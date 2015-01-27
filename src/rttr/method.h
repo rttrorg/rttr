@@ -1,0 +1,296 @@
+/************************************************************************************
+*                                                                                   *
+*   Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>                             *
+*                                                                                   *
+*   This file is part of RTTR (Run Time Type Reflection)                            *
+*   License: MIT License                                                            *
+*                                                                                   *
+*   Permission is hereby granted, free of charge, to any person obtaining           *
+*   a copy of this software and associated documentation files (the "Software"),    *
+*   to deal in the Software without restriction, including without limitation       *
+*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
+*   and/or sell copies of the Software, and to permit persons to whom the           *
+*   Software is furnished to do so, subject to the following conditions:            *
+*                                                                                   *
+*   The above copyright notice and this permission notice shall be included in      *
+*   all copies or substantial portions of the Software.                             *
+*                                                                                   *
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+*   SOFTWARE.                                                                       *
+*                                                                                   *
+*************************************************************************************/
+
+#ifndef __RTTR_METHOD_H__
+#define __RTTR_METHOD_H__
+
+#include "rttr/base/core_prerequisites.h"
+
+#include <string>
+#include <vector>
+
+namespace rttr
+{
+
+class variant;
+class type;
+
+namespace detail
+{
+class method_container_base;
+class instance;
+class argument;
+}
+
+/*!
+ * The \ref method class provides several meta information about a method and can be invoked.
+ *
+ * A instance of a method class can only be obtained from the \ref type class.
+ * See \ref type::get_method() and \ref type::get_methods().
+ *
+ * For registration a method, nested inside a class, see \ref class_::method() and for global methods see \ref register_global::method.
+ *
+ * Meta Information
+ * ----------------
+ * A \ref method has a \ref get_name "name",  a \ref get_signature "signature", a \ref get_return_type "return type", a list of \ref get_parameter_types "parameter types"
+ * as well as attributes that specify its behavior: \ref is_static(). 
+ * When the \ref method was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
+ *
+ * The method can be invoked with \ref invoke(); When its not a \ref is_static "static method" you have to provide a valid class instance to invoke the method.
+ * This instance can be the raw type on the stack; the current class hierarchy level doesn't matter. It can be also a raw pointer to the object or
+ * a \ref variant which contains the instance, again as pointer or stack object. 
+ * When the method is declared as static you you still have to provide a dummy instance object, therefore the function `rttr::empty_instance()` should be used.
+ *
+ * A method will be successfully invoked when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
+ * When the method has \ref get_parameter_types "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
+ * An automatically type conversion is **not** performed.
+ *
+ * The return type of \ref invoke() is \ef variant object. 
+ * This object contains not only the possible return value of a function, it also indicates whether the method was invoked or not.
+ * A \ref variant::is_valid "valid" variant object means, that then the method was successfully invoked, otherwise not.
+ * When the invoked method has no return type, i.e. is a `void` method, then a valid variant of type `void` is returned.
+ * 
+ * While the \ref invoke() function can directly forward up to six arguments, it is sometime necessary to forward even more arguments.
+ * Therefore the function \ref invoke_variadic() should be used; it allows to pack an unlimited amount of arguments into a std::vector and forward them to the function.
+ *
+ * Another way to invoke a method is to use the \ref type class through \ref invoke_method().
+ *
+ * Copying and Assignment
+ * ----------------------
+ * A \ref method object is lightweight and can be copied by value. However, each copy will refer to the same underlying method.
+ *
+ * Typical Usage
+ * ----------------------
+ * 
+\code{.cpp}
+  using namespace rttr;
+  struct MyStruct { int my_method(int param) { return param; } };
+  //...
+  variant obj = type::get("MyStruct").create();
+  method func = obj.get_type().get_method("my_method");
+  if (func)
+  {
+     variant val = func.invoke(obj, 23);
+     std::cout << val.get_value<int>(); // prints 23
+     // you can also invoke the method with an object on the stack
+     MyStruct inst;
+     val = func.invoke(inst, 42);
+     std::cout << val.get_value<int>(); // prints 42
+     // or as pointer
+     MyStruct* ptr = &inst;
+     val = func.invoke(ptr, 7);
+     std::cout << val.get_value<int>(); // prints 7
+  }
+\endcode
+ *
+ * \see property, enumeration, constructor and type
+ */
+class RTTR_API method
+{
+    public:
+        /*!
+         * \brief Returns true if this method is valid, otherwise false.
+         *
+         * \return True if this method is valid, otherwise false.
+         */
+        bool is_valid() const;
+
+        /*!
+         * \brief Convenience function to check if this method is valid or not.
+         *
+         * \return True if this method is valid, otherwise false.
+         */
+        operator bool() const;
+
+        /*!
+         * \brief Returns the name of this method.
+         *
+         * \return Name of the method.
+         */
+        std::string get_name() const;
+
+        /*!
+         * \brief Returns true if this method is static method, otherwise false.
+         *        A static method does not need an instance for performing an invoke.
+         *
+         * \remark When the method is not valid, this function will return false.
+         *
+         * \return True if this is a static method, otherwise false.
+         */
+        bool is_static() const;
+
+        /*!
+         * Returns the type object of the return type.
+         *
+         * \return The type of the return type.
+         */
+        type get_return_type() const;
+
+        /*!
+         * Returns the class that declares this method.
+         *
+         * \remark When this method does not belong to a class (i.e. is a global method) it will return an invalid type.
+         *         When this method is not valid, this function will return an invalid type object (see \ref type::is_valid).
+         *
+         * \return Type of the underlying property.
+         */
+        type get_declaring_type() const;
+        
+        /*!
+         * \brief Returns an ordered list of type objects which represents the parameters of this method.
+         *
+         * \return A list of type objects from the arguments.
+         */
+        std::vector<type> get_parameter_types() const;
+
+        /*!
+         * \brief Returns the signature of this method as readable string.
+         *
+         * \return The signature as readable string.
+         */
+        std::string get_signature() const;
+
+        /*!
+         * \brief Returns the metadata for the given key \p key.
+         *
+         * \remark When no metadata is registered with the given \p key, 
+         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
+         *
+         * \return A variant object, containing arbitrary data.
+         */
+        variant get_metadata(int key) const;
+
+        /*!
+         * \brief Returns the metadata for the given key \p key.
+         *
+         * \remark When no metadata is registered with the given \p key, 
+         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
+         *
+         * \return A variant object, containing arbitrary data.
+         */
+        variant get_metadata(const std::string& key) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
+                       detail::argument arg5) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *
+         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
+                       detail::argument arg5, detail::argument arg6) const;
+
+        /*!
+         * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
+         *        Use this method when the argument count is higher then six.
+         *
+         * \remark Using this invoke function is slower, then specifying the arguments directly.
+         *         When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *
+         * \return The type of the return type.
+         */
+        variant invoke_variadic(detail::instance object, std::vector<detail::argument> args) const;
+
+        /*!
+         * \brief Returns true if this method is the same like the \p other.
+         *
+         * \return True if both methods are equal, otherwise false.
+         */
+        bool operator==(const method& other) const;
+
+        /*!
+         * Returns true if this method is the not the same like the \p other.
+         *
+         * \return True if both methods are different, otherwise false.
+         */
+        bool operator!=(const method& other) const;
+
+    private:
+        friend class type; // to prevent creation of this class
+        method(const detail::method_container_base* container = nullptr);
+    private:
+        const detail::method_container_base* _container;
+};
+
+} // end namespace rttr
+
+#endif // __RTTR_METHOD_H__

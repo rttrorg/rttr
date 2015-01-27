@@ -1,0 +1,920 @@
+/************************************************************************************
+*                                                                                   *
+*   Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>                             *
+*                                                                                   *
+*   This file is part of RTTR (Run Time Type Reflection)                            *
+*   License: MIT License                                                            *
+*                                                                                   *
+*   Permission is hereby granted, free of charge, to any person obtaining           *
+*   a copy of this software and associated documentation files (the "Software"),    *
+*   to deal in the Software without restriction, including without limitation       *
+*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
+*   and/or sell copies of the Software, and to permit persons to whom the           *
+*   Software is furnished to do so, subject to the following conditions:            *
+*                                                                                   *
+*   The above copyright notice and this permission notice shall be included in      *
+*   all copies or substantial portions of the Software.                             *
+*                                                                                   *
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+*   SOFTWARE.                                                                       *
+*                                                                                   *
+*************************************************************************************/
+
+/*
+@file     Tutorial.dox
+@author   Axel Menzel
+@brief    Contains the tutorial for RTTR
+*/
+
+// This file contains only comments for doxygen
+
+namespace rttr
+{
+
+/*!
+\page page_tutorial Tutorial
+\tableofcontents
+Before retrieving data from RTTR you have register your custom `Type` and the following tutorial will show how to do this.
+The register process has to be done manually and can be separated in two steps:
+
+ 1. \ref declare_types "declaring" your `Type`
+ 2. \ref binding_types "binding" the properties, methods, enums or constructors of your `Type`
+
+\section declare_types Declaring Types
+
+RTTR uses an own, in ISO C++ implemented, alternative to the build in RTTI mechanism of C++. The reason for that are problems when using typeid <a target="_blank" href=https://svn.boost.org/trac/boost/ticket/754>across shared boundaries</a>
+and the <a target="_blank" href=http://tinodidriksen.com/2010/04/14/cpp-dynamic-cast-performance/>execution speed</a>.
+In order to use this mechanism you have to register them with a macro named \ref RTTR_DECLARE_TYPE.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection declare_simple_types 1. Simple Types
+Suppose we have a struct named `MyStruct`
+\code{.cpp}
+// MyStruct.h
+struct MyStruct
+{
+  int i;
+};
+RTTR_DECLARE_TYPE(MyStruct)
+\endcode
+
+Place the macro inside the header of the struct or class, just below the declaration. 
+The macro will create a register function and is also responsible for returning the corresponding \ref type object for this type.<br>
+The registration process itself is now done at runtime. 
+
+When `MyStruct` is in a namespace, make sure you put the macro outside the namespace, otherwise the \ref type class cannot access the `Type`.
+\code{.cpp}
+  namespace MyNameSpace
+  {
+    //....
+  }
+  RTTR_DECLARE_TYPE(MyNameSpace::MyStruct)
+\endcode
+
+Also note, that when your are working with pointers of your custom type, then these needs to be registered too.
+\code{.cpp}
+  RTTR_DECLARE_TYPE(MyStruct) // raw type
+  RTTR_DECLARE_TYPE(MyStruct*) // ptr type
+  RTTR_DECLARE_TYPE(const MyStruct*) // ptr to const type
+\endcode
+
+Instead of writing tree times \ref RTTR_DECLARE_TYPE you can use the shortcut macro \ref RTTR_DECLARE_STANDARD_TYPE_VARIANTS
+
+\code{.cpp}
+  RTTR_DECLARE_STANDARD_TYPE_VARIANTS(MyStruct)
+\endcode
+
+This will declare for a given type `Type`, the following types: `Type`, `Type*`, `const Type*`
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection declare_class_hierarchies 2. Class Hierarchies
+When you use class hierarchies, you have to put a certain macro inside every class. 
+Otherwise you are not able to retrieve the information about the most derived type of your current instance.
+The macro you have to insert is called \ref RTTR_ENABLE
+
+Suppose we have a base struct called `Base`.
+\code{.cpp}
+// Base.h
+struct Base
+{
+  RTTR_ENABLE()
+};
+RTTR_DECLARE_TYPE(Base)
+\endcode
+Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public, protected or private class accessor section.
+
+Into the derived class you put the same macro, but now as argument the name of the parent class.
+Which is in this case `Base`.
+\code{.cpp}
+// Derived.h
+struct Derived : Base
+{
+  RTTR_ENABLE(Base)
+};
+RTTR_DECLARE_TYPE(Derived) // don't forget to declare your type
+\endcode
+
+When you use multiple inheritance you simply separate every class with a comma.
+\code{.cpp}
+// MultipleDerived.h
+struct MultipleDerived : Base, Other
+{
+  RTTR_ENABLE(Base, Other)
+};
+RTTR_DECLARE_TYPE(MultipleDerived)
+\endcode
+Remark that the order in which you declare here the multiple inheritance, has an impact later when retrieving properties of a class.
+So it is best practice to use the same order like in your class.
+RTTR supports to register even virtual base classes. 
+
+\remark The only limitation you have is: It is **not** possible to register a class twice in the same class hierarchy.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection declare_types_use_type 3. type as alternative to typeid
+When you have successfully registered your custom type, you can use \ref type to check whether the current instance is a certain type or not.<br>
+There are three static template member functions for retrieving the \ref type:
+
+type::get(const char*)
+
+This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
+The name of the type is the same like you have registered with \ref RTTR_DECLARE_TYPE but as string literal. When you have used a typedef then you need to provide this typedef also as string literal.
+
+\code{.cpp}
+  type::get("int") == type::get("int");   // yields to true
+  type::get("bool") == type::get("int");  // yields to false
+  type::get("MyNameSpace::MyStruct") == type::get("MyNameSpace::MyStruct");  // yields to true
+\endcode
+
+type::get<T>()
+
+This function just expects one template argument. Use it to check against a known type.
+
+\code{.cpp}
+  type::get<int>() == type::get<int>();  // yields to true
+  type::get<int>() == type::get<bool>(); // yields to false
+\endcode
+
+type::get<T>(T&& obj)
+
+This function is a universal reference and returns from every given object the corresponding type object.
+\code{.cpp}
+  int int_obj;
+  int* int_obj_ptr = &int_obj;
+  const int* c_int_obj_ptr = int_obj_ptr;
+  type::get<int>() == type::get(int_obj);             // yields to true
+  type::get<int*>() == type::get(int_obj_ptr);        // yields to true
+  type::get<const int*>() == type::get(c_int_obj_ptr);// yields to true
+\endcode
+ 
+When this function is called for a glvalue expression whose type is a polymorphic class type,
+then the result refers to a \ref type object representing the type of the most derived object. 
+
+\code{.cpp}
+  struct Base {};
+  struct Derived : Base {};
+  Derived d;
+  Base& base = d;
+  type::get<Derived>() == type::get(base) // yields to true
+  type::get<Base>() == type::get(base)    // yields to false
+  
+  // remark, when called with pointers:
+  Base* base_ptr = &d;
+  type::get<Derived>() == type::get(base_ptr);  // yields to false
+  type::get<Base*>() == type::get(base_ptr);    // yields to true
+\endcode
+ 
+\remark If the type of the expression is a cv-qualified type, the result of the rttr::type::get expression refers to a rttr::type object representing the cv-unqualified type.
+  
+\code{.cpp}
+  class D { ... };
+  D d1;
+  const D d2;
+  type::get(d1)  == type::get(d2);         // yields true
+  type::get<D>() == type::get<const D>();  // yields true
+  type::get<D>() == type::get(d2);         // yields true
+  type::get<D>() == type::get<const D&>(); // yields true
+  type::get<D>() == type::get<const D*>(); // yields false
+\endcode
+
+Any `top level` cv-qualifier of the given type `T` will be removed.
+
+ <!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+ 
+\subsection declare_rttr_cast 4. rttr_cast as alternative to dynamic_cast
+Providing an own function for `dynamic_cast` completes the package as an `RTTI` alternative.<br>
+The function rttr_cast<T>(Arg) allows the client to cast between class hierarchies up and down, 
+cross casts between unrelated classes and even class hierarchies with virtual inheritance.
+The target type `T` can be also in the middle of the hierarchy.
+  \code{.cpp}
+    struct A { ... };
+    struct B : A { ... };
+    struct C : B { ... };
+    C c;
+    A* a = &c;
+    B* b = rttr_cast<B*>(a); // successful
+  \endcode
+  An rttr::type object knows from which parent class it is derived. Assumed this information is given via \ref RTTR_ENABLE.
+From the functionality it is similar to `dynamic_cast`.
+\remark Because exception are not supported the target type `T` can only be a pointer type.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\section binding_types Binding Types
+\subsection binding_types_hello_world 1. Hello World
+
+Let's start with the traditional hello world example.
+
+\code{.cpp}
+#include <rttr/reflect>
+
+static void f() { std::cout << "Hello World" << std::endl; }
+using namespace rttr;
+
+RTTR_REGISTER
+{
+  method_("f", &f);
+}
+  
+int main()
+{
+  type::invoke("f", {});
+}
+// outputs: "Hello World"
+\endcode
+
+When you need to reflect a property, or like in this case a free function,
+you need to include first `#include <rttr/reflect>`. This will include everything necessary for creating
+the reflection information. The macro \ref RTTR_REGISTER must be placed outside of any function or class, just place directly into in your cpp file.
+This macro executes the register process before *main* is called, 
+that has the advantage that this reflection information is directly available when main is called.
+Remark that this macro can only be placed one-time in a source file, otherwise you will get an compile error.
+
+The shortest way to invoke the function `f()` is to call \ref type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()".
+It requires the exact name of the free function and a vector of arguments. 
+You can check whether the call was successful with checking the return value. When the returned \ref variant is valid the call was successful, otherwise not.
+
+In RTTR is the most important class the \ref type class. With that class you get access to everything else.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_methods 2. Methods
+As already mentioned to bind global methods to RTTR use the function \ref rttr::method_().
+It has following synopsis:
+\code{.cpp}
+  template<typename F>
+  void rttr::method_( const std::string & name, F function, std::vector< rttr::metadata > data);
+\endcode
+- name is the name of the function
+- F is the function pointer or std::function your want to register
+- data contains metadata for this function; this is an optional parameter
+
+For example when you want to register the byte string to integer conversion function: `int atoi (const char * str);`
+
+Do it in the following way:
+\code{.cpp}
+RTTR_REGISTER
+{
+  method_("atoi", &atoi);
+}
+\endcode
+
+\subsubsection binding_types_method_overloading 2.1 Overloaded Methods
+When you want to register a function which is overloaded (same name, different signature), you have to explicitly provide the signature.
+Otherwise C++ can not deduce which function you refer to.
+For example when you have two function `float sin (float x);` and `double sin (double x);` :
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  method_("sin", static_cast<float(*)(float)>(&sin));
+  method_("sin", static_cast<double(*)(double)>(&sin));
+}
+\endcode
+
+That is the general syntax for function pointers:
+\code{.cpp}
+return-value (*func-name)(arg1-type, arg2-type, ...)
+\endcode
+
+\subsubsection binding_types_method_invoke 2.2 Invoke of methods
+Invoking a method with RTTR can be done in two ways.
+- calling \ref type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()" from the \ref type class.
+- retrieving first a \ref method object from \ref type::get_global_method(const std::string &, const std::vector< type >&) "type::get_global_method()" and then calling invoke
+
+The first option needs less typing, but it is slower when you need to invoke the function several times.
+For the second option you need more code to write, but it invokes the method faster.
+
+The following example demonstrates the possibilities to invoke a method:
+\code{.cpp}
+int main()
+{
+  // let asume we have registered the pow function: double pow( double base, double exp );
+  // option 1
+  variant return_value = type::invoke("pow", {9.0, 2.0});
+  if (return_value.is_valid() && return_value.is_type<double>())
+    std::cout << return_value.get_value<double>() << std::endl; // 81
+  
+  // option 2
+  method meth = type::get_global_method("pow");
+  if (meth) // check if the function was found
+  {
+    return_value = meth.invoke(empty_instance(), 9.0, 3.0);
+    if (return_value.is_valid() && return_value.is_type<double>())
+      std::cout << return_value.get_value<double>() << std::endl; // 729
+    
+  }
+}
+\endcode
+
+The \ref type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()" function will internally try 
+to find a function based on the given name and the given types of the arguments. So finding the correct function when overloaded function are registered is automatically done.
+Notice that you have to provide the arguments as a vector pack. Therefore an initializer list is quite handy to reduce typing.
+The argument must match 100%, there is at the moment no conversion done. That means, when an integer argument is needed and you forward a double
+value the function will **not** be called. The arguments will not be copied, instead they will be wrapped in an internal class and forwarded to the 
+underlying function pointer. This class is called `detail::argument` do **not** create this class on your own. The class will implicit wrap your argument value.
+
+The return value of \ref type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()" is a \ref variant object.
+It indicates whether the function was called or not. RTTR does **not** use the exception mechanism of C++, therefore you have to check the return values when you are interested
+in a successfull call. The \ref variant object \ref variant::is_valid "is valid" when it was successfully called. When the function has a return value, then this value is also contained
+in the variant object.
+
+When you prefer to hold a handle to the function use the getter \ref type::get_global_method(const std::string &, const std::vector< type >&) "type::get_global_method()"
+to retrieve a \ref method object. This has the advantage that you do not need to search for the function every time you want to invoke it.
+Additionally this class provides \ref method::invoke "functions" to invoke a function without the need to create a vector of arguments.
+The method object is very lightweight and can be simply copied around different locations. The object stays valid till end of the `main()` function.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_properties 3. Properties
+For binding a property to RTTR you can use following functions: \ref rttr::property_() and \ref rttr::property_readonly_().
+
+They have following synopsis:
+\code{.cpp}
+  template<typename A>
+  void rttr::property_( const std::string & name, A accessor, std::vector< rttr::metadata > data );
+  
+  template<typename A>
+  void rttr::property_readonly_( const std::string & name, A accessor, std::vector< rttr::metadata > data );
+\endcode
+- name is the name of the property
+- A is the pointer to the property
+- data contains metadata for this property; this is an optional parameter
+
+It is also possible to use function pointers for the property as getter and setter functions.
+Therefore the \ref rttr::property_( const std::string &, A1, A2 , std::vector< rttr::metadata >) "rttr::property_()" function is overloaded.
+
+It has following synposis:
+\code{.cpp}
+  template<typename A1, typename A2>
+  void rttr::property_( const std::string & name, A1 getter, A2 setter, std::vector< rttr::metadata > data );
+\endcode
+- name is the name of the property
+- A1 is the function pointer to the getter and A2 is the function pointer to the setter of the property
+- data contains metadata for this property; this is an optional parameter
+
+The following example shows how to use these register functions:
+\code{.cpp}
+static const double pi = 3.14259;
+static std::string global_text;
+void set_text(const std::string& text) { global_text = text; }
+const std::string& get_text() { return global_text; }
+
+RTTR_REGISTER
+{
+  property_readonly_("PI", &pi);
+  property_("global_text", &get_text, &set_text);
+}
+\endcode
+
+There can be not two global properties with the same name. The later registered property with an already existing name will be discarded.
+
+\subsubsection binding_types_property_invoke 3.1 Invoke properties
+For setting and getting a property with RTTR you have two options like with methods:
+- calling \ref type::set_property_value(const std::string&, detail::argument) "type::set_property_value()" and \ref type::get_property_value(const std::string&) "type::get_property_value()" from the \ref type class or
+- retrieving a \ref property object from \ref type::get_global_property(const std::string &) "type::get_global_property()" and then calling \ref property::set_value() and \ref property::get_value
+
+\code{.cpp}
+int main()
+{
+  // option 1, via type
+   variant value = type::get_property_value("pi");
+   if (value && value.is_type<double>())
+      std::cout << value.get_value<double>() << std::endl; // outputs: "3.14259"
+      
+  // option 2, via property class
+   property prop = type::get_property_value("pi");
+   if (prop)
+   {
+      value = prop.get_value();
+      if (value.is_valid() && value.is_type<double>())
+        std::cout << value.get_value<double>() << std::endl; // outputs: "3.14259"
+   }
+}
+\endcode
+The static \ref type::set_property_value(const std::string&, detail::argument) "type::set_property_value()" function calls directly a global property with the given name.
+This function has a bool value as return value, indicating whether the property was invoked or not. For retrieving a property value use
+the static function \ref type::get_property_value(const std::string&) "type::get_property_value()". The returned \ref variant object contains
+the property value and also indicates whether the call to retrieve the property was successful or not. 
+When the variant is \ref variant::is_valid() "not valid" then the call could not be done.
+
+Another option is to retrieve a handle to the property via \ref type::get_global_property(const std::string &) "type::get_global_property()".
+This is the preferred option, because then you directly set/get the value without searching every time for the property.
+The property object is very lightweight and can be simply copied around different locations. The object stays valid till end of the `main()` function.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_enums 4. Enums
+RTTR allows also to bind enumerated constants (enums). Therefore use the function \ref enumeration_().
+
+It has following synposis:
+\code{.cpp}
+  template<typename EnumType>
+  void rttr::enumeration_( std::vector< std::pair< std::string, EnumType > > enum_data, std::vector< rttr::metadata > data );
+\endcode
+
+- enum_data contains a list of *key* to *value* pairs
+- data contains metadata for this property; this is an optional parameter
+
+\code{.cpp}
+enum E_Alignment
+{
+  AlignLeft       = 0x0001,
+  AlignRight      = 0x0002,
+  AlignHCenter    = 0x0004,
+  AlignJustify    = 0x0008
+};
+
+RTTR_REGISTER
+{
+  enumeration_<E_Alignment>({ {"AlignLeft",    E_Alignment::AlignLeft},
+                              {"AlignRight",   E_Alignment::AlignRight},
+                              {"AlignHCenter", E_Alignment::AlignHCenter},
+                              {"AlignJustify", E_Alignment::AlignJustify}
+                            });
+}
+\endcode
+You don't need to provide a name for the enum during the enumeration binding, because this is already done with the \ref declare_simple_types "registration process" for types.
+The *key* is a std::string and the *value* is the enum value.
+The class \ref enumeration contains several meta information about an enum with conversion functions between the value representation and its literal representation.
+
+How to use the enumeration class shows following example:
+\code{.cpp}
+  type enum_type = type::get("E_Alignment");
+  if (enum_type && enum_type.is_enumeration())
+  {
+    enumeration enum_align = enum_type.get_enumeration();
+    std::string key = enum_align.value_to_key(MyStruct::AlignHCenter);
+    std::cout << key; // prints "AlignHCenter"
+    
+    variant var = enum_align.key_to_value(key);
+    std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "4";
+  }
+\endcode
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_variant 5. Variant
+
+The variant class acts as return value container for properties and methods. This class allows to store data of any type and convert between these types transparently.
+It can hold one value at a time (using containers you can hold multiple types e.g. `std::vector<int>`). 
+Remark that the content is copied into the variant class. Even raw arrays (e.g. `int[10]`) are copied.
+When you would like to avoid copies, use pointer types or wrap your type in a `std::reference_wrapper<T>`
+A typical usage is the following example:
+
+\code{.cpp}
+    variant var;
+    var = 23;                                   // copy integer
+    int x = var.to_int();                       // x = 23
+    
+    var = std:.string("Hello World");           // variant contains now a std::string
+    var = "Hello World";                        // variant contains now a char[12] array
+    int y = var.to_int();                       // y = 0, because invalid conversion
+    std::string text = var.to_string();         // text = "Hello World", char array to string converted
+    
+    var = "42";                                 // contains now char[3] array
+    std::cout << var.to_int();                  // convert char array to integer and prints "42"
+    
+    int my_array[100];    
+    var = my_array;                             // copies the content of my_array into var
+    auto& arr = var.get_value<int[100]>();      // extracts the content of var by reference
+    
+    bool ret = var.can_convert<variant_array>();// return true
+    variant_array array = var.to_array();       // converts to variant_array, a helper class to get access to array values and other meta infos about array
+    std::size_t size = array.get_size();        // size = 100
+    array.set_value(0, 42);                     // set the first value to 42
+    std::cout << array.get_value(0);            // prints 42
+\endcode
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_classes 6. Classes
+For registering classes in RTTR you use a class called \ref class_. Its name is supposed to resemble the C++ keyword, to make it look more intuitive. 
+It has member functions for register \ref class_::constructor() "constructors", \ref class_::property() "properties", \ref class_::method() "methods" and \ref class_::enumeration() "enums".
+These functions have the same interface and work in the same way like register the global symbols.
+Every call to these member functions, will return a reference to *this*, in order to chain more registration calls.
+The name of the class does not have to be provided, because this is already done with the \ref declare_simple_types "registration process" for types.
+
+Let's start with a simple example. Consider the following C++ class:
+
+\code{.cpp}
+
+// test class.h
+class test_class{
+public:
+   test_class(int value) : m_value(value) {}
+   void print_value() const { std::cout << m_value; }
+private:
+   int m_value;
+RTTR_ENABLE()
+};
+
+RTTR_DECLARE_TYPE_VARIANTS(test_class);
+\endcode
+
+The registration process is now done at global scope in the cpp file.
+
+\code{.cpp}
+// test_class.cpp
+using namespace rttr;
+
+RTTR_REGISTER
+{
+  class_<test_class>()
+    .constructor<int>()
+    .method("print_value", &test_class::print_value);
+    .property("value", &test_class::m_value);
+}
+\endcode
+This will register the class `test_class` with a constructor that takes an integer as argument, a member function with the name `print_value`
+and a property called `value`.
+
+The property name has be unique for this class type but derived classes can register another property with the same name again.
+Member functions can be overloaded, so a method can be registered with an already existing name multiple times. However when there exist a method with the same name and signature,
+then this function will not be registered and discarded.
+
+\subsubsection binding_types_overload_member_functions 6.1 Overloaded member functions
+
+When binding a overloaded member function, you have to disambiguate the member function pointer you pass to \ref class_::method() "method".
+To do this, you can use `static_cast`  or an ordinary C-style cast, to cast it to the right overload.
+
+The syntax for member function pointers if following:
+\code{.cpp}
+return-value (class-name::*)(arg1-type, arg2-type, ...)
+\endcode
+
+Here's an example illlustrating this:
+
+\code{.cpp}
+struct Foo
+{
+  void f();
+  void f(int);
+};
+\endcode
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .method("f", static_cast<void(Foo::*)(int)>(&Foo::f)); // C++ cast
+    .method("f", (void(Foo::*)())&Foo::f); // C style cast
+}
+\endcode
+
+This first overload of the function f is binded with a C++ cast. The second overload is binded with a C style cast.
+
+\subsubsection binding_types_class_ctor 6.2 Register constructor
+\code{.cpp}
+
+RTTR allows your to register constructors for classes. 
+Because C++ doesn't allow to retrieve the member function pointer of a constructor you have to explicit specify all data types of a constructor.
+
+Consider following class with three constructors:
+struct Foo
+{
+  Foo();
+  Foo(int, double);
+  Foo(const std::string&);
+};
+\endcode
+
+For registering these constructors you now have to specify every parameter as template parameter in the member function :\ref class_::constructor().
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .constructor<>()
+    .constructor<int,double>()
+    .constructor<const std::string&>();
+}
+\endcode
+
+When a constructor is registered a destructor is registered automatically.
+
+\subsubsection binding_types_class_props 6.3 Register class properties
+Register a public property can be easily done, consider following class:
+
+\code{.cpp}
+struct Foo
+{
+  int value;
+};
+\endcode
+
+This class is registered like this:
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .property("value", &Foo::value);
+}
+\endcode
+
+With the \ref class_::property() "property()" member function you will bind the member variable `Foo::value` with read and write access. When you want a bind a property with `read-only` access, then this is also possible with \ref class_::property_readonly "property_readonly()" member function.
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .property_readonly("value", &Foo::value);
+}
+\endcode
+
+When you have a class and the property is declared in private scope, then you can still register this property when you insert the macro: \ref RTTR_REGISTER_FRIEND
+inside the class.
+\code{.cpp}
+class Foo
+{
+  private:
+    int value;
+
+  RTTR_REGISTER_FRIEND
+};
+\endcode
+
+This will make this class a friend to the registration system.
+
+You can also register getter and setter functions and make them look as if they were a public data member. Consider the following class:
+\code{.cpp}
+class Foo
+{
+  public:
+    void set_value(int x) { m_value = x; }
+    int get_value() const { return m_value; }
+    
+  private:
+    int m_value;
+};
+\endcode
+
+This is the registration code:
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .property("value", &Foo::get_value, &Foo::set_value);
+}
+\endcode
+
+This way, accessing the property will now call these functions, instead the property directly. Remark that the getter function needs the be `const`.
+
+The following sub sections will now show how to retrieve these informations for creating, invoking and setting properties of an instance of this class.
+
+\subsubsection binding_types_create_classes 6.4 Create/destroy of classes
+
+There are two options for creating/destroying a class. Option 1, use just the \ref type::create "type" interface or option 2 retrieve a \ref constructor
+and \ref destructor object from the type class.
+
+\code{.cpp}
+int main()
+{
+  // option 1
+   type class_type = type::get("test_class");
+   if (class_type)
+   {
+      variant obj = class_type.create({23});
+      class_type.destroy(obj);
+   }
+   // option 2
+   if (class_type)
+   {
+      constructor ctor = class_type.get_constructor({type::get<int>()});
+      variant obj = ctor.invoke(23);
+      destructor dtor = class_type.get_destructor();
+      dtor.invoke(obj);
+   }
+}
+\endcode
+The objects which are constructed are created on the heap and stored as pointer in the variant object.
+
+\subsubsection binding_types_invoke_classes 6.5 Invoke member functions
+Invoking a member function works in the same way like invoking global function. The only difference is, that you have to provide
+the instance of the class.
+
+\code{.cpp}
+int main()
+{
+  test_class obj(42);
+  type class_type = type::get("test_class");
+  // option 1
+  class_type.invoke("print_value", obj, {}); // print 42
+  
+  // option 2
+  method print_meth = class_type.get_method("print_value");
+  print_meth.invoke(obj); // prints "42"
+}
+\endcode
+
+The invoke function also except to use variants. So when you create the object via the type constructor you can use the returned variant to invoke to method:
+
+\code{.cpp}
+int main()
+{
+  variant obj_var = type::get("test_class").create({42});
+  type::get("test_class").invoke("print_value", obj_var, {}); // print 42
+}
+\endcode
+
+\subsubsection binding_types_set_get_property_classes 6.6 Set/Get property of a class
+Properties can be also set an get in two ways.
+
+\code{.cpp}
+int main()
+{
+  test_class obj(0);
+  type class_type = type::get("test_class");
+  // option 1
+  bool success = class_type.set_property_value("value", obj, 50);
+  std::cout << obj.m_value; // prints "50"
+  
+  // option 2
+  property prop = class_type.get_property("value");
+  success = prop.set_value(obj, 24);
+  std::cout << obj.m_value; // prints "24"
+}
+\endcode
+
+In difference to the global properties, a valid \ref type object and an instance (object) of the class is now needed to set and get the value.
+It doesn't matter in what hierarchy level the object is. Or if its a pointer, an object on the stack or wrapped inside a variant.
+RTTR will try to cast the given object to the class type where the property was registered to.
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_meta_data 7. Metadata
+Adding additional meta information to properties or methods can be very useful.
+So for instance, it allows to add ToolTips or the information what kind of editor should be created in the GUI.
+You can also tag certain properties to make only those available in a scripting engine which has a certain key set.
+
+The metadata consists of a *key*, which can be a std::string or an integer and a *value* which is a \ref variant.
+
+Please take a look at following example:
+
+\code{.cpp}
+RTTR_REGISTER
+{
+  property_("value", value, { metadata(SCRIPTABLE, false), 
+                              metadata("Description", "This is a value.") });
+}
+\endcode
+This will register a global property named `"value"` with two metadata informations.
+Both keys use the integer as data role, because the enum value will be implicit converted to an integer.
+
+And the following snippet shows, how to retrieve this information:
+\code{.cpp}
+int main()
+{
+  property prop = type::get_global_property("value");
+  variant value = prop.get_metadata(SCRIPTABLE);
+  std::cout << value.get_value<bool>(); // prints "false"
+  
+  value = prop.get_metadata("Description");
+  std::cout << value.get_value<int>(); // prints "This is a value."
+}
+\endcode
+
+Every \ref property, \ref method, \ref enumeration and \ref constructor can have metadata.
+
+
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\subsection binding_types_policies 8. Policies
+Sometimes it is necessary to adjust the default binding behaviour RTTR. Therefore policies were introduced.
+At the moment only return value policies are implemented.
+The default binding behaviour of RTTR is to return all values by copying the content in a variant.
+
+Currently implemented policies:
+- \ref bind_bind_property_as_ptr "bind_property_as_ptr"
+- \ref bind_return_reference_as_ptr "return_reference_as_ptr"
+- \ref bind_discard_return_value "discard_return_value"
+
+\subsubsection bind_bind_property_as_ptr 8.1 bind_property_as_ptr
+The motivation for this policy is to avoid expensive copies when returning a property.
+When you have primitive data types like integer or doubles you are good to go with the standard binding behaviour.
+But when you have big arrays, it would be a waste to always copy the content when retrieving or setting the value, therefore this policy was introduced.
+
+Example:
+\code{.cpp}
+struct Foo
+{
+  std::vector<int> vec;
+};
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .property("vec", &Foo::vec, bind_property_as_ptr);
+}
+\endcode
+
+\code{.cpp}
+int main()
+{
+  Foo obj;
+  property vec_prop = type::get("Foo").get_property("vec");
+  variant vec_value = prop.get_value(obj);
+  std::cout << value.is_type<std::vector<int>*>(); // prints "true"
+  
+  // not really necessary, but remark that now a std::vector<int>* is expected
+  prop.set_value(obj, vec_value);
+}
+\endcode
+
+\subsubsection bind_return_reference_as_ptr 8.2 return_reference_as_ptr
+The motivation for this policy is the same like the \ref bind_bind_property_as_ptr "bind_property_as_ptr" policy.
+When you really need to get a reference to the return value of a method call you have to use this policy,
+otherwise the returned reference will be copied into the variant.
+
+Example:
+\code{.cpp}
+struct Foo
+{
+  std::string& get_text() { static text; return text; }
+};
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .method("get_text", &Foo::get_text, return_reference_as_ptr);
+}
+\endcode
+
+\code{.cpp}
+int main()
+{
+  Foo obj;
+  method text_meth = type::get("Foo").get_method("get_text");
+  variant vec_value = text_meth.invoke(obj);
+  std::cout << value.is_type<std::string*>(); // prints "true"
+  std::cout << text_meth.get_return_type().get_name(); // prints "std::string*"
+}
+\endcode
+
+\subsubsection bind_discard_return_value 8.3 discard_return_value
+
+Sometimes it is necessary that the client caller should ignore the return value of a method call.
+Therefore this policies was introduced.
+
+Example:
+\code{.cpp}
+struct Foo
+{
+  int get_value() { return 42; }
+};
+RTTR_REGISTER
+{
+  class_<Foo>()
+    .method("get_value", &Foo::get_value, discard_return_value);
+}
+\endcode
+
+\code{.cpp}
+int main()
+{
+  Foo obj;
+  method text_meth = type::get("Foo").get_method("get_value");
+  variant vec_value = text_meth.invoke(obj);
+  std::cout << value.is_type<void>(); // prints "true"
+  std::cout << text_meth.get_return_type().get_name(); // prints "void"
+}
+\endcode
+
+A closing hint: you can of course build your own policies in that way, that you build wrappers around your properties or methods and 
+then bind the wrapper instead of the original accessor.
+ 
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+\par Go To Section...
+- \ref page_tutorial
+- \ref page_license
+*/
+
+}

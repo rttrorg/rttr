@@ -1,0 +1,56 @@
+/************************************************************************************
+*                                                                                   *
+*   Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>                             *
+*                                                                                   *
+*   This file is part of RTTR (Run Time Type Reflection)                            *
+*   License: MIT License                                                            *
+*                                                                                   *
+*   Permission is hereby granted, free of charge, to any person obtaining           *
+*   a copy of this software and associated documentation files (the "Software"),    *
+*   to deal in the Software without restriction, including without limitation       *
+*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
+*   and/or sell copies of the Software, and to permit persons to whom the           *
+*   Software is furnished to do so, subject to the following conditions:            *
+*                                                                                   *
+*   The above copyright notice and this permission notice shall be included in      *
+*   all copies or substantial portions of the Software.                             *
+*                                                                                   *
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+*   SOFTWARE.                                                                       *
+*                                                                                   *
+*************************************************************************************/
+
+Build instruction for RTTR with Windows and Visual Studio 2012 and above:
+================================================================
+1. Set environment variables in command shell:
+set CMAKE_ROOT = <Your path to cmake directory> - REQUIRED
+
+set DOXYGEN_ROOT = <Your path to cmake directory> - OPTIONAL otherwise no documentation will be generated
+
+Start CMake:
+e.g.
+cmake -G "Visual Studio 11" <Absolute Path to RTTR source code directory>
+or with make files:
+cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" <Absolute Path to RTTR source code directory>
+// compile with
+nmake install
+
+
+
+Build instruction for RTTR with Linux and g++:
+================================================================
+1. Set environment variables in your shell:
+CMAKE_ROOT => <Your path to cmake directory> - REQUIRED
+
+DOXYGEN_ROOT => <Your path to cmake directory> - OPTIONAL otherwise no documentation generated
+
+Start CMake:
+e.g.
+cmake -DCMAKE_BUILD_TYPE=Release <Absolute Path to RTTR source code directory>
+// compile with:
+make install

@@ -1,0 +1,82 @@
+/************************************************************************************
+*                                                                                   *
+*   Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>                             *
+*                                                                                   *
+*   This file is part of RTTR (Run Time Type Reflection)                            *
+*   License: MIT License                                                            *
+*                                                                                   *
+*   Permission is hereby granted, free of charge, to any person obtaining           *
+*   a copy of this software and associated documentation files (the "Software"),    *
+*   to deal in the Software without restriction, including without limitation       *
+*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
+*   and/or sell copies of the Software, and to permit persons to whom the           *
+*   Software is furnished to do so, subject to the following conditions:            *
+*                                                                                   *
+*   The above copyright notice and this permission notice shall be included in      *
+*   all copies or substantial portions of the Software.                             *
+*                                                                                   *
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+*   SOFTWARE.                                                                       *
+*                                                                                   *
+*************************************************************************************/
+
+// version.rc.in
+#define VER_FILEVERSION             @RTTR_VERSION_MAJOR@,@RTTR_VERSION_MINOR@,@RTTR_VERSION_PATCH@,0
+#define VER_FILEVERSION_STR         "@RTTR_VERSION_MAJOR@.@RTTR_VERSION_MINOR@.@RTTR_VERSION_PATCH@.0\0"
+
+#define VER_PRODUCTVERSION          @RTTR_VERSION_MAJOR@,@RTTR_VERSION_MINOR@,@RTTR_VERSION_PATCH@,0
+#define VER_PRODUCTVERSION_STR      "@RTTR_VERSION_MAJOR@.@RTTR_VERSION_MINOR@.@RTTR_VERSION_PATCH@.0\0"
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+1 VERSIONINFO
+FILEVERSION    	VER_FILEVERSION
+PRODUCTVERSION 	VER_PRODUCTVERSION
+FILEFLAGSMASK   0X3FL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+FILETYPE        0X2
+FILESUBTYPE     0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      ""
+            VALUE "FileDescription",  ""
+            VALUE "FileVersion",      VER_FILEVERSION_STR
+            VALUE "InternalName",     "rttr"
+            VALUE "LegalCopyright",   "Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>"
+            VALUE "LegalTrademarks1", "MIT License"
+            VALUE "LegalTrademarks2", ""
+            VALUE "OriginalFilename", ""
+            VALUE "ProductName",      "@RTTR_PRODUCT_NAME@"
+            VALUE "ProductVersion",   VER_PRODUCTVERSION_STR
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        /* The following line should only be modified for localized versions.     */
+        /* It consists of any number of WORD,WORD pairs, with each pair           */
+        /* describing a language,codepage combination supported by the file.      */
+        /*                                                                        */
+        /* For example, a file might have values "0x409,1252" indicating that it  */
+        /* supports English language (0x409) in the Windows ANSI codepage (1252). */
+
+        VALUE "Translation", 0x409, 1252
+
+    END
+END
