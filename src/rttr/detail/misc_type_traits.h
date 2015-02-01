@@ -359,7 +359,7 @@ namespace detail
     {};
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // is_char_array<T>::value Returns true if the given typ is a char array
+    // is_char_array<T>::value Returns true if the given type is a char array
     // e.g. is_char_array<char[10]>::value => true
     //      is_char_array<int[10]>::value => false
     //      is_char_array<char>::value => false

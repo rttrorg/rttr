@@ -359,7 +359,7 @@ class RTTR_API variant
          * \code{.cpp}
          *   int obj_array[100];
          *   variant var = obj_array;              // copies the content of obj_array into var
-         *   variant_array array = var.to_array(); // Copies the content of var to a variant_array object
+         *   variant_array array = var.to_array(); // copies the content of var to a variant_array object
          *   auto x = array.get_size();            // set x to 100
          *   array.set_value(0, 42);               // set the first index to the value 42
          * \endcode
