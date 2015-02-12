@@ -25,49 +25,47 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/standard_types.h"
 #include "rttr/reflect"
-
-RTTR_DEFINE_TYPE(void)
-RTTR_DEFINE_TYPE(bool)
-RTTR_DEFINE_TYPE(signed char)
-RTTR_DEFINE_TYPE(unsigned char)
-RTTR_DEFINE_TYPE(char)
-RTTR_DEFINE_TYPE(wchar_t)
-RTTR_DEFINE_TYPE(short int)
-RTTR_DEFINE_TYPE(unsigned short int)
-RTTR_DEFINE_TYPE(int)
-RTTR_DEFINE_TYPE(unsigned int)
-RTTR_DEFINE_TYPE(long int)
-RTTR_DEFINE_TYPE(unsigned long int)
-RTTR_DEFINE_TYPE(long long int)
-RTTR_DEFINE_TYPE(unsigned long long int)
-RTTR_DEFINE_TYPE(float)
-RTTR_DEFINE_TYPE(double)
-RTTR_DEFINE_TYPE(long double)
-RTTR_DEFINE_TYPE(std::string)
-RTTR_DEFINE_TYPE(std::vector<int>)
-RTTR_DEFINE_TYPE(std::vector<float>)
-RTTR_DEFINE_TYPE(std::vector<double>)
 
 
 RTTR_REGISTER
 {
-    using namespace rttr;
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(void)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(bool)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(signed char)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(unsigned char)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(char)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(wchar_t)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(short int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(unsigned short int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(unsigned int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(long int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(unsigned long int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(long long int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(unsigned long long int)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(float)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(double)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(long double)
+    RTTR_REGISTER_STANDARD_TYPE_VARIANTS(std::string)
+    rttr::type::get<std::vector<bool>>();
+    rttr::type::get<std::vector<int>>();
+    rttr::type::get<std::vector<float>>();
+    rttr::type::get<std::vector<double>>();
 
-    class_<std::string>()
-        .constructor<>()
-        .constructor<const std::string&>()
-        .constructor<const std::string&, unsigned int, unsigned int>()
-        .constructor<const char*>()
-        .constructor<const char*, unsigned int>()
-        .constructor<unsigned int, char>()
-        .method("length",       &std::string::length)
-        .method("size",         &std::string::size)
-        .method("empty",        &std::string::empty)
-        .method("at",           static_cast<const char&(std::string::*)(size_t) const>(&std::string::at))
-        .method("data",         &std::string::data)
-        .method("c_str",        &std::string::c_str)
-        .method("operator[]",   static_cast<char&(std::string::*)(size_t)>(&std::string::operator[]))
-   ;
+    rttr::class_<std::string>()
+                .constructor<>()
+                .constructor<const std::string&>()
+                .constructor<const std::string&, unsigned int, unsigned int>()
+                .constructor<const char*>()
+                .constructor<const char*, unsigned int>()
+                .constructor<unsigned int, char>()
+                .method("length",       &std::string::length)
+                .method("size",         &std::string::size)
+                .method("empty",        &std::string::empty)
+                .method("at",           static_cast<const char&(std::string::*)(size_t) const>(&std::string::at))
+                .method("data",         &std::string::data)
+                .method("c_str",        &std::string::c_str)
+                .method("operator[]",   static_cast<char&(std::string::*)(size_t)>(&std::string::operator[]))
+           ;
 }

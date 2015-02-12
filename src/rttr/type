@@ -42,6 +42,5 @@
 #include "type.h"
 #include "detail/argument.h"
 #include "detail/instance.h"
-#include "detail/standard_types.h"
 
 #endif //__RTTR_TYPE_HEADERS_H__

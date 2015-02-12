@@ -604,6 +604,7 @@ class_<ClassType>& class_<ClassType>::enumeration(std::vector< std::pair< std::s
 
 } // end namespace rttr
 
+
 /*!
  * \brief Use this macro to automatically register your reflection information to RTTR before `main` is called.
  *

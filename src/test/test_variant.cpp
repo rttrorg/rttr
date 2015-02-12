@@ -36,13 +36,14 @@
 using namespace rttr;
 using namespace std;
 
+namespace
+{
 template<class T>
 typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
     almost_equal(T x, T y)
 {
     return std::abs(x - y) <= std::numeric_limits<T>::epsilon();
 }
-
 
 struct point
 {
@@ -51,17 +52,12 @@ struct point
     int _y;
 };
 
-RTTR_DECLARE_TYPE(point)
-
 struct vector2d
 {
     vector2d(int x, int y) : _x(x), _y(y) {}
     int _x;
     int _y;
 };
-
-RTTR_DECLARE_TYPE(vector2d)
-
 
 static std::string convert_to_string(const point& p, bool& ok)
 {
@@ -87,16 +83,14 @@ struct derived : virtual base
     RTTR_ENABLE(base)
 };
 
+} // end anonymous namespace
+
 RTTR_REGISTER
 {
     type::register_converter_func(convert_to_string);
     type::register_converter_func(convert_to_vector);
 }
 
-RTTR_DECLARE_TYPE(int[10])
-RTTR_DECLARE_TYPE(int[2][10])
-RTTR_DECLARE_TYPE(int(*)[2][10])
-RTTR_DECLARE_TYPE(void**)
 
 TEST_CASE("variant test - BasicTests", "[variant]")
 {

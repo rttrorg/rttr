@@ -42,7 +42,6 @@ set(SOURCE_FILES constructor.cpp
                  detail/metadata_container.cpp
                  detail/standard_types.cpp
                  detail/reflection_database.cpp
-                 detail/standard_types_char.cpp
                  detail/std_conversion_functions.cpp
                  )
 
@@ -87,7 +86,6 @@ set(HEADER_FILES constructor.h
                  detail/method_container_base.h
                  detail/method_container.h
                  detail/metadata_container.h
-                 detail/standard_types.h
                  detail/function_traits.h
                  detail/enumeration_container_base.h
                  detail/enumeration_container.h

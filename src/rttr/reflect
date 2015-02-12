@@ -40,6 +40,5 @@
 #include "variant_array.h"
 #include "detail/type_converter.h"
 #include "register_reflection.h"
-#include "detail/standard_types.h"
 
 #endif //__RTTR_REFLECT_HEADERS_H__

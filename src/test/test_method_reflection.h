@@ -69,9 +69,6 @@ struct method_test
     RTTR_ENABLE()
 };
 
-RTTR_DECLARE_TYPE(int[10])
-RTTR_DECLARE_TYPE(int[9])
-
 struct method_test_derived : method_test
 {
 

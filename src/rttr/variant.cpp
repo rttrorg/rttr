@@ -36,13 +36,6 @@
 #include "rttr/rttr_enable.h"
 #include "rttr/detail/array_container.h"
 
-RTTR_DECLARE_TYPE(void)
-RTTR_DECLARE_TYPE(int)
-RTTR_DECLARE_TYPE(bool)
-RTTR_DECLARE_TYPE(float)
-RTTR_DECLARE_TYPE(double)
-RTTR_DECLARE_TYPE(std::string)
-
 namespace rttr
 {
 namespace detail

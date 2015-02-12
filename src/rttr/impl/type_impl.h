@@ -326,82 +326,25 @@ RTTR_INLINE void type::register_converter_func(F func)
 
 namespace std 
 {
-template <>
-class hash<rttr::type>
-{
-public:
-    size_t operator()(const rttr::type& info) const
+    template <>
+    class hash<rttr::type>
     {
-        return hash<rttr::type::type_id>()(info.get_id());
-    }
-};
+    public:
+        size_t operator()(const rttr::type& info) const
+        {
+            return hash<rttr::type::type_id>()(info.get_id());
+        }
+    };
 } // end namespace std
-
-static void _rttr_auto_register_reflection_function();
-#define RTTR_REGISTER_FRIEND friend void _rttr_auto_register_reflection_function();
 
 #define RTTR_CAT_IMPL(a,b) a##b
 #define RTTR_CAT(a,b) RTTR_CAT_IMPL(a,b)
 
-#define RTTR_DECLARE_TYPE(...)   
+static void _rttr_auto_register_reflection_function();
+#define RTTR_REGISTER_FRIEND friend void _rttr_auto_register_reflection_function();
 
-#if 0
 
-#define RTTR_DECLARE_TYPE(...)                                                                                          \
-namespace rttr                                                                                                          \
-{                                                                                                                       \
-    namespace impl                                                                                                      \
-    {                                                                                                                   \
-        template<>                                                                                                      \
-        struct MetaTypeInfo< __VA_ARGS__ >                                                                              \
-        {                                                                                                               \
-            enum { Defined = 1 };                                                                                       \
-            static RTTR_INLINE rttr::type get_type()                                                                    \
-            {                                                                                                           \
-                static const type val = rttr::type::register_type(rttr::detail::extract_type_signature(__FUNCSIG__).c_str(),                                         \
-                                                                  raw_type_info<__VA_ARGS__>::get_type(),               \
-                                                                  std::move(base_classes<__VA_ARGS__>::get_types()),    \
-                                                                  get_most_derived_info_func<__VA_ARGS__>(),            \
-                                                                  get_create_variant_func<__VA_ARGS__>(),               \
-                                                                  std::is_class<__VA_ARGS__>::value,                    \
-                                                                  std::is_enum<__VA_ARGS__>::value,                     \
-                                                                  ::rttr::detail::is_array<__VA_ARGS__>::value,         \
-                                                                  std::is_pointer<__VA_ARGS__>::value,                  \
-                                                                  std::is_arithmetic<__VA_ARGS__>::value);              \
-                return val;                                                                                             \
-            }                                                                                                           \
-        };                                                                                                              \
-    }                                                                                                                   \
-} // end namespace rttr
-#endif
-
-#define RTTR_DEFINE_TYPE(...)                                                                                           \
-namespace rttr                                                                                                          \
-{                                                                                                                       \
-    namespace impl                                                                                                      \
-    {                                                                                                                   \
-        template<>                                                                                                      \
-        struct auto_register_type<__VA_ARGS__>                                                                          \
-        {                                                                                                               \
-            auto_register_type()                                                                                        \
-            {                                                                                                           \
-                MetaTypeInfo<__VA_ARGS__>::get_type();                                                                  \
-            }                                                                                                           \
-        };                                                                                                              \
-    }                                                                                                                   \
-}                                                                                                                       \
-static const rttr::impl::auto_register_type<__VA_ARGS__> RTTR_CAT(autoRegisterType,__COUNTER__);
-
-#if 0
-
-#define RTTR_DECLARE_STANDARD_TYPE_VARIANTS(T) RTTR_DECLARE_TYPE(T)                                                     \
-                                               RTTR_DECLARE_TYPE(T*)                                                    \
-                                               RTTR_DECLARE_TYPE(const T*)
-
-#define RTTR_DEFINE_STANDARD_TYPE_VARIANTS(T) RTTR_DEFINE_TYPE(T)                                                       \
-                                              RTTR_DEFINE_TYPE(T*)                                                      \
-                                              RTTR_DEFINE_TYPE(const T*)
-
-#endif
-
+#define RTTR_REGISTER_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();   \
+                                                rttr::type::get<T*>();  \
+                                                rttr::type::get<const T*>();  
 #endif // __RTTR_TYPE_IMPL_H__
