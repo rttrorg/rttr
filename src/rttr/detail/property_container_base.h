@@ -29,8 +29,10 @@
 #define __RTTR_PROPERTY_CONTAINER_BASE_H__
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/metadata_container.h"
 #include "rttr/type.h"
+#include "rttr/variant.h"
+#include "rttr/detail/metadata_container.h"
+
 
 #include <string>
 

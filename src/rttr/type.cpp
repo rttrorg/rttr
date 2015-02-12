@@ -49,13 +49,14 @@
 #include <set>
 #include <thread>
 #include <mutex>
+#include <cstring>
 
 using namespace std;
 
 namespace rttr
 {
 static detail::reflection_database::NameToTag               *g_name_to_id                   = nullptr;
-static string                                               *g_name_list                    = nullptr;
+static const char*                                          *g_name_list                    = nullptr;
 static type::type_id                                        *g_base_class_list              = nullptr;
 static type::type_id                                        *g_derived_class_list           = nullptr;
 static detail::reflection_database::rttr_cast_func          *g_conversion_list              = nullptr;
@@ -70,7 +71,7 @@ static bool                                                 *g_is_primitive_list
 static unique_ptr<detail::constructor_container_base>       *g_ctor_list                    = nullptr;
 static unique_ptr<detail::destructor_container_base>        *g_dtor_list                    = nullptr;
 static unique_ptr<detail::enumeration_container_base>       *g_enumeration_list             = nullptr;
-static std::vector<std::unique_ptr<detail::type_converter_base>> *g_type_converter_list          = nullptr;
+static std::vector<std::unique_ptr<detail::type_converter_base>> *g_type_converter_list     = nullptr;
 static unique_ptr<detail::reflection_database::class_data>  *g_class_data_list              = nullptr;
 static detail::reflection_database::property_map            *g_global_properties            = nullptr;
 static detail::reflection_database::method_map              *g_global_methods               = nullptr;
@@ -130,7 +131,29 @@ static void init_globals()
 std::string type::get_name() const
 {
     if (is_valid())
-        return g_name_list[m_id];
+    {
+        const auto db_string = g_name_list[m_id];
+        const auto str_length = strlen(db_string);
+// #if RTTR_COMPILER == RTTR_COMPILER_MSVC
+//         short int skip_start = 0;
+//         if (strstr("struct ", db_string))
+//         {
+//             skip_start = 7;
+//         }
+//         else if (strstr("class ", db_string))
+//         {
+//             skip_start = 6;
+//         }
+//         else if (strstr("enum ", db_string))
+//         {
+//             skip_start = 5;
+//         }
+// #endif
+        
+        //std::string type_name(db_string + skip_start, str_length - detail::skip_size_at_end - skip_start);
+        //std::string type_name(db_string + skip_start, str_length - detail::skip_size_at_end);
+        return std::string(db_string, str_length - detail::skip_size_at_end);
+    }
     else
         return std::string();
 }
@@ -306,7 +329,7 @@ constructor type::get_constructor(const std::vector<type>& args) const
     else
     {
         const auto& ctor = g_ctor_list[get_raw_type().get_id()];
-        if (detail::reflection_database::does_signature_match_arguments(ctor->get_parameter_types(), args))
+        if (ctor && detail::reflection_database::does_signature_match_arguments(ctor->get_parameter_types(), args))
             return constructor(ctor.get());
     }
     
@@ -663,7 +686,13 @@ variant type::invoke(const std::string& name, std::vector<detail::argument> args
 
 type type::get(const char* name)
 {
-   const auto itr = g_name_to_id->find(name);
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+    const auto orig_type_name = name + std::string(">(void)");
+#elif RTTR_COMPILER == RTTR_COMPILER_GNUC
+    const auto orig_type_name = name + std::string("]");
+#endif
+
+   const auto itr = g_name_to_id->find(orig_type_name.c_str());
    if (itr != g_name_to_id->end())
        return type(itr->second);
    else
@@ -687,8 +716,8 @@ type type::register_type(const char* name,
                          bool is_primitive)
 {
     std::lock_guard<std::mutex> lock(register_type_mutex);
-
     using namespace detail;
+
     init_globals();
     reflection_database& db = reflection_database::instance();
     {

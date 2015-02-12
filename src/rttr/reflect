@@ -28,6 +28,7 @@
 #ifndef __RTTR_REFLECT_HEADERS_H__
 #define __RTTR_REFLECT_HEADERS_H__
 
+#include "type.h"
 #include "rttr_enable.h"
 #include "rttr_cast.h"
 #include "constructor.h"
@@ -38,7 +39,6 @@
 #include "variant.h"
 #include "variant_array.h"
 #include "detail/type_converter.h"
-#include "type.h"
 #include "register_reflection.h"
 #include "detail/standard_types.h"
 

@@ -31,6 +31,9 @@
 #include <type_traits>
 #include "rttr/detail/misc_type_traits.h"
 #include "rttr/detail/function_traits.h"
+#include "rttr/detail/base_classes.h"
+#include "rttr/detail/get_derived_info_func.h"
+#include "rttr/detail/get_create_variant_func.h"
 
 namespace rttr
 {
@@ -145,6 +148,23 @@ class method_container_base;
 class property_container_base;
 }
 
+#define RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(begin_skip, end_skip)          \
+namespace detail                                                            \
+{                                                                           \
+    RTTR_STATIC_CONSTEXPR std::size_t skip_size_at_begin = begin_skip;      \
+    RTTR_STATIC_CONSTEXPR std::size_t skip_size_at_end   = end_skip;        \
+}
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+    // sizeof("const char *__cdecl rttr::impl::f<"), sizeof(">(void)")
+    RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(34, 7)
+#elif RTTR_COMPILER == RTTR_COMPILER_GNUC
+    // sizeof("const char* rttr::impl::f() [with T = "), sizeof("]")
+    RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(38, 1)
+#else
+#   error "This compiler does not supported extracting a function signature via preprocessor!"
+#endif
+
 namespace impl
 {
 
@@ -156,27 +176,27 @@ RTTR_API void register_enumeration(type t, std::unique_ptr<detail::enumeration_c
 
 static type get_invalid_type() { return type(); }
 
-template <typename T>
-struct MetaTypeInfo
+/////////////////////////////////////////////////////////////////////////////////
+
+template <std::size_t N>
+RTTR_INLINE static const char* extract_type_signature(const char (&signature)[N])
 {
-    enum { Defined = 0 };
-    static type get_type()
-    {
-        // when you get this error, you have to declare first the type with this macro
-        static_assert(sizeof(T) != sizeof(T), "The given type T is not registered to the type system; please register with RTTR_DECLARE_TYPE.");
-        return get_invalid_type();
-    }
-};
+//    static_assert(N > skip_size_at_begin + skip_size_at_end, "RTTR is misconfigured for your compiler.")
+    return &signature[rttr::detail::skip_size_at_begin];
+}
 
-
-template<typename T>
-struct auto_register_type;
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_INLINE type get_type_from_instance(const T*)
+RTTR_INLINE static const char* f()
 {
-    return impl::MetaTypeInfo<T>::get_type();
+    return extract_type_signature(
+    #if RTTR_COMPILER == RTTR_COMPILER_MSVC
+                                                            __FUNCSIG__
+    #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
+                                                            __PRETTY_FUNCTION__
+    #endif
+                                   );
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -194,6 +214,36 @@ struct raw_type_info<T, false>
 {
     static RTTR_INLINE type get_type() { return MetaTypeInfo<typename detail::raw_type<T>::type>::get_type(); }
 };
+
+template <typename T>
+struct MetaTypeInfo
+{
+    static type get_type()
+    {
+        static const type val = rttr::type::register_type(f<T>(),
+                                                          raw_type_info<T>::get_type(),
+                                                          std::move(::rttr::detail::base_classes<T>::get_types()),
+                                                          ::rttr::detail::get_most_derived_info_func<T>(),
+                                                          ::rttr::detail::get_create_variant_func<T>(),
+                                                          std::is_class<T>::value,
+                                                          std::is_enum<T>::value,
+                                                          ::rttr::detail::is_array<T>::value,
+                                                          std::is_pointer<T>::value,
+                                                          std::is_arithmetic<T>::value);
+        return val;
+    }
+};
+
+
+template<typename T>
+struct auto_register_type;
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static RTTR_INLINE type get_type_from_instance(const T*)
+{
+    return impl::MetaTypeInfo<T>::get_type();
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -293,6 +343,10 @@ static void _rttr_auto_register_reflection_function();
 #define RTTR_CAT_IMPL(a,b) a##b
 #define RTTR_CAT(a,b) RTTR_CAT_IMPL(a,b)
 
+#define RTTR_DECLARE_TYPE(...)   
+
+#if 0
+
 #define RTTR_DECLARE_TYPE(...)                                                                                          \
 namespace rttr                                                                                                          \
 {                                                                                                                       \
@@ -304,7 +358,7 @@ namespace rttr                                                                  
             enum { Defined = 1 };                                                                                       \
             static RTTR_INLINE rttr::type get_type()                                                                    \
             {                                                                                                           \
-                static const type val = rttr::type::register_type(#__VA_ARGS__,                                         \
+                static const type val = rttr::type::register_type(rttr::detail::extract_type_signature(__FUNCSIG__).c_str(),                                         \
                                                                   raw_type_info<__VA_ARGS__>::get_type(),               \
                                                                   std::move(base_classes<__VA_ARGS__>::get_types()),    \
                                                                   get_most_derived_info_func<__VA_ARGS__>(),            \
@@ -319,6 +373,7 @@ namespace rttr                                                                  
         };                                                                                                              \
     }                                                                                                                   \
 } // end namespace rttr
+#endif
 
 #define RTTR_DEFINE_TYPE(...)                                                                                           \
 namespace rttr                                                                                                          \
@@ -337,6 +392,8 @@ namespace rttr                                                                  
 }                                                                                                                       \
 static const rttr::impl::auto_register_type<__VA_ARGS__> RTTR_CAT(autoRegisterType,__COUNTER__);
 
+#if 0
+
 #define RTTR_DECLARE_STANDARD_TYPE_VARIANTS(T) RTTR_DECLARE_TYPE(T)                                                     \
                                                RTTR_DECLARE_TYPE(T*)                                                    \
                                                RTTR_DECLARE_TYPE(const T*)
@@ -345,5 +402,6 @@ static const rttr::impl::auto_register_type<__VA_ARGS__> RTTR_CAT(autoRegisterTy
                                               RTTR_DEFINE_TYPE(T*)                                                      \
                                               RTTR_DEFINE_TYPE(const T*)
 
+#endif
 
 #endif // __RTTR_TYPE_IMPL_H__

@@ -126,6 +126,30 @@ namespace rttr
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// Macros for some C++11 features, which are not available on every compiler
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
+#       define RTTR_NO_CXX11_CONSTEXPR
+#   else
+#       error "Please check for working constexpr support in new compiler version."
+#   endif
+#endif
+
+#if defined(RTTR_NO_CXX11_CONSTEXPR)
+#   define RTTR_CONSTEXPR
+#   define RTTR_CONSTEXPR_OR_CONST const
+#else
+#   define RTTR_CONSTEXPR constexpr
+#   define RTTR_CONSTEXPR_OR_CONST constexpr
+#endif
+
+
+#define RTTR_STATIC_CONSTEXPR static RTTR_CONSTEXPR_OR_CONST
+
+/////////////////////////////////////////////////////////////////////////////////////////
 // Integer formats of fixed bit width
 /////////////////////////////////////////////////////////////////////////////////////////
 typedef unsigned char uint8;

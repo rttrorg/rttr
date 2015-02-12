@@ -431,7 +431,7 @@ class RTTR_API type
         /*!
          * \brief Returns a property with the name \p name.
          *
-         * \remark When there exists not property with the name \p name, and invalid property is returned.
+         * \remark When there exists no property with the name \p name, then an invalid property is returned.
          *
          * \return A property with name \p name.
          */
@@ -448,7 +448,7 @@ class RTTR_API type
         /*!
          * \brief Returns a global property with the name \p name.
          *
-         * \remark When there exists not property with the name \p name, and invalid property is returned.
+         * \remark When there exists no property with the name \p name, then an invalid property is returned.
          *
          * \return A property with name \p name.
          */
@@ -554,7 +554,7 @@ class RTTR_API type
          *
          * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
          *
-         * \return The a variant object containing the possible return value, 
+         * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
         variant invoke(const std::string& name, detail::instance obj, std::vector<detail::argument> args) const;
@@ -562,7 +562,7 @@ class RTTR_API type
         /*!
          * \brief Invokes a global method named \p name with the specified argument \p args.
          *
-         * \return The a variant object containing the possible return value, 
+         * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
         static variant invoke(const std::string& name, std::vector<detail::argument> args);

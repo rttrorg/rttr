@@ -29,7 +29,7 @@
 #define __RTTR_VARIANT_H__
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/type.h"
+#include "rttr/detail/misc_type_traits.h"
 
 #include <type_traits>
 #include <cstddef>
@@ -39,6 +39,8 @@ namespace rttr
 {
 
 class variant_array;
+class type;
+class variant;
 
 namespace detail
 {
@@ -66,59 +68,59 @@ namespace detail
  * Typical Usage
  * ----------------------
  * 
-\code{.cpp}
-    variant var;
-    var = 23;                               // copy integer
-    int x = var.to_int();                   // x = 23
-
-    var = std::string("Hello World");       // variant contains now a std::string
-    var = "Hello World";                    // variant contains now a char[12] array
-    int y = var.to_int();                   // y = 0, because invalid conversion
-    std::string text = var.to_string();     // text = "Hello World", char array to string converted
-
-    var = "42";                             // contains now char[3] array
-    std::cout << var.to_int();              // convert char array to integer and prints "42"
-
-    int my_array[100];
-    var = my_array;                         // copies the content of my_array into var
-    auto& arr = var.get_value<int[100]>();  // extracts the content of var by reference
-\endcode
+ * \code{.cpp}
+ *     variant var;
+ *     var = 23;                               // copy integer
+ *     int x = var.to_int();                   // x = 23
+ * 
+ *     var = std::string("Hello World");       // variant contains now a std::string
+ *     var = "Hello World";                    // variant contains now a char[12] array
+ *     int y = var.to_int();                   // y = 0, because invalid conversion
+ *     std::string text = var.to_string();     // text = "Hello World", char array to string converted
+ * 
+ *     var = "42";                             // contains now char[3] array
+ *     std::cout << var.to_int();              // convert char array to integer and prints "42"
+ * 
+ *     int my_array[100];
+ *     var = my_array;                         // copies the content of my_array into var
+ *     auto& arr = var.get_value<int[100]>();  // extracts the content of var by reference
+ * \endcode
  *
  * 
  * It's of course also possible to store own custom types in a variant,
  * take a look at following code:
  *
-\code{.cpp}
-    struct custom_type
-    {
-        //...
-    };
-
-    variant var = custom_type(...);
-    bool b = var.is_type<custom_type>();                // b = true
-    custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
-\endcode
+ * \code{.cpp}
+ *     struct custom_type
+ *     {
+ *         //...
+ *     };
+ * 
+ *     variant var = custom_type(...);
+ *     bool b = var.is_type<custom_type>();                // b = true
+ *     custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
+ * \endcode
  *
  * The variant class allows to convert also custom types,
  * therefore you have to register a convert function:
  *
-\code{.cpp}
-    std::string converter_func(const custom_type& value, bool& ok)
-    {
-        ok = true;
-        // convert value to std::string
-        return std::string(...);
-    }
-    
-    //...
-    variant var = custom_type(...);
-    var.can_convert<std::string>();     // return false
-    // will register a convert from custom_type to std::string
-    type::register_converter_func(converter_func);
-
-    var.can_convert<std::string>();     // return true
-    var.to_string();                    // converts from custom_type to std::string
-\endcode
+ * \code{.cpp}
+ *     std::string converter_func(const custom_type& value, bool& ok)
+ *     {
+ *         ok = true;
+ *         // convert value to std::string
+ *         return std::string(...);
+ *     }
+ *     
+ *     //...
+ *     variant var = custom_type(...);
+ *     var.can_convert<std::string>();     // return false
+ *     // will register a convert from custom_type to std::string
+ *     type::register_converter_func(converter_func);
+ * 
+ *     var.can_convert<std::string>();     // return true
+ *     var.to_string();                    // converts from custom_type to std::string
+ * \endcode
  *
  * \see variant_array
  */

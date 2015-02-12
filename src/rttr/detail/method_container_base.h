@@ -29,6 +29,7 @@
 #define __RTTR_METHOD_CONTAINER_BASE_H__
 
 #include "rttr/base/core_prerequisites.h"
+#include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/detail/metadata_container.h"
 

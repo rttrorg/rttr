@@ -75,11 +75,14 @@ set(HEADER_FILES constructor.h
                  detail/array_container_base.h
                  detail/array_accessor.h
                  detail/accessor_type.h
+                 detail/base_classes.h
                  detail/instance.h
+                 detail/get_create_variant_func.h
                  detail/constructor_container.h
                  detail/constructor_container_base.h
                  detail/destructor_container.h
                  detail/destructor_container_base.h
+                 detail/get_derived_info_func.h
                  detail/method_accessor.h
                  detail/method_container_base.h
                  detail/method_container.h

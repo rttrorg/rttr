@@ -25,6 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
+#include "rttr/type.h"
 #include "rttr/detail/misc_type_traits.h"
 #include "rttr/detail/utility.h"
 #include "rttr/detail/type_converter.h"
@@ -66,11 +67,11 @@ RTTR_INLINE variant::~variant()
 {
     delete _holder;
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-    #if RTTR_COMP_VER <= 1800
+#   if RTTR_COMP_VER <= 1800
         _holder = nullptr;
-    #else
-        #error "Please check if this lead to still to a crash."
-    #endif
+#   else
+#       error "Please check if this lead to still to a crash."
+#   endif
 #endif
 }
 
@@ -420,7 +421,11 @@ template<typename T>
 variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::variant_container(const T& arg)
 {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
     detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), _value);
+#   else
+#       error "Check new MSVC Compiler!"
+#   endif
 #else
     detail::copy_array(arg, _value);
 #endif
@@ -547,7 +552,11 @@ template<std::size_t N>
 variant::variant_container<char[N]>::variant_container(const char (&arg)[N])
 {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-    detail::copy_array(const_cast<std::remove_const<char[N]>::type&>(arg), _value);
+#   if RTTR_COMP_VER <= 1800
+        detail::copy_array(const_cast<std::remove_const<char[N]>::type&>(arg), _value);
+#   else
+#       error "Check new MSVC Compiler!"
+#   endif
 #else
     detail::copy_array(arg, _value);
 #endif

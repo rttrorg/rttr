@@ -80,7 +80,7 @@ RTTR_REGISTER
 
 TEST_CASE("Test Enumeration", "[enumeration]") 
 {
-    type enum_type = type::get("enum_test");
+    type enum_type = type::get<enum_test>();
     REQUIRE(enum_type.is_valid() == true);
 
     auto ctor_list = enum_type.get_constructors();
@@ -102,7 +102,18 @@ TEST_CASE("Test Enumeration", "[enumeration]")
     REQUIRE(enum_info_orient.is_valid() == true);
 
     // create instance from enum value
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
+        variant var1 = enum_info_align.key_to_value("AlignHCenter");
+        variant var2 = enum_info_orient.key_to_value("Vertical");
+        std::vector<detail::argument> args = {var1, var2};
+        variant enum_inst = enum_type.create(args);
+#   else
+#       error "Check new MSVC Compiler!"
+#   endif
+#else
     variant enum_inst = enum_type.create({enum_info_align.key_to_value("AlignHCenter"), enum_info_orient.key_to_value("Vertical")});
+#endif
     REQUIRE(enum_inst.is_valid() == true);
 
     property prop = enum_type.get_property("orientation");
@@ -152,7 +163,7 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 
 TEST_CASE("Test global enum", "[enumeration]") 
 {
-    type enum_type = type::get("E_DayOfWeek");
+    type enum_type = type::get<E_DayOfWeek>();
     REQUIRE(enum_type.is_valid() == true);
     REQUIRE(enum_type.is_enumeration() == true);
     
@@ -164,20 +175,20 @@ TEST_CASE("Test global enum", "[enumeration]")
 
 TEST_CASE("Test enumeration metadata", "[enumeration]") 
 {
-    enumeration enum_align = type::get("enum_test::E_Alignment").get_enumeration();
+    enumeration enum_align = type::get<enum_test::E_Alignment>().get_enumeration();
 
     variant value = enum_align.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
     
     // not scriptable
-    enumeration enum_orient = type::get("enum_test::E_Orientation").get_enumeration();
+    enumeration enum_orient = type::get<enum_test::E_Orientation>().get_enumeration();
     value = enum_orient.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);
 
     // integer metadata
-    enumeration enum_day = type::get("E_DayOfWeek").get_enumeration();
+    enumeration enum_day = type::get<E_DayOfWeek>().get_enumeration();
     value = enum_day.get_metadata("Global_Tag");
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);

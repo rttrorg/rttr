@@ -85,9 +85,9 @@ RTTR_REGISTER
         .method("method_9", &method_test::method_9, {metadata(E_MetaData::SCRIPTABLE, false)})
         .method("method_10", std::function<int(double, bool)>([](double, bool)->int{ return 42;}))
         .method("method_raw_array", &method_test::method_raw_array)
-        .method("method_default", &method_test::method_default_arg)
+        .method("method_default",   &method_test::method_default_arg)
         .method("method_6_ret_ptr", &method_test::method_6, return_reference_as_ptr)
-        .method("method_6_void", &method_test::method_6, discard_return_value)
+        .method("method_6_void",     &method_test::method_6, discard_return_value)
         ;
 
     class_<method_test_derived>()
@@ -110,9 +110,10 @@ RTTR_REGISTER
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+
 TEST_CASE("Test method", "[method]") 
 {
-    type t_meth = type::get("method_test");
+    type t_meth = type::get<method_test>();
     REQUIRE(t_meth.is_valid() == true);
     variant inst = t_meth.create({});
     method_test& obj = *inst.get_value<method_test*>();
@@ -220,7 +221,7 @@ TEST_CASE("Test method", "[method]")
     
 
     ////////////////////////////////////////
-    t_meth.get_method("method_default").invoke(derived_inst,3);
+    t_meth.get_method("method_default").invoke(derived_inst, 3);
     REQUIRE(derived_inst.method_default_arg_called == true);
 
     ////////////////////////////////////////////////////////////
@@ -288,12 +289,12 @@ TEST_CASE("ShortCut via type - method invoke", "[method]")
 {
     // with instance
     method_test_final obj;
-    variant success = type::get("method_test_final").invoke("method_5", obj, {5, 23.0});
+    variant success = type::get<method_test_final>().invoke("method_5", obj, {5, 23.0});
     REQUIRE(success.is_valid() == true);
     REQUIRE(obj.method_5_overloaded_called == true);
 
     double arg = 0.0;
-    success = type::get("method_test_final").invoke("method_5", obj, {&arg});
+    success = type::get<method_test_final>().invoke("method_5", obj, {&arg});
     REQUIRE(success.is_valid() == true);
     REQUIRE(obj.method_5_called == true);
 
@@ -328,11 +329,11 @@ TEST_CASE("Test method arrays", "[method]")
 
 TEST_CASE("Test method signature", "[method]") 
 {
-    const auto methods = type::get("method_test_final").get_methods();
+    const auto methods = type::get<method_test_final>().get_methods();
     REQUIRE(methods.size() == 18);
 
     REQUIRE(methods[0].get_signature() == "method_13( )");
-    REQUIRE(methods[5].get_signature() == "method_4( std::string & )");
+    REQUIRE(methods[5].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");
     REQUIRE(methods[6].get_signature() == "method_5( double* )");
     REQUIRE(methods[7].get_signature() == "method_5( int, double )");
 }
@@ -373,7 +374,7 @@ TEST_CASE("method policies", "[method]")
 
 TEST_CASE("Test method metadata", "[method]") 
 {
-    method m8 = type::get("method_test_final").get_method("method_8");
+    method m8 = type::get<method_test_final>().get_method("method_8");
     variant value = m8.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
@@ -383,12 +384,12 @@ TEST_CASE("Test method metadata", "[method]")
     REQUIRE(value.get_value<int>() == 42);
     
     // no metadata
-    method m7 = type::get("method_test_final").get_method("method_7");
+    method m7 = type::get<method_test_final>().get_method("method_7");
     REQUIRE(m7.is_valid() == true);
     REQUIRE(m7.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == false);
 
     // not scriptable
-    method m9 = type::get("method_test_final").get_method("method_9");
+    method m9 = type::get<method_test_final>().get_method("method_9");
     value = m9.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);

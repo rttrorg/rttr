@@ -94,11 +94,11 @@ RTTR_INLINE variant_array::~variant_array()
 {
     delete _container;
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-    #if RTTR_COMP_VER <= 1800
+#   if RTTR_COMP_VER <= 1800
         _container = nullptr;
-    #else
-        #error "Please check if this lead to still to a crash."
-    #endif
+#   else
+#       error "Please check if this lead to still to a crash."
+#   endif
 #endif
 }
 

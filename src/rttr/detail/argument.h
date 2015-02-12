@@ -52,6 +52,8 @@ class argument
 {
 public:
     argument() : _data(nullptr), _type(impl::get_invalid_type()) {}
+
+    argument(argument&& arg) : _data(arg._data), _type(arg._type) {}
     argument(const argument& other) : _data(other._data), _type(other._type) {}
     argument(variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}
     argument(const variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}

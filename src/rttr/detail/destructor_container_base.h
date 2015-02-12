@@ -29,8 +29,8 @@
 #define __RTTR_DESTRUCTORCONTAINERBASE_H__
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/variant.h"
 #include "rttr/type.h"
+#include "rttr/variant.h"
 
 #include <string>
 #include <initializer_list>

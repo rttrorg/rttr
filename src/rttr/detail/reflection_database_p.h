@@ -57,15 +57,40 @@ class RTTR_LOCAL reflection_database
         typedef variant (*variant_create_func)(void*);
         typedef derived_info(*get_derived_info_func)(void*);
 
-        typedef std::unordered_map< std::string, const rttr::type::type_id>         NameToTag;
-        typedef std::vector< std::unique_ptr< property_container_base>>             property_container;
-        typedef std::vector< std::unique_ptr< constructor_container_base>>          constructor_container;
-        typedef std::vector< std::unique_ptr< constructor_container_base>>          destructor_container;
-        typedef std::vector< std::unique_ptr< method_container_base>>               method_container;
 
-        typedef std::vector< std::unique_ptr< constructor_container_base>>          ctor_list;
-        typedef std::unordered_map< std::string, property_container::size_type>     property_map;
-        typedef std::unordered_multimap< std::string, method_container::size_type>  method_map;
+        struct hash_char
+        {
+            RTTR_INLINE std::size_t operator() (const char* ptr) const
+            {
+                const std::size_t  magic_prime = 0x01000193;
+                std::size_t        hash        = 0xcbf29ce4;
+
+                for (; *ptr; ++ptr)
+                  hash = (hash ^ *ptr) * magic_prime;
+
+                return hash;
+            }
+        };
+
+        struct comparison_char
+        {
+            RTTR_INLINE bool operator() (const char* str1, const char* str2) const
+            {
+                for (; *str1 && *str1 == *str2; ++str1, ++str2) {}
+                    return (*str1 == *str2);
+            }
+        };
+
+
+        typedef std::unordered_map<const char*, const rttr::type::type_id, hash_char, comparison_char>  NameToTag;
+        typedef std::vector< std::unique_ptr< property_container_base>>                                 property_container;
+        typedef std::vector< std::unique_ptr< constructor_container_base>>                              constructor_container;
+        typedef std::vector< std::unique_ptr< constructor_container_base>>                              destructor_container;
+        typedef std::vector< std::unique_ptr< method_container_base>>                                   method_container;
+
+        typedef std::vector< std::unique_ptr< constructor_container_base>>                              ctor_list;
+        typedef std::unordered_map< std::string, property_container::size_type>                         property_map;
+        typedef std::unordered_multimap< std::string, method_container::size_type>                      method_map;
 
         /*!
          * \brief This function returns true, when the given types in \p param_list are the same type like in \p args,
@@ -108,7 +133,7 @@ class RTTR_LOCAL reflection_database
     public:
         type::type_id                                       type_id_counter;    // the global incremented id counter
         NameToTag                                           name_to_id;         // a container for mapping the name of a type to its unique id
-        std::string                                         name_list[RTTR_MAX_TYPE_COUNT];
+        const char*                                         name_list[RTTR_MAX_TYPE_COUNT];
         type::type_id                                       base_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type its base classes
         type::type_id                                       derived_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];     // this list contains for every type its derived classes
         rttr_cast_func                                      conversion_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type a conversion function to its base classes

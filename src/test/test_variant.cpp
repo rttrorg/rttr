@@ -80,16 +80,12 @@ struct base
     int dummy;
     RTTR_ENABLE()
 };
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(base)
 
 struct derived : virtual base
 {
     double dummy2;
     RTTR_ENABLE(base)
 };
-
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(derived)
-RTTR_DECLARE_TYPE(derived**)
 
 RTTR_REGISTER
 {

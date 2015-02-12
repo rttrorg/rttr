@@ -535,11 +535,15 @@ class array_container<T, typename std::enable_if<std::is_array<T>::value>::type>
     public:
         array_container(const T& arg)
         {
-            #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-                detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), _value);
-            #else
-                detail::copy_array(arg, _value);
-            #endif
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
+            detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), _value);
+#   else
+        #error "Check new MSVC Compiler!"
+#   endif
+#else
+        detail::copy_array(arg, _value);
+#endif
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////

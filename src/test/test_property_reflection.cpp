@@ -135,7 +135,7 @@ RTTR_REGISTER
 
 TEST_CASE("Test Properties", "[property]") 
 {
-    type prop_type = type::get("property_test");
+    type prop_type = type::get<property_test>();
     REQUIRE(prop_type.is_valid() == true);
     
     REQUIRE(prop_type.get_property("p1").is_valid() == true);
@@ -490,7 +490,7 @@ TEST_CASE("Test property policy", "[property]")
 
 TEST_CASE("Test property inheritance", "[property]") 
 {
-    type t = type::get("ns_property::bottom");
+    type t = type::get<ns_property::bottom>();
     auto props = t.get_properties();
     REQUIRE(props.size() == 6);
 
@@ -523,11 +523,11 @@ TEST_CASE("Test property inheritance", "[property]")
     REQUIRE(instance._p1 == 2000);
 
     // check double declared property is from left class
-    REQUIRE(props[1].get_declaring_type() == type::get("ns_property::left"));
+    REQUIRE(props[1].get_declaring_type() == type::get<ns_property::left>());
     // the right class has still its property?
-    REQUIRE(type::get("ns_property::right").get_property("p2").is_valid() == true);
+    REQUIRE(type::get<ns_property::right>().get_property("p2").is_valid() == true);
 
-    property p1 = type::get("ns_property::bottom").get_property("p1");
+    property p1 = type::get<ns_property::bottom>().get_property("p1");
     REQUIRE(p1 == true);
 }
 
@@ -593,7 +593,7 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
 
 TEST_CASE("Test property metadata", "[property]") 
 {
-    property p5 = type::get("property_test").get_property("p5");
+    property p5 = type::get<property_test>().get_property("p5");
     variant value = p5.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
@@ -603,19 +603,19 @@ TEST_CASE("Test property metadata", "[property]")
     REQUIRE(value.get_value<std::string>() == "This is property 5.");
 
     // no metadata
-    property p4 = type::get("property_test").get_property("p4");
+    property p4 = type::get<property_test>().get_property("p4");
     REQUIRE(p4.is_valid() == true);
     REQUIRE(p4.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == false);
 
     // not scriptable property
-    property p6 = type::get("property_test").get_property("p6");
+    property p6 = type::get<property_test>().get_property("p6");
     REQUIRE(p6.is_valid() == true);
     REQUIRE(p6.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == true);
     REQUIRE(p6.get_metadata(E_MetaData::SCRIPTABLE).get_value<bool>() == false);
 
 
     // string metdadata
-    property p8 = type::get("property_test").get_property("p8");
+    property p8 = type::get<property_test>().get_property("p8");
     REQUIRE(p8 == true);
 
     value = p8.get_metadata("Global_Tag");

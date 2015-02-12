@@ -25,81 +25,72 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_RTTR_ENABLE_H__
-#define __RTTR_RTTR_ENABLE_H__
-
-#include <type_traits>
-
-#include "rttr/type.h"
+#ifndef __RTTR_DERIVED_INFO_FUNC_H__
+#define __RTTR_DERIVED_INFO_FUNC_H__
 
 namespace rttr
 {
 
 namespace detail
 {
-   
+
+ /*!
+  * \brief A helper struct, which contains data about a class type.
+  * This is used for the casting mechanism.
+  */
+struct derived_info
+{
+    void* _ptr; //!< A void pointer, which contains the address to an arbitrary instance.
+    type _type; //!< The corresponding typ object to the \ref _ptr
+};
+
+template<typename T>
+static derived_info get_most_derived_info_impl(void* ptr)
+{
+    return (static_cast<T*>(ptr)->get_derived_info());
+}
+
+template<typename T>
+static derived_info get_most_derived_info_impl_none(void* ptr)
+{
+    return {ptr, type::get<T>()};
+}
+
+typedef derived_info(*derived_func)(void*);
+
+/*!
+ * This is the case where the type T has put necessary macro `RTTR_ENABLE` inside the class.
+ */
+
+template<typename T>
+static derived_func get_most_derived_info_check(typename std::enable_if<has_get_derived_info_func<T>::value >::type* = 0)
+{
+    return get_most_derived_info_impl<T>;
+}
+
+/*!
+ * This is the case where the typ T has not put necessary macro `RTTR_ENABLE` inside the class.
+ */
+template<typename T>
+static derived_func get_most_derived_info_check(typename std::enable_if<!has_get_derived_info_func<T>::value >::type* = 0)
+{
+    return get_most_derived_info_impl_none<T>;
+}
+
+/*!
+ * \brief This function returns a function pointer to a function for retrieving the infos
+ *        about the most derived type of an given instance.
+ *
+ */
+template<typename T>
+static derived_func get_most_derived_info_func()
+{
+    return get_most_derived_info_check<typename detail::raw_type<T>::type>();
+}
+
 
 } // end namespace detail
 
-namespace impl
-{
-#if 0
-/////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(&data));
-}
-
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(&data);
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(data));
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(T& data,  typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(data);
-}
-
-#endif
-/////////////////////////////////////////////////////////////////////////////////////////
-
-//! A simple type_list
-template<typename... U> struct type_list {};
-
-} // end namespace impl
 } // end namespace rttr
 
-#define TYPE_LIST(...)      rttr::impl::type_list<__VA_ARGS__>
-
-#define RTTR_ENABLE(...) \
-public:\
-    virtual RTTR_INLINE rttr::type get_type() const { return rttr::impl::get_type_from_instance(this); }  \
-    virtual RTTR_INLINE void* get_ptr() { return reinterpret_cast<void*>(this); } \
-    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::impl::get_type_from_instance(this)}; } \
-    typedef TYPE_LIST(__VA_ARGS__) base_class_list; \
-private:
-
-
-#endif // __RTTR_RTTR_ENABLE_H__
+#endif // __RTTR_DERIVED_INFO_FUNC_H__

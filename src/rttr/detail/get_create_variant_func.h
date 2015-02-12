@@ -25,81 +25,46 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_RTTR_ENABLE_H__
-#define __RTTR_RTTR_ENABLE_H__
+#ifndef __RTTR_GET_CREATE_VARIANT_FUNC_H__
+#define __RTTR_GET_CREATE_VARIANT_FUNC_H__
 
-#include <type_traits>
-
-#include "rttr/type.h"
+#include "rttr/variant.h"
+#include "rttr/detail/misc_type_traits.h"
 
 namespace rttr
 {
 
 namespace detail
 {
-   
+
+template<typename source_type>
+static variant create_variant(void* ptr)
+{
+    return static_cast<source_type>(ptr);
+}
+
+template<typename source_type>
+static variant create_invalid_variant(void*)
+{
+    return variant();
+}
+
+typedef variant(*create_variant_func)(void*);
+
+template<typename T>
+create_variant_func get_create_variant_func(typename std::enable_if< detail::pointer_count<T>::value == 1 >::type* = 0)
+{
+    return create_variant<T>;
+}
+
+template<typename T>
+create_variant_func get_create_variant_func(typename std::enable_if< detail::pointer_count<T>::value != 1>::type* = 0)
+{
+    return create_invalid_variant<T>;
+}
 
 } // end namespace detail
 
-namespace impl
-{
-#if 0
-/////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(&data));
-}
-
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(&data);
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(data));
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(T& data,  typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(data);
-}
-
-#endif
-/////////////////////////////////////////////////////////////////////////////////////////
-
-//! A simple type_list
-template<typename... U> struct type_list {};
-
-} // end namespace impl
 } // end namespace rttr
 
-#define TYPE_LIST(...)      rttr::impl::type_list<__VA_ARGS__>
-
-#define RTTR_ENABLE(...) \
-public:\
-    virtual RTTR_INLINE rttr::type get_type() const { return rttr::impl::get_type_from_instance(this); }  \
-    virtual RTTR_INLINE void* get_ptr() { return reinterpret_cast<void*>(this); } \
-    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::impl::get_type_from_instance(this)}; } \
-    typedef TYPE_LIST(__VA_ARGS__) base_class_list; \
-private:
-
-
-#endif // __RTTR_RTTR_ENABLE_H__
+#endif // __RTTR_GET_CREATE_VARIANT_FUNC_H__

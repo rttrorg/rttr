@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef TEST_METHOD_REFLECTION_H_
+#define TEST_METHOD_REFLECTION_H_
+
 #include <rttr/type>
 #include <string>
 
@@ -100,7 +103,4 @@ struct method_test_final : method_test_derived, method_test_right
     RTTR_ENABLE(method_test_derived, method_test_right)
 };
 
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(method_test)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(method_test_derived)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(method_test_right)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(method_test_final)
+#endif // TEST_METHOD_REFLECTION_H_

@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef TEST_ENUMERATION_REFLECTION_H_
+#define TEST_ENUMERATION_REFLECTION_H_
+
 #include <rttr/type>
 
 
@@ -66,7 +69,4 @@ enum E_DayOfWeek
     Sunday      = 6
 };
 
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(enum_test)
-RTTR_DECLARE_TYPE(enum_test::E_Alignment)
-RTTR_DECLARE_TYPE(enum_test::E_Orientation)
-RTTR_DECLARE_TYPE(E_DayOfWeek)
+#endif // TEST_ENUMERATION_REFLECTION_H_

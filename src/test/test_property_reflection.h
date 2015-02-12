@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef TEST_PROPERTY_REFLECTION_H_
+#define TEST_PROPERTY_REFLECTION_H_
+
 #include <rttr/type>
 
 struct property_test
@@ -54,11 +57,6 @@ struct property_test
 
     RTTR_REGISTER_FRIEND;
 };
-
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(property_test)
-RTTR_DECLARE_TYPE(int[100])
-RTTR_DECLARE_TYPE(int(*)[100])
-RTTR_DECLARE_TYPE(const int(*)[100])
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -117,10 +115,6 @@ struct bottom : left, right, right_2
 
 }
 
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(ns_property::top)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(ns_property::left)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(ns_property::right)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(ns_property::right_2)
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(ns_property::bottom)
-
 /////////////////////////////////////////////////////////////////////////////////////////
+
+#endif // TEST_PROPERTY_REFLECTION_H_

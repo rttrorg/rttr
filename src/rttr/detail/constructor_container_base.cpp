@@ -56,10 +56,16 @@ type constructor_container_base::get_declaring_type() const
 {
     return _decalaring_type;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 std::vector<bool> constructor_container_base::get_is_reference() const
 {
     return{};
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 std::vector<bool> constructor_container_base::get_is_const() const
 {
     return{};

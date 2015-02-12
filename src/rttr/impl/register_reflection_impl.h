@@ -382,7 +382,7 @@ template<typename ClassType>
 class_<ClassType>::~class_()
 {
     // make sure that all base classes are registered
-    impl::base_classes<ClassType>::get_types();
+    detail::base_classes<ClassType>::get_types();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

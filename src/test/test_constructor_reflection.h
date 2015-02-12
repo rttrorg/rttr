@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef TEST_CONSTRUCTOR_REFLECTION_H_
+#define TEST_CONSTRUCTOR_REFLECTION_H_
+
 #include <rttr/type>
 
 struct constructor_test
@@ -40,4 +43,4 @@ struct constructor_test
     std::string _text;
 };
 
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(constructor_test)
+#endif // TEST_CONSTRUCTOR_REFLECTION_H_

@@ -39,13 +39,6 @@ using namespace rttr;
 typedef std::map<int, std::string> IntToStringMap;
 typedef std::map<int, int> IntToIntMap;
 
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(IntToStringMap)
-
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(IntToIntMap)
-
-RTTR_DECLARE_TYPE(int***)
-
-RTTR_DECLARE_TYPE(int[10])
 
 enum E_Alignment
 {
@@ -54,8 +47,6 @@ enum E_Alignment
     BOTTOM,
     DOWN
 };
-
-RTTR_DECLARE_TYPE(E_Alignment)
 
 TEST_CASE("TypeInfoTests - BasicTests", "[type]")
 {

@@ -58,9 +58,9 @@ RTTR_REGISTER
 
 TEST_CASE("Test constructor/destructor", "[constructor]") 
 {
-    type p_type = type::get("constructor_test");
+    type p_type = type::get<constructor_test>();
     REQUIRE(p_type.is_valid() == true);
-
+        
     constructor default_ctor = p_type.get_constructor();
     REQUIRE(default_ctor == true);
     REQUIRE(default_ctor.is_valid() == true);
@@ -72,7 +72,8 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
     
     REQUIRE(default_ctor.get_instanciated_type() == type::get<constructor_test*>());
     REQUIRE(default_ctor.get_parameter_types().empty() == true);
-    REQUIRE(default_ctor.get_signature() == std::string("constructor_test( )"));
+    auto const ctor_name = type::get<constructor_test>().get_name();
+    REQUIRE(default_ctor.get_signature() == ctor_name + "( )");
 
     destructor dtor = p_type.get_destructor();
     REQUIRE(dtor.is_valid() == true);
@@ -103,7 +104,7 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
 
 TEST_CASE("Test constructor argument forwarding", "[constructor]") 
 {
-    type p_type = type::get("constructor_test");
+    type p_type = type::get<constructor_test>();
     REQUIRE(p_type.is_valid() == true);
     
     constructor ctor_string = p_type.get_constructor({type::get<std::string>()});
@@ -121,7 +122,7 @@ TEST_CASE("Test constructor argument forwarding", "[constructor]")
 
 TEST_CASE("Test create/destroy via type", "[constructor]") 
 {
-    type t = type::get("constructor_test");
+    type t = type::get<constructor_test>();
     variant instance = t.create({2, 4});
     
     REQUIRE(instance.is_valid() == true);
@@ -149,20 +150,21 @@ TEST_CASE("Test create/destroy via type", "[constructor]")
 
 TEST_CASE("Test constructor signature", "[constructor]") 
 {
-    const auto ctors = type::get("constructor_test").get_constructors();
+    const auto ctors = type::get<constructor_test>().get_constructors();
     REQUIRE(ctors.size() == 4);
+    auto const ctor_name = type::get<constructor_test>().get_name();
 
-    REQUIRE(ctors[0].get_signature() == "constructor_test( )");
-    REQUIRE(ctors[1].get_signature() == "constructor_test( int, int )");
-    REQUIRE(ctors[2].get_signature() == "constructor_test( std::string const & )");
-    REQUIRE(ctors[3].get_signature() == "constructor_test( int, int, int, int, int, int, const int* const )");
+    REQUIRE(ctors[0].get_signature() == ctor_name + "( )");
+    REQUIRE(ctors[1].get_signature() == ctor_name + "( int, int )");
+    REQUIRE(ctors[2].get_signature() == ctor_name + "( " + type::get<const std::string&>().get_name() + " const & )");
+    REQUIRE(ctors[3].get_signature() == ctor_name + "( int, int, int, int, int, int, const int* const )");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("Test metadata in constructor", "[constructor]") 
 {
-    constructor ctor_string = type::get("constructor_test").get_constructor({type::get<std::string>()});
+    constructor ctor_string = type::get<constructor_test>().get_constructor({type::get<std::string>()});
     variant value = ctor_string.get_metadata("SCRIPTABLE");
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
@@ -172,7 +174,7 @@ TEST_CASE("Test metadata in constructor", "[constructor]")
     REQUIRE(value.get_value<std::string>() == "This is a ToolTip");
 
     // no metadata
-    constructor ctor_int = type::get("constructor_test").get_constructor({type::get<int>(), type::get<int>()});
+    constructor ctor_int = type::get<constructor_test>().get_constructor({type::get<int>(), type::get<int>()});
     REQUIRE(ctor_int.is_valid() == true);
     REQUIRE(ctor_int.get_metadata("SCRIPTABLE").is_valid() == false);
 }
