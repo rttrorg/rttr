@@ -33,10 +33,12 @@ namespace rttr
 /*!
  * \brief Casts the given \p object of type \p SourceType to an object of type \p TargetType.
  *
- * When the given the given \a object is an instance of type \p TargetType, then this function will cast the pointer to the \p TargetType;
- * otherwise it will return a nullptr. If object is already a nullptr then it will also return a nullptr.
+ * When the given the given \p object is an instance of type \p TargetType, then this function will cast the pointer to the \p TargetType;
+ * otherwise it will return a nullptr. If \p object is already a nullptr then it will also return a nullptr.
  *
- * \remark \p SourceType and \p TargetType must be both pointer types.
+ * \remark Both class types must contain the macro \ref RTTR_ENABLE in the class declaration.
+ *        \p SourceType and \p TargetType must be both pointer types.
+ *         
  *
  * \return A pointer of type \p TargetType
  */

@@ -70,90 +70,73 @@ static type get_invalid_type();
  * Every class or primitive data type can have an unique type object.
  * With the help of this object you can compare unknown types for equality at runtime or introspect the type
  * for its properties, methods, enumerations, constructors and destructor.
- *
- * Preparation
- * -----------
- * Before you can retrieve data from type, you have to register your struct or class.
- * Therefore use the macro #RTTR_DECLARE_TYPE(Type) to make the type known to the type system.
- *
- * This example shows a typical usage:
-\code{.cpp}
-  // MyStruct.h
-  struct MyStruct
-  {
-    int i;
-  };
-  
-  RTTR_DECLARE_TYPE(MyStruct)
-  
-\endcode
  * 
  * Retrieve %type
  * ------------------
- * A type object cannot be created. It is only possible to retrieve a type object via three static template member functions:
+ * A type object **cannot** be created. It is only possible to retrieve a type object via three static template member functions:
+ *
+ * type::get<T>()
+ *
+ * This function just expects one template argument. Use it to check against a known type.
+ *
+ * \code{.cpp}
+ *   type::get<int>() == type::get<int>();  // yields to true
+ *   type::get<int>() == type::get<bool>(); // yields to false
+ * \endcode
  *
  * type::get(const char*)
  *
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  * The name of the type is the same like you have registered with \ref RTTR_DECLARE_TYPE but as string literal. When you have used a typedef then you need to provide this typedef also as string literal.
  *
-\code{.cpp}
-  type::get("int") == type::get("int");   // yields to true
-  type::get("bool") == type::get("int");  // yields to false
-  type::get("MyNameSpace::MyStruct") == type::get("MyNameSpace::MyStruct");  // yields to true
-\endcode
- *
- * type::get<T>()
- *
- * This function just expects one template argument. Use it to check against a known type.
- *
-\code{.cpp}
-  type::get<int>() == type::get<int>();  // yields to true
-  type::get<int>() == type::get<bool>(); // yields to false
-\endcode
+ * \code{.cpp}
+ *   type::get("int") == type::get("int");   // yields to true
+ *   type::get("bool") == type::get("int");  // yields to false
+ *   type::get("MyNameSpace::MyStruct") == type::get("MyNameSpace::MyStruct");  // yields to true
+ * \endcode
  *
  * type::get<T>(T&& obj)
  *
- * This function is a universal reference and returns from every given object the corresponding type object.
+ * This function takes a universal reference and returns from every given object the corresponding type object.
  *
-\code{.cpp}
-  int int_obj;
-  int* int_obj_ptr = &int_obj;
-  const int* c_int_obj_ptr = int_obj_ptr;
-  type::get<int>() == type::get(int_obj);             // yields to true
-  type::get<int*>() == type::get(int_obj_ptr);        // yields to true
-  type::get<const int*>() == type::get(c_int_obj_ptr);// yields to true
-\endcode
+ * \code{.cpp}
+ *   int int_obj;
+ *   int* int_obj_ptr = &int_obj;
+ *   const int* c_int_obj_ptr = int_obj_ptr;
+ *   type::get<int>() == type::get(int_obj);             // yields to true
+ *   type::get<int*>() == type::get(int_obj_ptr);        // yields to true
+ *   type::get<const int*>() == type::get(c_int_obj_ptr);// yields to true
+ * \endcode
  *
  * When this function is called for a glvalue expression whose type is a polymorphic class type,
  * then the result refers to a \ref type object representing the type of the most derived object.
  *
-\code{.cpp}
-  struct Base {};
-  struct Derived : Base {};
-  Derived d;
-  Base& base = d;
-  type::get<Derived>() == type::get(base) // yields to true
-  type::get<Base>() == type::get(base)    // yields to false
-  
-  // remark, when called with pointers:
-  Base* base_ptr = &d;
-  type::get<Derived>() == type::get(base_ptr);  // yields to false
-  type::get<Base*>() == type::get(base_ptr);    // yields to true
-\endcode
+ * \code{.cpp}
+ *   struct Base {};
+ *   struct Derived : Base {};
+ *   Derived d;
+ *   Base& base = d;
+ *   type::get<Derived>() == type::get(base) // yields to true
+ *   type::get<Base>() == type::get(base)    // yields to false
+ *   
+ *   // remark, when called with pointers:
+ *   Base* base_ptr = &d;
+ *   type::get<Derived>() == type::get(base_ptr);  // yields to false
+ *   type::get<Base*>() == type::get(base_ptr);    // yields to true
+ * \endcode
  *
  * \remark If the type of the expression is a cv-qualified type, the result of the rttr::type::get expression refers to a rttr::type object representing the cv-unqualified type.
  * 
-\code{.cpp}
-  class D { ... };
-  D d1;
-  const D d2;
-  type::get(d1)  == type::get(d2);         // yields true
-  type::get<D>() == type::get<const D>();  // yields true
-  type::get<D>() == type::get(d2);         // yields true
-  type::get<D>() == type::get<const D&>(); // yields true
-  type::get<D>() == type::get<const D*>(); // yields false
-\endcode
+ * \code{.cpp}
+ *   class D { ... };
+ *   D d1;
+ *   const D d2;
+ *   type::get(d1)  == type::get(d2);         // yields true
+ *   type::get<D>() == type::get<const D>();  // yields true
+ *   type::get<D>() == type::get(d2);         // yields true
+ *   type::get<D>() == type::get<const D&>(); // yields true
+ *   type::get<D>() == type::get<const D*>(); // yields false
+ * \endcode
  * Any `top level` cv-qualifier of the given type `T` will be removed.
  *
  *
@@ -236,6 +219,8 @@ class RTTR_API type
 
         /*!
          * \brief Returns the unique and human-readable name of the type.
+         *
+         * \remark The content of this string is compiler depended.
          *
          * \return The type name.
          */
@@ -353,12 +338,20 @@ class RTTR_API type
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.
          *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
+         *
          * \return Returns true if this type is a derived type from \p other, otherwise false.
          */
         bool is_derived_from(const type& other) const;
 
         /*!
          * \brief Returns true if this type is derived from the given type \a T, otherwise false.
+         *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
          *
          * \return Returns true if this type is a derived type from \a T, otherwise false.
          */
@@ -368,12 +361,20 @@ class RTTR_API type
         /*!
          * \brief Returns a list of all base classes of this type.
          *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
+         *
          * \return A list of type objects.
          */
         std::vector<type> get_base_classes() const;
 
         /*!
          * \brief Returns a list of all derived classes of this type.
+         *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
          *
          * \return A list of type objects.
          */
@@ -498,7 +499,7 @@ class RTTR_API type
         /*!
          * \brief Returns a method with the name \p name.
          *
-         * \remark When there exists not method with the name \p name, then an invalid method is returned.
+         * \remark When there exists no method with the name \p name, then an invalid method is returned.
          *
          * \return A method with name \p name.
          */
@@ -507,7 +508,7 @@ class RTTR_API type
         /*!
          * \brief Returns a method with the name \p name which match the given parameter list \p params.
          *
-         * \remark When there exists not method with the name \p name and matching parameter list \p params,
+         * \remark When there exists no method with the name \p name and matching parameter list \p params,
          *         then an invalid method is returned.
          *
          * \return A method with name \p name.
@@ -525,7 +526,7 @@ class RTTR_API type
         /*!
          * \brief Returns a global method with the name \p name.
          *
-         * \remark When there exists not method with the name \p name, and invalid method is returned.
+         * \remark When there exists no method with the name \p name, and invalid method is returned.
          *
          * \return A method with name \p name.
          */
@@ -534,7 +535,7 @@ class RTTR_API type
         /*!
          * \brief Returns a global method with the name \p name which match the given parameter list \p params.
          *
-         * \remark When there exists not method with the name \p name and matching parameter list \p params,
+         * \remark When there exists no method with the name \p name and matching parameter list \p params,
          *         then an invalid method is returned.
          *
          * \return A method with name \p name and parameter signature \p params.
@@ -619,7 +620,8 @@ class RTTR_API type
         detail::type_converter_base* get_type_converter(const type& target_type) const;
 
         /////////////////////////////////////////////////////////////////////////////////
-        // now comes the register functions
+        /////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////
 
         /*!
          * \brief Register the type info for the given name
@@ -661,67 +663,6 @@ class RTTR_API type
     private:
         type_id  m_id;
 };
-
-#ifdef DOXYGEN
-/*!
- * \brief This macro makes the type \p Type known to the \ref rttr::type "type" system.
- *
- * The macro should be placed directly under declaration of the custom class or struct of \p Type.
- * So the \ref rttr::type "type" class can access it in every translation unit (*.cpp file).
- *
- * When using a \p Type without this registration, it will lead to a compile time error 
- * with following message: *The given type T is not registered to the type system; please register with RTTR_DECLARE_TYPE.*
- *
- * The following example will demonstrate the usage:
- \code{.cpp}
- // MyStruct.h
- struct MyStruct
- {
-   bool visible;
- };
-
- RTTR_DECLARE_TYPE(MyStruct)
- \endcode
- *
- * When MyStruct is in a namespace, make sure you putt the macro outside the namespace,
- * otherwise \ref rttr::type "type" cannot access the \p Type.
- \code{.cpp}
- namespace NSMyStruct
- {
- }
-
- RTTR_DECLARE_TYPE(NSMyStruct::MyStruct)
- \endcode
- */
-#define RTTR_DECLARE_TYPE(Type)
-
-/*!
- * \brief This macro will define three common variants of the given type \p Type.
- *        That are: `Type`, `Type*`, `const Type*`
- *        So it is basically a shortcut instead of writing three times \ref RTTR_DECLARE_TYPE.
- */
-#define RTTR_DECLARE_STANDARD_TYPE_VARIANTS(Type)
-
-
-/*!
- * \brief This macro makes the type \p Type immediately known to the \ref rttr::type "type" system.
- *        
- * Place this macro inside the global namespace of one translation unit. Normally it is placed
- * inside the corresponding cpp file of type \p Type.
- *
- * The reason for this macro is, to make sure that the given \p Type is registered before main was executed.
- * Another way to execute the registration process is to call rttr::type::get<Type>(), this will invoke
- * the registration function registered with \ref RTTR_DECLARE_TYPE.
- *
- \code{.cpp}
- // MyStruct.cpp
- RTTR_DEFINE_TYPE(MyStruct)
- \endcode
- *
- */
-#define RTTR_DEFINE_TYPE(Type)
-
-#endif
 
 } // end namespace rttr
 

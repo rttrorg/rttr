@@ -54,6 +54,7 @@ option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries
 option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
 option(CREATE_UNITY_BUILD "Creates a unity build" FALSE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)
+option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documenation; Otherwise the default will be used" TRUE)
 
 include(config)
 include(installDependencies)

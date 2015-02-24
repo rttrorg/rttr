@@ -65,8 +65,6 @@ struct Mesh
   private:
     Vector3d _pos;
 };
-
-RTTR_DECLARE_STANDARD_TYPE_VARIANTS(Mesh) // to register the type
 \endcode
 *
 * The in a cpp file, register the constructors, properties and methods of the class \p Mesh.
@@ -674,17 +672,99 @@ void enumeration_(std::vector< std::pair< std::string, EnumType> > enum_data,
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief This is a helper function to register overloaded functions.
+ *
+ * Use it like following:
+ * \code{.cpp}
+ *
+ * #include <rttr/reflect>
+ * #include <cmath>
+ * using namespace rttr;
+ * 
+ * RTTR_REFLECT
+ * {
+ *     method_("pow", select_overload<float(float, float)>(&pow));
+ * }
+ * \endcode
+ *
+ */
+template<typename Signature>
+Signature* select_overload(Signature* func)
+{
+  return func;
+}
+
+
+/*!
+ * \brief This is a helper function to register overloaded member functions.
+ *
+ * Use it like following:
+ * \code{.cpp}
+ *
+ * #include <rttr/reflect>
+ * #include <cmath>
+ * using namespace rttr;
+ * 
+ * RTTR_REFLECT
+ * {
+ *     method_("pow", select_overload<float(float, float)>(&pow));
+ * }
+ * \endcode
+ *
+ */
+template<typename Signature, typename ClassType>
+auto select_overload(Signature (ClassType::*func)) -> decltype(func)
+{
+    return func;
+}
+
+
+/*!
+ * \brief This is a helper function to register overloaded const member functions.
+ *
+ * Use it like following:
+ * \code{.cpp}
+ *
+ * #include <rttr/reflect>
+ * using namespace rttr;
+ * struct Foo
+ * {
+ *   void func();
+ *   void func() const;
+ * };
+ * 
+ * RTTR_REFLECT
+ * {
+ *     class<Foo>()
+            .method("func", select_overload<void(void)>(&Foo::func))
+            .method("func", select_const(&Foo::func));
+ * }
+ * \endcode
+ *
+ */
+template<typename ClassType, typename ReturnType, typename... Args>
+auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func)
+{
+    return func;
+}
+
+
 #ifdef DOXYGEN
 /*!
  * \brief Use this macro to automatically register your reflection information to RTTR before `main` is called.
  *
  * Use it in following way:
-\code{.cpp}
-RTTR_REGISTER
-{
-  rttr::method_("foo", &foo);
-}
-\endcode
+ * \code{.cpp}
+ * RTTR_REGISTER
+ * {
+ *   rttr::method_("foo", &foo);
+ * }
+ * \endcode
  *
  * Just place the macro in global scope in a cpp file. 
  *

@@ -85,11 +85,56 @@ static void* get_ptr(T& data,  typename std::enable_if<std::is_pointer<T>::value
 #endif
 /////////////////////////////////////////////////////////////////////////////////////////
 
-//! A simple type_list
-template<typename... U> struct type_list {};
+#ifndef DOXYGEN
+    //! A simple type_list
+    template<typename... U> struct type_list {};
+#endif
 
 } // end namespace impl
 } // end namespace rttr
+
+#ifdef DOXYGEN
+
+/*!
+ * \brief This macro is necessary in order to retrieve type information about the
+ *        inheritance graph of a class.
+ * 
+ * Put the macro inside every class, where you need the complete inheritance information about the class type.
+ *
+ * \code{.cpp}
+ * struct Base
+ * {
+ *   RTTR_ENABLE()
+ * };
+ * \endcode
+ *
+ * Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public, 
+ * protected or private class accessor section.
+ *
+ * Into the derived class you put the same macro, but now as argument the name of the parent class.
+ * Which is in this case `Base`.
+ * \code{.cpp}
+ *   struct Derived : Base
+ *   {
+ *     RTTR_ENABLE(Base)
+ *   };
+ * \endcode
+ *
+ *  When you use multiple inheritance you simply separate every class with a comma.
+ * \code{.cpp}
+ *   struct MultipleDerived : Base, Other
+ *   {
+ *     RTTR_ENABLE(Base, Other)
+ *   };
+ * \endcode
+ *
+ * \remark Without this macro, it will not be possible to use \ref rttr::rttr_cast "rttr_cast" or 
+ *         meta information in the type class, like: \ref rttr::type::get_base_classes() "get_base_classes()" or 
+ *         \ref rttr::type::get_derived_classes() "get_derived_classes()".
+ */
+#define RTTR_ENABLE(...)
+
+#else
 
 #define TYPE_LIST(...)      rttr::impl::type_list<__VA_ARGS__>
 
@@ -101,5 +146,6 @@ public:\
     typedef TYPE_LIST(__VA_ARGS__) base_class_list; \
 private:
 
+#endif // DOXYGEN
 
 #endif // __RTTR_RTTR_ENABLE_H__

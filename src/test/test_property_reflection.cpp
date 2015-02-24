@@ -36,7 +36,7 @@ using namespace std;
 #include <memory>
 #include <functional>
 
-#include "catch.hpp"
+#include <catch.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // init static variables and some global functions added as properties to the test class
@@ -587,6 +587,24 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
         variant ret = type::get_property_value("Global_Text");
         REQUIRE(ret.get_value<std::string>() == string("Another Text"));
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test get_base_classes", "[property]")
+{
+    ns_property::bottom b;
+    const auto base_list = type::get(b).get_base_classes();
+    REQUIRE(base_list.size() == 4);
+
+    REQUIRE(base_list[0] == type::get<ns_property::left>());
+    REQUIRE(base_list[1] == type::get<ns_property::right>());
+    REQUIRE(base_list[2] == type::get<ns_property::top>());
+    REQUIRE(base_list[3] == type::get<ns_property::right_2>());
+
+
+    REQUIRE(type::get(b).is_derived_from(type::get<ns_property::top>()) == true); // dynamic
+    REQUIRE(type::get(b).is_derived_from<ns_property::top>() == true); // static
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

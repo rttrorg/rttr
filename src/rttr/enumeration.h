@@ -50,7 +50,7 @@ class argument;
  * A instance of an enumeration class can only be obtained from the \ref type class.
  * See \ref type::get_enum() and \ref type::get_enumerations().
  *
- * For registration an enum, nested inside a class, see \ref class_::enumeration() and for global enums see \ref register_global::enumeration.
+ * For registration an enum, nested inside a class, see \ref class_::enumeration() and for global enums see \ref enumeration_.
  *
  * Meta Information
  * ----------------

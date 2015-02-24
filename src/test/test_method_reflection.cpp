@@ -37,7 +37,7 @@ using namespace std;
 #include <functional>
 #include <cmath>
 
-#include "catch.hpp"
+#include <catch.hpp>
 
 enum E_MetaData
 {
@@ -77,8 +77,9 @@ RTTR_REGISTER
         .method("method_2", &method_test::method_2)    
         .method("method_3", &method_test::method_3)
         .method("method_4", &method_test::method_4)
-        .method("method_5", static_cast<int(method_test::*)(double*)>(&method_test::method_5))
-        .method("method_5", static_cast<int(method_test::*)(int,double)>(&method_test::method_5))
+        .method("method_5", select_overload<int(double*)>(&method_test::method_5))
+        .method("method_5", select_overload<int(int,double)>(&method_test::method_5))
+        .method("method_5", select_const(&method_test::method_5))
         .method("method_6", &method_test::method_6)
         .method("method_7", &method_test::method_7)
         .method("method_8", &method_test::method_8, {metadata(E_MetaData::SCRIPTABLE, true), metadata("TAG",  42)})
@@ -88,6 +89,7 @@ RTTR_REGISTER
         .method("method_default",   &method_test::method_default_arg)
         .method("method_6_ret_ptr", &method_test::method_6, return_reference_as_ptr)
         .method("method_6_void",     &method_test::method_6, discard_return_value)
+        .method("method_fun_ptr_arg", &method_test::method_fun_ptr_arg)
         ;
 
     class_<method_test_derived>()
@@ -117,7 +119,7 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(t_meth.is_valid() == true);
     variant inst = t_meth.create({});
     method_test& obj = *inst.get_value<method_test*>();
-
+    
     ////////////////////////////////////////////////////////////
     // invoke tests
     variant ret = t_meth.get_method("method_1").invoke(inst);
@@ -218,7 +220,13 @@ TEST_CASE("Test method", "[method]")
 
     ret = m9.invoke_variadic(inst, {1,2,3,4,true,6,7,8,9,10});
     REQUIRE(obj.method_9_called == true);
-    
+
+    ////////////////////////////////////////
+    // function pointer argument
+    typedef void(*func_ptr)(int);
+    func_ptr func = nullptr;
+    ret = t_meth.get_method("method_fun_ptr_arg").invoke(obj, func);
+    REQUIRE(obj.method_func_ptr_arg_called == true);
 
     ////////////////////////////////////////
     t_meth.get_method("method_default").invoke(derived_inst, 3);
@@ -228,7 +236,7 @@ TEST_CASE("Test method", "[method]")
     // check up_cast, cross cast and middle in the hierarchy cast through invoke
     method_test_final final_obj;
     type t_final = type::get(final_obj);
-    REQUIRE(t_final.get_methods().size() == 18); // +1 overloaded
+    REQUIRE(t_final.get_methods().size() == 19); // +1 overloaded
     // test the up cast
     t_final.get_method("method_3").invoke(final_obj, 1000);
     REQUIRE(final_obj.method_3_called == true);
@@ -330,7 +338,7 @@ TEST_CASE("Test method arrays", "[method]")
 TEST_CASE("Test method signature", "[method]") 
 {
     const auto methods = type::get<method_test_final>().get_methods();
-    REQUIRE(methods.size() == 18);
+    REQUIRE(methods.size() == 19);
 
     REQUIRE(methods[0].get_signature() == "method_13( )");
     REQUIRE(methods[5].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");

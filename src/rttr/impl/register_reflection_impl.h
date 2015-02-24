@@ -605,34 +605,19 @@ class_<ClassType>& class_<ClassType>::enumeration(std::vector< std::pair< std::s
 } // end namespace rttr
 
 
-/*!
- * \brief Use this macro to automatically register your reflection information to RTTR before `main` is called.
- *
- * Use it in following way:
-\code{.cpp}
-RTTR_REGISTER
-{
-  rttr::method_("foo", &foo);
-}
-\endcode
- *
- * Just place the macro in global scope in a cpp file. 
- *
- * \remark It is not possible to place the macro multiple times in one cpp file.
- *
- */
 #define RTTR_REGISTER                                                   \
+static void rttr__auto_register_reflection_function__();                \
 namespace                                                               \
 {                                                                       \
-    struct _rttr__auto_register                                         \
+    struct rttr__auto__register__                                       \
     {                                                                   \
-        _rttr__auto_register()                                          \
+        rttr__auto__register__()                                        \
         {                                                               \
-            _rttr_auto_register_reflection_function();                  \
+            rttr__auto_register_reflection_function__();                \
         }                                                               \
     };                                                                  \
 }                                                                       \
-static const _rttr__auto_register RTTR_CAT(auto_register__,__LINE__);   \
-static void _rttr_auto_register_reflection_function()
+static const rttr__auto__register__ RTTR_CAT(auto_register__,__LINE__); \
+static void rttr__auto_register_reflection_function__()
 
 #endif // __RTTR_REGISTER_REFLECTION_IMPL_H__

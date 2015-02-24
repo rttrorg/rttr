@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "test_classes.h"
-#include "catch.hpp"
+#include <catch.hpp>
 
 #include <rttr/type>
 

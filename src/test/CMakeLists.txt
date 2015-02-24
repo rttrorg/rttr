@@ -45,7 +45,7 @@ set(HEADER_FILES test_classes.h
                  test_method_reflection.h
                  test_property_reflection.h
                  test_enumeration_reflection.h
-                 catch.hpp)
+                 ${RTTR_3RD_PARTY_DIR}/catch/catch.hpp)
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SOURCE_FILES)
@@ -54,7 +54,9 @@ endif()
 add_executable(unit-tests ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(unit-tests rttr)
 add_dependencies(unit-tests rttr)
+target_include_directories(unit-tests PUBLIC ${RTTR_3RD_PARTY_DIR}/catch)
 
+# run tests
 get_target_property(UnitTest_Exec unit-tests LOCATION)
 add_custom_target(run-tests ALL
                   COMMAND "${UnitTest_Exec}"

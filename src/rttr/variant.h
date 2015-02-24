@@ -182,21 +182,21 @@ class RTTR_API variant
         variant& operator=(T&& other);
        
         /*!
-         * Assigns the value of the \a other variant to this variant.
+         * \brief Assigns the value of the \a other variant to this variant.
          *
          * \return A reference to the variant with the new data.
          */
         variant& operator=(variant&& other);
 
         /*!
-         * Assigns the value of the \a other variant to this variant.
+         * \brief Assigns the value of the \a other variant to this variant.
          *
          * \return A reference to the variant with the new data.
          */
         variant& operator=(const variant& other);
         
         /*!
-         * Returns true if this variant data is of the given template type \a T.
+         * \brief Returns true if this variant data is of the given template type \a T.
          * 
          * \return True if variant is the same like \a T, otherwise false.
          */
@@ -213,9 +213,13 @@ class RTTR_API variant
         type get_type() const;
 
         /*!
-         * Returns true if this variant is valid, that means the variant is holding some data.
+         * \brief Returns true if this variant is valid, that means the variant is holding some data.
          *
          * When the variant doesn't hold any data it will return false.
+         *
+         * \remark A variant can also hold `void` data, this is used to indicate that a method call,
+         *         which has no return value, was successfully. In this case, there is no data actually,
+         *         stored, but this function will return true.
          * 
          * \return True if this variant is valid, otherwise false.
          */

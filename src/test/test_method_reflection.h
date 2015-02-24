@@ -48,6 +48,9 @@ struct method_test
 
 
     int method_5(int, double)       { method_5_overloaded_called = true; return 42; }   // overloaded method
+    int method_5(int, double) const { return 23; }   // second overloaded method, with const
+
+    void method_fun_ptr_arg(void(*func_ptr)(int)) { method_func_ptr_arg_called = true; }
     
     double dummy_data = 12;
     std::string dummy_text = "Hello World";
@@ -65,6 +68,7 @@ struct method_test
     bool method_5_overloaded_called = false;
     bool method_default_arg_called  = false;
     bool method_raw_array_called    = false;
+    bool method_func_ptr_arg_called = false;
 
     RTTR_ENABLE()
 };

@@ -39,11 +39,14 @@ message("Project version: ${RTTR_VERSION_STR}")
 set(README_FILE "${CMAKE_SOURCE_DIR}/README")
 set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE")
 
-# dirs where the binaries should be placed, isntalled
+# dirs where the binaries should be placed, installed
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(RTTR_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+
+#3rd part dependencies dirs
+set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd-party")
 
 getNameOfDir(CMAKE_LIBRARY_OUTPUT_DIRECTORY RTTR_TARGET_BIN_DIR)
 is_vs_based_build(VS_BUILD)
