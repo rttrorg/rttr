@@ -184,8 +184,8 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(arg == 22.0);
 
     method m5_overloaded_2 = t_meth.get_method("method_5", {type::get<int>(), type::get<double>()});
-    REQUIRE(m5_overloaded_1 == true);
-    REQUIRE(m5_overloaded_2 == true);
+    REQUIRE(bool(m5_overloaded_1) == true);
+    REQUIRE(bool(m5_overloaded_2) == true);
     REQUIRE(m5_overloaded_1 != m5_overloaded_2);
 
     ////////////////////////////////////////
@@ -269,7 +269,7 @@ TEST_CASE("global methods", "[method]")
 {
     free_function_called = false;
     method global_meth_1 = type::get_global_method("free_function", {type::get<bool>()});
-    REQUIRE(global_meth_1 == true);
+    REQUIRE(bool(global_meth_1) == true);
     REQUIRE(global_meth_1.get_parameter_types()[0] == type::get<bool>());
     variant success = global_meth_1.invoke(empty_instance());
     REQUIRE(success.is_valid() == false);
@@ -280,7 +280,7 @@ TEST_CASE("global methods", "[method]")
     REQUIRE(free_function_called == true);
 
     method global_meth_2 = type::get_global_method("free_function", {type::get<int>()});
-    REQUIRE(global_meth_2 == true);
+    REQUIRE(bool(global_meth_2) == true);
     int arg = 0;
     global_meth_2.invoke(empty_instance(), arg);
     REQUIRE(arg == 42);

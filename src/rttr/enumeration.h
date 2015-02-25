@@ -108,7 +108,7 @@ class RTTR_API enumeration
          *
          * \return True if this \ref enumeration is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * \brief Returns the name of this \ref enumeration.

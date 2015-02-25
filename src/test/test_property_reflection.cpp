@@ -339,7 +339,7 @@ TEST_CASE("Test property array access", "[property]")
         property_test obj;
         type bottom_type = type::get(obj);
         property prop = bottom_type.get_property("array_copy");
-        REQUIRE(prop == true);
+        REQUIRE(bool(prop) == true);
         variant var = prop.get_value(obj);
         REQUIRE(var.is_type<std::vector<int>>() == true);
         REQUIRE(var.can_convert<variant_array>()== true);
@@ -470,7 +470,7 @@ TEST_CASE("Test property policy", "[property]")
         property_test obj;
         type prop_type = type::get(obj);
         property p7_as_ptr = prop_type.get_property("p7_as_ptr_read_only");
-        REQUIRE(p7_as_ptr == true);
+        REQUIRE(bool(p7_as_ptr) == true);
         REQUIRE(p7_as_ptr.is_readonly() == true);
         REQUIRE(p7_as_ptr.get_type() == type::get<const std::string*>());
     }
@@ -480,7 +480,7 @@ TEST_CASE("Test property policy", "[property]")
         property_test obj;
         type prop_type = type::get(obj);
         property p7_as_ptr = prop_type.get_property("p7_as_ptr");
-        REQUIRE(p7_as_ptr == true);
+        REQUIRE(bool(p7_as_ptr) == true);
         REQUIRE(p7_as_ptr.is_readonly() == false);
         REQUIRE(p7_as_ptr.get_type() == type::get<const std::string*>());
     }
@@ -528,7 +528,7 @@ TEST_CASE("Test property inheritance", "[property]")
     REQUIRE(type::get<ns_property::right>().get_property("p2").is_valid() == true);
 
     property p1 = type::get<ns_property::bottom>().get_property("p1");
-    REQUIRE(p1 == true);
+    REQUIRE(bool(p1) == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -536,11 +536,11 @@ TEST_CASE("Test property inheritance", "[property]")
 TEST_CASE("Test get/set global property", "[property]")
 {
     property pi_prop = type::get_global_property("PI");
-    REQUIRE(pi_prop == true);
+    REQUIRE(bool(pi_prop) == true);
     REQUIRE(pi_prop.set_value(empty_instance(), 3.2) == false);
 
     property global_text = type::get_global_property("Global_Text");
-    REQUIRE(global_text == true);
+    REQUIRE(bool(global_text) == true);
     REQUIRE(global_text.set_value(empty_instance(), std::string("Hello World")) == true);
     REQUIRE(global_text.get_value(empty_instance()).get_value<std::string>() == "Hello World");
 
@@ -634,7 +634,7 @@ TEST_CASE("Test property metadata", "[property]")
 
     // string metdadata
     property p8 = type::get<property_test>().get_property("p8");
-    REQUIRE(p8 == true);
+    REQUIRE(bool(p8) == true);
 
     value = p8.get_metadata("Global_Tag");
     REQUIRE(value.is_type<bool>() == true);

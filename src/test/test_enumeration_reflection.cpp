@@ -94,7 +94,7 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 
     enumeration enum_info_align = params[0].get_enumeration();
     REQUIRE(enum_info_align.is_valid() == true);
-    REQUIRE(enum_info_align == true);
+    REQUIRE(bool(enum_info_align) == true);
     REQUIRE(enum_info_align.get_declaring_type() == type::get<enum_test>());
     REQUIRE(enum_info_align.get_type() == params[0]);
 

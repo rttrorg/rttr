@@ -238,7 +238,7 @@ class RTTR_API type
          *
          * \return True if this \ref type is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * \brief Returns a type object which represent the raw type.

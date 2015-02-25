@@ -121,7 +121,7 @@ class RTTR_API property
          *
          * \return True if this property is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * \brief Returns true if this property is read only, otherwise false.

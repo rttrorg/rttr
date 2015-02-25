@@ -102,7 +102,7 @@ class RTTR_API constructor
          *
          * \return True if this constructor is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * Returns the type object of the instantiated type.

@@ -124,7 +124,7 @@ class RTTR_API method
          *
          * \return True if this method is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * \brief Returns the name of this method.

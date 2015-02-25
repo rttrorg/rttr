@@ -84,7 +84,7 @@ class RTTR_API destructor
          *
          * \return True if this destructor is valid, otherwise false.
          */
-        operator bool() const;
+        explicit operator bool() const;
 
         /*!
          * \brief Returns the rttr::type for which this destructor can delete objects.

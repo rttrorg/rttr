@@ -63,7 +63,8 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
     REQUIRE(p_type.is_valid() == true);
         
     constructor default_ctor = p_type.get_constructor();
-    REQUIRE(default_ctor == true);
+    
+    REQUIRE(bool(default_ctor) == true);
     REQUIRE(default_ctor.is_valid() == true);
     REQUIRE(default_ctor.get_declaring_type() == type::get<constructor_test>());
 
@@ -78,7 +79,7 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
 
     destructor dtor = p_type.get_destructor();
     REQUIRE(dtor.is_valid() == true);
-    REQUIRE(dtor == true);
+    REQUIRE(bool(dtor) == true);
     REQUIRE(dtor == dtor);
     REQUIRE( !(dtor != dtor) );
     REQUIRE(dtor.get_destructed_type() == type::get<constructor_test*>());
@@ -92,7 +93,7 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
     {
         REQUIRE(ctor.get_instanciated_type() == type::get<constructor_test*>());
         REQUIRE(ctor.is_valid() == true);
-        REQUIRE(ctor == true);
+        REQUIRE(bool(ctor) == true);
         // negative test
         REQUIRE(ctor.invoke_variadic({"This will not work"}).is_valid() == false);
     }
