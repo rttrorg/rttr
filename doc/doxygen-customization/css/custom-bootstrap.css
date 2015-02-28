@@ -20,6 +20,10 @@ td > .btn-default {
   font-weight: bold;
 }
 
+.memname  td {
+    padding: 0 1px;
+}
+
 .panel-body > dl > dd {
   margin-left: 40px;
 }
