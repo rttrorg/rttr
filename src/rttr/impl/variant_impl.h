@@ -465,7 +465,7 @@ type variant::variant_container<T,  typename std::enable_if<detail::is_array_and
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>            
+template<typename T>
 void* variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::get_raw_ptr() const
 {
     return detail::get_void_ptr(_value);
@@ -596,7 +596,7 @@ type variant::variant_container<char[N]>::get_raw_type() const
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<std::size_t N>            
+template<std::size_t N>
 void* variant::variant_container<char[N]>::get_raw_ptr() const
 {
     return detail::get_void_ptr(_value);

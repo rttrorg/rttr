@@ -282,7 +282,7 @@ namespace detail
     // rank_type<int[2][10][4], 0>::type => int[2][10][4]
     // rank_type<int[2][10][4], 1>::type => int[10][4]
     // rank_type<int[2][10][4], 2>::type => int[4]
-    // works of course with all other class, which has an array_mapper specialization
+    // works of course with all other classes, which has an array_mapper specialization
 
     template <typename... T>
     struct concat_array_types;
@@ -352,11 +352,8 @@ namespace detail
         static const std::size_t size = pointer_count_impl<T>::size + 1;
     };
 
-    //template<typename T>
-    //using pointer_count = std::integral_constant<std::size_t, pointer_count_impl<T>::size>;
     template<typename T>
-    struct pointer_count : std::integral_constant<std::size_t, pointer_count_impl<T>::size>
-    {};
+    using pointer_count = std::integral_constant<std::size_t, pointer_count_impl<T>::size>;
 
     /////////////////////////////////////////////////////////////////////////////////////
     // is_char_array<T>::value Returns true if the given type is a char array

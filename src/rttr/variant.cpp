@@ -26,8 +26,10 @@
 *************************************************************************************/
 
 #include "rttr/variant.h"
+
 #include "rttr/detail/std_conversion_functions.h"
 #include "rttr/variant_array.h"
+#include "rttr/detail/generic_data_container.h"
 #include <limits>
 
 #include <string>
@@ -158,15 +160,20 @@ bool variant::convert(const type& target_type)
             void* data = _holder->get_ptr();
             new_var = converter->to_variant(data, ok);
         }
-        else
+        else if (source_type.is_pointer())
         {
-            void* data = _holder->get_raw_ptr();
-            void* d_ptr = type::apply_offset(data, source_type, target_type);
-            if (d_ptr)
+            if (source_type.get_pointer_count() == 1 && target_type.get_pointer_count() == 1)
             {
-                new_var = target_type.create_from_ptr(d_ptr);
-                if (new_var.is_valid())
-                    ok = true;
+                void* data = _holder->get_raw_ptr();
+                void* d_ptr = type::apply_offset(data, source_type, target_type);
+                if (d_ptr)
+                {
+                    detail::generic_data_container container;
+                    container.m_obj_ptr = d_ptr;
+                    new_var = target_type.create_from_ptr(container);
+                    if (new_var.is_valid())
+                        ok = true;
+                }
             }
         }
         

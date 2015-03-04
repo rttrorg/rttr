@@ -124,6 +124,7 @@ TEST_CASE("variant test - BasicTests", "[variant]")
         var = 42;
         REQUIRE(var.get_value<int>() == 42);
     }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -765,6 +766,26 @@ TEST_CASE("variant test - array", "[variant]")
         variant_array vec_array = var.to_array();
         // pointer to const array cannot be changed
         REQUIRE(vec_array.set_size(0)   == false);
+    }
+
+    SECTION("check if vector<bool>() is supported in variant")
+    {
+        auto orig_vec = std::vector<bool>({true, false, false});
+        variant var = &orig_vec;
+        REQUIRE(*var.get_value<std::vector<bool>*>() == orig_vec);
+
+        variant_array var_arr = var.to_array();
+        var_arr.set_value(0, false);
+        REQUIRE(orig_vec[0] == false);
+
+        var_arr.set_size(100);
+        REQUIRE(orig_vec.size() == 100);
+
+        var_arr.set_size(50);
+        REQUIRE(orig_vec.size() == 50);
+
+        var_arr.insert_value(25, true);
+        REQUIRE(orig_vec[25] == true);
     }
 }
 

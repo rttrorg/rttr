@@ -29,6 +29,7 @@
 #define __RTTR_TYPE_H__
 
 #include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/generic_data_container.h"
 
 #include <type_traits>
 #include <vector>
@@ -55,11 +56,13 @@ class argument;
 struct derived_info;
 struct base_class_info;
 struct type_converter_base;
+
+typedef variant(*variant_create_func)(const generic_data_container&);
 } // end namespace detail
 
 namespace impl
 {
-template<typename T>
+template<typename T, typename Enable = void>
 struct MetaTypeInfo;
 static type get_invalid_type();
 } // end namespace impl
@@ -329,11 +332,39 @@ class RTTR_API type
         bool is_pointer() const;
 
         /*!
-         * \brief Returns true whether the given type represents an primitive type (e.g. int, bool, etc.).
+         * \brief Returns true whether the given type represents an primitive type (e.g. `int`, `bool`, etc.).
          *
          * \return True if the type is a primitive type, otherwise false.
          */
         bool is_primitive() const;
+
+        /*!
+         * \brief Returns true whether the given type represents a pointer to a function (e.g. `void (*)(void)`).
+         *
+         * \return True if the type is a function pointer, otherwise false.
+         */
+        bool is_function_pointer() const;
+
+        /*!
+         * \brief Returns true whether the given type represents a pointer to a member object (e.g. `int (MyClass::*)`).
+         *
+         * \return True if the type is a member object pointer, otherwise false.
+         */
+        bool is_member_object_pointer() const;
+
+        /*!
+         * \brief Returns true whether the given type represents a pointer to a member function (e.g. `void (MyClass::*)(void)`).
+         *
+         * \return True if the type is a member function pointer type, otherwise false.
+         */
+        bool is_member_function_pointer() const;
+
+        /*!
+         * \brief Returns the amount of pointers in the type. E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
+         *
+         * \return The pointer count.
+         */
+        std::size_t get_pointer_count() const;
 
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.
@@ -635,18 +666,23 @@ class RTTR_API type
                                   const type& raw_type,
                                   std::vector<detail::base_class_info> base_classes, 
                                   detail::derived_info(*get_derived_func)(void*),
-                                  variant(*variant_create_func)(void*),
+                                  detail::variant_create_func var_func_ptr,
                                   bool is_class,
                                   bool is_enum,
                                   bool is_array,
                                   bool is_pointer,
-                                  bool is_primitive);
+                                  bool is_primitive,
+                                  bool is_function_pointer,
+                                  bool is_member_object_pointer,
+                                  bool is_member_function_pointer,
+                                  std::size_t get_pointer_count);
 
         void register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const;
 
-        variant create_from_ptr(void* ptr) const;
+        //! Creates a variant from the given container data pointer.
+        variant create_from_ptr(const detail::generic_data_container& data) const;
 
-        template<typename T>
+        template<typename T, typename Enable>
         friend struct impl::MetaTypeInfo;
 
         template<typename T>

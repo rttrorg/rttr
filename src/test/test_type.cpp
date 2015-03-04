@@ -344,3 +344,55 @@ TEST_CASE("TypeInfoTests - Check is_array", "[type]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("TypeInfoTests - Check is_function_pointer", "[type]")
+{
+    using MyClass = ClassSingleBase;
+    CHECK(type::get<void(*)()>().is_function_pointer()              == true);
+
+    CHECK(type::get<void(void)>().is_function_pointer()             == false);
+    CHECK(type::get<void*(*)>().is_function_pointer()               == false);
+    CHECK(type::get<int(MyClass::*)>().is_function_pointer()        == false);
+    CHECK(type::get<int(MyClass::*)(void)>().is_function_pointer()  == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("TypeInfoTests - Check is_member_function_pointer", "[type]")
+{
+    using MyClass = ClassSingleBase;
+    CHECK(type::get<void(MyClass::*)()>().is_member_function_pointer()      == true);
+
+    CHECK(type::get<void(void)>().is_member_function_pointer()              == false);
+    CHECK(type::get<void*(*)>().is_member_function_pointer()                == false);
+    CHECK(type::get<int(MyClass::*)>().is_member_function_pointer()         == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("TypeInfoTests - Check is_member_object_pointer", "[type]")
+{
+    using MyClass = ClassSingleBase;
+    CHECK(type::get<int(MyClass::*)>().is_member_object_pointer()      == true);
+
+    CHECK(type::get<void(void)>().is_member_object_pointer()           == false);
+    CHECK(type::get<void*(*)>().is_member_object_pointer()             == false);
+    CHECK(type::get<int(MyClass::*)()>().is_member_object_pointer()    == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("TypeInfoTests - Check get_pointer_count", "[type]")
+{
+    using MyClass = ClassSingleBase;
+    CHECK(type::get<int>().get_pointer_count()                 == 0);
+    CHECK(type::get<int*>().get_pointer_count()                == 1);
+    CHECK(type::get<int**>().get_pointer_count()               == 2);
+
+
+    CHECK(type::get<void(void)>().get_pointer_count()          == 0);
+    CHECK(type::get<void*(*)>().get_pointer_count()            == 2);
+    CHECK(type::get<int(MyClass::*)()>().get_pointer_count()   == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

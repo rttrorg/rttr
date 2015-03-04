@@ -55,31 +55,35 @@ using namespace std;
 
 namespace rttr
 {
-static detail::reflection_database::NameToTag               *g_name_to_id                   = nullptr;
-static const char*                                          *g_name_list                    = nullptr;
-static type::type_id                                        *g_base_class_list              = nullptr;
-static type::type_id                                        *g_derived_class_list           = nullptr;
-static detail::reflection_database::rttr_cast_func          *g_conversion_list              = nullptr;
-static detail::reflection_database::get_derived_info_func   *g_get_derived_info_func_list   = nullptr;
-static detail::reflection_database::variant_create_func     *g_variant_create_list          = nullptr;
-static type::type_id                                        *g_raw_type_list                = nullptr;
-static bool                                                 *g_is_class_list                = nullptr;
-static bool                                                 *g_is_enum_list                 = nullptr;
-static bool                                                 *g_is_array_list                = nullptr;
-static bool                                                 *g_is_pointer_list              = nullptr;
-static bool                                                 *g_is_primitive_list            = nullptr;
-static unique_ptr<detail::constructor_container_base>       *g_ctor_list                    = nullptr;
-static unique_ptr<detail::destructor_container_base>        *g_dtor_list                    = nullptr;
-static unique_ptr<detail::enumeration_container_base>       *g_enumeration_list             = nullptr;
-static std::vector<std::unique_ptr<detail::type_converter_base>> *g_type_converter_list     = nullptr;
-static unique_ptr<detail::reflection_database::class_data>  *g_class_data_list              = nullptr;
-static detail::reflection_database::property_map            *g_global_properties            = nullptr;
-static detail::reflection_database::method_map              *g_global_methods               = nullptr;
+static detail::reflection_database::NameToTag               *g_name_to_id                       = nullptr;
+static const char*                                          *g_name_list                        = nullptr;
+static type::type_id                                        *g_base_class_list                  = nullptr;
+static type::type_id                                        *g_derived_class_list               = nullptr;
+static detail::reflection_database::rttr_cast_func          *g_conversion_list                  = nullptr;
+static detail::reflection_database::get_derived_info_func   *g_get_derived_info_func_list       = nullptr;
+static detail::variant_create_func                          *g_variant_create_list              = nullptr;
+static type::type_id                                        *g_raw_type_list                    = nullptr;
+static bool                                                 *g_is_class_list                    = nullptr;
+static bool                                                 *g_is_enum_list                     = nullptr;
+static bool                                                 *g_is_array_list                    = nullptr;
+static bool                                                 *g_is_pointer_list                  = nullptr;
+static bool                                                 *g_is_primitive_list                = nullptr;
+static bool                                                 *g_is_function_pointer_list         = nullptr;
+static bool                                                 *g_is_member_object_pointer_list    = nullptr;
+static bool                                                 *g_is_member_function_pointer_list  = nullptr;
+static std::size_t                                          *g_get_pointer_count_list           = nullptr;
+static unique_ptr<detail::constructor_container_base>       *g_ctor_list                        = nullptr;
+static unique_ptr<detail::destructor_container_base>        *g_dtor_list                        = nullptr;
+static unique_ptr<detail::enumeration_container_base>       *g_enumeration_list                 = nullptr;
+static std::vector<std::unique_ptr<detail::type_converter_base>> *g_type_converter_list         = nullptr;
+static unique_ptr<detail::reflection_database::class_data>  *g_class_data_list                  = nullptr;
+static detail::reflection_database::property_map            *g_global_properties                = nullptr;
+static detail::reflection_database::method_map              *g_global_methods                   = nullptr;
 
-static detail::reflection_database::constructor_container   *g_constructor_list             = nullptr;
-static detail::reflection_database::destructor_container    *g_destructor_list              = nullptr;
-static detail::reflection_database::method_container        *g_method_list                  = nullptr;
-static detail::reflection_database::property_container      *g_property_list                = nullptr;
+static detail::reflection_database::constructor_container   *g_constructor_list                 = nullptr;
+static detail::reflection_database::destructor_container    *g_destructor_list                  = nullptr;
+static detail::reflection_database::method_container        *g_method_list                      = nullptr;
+static detail::reflection_database::property_container      *g_property_list                    = nullptr;
 
 
 static std::mutex register_type_mutex;
@@ -98,30 +102,34 @@ static void init_globals()
 
     detail::reflection_database& db = detail::reflection_database::instance();
 
-    g_name_to_id                = &db.name_to_id;
-    g_name_list                 = db.name_list;
-    g_base_class_list           = db.base_class_list;
-    g_derived_class_list        = db.derived_class_list;
-    g_conversion_list           = db.conversion_list;
-    g_variant_create_list       = db.variant_create_func_list;
-    g_get_derived_info_func_list= db.get_derived_info_func_list;
-    g_raw_type_list             = db.raw_type_list;
-    g_is_class_list             = db.is_class_list;
-    g_is_enum_list              = db.is_enum_list;
-    g_is_array_list             = db.is_array_list;
-    g_is_pointer_list           = db.is_pointer_list;
-    g_is_primitive_list         = db.is_primitive_list;
-    g_class_data_list           = db.class_data_list;
-    g_ctor_list                 = db.constructor_list;
-    g_dtor_list                 = db.destructor_list;
-    g_enumeration_list          = db.enumeration_list;
-    g_global_properties         = &db.global_properties;
-    g_global_methods            = &db.global_methods;
-    g_constructor_list          = &db._constructor_list;
-    g_destructor_list           = &db._destructor_list;
-    g_method_list               = &db._method_list;
-    g_property_list             = &db._property_list;
-    g_type_converter_list       = db.type_converter_list;
+    g_name_to_id                        = &db.name_to_id;
+    g_name_list                         = db.name_list;
+    g_base_class_list                   = db.base_class_list;
+    g_derived_class_list                = db.derived_class_list;
+    g_conversion_list                   = db.conversion_list;
+    g_variant_create_list               = db.variant_create_func_list;
+    g_get_derived_info_func_list        = db.get_derived_info_func_list;
+    g_raw_type_list                     = db.raw_type_list;
+    g_is_class_list                     = db.is_class_list;
+    g_is_enum_list                      = db.is_enum_list;
+    g_is_array_list                     = db.is_array_list;
+    g_is_pointer_list                   = db.is_pointer_list;
+    g_is_primitive_list                 = db.is_primitive_list;
+    g_is_function_pointer_list          = db.is_function_pointer_list;
+    g_is_member_object_pointer_list     = db.is_member_object_pointer_list;
+    g_is_member_function_pointer_list   = db.is_member_function_pointer_list;
+    g_get_pointer_count_list            = db.get_pointer_count_list;
+    g_class_data_list                   = db.class_data_list;
+    g_ctor_list                         = db.constructor_list;
+    g_dtor_list                         = db.destructor_list;
+    g_enumeration_list                  = db.enumeration_list;
+    g_global_properties                 = &db.global_properties;
+    g_global_methods                    = &db.global_methods;
+    g_constructor_list                  = &db._constructor_list;
+    g_destructor_list                   = &db._destructor_list;
+    g_method_list                       = &db._method_list;
+    g_property_list                     = &db._property_list;
+    g_type_converter_list               = db.type_converter_list;
 
     initialized = true;
 }
@@ -134,24 +142,6 @@ std::string type::get_name() const
     {
         const auto db_string = g_name_list[m_id];
         const auto str_length = strlen(db_string);
-// #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-//         short int skip_start = 0;
-//         if (strstr("struct ", db_string))
-//         {
-//             skip_start = 7;
-//         }
-//         else if (strstr("class ", db_string))
-//         {
-//             skip_start = 6;
-//         }
-//         else if (strstr("enum ", db_string))
-//         {
-//             skip_start = 5;
-//         }
-// #endif
-        
-        //std::string type_name(db_string + skip_start, str_length - detail::skip_size_at_end - skip_start);
-        //std::string type_name(db_string + skip_start, str_length - detail::skip_size_at_end);
         return std::string(db_string, str_length - detail::skip_size_at_end);
     }
     else
@@ -218,9 +208,9 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::create_from_ptr(void* ptr) const
+variant type::create_from_ptr(const detail::generic_data_container& data) const
 {
-    return g_variant_create_list[m_id](ptr);
+    return g_variant_create_list[m_id](data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -295,6 +285,35 @@ bool type::is_primitive() const
 {
     return g_is_primitive_list[m_id];
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type::is_function_pointer() const
+{
+    return g_is_function_pointer_list[m_id];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type::is_member_object_pointer() const
+{
+    return g_is_member_object_pointer_list[m_id];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type::is_member_function_pointer() const
+{
+    return g_is_member_function_pointer_list[m_id];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::size_t type::get_pointer_count() const
+{
+    return g_get_pointer_count_list[m_id];
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -708,12 +727,16 @@ type type::register_type(const char* name,
                          const type& raw_type,
                          vector<detail::base_class_info> base_classes,
                          detail::derived_info(*get_derived_func)(void*),
-                         variant(*variant_create_func)(void*),
+                         detail::variant_create_func var_func_ptr,
                          bool is_class,
                          bool is_enum,
                          bool is_array,
                          bool is_pointer,
-                         bool is_primitive)
+                         bool is_primitive,
+                         bool is_function_pointer,
+                         bool is_member_object_pointer,
+                         bool is_member_function_pointer,
+                         std::size_t get_pointer_count)
 {
     std::lock_guard<std::mutex> lock(register_type_mutex);
     using namespace detail;
@@ -733,7 +756,7 @@ type type::register_type(const char* name,
         const type::type_id raw_id = ((raw_type.get_id() == 0) ? db.type_id_counter : raw_type.get_id());
         g_raw_type_list[db.type_id_counter] = raw_id;
         g_get_derived_info_func_list[raw_id]  = get_derived_func;
-        g_variant_create_list[db.type_id_counter] = variant_create_func;
+        g_variant_create_list[db.type_id_counter] = var_func_ptr;
         const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
         int index = 0;
         // remove double entries; can only be happen for virtual inheritance case
@@ -772,11 +795,15 @@ type type::register_type(const char* name,
             }
         }
 
-        db.is_class_list    [ret.first->second] = is_class;
-        db.is_enum_list     [ret.first->second] = is_enum;
-        db.is_array_list    [ret.first->second] = is_array;
-        db.is_pointer_list  [ret.first->second] = is_pointer;
-        db.is_primitive_list[ret.first->second] = is_primitive;
+        db.is_class_list                    [ret.first->second] = is_class;
+        db.is_enum_list                     [ret.first->second] = is_enum;
+        db.is_array_list                    [ret.first->second] = is_array;
+        db.is_pointer_list                  [ret.first->second] = is_pointer;
+        db.is_primitive_list                [ret.first->second] = is_primitive;
+        db.is_function_pointer_list         [ret.first->second] = is_function_pointer;
+        db.is_member_object_pointer_list    [ret.first->second] = is_member_object_pointer;
+        db.is_member_function_pointer_list  [ret.first->second] = is_member_function_pointer;
+        db.get_pointer_count_list           [ret.first->second] = get_pointer_count;
     } // else cannot happen!
 
     return type(ret.first->second);

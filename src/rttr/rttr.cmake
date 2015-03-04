@@ -82,6 +82,7 @@ set(HEADER_FILES constructor.h
                  detail/destructor_container.h
                  detail/destructor_container_base.h
                  detail/get_derived_info_func.h
+                 detail/generic_data_container.h
                  detail/method_accessor.h
                  detail/method_container_base.h
                  detail/method_container.h

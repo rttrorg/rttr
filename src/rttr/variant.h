@@ -218,8 +218,8 @@ class RTTR_API variant
          * When the variant doesn't hold any data it will return false.
          *
          * \remark A variant can also hold `void` data, this is used to indicate that a method call,
-         *         which has no return value, was successfully. In this case, there is no data actually,
-         *         stored, but this function will return true.
+         *         which has no return value, was successfully. In this case, there is no data actually stored,
+         *         but this function will return true.
          * 
          * \return True if this variant is valid, otherwise false.
          */
@@ -244,10 +244,10 @@ class RTTR_API variant
 
         /*!
          * \brief Converts the containing variant internally to the given type \p target_type.
-         *        When the conversion was successfully the function will return true. 
+         *        When the conversion was successfully the function will return \p true. 
          *        When the conversion fails, then the containing variant value stays the same and the function will return false.
          *
-         *        A variant containing a pointer to a custom type will also convert and return true
+         *        A variant containing a pointer to a custom type will also convert and return \p true
          *        for this function if a \ref rttr_cast to the type described by \p target_type would succeed.
          *
          * \see can_convert()
@@ -436,6 +436,7 @@ class RTTR_API variant
                 virtual variant_container_base* clone() const = 0;
 
                 virtual bool can_convert(const type& target_type) const = 0;
+
         };
 
         template<typename T, typename Enable = void>

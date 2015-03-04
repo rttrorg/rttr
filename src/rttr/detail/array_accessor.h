@@ -148,29 +148,46 @@ variant get_value_from_array(const ArrayType& array, std::size_t index, Indices.
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ArrayType, typename B>
+template<typename ArrayValue, typename B>
 struct set_value_to_array_impl;
 
-template<typename ArrayType>
-struct set_value_to_array_impl<ArrayType, std::true_type>
+template<typename ArrayValue>
+struct set_value_to_array_impl<ArrayValue, std::true_type>
 {
     template<typename T1,  typename... Indices>
-    static void set_value(ArrayType& array, const T1& value, std::size_t index, Indices... args)
+    static void set_value(ArrayValue& array, const T1& value, std::size_t index, Indices... args)
     {
-        using sub_type = typename array_mapper<ArrayType>::sub_type;
+        using sub_type = typename std::remove_reference<decltype(array_mapper<ArrayValue>::get_value(array, index))>::type;
         using arg_count_valid = typename std::integral_constant<bool,  sizeof...(Indices) != 0>::type;
-        set_value_to_array_impl<sub_type, arg_count_valid>::set_value(array_mapper<ArrayType>::get_value(array, index), value, args...);
+        set_value_to_array_impl<sub_type, arg_count_valid>::set_value(array_mapper<ArrayValue>::get_value(array, index), value, args...);
     }
 };
 
-template<typename T>
-struct set_value_to_array_impl<T, std::false_type>
+template<typename ArrayValue>
+struct set_value_to_array_impl<ArrayValue, std::false_type>
 {
-    static void set_value(T& array, const T& value)
+    template<typename T>
+    static void set_value(ArrayValue& array, const T& value)
     {
        array = value;
     }
 };
+
+/*!
+ * Specialization for std::vector<bool>::reference, 
+ * because we cannot call a function with an rvalue by reference, like in the default implementation.
+ *
+ */
+template<>
+struct set_value_to_array_impl<std::vector<bool>::reference, std::false_type>
+{
+    template<typename T>
+    static void set_value(std::vector<bool>::reference array, const T& value)
+    {
+       array = value;
+    }
+};
+
 
 template<typename T, size_t N>
 struct set_value_to_array_impl<T[N], std::false_type>
@@ -196,16 +213,16 @@ bool set_value_to_array(ArrayType& array, const F& value, std::size_t index, Ind
 {
     // MSVC is to dumb to let us put this in the argument list
     static_assert(std::is_same<typename rank_type<ArrayType, sizeof...(Indices) + 1>::type, F>::value, "invalid type!");
-    using sub_type = typename array_mapper<ArrayType>::sub_type;
+    using sub_type = typename std::remove_reference<decltype(array_mapper<ArrayType>::get_value(array, index))>::type;
     using go_one_dim_deeper = typename std::integral_constant<bool,  sizeof...(Indices) != 0>::type;
     set_value_to_array_impl<sub_type, go_one_dim_deeper>::set_value(array_mapper<ArrayType>::get_value(array, index), value, args...);
     return true;
 }
 
-template<typename T>
-bool set_value_to_array(T& arg, const T& value)
+template<typename ArrayValue, typename T>
+bool set_value_to_array(ArrayValue& arg, const T& value)
 {
-    set_value_to_array_impl<T, std::false_type>::set_value(arg, value);
+    set_value_to_array_impl<ArrayValue, std::false_type>::set_value(arg, value);
     return true;
 }
 

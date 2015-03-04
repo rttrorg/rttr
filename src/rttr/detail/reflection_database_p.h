@@ -54,7 +54,6 @@ class RTTR_LOCAL reflection_database
         static reflection_database& instance() { static reflection_database obj; return obj; }
 
         typedef void*(*rttr_cast_func)(void*);
-        typedef variant (*variant_create_func)(void*);
         typedef derived_info(*get_derived_info_func)(void*);
 
 
@@ -137,7 +136,7 @@ class RTTR_LOCAL reflection_database
         type::type_id                                       base_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type its base classes
         type::type_id                                       derived_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];     // this list contains for every type its derived classes
         rttr_cast_func                                      conversion_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type a conversion function to its base classes
-        variant_create_func                                 variant_create_func_list[RTTR_MAX_TYPE_COUNT];                              // this list contains for every type a create function to a variant
+        detail::variant_create_func                         variant_create_func_list[RTTR_MAX_TYPE_COUNT];                              // this list contains for every type a create function to a variant
         get_derived_info_func                               get_derived_info_func_list[RTTR_MAX_TYPE_COUNT];
         type::type_id                                       raw_type_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_class_list[RTTR_MAX_TYPE_COUNT];
@@ -145,6 +144,10 @@ class RTTR_LOCAL reflection_database
         bool                                                is_array_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_pointer_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_primitive_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                is_function_pointer_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                is_member_object_pointer_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                is_member_function_pointer_list[RTTR_MAX_TYPE_COUNT];
+        std::size_t                                         get_pointer_count_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<class_data>                         class_data_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<constructor_container_base>         constructor_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<destructor_container_base>          destructor_list[RTTR_MAX_TYPE_COUNT];

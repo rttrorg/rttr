@@ -215,25 +215,92 @@ struct raw_type_info<T, false>
     static RTTR_INLINE type get_type() { return MetaTypeInfo<typename detail::raw_type<T>::type>::get_type(); }
 };
 
-template <typename T>
+
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename T, typename Enable>
 struct MetaTypeInfo
+{
+    static type get_type()
+    {
+        // when you get an error here, then the type was not completely defined 
+        // (a forward declaration is not enough because base_classes will not be found)
+        typedef char type_must_be_complete[ sizeof(T) ? 1: -1 ];
+        (void) sizeof(type_must_be_complete);
+        static const type val = rttr::type::register_type(f<T>(),
+                                                          raw_type_info<T>::get_type(),
+                                                          std::move(::rttr::detail::base_classes<T>::get_types()),
+                                                          ::rttr::detail::get_most_derived_info_func<T>(),
+                                                          ::rttr::detail::variant_creater<T>::create(),
+                                                          std::is_class<T>::value,
+                                                          std::is_enum<T>::value,
+                                                          ::rttr::detail::is_array<T>::value,
+                                                          std::is_pointer<T>::value,
+                                                          std::is_arithmetic<T>::value,
+                                                          ::rttr::detail::is_function_ptr<T>::value,
+                                                          std::is_member_object_pointer<T>::value,
+                                                          std::is_member_function_pointer<T>::value,
+                                                          ::rttr::detail::pointer_count<T>::value);
+        return val;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template <>
+struct MetaTypeInfo<void>
+{
+    static type get_type()
+    {
+        static const type val = rttr::type::register_type(f<void>(),
+                                                          raw_type_info<void>::get_type(),
+                                                          std::vector<detail::base_class_info>(),
+                                                          ::rttr::detail::get_most_derived_info_func<void>(),
+                                                          nullptr,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false,
+                                                          false);
+        return val;
+    }
+};
+
+// explicit specializations for function types
+
+template <typename T>
+struct MetaTypeInfo<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type()
     {
         static const type val = rttr::type::register_type(f<T>(),
                                                           raw_type_info<T>::get_type(),
-                                                          std::move(::rttr::detail::base_classes<T>::get_types()),
+                                                          std::vector<detail::base_class_info>(),
                                                           ::rttr::detail::get_most_derived_info_func<T>(),
-                                                          ::rttr::detail::get_create_variant_func<T>(),
+                                                          ::rttr::detail::variant_creater<T>::create(),
                                                           std::is_class<T>::value,
                                                           std::is_enum<T>::value,
                                                           ::rttr::detail::is_array<T>::value,
                                                           std::is_pointer<T>::value,
-                                                          std::is_arithmetic<T>::value);
+                                                          std::is_arithmetic<T>::value,
+                                                          ::rttr::detail::is_function_ptr<T>::value,
+                                                          std::is_member_object_pointer<T>::value,
+                                                          std::is_member_function_pointer<T>::value,
+                                                          ::rttr::detail::pointer_count<T>::value);
         return val;
     }
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 struct auto_register_type;

@@ -187,6 +187,54 @@ struct array_mapper<std::array<T, N> >
     }
 };
 
+ //////////////////////////////////////////////////////////////////////////////////////
+ // specialization for std::vector<bool>, because this is not really a vector
+
+ template <>
+ struct array_mapper<std::vector<bool> >
+ {
+    using raw_type          = array_mapper<bool>::raw_type;
+    using sub_type          = bool;
+
+    static bool is_dynamic()
+    {
+        return true;
+    }
+
+    static std::size_t get_size(const std::vector<bool>& arr)
+    {
+        return arr.size();
+    }
+
+    static bool set_size(std::vector<bool>& arr, std::size_t new_size)
+    {
+        arr.resize(new_size);
+        return true;
+    }
+    
+    static std::vector<bool>::const_reference get_value(const std::vector<bool>& arr, std::size_t index)
+    {
+        return arr[index];
+    }
+    
+    static std::vector<bool>::reference get_value(std::vector<bool>& arr, std::size_t index)
+    {
+        return arr[index];
+    }
+
+    static bool insert_value(std::vector<bool>& arr, const bool& value, std::size_t index)
+    {
+        arr.insert(arr.begin() + index, value);
+        return true;
+    }
+
+    static bool remove_value(std::vector<bool>& arr, std::size_t index)
+    {
+        arr.erase(arr.begin() + index);
+        return true;
+    }
+};
+
 //////////////////////////////////////////////////////////////////////////////////////
 
  template <typename T>
