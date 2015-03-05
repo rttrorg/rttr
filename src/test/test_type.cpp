@@ -127,6 +127,13 @@ TEST_CASE("TypeInfoTests - ComplexerTypes", "[type]")
     CHECK((type::get(myMap) == type::get(myMap2)));
 
     CHECK((type::get(myMap) != type::get<std::map<int, int> >()));
+    
+    // check typedef
+    typedef std::map<int, std::string> MyMap;
+    CHECK((type::get<MyMap>() == type::get<std::map<int, std::string>>()));
+    MyMap obj;
+    std::map<int, std::string> obj2;
+    CHECK(type::get(obj) == type::get(obj2));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
