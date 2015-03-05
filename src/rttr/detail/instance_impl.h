@@ -25,102 +25,86 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef TEST_PROPERTY_REFLECTION_H_
-#define TEST_PROPERTY_REFLECTION_H_
+#ifndef __RTTR_INSTANCE_IMPL_H__
+#define __RTTR_INSTANCE_IMPL_H__
 
-#include <rttr/type>
+#include "rttr/variant.h"
+#include "rttr/type.h"
 
-struct property_test
+namespace rttr
 {
-    property_test() : _p1(0), _p2(12), _p3(true), _p4(23) 
-    {
-        _array.resize(1000); 
-        for (int i = 0; i < 100; ++i)
-            _other_array[i] = i;
-    }
-    virtual ~property_test() {}
-
-    const std::string& get_p7() const { return _p7; }
-    void set_p7(const std::string& text) { _p7 = text; }
-    int get_prop() const volatile { return 22; }
-   
-    int                 _p1;
-    short int           _p2;
-    bool                _p3;
-    const double        _p4;
-    static int          _p5;
-    static const int    _p6;
-    std::string         _p7;
-    double*             _p8;
-    std::vector<int>    _array;
-    int                 _other_array[100];
-
-    RTTR_REGISTER_FRIEND;
-};
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// test derived properties
-
-namespace ns_property
+namespace detail
 {
-struct top
-{
-    virtual ~top() {}
-    top() : _p1(12){}
-    int _p1;
-    RTTR_ENABLE()
-};
+
+RTTR_INLINE instance::instance() : _data(nullptr), _type(impl::get_invalid_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct left : virtual top
+RTTR_INLINE instance::instance(variant& var)
+:   _data(var.get_raw_ptr()),
+    _type(var.get_raw_type())
 {
-
-    left() : _p2(true){}
-    bool _p2;
-
-    RTTR_ENABLE(top)
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct right : virtual top
-{
-
-    right() : _p3(true){}
-    bool _p3;
-
-    RTTR_ENABLE(top)
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct right_2
-{
-    virtual ~right_2() {}
-    right_2() : _p4(true){}
-    bool _p4;
-    RTTR_ENABLE()
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-typedef void(*func_ptr)(int);
-
-struct bottom : left, right, right_2
-{
-    bottom() : _p5(23.0){}
-    void set_function_cb(func_ptr cb) { m_funcPtr = cb; }
-    func_ptr get_function_cb() const { return m_funcPtr; }
-
-    double _p5;
-    func_ptr m_funcPtr;
-
-    RTTR_ENABLE(left, right, right_2)
-};
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // TEST_PROPERTY_REFLECTION_H_
+RTTR_INLINE instance::instance(const instance& other)
+:   _data(other._data),
+    _type(other._type)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE instance::instance(instance&& other)
+:   _data(other._data),
+    _type(other._type)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
+:   _data(detail::get_void_ptr(data)),
+    _type(rttr::type::get<typename raw_type<T>::type>())
+{
+    static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
+:   _data(detail::get_void_ptr(data)),
+    _type(rttr::type::get<typename raw_type<T>::type>())
+{
+    static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename TargetType>
+RTTR_INLINE TargetType* instance::try_convert() const
+{
+    return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->_data, _type, type::get<TargetType>())));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool instance::is_valid() const { return (_data != nullptr); }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE instance::operator bool() const { return (_data != nullptr); }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE type instance::get_type() const { return _type; }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // __RTTR_INSTANCE_IMPL_H__

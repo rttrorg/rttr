@@ -64,6 +64,10 @@ enum E_MetaData
     DESCRIPTION = 2
 };
 
+static void my_callback(int)
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 static const double pi = 3.124256;
@@ -118,7 +122,9 @@ RTTR_REGISTER
 
     class_<ns_property::bottom>()
         .constructor<>()
-        .property("p5", &ns_property::bottom::_p5);
+        .property("p5", &ns_property::bottom::_p5)
+        .property("callback", &ns_property::bottom::get_function_cb, &ns_property::bottom::set_function_cb);
+
     /////////////////////////////////////////
 
     property_readonly_("PI", &pi);
@@ -492,14 +498,17 @@ TEST_CASE("Test property inheritance", "[property]")
 {
     type t = type::get<ns_property::bottom>();
     auto props = t.get_properties();
-    REQUIRE(props.size() == 6);
+    REQUIRE(props.size() == 7);
 
     REQUIRE(props[0].get_name() == "p5"); // bottom
-    REQUIRE(props[1].get_name() == "p2"); // left
-    REQUIRE(props[2].get_name() == "p3"); // right
-    REQUIRE(props[3].get_name() == "p2"); // right
-    REQUIRE(props[4].get_name() == "p1"); // top
-    REQUIRE(props[5].get_name() == "p4"); // right
+    REQUIRE(props[1].get_name() == "callback"); // bottom
+    REQUIRE(props[2].get_name() == "p2"); // left
+    REQUIRE(props[3].get_name() == "p3"); // right
+    REQUIRE(props[4].get_name() == "p2"); // right
+    REQUIRE(props[5].get_name() == "p1"); // top
+    REQUIRE(props[6].get_name() == "p4"); // right
+    
+    
 
     REQUIRE(props[5] == props[5]);
     REQUIRE(props[5] != props[1]);
@@ -515,15 +524,15 @@ TEST_CASE("Test property inheritance", "[property]")
     REQUIRE(instance._p5 == 42.0);
     
     // and now the other way around, from bottom a top property
-    ret = props[4].get_value(&instance);
+    ret = props[5].get_value(&instance);
     REQUIRE(ret.is_type<int>() == true);
     REQUIRE(ret.get_value<int>() == 12);
     // try to change the value
-    props[4].set_value(top, 2000);
+    props[5].set_value(top, 2000);
     REQUIRE(instance._p1 == 2000);
 
     // check double declared property is from left class
-    REQUIRE(props[1].get_declaring_type() == type::get<ns_property::left>());
+    REQUIRE(props[2].get_declaring_type() == type::get<ns_property::left>());
     // the right class has still its property?
     REQUIRE(type::get<ns_property::right>().get_property("p2").is_valid() == true);
 
@@ -577,6 +586,10 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
         bool success = type::get(bottom).set_property_value("p5", obj, 500.0);
         REQUIRE(success == true);
         REQUIRE(bottom._p5 == 500.0);
+
+        auto cb = &my_callback;
+        success = type::get(bottom).set_property_value("callback", obj, cb);
+        REQUIRE(bottom.m_funcPtr == cb);
     }
     
     SECTION("test set global property")

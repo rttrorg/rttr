@@ -31,6 +31,10 @@
 #include <rttr/type>
 #include <string>
 
+static void my_global_func(int value)
+{
+}
+
 struct method_test
 {
     virtual ~method_test() {}
@@ -50,7 +54,7 @@ struct method_test
     int method_5(int, double)       { method_5_overloaded_called = true; return 42; }   // overloaded method
     int method_5(int, double) const { return 23; }   // second overloaded method, with const
 
-    void method_fun_ptr_arg(void(*func_ptr)(int)) { method_func_ptr_arg_called = true; }
+    void method_fun_ptr_arg(void(*func_ptr)(int)) { method_func_ptr_arg_called = true; m_func_ptr = func_ptr; }
     
     double dummy_data = 12;
     std::string dummy_text = "Hello World";
@@ -69,6 +73,7 @@ struct method_test
     bool method_default_arg_called  = false;
     bool method_raw_array_called    = false;
     bool method_func_ptr_arg_called = false;
+    void(*m_func_ptr)(int)          = nullptr;
 
     RTTR_ENABLE()
 };

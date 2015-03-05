@@ -224,9 +224,11 @@ TEST_CASE("Test method", "[method]")
     ////////////////////////////////////////
     // function pointer argument
     typedef void(*func_ptr)(int);
-    func_ptr func = nullptr;
+    func_ptr func = &my_global_func;
     ret = t_meth.get_method("method_fun_ptr_arg").invoke(obj, func);
     REQUIRE(obj.method_func_ptr_arg_called == true);
+    REQUIRE(obj.m_func_ptr == &my_global_func);
+    
 
     ////////////////////////////////////////
     t_meth.get_method("method_default").invoke(derived_inst, 3);

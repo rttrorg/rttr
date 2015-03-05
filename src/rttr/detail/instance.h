@@ -30,14 +30,14 @@
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc_type_traits.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
 
 namespace rttr
 {
+class variant;
+class type;
+
 namespace detail
 {
-
 class argument;
 /*!
  * This class is used for forwarding the instance of an object to the function calls.
@@ -47,52 +47,27 @@ class argument;
 class instance
 {
 public:
-    instance() : _data(nullptr), _type(impl::get_invalid_type()) {}
+    instance();
 
-    instance(variant& var) 
-    :   _data(var.get_raw_ptr()),
-        _type(var.get_raw_type())
-    {
-    }
+    instance(variant& var);
 
-    instance(const instance& other) 
-    :   _data(other._data),
-        _type(other._type)
-    {
-    }
+    instance(const instance& other);
 
-    instance(instance&& other) 
-    :   _data(other._data),
-        _type(other._type)
-    {
-    }
+    instance(instance&& other);
 
     template<typename T>
-    instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0) 
-    :   _data(detail::get_void_ptr(data)),
-        _type(rttr::type::get<typename raw_type<T>::type>())
-    {
-        static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
-    }
+    instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
 
     template<typename T>
-    instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0) 
-    :   _data(detail::get_void_ptr(data)),
-        _type(rttr::type::get<typename raw_type<T>::type>())
-    {
-        static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
-    }
+    instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
 
     template<typename TargetType>
-    TargetType* try_convert() const
-    {
-        return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->_data, _type, type::get<TargetType>())));
-    }
+    TargetType* try_convert() const;
 
-    bool is_valid() const { return (_data != nullptr); }
-    operator bool() const { return (_data != nullptr); }
+    bool is_valid() const;
+    explicit operator bool() const;
 
-    type get_type() const { return _type; }
+    type get_type() const;
 
 private:
     instance& operator=(const instance& other);
@@ -103,6 +78,12 @@ private:
 };
 
 } // end namespace detail
+} // end namespace rttr
+
+#include "rttr/detail/instance_impl.h"
+
+namespace rttr
+{
 
 /*!
  * \brief Returns a dummy instance object.

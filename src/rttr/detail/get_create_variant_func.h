@@ -31,7 +31,7 @@
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/variant.h"
 #include "rttr/detail/misc_type_traits.h"
-#include "rttr/detail/generic_data_container.h"
+#include "rttr/detail/argument.h"
 #include <type_traits>
 
 namespace rttr
@@ -46,44 +46,19 @@ namespace detail
  * With the create_variant function it is possible to perform a rttr_cast internally in variant.
  * So basically a conversion of source_type* to target_type*.
  *
- * Template arguments cannot be forwarded at runtime to some derived or base classes, 
- * thats why we have to work with a base type, which is void*.
+ * Template arguments cannot be forwarded at runtime to some derived or base classes.
  */
 
 template<typename T>
-variant create_invalid_variant(const generic_data_container& data)
+variant create_invalid_variant(const argument& data)
 {
     return variant();
 }
 
 template<typename T>
-variant create_from_obj_ptr(const generic_data_container& data)
+variant create_variant(const argument& data)
 {
-    return static_cast<T>(const_cast<void*>(data.m_obj_ptr));
-}
-
-template<typename T>
-variant create_from_obj(const generic_data_container& data)
-{
-    return *static_cast<T*>(const_cast<void*>(data.m_obj_ptr));
-}
-
-template<typename T>
-variant create_from_mem_obj_ptr(const generic_data_container& data)
-{
-    return reinterpret_cast<T>(const_cast<void_mem_obj_ptr>(data.m_mem_obj_ptr));
-}
-
-template<typename T>
-variant create_from_func_ptr(const generic_data_container& data)
-{
-    return reinterpret_cast<T>(data.m_func_ptr);
-}
-
-template<typename T>
-variant create_from_mem_func_ptr(const generic_data_container& data)
-{
-    return reinterpret_cast<T>(data.m_mem_func_ptr);
+    return data.get_value<T>();
 }
 
 
@@ -91,35 +66,14 @@ variant create_from_mem_func_ptr(const generic_data_container& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-typedef variant(*variant_create_func)(const generic_data_container&);
+typedef variant(*variant_create_func)(const argument&);
 
 template<typename Source_Type, typename Enable = void>
 struct variant_creater
 {
     static variant_create_func create()
     {
-        return create_from_obj<Source_Type>;
-    }
-};
-
-template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<std::is_pointer<Source_Type>::value &&
-                                                            !is_function_ptr<Source_Type>::value &&
-                                                            !std::is_member_object_pointer<Source_Type>::value &&
-                                                            !std::is_member_function_pointer<Source_Type>::value>::type>
-{
-    static variant_create_func create()
-    {
-        return create_from_obj_ptr<Source_Type>;
-    }
-};
-
-template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<is_function_ptr<Source_Type>::value>::type>
-{
-    static variant_create_func create()
-    {
-        return create_from_func_ptr<Source_Type>;
+        return create_variant<Source_Type>;
     }
 };
 
@@ -129,25 +83,6 @@ struct variant_creater<Source_Type, typename std::enable_if<std::is_function<Sou
     static variant_create_func create()
     {
         return create_invalid_variant<Source_Type>;
-    }
-};
-
-template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<std::is_member_object_pointer<Source_Type>::value>::type>
-{
-    static variant_create_func create()
-    {
-        return create_from_mem_obj_ptr<Source_Type>;;
-    }
-};
-
-
-template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<std::is_member_function_pointer<Source_Type>::value>::type>
-{
-    static variant_create_func create()
-    {
-        return create_from_mem_func_ptr<Source_Type>;
     }
 };
 

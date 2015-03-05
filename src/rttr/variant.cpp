@@ -29,13 +29,10 @@
 
 #include "rttr/detail/std_conversion_functions.h"
 #include "rttr/variant_array.h"
-#include "rttr/detail/generic_data_container.h"
+#include "rttr/detail/argument.h"
 #include <limits>
-
 #include <string>
 
-// needed for type::get<void>()
-#include "rttr/rttr_enable.h"
 #include "rttr/detail/array_container.h"
 
 namespace rttr
@@ -157,20 +154,21 @@ bool variant::convert(const type& target_type)
     {
         if (const auto& converter = source_type.get_type_converter(target_type))
         {
-            void* data = _holder->get_ptr();
-            new_var = converter->to_variant(data, ok);
+            void* raw_ptr = _holder->get_ptr();
+            new_var = converter->to_variant(raw_ptr, ok);
         }
         else if (source_type.is_pointer())
         {
             if (source_type.get_pointer_count() == 1 && target_type.get_pointer_count() == 1)
             {
-                void* data = _holder->get_raw_ptr();
-                void* d_ptr = type::apply_offset(data, source_type, target_type);
-                if (d_ptr)
+                void* raw_ptr = _holder->get_raw_ptr();
+                void* casted_ptr = type::apply_offset(raw_ptr, source_type, target_type);
+                if (casted_ptr)
                 {
-                    detail::generic_data_container container;
-                    container.m_obj_ptr = d_ptr;
-                    new_var = target_type.create_from_ptr(container);
+                    detail::argument data(casted_ptr);
+                    // although we forward a void* to create a variant,
+                    // it will create a variant for the specific class type
+                    new_var = target_type.create_variant(data);
                     if (new_var.is_valid())
                         ok = true;
                 }

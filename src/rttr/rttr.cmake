@@ -69,6 +69,7 @@ set(HEADER_FILES constructor.h
                  impl/variant_default_types_impl.h
                  impl/variant_array_impl.h
                  detail/argument.h
+                 detail/argument_impl.h
                  detail/array_mapper.h
                  detail/array_container.h
                  detail/array_container_base.h
@@ -76,13 +77,13 @@ set(HEADER_FILES constructor.h
                  detail/accessor_type.h
                  detail/base_classes.h
                  detail/instance.h
+                 detail/instance_impl.h
                  detail/get_create_variant_func.h
                  detail/constructor_container.h
                  detail/constructor_container_base.h
                  detail/destructor_container.h
                  detail/destructor_container_base.h
                  detail/get_derived_info_func.h
-                 detail/generic_data_container.h
                  detail/method_accessor.h
                  detail/method_container_base.h
                  detail/method_container.h

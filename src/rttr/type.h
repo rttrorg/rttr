@@ -29,7 +29,6 @@
 #define __RTTR_TYPE_H__
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/generic_data_container.h"
 
 #include <type_traits>
 #include <vector>
@@ -57,7 +56,7 @@ struct derived_info;
 struct base_class_info;
 struct type_converter_base;
 
-typedef variant(*variant_create_func)(const generic_data_container&);
+typedef variant(*variant_create_func)(const argument&);
 } // end namespace detail
 
 namespace impl
@@ -326,45 +325,43 @@ class RTTR_API type
 
         /*!
          * \brief Returns true whether the given type represents a pointer.
+         *        e.g. `int*`, or `bool*`
          *
          * \return True if the type is a pointer, otherwise false.
          */
         bool is_pointer() const;
 
         /*!
-         * \brief Returns true whether the given type represents an primitive type (e.g. `int`, `bool`, etc.).
+         * \brief Returns true whether the given type represents an primitive type.
+         *        e.g. `int`, `bool`, etc...
          *
          * \return True if the type is a primitive type, otherwise false.
          */
         bool is_primitive() const;
 
         /*!
-         * \brief Returns true whether the given type represents a pointer to a function (e.g. `void (*)(void)`).
+         * \brief Returns true whether the given type represents a pointer to a function 
+         *        e.g. `void (*)(void)`
          *
          * \return True if the type is a function pointer, otherwise false.
          */
         bool is_function_pointer() const;
 
         /*!
-         * \brief Returns true whether the given type represents a pointer to a member object (e.g. `int (MyClass::*)`).
+         * \brief Returns true whether the given type represents a pointer to a member object.
+         *        e.g. `int (MyClass::*)`
          *
          * \return True if the type is a member object pointer, otherwise false.
          */
         bool is_member_object_pointer() const;
 
         /*!
-         * \brief Returns true whether the given type represents a pointer to a member function (e.g. `void (MyClass::*)(void)`).
+         * \brief Returns true whether the given type represents a pointer to a member function.
+         *        e.g. `void (MyClass::*)(void)`
          *
          * \return True if the type is a member function pointer type, otherwise false.
          */
         bool is_member_function_pointer() const;
-
-        /*!
-         * \brief Returns the amount of pointers in the type. E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
-         *
-         * \return The pointer count.
-         */
-        std::size_t get_pointer_count() const;
 
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.
@@ -650,6 +647,14 @@ class RTTR_API type
          */
         detail::type_converter_base* get_type_converter(const type& target_type) const;
 
+        /*!
+         * \brief Returns the amount of pointers in the type. E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
+         *
+         * \return The pointer count.
+         */
+        std::size_t get_pointer_count() const;
+
+
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
@@ -679,8 +684,8 @@ class RTTR_API type
 
         void register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const;
 
-        //! Creates a variant from the given container data pointer.
-        variant create_from_ptr(const detail::generic_data_container& data) const;
+        //! Creates a variant from the given argument data.
+        variant create_variant(const detail::argument& data) const;
 
         template<typename T, typename Enable>
         friend struct impl::MetaTypeInfo;

@@ -30,15 +30,16 @@
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc_type_traits.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
-#include "rttr/variant_array.h"
 
 #include <type_traits>
 #include <utility>
 
 namespace rttr
 {
+class type;
+class variant;
+class variant_array;
+
 namespace detail
 {
 class instance;
@@ -51,49 +52,30 @@ class instance;
 class argument
 {
 public:
-    argument() : _data(nullptr), _type(impl::get_invalid_type()) {}
+    argument();
 
-    argument(argument&& arg) : _data(arg._data), _type(arg._type) {}
-    argument(const argument& other) : _data(other._data), _type(other._type) {}
-    argument(variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}
-    argument(const variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}
-    argument(variant_array& var) : _data(var.get_ptr()), _type(var.get_type()) {}
-    argument(const variant_array& var) : _data(var.get_ptr()), _type(var.get_type()) {}
-
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0) 
-    :   _data(reinterpret_cast<const void*>(std::addressof(data))),
-        _type(rttr::type::get<T>())
-    {
-        static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
-    }
+    argument(argument&& arg);
+    argument(const argument& other);
+    argument(variant& var);
+    argument(const variant& var);
+    argument(variant_array& var);
+    argument(const variant_array& var);
 
     template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0) 
-    :   _data(reinterpret_cast<const void*>(std::addressof(data))),
-        _type(rttr::type::get<T>())
-    {
-        static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
-    }
+    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
 
     template<typename T>
-    bool is_type()  const { return rttr::type::get<T>() == _type; }
-    type get_type() const { return _type; }
-    void* get_ptr() const { return const_cast<void *>(_data); }
+    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
 
     template<typename T>
-    T& get_value() const
-    {
-        using raw_type = typename std::remove_reference<T>::type;
-        return (*reinterpret_cast<raw_type*>(const_cast<void *>(_data)));
-    }
+    bool is_type() const;
+    type get_type() const;
+    void* get_ptr() const;
 
-    argument& operator=(const argument& other)
-    {
-        _data = other._data;
-        const_cast<rttr::type&>(_type) = other._type;
-        return *this;
-    }
+    template<typename T>
+    T& get_value() const;
+
+    argument& operator=(const argument& other);
 
 private:
     const void*         _data;
@@ -102,5 +84,7 @@ private:
 
 } // end namespace detail
 } // end namespace rttr
+
+#include "rttr/detail/argument_impl.h"
 
 #endif // __RTTR_ARGUMENT_H__

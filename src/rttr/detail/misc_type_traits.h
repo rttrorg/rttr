@@ -29,6 +29,7 @@
 #define __RTTR_MISC_TYPE_TRAITS_H__
 
 #include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/function_traits.h"
 
 #include "rttr/detail/array_mapper.h"
 
@@ -339,15 +340,17 @@ namespace detail
     // e.g. pointer_count<char**>::value => 2
     //      pointer_count<char*>::value  => 1
     //      pointer_count<char>::value   => 0
-    template<typename T>
+    template<typename T, typename Enable = void>
     struct pointer_count_impl
     {
         static const std::size_t size = 0;
     };
 
-
     template<typename T>
-    struct pointer_count_impl<T*>
+    struct pointer_count_impl<T*, typename std::enable_if<std::is_pointer<T*>::value &&
+                                                          !is_function_ptr<T*>::value &&
+                                                          !std::is_member_object_pointer<T*>::value &&
+                                                          !std::is_member_function_pointer<T*>::value>::type>
     {
         static const std::size_t size = pointer_count_impl<T>::size + 1;
     };

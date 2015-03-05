@@ -208,7 +208,7 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::create_from_ptr(const detail::generic_data_container& data) const
+variant type::create_variant(const detail::argument& data) const
 {
     return g_variant_create_list[m_id](data);
 }
