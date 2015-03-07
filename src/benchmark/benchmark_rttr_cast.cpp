@@ -72,12 +72,6 @@ void print_stats(const std::string& text, const chrono::high_resolution_clock::d
               << std::endl;
 }
 
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique_impl(Args&&... args)
-{
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-
 
 void bench_single_inheritance_level_1()
 {
@@ -85,11 +79,11 @@ void bench_single_inheritance_level_1()
     vec.reserve(ITEM_COUNT * 5);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassSingle1A>());
-        vec.push_back(make_unique_impl<ClassSingle1B>());
-        vec.push_back(make_unique_impl<ClassSingle1C>());
-        vec.push_back(make_unique_impl<ClassSingle1D>());
-        vec.push_back(make_unique_impl<ClassSingle1E>());
+        vec.push_back(detail::make_unique<ClassSingle1A>());
+        vec.push_back(detail::make_unique<ClassSingle1B>());
+        vec.push_back(detail::make_unique<ClassSingle1C>());
+        vec.push_back(detail::make_unique<ClassSingle1D>());
+        vec.push_back(detail::make_unique<ClassSingle1E>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -172,11 +166,11 @@ void bench_single_inheritance_level_3()
     vec.reserve(ITEM_COUNT * 5);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassSingle3A>());
-        vec.push_back(make_unique_impl<ClassSingle3B>());
-        vec.push_back(make_unique_impl<ClassSingle3C>());
-        vec.push_back(make_unique_impl<ClassSingle3D>());
-        vec.push_back(make_unique_impl<ClassSingle3E>());
+        vec.push_back(detail::make_unique<ClassSingle3A>());
+        vec.push_back(detail::make_unique<ClassSingle3B>());
+        vec.push_back(detail::make_unique<ClassSingle3C>());
+        vec.push_back(detail::make_unique<ClassSingle3D>());
+        vec.push_back(detail::make_unique<ClassSingle3E>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -260,11 +254,11 @@ void bench_single_inheritance_level_6()
     vec.reserve(ITEM_COUNT * 5);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassSingle6A>());
-        vec.push_back(make_unique_impl<ClassSingle6B>());
-        vec.push_back(make_unique_impl<ClassSingle6C>());
-        vec.push_back(make_unique_impl<ClassSingle6D>());
-        vec.push_back(make_unique_impl<ClassSingle6E>());
+        vec.push_back(detail::make_unique<ClassSingle6A>());
+        vec.push_back(detail::make_unique<ClassSingle6B>());
+        vec.push_back(detail::make_unique<ClassSingle6C>());
+        vec.push_back(detail::make_unique<ClassSingle6D>());
+        vec.push_back(detail::make_unique<ClassSingle6E>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -348,9 +342,9 @@ void bench_virtual_inheritance_level_1()
     vec.reserve(ITEM_COUNT * 3);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassDiamondLeft1>());
-        vec.push_back(make_unique_impl<ClassDiamondMiddle1>());
-        vec.push_back(make_unique_impl<ClassDiamondRight1>());
+        vec.push_back(detail::make_unique<ClassDiamondLeft1>());
+        vec.push_back(detail::make_unique<ClassDiamondMiddle1>());
+        vec.push_back(detail::make_unique<ClassDiamondRight1>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -420,9 +414,9 @@ void bench_virtual_inheritance_level_3()
     vec.reserve(ITEM_COUNT * 3);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassDiamondLeft3>());
-        vec.push_back(make_unique_impl<ClassDiamondMiddle3>());
-        vec.push_back(make_unique_impl<ClassDiamondRight3>());
+        vec.push_back(detail::make_unique<ClassDiamondLeft3>());
+        vec.push_back(detail::make_unique<ClassDiamondMiddle3>());
+        vec.push_back(detail::make_unique<ClassDiamondRight3>());
     }
 
    chrono::high_resolution_clock::duration elapsedTime_1;
@@ -492,9 +486,9 @@ void bench_virtual_inheritance_level_6()
     vec.reserve(ITEM_COUNT * 3);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassDiamondLeft6>());
-        vec.push_back(make_unique_impl<ClassDiamondMiddle6>());
-        vec.push_back(make_unique_impl<ClassDiamondRight6>());
+        vec.push_back(detail::make_unique<ClassDiamondLeft6>());
+        vec.push_back(detail::make_unique<ClassDiamondMiddle6>());
+        vec.push_back(detail::make_unique<ClassDiamondRight6>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -564,13 +558,13 @@ void bench_multiple_class_hierachy_end()
     vec.reserve(ITEM_COUNT * 7);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<FinalClass>());
-        vec.push_back(make_unique_impl<ClassMultiple5A>());
-        vec.push_back(make_unique_impl<FinalClass>());
-        vec.push_back(make_unique_impl<ClassMultiple4A>());
-        vec.push_back(make_unique_impl<FinalClass>());
-        vec.push_back(make_unique_impl<ClassMultiple5A>());
-        vec.push_back(make_unique_impl<FinalClass>());
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple5A>());
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple4A>());
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple5A>());
+        vec.push_back(detail::make_unique<FinalClass>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -623,8 +617,8 @@ void bench_cross_cast_1()
     vec.reserve(ITEM_COUNT * 2);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<FinalClass>());
-        vec.push_back(make_unique_impl<ClassMultiple6A>());
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple6A>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -677,8 +671,8 @@ void bench_cross_cast_2()
     vec.reserve(ITEM_COUNT * 2);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<FinalClass>());
-        vec.push_back(make_unique_impl<ClassMultiple6A>());
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple6A>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;
@@ -731,11 +725,11 @@ void bench_type_get_vs_typeid()
     vec.reserve(ITEM_COUNT * 5);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
-        vec.push_back(make_unique_impl<ClassSingle6A>());
-        vec.push_back(make_unique_impl<ClassSingle6B>());
-        vec.push_back(make_unique_impl<ClassSingle6C>());
-        vec.push_back(make_unique_impl<ClassSingle6D>());
-        vec.push_back(make_unique_impl<ClassSingle6E>());
+        vec.push_back(detail::make_unique<ClassSingle6A>());
+        vec.push_back(detail::make_unique<ClassSingle6B>());
+        vec.push_back(detail::make_unique<ClassSingle6C>());
+        vec.push_back(detail::make_unique<ClassSingle6D>());
+        vec.push_back(detail::make_unique<ClassSingle6E>());
     }
 
     chrono::high_resolution_clock::duration elapsedTime_1;

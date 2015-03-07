@@ -70,14 +70,15 @@ void constructor_impl(std::vector< rttr::metadata > data)
 {
     using namespace std;
     const type type = type::get<ClassType>();
-    unique_ptr<detail::constructor_container_base> ctor(new detail::constructor_container<ClassType, Args...>());
+    auto ctor = detail::make_unique<detail::constructor_container<ClassType, Args...>>();
     // register the type with the following call:
     ctor->get_instanciated_type();
     ctor->get_parameter_types();
 
     impl::store_metadata(ctor, data);
     impl::register_constructor(type, move(ctor));
-    impl::register_destructor(type, unique_ptr<detail::destructor_container_base>(new detail::destructor_container<ClassType>()));
+    impl::register_destructor(type, detail::make_unique<detail::destructor_container<ClassType>>());
+    
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +91,7 @@ void property_impl(const std::string& name, A accessor, std::vector<rttr::metada
     using setter_policy = typename detail::get_setter_policy<Policy>::type;
     using acc_type      = typename detail::property_type<A>::type;
 
-    unique_ptr<detail::property_container_base> prop(new detail::property_container<acc_type, A, void, getter_policy, setter_policy>(name, type::get<ClassType>(), accessor));
+    auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
     // register the type with the following call:
     prop->get_type();
     impl::store_metadata(prop, data);
@@ -107,7 +108,7 @@ void property_impl(const std::string& name, A1 getter, A2 setter, std::vector<rt
     using setter_policy = typename detail::get_setter_policy<Policy>::type;
     using acc_type      = typename detail::property_type<A1>::type;
 
-    unique_ptr<detail::property_container_base> prop(new detail::property_container<acc_type, A1, A2, getter_policy, setter_policy>(name, type::get<ClassType>(), getter, setter));
+    auto prop = detail::make_unique<detail::property_container<acc_type, A1, A2, getter_policy, setter_policy>>(name, type::get<ClassType>(), getter, setter);
     // register the type with the following call:
     prop->get_type();
     impl::store_metadata(prop, data);
@@ -124,7 +125,7 @@ void property_readonly_impl(const std::string& name, A accessor, std::vector<rtt
     using setter_policy = detail::read_only;
     using acc_type      = typename detail::property_type<A>::type;
 
-    unique_ptr<detail::property_container_base> prop(new detail::property_container<acc_type, A, void, getter_policy, setter_policy>(name, type::get<ClassType>(), accessor));
+    auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
     // register the type with the following call:
     prop->get_type();
     impl::store_metadata(prop, data);
@@ -139,7 +140,7 @@ void method_impl(const std::string& name, F function, std::vector< rttr::metadat
     using namespace std;
     using method_policy = typename detail::get_method_policy<Policy>::type;
 
-    unique_ptr<detail::method_container_base> meth(new detail::method_container<F, method_policy>(name, type::get<ClassType>(), function));
+    auto meth = detail::make_unique<detail::method_container<F, method_policy>>(name, type::get<ClassType>(), function);
     // register the underlying type with the following call:
     meth->get_return_type();
     meth->get_parameter_types();
@@ -158,7 +159,7 @@ void enumeration_impl(std::vector< std::pair< std::string, EnumType> > enum_data
     if (!std::is_same<ClassType, void>::value)
         declar_type = type::get<ClassType>();
 
-    unique_ptr<detail::enumeration_container_base> enum_item(new detail::enumeration_container<EnumType>(declar_type, move(enum_data)));
+    auto enum_item = detail::make_unique<detail::enumeration_container<EnumType>>(declar_type, move(enum_data));
     // register the underlying type with the following call:
     enum_item->get_type();
 

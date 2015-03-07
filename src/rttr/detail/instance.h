@@ -44,7 +44,7 @@ class argument;
  *
  * \remark You should never explicit instantiate this class by yourself.
  */
-class instance
+class RTTR_API instance
 {
 public:
     instance();

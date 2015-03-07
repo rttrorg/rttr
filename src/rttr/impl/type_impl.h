@@ -34,6 +34,7 @@
 #include "rttr/detail/base_classes.h"
 #include "rttr/detail/get_derived_info_func.h"
 #include "rttr/detail/get_create_variant_func.h"
+#include "rttr/detail/utility.h"
 
 namespace rttr
 {
@@ -381,7 +382,7 @@ RTTR_INLINE void type::register_converter_func(F func)
     using source_type_orig = typename detail::param_types<F, 0>::type;
     using source_type = typename std::remove_cv<typename std::remove_reference<source_type_orig>::type>::type;
 
-    std::unique_ptr<detail::type_converter_base> converter(new detail::type_converter<target_type, source_type, F>(func));
+    auto converter = detail::make_unique<detail::type_converter<target_type, source_type, F>>(func);
     type source_t = type::get<source_type>();
     source_t.register_type_converter(std::move(converter));
 }

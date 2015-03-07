@@ -107,7 +107,7 @@ namespace detail
         typedef R   return_type;
         typedef C   class_type;
     };
-
+    
     template<typename R, typename C, typename... Args>
     struct function_traits_mem_ptr<R (C::*)(Args...) const> : function_args<Args...>
     {
