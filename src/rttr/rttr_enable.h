@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_RTTR_ENABLE_H__
-#define __RTTR_RTTR_ENABLE_H__
+#ifndef RTTR_RTTR_ENABLE_H_
+#define RTTR_RTTR_ENABLE_H_
 
 #include <type_traits>
 
@@ -148,4 +148,4 @@ private:
 
 #endif // DOXYGEN
 
-#endif // __RTTR_RTTR_ENABLE_H__
+#endif // RTTR_RTTR_ENABLE_H_

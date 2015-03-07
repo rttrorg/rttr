@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_PROPERTY_CONTAINER_H__
-#define __RTTR_PROPERTY_CONTAINER_H__
+#ifndef RTTR_PROPERTY_CONTAINER_H_
+#define RTTR_PROPERTY_CONTAINER_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/function_traits.h"
@@ -57,4 +57,4 @@ class property_container;
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_PROPERTY_CONTAINER_H__
+#endif // RTTR_PROPERTY_CONTAINER_H_

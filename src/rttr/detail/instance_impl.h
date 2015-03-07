@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_INSTANCE_IMPL_H__
-#define __RTTR_INSTANCE_IMPL_H__
+#ifndef RTTR_INSTANCE_IMPL_H_
+#define RTTR_INSTANCE_IMPL_H_
 
 #include "rttr/variant.h"
 #include "rttr/type.h"
@@ -107,4 +107,4 @@ RTTR_INLINE type instance::get_type() const { return m_type; }
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_INSTANCE_IMPL_H__
+#endif // RTTR_INSTANCE_IMPL_H_

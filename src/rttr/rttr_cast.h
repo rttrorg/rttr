@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_RTTR_CAST_H__
-#define __RTTR_RTTR_CAST_H__
+#ifndef RTTR_RTTR_CAST_H_
+#define RTTR_RTTR_CAST_H_
 
 namespace rttr
 {
@@ -49,4 +49,4 @@ TargetType rttr_cast(SourceType object);
 
 #include "rttr/impl/rttr_cast_impl.h"
 
-#endif // __RTTR_RTTR_CAST_H__
+#endif // RTTR_RTTR_CAST_H_

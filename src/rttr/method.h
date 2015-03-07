@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_METHOD_H__
-#define __RTTR_METHOD_H__
+#ifndef RTTR_METHOD_H_
+#define RTTR_METHOD_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -293,4 +293,4 @@ class RTTR_API method
 
 } // end namespace rttr
 
-#endif // __RTTR_METHOD_H__
+#endif // RTTR_METHOD_H_

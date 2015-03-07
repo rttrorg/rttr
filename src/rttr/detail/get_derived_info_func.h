@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_DERIVED_INFO_FUNC_H__
-#define __RTTR_DERIVED_INFO_FUNC_H__
+#ifndef RTTR_DERIVED_INFO_FUNC_H_
+#define RTTR_DERIVED_INFO_FUNC_H_
 
 namespace rttr
 {
@@ -93,4 +93,4 @@ static derived_func get_most_derived_info_func()
 
 } // end namespace rttr
 
-#endif // __RTTR_DERIVED_INFO_FUNC_H__
+#endif // RTTR_DERIVED_INFO_FUNC_H_

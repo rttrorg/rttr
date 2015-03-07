@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_BENCH_UTILS_H__
-#define __RTTR_BENCH_UTILS_H__
+#ifndef RTTR_BENCH_UTILS_H_
+#define RTTR_BENCH_UTILS_H_
 
 #include <string>
 #include <sstream>
@@ -91,4 +91,4 @@ std::string left(const std::string& s, const std::size_t w)
 }
 
 
-#endif // __RTTR_BENCH_UTILS_H__
+#endif // RTTR_BENCH_UTILS_H_

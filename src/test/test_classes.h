@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_TESTCLASSES_H__
-#define __RTTR_TESTCLASSES_H__
+#ifndef RTTR_TESTCLASSES_H_
+#define RTTR_TESTCLASSES_H_
 
 #include <rttr/type>
 
@@ -177,4 +177,4 @@ CLASS_MULTI_INHERIT_2(ClassMulti5A, ClassMulti4A, ClassMulti4B)
 CLASS_MULTI_INHERIT_2(ClassMulti6A, ClassMulti5A, ClassMulti5B)
 CLASS_MULTI_INHERIT_2(ClassMulti7A, ClassMulti6A, ClassMulti6B)
 
-#endif // __RTTR_TESTCLASSES_H__
+#endif // RTTR_TESTCLASSES_H_

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_INSTANCE_H__
-#define __RTTR_INSTANCE_H__
+#ifndef RTTR_INSTANCE_H_
+#define RTTR_INSTANCE_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc_type_traits.h"
@@ -94,4 +94,4 @@ namespace rttr
 RTTR_INLINE static detail::instance empty_instance() { return detail::instance(); }
 } // end namespace rttr
 
-#endif // __RTTR_INSTANCE_H__
+#endif // RTTR_INSTANCE_H_

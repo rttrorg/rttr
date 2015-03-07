@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_METADATA_CONTAINER_H__
-#define __RTTR_METADATA_CONTAINER_H__
+#ifndef RTTR_METADATA_CONTAINER_H_
+#define RTTR_METADATA_CONTAINER_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/variant.h"
@@ -64,4 +64,4 @@ class RTTR_API metadata_container
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_METADATA_CONTAINER_H__
+#endif // RTTR_METADATA_CONTAINER_H_

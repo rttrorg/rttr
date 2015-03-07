@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_VARIANT_ARRAY_H__
-#define __RTTR_VARIANT_ARRAY_H__
+#ifndef RTTR_VARIANT_ARRAY_H_
+#define RTTR_VARIANT_ARRAY_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include <cstddef>
@@ -510,4 +510,4 @@ class RTTR_API variant_array
 
 #include "rttr/impl/variant_array_impl.h"
 
-#endif // __RTTR_VARIANT_ARRAY_H__
+#endif // RTTR_VARIANT_ARRAY_H_

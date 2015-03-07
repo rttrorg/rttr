@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ENUMERATION_H__
-#define __RTTR_ENUMERATION_H__
+#ifndef RTTR_ENUMERATION_H_
+#define RTTR_ENUMERATION_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/type.h"
@@ -219,4 +219,4 @@ class RTTR_API enumeration
 
 } // end namespace rttr
 
-#endif // __RTTR_ENUMERATION_H__
+#endif // RTTR_ENUMERATION_H_

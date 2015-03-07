@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_UTILITY_H__
-#define __RTTR_UTILITY_H__
+#ifndef RTTR_UTILITY_H_
+#define RTTR_UTILITY_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -233,4 +233,4 @@ template<class T> struct _Unique_if {
 } // end namespace detail
 } // end namespace rttr
 
-#endif //__RTTR_UTILITY_H__
+#endif //RTTR_UTILITY_H_

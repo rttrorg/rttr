@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_VARIANT_H__
-#define __RTTR_VARIANT_H__
+#ifndef RTTR_VARIANT_H_
+#define RTTR_VARIANT_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc_type_traits.h"
@@ -571,4 +571,4 @@ namespace detail
 #include "rttr/impl/variant_impl.h"
 #include "rttr/impl/variant_default_types_impl.h"
 
-#endif // __RTTR_VARIANT_H__
+#endif // RTTR_VARIANT_H_

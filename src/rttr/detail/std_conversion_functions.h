@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_STD_CONVERSION_FUNCTIONS_H__
-#define __RTTR_STD_CONVERSION_FUNCTIONS_H__
+#ifndef RTTR_STD_CONVERSION_FUNCTIONS_H_
+#define RTTR_STD_CONVERSION_FUNCTIONS_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include <string>
@@ -91,4 +91,4 @@ RTTR_API double string_to_double(const std::string& source, bool* ok);
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_STD_CONVERSION_FUNCTIONS_H__
+#endif // RTTR_STD_CONVERSION_FUNCTIONS_H_

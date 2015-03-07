@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARRAY_CONTAINER_BASE_H__
-#define __RTTR_ARRAY_CONTAINER_BASE_H__
+#ifndef RTTR_ARRAY_CONTAINER_BASE_H_
+#define RTTR_ARRAY_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -92,4 +92,4 @@ class RTTR_API array_container_base
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ARRAY_CONTAINER_BASE_H__
+#endif // RTTR_ARRAY_CONTAINER_BASE_H_

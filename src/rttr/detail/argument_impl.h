@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARGUMENT_IMPL_H__
-#define __RTTR_ARGUMENT_IMPL_H__
+#ifndef RTTR_ARGUMENT_IMPL_H_
+#define RTTR_ARGUMENT_IMPL_H_
 
 #include "rttr/type.h"
 #include "rttr/variant.h"
@@ -119,4 +119,4 @@ RTTR_INLINE argument& argument::operator=(const argument& other)
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ARGUMENT_IMPL_H__
+#endif // RTTR_ARGUMENT_IMPL_H_

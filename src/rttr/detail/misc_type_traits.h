@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_MISC_TYPE_TRAITS_H__
-#define __RTTR_MISC_TYPE_TRAITS_H__
+#ifndef RTTR_MISC_TYPE_TRAITS_H_
+#define RTTR_MISC_TYPE_TRAITS_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/function_traits.h"
@@ -393,4 +393,4 @@ namespace detail
 
 } // end namespace rttr
 
-#endif // __RTTR_MISC_TYPE_TRAITS_H__
+#endif // RTTR_MISC_TYPE_TRAITS_H_

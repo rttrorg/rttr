@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_PROPERTY_CONTAINER_FUNC_H__
-#define __RTTR_PROPERTY_CONTAINER_FUNC_H__
+#ifndef RTTR_PROPERTY_CONTAINER_FUNC_H_
+#define RTTR_PROPERTY_CONTAINER_FUNC_H_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -199,4 +199,4 @@ class property_container<function_ptr, Getter, void, return_as_ptr, read_only> :
 };
 
 
-#endif // __RTTR_PROPERTY_CONTAINER_FUNC_H__
+#endif // RTTR_PROPERTY_CONTAINER_FUNC_H_

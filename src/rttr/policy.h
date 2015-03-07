@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_POLICY_H__
-#define __RTTR_POLICY_H__
+#ifndef RTTR_POLICY_H_
+#define RTTR_POLICY_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -157,4 +157,4 @@ RTTR_API extern detail::discard_return_value_policy      discard_return_value;
 
 } // end namespace rttr
 
-#endif // __RTTR_POLICY_H__
+#endif // RTTR_POLICY_H_

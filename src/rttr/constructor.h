@@ -24,8 +24,8 @@
 *   SOFTWARE.                                                                       *
 *                                                                                   *
 *************************************************************************************/
-#ifndef __RTTR_CONSTRUCTOR_H__
-#define __RTTR_CONSTRUCTOR_H__
+#ifndef RTTR_CONSTRUCTOR_H_
+#define RTTR_CONSTRUCTOR_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -271,4 +271,4 @@ class RTTR_API constructor
 
 } // end namespace rttr
 
-#endif // __RTTR_CONSTRUCTOR_H__
+#endif // RTTR_CONSTRUCTOR_H_

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_TYPE_H__
-#define __RTTR_TYPE_H__
+#ifndef RTTR_TYPE_H_
+#define RTTR_TYPE_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -709,4 +709,4 @@ class RTTR_API type
 
 #include "rttr/impl/type_impl.h"
 
-#endif // __RTTR_TYPE_H__
+#endif // RTTR_TYPE_H_

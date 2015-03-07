@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARRAY_MAPPER_H__
-#define __RTTR_ARRAY_MAPPER_H__
+#ifndef RTTR_ARRAY_MAPPER_H_
+#define RTTR_ARRAY_MAPPER_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -293,4 +293,4 @@ struct array_mapper<std::array<T, N> >
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ARRAY_MAPPER_H__
+#endif // RTTR_ARRAY_MAPPER_H_

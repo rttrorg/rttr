@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARGUMENT_H__
-#define __RTTR_ARGUMENT_H__
+#ifndef RTTR_ARGUMENT_H_
+#define RTTR_ARGUMENT_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc_type_traits.h"
@@ -87,4 +87,4 @@ private:
 
 #include "rttr/detail/argument_impl.h"
 
-#endif // __RTTR_ARGUMENT_H__
+#endif // RTTR_ARGUMENT_H_

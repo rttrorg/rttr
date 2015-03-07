@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ENUMERATION_CONTAINER_BASE_H__
-#define __RTTR_ENUMERATION_CONTAINER_BASE_H__
+#ifndef RTTR_ENUMERATION_CONTAINER_BASE_H_
+#define RTTR_ENUMERATION_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/variant.h"
@@ -78,4 +78,4 @@ class RTTR_API enumeration_container_base : public metadata_container
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ENUMERATION_CONTAINER_BASE_H__
+#endif // RTTR_ENUMERATION_CONTAINER_BASE_H_

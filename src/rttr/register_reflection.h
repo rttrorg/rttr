@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_REGISTER_REFLECTION_H__
-#define __RTTR_REGISTER_REFLECTION_H__
+#ifndef RTTR_REGISTER_REFLECTION_H_
+#define RTTR_REGISTER_REFLECTION_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/metadata.h"
@@ -802,4 +802,4 @@ RTTR_REGISTER
 
 #include "rttr/impl/register_reflection_impl.h"
 
-#endif //__RTTR_REGISTER_REFLECTION_H__
+#endif //RTTR_REGISTER_REFLECTION_H_

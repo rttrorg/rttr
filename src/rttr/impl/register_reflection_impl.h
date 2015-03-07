@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_REGISTER_REFLECTION_IMPL_H__
-#define __RTTR_REGISTER_REFLECTION_IMPL_H__
+#ifndef RTTR_REGISTER_REFLECTION_IMPL_H_
+#define RTTR_REGISTER_REFLECTION_IMPL_H_
 
 #include "rttr/detail/constructor_container.h"
 #include "rttr/detail/destructor_container.h"
@@ -621,4 +621,4 @@ namespace                                                               \
 static const rttr__auto__register__ RTTR_CAT(auto_register__,__LINE__); \
 static void rttr__auto_register_reflection_function__()
 
-#endif // __RTTR_REGISTER_REFLECTION_IMPL_H__
+#endif // RTTR_REGISTER_REFLECTION_IMPL_H_

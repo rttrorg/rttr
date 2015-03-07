@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_DESTRUCTOR_H__
-#define __RTTR_DESTRUCTOR_H__
+#ifndef RTTR_DESTRUCTOR_H_
+#define RTTR_DESTRUCTOR_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -124,4 +124,4 @@ class RTTR_API destructor
 
 } // end namespace rttr
 
-#endif // __RTTR_DESTRUCTOR_H__
+#endif // RTTR_DESTRUCTOR_H_

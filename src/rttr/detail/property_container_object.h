@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_PROPERTY_CONTAINER_OBJECT_H__
-#define __RTTR_PROPERTY_CONTAINER_OBJECT_H__
+#ifndef RTTR_PROPERTY_CONTAINER_OBJECT_H_
+#define RTTR_PROPERTY_CONTAINER_OBJECT_H_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -175,4 +175,4 @@ class property_container<object_ptr, C*, void, return_as_ptr, read_only> : publi
         C* m_accessor;
 };
 
-#endif // __RTTR_PROPERTY_CONTAINER_OBJECT_H__
+#endif // RTTR_PROPERTY_CONTAINER_OBJECT_H_

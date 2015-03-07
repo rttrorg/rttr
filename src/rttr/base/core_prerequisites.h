@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_CORE_PREREQUISITES_H__
-#define __RTTR_CORE_PREREQUISITES_H__
+#ifndef RTTR_CORE_PREREQUISITES_H_
+#define RTTR_CORE_PREREQUISITES_H_
 
 #include "rttr/base/version.h"
 
@@ -206,4 +206,4 @@ typedef int int32;
 
 } // end namespace rttr
 
-#endif // __RTTR_CORE_PREREQUISITES_H__
+#endif // RTTR_CORE_PREREQUISITES_H_

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARRAY_ACCESSOR_H__
-#define __RTTR_ARRAY_ACCESSOR_H__
+#ifndef RTTR_ARRAY_ACCESSOR_H_
+#define RTTR_ARRAY_ACCESSOR_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/utility.h"
@@ -726,4 +726,4 @@ struct array_accessor
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ARRAY_ACCESSOR_H__
+#endif // RTTR_ARRAY_ACCESSOR_H_

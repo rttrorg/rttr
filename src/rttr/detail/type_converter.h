@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_TYPE_CONVERTER_H__
-#define __RTTR_TYPE_CONVERTER_H__
+#ifndef RTTR_TYPE_CONVERTER_H_
+#define RTTR_TYPE_CONVERTER_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/array_mapper.h"
@@ -74,4 +74,4 @@ struct type_converter : type_converter_target<TargetType>
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_TYPE_CONVERTER_H__
+#endif // RTTR_TYPE_CONVERTER_H_

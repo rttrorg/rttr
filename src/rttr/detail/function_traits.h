@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_FUNCTION_TRAITS_H__
-#define __RTTR_FUNCTION_TRAITS_H__
+#ifndef RTTR_FUNCTION_TRAITS_H_
+#define RTTR_FUNCTION_TRAITS_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -163,4 +163,4 @@ namespace detail
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_FUNCTION_TRAITS_H__
+#endif // RTTR_FUNCTION_TRAITS_H_

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_GET_CREATE_VARIANT_FUNC_H__
-#define __RTTR_GET_CREATE_VARIANT_FUNC_H__
+#ifndef RTTR_GET_CREATE_VARIANT_FUNC_H_
+#define RTTR_GET_CREATE_VARIANT_FUNC_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/variant.h"
@@ -90,4 +90,4 @@ struct variant_creater<Source_Type, typename std::enable_if<std::is_function<Sou
 
 } // end namespace rttr
 
-#endif // __RTTR_GET_CREATE_VARIANT_FUNC_H__
+#endif // RTTR_GET_CREATE_VARIANT_FUNC_H_

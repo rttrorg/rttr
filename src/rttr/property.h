@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_PROPERTY_H__
-#define __RTTR_PROPERTY_H__
+#ifndef RTTR_PROPERTY_H_
+#define RTTR_PROPERTY_H_
 
 #include "rttr/base/core_prerequisites.h"
 
@@ -268,4 +268,4 @@ class RTTR_API property
 
 } // end namespace rttr
 
-#endif // __RTTR_PROPERTY_H__
+#endif // RTTR_PROPERTY_H_

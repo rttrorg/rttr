@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_TYPE_IMPL_H__
-#define __RTTR_TYPE_IMPL_H__
+#ifndef RTTR_TYPE_IMPL_H_
+#define RTTR_TYPE_IMPL_H_
 
 #include <type_traits>
 #include "rttr/detail/misc_type_traits.h"
@@ -415,4 +415,4 @@ static void _rttr_auto_register_reflection_function();
 #define RTTR_REGISTER_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();   \
                                                 rttr::type::get<T*>();  \
                                                 rttr::type::get<const T*>();  
-#endif // __RTTR_TYPE_IMPL_H__
+#endif // RTTR_TYPE_IMPL_H_

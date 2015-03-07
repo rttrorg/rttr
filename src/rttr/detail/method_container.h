@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_METHOD_CONTAINER_H__
-#define __RTTR_METHOD_CONTAINER_H__
+#ifndef RTTR_METHOD_CONTAINER_H_
+#define RTTR_METHOD_CONTAINER_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/method_container_base.h"
@@ -103,4 +103,4 @@ class method_container : public method_container_base
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_METHOD_CONTAINER_H__
+#endif // RTTR_METHOD_CONTAINER_H_

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_CONSTRUCTOR_CONTAINER_BASE_H__
-#define __RTTR_CONSTRUCTOR_CONTAINER_BASE_H__
+#ifndef RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
+#define RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/type.h"
@@ -82,4 +82,4 @@ class RTTR_API constructor_container_base : public metadata_container
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_CONSTRUCTOR_CONTAINER_BASE_H__
+#endif // RTTR_CONSTRUCTOR_CONTAINER_BASE_H_

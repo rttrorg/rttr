@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_REFLECTION_DATABASE_P_H__
-#define __RTTR_REFLECTION_DATABASE_P_H__
+#ifndef RTTR_REFLECTION_DATABASE_P_H_
+#define RTTR_REFLECTION_DATABASE_P_H_
 
 #include "rttr/type.h"
 
@@ -165,4 +165,4 @@ class RTTR_LOCAL reflection_database
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_REFLECTION_DATABASE_P_H__
+#endif // RTTR_REFLECTION_DATABASE_P_H_

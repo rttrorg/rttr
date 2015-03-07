@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ARRAY_CONTAINER_H__
-#define __RTTR_ARRAY_CONTAINER_H__
+#ifndef RTTR_ARRAY_CONTAINER_H_
+#define RTTR_ARRAY_CONTAINER_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/array_container_base.h"
@@ -732,4 +732,4 @@ array_container_base* create_array_container_moved(T&& value)
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ARRAY_CONTAINER_H__
+#endif // RTTR_ARRAY_CONTAINER_H_

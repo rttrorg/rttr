@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_PROPERTY_ACCESSOR__
-#define __RTTR_PROPERTY_ACCESSOR__
+#ifndef RTTR_PROPERTY_ACCESSOR__
+#define RTTR_PROPERTY_ACCESSOR__
 
 namespace rttr
 {
@@ -76,4 +76,4 @@ struct property_accessor<T(*)[N]>
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_PROPERTY_ACCESSOR_
+#endif // RTTR_PROPERTY_ACCESSOR_

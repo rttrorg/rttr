@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_ACCESSOR_TYPE_H__
-#define __RTTR_ACCESSOR_TYPE_H__
+#ifndef RTTR_ACCESSOR_TYPE_H_
+#define RTTR_ACCESSOR_TYPE_H_
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/function_traits.h"
@@ -121,4 +121,4 @@ namespace detail
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_ACCESSOR_TYPE_H__
+#endif // RTTR_ACCESSOR_TYPE_H_

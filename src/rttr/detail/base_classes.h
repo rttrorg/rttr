@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_BASE_CLASSES_H__
-#define __RTTR_BASE_CLASSES_H__
+#ifndef RTTR_BASE_CLASSES_H_
+#define RTTR_BASE_CLASSES_H_
 
 
 namespace rttr
@@ -154,4 +154,4 @@ struct base_classes
 
 } // end namespace rttr
 
-#endif // __RTTR_BASE_CLASSES_H__
+#endif // RTTR_BASE_CLASSES_H_

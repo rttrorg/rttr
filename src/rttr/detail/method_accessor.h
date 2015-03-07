@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_METHOD_ACCESSOR__
-#define __RTTR_METHOD_ACCESSOR__
+#ifndef RTTR_METHOD_ACCESSOR__
+#define RTTR_METHOD_ACCESSOR__
 
 #include "rttr/detail/function_traits.h"
 #include "rttr/detail/utility.h"
@@ -326,4 +326,4 @@ struct method_accessor
 } // end namespace detail
 } // end namespace rttr
 
-#endif // __RTTR_METHOD_ACCESSOR__
+#endif // RTTR_METHOD_ACCESSOR__
