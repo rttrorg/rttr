@@ -47,7 +47,7 @@ class enumeration_container : public enumeration_container_base
     public:
         enumeration_container(const type declaring_type, std::vector< std::pair<std::string, EnumType> > data)
         :   enumeration_container_base(declaring_type),
-            _keyToValue(move(data))
+            m_keyToValue(move(data))
         {
             static_assert(std::is_enum<EnumType>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
@@ -58,7 +58,7 @@ class enumeration_container : public enumeration_container_base
         std::vector<std::string> get_keys() const
         {
             std::vector<std::string> result;
-            for (const auto& item : _keyToValue)
+            for (const auto& item : m_keyToValue)
             {
                 result.push_back(item.first);
             }
@@ -68,7 +68,7 @@ class enumeration_container : public enumeration_container_base
         std::vector<variant> get_values() const
         {
             std::vector<variant> result;
-            for (const auto& item : _keyToValue)
+            for (const auto& item : m_keyToValue)
             {
                 result.push_back(item.second);
             }
@@ -84,7 +84,7 @@ class enumeration_container : public enumeration_container_base
             }
 
             EnumType enum_value = value.get_value<EnumType>();
-            for (const auto& item : _keyToValue)
+            for (const auto& item : m_keyToValue)
             {
                 if (item.second == enum_value)
                     return item.first;
@@ -97,7 +97,7 @@ class enumeration_container : public enumeration_container_base
             if (key.empty())
                 return variant();
 
-            for (const auto& item : _keyToValue)
+            for (const auto& item : m_keyToValue)
             {
                 if (item.first == key)
                     return item.second;
@@ -106,7 +106,7 @@ class enumeration_container : public enumeration_container_base
         }
 
     private:
-        std::vector<std::pair<std::string, EnumType> > _keyToValue;
+        std::vector<std::pair<std::string, EnumType> > m_keyToValue;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

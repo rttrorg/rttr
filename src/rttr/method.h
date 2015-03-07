@@ -288,7 +288,7 @@ class RTTR_API method
         friend class type; // to prevent creation of this class
         method(const detail::method_container_base* container = nullptr);
     private:
-        const detail::method_container_base* _container;
+        const detail::method_container_base* m_container;
 };
 
 } // end namespace rttr

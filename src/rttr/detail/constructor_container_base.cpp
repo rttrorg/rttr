@@ -39,7 +39,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 constructor_container_base::constructor_container_base(type decalaring_type)
-:   _decalaring_type(decalaring_type)
+:   m_decalaring_type(decalaring_type)
 {
 
 }
@@ -54,7 +54,7 @@ constructor_container_base::~constructor_container_base()
 
 type constructor_container_base::get_declaring_type() const
 {
-    return _decalaring_type;
+    return m_decalaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

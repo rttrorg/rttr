@@ -38,7 +38,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, set_v
     typedef A (C::*accessor);
     public:
         property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type), _acc(acc)
+        :   property_container_base(name, declaring_type), m_acc(acc)
         {
         }
 
@@ -51,7 +51,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, set_v
         {
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A>())
-                return property_accessor<A>::set_value((ptr->*_acc), arg);
+                return property_accessor<A>::set_value((ptr->*m_acc), arg);
             else
                 return false;
         }
@@ -59,13 +59,13 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, set_v
         variant get_value(detail::instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
-                return variant((ptr->*_acc));
+                return variant((ptr->*m_acc));
             else
                 return variant();
         }
 
     private:
-        accessor _acc;
+        accessor m_acc;
 };
 
 
@@ -80,7 +80,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, read_
     public:
         property_container(const std::string& name, const type declaring_type, accessor acc)
         :   property_container_base(name, declaring_type),
-            _acc(acc)
+            m_acc(acc)
         {
         }
 
@@ -97,13 +97,13 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, read_
         variant get_value(detail::instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
-                return variant((ptr->*_acc));
+                return variant((ptr->*m_acc));
             else
                 return variant();
         }
 
     private:
-        accessor _acc;
+        accessor m_acc;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, set_as
     typedef A (C::*accessor);
     public:
         property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type), _acc(acc)
+        :   property_container_base(name, declaring_type), m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
         }
@@ -131,7 +131,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, set_as
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A*>())
             {
-                return property_accessor<A*>::set_value(&(ptr->*_acc), arg);
+                return property_accessor<A*>::set_value(&(ptr->*m_acc), arg);
             }
             else
             {
@@ -142,13 +142,13 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, set_as
         variant get_value(detail::instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
-                return variant(&(ptr->*_acc));
+                return variant(&(ptr->*m_acc));
             else
                 return variant();
         }
 
     private:
-        accessor _acc;
+        accessor m_acc;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, read_o
     public:
         property_container(const std::string& name, const type declaring_type, accessor acc)
         :   property_container_base(name, declaring_type),
-            _acc(acc)
+            m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
         }
@@ -180,13 +180,13 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, read_o
         variant get_value(detail::instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
-                return variant(const_cast<const A*>(&(ptr->*_acc)));
+                return variant(const_cast<const A*>(&(ptr->*m_acc)));
             else
                 return variant();
         }
 
     private:
-        accessor _acc;
+        accessor m_acc;
 };
 
 #endif // __RTTR_PROPERTY_CONTAINER_MEMBER_OBJECT_H__

@@ -81,8 +81,8 @@ class RTTR_API property_container_base : public metadata_container
         //! Returns the value of this property from the given instance \p instance.
         virtual variant get_value(detail::instance& object) const = 0;
     private:
-        const std::string   _name;
-        const type          _decalaring_type;
+        const std::string   m_name;
+        const type          m_decalaring_type;
 };
 
 } // end namespace detail

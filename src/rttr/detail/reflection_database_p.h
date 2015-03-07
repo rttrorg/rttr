@@ -120,9 +120,9 @@ class RTTR_LOCAL reflection_database
         {
             void add_constructor(std::unique_ptr<detail::constructor_container_base> ctor);
 
-            reflection_database::ctor_list       _ctorList;
-            reflection_database::property_map    _property_map;
-            reflection_database::method_map      _method_map;
+            reflection_database::ctor_list       m_ctor_list;
+            reflection_database::property_map    m_property_map;
+            reflection_database::method_map      m_method_map;
         };
 
     private:
@@ -156,10 +156,10 @@ class RTTR_LOCAL reflection_database
         property_map                                        global_properties;
         method_map                                          global_methods;
 
-        constructor_container                               _constructor_list;
-        destructor_container                                _destructor_list;
-        method_container                                    _method_list;
-        property_container                                  _property_list;
+        constructor_container                               m_constructor_list;
+        destructor_container                                m_destructor_list;
+        method_container                                    m_method_list;
+        property_container                                  m_property_list;
 };
 
 } // end namespace detail

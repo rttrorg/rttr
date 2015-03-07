@@ -49,13 +49,13 @@ class array_container : public array_container_base
     using ArrayType = typename detail::raw_type<T>::type;
     public:
         array_container(const T& arg)
-        :   _value(arg)
+        :   m_value(arg)
         {
 
         }
 
         array_container(T&& arg)
-        :   _value(std::move(arg))
+        :   m_value(std::move(arg))
         {
 
         }
@@ -72,137 +72,137 @@ class array_container : public array_container_base
 
         std::size_t get_size() const
         {
-            return array_accessor<ArrayType>::get_size(_value);
+            return array_accessor<ArrayType>::get_size(m_value);
         }
         std::size_t get_size(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_size(_value, index_1);
+            return array_accessor<ArrayType>::get_size(m_value, index_1);
         }
         std::size_t get_size(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_size(_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_size(m_value, index_1, index_2);
         }
         std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_size(_value, index_list);
+            return array_accessor<ArrayType>::get_size(m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_size(std::size_t new_size)
         {
-            return array_accessor<ArrayType>::set_size(_value, new_size);
+            return array_accessor<ArrayType>::set_size(m_value, new_size);
         }
         bool set_size(std::size_t new_size, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::set_size(_value, new_size, index_1);
+            return array_accessor<ArrayType>::set_size(m_value, new_size, index_1);
         }
         bool set_size(std::size_t new_size, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::set_size(_value, new_size, index_1, index_2);
+            return array_accessor<ArrayType>::set_size(m_value, new_size, index_1, index_2);
         }
         bool set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::set_size(_value, new_size, index_list);
+            return array_accessor<ArrayType>::set_size(m_value, new_size, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_value(argument& arg)
         {
-            return array_accessor<ArrayType>::set_value(_value, arg);
+            return array_accessor<ArrayType>::set_value(m_value, arg);
         }
 
         bool set_value(argument& arg, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::set_value(_value, arg, index_1);
+            return array_accessor<ArrayType>::set_value(m_value, arg, index_1);
         }
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::set_value(_value, arg, index_1, index_2);
+            return array_accessor<ArrayType>::set_value(m_value, arg, index_1, index_2);
         }
 
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::set_value(_value, arg, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::set_value(m_value, arg, index_1, index_2, index_3);
         }
 
         bool set_value_variadic(argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::set_value(_value, arg, index_list);
+            return array_accessor<ArrayType>::set_value(m_value, arg, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         variant get_value(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_value(_value, index_1);
+            return array_accessor<ArrayType>::get_value(m_value, index_1);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_value(_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_value(m_value, index_1, index_2);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
         {
-            return array_accessor<ArrayType>::get_value(_value, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::get_value(m_value, index_1, index_2, index_3);
         }
 
         variant get_value_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_value(_value, index_list);
+            return array_accessor<ArrayType>::get_value(m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool insert_value(detail::argument& arg, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::insert_value(_value, arg, index_1);
+            return array_accessor<ArrayType>::insert_value(m_value, arg, index_1);
         }
 
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::insert_value(_value, arg, index_1, index_2);
+            return array_accessor<ArrayType>::insert_value(m_value, arg, index_1, index_2);
         }
         
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::insert_value(_value, arg, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::insert_value(m_value, arg, index_1, index_2, index_3);
         }
 
         bool insert_value_variadic(detail::argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::insert_value(_value, arg, index_list);
+            return array_accessor<ArrayType>::insert_value(m_value, arg, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool remove_value(std::size_t index_1)
         {
-            return array_accessor<ArrayType>::remove_value(_value, index_1);
+            return array_accessor<ArrayType>::remove_value(m_value, index_1);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::remove_value(_value, index_1, index_2);
+            return array_accessor<ArrayType>::remove_value(m_value, index_1, index_2);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::remove_value(_value, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::remove_value(m_value, index_1, index_2, index_3);
         }
         bool remove_value_variadic(const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::remove_value(_value, index_list);
+            return array_accessor<ArrayType>::remove_value(m_value, index_list);
         }
 
-        array_container_base* clone() const { return new array_container<T>(_value); }
+        array_container_base* clone() const { return new array_container<T>(m_value); }
 
-        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value))); }
+        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value))); }
 
     private:
-        T _value;
+        T m_value;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -216,7 +216,7 @@ class array_container<T*> : public array_container_base
     using ArrayType = typename detail::raw_type<T>::type;
     public:
         array_container(T* arg)
-        :   _value(static_cast<ArrayType*>(get_void_ptr(arg)))
+        :   m_value(static_cast<ArrayType*>(get_void_ptr(arg)))
         {
         }
 
@@ -232,137 +232,137 @@ class array_container<T*> : public array_container_base
 
         std::size_t get_size() const
         {
-            return array_accessor<ArrayType>::get_size(*_value);
+            return array_accessor<ArrayType>::get_size(*m_value);
         }
         std::size_t get_size(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_1);
+            return array_accessor<ArrayType>::get_size(*m_value, index_1);
         }
         std::size_t get_size(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_size(*m_value, index_1, index_2);
         }
         std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_list);
+            return array_accessor<ArrayType>::get_size(*m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_size(std::size_t new_size)
         {
-            return array_accessor<ArrayType>::set_size(*_value, new_size);
+            return array_accessor<ArrayType>::set_size(*m_value, new_size);
         }
         bool set_size(std::size_t new_size, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::set_size(*_value, new_size, index_1);
+            return array_accessor<ArrayType>::set_size(*m_value, new_size, index_1);
         }
         bool set_size(std::size_t new_size, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::set_size(*_value, new_size, index_1, index_2);
+            return array_accessor<ArrayType>::set_size(*m_value, new_size, index_1, index_2);
         }
         bool set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::set_size(*_value, new_size, index_list);
+            return array_accessor<ArrayType>::set_size(*m_value, new_size, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_value(argument& arg)
         {
-            return array_accessor<ArrayType>::set_value(*_value, arg);
+            return array_accessor<ArrayType>::set_value(*m_value, arg);
         }
 
         bool set_value(argument& arg, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::set_value(*_value, arg, index_1);
+            return array_accessor<ArrayType>::set_value(*m_value, arg, index_1);
         }
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::set_value(*_value, arg, index_1, index_2);
+            return array_accessor<ArrayType>::set_value(*m_value, arg, index_1, index_2);
         }
 
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::set_value(*_value, arg, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::set_value(*m_value, arg, index_1, index_2, index_3);
         }
 
         bool set_value_variadic(argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::set_value(*_value, arg, index_list);
+            return array_accessor<ArrayType>::set_value(*m_value, arg, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         variant get_value(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1, index_2);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1, index_2, index_3);
         }
 
         variant get_value_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_list);
+            return array_accessor<ArrayType>::get_value(*m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool insert_value(detail::argument& arg, std::size_t index_1)
         {
-            return array_accessor<ArrayType>::insert_value(*_value, arg, index_1);
+            return array_accessor<ArrayType>::insert_value(*m_value, arg, index_1);
         }
 
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::insert_value(*_value, arg, index_1, index_2);
+            return array_accessor<ArrayType>::insert_value(*m_value, arg, index_1, index_2);
         }
         
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::insert_value(*_value, arg, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::insert_value(*m_value, arg, index_1, index_2, index_3);
         }
 
         bool insert_value_variadic(detail::argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::insert_value(*_value, arg, index_list);
+            return array_accessor<ArrayType>::insert_value(*m_value, arg, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool remove_value(std::size_t index_1)
         {
-            return array_accessor<ArrayType>::remove_value(*_value, index_1);
+            return array_accessor<ArrayType>::remove_value(*m_value, index_1);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<ArrayType>::remove_value(*_value, index_1, index_2);
+            return array_accessor<ArrayType>::remove_value(*m_value, index_1, index_2);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<ArrayType>::remove_value(*_value, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::remove_value(*m_value, index_1, index_2, index_3);
         }
         bool remove_value_variadic(const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<ArrayType>::remove_value(*_value, index_list);
+            return array_accessor<ArrayType>::remove_value(*m_value, index_list);
         }
 
-        array_container_base* clone() const { return new array_container<ArrayType*>(_value); }
+        array_container_base* clone() const { return new array_container<ArrayType*>(m_value); }
 
-        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value))); }
+        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value))); }
 
     private:
-        ArrayType* _value;
+        ArrayType* m_value;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -376,7 +376,7 @@ class array_container<const T*> : public array_container_base
     using ArrayType = typename detail::raw_type<T>::type;
     public:
         array_container(const T* arg)
-        :   _value(static_cast<const T*>(get_void_ptr(arg)))
+        :   m_value(static_cast<const T*>(get_void_ptr(arg)))
         {
         }
 
@@ -392,19 +392,19 @@ class array_container<const T*> : public array_container_base
 
         std::size_t get_size() const
         {
-            return array_accessor<ArrayType>::get_size(*_value);
+            return array_accessor<ArrayType>::get_size(*m_value);
         }
         std::size_t get_size(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_1);
+            return array_accessor<ArrayType>::get_size(*m_value, index_1);
         }
         std::size_t get_size(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_size(*m_value, index_1, index_2);
         }
         std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_size(*_value, index_list);
+            return array_accessor<ArrayType>::get_size(*m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -456,22 +456,22 @@ class array_container<const T*> : public array_container_base
 
         variant get_value(std::size_t index_1) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1, index_2);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1, index_2);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_1, index_2, index_3);
+            return array_accessor<ArrayType>::get_value(*m_value, index_1, index_2, index_3);
         }
 
         variant get_value_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<ArrayType>::get_value(*_value, index_list);
+            return array_accessor<ArrayType>::get_value(*m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -517,11 +517,11 @@ class array_container<const T*> : public array_container_base
             return false;
         }
 
-        array_container_base* clone() const { return new array_container<const T*>(_value); }
-        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value))); }
+        array_container_base* clone() const { return new array_container<const T*>(m_value); }
+        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value))); }
 
     private:
-        const T* _value;
+        const T* m_value;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -537,12 +537,12 @@ class array_container<T, typename std::enable_if<std::is_array<T>::value>::type>
         {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-            detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), _value);
+            detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), m_value);
 #   else
         #error "Check new MSVC Compiler!"
 #   endif
 #else
-        detail::copy_array(arg, _value);
+        detail::copy_array(arg, m_value);
 #endif
         }
 
@@ -558,136 +558,136 @@ class array_container<T, typename std::enable_if<std::is_array<T>::value>::type>
 
         std::size_t get_size() const
         {
-            return array_accessor<T>::get_size(_value);
+            return array_accessor<T>::get_size(m_value);
         }
         std::size_t get_size(std::size_t index_1) const
         {
-            return array_accessor<T>::get_size(_value, index_1);
+            return array_accessor<T>::get_size(m_value, index_1);
         }
         std::size_t get_size(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<T>::get_size(_value, index_1, index_2);
+            return array_accessor<T>::get_size(m_value, index_1, index_2);
         }
         std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<T>::get_size(_value, index_list);
+            return array_accessor<T>::get_size(m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_size(std::size_t new_size)
         {
-            return array_accessor<T>::set_size(_value, new_size);
+            return array_accessor<T>::set_size(m_value, new_size);
         }
         bool set_size(std::size_t new_size, std::size_t index_1)
         {
-            return array_accessor<T>::set_size(_value, new_size, index_1);
+            return array_accessor<T>::set_size(m_value, new_size, index_1);
         }
         bool set_size(std::size_t new_size, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<T>::set_size(_value, new_size, index_1, index_2);
+            return array_accessor<T>::set_size(m_value, new_size, index_1, index_2);
         }
         bool set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<T>::set_size(_value, new_size, index_list);
+            return array_accessor<T>::set_size(m_value, new_size, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool set_value(argument& arg)
         {
-            return array_accessor<T>::set_value(_value, arg);
+            return array_accessor<T>::set_value(m_value, arg);
         }
 
         bool set_value(argument& arg, std::size_t index_1)
         {
-            return array_accessor<T>::set_value(_value, arg, index_1);
+            return array_accessor<T>::set_value(m_value, arg, index_1);
         }
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<T>::set_value(_value, arg, index_1, index_2);
+            return array_accessor<T>::set_value(m_value, arg, index_1, index_2);
         }
 
         bool set_value(argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<T>::set_value(_value, arg, index_1, index_2, index_3);
+            return array_accessor<T>::set_value(m_value, arg, index_1, index_2, index_3);
         }
 
         bool set_value_variadic(argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<T>::set_value(_value, arg, index_list);
+            return array_accessor<T>::set_value(m_value, arg, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         variant get_value(std::size_t index_1) const
         {
-            return array_accessor<T>::get_value(_value, index_1);
+            return array_accessor<T>::get_value(m_value, index_1);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2) const
         {
-            return array_accessor<T>::get_value(_value, index_1, index_2);
+            return array_accessor<T>::get_value(m_value, index_1, index_2);
         }
 
         variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
         {
-            return array_accessor<T>::get_value(_value, index_1, index_2, index_3);
+            return array_accessor<T>::get_value(m_value, index_1, index_2, index_3);
         }
 
         variant get_value_variadic(const std::vector<std::size_t>& index_list) const
         {
-            return array_accessor<T>::get_value(_value, index_list);
+            return array_accessor<T>::get_value(m_value, index_list);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool insert_value(detail::argument& arg, std::size_t index_1)
         {
-            return array_accessor<T>::insert_value(_value, arg, index_1);
+            return array_accessor<T>::insert_value(m_value, arg, index_1);
         }
 
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<T>::insert_value(_value, arg, index_1, index_2);
+            return array_accessor<T>::insert_value(m_value, arg, index_1, index_2);
         }
         
         bool insert_value(detail::argument& arg, std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<T>::insert_value(_value, arg, index_1, index_2, index_3);
+            return array_accessor<T>::insert_value(m_value, arg, index_1, index_2, index_3);
         }
 
         bool insert_value_variadic(detail::argument& arg, const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<T>::insert_value(_value, arg, index_list);
+            return array_accessor<T>::insert_value(m_value, arg, index_list);
         }
         
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool remove_value(std::size_t index_1)
         {
-            return array_accessor<T>::remove_value(_value, index_1);
+            return array_accessor<T>::remove_value(m_value, index_1);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2)
         {
-            return array_accessor<T>::remove_value(_value, index_1, index_2);
+            return array_accessor<T>::remove_value(m_value, index_1, index_2);
         }
 
         bool remove_value(std::size_t index_1, std::size_t index_2, std::size_t index_3)
         {
-            return array_accessor<T>::remove_value(_value, index_1, index_2, index_3);
+            return array_accessor<T>::remove_value(m_value, index_1, index_2, index_3);
         }
         bool remove_value_variadic(const std::vector<std::size_t>& index_list)
         {
-            return array_accessor<T>::remove_value(_value, index_list);
+            return array_accessor<T>::remove_value(m_value, index_list);
         }
 
-        array_container_base* clone() const { return new array_container<T>(_value); }
-        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value))); }
+        array_container_base* clone() const { return new array_container<T>(m_value); }
+        void* get_ptr() const { return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value))); }
 
     private:
-        T _value;
+        T m_value;
         /////////////////////////////////////////////////////////////////////////////////////////
 };
 

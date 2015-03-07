@@ -36,7 +36,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor::destructor(const detail::destructor_container_base* container)
-:   _container(container)
+:   m_container(container)
 {
 
 }
@@ -45,14 +45,14 @@ destructor::destructor(const detail::destructor_container_base* container)
 
 bool destructor::is_valid() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor::operator bool() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ destructor::operator bool() const
 type destructor::get_destructed_type() const
 {
     if (is_valid())
-        return _container->get_destructed_type();
+        return m_container->get_destructed_type();
     else
         return impl::get_invalid_type();
 }
@@ -70,21 +70,21 @@ type destructor::get_destructed_type() const
 void destructor::invoke(variant& obj) const
 {
     if (is_valid())
-        _container->invoke(obj);
+        m_container->invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool destructor::operator==(const destructor& other) const
 {
-    return (_container == other._container);
+    return (m_container == other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool destructor::operator!=(const destructor& other) const
 {
-    return (_container != other._container);
+    return (m_container != other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

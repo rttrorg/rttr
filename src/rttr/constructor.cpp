@@ -40,7 +40,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 constructor::constructor(const detail::constructor_container_base* container)
-:   _container(container)
+:   m_container(container)
 {
 
 }
@@ -49,14 +49,14 @@ constructor::constructor(const detail::constructor_container_base* container)
 
 bool constructor::is_valid() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 constructor::operator bool() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ constructor::operator bool() const
 type constructor::get_instanciated_type() const
 {
     if (is_valid())
-        return _container->get_instanciated_type();
+        return m_container->get_instanciated_type();
     else
         return impl::get_invalid_type();
 }
@@ -74,7 +74,7 @@ type constructor::get_instanciated_type() const
 type constructor::get_declaring_type() const
 {
     if (is_valid())
-        return _container->get_declaring_type();
+        return m_container->get_declaring_type();
     else
         return impl::get_invalid_type();
 }
@@ -85,7 +85,7 @@ type constructor::get_declaring_type() const
 string constructor::get_signature() const
 {
     if (is_valid())
-        return _container->get_signature();
+        return m_container->get_signature();
     else
         return string();
 }
@@ -95,7 +95,7 @@ string constructor::get_signature() const
 vector<type> constructor::get_parameter_types() const
 {
     if (is_valid())
-        return _container->get_parameter_types();
+        return m_container->get_parameter_types();
     else
         return vector<type>();
 }
@@ -105,7 +105,7 @@ vector<type> constructor::get_parameter_types() const
 variant constructor::get_metadata(int key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -115,7 +115,7 @@ variant constructor::get_metadata(int key) const
 variant constructor::get_metadata(const std::string& key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -125,7 +125,7 @@ variant constructor::get_metadata(const std::string& key) const
 variant constructor::invoke() const
 {
     if (is_valid())
-        return _container->invoke();
+        return m_container->invoke();
     else
         return variant();
 }
@@ -135,7 +135,7 @@ variant constructor::invoke() const
 variant constructor::invoke(detail::argument arg1) const
 {
     if (is_valid())
-        return _container->invoke(arg1);
+        return m_container->invoke(arg1);
     else
         return variant();
 }
@@ -145,7 +145,7 @@ variant constructor::invoke(detail::argument arg1) const
 variant constructor::invoke(detail::argument arg1, detail::argument arg2) const
 {
     if (is_valid())
-        return _container->invoke(arg1, arg2);
+        return m_container->invoke(arg1, arg2);
     else
         return variant();
 }
@@ -155,7 +155,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2) const
 variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3) const
 {
     if (is_valid())
-        return _container->invoke(arg1, arg2, arg3);
+        return m_container->invoke(arg1, arg2, arg3);
     else
         return variant();
 }
@@ -165,7 +165,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const
 {
     if (is_valid())
-        return _container->invoke(arg1, arg2, arg3, arg4);
+        return m_container->invoke(arg1, arg2, arg3, arg4);
     else
         return variant();
 }
@@ -176,7 +176,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
                             detail::argument arg5) const
 {
     if (is_valid())
-        return _container->invoke(arg1, arg2, arg3, arg4, arg5);
+        return m_container->invoke(arg1, arg2, arg3, arg4, arg5);
     else
         return variant();
 }
@@ -187,7 +187,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
                             detail::argument arg5, detail::argument arg6) const
 {
     if (is_valid())
-        return _container->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
+        return m_container->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
     else
         return variant();
 }
@@ -197,7 +197,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 variant constructor::invoke_variadic(std::vector<detail::argument> args) const
 {
     if (is_valid())
-        return _container->invoke_variadic(args);
+        return m_container->invoke_variadic(args);
     else
         return variant();
 }
@@ -206,14 +206,14 @@ variant constructor::invoke_variadic(std::vector<detail::argument> args) const
 
 bool constructor::operator==(const constructor& other) const
 {
-    return (_container == other._container);
+    return (m_container == other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool constructor::operator!=(const constructor& other) const
 {
-    return (_container != other._container);
+    return (m_container != other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

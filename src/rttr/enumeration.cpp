@@ -39,7 +39,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration::enumeration(const detail::enumeration_container_base* container)
-:   _container(container)
+:   m_container(container)
 {
 
 }
@@ -48,14 +48,14 @@ enumeration::enumeration(const detail::enumeration_container_base* container)
 
 bool enumeration::is_valid() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration::operator bool() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ enumeration::operator bool() const
 type enumeration::get_underlying_type() const
 {
     if (is_valid())
-        return _container->get_underlying_type();
+        return m_container->get_underlying_type();
     else
         return impl::get_invalid_type();
 }
@@ -73,7 +73,7 @@ type enumeration::get_underlying_type() const
 type enumeration::get_type() const
 {
     if (is_valid())
-        return _container->get_type();
+        return m_container->get_type();
     else
         return impl::get_invalid_type();
 }
@@ -83,7 +83,7 @@ type enumeration::get_type() const
 type enumeration::get_declaring_type() const
 {
     if (is_valid())
-        return _container->get_declaring_type();
+        return m_container->get_declaring_type();
     else
         return impl::get_invalid_type();
 }
@@ -93,7 +93,7 @@ type enumeration::get_declaring_type() const
 variant enumeration::get_metadata(int key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -103,7 +103,7 @@ variant enumeration::get_metadata(int key) const
 variant enumeration::get_metadata(const std::string& key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -113,7 +113,7 @@ variant enumeration::get_metadata(const std::string& key) const
 vector<string> enumeration::get_keys() const
 {
     if (is_valid())
-        return _container->get_keys();
+        return m_container->get_keys();
     else
         return vector<string>();
 }
@@ -123,7 +123,7 @@ vector<string> enumeration::get_keys() const
 vector<variant> enumeration::get_values() const
 {
     if (is_valid())
-        return _container->get_values();
+        return m_container->get_values();
     else
         return vector<variant>();
 }
@@ -133,7 +133,7 @@ vector<variant> enumeration::get_values() const
 string enumeration::value_to_key(detail::argument value) const
 {
     if (is_valid())
-        return _container->value_to_key(value);
+        return m_container->value_to_key(value);
     else
         return string();
 }
@@ -143,7 +143,7 @@ string enumeration::value_to_key(detail::argument value) const
 variant enumeration::key_to_value(const std::string& key) const
 {
     if (is_valid())
-        return _container->key_to_value(key);
+        return m_container->key_to_value(key);
     else
         return variant();
 }
@@ -152,14 +152,14 @@ variant enumeration::key_to_value(const std::string& key) const
 
 bool enumeration::operator==(const enumeration& other) const
 {
-    return (_container == other._container);
+    return (m_container == other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool enumeration::operator!=(const enumeration& other) const
 {
-    return (_container != other._container);
+    return (m_container != other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

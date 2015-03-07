@@ -40,8 +40,8 @@ namespace detail
   */
 struct derived_info
 {
-    void* _ptr; //!< A void pointer, which contains the address to an arbitrary instance.
-    type _type; //!< The corresponding typ object to the \ref _ptr
+    void* m_ptr;    //!< A void pointer, which contains the address to an arbitrary instance.
+    type m_type;    //!< The corresponding typ object to the \ref m_ptr
 };
 
 template<typename T>

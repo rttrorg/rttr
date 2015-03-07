@@ -41,8 +41,8 @@ namespace detail
 
 variant metadata_container::get_metadata(int key) const
 {
-    const auto value = _int_data.find(key);
-    if (value != _int_data.end())
+    const auto value = m_int_data.find(key);
+    if (value != m_int_data.end())
         return value->second;
     else
         return variant();
@@ -52,8 +52,8 @@ variant metadata_container::get_metadata(int key) const
 
 variant metadata_container::get_metadata(const std::string& key) const
 {
-    const auto value = _string_data.find(key);
-    if (value != _string_data.end())
+    const auto value = m_string_data.find(key);
+    if (value != m_string_data.end())
         return value->second;
     else
         return variant();
@@ -63,14 +63,14 @@ variant metadata_container::get_metadata(const std::string& key) const
 
 void metadata_container::set_metadata(int key, const variant& value)
 {
-    _int_data.insert(make_pair(key, value));
+    m_int_data.insert(make_pair(key, value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void metadata_container::set_metadata(const std::string& key, const variant& value)
 {
-    _string_data.insert(make_pair(key, value));
+    m_string_data.insert(make_pair(key, value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

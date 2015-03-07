@@ -214,7 +214,7 @@ class RTTR_API enumeration
         //! Constructs a valid MetaProperty from a PropertyContainerBase.
         enumeration(const detail::enumeration_container_base* container = nullptr);
     private:
-        const detail::enumeration_container_base* _container;
+        const detail::enumeration_container_base* m_container;
 };
 
 } // end namespace rttr

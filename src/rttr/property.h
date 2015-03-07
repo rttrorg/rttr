@@ -263,7 +263,7 @@ class RTTR_API property
         //! Constructs a property from a property_container_base.
         property(const detail::property_container_base* container = nullptr);
     private:
-        const detail::property_container_base* _container;
+        const detail::property_container_base* m_container;
 };
 
 } // end namespace rttr

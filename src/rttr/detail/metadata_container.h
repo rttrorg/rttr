@@ -57,8 +57,8 @@ class RTTR_API metadata_container
     private:
         typedef std::unordered_map<int, variant> IntKey2ValueMap;
         typedef std::unordered_map<std::string, variant> StringKey2ValueMap;
-        IntKey2ValueMap _int_data;
-        StringKey2ValueMap _string_data;
+        IntKey2ValueMap m_int_data;
+        StringKey2ValueMap m_string_data;
 };
 
 } // end namespace detail

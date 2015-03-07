@@ -73,8 +73,8 @@ private:
     instance& operator=(const instance& other);
 
 private:
-    void*               _data;
-    const rttr::type    _type;
+    void*               m_data;
+    const rttr::type    m_type;
 };
 
 } // end namespace detail

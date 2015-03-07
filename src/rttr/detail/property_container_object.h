@@ -38,7 +38,7 @@ class property_container<object_ptr, C*, void, return_as_copy, set_value> : publ
     public:
         property_container(const std::string& name, const type declaring_type, C* pointer)
         :   property_container_base(name, declaring_type),
-           _accessor(pointer)
+            m_accessor(pointer)
         {
         }
 
@@ -51,7 +51,7 @@ class property_container<object_ptr, C*, void, return_as_copy, set_value> : publ
         {
             if (arg.is_type<C>())
             {
-                return property_accessor<C>::set_value(*_accessor, arg);
+                return property_accessor<C>::set_value(*m_accessor, arg);
             }
             else
             {
@@ -61,11 +61,11 @@ class property_container<object_ptr, C*, void, return_as_copy, set_value> : publ
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(*_accessor));
+            return (variant(*m_accessor));
         }
 
     private:
-        C* _accessor;
+        C* m_accessor;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ class property_container<object_ptr, C*, void, return_as_copy, read_only> : publ
     public:
         property_container(const std::string& name, const type declaring_type, C* pointer)
         :   property_container_base(name, declaring_type),
-            _accessor(pointer)
+            m_accessor(pointer)
         {
         }
 
@@ -94,11 +94,11 @@ class property_container<object_ptr, C*, void, return_as_copy, read_only> : publ
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(*_accessor));
+            return (variant(*m_accessor));
         }
 
     private:
-        C* _accessor;
+        C* m_accessor;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ class property_container<object_ptr, C*, void, return_as_ptr, set_as_ptr> : publ
     public:
         property_container(const std::string& name, const type declaring_type, C* pointer)
         :   property_container_base(name, declaring_type),
-           _accessor(pointer)
+           m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
         }
@@ -125,7 +125,7 @@ class property_container<object_ptr, C*, void, return_as_ptr, set_as_ptr> : publ
         {
             if (arg.is_type<C*>())
             {
-                return property_accessor<C*>::set_value(_accessor, arg);
+                return property_accessor<C*>::set_value(m_accessor, arg);
             }
             else
             {
@@ -135,11 +135,11 @@ class property_container<object_ptr, C*, void, return_as_ptr, set_as_ptr> : publ
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(_accessor));
+            return (variant(m_accessor));
         }
 
     private:
-        C* _accessor;
+        C* m_accessor;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ class property_container<object_ptr, C*, void, return_as_ptr, read_only> : publi
     public:
         property_container(const std::string& name, const type declaring_type, C* pointer)
         :   property_container_base(name, declaring_type),
-            _accessor(pointer)
+            m_accessor(pointer)
         {
         }
 
@@ -168,11 +168,11 @@ class property_container<object_ptr, C*, void, return_as_ptr, read_only> : publi
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(const_cast<const C*>(_accessor)));
+            return (variant(const_cast<const C*>(m_accessor)));
         }
 
     private:
-        C* _accessor;
+        C* m_accessor;
 };
 
 #endif // __RTTR_PROPERTY_CONTAINER_OBJECT_H__

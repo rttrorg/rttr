@@ -47,18 +47,18 @@ namespace rttr
 class RTTR_API metadata
 {
     public:
-        metadata(const metadata& other) : _key(other._key), _value(other._value) {}
-        metadata(std::string key, variant value) : _key(std::move(key)), _value(std::move(value)) {}
-        metadata(int key, variant value) : _key(std::move(key)), _value(std::move(value)) {}
-        metadata(metadata&& data) : _key(std::move(data._key)), _value(std::move(data._value)) { data._key = variant(); data._value = variant(); }
-        metadata& operator=(metadata other) { std::swap(_key, other._key); std::swap(_value, other._value); return *this; }
+        metadata(const metadata& other) : m_key(other.m_key), m_value(other.m_value) {}
+        metadata(std::string key, variant value) : m_key(std::move(key)), m_value(std::move(value)) {}
+        metadata(int key, variant value) : m_key(std::move(key)), m_value(std::move(value)) {}
+        metadata(metadata&& data) : m_key(std::move(data.m_key)), m_value(std::move(data.m_value)) { data.m_key = variant(); data.m_value = variant(); }
+        metadata& operator=(metadata other) { std::swap(m_key, other.m_key); std::swap(m_value, other.m_value); return *this; }
 
-        variant get_key() const     { return _key; }
-        variant get_value() const   { return _value; }
+        variant get_key() const     { return m_key; }
+        variant get_value() const   { return m_value; }
 
     private:
-        variant _key;
-        variant _value;
+        variant m_key;
+        variant m_value;
 };
 
 } // end namespace rttr

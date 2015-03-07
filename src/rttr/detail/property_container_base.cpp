@@ -35,8 +35,8 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property_container_base::property_container_base(const std::string& name, const type decalaring_type)
-:   _name(name),
-    _decalaring_type(decalaring_type)
+:   m_name(name),
+    m_decalaring_type(decalaring_type)
 {
 }
 
@@ -50,14 +50,14 @@ property_container_base::~property_container_base()
 
 std::string property_container_base::get_name() const
 {
-    return _name;
+    return m_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type property_container_base::get_declaring_type() const
 {
-    return _decalaring_type;
+    return m_decalaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

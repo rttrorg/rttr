@@ -469,7 +469,7 @@ class RTTR_API variant
                 float to_float(bool* ok) const;
                 double to_double(bool* ok) const;
 
-                T _value; // the stored data
+                T m_value; // the stored data
 
             private: // unimplemented
                 variant_container & operator=(const variant_container &);
@@ -503,7 +503,7 @@ class RTTR_API variant
                 float to_float(bool* ok) const;
                 double to_double(bool* ok) const;
 
-                T _value; // the stored data
+                T m_value; // the stored data
 
             private: // unimplemented
                 variant_container & operator=(const variant_container &);
@@ -537,7 +537,7 @@ class RTTR_API variant
                 float to_float(bool* ok) const;
                 double to_double(bool* ok) const;
 
-                char _value[N]; // the stored data
+                char m_value[N]; // the stored data
 
             private: // unimplemented
                 variant_container & operator=(const variant_container &);
@@ -547,7 +547,7 @@ class RTTR_API variant
         friend variant detail::create_void_variant();
         friend detail::argument;
         friend detail::instance;
-        variant_container_base*         _holder;
+        variant_container_base*         m_holder;
 };
 
 #ifndef DOXYGEN

@@ -82,8 +82,8 @@ class RTTR_API method_container_base : public metadata_container
         virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
 
     private:
-        const std::string   _name;
-        const type          _decalaring_type;
+        const std::string   m_name;
+        const type          m_decalaring_type;
 };
 
 } // end namespace detail

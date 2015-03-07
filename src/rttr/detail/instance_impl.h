@@ -36,29 +36,29 @@ namespace rttr
 namespace detail
 {
 
-RTTR_INLINE instance::instance() : _data(nullptr), _type(impl::get_invalid_type()) {}
+RTTR_INLINE instance::instance() : m_data(nullptr), m_type(impl::get_invalid_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(variant& var)
-:   _data(var.get_raw_ptr()),
-    _type(var.get_raw_type())
+:   m_data(var.get_raw_ptr()),
+    m_type(var.get_raw_type())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(const instance& other)
-:   _data(other._data),
-    _type(other._type)
+:   m_data(other.m_data),
+    m_type(other.m_type)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(instance&& other)
-:   _data(other._data),
-    _type(other._type)
+:   m_data(other.m_data),
+    m_type(other.m_type)
 {
 }
 
@@ -66,8 +66,8 @@ RTTR_INLINE instance::instance(instance&& other)
 
 template<typename T>
 RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   _data(detail::get_void_ptr(data)),
-    _type(rttr::type::get<typename raw_type<T>::type>())
+:   m_data(detail::get_void_ptr(data)),
+    m_type(rttr::type::get<typename raw_type<T>::type>())
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
 }
@@ -76,8 +76,8 @@ RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_s
 
 template<typename T>
 RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   _data(detail::get_void_ptr(data)),
-    _type(rttr::type::get<typename raw_type<T>::type>())
+:   m_data(detail::get_void_ptr(data)),
+    m_type(rttr::type::get<typename raw_type<T>::type>())
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
 }
@@ -87,20 +87,20 @@ RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<in
 template<typename TargetType>
 RTTR_INLINE TargetType* instance::try_convert() const
 {
-    return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->_data, _type, type::get<TargetType>())));
+    return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data, m_type, type::get<TargetType>())));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool instance::is_valid() const { return (_data != nullptr); }
+RTTR_INLINE bool instance::is_valid() const { return (m_data != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::operator bool() const { return (_data != nullptr); }
+RTTR_INLINE instance::operator bool() const { return (m_data != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type instance::get_type() const { return _type; }
+RTTR_INLINE type instance::get_type() const { return m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

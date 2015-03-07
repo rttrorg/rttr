@@ -125,10 +125,10 @@ static void init_globals()
     g_enumeration_list                  = db.enumeration_list;
     g_global_properties                 = &db.global_properties;
     g_global_methods                    = &db.global_methods;
-    g_constructor_list                  = &db._constructor_list;
-    g_destructor_list                   = &db._destructor_list;
-    g_method_list                       = &db._method_list;
-    g_property_list                     = &db._property_list;
+    g_constructor_list                  = &db.m_constructor_list;
+    g_destructor_list                   = &db.m_destructor_list;
+    g_method_list                       = &db.m_method_list;
+    g_property_list                     = &db.m_property_list;
     g_type_converter_list               = db.type_converter_list;
 
     initialized = true;
@@ -190,16 +190,16 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
         return ptr;
 
     const detail::derived_info info = g_get_derived_info_func_list[source_raw_id](ptr);
-    source_raw_id = g_raw_type_list[info._type.m_id];
+    source_raw_id = g_raw_type_list[info.m_type.m_id];
     if (source_raw_id == target_raw_id)
-        return info._ptr;
+        return info.m_ptr;
 
     const int row = RTTR_MAX_INHERIT_TYPES_COUNT * source_raw_id;
     for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
     {
         const type::type_id currId = g_base_class_list[row + i];
         if (currId == target_raw_id)
-            return g_conversion_list[row + i](info._ptr);
+            return g_conversion_list[row + i](info.m_ptr);
         if (currId == 0) // invalid id
             return nullptr;
     }
@@ -339,7 +339,7 @@ constructor type::get_constructor(const std::vector<type>& args) const
         if (!classPtr)
             return constructor();
         
-        for (const auto& ctor : classPtr->_ctorList)
+        for (const auto& ctor : classPtr->m_ctor_list)
         {
             if (detail::reflection_database::does_signature_match_arguments(ctor->get_parameter_types(), args))
                 return constructor(ctor.get());
@@ -366,8 +366,8 @@ vector<constructor> type::get_constructors() const
             return { constructor() };
 
         vector<constructor> result;
-        result.reserve(classPtr->_ctorList.size());
-        for (const auto& ctor : classPtr->_ctorList)
+        result.reserve(classPtr->m_ctor_list.size());
+        for (const auto& ctor : classPtr->m_ctor_list)
         {
             result.push_back(constructor(ctor.get()));
         }
@@ -393,7 +393,7 @@ variant type::create(vector<detail::argument> args) const
         if (!classPtr)
             return variant();
 
-        for (const auto& ctor : classPtr->_ctorList)
+        for (const auto& ctor : classPtr->m_ctor_list)
         {
             if (detail::reflection_database::does_signature_match_arguments(ctor->get_parameter_types(),
                 detail::reflection_database::extract_types(args)))
@@ -434,7 +434,7 @@ property type::get_property(const std::string& name) const
 {
     if (const auto& classPtr = g_class_data_list[get_raw_type().get_id()].get())
     {
-        if (const auto& ret = detail::reflection_database::find_property(name, classPtr->_property_map))
+        if (const auto& ret = detail::reflection_database::find_property(name, classPtr->m_property_map))
             return property(ret);
     }
     
@@ -443,7 +443,7 @@ property type::get_property(const std::string& name) const
     {
         if (const auto& classPtr = g_class_data_list[type.get_raw_type().get_id()].get())
         {
-            if (const auto& ret = detail::reflection_database::find_property(name, classPtr->_property_map))
+            if (const auto& ret = detail::reflection_database::find_property(name, classPtr->m_property_map))
                 return property(ret);
         }
     }
@@ -531,14 +531,14 @@ vector<property> type::get_properties() const
 
     if (auto classPtr = g_class_data_list[get_raw_type().get_id()].get())
     {
-        retrieve_sorted_properties(props, classPtr->_property_map);
+        retrieve_sorted_properties(props, classPtr->m_property_map);
     }
     
     // search in the base classes, but not recursively
     for (const auto& type : get_base_classes())
     {
         if (auto classPtr = g_class_data_list[type.get_raw_type().get_id()].get())
-            retrieve_sorted_properties(props, classPtr->_property_map);
+            retrieve_sorted_properties(props, classPtr->m_property_map);
     }
 
     for (const auto& prop : props)
@@ -555,7 +555,7 @@ method type::get_method(const string& name) const
 {
     if (const auto classPtr = g_class_data_list[get_raw_type().get_id()].get())
     {
-        if (const auto& ret = detail::reflection_database::find_method(name, classPtr->_method_map))
+        if (const auto& ret = detail::reflection_database::find_method(name, classPtr->m_method_map))
             return method(ret);
     }
     
@@ -564,7 +564,7 @@ method type::get_method(const string& name) const
     {
         if (const auto& classPtr = g_class_data_list[type.get_raw_type().get_id()].get())
         {
-            if (const auto& ret = detail::reflection_database::find_method(name, classPtr->_method_map))
+            if (const auto& ret = detail::reflection_database::find_method(name, classPtr->m_method_map))
                 return method(ret);
         }
     }
@@ -578,7 +578,7 @@ method type::get_method(const std::string& name, const std::vector<type>& params
 {
     if (const auto classPtr = g_class_data_list[get_raw_type().get_id()].get())
     {
-        if (const auto& ret = detail::reflection_database::find_method(name, params, classPtr->_method_map))
+        if (const auto& ret = detail::reflection_database::find_method(name, params, classPtr->m_method_map))
             return method(ret);
     }
     
@@ -587,7 +587,7 @@ method type::get_method(const std::string& name, const std::vector<type>& params
     {
         if (const auto& classPtr = g_class_data_list[type.get_raw_type().get_id()].get())
         {
-            if (const auto& ret = detail::reflection_database::find_method(name, params, classPtr->_method_map))
+            if (const auto& ret = detail::reflection_database::find_method(name, params, classPtr->m_method_map))
                 return method(ret);
         }
     }
@@ -604,14 +604,14 @@ vector<method> type::get_methods() const
 
     if (const auto classPtr = g_class_data_list[get_raw_type().get_id()].get())
     {
-        retrieve_sorted_methods(methods, classPtr->_method_map);
+        retrieve_sorted_methods(methods, classPtr->m_method_map);
     }
     
     // search in the base classes, but not recursively
     for (const auto& type : get_base_classes())
     {
         if (const auto classPtr = g_class_data_list[type.get_raw_type().get_id()].get())
-            retrieve_sorted_methods(methods, classPtr->_method_map);
+            retrieve_sorted_methods(methods, classPtr->m_method_map);
     }
 
     for (const auto& meth : methods)
@@ -763,9 +763,9 @@ type type::register_type(const char* name,
         set<type> double_entries;
         for (auto itr = base_classes.rbegin(); itr != base_classes.rend();)
         {
-            if (double_entries.find(itr->_base_type) == double_entries.end())
+            if (double_entries.find(itr->m_base_type) == double_entries.end())
             {
-                double_entries.insert(itr->_base_type);
+                double_entries.insert(itr->m_base_type);
                 ++itr;
             }
             else
@@ -776,14 +776,14 @@ type type::register_type(const char* name,
         
         for (const auto& type : base_classes)
         {
-            g_base_class_list[row + index] = type._base_type.get_id();
-            g_conversion_list[row + index] = type._rttr_cast_func;
+            g_base_class_list[row + index] = type.m_base_type.get_id();
+            g_conversion_list[row + index] = type.m_rttr_cast_func;
             ++index;
         }
 
         for (const auto& type : base_classes)
         {
-            const int row = RTTR_MAX_INHERIT_TYPES_COUNT * type._base_type.get_raw_type().get_id();
+            const int row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
             for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
             {
                 if (g_derived_class_list[row + i] == 0)
@@ -817,7 +817,7 @@ detail::type_converter_base* type::get_type_converter(const type& target_type) c
 
     for (const auto& converter : converter_list)
     {
-        if (converter.get()->_target_type == target_type)
+        if (converter.get()->m_target_type == target_type)
             return converter.get();
     }
 
@@ -831,7 +831,7 @@ void type::register_type_converter(std::unique_ptr<detail::type_converter_base> 
     const auto& converter_list = g_type_converter_list[m_id];
     for (const auto& conv : converter_list)
     {
-        if (conv.get()->_target_type == converter->_target_type)
+        if (conv.get()->m_target_type == converter->m_target_type)
             return;
     }
     g_type_converter_list[m_id].push_back(move(converter));
@@ -851,7 +851,7 @@ void register_property(type curr_type, unique_ptr<detail::property_container_bas
         if (!g_class_data_list[raw_id])
             g_class_data_list[raw_id].reset(new detail::reflection_database::class_data);
 
-        detail::reflection_database::register_property(move(prop), g_class_data_list[raw_id]->_property_map);
+        detail::reflection_database::register_property(move(prop), g_class_data_list[raw_id]->m_property_map);
     }
     else
     {
@@ -869,7 +869,7 @@ void register_method(type curr_type, std::unique_ptr<detail::method_container_ba
         if (!g_class_data_list[raw_id])
             g_class_data_list[raw_id].reset(new detail::reflection_database::class_data);
 
-        detail::reflection_database::register_method(move(method), g_class_data_list[raw_id]->_method_map);
+        detail::reflection_database::register_method(move(method), g_class_data_list[raw_id]->m_method_map);
     }
     else
     {

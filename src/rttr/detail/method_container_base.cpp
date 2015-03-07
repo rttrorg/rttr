@@ -42,8 +42,8 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method_container_base::method_container_base(const std::string& name, const type decalaring_type)
-:   _name(name),
-    _decalaring_type(decalaring_type)
+:   m_name(name),
+    m_decalaring_type(decalaring_type)
 {
 
 }
@@ -58,14 +58,14 @@ method_container_base::~method_container_base()
 
 string method_container_base::get_name() const 
 {
-    return _name; 
+    return m_name; 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type method_container_base::get_declaring_type() const
 {
-    return _decalaring_type;
+    return m_decalaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ type method_container_base::get_declaring_type() const
 string method_container_base::get_signature() const
 {
     auto params = get_parameter_types();
-    string result = _name + "( ";
+    string result = m_name + "( ";
     std::size_t index = 0;
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();

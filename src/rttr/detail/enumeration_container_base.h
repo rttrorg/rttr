@@ -72,7 +72,7 @@ class RTTR_API enumeration_container_base : public metadata_container
         type get_declaring_type() const;
 
     private:
-        const type  _declaring_type;
+        const type  m_declaring_type;
 };
 
 } // end namespace detail

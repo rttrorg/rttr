@@ -501,7 +501,7 @@ class RTTR_API variant_array
     private:
         friend class variant;
         friend class detail::argument;
-        detail::array_container_base* _container;
+        detail::array_container_base* m_container;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

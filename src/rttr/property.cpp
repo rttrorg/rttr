@@ -41,7 +41,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property::property(const detail::property_container_base* container)
-:   _container(container)
+:   m_container(container)
 {
 
 }
@@ -50,14 +50,14 @@ property::property(const detail::property_container_base* container)
 
 bool property::is_valid() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property::operator bool() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ property::operator bool() const
 bool property::is_readonly() const
 {
     if (is_valid())
-        return _container->is_readonly();
+        return m_container->is_readonly();
     else
         return false;
 }
@@ -75,7 +75,7 @@ bool property::is_readonly() const
 bool property::is_static() const
 {
     if (is_valid())
-        return _container->is_static();
+        return m_container->is_static();
     else
         return false;
 }
@@ -85,7 +85,7 @@ bool property::is_static() const
 bool property::is_enumeration() const
 {
     if (is_valid())
-        return _container->get_type().is_enumeration();
+        return m_container->get_type().is_enumeration();
     else
         return false;
 }
@@ -95,7 +95,7 @@ bool property::is_enumeration() const
 enumeration property::get_enumeration() const
 {
     if (is_valid())
-        return _container->get_type().get_enumeration();
+        return m_container->get_type().get_enumeration();
     else
         return impl::get_invalid_type().get_enumeration();
 }
@@ -105,7 +105,7 @@ enumeration property::get_enumeration() const
 bool property::is_array() const
 {
     if (is_valid())
-        return _container->is_array();
+        return m_container->is_array();
     else
         return false;
 }
@@ -115,7 +115,7 @@ bool property::is_array() const
 string property::get_name() const
 {
     if (is_valid())
-        return _container->get_name();
+        return m_container->get_name();
     else
         return string();
 }
@@ -125,7 +125,7 @@ string property::get_name() const
 type property::get_type() const
 {
     if (is_valid())
-        return _container->get_type();
+        return m_container->get_type();
     else
         return impl::get_invalid_type();
 }
@@ -135,7 +135,7 @@ type property::get_type() const
 type property::get_declaring_type() const
 {
     if (is_valid())
-        return _container->get_declaring_type();
+        return m_container->get_declaring_type();
     else
         return impl::get_invalid_type();
 }
@@ -145,7 +145,7 @@ type property::get_declaring_type() const
 bool property::set_value(detail::instance object, detail::argument arg) const
 {
     if (is_valid())
-        return _container->set_value(object, arg);
+        return m_container->set_value(object, arg);
     else
         return false;
 }
@@ -155,7 +155,7 @@ bool property::set_value(detail::instance object, detail::argument arg) const
 variant property::get_value(detail::instance object) const
 {
     if (is_valid())
-        return _container->get_value(object);
+        return m_container->get_value(object);
     else
         return variant();
 }
@@ -165,7 +165,7 @@ variant property::get_value(detail::instance object) const
 variant property::get_metadata(int key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -175,7 +175,7 @@ variant property::get_metadata(int key) const
 variant property::get_metadata(const std::string& key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -184,14 +184,14 @@ variant property::get_metadata(const std::string& key) const
 
 bool property::operator==(const property& other) const
 {
-    return (_container == other._container); 
+    return (m_container == other.m_container); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::operator!=(const property& other) const
 {
-    return (_container != other._container); 
+    return (m_container != other.m_container); 
 }
 
 } // end namespace rttr

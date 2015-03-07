@@ -42,7 +42,7 @@ namespace detail
     variant create_void_variant()
     {
         variant var;
-        var._holder = new variant::variant_container<void>();
+        var.m_holder = new variant::variant_container<void>();
         return var;
     }
 
@@ -88,8 +88,8 @@ double variant::to_double(bool* ok)
 
 variant_array variant::to_array() const
 {
-    if (_holder)
-        return variant_array(_holder->to_array());
+    if (m_holder)
+        return variant_array(m_holder->to_array());
     else
         return variant_array();
 }
@@ -98,8 +98,8 @@ variant_array variant::to_array() const
 
 bool variant::can_convert(const type& target_type) const
 {
-    if (_holder)
-        return _holder->can_convert(target_type);
+    if (m_holder)
+        return m_holder->can_convert(target_type);
     else
         return false;
 }
@@ -109,8 +109,8 @@ bool variant::can_convert(const type& target_type) const
 template<> 
 bool variant::can_convert<variant_array>() const
 {
-    if (_holder)
-        return _holder->is_array();
+    if (m_holder)
+        return m_holder->is_array();
     else
         return false;
 }
@@ -119,12 +119,12 @@ bool variant::can_convert<variant_array>() const
 
 bool variant::convert(const type& target_type)
 {
-    if (!_holder)
+    if (!m_holder)
         return false;
 
     bool ok = false;
     variant new_var;
-    const type& source_type = _holder->get_type();
+    const type& source_type = m_holder->get_type();
     if (target_type == source_type)
     {
         return true;
@@ -154,14 +154,14 @@ bool variant::convert(const type& target_type)
     {
         if (const auto& converter = source_type.get_type_converter(target_type))
         {
-            void* raw_ptr = _holder->get_ptr();
+            void* raw_ptr = m_holder->get_ptr();
             new_var = converter->to_variant(raw_ptr, ok);
         }
         else if (source_type.is_pointer())
         {
             if (source_type.get_pointer_count() == 1 && target_type.get_pointer_count() == 1)
             {
-                void* raw_ptr = _holder->get_raw_ptr();
+                void* raw_ptr = m_holder->get_raw_ptr();
                 void* casted_ptr = type::apply_offset(raw_ptr, source_type, target_type);
                 if (casted_ptr)
                 {
@@ -188,8 +188,8 @@ bool variant::convert(const type& target_type)
 template<>
 std::string variant::convert<std::string>(bool* ok) const
 {
-    if (_holder)
-        return _holder->to_string(ok);
+    if (m_holder)
+        return m_holder->to_string(ok);
     else
     {
         if (ok)
@@ -203,8 +203,8 @@ std::string variant::convert<std::string>(bool* ok) const
 template<>
 int variant::convert<int>(bool* ok) const
 {
-    if (_holder)
-        return _holder->to_int(ok);
+    if (m_holder)
+        return m_holder->to_int(ok);
     else
     {
         if (ok)
@@ -218,8 +218,8 @@ int variant::convert<int>(bool* ok) const
 template<>
 bool variant::convert<bool>(bool* ok) const
 {
-    if (_holder)
-        return _holder->to_bool(ok);
+    if (m_holder)
+        return m_holder->to_bool(ok);
     else
     {
         if (ok)
@@ -233,8 +233,8 @@ bool variant::convert<bool>(bool* ok) const
 template<>
 float variant::convert<float>(bool* ok) const
 {
-    if (_holder)
-        return _holder->to_float(ok);
+    if (m_holder)
+        return m_holder->to_float(ok);
     else
     {
         if (ok)
@@ -248,8 +248,8 @@ float variant::convert<float>(bool* ok) const
 template<>
 double variant::convert<double>(bool* ok) const
 {
-    if (_holder)
-        return _holder->to_double(ok);
+    if (m_holder)
+        return m_holder->to_double(ok);
     else
     {
         if (ok)
@@ -265,8 +265,8 @@ variant_array variant::convert<variant_array>(bool* ok) const
 {
     variant_array result;
 
-    if (_holder)
-        result = _holder->to_array();
+    if (m_holder)
+        result = m_holder->to_array();
     
     if (ok && result.is_valid())
         *ok = false;
@@ -396,19 +396,19 @@ double variant::variant_container<void>::to_double(bool* ok) const
 // std::string
 
 variant::variant_container<std::string>::variant_container(const std::string& arg)
-: _value(arg)
+: m_value(arg)
 {
 
 }
 
 variant::variant_container<std::string>::variant_container(std::string&& arg)
-: _value(std::move(arg))
+: m_value(std::move(arg))
 {
 }
 
 variant::variant_container_base* variant::variant_container<std::string>::clone() const
 {
-    return (new variant_container<std::string>(_value));
+    return (new variant_container<std::string>(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -422,7 +422,7 @@ type variant::variant_container<std::string>::get_type() const
     
 void* variant::variant_container<std::string>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -436,7 +436,7 @@ type variant::variant_container<std::string>::get_raw_type() const
 
 void* variant::variant_container<std::string>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -481,35 +481,35 @@ std::string variant::variant_container<std::string>::to_string(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 int variant::variant_container<std::string>::to_int(bool* ok) const
 {
-    return detail::string_to_int(_value, ok);
+    return detail::string_to_int(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant::variant_container<std::string>::to_bool(bool* ok) const
 {
-    return detail::string_to_bool(_value, ok);
+    return detail::string_to_bool(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 float variant::variant_container<std::string>::to_float(bool* ok) const
 {
-    return detail::string_to_float(_value, ok);
+    return detail::string_to_float(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 double variant::variant_container<std::string>::to_double(bool* ok) const
 {
-    return detail::string_to_double(_value, ok);
+    return detail::string_to_double(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -518,19 +518,19 @@ double variant::variant_container<std::string>::to_double(bool* ok) const
 // int
 
 variant::variant_container<int>::variant_container(const int& arg)
-: _value(arg)
+: m_value(arg)
 {
 
 }
 
 variant::variant_container<int>::variant_container(int&& arg)
-: _value(std::move(arg))
+: m_value(std::move(arg))
 {
 }
 
 variant::variant_container_base* variant::variant_container<int>::clone() const
 {
-    return (new variant_container<int>(_value));
+    return (new variant_container<int>(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -544,7 +544,7 @@ type variant::variant_container<int>::get_type() const
     
 void* variant::variant_container<int>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -558,7 +558,7 @@ type variant::variant_container<int>::get_raw_type() const
 
 void* variant::variant_container<int>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +600,7 @@ detail::array_container_base* variant::variant_container<int>::to_array() const
 
 std::string variant::variant_container<int>::to_string(bool* ok) const
 {
-    return detail::int_to_string(_value, ok);
+    return detail::int_to_string(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -609,7 +609,7 @@ int variant::variant_container<int>::to_int(bool* ok) const
 {
     if (ok)
         *ok = true;
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -619,7 +619,7 @@ bool variant::variant_container<int>::to_bool(bool* ok) const
     if (ok)
         *ok = true;
 
-    return (_value != 0) ? true : false;
+    return (m_value != 0) ? true : false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -628,7 +628,7 @@ float variant::variant_container<int>::to_float(bool* ok) const
 {
     if (ok)
         *ok = true;
-    return static_cast<float>(_value);
+    return static_cast<float>(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -637,7 +637,7 @@ double variant::variant_container<int>::to_double(bool* ok) const
 {
     if (ok)
         *ok = true;
-    return static_cast<double>(_value);
+    return static_cast<double>(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -646,19 +646,19 @@ double variant::variant_container<int>::to_double(bool* ok) const
 // bool
 
 variant::variant_container<bool>::variant_container(const bool& arg)
-: _value(arg)
+: m_value(arg)
 {
 
 }
 
 variant::variant_container<bool>::variant_container(bool&& arg)
-: _value(std::move(arg))
+: m_value(std::move(arg))
 {
 }
 
 variant::variant_container_base* variant::variant_container<bool>::clone() const
 {
-    return (new variant_container<bool>(_value));
+    return (new variant_container<bool>(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -672,7 +672,7 @@ type variant::variant_container<bool>::get_type() const
     
 void* variant::variant_container<bool>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -686,7 +686,7 @@ type variant::variant_container<bool>::get_raw_type() const
 
 void* variant::variant_container<bool>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -728,7 +728,7 @@ detail::array_container_base* variant::variant_container<bool>::to_array() const
 
 std::string variant::variant_container<bool>::to_string(bool* ok) const
 {
-    return (_value ? "true" : "false");
+    return (m_value ? "true" : "false");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -738,7 +738,7 @@ int variant::variant_container<bool>::to_int(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -748,7 +748,7 @@ bool variant::variant_container<bool>::to_bool(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -758,7 +758,7 @@ float variant::variant_container<bool>::to_float(bool* ok) const
     if (ok)
         *ok = true;
     
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -768,7 +768,7 @@ double variant::variant_container<bool>::to_double(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -777,19 +777,19 @@ double variant::variant_container<bool>::to_double(bool* ok) const
 // float
 
 variant::variant_container<float>::variant_container(const float& arg)
-: _value(arg)
+: m_value(arg)
 {
 
 }
 
 variant::variant_container<float>::variant_container(float&& arg)
-: _value(std::move(arg))
+: m_value(std::move(arg))
 {
 }
 
 variant::variant_container_base* variant::variant_container<float>::clone() const
 {
-    return (new variant_container<float>(_value));
+    return (new variant_container<float>(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -803,7 +803,7 @@ type variant::variant_container<float>::get_type() const
     
 void* variant::variant_container<float>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -817,7 +817,7 @@ type variant::variant_container<float>::get_raw_type() const
 
 void* variant::variant_container<float>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -859,7 +859,7 @@ detail::array_container_base* variant::variant_container<float>::to_array() cons
 
 std::string variant::variant_container<float>::to_string(bool* ok) const
 {
-    return detail::float_to_string(_value, ok);
+    return detail::float_to_string(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -869,7 +869,7 @@ int variant::variant_container<float>::to_int(bool* ok) const
     if (ok)
         *ok = true;
 
-    return static_cast<int>(_value);
+    return static_cast<int>(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -879,7 +879,7 @@ bool variant::variant_container<float>::to_bool(bool* ok) const
     if (ok)
         *ok = true;
 
-    return (std::abs(_value) <= std::numeric_limits<float>::epsilon()) ? false : true;
+    return (std::abs(m_value) <= std::numeric_limits<float>::epsilon()) ? false : true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -889,7 +889,7 @@ float variant::variant_container<float>::to_float(bool* ok) const
     if (ok)
         *ok = true;
     
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -899,7 +899,7 @@ double variant::variant_container<float>::to_double(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -908,19 +908,19 @@ double variant::variant_container<float>::to_double(bool* ok) const
 // double
 
 variant::variant_container<double>::variant_container(const double& arg)
-: _value(arg)
+: m_value(arg)
 {
 
 }
 
 variant::variant_container<double>::variant_container(double&& arg)
-: _value(std::move(arg))
+: m_value(std::move(arg))
 {
 }
 
 variant::variant_container_base* variant::variant_container<double>::clone() const
 {
-    return (new variant_container<double>(_value));
+    return (new variant_container<double>(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -934,7 +934,7 @@ type variant::variant_container<double>::get_type() const
     
 void* variant::variant_container<double>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -948,7 +948,7 @@ type variant::variant_container<double>::get_raw_type() const
 
 void* variant::variant_container<double>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -990,7 +990,7 @@ bool variant::variant_container<double>::can_convert(const type& target_type) co
 
 std::string variant::variant_container<double>::to_string(bool* ok) const
 {
-    return detail::double_to_string(_value, ok);
+    return detail::double_to_string(m_value, ok);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1000,7 +1000,7 @@ int variant::variant_container<double>::to_int(bool* ok) const
     if (ok)
         *ok = true;
 
-    return static_cast<int>(_value);
+    return static_cast<int>(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1010,7 +1010,7 @@ bool variant::variant_container<double>::to_bool(bool* ok) const
     if (ok)
         *ok = true;
 
-    return (std::abs(_value) <= std::numeric_limits<double>::epsilon()) ? false : true;
+    return (std::abs(m_value) <= std::numeric_limits<double>::epsilon()) ? false : true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1020,7 +1020,7 @@ float variant::variant_container<double>::to_float(bool* ok) const
     if (ok)
         *ok = true;
     
-    return static_cast<float>(_value);
+    return static_cast<float>(m_value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1030,7 +1030,7 @@ double variant::variant_container<double>::to_double(bool* ok) const
     if (ok)
         *ok = true;
 
-    return _value;
+    return m_value;
 }
 
 } // end namespace rttr

@@ -37,38 +37,38 @@ namespace rttr
 namespace detail
 {
 
-RTTR_INLINE argument::argument() : _data(nullptr), _type(impl::get_invalid_type()) {}
+RTTR_INLINE argument::argument() : m_data(nullptr), m_type(impl::get_invalid_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(argument&& arg) : _data(arg._data), _type(arg._type) {}
+RTTR_INLINE argument::argument(argument&& arg) : m_data(arg.m_data), m_type(arg.m_type) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(const argument& other) : _data(other._data), _type(other._type) {}
+RTTR_INLINE argument::argument(const argument& other) : m_data(other.m_data), m_type(other.m_type) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}
+RTTR_INLINE argument::argument(variant& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(const variant& var) : _data(var.get_ptr()), _type(var.get_type()) {}
+RTTR_INLINE argument::argument(const variant& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(variant_array& var) : _data(var.get_ptr()), _type(var.get_type()) {}
+RTTR_INLINE argument::argument(variant_array& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE argument::argument(const variant_array& var) : _data(var.get_ptr()), _type(var.get_type()) {}
+RTTR_INLINE argument::argument(const variant_array& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 argument::argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type*) 
-:   _data(reinterpret_cast<const void*>(std::addressof(data))),
-    _type(rttr::type::get<T>())
+:   m_data(reinterpret_cast<const void*>(std::addressof(data))),
+    m_type(rttr::type::get<T>())
 {
     static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
 }
@@ -77,8 +77,8 @@ argument::argument(const T& data, typename std::enable_if<!std::is_same<argument
 
 template<typename T>
 argument::argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type*) 
-:   _data(reinterpret_cast<const void*>(std::addressof(data))),
-    _type(rttr::type::get<T>())
+:   m_data(reinterpret_cast<const void*>(std::addressof(data))),
+    m_type(rttr::type::get<T>())
 {
     static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
 }
@@ -86,15 +86,15 @@ argument::argument(T& data, typename std::enable_if<!std::is_same<argument, T>::
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-bool argument::is_type()  const { return rttr::type::get<T>() == _type; }
+bool argument::is_type()  const { return rttr::type::get<T>() == m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type argument::get_type() const { return _type; }
+RTTR_INLINE type argument::get_type() const { return m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE void* argument::get_ptr() const { return const_cast<void *>(_data); }
+RTTR_INLINE void* argument::get_ptr() const { return const_cast<void *>(m_data); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -102,15 +102,15 @@ template<typename T>
 T& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
-    return (*reinterpret_cast<raw_type*>(const_cast<void *>(_data)));
+    return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE argument& argument::operator=(const argument& other)
 {
-    _data = other._data;
-    const_cast<rttr::type&>(_type) = other._type;
+    m_data = other.m_data;
+    const_cast<rttr::type&>(m_type) = other.m_type;
     return *this;
 }
 

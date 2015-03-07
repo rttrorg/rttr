@@ -52,7 +52,7 @@ class method_container : public method_container_base
     public:
         method_container(const std::string& name, const type declaring_type, F func_acc)
         :   method_container_base(name, declaring_type),
-            _func_acc(func_acc)
+            m_func_acc(func_acc)
         { }
 
         bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
@@ -63,41 +63,41 @@ class method_container : public method_container_base
 
         variant invoke(detail::instance& object) const
         {
-           return method_accessor<F, Policy>::invoke(_func_acc, object);
+           return method_accessor<F, Policy>::invoke(m_func_acc, object);
         }
 
         variant invoke(detail::instance& object, detail::argument& arg1) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1);
         }
         variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1, arg2);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2);
         }
         variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1, arg2, arg3);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3);
         }
         variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1, arg2, arg3, arg4);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4);
         }
         variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1, arg2, arg3, arg4, arg5);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4, arg5);
         }
         variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, arg1, arg2, arg3, arg4, arg5, arg6);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
         variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke(_func_acc, object, args);
+            return method_accessor<F, Policy>::invoke(m_func_acc, object, args);
         }
 
     private:
-        F  _func_acc;
+        F  m_func_acc;
 };
 
 } // end namespace detail

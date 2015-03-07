@@ -78,8 +78,8 @@ public:
     argument& operator=(const argument& other);
 
 private:
-    const void*         _data;
-    const rttr::type    _type;
+    const void*         m_data;
+    const rttr::type    m_type;
 };
 
 } // end namespace detail

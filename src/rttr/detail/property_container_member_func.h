@@ -42,8 +42,8 @@ class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_va
     public:
         property_container(const std::string& name, const type declaring_type, Getter get, Setter set)
         :   property_container_base(name, declaring_type),
-            _getter(get),
-            _setter(set)
+            m_getter(get),
+            m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
@@ -60,7 +60,7 @@ class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_va
             class_type* ptr = object.try_convert<class_type>();
             if (ptr && arg.is_type<arg_type>() )
             {
-                (ptr->*_setter)(arg.get_value<arg_type>());
+                (ptr->*m_setter)(arg.get_value<arg_type>());
                 return true;
             }
             return false;
@@ -69,14 +69,14 @@ class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_va
         variant get_value(detail::instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
-                return variant((ptr->*_getter)());
+                return variant((ptr->*m_getter)());
             else
                 return variant();
         }
 
     private:
-        Getter  _getter;
-        Setter  _setter;
+        Getter  m_getter;
+        Setter  m_setter;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ class property_container<member_func_ptr, Getter, void, return_as_copy, read_onl
     public:
         property_container(const std::string& name, const type declaring_type, Getter get)
         :   property_container_base(name, declaring_type),
-            _getter(get)
+            m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
         }
@@ -110,13 +110,13 @@ class property_container<member_func_ptr, Getter, void, return_as_copy, read_onl
         variant get_value(detail::instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
-                return variant((ptr->*_getter)());
+                return variant((ptr->*m_getter)());
             else
                 return variant();
         }
 
     private:
-        Getter  _getter;
+        Getter  m_getter;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -134,8 +134,8 @@ class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_
     public:
         property_container(const std::string& name, const type declaring_type, Getter get, Setter set)
         :   property_container_base(name, declaring_type),
-            _getter(get),
-            _setter(set)
+            m_getter(get),
+            m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
@@ -156,7 +156,7 @@ class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_
             class_type* ptr = object.try_convert<class_type>();
             if (ptr && arg.is_type<arg_type*>())
             {
-                (ptr->*_setter)(*arg.get_value<arg_type*>());
+                (ptr->*m_setter)(*arg.get_value<arg_type*>());
                 return true;
             }
             return false;
@@ -165,14 +165,14 @@ class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_
         variant get_value(detail::instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
-                return variant(&(ptr->*_getter)());
+                return variant(&(ptr->*m_getter)());
             else
                 return variant();
         }
 
     private:
-        Getter  _getter;
-        Setter  _setter;
+        Getter  m_getter;
+        Setter  m_setter;
     
 };
 
@@ -189,7 +189,7 @@ class property_container<member_func_ptr, Getter, void, return_as_ptr, read_only
     public:
         property_container(const std::string& name, const type declaring_type, Getter get)
         :   property_container_base(name, declaring_type),
-            _getter(get)
+            m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
@@ -208,13 +208,13 @@ class property_container<member_func_ptr, Getter, void, return_as_ptr, read_only
         variant get_value(detail::instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
-                return variant(&(ptr->*_getter)());
+                return variant(&(ptr->*m_getter)());
             else
                 return variant();
         }
 
     private:
-        Getter  _getter;
+        Getter  m_getter;
 };
 
 #endif // __RTTR_PROPERTY_CONTAINER_MEMBER_FUNC_H__

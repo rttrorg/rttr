@@ -40,11 +40,11 @@ namespace detail
 
 struct RTTR_LOCAL type_converter_base
 {
-    type_converter_base(const type& target_type) : _target_type(target_type) {}
+    type_converter_base(const type& target_type) : m_target_type(target_type) {}
     virtual variant to_variant(void* data, bool& ok) const = 0;
     virtual ~type_converter_base() {}
 
-    type _target_type;
+    type m_target_type;
 };
 
 template<typename TargetType>
@@ -59,16 +59,16 @@ struct type_converter_target : type_converter_base
 template<typename TargetType, typename SourceType, typename F>
 struct type_converter : type_converter_target<TargetType>
 {
-    type_converter(const F& acc) : type_converter_target<TargetType>(type::get<TargetType>()), _acc(acc) { }
+    type_converter(const F& acc) : type_converter_target<TargetType>(type::get<TargetType>()), m_acc(acc) { }
     virtual ~type_converter() {}
 
     TargetType convert(void* data, bool& ok) const
     {
         SourceType* obj = static_cast<SourceType*>(data);
-        return _acc(*obj, ok);
+        return m_acc(*obj, ok);
     }
 
-    F _acc;
+    F m_acc;
 };
 
 } // end namespace detail

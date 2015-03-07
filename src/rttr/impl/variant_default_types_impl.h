@@ -98,7 +98,7 @@ class RTTR_API variant::variant_container<std::string> : public variant_containe
         float to_float(bool* ok) const;
         double to_double(bool* ok) const;
 
-        std::string _value;
+        std::string m_value;
 
     private: // unimplemented
         variant_container & operator=(const variant_container &);
@@ -136,7 +136,7 @@ class RTTR_API variant::variant_container<int> : public variant_container_base
         float to_float(bool* ok) const;
         double to_double(bool* ok) const;
 
-        int _value;
+        int m_value;
 
     private: // unimplemented
         variant_container & operator=(const variant_container &);
@@ -174,7 +174,7 @@ class RTTR_API variant::variant_container<bool> : public variant_container_base
         float to_float(bool* ok) const;
         double to_double(bool* ok) const;
 
-        bool _value;
+        bool m_value;
 
     private: // unimplemented
         variant_container & operator=(const variant_container &);
@@ -212,7 +212,7 @@ class RTTR_API variant::variant_container<float> : public variant_container_base
         float to_float(bool* ok) const;
         double to_double(bool* ok) const;
 
-        float _value;
+        float m_value;
 
     private: // unimplemented
         variant_container & operator=(const variant_container &);
@@ -250,7 +250,7 @@ class RTTR_API variant::variant_container<double> : public variant_container_bas
         float to_float(bool* ok) const;
         double to_double(bool* ok) const;
 
-        double _value;
+        double m_value;
 
     private: // unimplemented
         variant_container & operator=(const variant_container &);

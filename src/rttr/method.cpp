@@ -38,7 +38,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method::method(const detail::method_container_base* container)
-:   _container(container)
+:   m_container(container)
 {
 
 }
@@ -47,14 +47,14 @@ method::method(const detail::method_container_base* container)
 
 bool method::is_valid() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method::operator bool() const
 {
-    return (_container ? true : false);
+    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ method::operator bool() const
 string method::get_name() const
 {
     if (is_valid())
-        return _container->get_name();
+        return m_container->get_name();
     else
         return string();
 }
@@ -72,7 +72,7 @@ string method::get_name() const
 bool method::is_static() const
 {
     if (is_valid())
-        return _container->is_static();
+        return m_container->is_static();
     else
         return false;
 }
@@ -82,7 +82,7 @@ bool method::is_static() const
 type method::get_return_type() const
 {
     if (is_valid())
-        return _container->get_return_type();
+        return m_container->get_return_type();
     else
         return impl::get_invalid_type();
 }
@@ -92,7 +92,7 @@ type method::get_return_type() const
 type method::get_declaring_type() const
 {
     if (is_valid())
-        return _container->get_declaring_type();
+        return m_container->get_declaring_type();
     else
         return impl::get_invalid_type();
 }
@@ -102,7 +102,7 @@ type method::get_declaring_type() const
 vector<type> method::get_parameter_types() const
 {
     if (is_valid())
-        return _container->get_parameter_types();
+        return m_container->get_parameter_types();
     else
         return vector<type>();
 }
@@ -112,7 +112,7 @@ vector<type> method::get_parameter_types() const
 string method::get_signature() const
 {
     if (is_valid())
-        return _container->get_signature();
+        return m_container->get_signature();
     else
         return string();
 }
@@ -122,7 +122,7 @@ string method::get_signature() const
 variant method::get_metadata(int key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -132,7 +132,7 @@ variant method::get_metadata(int key) const
 variant method::get_metadata(const std::string& key) const
 {
     if (is_valid())
-        return _container->get_metadata(key);
+        return m_container->get_metadata(key);
     else
         return variant();
 }
@@ -142,7 +142,7 @@ variant method::get_metadata(const std::string& key) const
 variant method::invoke(detail::instance object) const
 {
     if (is_valid())
-        return _container->invoke(object);
+        return m_container->invoke(object);
     else
         return variant();
 }
@@ -152,7 +152,7 @@ variant method::invoke(detail::instance object) const
 variant method::invoke(detail::instance object, detail::argument arg1) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1);
+        return m_container->invoke(object, arg1);
     else
         return variant();
 }
@@ -162,7 +162,7 @@ variant method::invoke(detail::instance object, detail::argument arg1) const
 variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1, arg2);
+        return m_container->invoke(object, arg1, arg2);
     else
         return variant();
 }
@@ -172,7 +172,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1, arg2, arg3);
+        return m_container->invoke(object, arg1, arg2, arg3);
     else
         return variant();
 }
@@ -182,7 +182,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1, arg2, arg3, arg4);
+        return m_container->invoke(object, arg1, arg2, arg3, arg4);
     else
         return variant();
 }
@@ -193,7 +193,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
                        detail::argument arg5) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1, arg2, arg3, arg4, arg5);
+        return m_container->invoke(object, arg1, arg2, arg3, arg4, arg5);
     else
         return variant();
 }
@@ -204,7 +204,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
                        detail::argument arg5, detail::argument arg6) const
 {
     if (is_valid())
-        return _container->invoke(object, arg1, arg2, arg3, arg4, arg5, arg6);
+        return m_container->invoke(object, arg1, arg2, arg3, arg4, arg5, arg6);
     else
         return variant();
 }
@@ -214,7 +214,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 variant method::invoke_variadic(detail::instance object, std::vector<detail::argument> args) const
 {
     if (is_valid())
-        return _container->invoke_variadic(object, args);
+        return m_container->invoke_variadic(object, args);
     else
         return variant();
 }
@@ -223,14 +223,14 @@ variant method::invoke_variadic(detail::instance object, std::vector<detail::arg
 
 bool method::operator==(const method& other) const
 {
-    return (_container == other._container);
+    return (m_container == other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool method::operator!=(const method& other) const
 {
-    return (_container != other._container);
+    return (m_container != other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

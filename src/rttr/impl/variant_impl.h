@@ -42,33 +42,33 @@ detail::array_container_base* create_array_container(const T& value);
 } // end namespace detail;
 
 RTTR_INLINE variant::variant()
-:   _holder(0)
+:   m_holder(0)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::variant(const variant& other)
-:   _holder(other._holder ? other._holder->clone() : nullptr)
+:   m_holder(other.m_holder ? other.m_holder->clone() : nullptr)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::variant(variant&& other)
-:   _holder(other._holder)
+:   m_holder(other.m_holder)
 {
-    other._holder = nullptr;
+    other.m_holder = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::~variant()
 {
-    delete _holder;
+    delete m_holder;
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-        _holder = nullptr;
+        m_holder = nullptr;
 #   else
 #       error "Please check if this lead to still to a crash."
 #   endif
@@ -79,7 +79,7 @@ RTTR_INLINE variant::~variant()
 
 RTTR_INLINE void variant::swap(variant& other)
 {
-    std::swap(_holder, other._holder);
+    std::swap(m_holder, other.m_holder);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -112,35 +112,35 @@ RTTR_INLINE variant& variant::operator=(variant&& other)
 
 RTTR_INLINE type variant::get_type() const
 {
-    return (_holder ? _holder->get_type() : impl::get_invalid_type());
+    return (m_holder ? m_holder->get_type() : impl::get_invalid_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void* variant::get_ptr() const
 {
-    return (_holder ? _holder->get_ptr() : nullptr);
+    return (m_holder ? m_holder->get_ptr() : nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type variant::get_raw_type() const
 {
-    return (_holder ? _holder->get_raw_type() : impl::get_invalid_type());
+    return (m_holder ? m_holder->get_raw_type() : impl::get_invalid_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void* variant::get_raw_ptr() const
 {
-    return (_holder ? _holder->get_raw_ptr() : nullptr);
+    return (m_holder ? m_holder->get_raw_ptr() : nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool variant::is_valid() const
 {
-    return (_holder ? true : false); 
+    return (m_holder ? true : false); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ RTTR_INLINE variant::variant_container_base::~variant_container_base()
 
 template<typename T>
 variant::variant(const T& param)
-:   _holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(param))
+:   m_holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(param))
 {
 }
 
@@ -165,7 +165,7 @@ variant::variant(T&& param,
                 typename std::enable_if<!std::is_same<variant&, T>::value >::type*,
                 typename std::enable_if<!std::is_const<T>::value >::type*
                 )
-:   _holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(static_cast<T&&>(param)))
+:   m_holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(static_cast<T&&>(param)))
 {
 }
 
@@ -177,7 +177,7 @@ bool variant::is_type() const
     if (!is_valid())
         return false;
     else
-        return (type::get<T>() == _holder->get_type());
+        return (type::get<T>() == m_holder->get_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ bool variant::can_convert() const
     if (!is_valid())
         return false;
 
-    return _holder->can_convert(type::get<T>());
+    return m_holder->can_convert(type::get<T>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ template<typename T>
 T& variant::get_value() const
 {
     typedef typename std::remove_cv<T>::type nonRef;
-    return static_cast<variant_container<nonRef> *>(_holder)->_value;
+    return static_cast<variant_container<nonRef> *>(m_holder)->m_value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -205,19 +205,19 @@ T& variant::get_value() const
 template<typename T>
 T variant::convert(bool* ok) const
 {
-    const type& source_type = _holder->get_type();
+    const type& source_type = m_holder->get_type();
     const type& target_type = type::get<T>();
     if (target_type == source_type)
     {
         if (ok)
             *ok = true;
         typedef typename std::remove_cv<T>::type nonRef;
-        return static_cast<variant_container<nonRef> *>(_holder)->_value;
+        return static_cast<variant_container<nonRef> *>(m_holder)->m_value;
     }
     else
     {
         const auto& converter = source_type.get_type_converter(target_type);
-        void* data = _holder->get_ptr();
+        void* data = m_holder->get_ptr();
         using t_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
         if (const auto& targert_converter = static_cast<detail::type_converter_target<t_type>*>(converter))
         {
@@ -283,7 +283,7 @@ T variant::get_value_with_default_value(const SourceType& source, T default_valu
 
 template<typename T, typename Enable>
 variant::variant_container<T, Enable>::variant_container(const T& arg)
-:   _value(arg)
+:   m_value(arg)
 {
 
 }
@@ -292,7 +292,7 @@ variant::variant_container<T, Enable>::variant_container(const T& arg)
 
 template<typename T, typename Enable>
 variant::variant_container<T, Enable>::variant_container(T&& arg)
-:   _value(std::move(arg))
+:   m_value(std::move(arg))
 {
 
 }
@@ -302,7 +302,7 @@ variant::variant_container<T, Enable>::variant_container(T&& arg)
 template<typename T, typename Enable>
 variant::variant_container_base* variant::variant_container<T, Enable>::clone() const
 {
-    return (new variant_container<T>(_value));
+    return (new variant_container<T>(m_value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ type variant::variant_container<T, Enable>::get_type() const
 template<typename T, typename Enable>           
 void* variant::variant_container<T, Enable>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ type variant::variant_container<T, Enable>::get_raw_type() const
 template<typename T, typename Enable>            
 void* variant::variant_container<T, Enable>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -371,7 +371,7 @@ bool variant::variant_container<T, Enable>::is_array() const
 template<typename T, typename Enable>
 detail::array_container_base* variant::variant_container<T, Enable>::to_array() const
 {
-    return detail::create_array_container(_value);
+    return detail::create_array_container(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -379,7 +379,7 @@ detail::array_container_base* variant::variant_container<T, Enable>::to_array() 
 template<typename T, typename Enable>
 std::string variant::variant_container<T, Enable>::to_string(bool* ok) const
 {
-    return variant::get_value_with_default_value<std::string, T>(_value, std::string(), ok);
+    return variant::get_value_with_default_value<std::string, T>(m_value, std::string(), ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +387,7 @@ std::string variant::variant_container<T, Enable>::to_string(bool* ok) const
 template<typename T, typename Enable>
 int variant::variant_container<T, Enable>::to_int(bool* ok) const
 {
-    return variant::get_value_with_default_value<int, T>(_value, 0, ok);
+    return variant::get_value_with_default_value<int, T>(m_value, 0, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ int variant::variant_container<T, Enable>::to_int(bool* ok) const
 template<typename T, typename Enable>
 bool variant::variant_container<T, Enable>::to_bool(bool* ok) const
 {
-    return variant::get_value_with_default_value<bool, T>(_value, false, ok);
+    return variant::get_value_with_default_value<bool, T>(m_value, false, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -403,7 +403,7 @@ bool variant::variant_container<T, Enable>::to_bool(bool* ok) const
 template<typename T, typename Enable>
 float variant::variant_container<T, Enable>::to_float(bool* ok) const
 {
-    return variant::get_value_with_default_value<float, T>(_value, 0.0f, ok);
+    return variant::get_value_with_default_value<float, T>(m_value, 0.0f, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +411,7 @@ float variant::variant_container<T, Enable>::to_float(bool* ok) const
 template<typename T, typename Enable>
 double variant::variant_container<T, Enable>::to_double(bool* ok) const
 {
-    return variant::get_value_with_default_value<double, T>(_value, 0.0, ok);
+    return variant::get_value_with_default_value<double, T>(m_value, 0.0, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -422,12 +422,12 @@ variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_o
 {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-    detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), _value);
+    detail::copy_array(const_cast<std::remove_const<T>::type&>(arg), m_value);
 #   else
 #       error "Check new MSVC Compiler!"
 #   endif
 #else
-    detail::copy_array(arg, _value);
+    detail::copy_array(arg, m_value);
 #endif
 }
 
@@ -436,7 +436,7 @@ variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_o
 template<typename T>
 variant::variant_container_base* variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::clone() const
 {
-    return (new variant_container<T>(_value));
+    return (new variant_container<T>(m_value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +452,7 @@ type variant::variant_container<T, typename std::enable_if<detail::is_array_and_
 template<typename T>           
 void* variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -468,7 +468,7 @@ type variant::variant_container<T,  typename std::enable_if<detail::is_array_and
 template<typename T>
 void* variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -484,7 +484,7 @@ bool variant::variant_container<T, typename std::enable_if<detail::is_array_and_
 template<typename T>
 detail::array_container_base* variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_array() const
 {
-    return detail::create_array_container(_value);
+    return detail::create_array_container(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -507,7 +507,7 @@ bool variant::variant_container<T, typename std::enable_if<detail::is_array_and_
 template<typename T>
 std::string variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_string(bool* ok) const
 {
-    return variant::get_value_with_default_value<std::string, T>(_value, std::string(), ok);
+    return variant::get_value_with_default_value<std::string, T>(m_value, std::string(), ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -515,7 +515,7 @@ std::string variant::variant_container<T, typename std::enable_if<detail::is_arr
 template<typename T>
 int variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_int(bool* ok) const
 {
-    return variant::get_value_with_default_value<int, T>(_value, 0, ok);
+    return variant::get_value_with_default_value<int, T>(m_value, 0, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -523,7 +523,7 @@ int variant::variant_container<T, typename std::enable_if<detail::is_array_and_n
 template<typename T>
 bool variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_bool(bool* ok) const
 {
-    return variant::get_value_with_default_value<bool, T>(_value, false, ok);
+    return variant::get_value_with_default_value<bool, T>(m_value, false, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -531,7 +531,7 @@ bool variant::variant_container<T, typename std::enable_if<detail::is_array_and_
 template<typename T>
 float variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_float(bool* ok) const
 {
-    return variant::get_value_with_default_value<float, T>(_value, 0.0f, ok);
+    return variant::get_value_with_default_value<float, T>(m_value, 0.0f, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -539,7 +539,7 @@ float variant::variant_container<T, typename std::enable_if<detail::is_array_and
 template<typename T>
 double variant::variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value >::type>::to_double(bool* ok) const
 {
-    return variant::get_value_with_default_value<double, T>(_value, 0.0, ok);
+    return variant::get_value_with_default_value<double, T>(m_value, 0.0, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -553,12 +553,12 @@ variant::variant_container<char[N]>::variant_container(const char (&arg)[N])
 {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-        detail::copy_array(const_cast<std::remove_const<char[N]>::type&>(arg), _value);
+        detail::copy_array(const_cast<std::remove_const<char[N]>::type&>(arg), m_value);
 #   else
 #       error "Check new MSVC Compiler!"
 #   endif
 #else
-    detail::copy_array(arg, _value);
+    detail::copy_array(arg, m_value);
 #endif
 }
 
@@ -567,7 +567,7 @@ variant::variant_container<char[N]>::variant_container(const char (&arg)[N])
 template<std::size_t N>
 variant::variant_container_base* variant::variant_container<char[N]>::clone() const
 {
-    return (new variant_container<char[N]>(_value));
+    return (new variant_container<char[N]>(m_value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +583,7 @@ type variant::variant_container<char[N]>::get_type() const
 template<std::size_t N>           
 void* variant::variant_container<char[N]>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_value)));
+    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -599,7 +599,7 @@ type variant::variant_container<char[N]>::get_raw_type() const
 template<std::size_t N>
 void* variant::variant_container<char[N]>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(_value);
+    return detail::get_void_ptr(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -615,7 +615,7 @@ bool variant::variant_container<char[N]>::is_array() const
 template<std::size_t N>  
 detail::array_container_base* variant::variant_container<char[N]>::to_array() const
 {
-    return detail::create_array_container<char[N]>(_value);
+    return detail::create_array_container<char[N]>(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -641,7 +641,7 @@ std::string variant::variant_container<char[N]>::to_string(bool* ok) const
 {
     if (ok)
         *ok = true;
-    return std::string(_value);
+    return std::string(m_value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -649,7 +649,7 @@ std::string variant::variant_container<char[N]>::to_string(bool* ok) const
 template<std::size_t N>
 int variant::variant_container<char[N]>::to_int(bool* ok) const
 {
-    return detail::char_to_int(_value, ok);
+    return detail::char_to_int(m_value, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -657,7 +657,7 @@ int variant::variant_container<char[N]>::to_int(bool* ok) const
 template<std::size_t N>
 bool variant::variant_container<char[N]>::to_bool(bool* ok) const
 {
-    return detail::char_to_bool(_value, ok);
+    return detail::char_to_bool(m_value, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -665,7 +665,7 @@ bool variant::variant_container<char[N]>::to_bool(bool* ok) const
 template<std::size_t N>
 float variant::variant_container<char[N]>::to_float(bool* ok) const
 {
-    return detail::char_to_float(_value, ok);
+    return detail::char_to_float(m_value, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -673,7 +673,7 @@ float variant::variant_container<char[N]>::to_float(bool* ok) const
 template<std::size_t N>
 double variant::variant_container<char[N]>::to_double(bool* ok) const
 {
-    return detail::char_to_double(_value, ok);
+    return detail::char_to_double(m_value, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

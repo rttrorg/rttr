@@ -45,7 +45,7 @@ array_container_base* create_array_container_moved(T&& value);
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array()
-:   _container(nullptr)
+:   m_container(nullptr)
 {
 }
 
@@ -53,7 +53,7 @@ RTTR_INLINE variant_array::variant_array()
 
 template<typename T>
 variant_array::variant_array(const T& param)
-:   _container(detail::create_array_container(param))
+:   m_container(detail::create_array_container(param))
 
 {
    static_assert(detail::is_array<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
@@ -67,7 +67,7 @@ variant_array::variant_array(T&& param,
                 typename std::enable_if<!std::is_same<variant_array&, T>::value >::type*,
                 typename std::enable_if<!std::is_const<T>::value >::type*
                 )
-:   _container(detail::create_array_container_moved(std::move(param)))
+:   m_container(detail::create_array_container_moved(std::move(param)))
 {
    using type = typename detail::raw_type<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::type;
    static_assert(detail::is_array<type>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
@@ -77,26 +77,26 @@ variant_array::variant_array(T&& param,
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array(const variant_array& other)
-:   _container(other._container ? other._container->clone() : nullptr)
+:   m_container(other.m_container ? other.m_container->clone() : nullptr)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array(variant_array&& other)
-:   _container(other._container)
+:   m_container(other.m_container)
 {
-    other._container = nullptr;
+    other.m_container = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::~variant_array()
 {
-    delete _container;
+    delete m_container;
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-        _container = nullptr;
+        m_container = nullptr;
 #   else
 #       error "Please check if this lead to still to a crash."
 #   endif
@@ -107,7 +107,7 @@ RTTR_INLINE variant_array::~variant_array()
 
 RTTR_INLINE void variant_array::swap(variant_array& other)
 {
-    std::swap(_container, other._container);
+    std::swap(m_container, other.m_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
