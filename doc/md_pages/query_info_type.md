@@ -27,15 +27,15 @@ Or you might want to group stuff together, like: *give me all primitive properti
 
 It is also possible to retrieve information about the inheritance graph of a class.
 ~~~~{.cpp}
-struct Base { ... };
-struct Derived : Base { ... };
+struct Base { RTTR_ENABLE() };
+struct Derived : Base { RTTR_ENABLE(Base) };
 
 Derived d;
 
 std::vector<type> base_list = type::get(d).get_base_classes();
 
 for (auto& t : base_list)
-  std::cout << t.get_name() << std::endl; // 'struct Base'
+  std::cout << t.get_name() << std::endl; // 'Base'
 ~~~~
 
 Or use a shorthand method to check if a type is derived from another:

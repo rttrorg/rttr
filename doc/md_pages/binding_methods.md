@@ -65,7 +65,7 @@ int main()
     {
         return_value = meth.invoke(empty_instance(), 9.0, 3.0);
         if (return_value.is_valid() && return_value.is_type<double>())
-        std::cout << return_value.get_value<double>() << std::endl; // 729
+            std::cout << return_value.get_value<double>() << std::endl; // 729
         
     }
 }
