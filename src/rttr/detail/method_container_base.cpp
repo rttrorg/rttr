@@ -43,7 +43,7 @@ namespace detail
 
 method_container_base::method_container_base(const std::string& name, const type decalaring_type)
 :   m_name(name),
-    m_decalaring_type(decalaring_type)
+    m_declaring_type(decalaring_type)
 {
 
 }
@@ -65,7 +65,7 @@ string method_container_base::get_name() const
 
 type method_container_base::get_declaring_type() const
 {
-    return m_decalaring_type;
+    return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

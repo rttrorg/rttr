@@ -83,7 +83,7 @@ class RTTR_API method_container_base : public metadata_container
 
     private:
         const std::string   m_name;
-        const type          m_decalaring_type;
+        const type          m_declaring_type;
 };
 
 } // end namespace detail

@@ -82,7 +82,7 @@ class RTTR_API property_container_base : public metadata_container
         virtual variant get_value(detail::instance& object) const = 0;
     private:
         const std::string   m_name;
-        const type          m_decalaring_type;
+        const type          m_declaring_type;
 };
 
 } // end namespace detail
