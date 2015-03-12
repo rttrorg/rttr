@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_REFLECT_HEADERS_H_
-#define RTTR_REFLECT_HEADERS_H_
+#ifndef RTTR_REGISTER_HEADERS_H_
+#define RTTR_REGISTER_HEADERS_H_
 
 #include "type.h"
 #include "rttr_enable.h"
@@ -41,4 +41,4 @@
 #include "detail/type_converter.h"
 #include "register_reflection.h"
 
-#endif //RTTR_REFLECT_HEADERS_H_
+#endif //RTTR_REGISTER_HEADERS_H_
