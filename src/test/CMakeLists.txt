@@ -57,9 +57,8 @@ add_dependencies(unit-tests rttr)
 target_include_directories(unit-tests PUBLIC ${RTTR_3RD_PARTY_DIR}/catch)
 
 # run tests
-get_target_property(UnitTest_Exec unit-tests LOCATION)
 add_custom_target(run-tests ALL
-                  COMMAND "${UnitTest_Exec}"
+                  COMMAND "$<TARGET_FILE:unit-tests>"
                   DEPENDS unit-tests
                   COMMENT "Running unit-tests")
 

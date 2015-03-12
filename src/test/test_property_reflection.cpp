@@ -81,7 +81,7 @@ const int* ptr_type;
 RTTR_REGISTER
 {
     using namespace rttr;
-    class_<property_test>()
+    class_<property_test>("property_test")
         .constructor<>()
         .property("p1",    &property_test::_p1)
         .property_readonly("p2",     &property_test::_p2)
@@ -104,23 +104,23 @@ RTTR_REGISTER
 
     /////////////////////////////////////////
 
-    class_<ns_property::top>()
+    class_<ns_property::top>("ns_property::top")
         .property("p1", &ns_property::top::_p1);
 
-    class_<ns_property::left>()
+    class_<ns_property::left>("ns_property::left")
         .constructor<>()
         .property("p2", &ns_property::left::_p2);
 
-    class_<ns_property::right>()
+    class_<ns_property::right>("ns_property::right")
         .constructor<>()
         .property("p3", &ns_property::right::_p3)
         .property("p2", &p11); // double property
 
-    class_<ns_property::right_2>()
+    class_<ns_property::right_2>("ns_property::right_2")
         .constructor<>()
         .property("p4", &ns_property::right_2::_p4);
 
-    class_<ns_property::bottom>()
+    class_<ns_property::bottom>("ns_property::bottom")
         .constructor<>()
         .property("p5", &ns_property::bottom::_p5)
         .property("callback", &ns_property::bottom::get_function_cb, &ns_property::bottom::set_function_cb);

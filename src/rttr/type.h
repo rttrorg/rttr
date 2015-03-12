@@ -412,6 +412,26 @@ class RTTR_API type
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////
 
+         /*!
+         * \brief Returns the metadata for the given key \p key.
+         *
+         * \remark When no metadata is registered with the given \p key, 
+         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
+         *
+         * \return A variant object, containing arbitrary data.
+         */
+        variant get_metadata(int key) const;
+
+        /*!
+         * \brief Returns the metadata for the given key \p key.
+         *
+         * \remark When no metadata is registered with the given \p key, 
+         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
+         *
+         * \return A variant object, containing arbitrary data.
+         */
+        variant get_metadata(const std::string& key) const;
+
         /*!
          * \brief Returns a public constructor whose parameters match the types in the specified list.
          *

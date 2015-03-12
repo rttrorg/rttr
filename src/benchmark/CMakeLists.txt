@@ -49,7 +49,6 @@ endif()
 add_executable(benchmark ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(benchmark rttr)
 add_dependencies(benchmark rttr)
-get_target_property(UnitTest_Exec unit_tests LOCATION)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

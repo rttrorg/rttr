@@ -29,11 +29,13 @@
 #define RTTR_REFLECTION_DATABASE_P_H_
 
 #include "rttr/type.h"
+#include "rttr/detail/metadata_container.h"
 
 #include <unordered_map>
 #include <vector>
 #include <string>
 #include <memory>
+#include <mutex>
 
 #define RTTR_MAX_TYPE_COUNT 32767
 #define RTTR_MAX_INHERIT_TYPES_COUNT 50
@@ -90,6 +92,7 @@ class RTTR_LOCAL reflection_database
         typedef std::vector< std::unique_ptr< constructor_container_base>>                              ctor_list;
         typedef std::unordered_map< std::string, property_container::size_type>                         property_map;
         typedef std::unordered_multimap< std::string, method_container::size_type>                      method_map;
+        typedef std::unordered_multimap< type, std::string>                                             custom_name_map;
 
         /*!
          * \brief This function returns true, when the given types in \p param_list are the same type like in \p args,
@@ -147,6 +150,7 @@ class RTTR_LOCAL reflection_database
         bool                                                is_function_pointer_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_member_object_pointer_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_member_function_pointer_list[RTTR_MAX_TYPE_COUNT];
+        metadata_container                                  meta_data_list[RTTR_MAX_TYPE_COUNT];
         std::size_t                                         get_pointer_count_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<class_data>                         class_data_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<constructor_container_base>         constructor_list[RTTR_MAX_TYPE_COUNT];
@@ -160,6 +164,10 @@ class RTTR_LOCAL reflection_database
         destructor_container                                m_destructor_list;
         method_container                                    m_method_list;
         property_container                                  m_property_list;
+        custom_name_map                                     m_custom_name_map;
+
+        std::mutex                                          m_register_type_mutex;
+        std::mutex                                          m_register_custom_name_mutex;
 };
 
 } // end namespace detail

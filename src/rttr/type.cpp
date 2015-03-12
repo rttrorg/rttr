@@ -40,9 +40,11 @@
 #include "rttr/detail/property_container.h"
 #include "rttr/detail/array_container_base.h"
 #include "rttr/rttr_enable.h"
+#include "rttr/metadata.h"
 
 #include "rttr/detail/reflection_database_p.h"
 
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 #include <memory>
@@ -50,6 +52,7 @@
 #include <thread>
 #include <mutex>
 #include <cstring>
+#include <cctype>
 
 using namespace std;
 
@@ -71,6 +74,7 @@ static bool                                                 *g_is_primitive_list
 static bool                                                 *g_is_function_pointer_list         = nullptr;
 static bool                                                 *g_is_member_object_pointer_list    = nullptr;
 static bool                                                 *g_is_member_function_pointer_list  = nullptr;
+static detail::metadata_container                           *g_metadata_list                    = nullptr;
 static std::size_t                                          *g_get_pointer_count_list           = nullptr;
 static unique_ptr<detail::constructor_container_base>       *g_ctor_list                        = nullptr;
 static unique_ptr<detail::destructor_container_base>        *g_dtor_list                        = nullptr;
@@ -85,15 +89,15 @@ static detail::reflection_database::destructor_container    *g_destructor_list  
 static detail::reflection_database::method_container        *g_method_list                      = nullptr;
 static detail::reflection_database::property_container      *g_property_list                    = nullptr;
 
+static detail::reflection_database::custom_name_map         *g_custom_name_map                  = nullptr;
 
-static std::mutex register_type_mutex;
+
+static std::mutex                                           *g_register_type_mutex              = nullptr;
+static std::mutex                                           *g_register_custom_name_mutex       = nullptr;
 
 // because everything is initialized at static initialization time the call to
 // register_type can be made from another translation unit before global statics
-// like 'g_name_list' are initialized, therefore we make a small singleton called type_data
-//
-// Before any other static function of type is called, a call to register has to be made first,
-// otherwise a compile time error occurs.
+// like 'g_name_list' are initialized, therefore we have to initialize the data base singleton here explicit
 static void init_globals()
 {
     static bool initialized = false;
@@ -118,6 +122,7 @@ static void init_globals()
     g_is_function_pointer_list          = db.is_function_pointer_list;
     g_is_member_object_pointer_list     = db.is_member_object_pointer_list;
     g_is_member_function_pointer_list   = db.is_member_function_pointer_list;
+    g_metadata_list                     = db.meta_data_list;
     g_get_pointer_count_list            = db.get_pointer_count_list;
     g_class_data_list                   = db.class_data_list;
     g_ctor_list                         = db.constructor_list;
@@ -130,8 +135,136 @@ static void init_globals()
     g_method_list                       = &db.m_method_list;
     g_property_list                     = &db.m_property_list;
     g_type_converter_list               = db.type_converter_list;
+    g_custom_name_map                   = &db.m_custom_name_map;
+    g_register_type_mutex               = &db.m_register_type_mutex;
+    g_register_custom_name_mutex        = &db.m_register_custom_name_mutex;
 
     initialized = true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static void remove_whitespaces(std::string& text)
+{
+    text.erase(std::remove_if(text.begin(), text.end(), static_cast<int(*)(int)>(&std::isspace)), text.end());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static bool is_space_after(const std::string& text, const std::string& part)
+{
+    auto found_pos = text.find(part);
+
+    if (found_pos == std::string::npos)
+        return false;
+
+    found_pos = found_pos + part.length();
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return false;
+
+    return std::isspace(text[found_pos]) ? true : false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static bool is_space_before(const std::string& text, const std::string& part)
+{
+    auto found_pos = text.find_last_of(part);
+
+    if (found_pos == std::string::npos)
+        return false;
+
+    found_pos = found_pos - 1;
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return false;
+
+    return std::isspace(text[found_pos]) ? true : false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void insert_space_after(std::string& text, const std::string& part)
+{
+    auto found_pos = text.find(part);
+
+    if (found_pos == std::string::npos)
+        return;
+
+    found_pos = found_pos + part.length();
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return;
+
+    text.insert(found_pos, " ");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void insert_space_before(std::string& text, const std::string& part)
+{
+   auto found_pos = text.find_last_of(part);
+
+    if (found_pos == std::string::npos)
+        return;
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return;
+
+    text.insert(found_pos, " ");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string get_name_impl(type::type_id id)
+{
+    const auto db_string = g_name_list[id];
+    const auto str_length = strlen(db_string);
+    return std::string(db_string, str_length - detail::skip_size_at_end);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string get_custom_name(type source_type, type raw_type)
+{
+    std::string source_name = get_name_impl(source_type.get_id());
+
+    std::lock_guard<std::mutex> lock(*g_register_custom_name_mutex);
+    auto& custom_name_map = *g_custom_name_map;
+    auto orig_src_name  = source_name;
+    auto raw_name       = get_name_impl(raw_type.get_id());
+    auto ret = custom_name_map.find(raw_type);
+    // We replace a custom registered name for a type for all derived types, e.g.
+    // "std::basic_string<char>" => "std::string"
+    // we want to use this also automatically for derived types like pointers, e.g.
+    // "const std::basic_string<char>*" => "const std::string*"
+    // therefore we have to replace the "raw_type" string
+    if (ret != custom_name_map.end())
+    {
+        const std::string& custom_name = ret->second;
+        remove_whitespaces(raw_name);
+        remove_whitespaces(source_name);
+
+        const auto start_pos    = source_name.find(raw_name);
+        const auto end_pos      = start_pos + raw_name.length();
+        if (start_pos == std::string::npos)
+            return orig_src_name; // nothing was found...
+
+        // remember the two parts before and after the found "raw_name"
+        const auto start_part   = source_name.substr(0, start_pos);
+        const auto end_part     = source_name.substr(end_pos, source_name.length());
+        
+        source_name.replace(start_pos, raw_name.length(), custom_name);
+
+        if (is_space_after(orig_src_name, start_part))
+            insert_space_after(source_name, start_part);
+
+        if (is_space_before(orig_src_name, end_part))
+            insert_space_before(source_name, end_part);
+    }
+
+    return source_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -140,12 +273,17 @@ std::string type::get_name() const
 {
     if (is_valid())
     {
-        const auto db_string = g_name_list[m_id];
-        const auto str_length = strlen(db_string);
-        return std::string(db_string, str_length - detail::skip_size_at_end);
+        const type::type_id raw_id = g_raw_type_list[m_id];
+        const type raw_type(raw_id);
+        if (raw_type.is_class() || raw_type.is_enumeration())
+            return get_custom_name(*this, raw_type);
+        else
+            return get_name_impl(m_id);
     }
     else
+    {
         return std::string();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +465,20 @@ std::vector<type> type::get_types()
     }
 
     return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant type::get_metadata(int key) const
+{
+    return g_metadata_list[m_id].get_metadata(key);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant type::get_metadata(const std::string& key) const
+{
+    return g_metadata_list[m_id].get_metadata(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -738,10 +890,12 @@ type type::register_type(const char* name,
                          bool is_member_function_pointer,
                          std::size_t get_pointer_count)
 {
-    std::lock_guard<std::mutex> lock(register_type_mutex);
+    init_globals();
+
+    std::lock_guard<std::mutex> lock(*g_register_type_mutex);
     using namespace detail;
 
-    init_globals();
+    
     reflection_database& db = reflection_database::instance();
     {
         const auto itr = g_name_to_id->find(name);
@@ -828,6 +982,8 @@ detail::type_converter_base* type::get_type_converter(const type& target_type) c
 
 void type::register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const
 {
+    std::lock_guard<std::mutex> lock(*g_register_type_mutex); // registration has to be synchronized
+
     const auto& converter_list = g_type_converter_list[m_id];
     for (const auto& conv : converter_list)
     {
@@ -908,6 +1064,38 @@ void register_enumeration(type t, std::unique_ptr<detail::enumeration_container_
 {
     g_enumeration_list[t.get_raw_type().get_id()] = move(enum_item);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void register_custom_name(type t, std::string name)
+{
+    std::lock_guard<std::mutex> lock(*g_register_custom_name_mutex);
+
+    auto& custom_name_map = *g_custom_name_map;
+
+    if (custom_name_map.find(t) != custom_name_map.end())
+        return;
+
+    custom_name_map.emplace(t, name);
+    
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void register_metadata(type t, std::vector< rttr::metadata > metadata)
+{
+     for (auto& item : metadata)
+    {
+        auto key    = item.get_key();
+        auto value  = item.get_value();
+        if (key.is_type<int>())
+            g_metadata_list[t.get_id()].set_metadata(key.get_value<int>(), std::move(value));
+        else if (key.is_type<std::string>())
+            g_metadata_list[t.get_id()].set_metadata(std::move(key.get_value<std::string>()), std::move(value));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace impl
 } // end namespace rttr

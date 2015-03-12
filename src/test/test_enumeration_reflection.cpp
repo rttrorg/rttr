@@ -49,7 +49,7 @@ enum E_MetaData
 
 RTTR_REGISTER
 {
-    class_<enum_test>()
+    class_<enum_test>("enum_test")
         .constructor<>()
         .constructor<enum_test::E_Alignment, enum_test::E_Orientation>()
         .enumeration<enum_test::E_Alignment>({ 

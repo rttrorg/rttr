@@ -47,7 +47,7 @@ enum E_MetaData
 
 RTTR_REGISTER
 {
-    class_<constructor_test>()
+    class_<constructor_test>("constructor_test", {metadata("CUSTOM_DATA", static_cast<int>(42)), metadata(DESCRIPTION, "some text")})
         .constructor<>()
         .constructor<int, int>()
         .constructor<const std::string&>({metadata("SCRIPTABLE", true), metadata(TOOL_TIP, string("This is a ToolTip"))})
@@ -179,6 +179,15 @@ TEST_CASE("Test metadata in constructor", "[constructor]")
     constructor ctor_int = type::get<constructor_test>().get_constructor({type::get<int>(), type::get<int>()});
     REQUIRE(ctor_int.is_valid() == true);
     REQUIRE(ctor_int.get_metadata("SCRIPTABLE").is_valid() == false);
+
+    value = type::get<constructor_test>().get_metadata("CUSTOM_DATA");
+    REQUIRE(value.is_type<int>() == true);
+    REQUIRE(value.get_value<int>() == 42);
+
+    value = type::get<constructor_test>().get_metadata(DESCRIPTION);
+
+    REQUIRE(value.is_type<char[10]>() == true);
+    REQUIRE(std::string(value.get_value<char[10]>()) == std::string("some text"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -51,14 +51,14 @@ class RTTR_API metadata_container
         variant get_metadata(int key) const;
         variant get_metadata(const std::string& key) const;
 
-        void set_metadata(int key, const variant& value);
-        void set_metadata(const std::string& key, const variant& value);
+        void set_metadata(int key, variant value);
+        void set_metadata(std::string key, variant value);
 
     private:
         typedef std::unordered_map<int, variant> IntKey2ValueMap;
         typedef std::unordered_map<std::string, variant> StringKey2ValueMap;
-        IntKey2ValueMap m_int_data;
-        StringKey2ValueMap m_string_data;
+        IntKey2ValueMap     m_int_data;
+        StringKey2ValueMap  m_string_data;
 };
 
 } // end namespace detail

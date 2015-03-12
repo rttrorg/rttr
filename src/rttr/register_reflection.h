@@ -127,7 +127,7 @@ template<typename ClassType>
 class class_
 {
     public:
-        class_(std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
+        class_(std::string name, std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
         ~class_();
 
         /*!

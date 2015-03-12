@@ -53,8 +53,8 @@ class RTTR_API metadata
         metadata(metadata&& data) : m_key(std::move(data.m_key)), m_value(std::move(data.m_value)) { data.m_key = variant(); data.m_value = variant(); }
         metadata& operator=(metadata other) { std::swap(m_key, other.m_key); std::swap(m_value, other.m_value); return *this; }
 
-        variant get_key() const     { return m_key; }
-        variant get_value() const   { return m_value; }
+        variant get_key() const      { return m_key; }
+        variant get_value() const    { return m_value; }
 
     private:
         variant m_key;

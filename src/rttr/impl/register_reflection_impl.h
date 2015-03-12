@@ -51,10 +51,12 @@ void store_metadata(T& obj, std::vector<rttr::metadata> data)
 {
     for (auto& item : data)
     {
-        if (item.get_key().is_type<int>())
-            obj->set_metadata(item.get_key().get_value<int>(), item.get_value());
-        else if (item.get_key().is_type<std::string>())
-            obj->set_metadata(item.get_key().get_value<std::string>(), item.get_value());
+        auto key    = item.get_key();
+        auto value  = item.get_value();
+        if (key.is_type<int>())
+            obj->set_metadata(key.get_value<int>(), std::move(value));
+        else if (key.is_type<std::string>())
+            obj->set_metadata(std::move(key.get_value<std::string>()), std::move(value));
     }
 }
 
@@ -75,7 +77,7 @@ void constructor_impl(std::vector< rttr::metadata > data)
     ctor->get_instanciated_type();
     ctor->get_parameter_types();
 
-    impl::store_metadata(ctor, data);
+    impl::store_metadata(ctor, std::move(data));
     impl::register_constructor(type, move(ctor));
     impl::register_destructor(type, detail::make_unique<detail::destructor_container<ClassType>>());
     
@@ -94,7 +96,7 @@ void property_impl(const std::string& name, A accessor, std::vector<rttr::metada
     auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
     // register the type with the following call:
     prop->get_type();
-    impl::store_metadata(prop, data);
+    impl::store_metadata(prop, std::move(data));
     impl::register_property(type::get<ClassType>(), move(prop));
 }
 
@@ -111,7 +113,7 @@ void property_impl(const std::string& name, A1 getter, A2 setter, std::vector<rt
     auto prop = detail::make_unique<detail::property_container<acc_type, A1, A2, getter_policy, setter_policy>>(name, type::get<ClassType>(), getter, setter);
     // register the type with the following call:
     prop->get_type();
-    impl::store_metadata(prop, data);
+    impl::store_metadata(prop, std::move(data));
     impl::register_property(type::get<ClassType>(), move(prop));
 }
 
@@ -128,7 +130,7 @@ void property_readonly_impl(const std::string& name, A accessor, std::vector<rtt
     auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
     // register the type with the following call:
     prop->get_type();
-    impl::store_metadata(prop, data);
+    impl::store_metadata(prop, std::move(data));
     impl::register_property(type::get<ClassType>(), move(prop));
 }
 
@@ -144,7 +146,7 @@ void method_impl(const std::string& name, F function, std::vector< rttr::metadat
     // register the underlying type with the following call:
     meth->get_return_type();
     meth->get_parameter_types();
-    impl::store_metadata(meth, data);
+    impl::store_metadata(meth, std::move(data));
     impl::register_method(type::get<ClassType>(), move(meth));
 }
 
@@ -163,7 +165,7 @@ void enumeration_impl(std::vector< std::pair< std::string, EnumType> > enum_data
     // register the underlying type with the following call:
     enum_item->get_type();
 
-    impl::store_metadata(enum_item, data);
+    impl::store_metadata(enum_item, std::move(data));
     impl::register_enumeration(type::get<EnumType>(), move(enum_item));
 }
 
@@ -370,10 +372,19 @@ void enumeration_(std::vector< std::pair< std::string, EnumType> > enum_data, st
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType>
-class_<ClassType>::class_(std::vector< rttr::metadata > data)
+class_<ClassType>::class_(std::string name, std::vector< rttr::metadata > data)
 {
+    auto t = type::get<ClassType>();
+    
+    if (!name.empty())
+        impl::register_custom_name(t, std::move(name));
+
+    impl::register_metadata(t, std::move(data));
+
     static_assert(std::is_class<ClassType>::value, "Reflected type is not a class or struct.");
 }
 

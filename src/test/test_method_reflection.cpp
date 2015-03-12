@@ -71,7 +71,7 @@ bool method_test::method_7_called = false;
 
 RTTR_REGISTER
 {
-    class_<method_test>()
+    class_<method_test>("method_test")
         .constructor<>()
         .method("method_1", &method_test::method_1)
         .method("method_2", &method_test::method_2)    
@@ -92,14 +92,14 @@ RTTR_REGISTER
         .method("method_fun_ptr_arg", &method_test::method_fun_ptr_arg)
         ;
 
-    class_<method_test_derived>()
+    class_<method_test_derived>("method_test_derived")
         .constructor<>()
         .method("method_10", &method_test_derived::method_10);
 
-    class_<method_test_right>()
+    class_<method_test_right>("method_test_right")
         .method("method_12", &method_test_right::method_12);
 
-    class_<method_test_final>()
+    class_<method_test_final>("method_test_final")
         .method("method_13", &method_test_final::method_13);
 
     // test free functions

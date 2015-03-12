@@ -35,6 +35,7 @@
 #include "rttr/detail/get_derived_info_func.h"
 #include "rttr/detail/get_create_variant_func.h"
 #include "rttr/detail/utility.h"
+#include "rttr/metadata.h"
 
 namespace rttr
 {
@@ -173,7 +174,9 @@ RTTR_API void register_property(type, std::unique_ptr<detail::property_container
 RTTR_API void register_method(type, std::unique_ptr<detail::method_container_base>);
 RTTR_API void register_constructor(type, std::unique_ptr<detail::constructor_container_base>);
 RTTR_API void register_destructor(type, std::unique_ptr<detail::destructor_container_base>);
-RTTR_API void register_enumeration(type t, std::unique_ptr<detail::enumeration_container_base>);
+RTTR_API void register_enumeration(type, std::unique_ptr<detail::enumeration_container_base>);
+RTTR_API void register_custom_name(type, std::string);
+RTTR_API void register_metadata(type, std::vector< rttr::metadata >);
 
 static type get_invalid_type() { return type(); }
 

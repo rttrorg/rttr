@@ -27,6 +27,11 @@
 
 #include "rttr/reflect"
 
+#include <vector>
+#include <map>
+#include <list>
+#include <set>
+
 
 RTTR_REGISTER
 {
@@ -52,8 +57,9 @@ RTTR_REGISTER
     rttr::type::get<std::vector<int>>();
     rttr::type::get<std::vector<float>>();
     rttr::type::get<std::vector<double>>();
+    rttr::impl::register_custom_name(rttr::type::get<std::map<int, std::string>>(), "std::map<int, std::string>");
 
-    rttr::class_<std::string>()
+    rttr::class_<std::string>("std::string")
                 .constructor<>()
                 .constructor<const std::string&>()
                 .constructor<const std::string&, unsigned int, unsigned int>()
