@@ -30,7 +30,7 @@ It has following synopsis:
 
 The following example shows how to use these register functions:
 ~~~~{.cpp}
-#include <rttr/reflect>
+#include <rttr/register>
 
 static const double pi = 3.14259;
 static std::string global_text;

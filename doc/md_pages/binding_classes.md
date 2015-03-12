@@ -30,7 +30,7 @@ The registration process is now done at global scope in the cpp file.
 
 ~~~~{.cpp}
 // test_class.cpp
-#include <rttr/reflect>
+#include <rttr/register>
 
 using namespace rttr;
 

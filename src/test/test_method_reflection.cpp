@@ -27,7 +27,7 @@
 
 #include "test_method_reflection.h"
 
-#include <rttr/reflect>
+#include <rttr/register>
 
 using namespace rttr;
 using namespace std;

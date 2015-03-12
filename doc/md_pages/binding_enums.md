@@ -14,7 +14,7 @@ It has following synopsis:
 - `data` contains metadata for this property; this is an optional parameter
 
 ~~~~{.cpp}
-#include <rttr/reflect>
+#include <rttr/register>
 
 enum E_Alignment
 {

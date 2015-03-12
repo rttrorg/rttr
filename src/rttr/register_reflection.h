@@ -71,11 +71,11 @@ struct Mesh
 *
 \code{.cpp}
 #include "Mesh.cpp"
-#include <rttr/reflect>
+#include <rttr/register>
 using namespace rttr;
 
 // register the class Mesh before main is called
-RTTR_REFLECT
+RTTR_REGISTER
 {
   class_<Mesh>()
     .constructor<>()
@@ -692,11 +692,11 @@ void enumeration_(std::string name,
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/reflect>
+ * #include <rttr/register>
  * #include <cmath>
  * using namespace rttr;
  * 
- * RTTR_REFLECT
+ * RTTR_REGISTER
  * {
  *     method_("pow", select_overload<float(float, float)>(&pow));
  * }
@@ -716,11 +716,11 @@ Signature* select_overload(Signature* func)
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/reflect>
+ * #include <rttr/register>
  * #include <cmath>
  * using namespace rttr;
  * 
- * RTTR_REFLECT
+ * RTTR_REGISTER
  * {
  *     method_("pow", select_overload<float(float, float)>(&pow));
  * }
@@ -740,7 +740,7 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/reflect>
+ * #include <rttr/register>
  * using namespace rttr;
  * struct Foo
  * {
@@ -748,7 +748,7 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  *   void func() const;
  * };
  * 
- * RTTR_REFLECT
+ * RTTR_REGISTER
  * {
  *     class<Foo>()
             .method("func", select_overload<void(void)>(&Foo::func))

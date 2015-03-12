@@ -59,7 +59,7 @@ set(HEADER_FILES constructor.h
                  register_reflection.h
                  policy.h
                  type
-                 reflect
+                 register
                  base/core_prerequisites.h
                  base/version.h.in
                  impl/register_reflection_impl.h

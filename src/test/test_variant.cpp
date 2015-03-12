@@ -27,7 +27,7 @@
 
 #include <catch.hpp>
 
-#include <rttr/reflect>
+#include <rttr/register>
 
 #include <vector>
 #include <map>

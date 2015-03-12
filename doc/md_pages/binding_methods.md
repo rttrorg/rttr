@@ -30,7 +30,7 @@ This will avoid the hassle with the function pointer signature.
 For example the two functions: `float sin (float x);` and `double sin (double x);` can be registered like following:
 
 ~~~~{.cpp}
-#include <rttr/reflect>
+#include <rttr/register>
 #include <cmath.h>
 
 RTTR_REGISTER

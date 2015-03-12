@@ -3,7 +3,7 @@ Binding Types - Hello World  {#binding_hello_world_page}
 Let's start with the traditional hello world example.
 
 ~~~~{.cpp}
-#include <rttr/reflect>
+#include <rttr/register>
 
 static void f() { std::cout << "Hello World" << std::endl; }
 using namespace rttr;
@@ -20,7 +20,7 @@ int main()
 // outputs: "Hello World"
 ~~~~
 
-When you need to reflect a property, or like in this case a free function, you need to include first `#include <rttr/reflect>`. 
+When you need to reflect a property, or like in this case a free function, you need to include first `#include <rttr/register>`. 
 This will include everything necessary for creating the reflection information. 
 
 The macro @ref RTTR_REGISTER must be placed outside of any function or class, just place directly into in your cpp file.
