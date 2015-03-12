@@ -127,6 +127,13 @@ template<typename ClassType>
 class class_
 {
     public:
+        /*!
+         * \brief Construct a class_ object with the given name \p name.
+         *
+         * \param name  The name of the class as string. Can be retrieved later via type::get_name().
+         * \param data  Additional meta data. Can be retrieved later via type::get_metadata().
+         *
+         */
         class_(std::string name, std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
         ~class_();
 
@@ -399,15 +406,16 @@ class class_
         /*!
          * \brief Register a nested enumeration of type \p EnumType
          *
-         * \param enum_data The name of the property.
-         * \param data Additional meta data.
+         * \param name      The name of the enumeration.
+         * \param enum_data The enum data, simple string to enum value pairs.
+         * \param data      Additional meta data.
          *
          * \remark Before using this make sure you have registered the type with \ref #RTTR_DECLARE_TYPE.
          *
          * \return Reference to this, in order to chain other calls.
          */
         template<typename EnumType>
-        class_& enumeration(std::vector< std::pair< std::string, EnumType> > enum_data,
+        class_& enumeration(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data,
                             std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
 
     private:
@@ -659,15 +667,17 @@ template<typename F, typename Policy>
 void method_(const std::string& name, F function, std::vector< rttr::metadata > data, const Policy& policy);
 
 /*!
- * \brief Register an enumeration of type \p EnumType
+ * \brief Register an enumeration of type \p EnumType.
  *
- * \param enum_data The name of the property.
+ * \param name      The name of the enumeration.
+ * \param enum_data The enum data, simple string to enum value pairs.
  * \param data      Additional meta data.
  *
  * \remark Before using this make sure you have registered the type with \ref #RTTR_DECLARE_TYPE.
  */
 template<typename EnumType>
-void enumeration_(std::vector< std::pair< std::string, EnumType> > enum_data,
+void enumeration_(std::string name,
+                  std::vector< std::pair< std::string, EnumType> > enum_data,
                   std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
 
 

@@ -52,20 +52,23 @@ RTTR_REGISTER
     class_<enum_test>("enum_test")
         .constructor<>()
         .constructor<enum_test::E_Alignment, enum_test::E_Orientation>()
-        .enumeration<enum_test::E_Alignment>({ 
+        .enumeration<enum_test::E_Alignment>("enum_test::E_Alignment",
+                                             { 
                                                {"AlignLeft",    enum_test::E_Alignment::AlignLeft},
                                                {"AlignRight",   enum_test::E_Alignment::AlignRight},
                                                {"AlignHCenter", enum_test::E_Alignment::AlignHCenter},
                                                {"AlignJustify", enum_test::E_Alignment::AlignJustify}
                                              },{metadata(E_MetaData::SCRIPTABLE, true)})
-        .enumeration<enum_test::E_Orientation>({ 
+        .enumeration<enum_test::E_Orientation>("enum_test::E_Orientation",
+                                               { 
                                                  {"Horizontal", enum_test::E_Orientation::Horizontal},
                                                  {"Vertical",   enum_test::E_Orientation::Vertical}
                                                }, {metadata(E_MetaData::SCRIPTABLE, false)})
-        .property("alignment", &enum_test::_alignment)
+        .property("alignment",   &enum_test::_alignment)
         .property("orientation", &enum_test::_orientation);
 
-    enumeration_<E_DayOfWeek>({
+    enumeration_<E_DayOfWeek>("E_DayOfWeek",
+                              {
                                 {"Monday",    Monday},
                                 {"Tuesday",   Tuesday},
                                 {"Wednesday", Wednesday},

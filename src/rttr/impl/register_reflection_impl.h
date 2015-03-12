@@ -153,10 +153,15 @@ void method_impl(const std::string& name, F function, std::vector< rttr::metadat
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename EnumType>
-void enumeration_impl(std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
+void enumeration_impl(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
 {
     using namespace std;
     static_assert(is_enum<EnumType>::value, "No enum type provided, please call this method with an enum type!");
+
+    type enum_type = type::get<EnumType>();
+    if (!name.empty())
+        impl::register_custom_name(enum_type, std::move(name));
+
     type declar_type = impl::get_invalid_type();
     if (!std::is_same<ClassType, void>::value)
         declar_type = type::get<ClassType>();
@@ -166,7 +171,7 @@ void enumeration_impl(std::vector< std::pair< std::string, EnumType> > enum_data
     enum_item->get_type();
 
     impl::store_metadata(enum_item, std::move(data));
-    impl::register_enumeration(type::get<EnumType>(), move(enum_item));
+    impl::register_enumeration(enum_type, move(enum_item));
 }
 
 }
@@ -366,9 +371,9 @@ void method_(const std::string& name, F function, std::vector< rttr::metadata > 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename EnumType>
-void enumeration_(std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
+void enumeration_(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
 {
-    impl::enumeration_impl<void, EnumType>(std::move(enum_data), std::move(data));
+    impl::enumeration_impl<void, EnumType>(std::move(name), std::move(enum_data), std::move(data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -601,9 +606,9 @@ class_<ClassType>& class_<ClassType>::method(const std::string& name, F function
 
 template<typename ClassType>
 template<typename EnumType>
-class_<ClassType>& class_<ClassType>::enumeration(std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
+class_<ClassType>& class_<ClassType>::enumeration(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
 {
-    impl::enumeration_impl<ClassType, EnumType>(std::move(enum_data), std::move(data));
+    impl::enumeration_impl<ClassType, EnumType>(std::move(name), std::move(enum_data), std::move(data));
     return *this;
 }
 
