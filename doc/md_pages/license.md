@@ -5,7 +5,7 @@ The rttr library is licensed under <a target="_blank" href="http://opensource.or
 
     RTTR (Run Time Type Reflection) is made available under the MIT License.
     
-    Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>	                          
+    Copyright (c) 2014, 2015 Axel Menzel <info@axelmenzel.de>	                     
     
     Permission is hereby granted, free of charge, to any person obtaining         
     a copy of this software and associated documentation files (the "Software"),  

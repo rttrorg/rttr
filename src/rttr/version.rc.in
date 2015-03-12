@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>                             *
+*   Copyright (c) 2014, 2015 Axel Menzel <info@axelmenzel.de>                       *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -58,7 +58,7 @@ BEGIN
             VALUE "FileDescription",  ""
             VALUE "FileVersion",      VER_FILEVERSION_STR
             VALUE "InternalName",     "rttr"
-            VALUE "LegalCopyright",   "Copyright (c) 2014 Axel Menzel <info@axelmenzel.de>"
+            VALUE "LegalCopyright",   "Copyright (c) 2014, 2015 Axel Menzel <info@axelmenzel.de>"
             VALUE "LegalTrademarks1", "MIT License"
             VALUE "LegalTrademarks2", ""
             VALUE "OriginalFilename", ""
