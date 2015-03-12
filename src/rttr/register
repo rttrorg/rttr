@@ -35,10 +35,7 @@
 #include "destructor.h"
 #include "method.h"
 #include "property.h"
-#include "detail/array_container.h"
-#include "variant.h"
-#include "variant_array.h"
-#include "detail/type_converter.h"
+#include "enumeration.h"
 #include "register_reflection.h"
 
 #endif //RTTR_REGISTER_HEADERS_H_

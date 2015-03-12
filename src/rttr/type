@@ -28,6 +28,7 @@
 #ifndef RTTR_TYPE_HEADERS_H_
 #define RTTR_TYPE_HEADERS_H_
 
+#include "type.h"
 #include "rttr_enable.h"
 #include "rttr_cast.h"
 #include "constructor.h"
@@ -35,12 +36,5 @@
 #include "method.h"
 #include "property.h"
 #include "enumeration.h"
-#include "detail/array_container.h"
-#include "variant.h"
-#include "variant_array.h"
-#include "detail/type_converter.h"
-#include "type.h"
-#include "detail/argument.h"
-#include "detail/instance.h"
 
 #endif //RTTR_TYPE_HEADERS_H_
