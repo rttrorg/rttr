@@ -37,8 +37,8 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, set_v
 {
     typedef A (C::*accessor);
     public:
-        property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type), m_acc(acc)
+        property_container(std::string name, type declaring_type, accessor acc)
+        :   property_container_base(std::move(name), declaring_type), m_acc(acc)
         {
         }
 
@@ -78,8 +78,8 @@ class property_container<member_object_ptr, A(C::*), void, return_as_copy, read_
 {
     typedef A (C::*accessor);
     public:
-        property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, accessor acc)
+        :   property_container_base(std::move(name), declaring_type),
             m_acc(acc)
         {
         }
@@ -115,8 +115,8 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, set_as
 {
     typedef A (C::*accessor);
     public:
-        property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type), m_acc(acc)
+        property_container(std::string name, type declaring_type, accessor acc)
+        :   property_container_base(std::move(name), declaring_type), m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
         }
@@ -160,8 +160,8 @@ class property_container<member_object_ptr, A(C::*), void, return_as_ptr, read_o
 {
     typedef A (C::*accessor);
     public:
-        property_container(const std::string& name, const type declaring_type, accessor acc)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, accessor acc)
+        :   property_container_base(std::move(name), declaring_type),
             m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");

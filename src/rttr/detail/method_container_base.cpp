@@ -41,9 +41,9 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_container_base::method_container_base(const std::string& name, const type decalaring_type)
-:   m_name(name),
-    m_declaring_type(decalaring_type)
+method_container_base::method_container_base(std::string name, type declaring_type)
+:   m_name(std::move(name)),
+    m_declaring_type(declaring_type)
 {
 
 }

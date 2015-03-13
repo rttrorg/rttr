@@ -63,8 +63,8 @@ class RTTR_LOCAL reflection_database
         {
             RTTR_INLINE std::size_t operator() (const char* ptr) const
             {
-                const std::size_t  magic_prime = 0x01000193;
-                std::size_t        hash        = 0xcbf29ce4;
+                const std::size_t  magic_prime = static_cast<std::size_t>(0x01000193);
+                std::size_t               hash = static_cast<std::size_t>(0xcbf29ce4);
 
                 for (; *ptr; ++ptr)
                   hash = (hash ^ *ptr) * magic_prime;

@@ -841,7 +841,7 @@ enumeration type::get_enumeration() const
 variant type::invoke(const std::string& name, detail::instance obj, std::vector<detail::argument> args) const
 {
     const auto meth = get_method(name, detail::reflection_database::extract_types(args));
-    return meth.invoke_variadic(obj, args);
+    return meth.invoke_variadic(obj, std::move(args));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -849,7 +849,7 @@ variant type::invoke(const std::string& name, detail::instance obj, std::vector<
 variant type::invoke(const std::string& name, std::vector<detail::argument> args)
 {
     const auto meth = get_global_method(name, detail::reflection_database::extract_types(args));
-    return meth.invoke_variadic(empty_instance(), args);
+    return meth.invoke_variadic(empty_instance(), std::move(args));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -911,8 +911,8 @@ type type::register_type(const char* name,
         g_raw_type_list[db.type_id_counter] = raw_id;
         g_get_derived_info_func_list[raw_id]  = get_derived_func;
         g_variant_create_list[db.type_id_counter] = var_func_ptr;
-        const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
-        int index = 0;
+        const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
+		std::size_t index = 0;
         // remove double entries; can only be happen for virtual inheritance case
         set<type> double_entries;
         for (auto itr = base_classes.rbegin(); itr != base_classes.rend();)
@@ -937,8 +937,8 @@ type type::register_type(const char* name,
 
         for (const auto& type : base_classes)
         {
-            const int row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
-            for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
+            const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
+			for (std::size_t i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
             {
                 if (g_derived_class_list[row + i] == 0)
                 {

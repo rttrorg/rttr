@@ -61,7 +61,7 @@ variant metadata_container::get_metadata(const std::string& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void metadata_container::set_metadata(int key, const variant value)
+void metadata_container::set_metadata(int key, variant value)
 {
     m_int_data.emplace(key, value);
 }

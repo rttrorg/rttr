@@ -53,7 +53,7 @@ class argument;
 class RTTR_API property_container_base : public metadata_container
 {
     public:
-        property_container_base(const std::string& name, const type decalaring_type);
+        property_container_base(std::string name, type decalaring_type);
 
         virtual ~property_container_base();
 

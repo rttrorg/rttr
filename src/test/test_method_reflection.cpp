@@ -118,6 +118,9 @@ TEST_CASE("Test method", "[method]")
     type t_meth = type::get<method_test>();
     REQUIRE(t_meth.is_valid() == true);
     variant inst = t_meth.create({});
+    REQUIRE(inst.is_type<method_test*>() == true);
+    method_test* null = nullptr; // workaround for catch compile error
+    REQUIRE(inst.get_value<method_test*>() != null);
     method_test& obj = *inst.get_value<method_test*>();
     
     ////////////////////////////////////////////////////////////

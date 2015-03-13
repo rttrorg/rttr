@@ -40,8 +40,8 @@ class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_va
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter get, Setter set)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter get, Setter set)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(get),
             m_setter(set)
         {
@@ -90,8 +90,8 @@ class property_container<member_func_ptr, Getter, void, return_as_copy, read_onl
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter get)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, const type declaring_type, Getter get)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
@@ -132,8 +132,8 @@ class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter get, Setter set)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter get, Setter set)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(get),
             m_setter(set)
         {
@@ -187,8 +187,8 @@ class property_container<member_func_ptr, Getter, void, return_as_ptr, read_only
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter get)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter get)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");

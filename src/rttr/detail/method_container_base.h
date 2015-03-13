@@ -54,7 +54,7 @@ class instance;
 class RTTR_API method_container_base : public metadata_container
 {
     public:
-        method_container_base(const std::string& name, const type decalaring_type);
+		method_container_base(std::string name, type declaring_type);
 
         virtual ~method_container_base();
 

@@ -34,8 +34,8 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_container_base::property_container_base(const std::string& name, const type decalaring_type)
-:   m_name(name),
+property_container_base::property_container_base(std::string name, type decalaring_type)
+:   m_name(std::move(name)),
     m_declaring_type(decalaring_type)
 {
 }

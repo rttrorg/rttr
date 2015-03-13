@@ -50,8 +50,8 @@ template<typename F, typename Policy>
 class method_container : public method_container_base
 {
     public:
-        method_container(const std::string& name, const type declaring_type, F func_acc)
-        :   method_container_base(name, declaring_type),
+        method_container(std::string name, type declaring_type, F func_acc)
+        :   method_container_base(std::move(name), declaring_type),
             m_func_acc(func_acc)
         { }
 

@@ -50,21 +50,7 @@ namespace detail
 
 bool reflection_database::does_signature_match_arguments(const vector<type>& param_list, const vector<type>& args)
 {
-    if (param_list.size() == args.size())
-    {
-        int index = 0;
-        for (const auto& arg : args)
-        {
-            if (arg != param_list[index])
-            {
-                return false;
-            }
-            ++index;
-        }
-        return true;
-    }
-
-    return false;
+    return (param_list == args);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

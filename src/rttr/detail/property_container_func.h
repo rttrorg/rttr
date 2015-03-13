@@ -39,8 +39,8 @@ class property_container<function_ptr, Getter, Setter, return_as_copy, set_value
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter getter, Setter setter)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter getter, Setter setter)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(getter),
             m_setter(setter)
         {
@@ -84,8 +84,8 @@ class property_container<function_ptr, Getter, void, return_as_copy, read_only> 
     using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter func)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter func)
+        :   property_container_base(std::move(name), declaring_type),
             m_accessor(func)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
@@ -123,8 +123,8 @@ class property_container<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_container(const std::string& name, const type declaring_type, Getter getter, Setter setter)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name,  type declaring_type, Getter getter, Setter setter)
+        :   property_container_base(std::move(name), declaring_type),
             m_getter(getter),
             m_setter(setter)
         {
@@ -172,8 +172,8 @@ class property_container<function_ptr, Getter, void, return_as_ptr, read_only> :
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:
-        property_container(const std::string& name, const type declaring_type, Getter func)
-        :   property_container_base(name, declaring_type),
+        property_container(std::string name, type declaring_type, Getter func)
+        :   property_container_base(std::move(name), declaring_type),
             m_accessor(func)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
