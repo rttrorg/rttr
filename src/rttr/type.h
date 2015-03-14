@@ -274,14 +274,16 @@ class RTTR_API type
         static type get(T&& object);
 
         /*!
-         * \brief Returns the type object for the given \a name.
+         * \brief Returns the type object with the given name \p name.
          *
-         * \remark The search for the type is case sensitive. 
-         *         The name itself correspond to the name registered with RTTR_DECLARE_TYPE.
+         * \remark The search for the type is case sensitive. White spaces will be ignored.
+         *         The name of the type corresponds to the name which was used during \ref RTTR_REGISTER.
+         *         Only after the registration process was executed, then the type can be retrieved with this function.
+         *         Otherwise and invalid type will be returned.
          *
-         * \return type for an \a object of name \a name.
+         * \return \ref type object with the name \p name.
          */
-        static type get(const char* name);
+        static type get_by_name(const char* name);
 
         /*!
          * \brief Returns a list of all registered type objects.

@@ -7,10 +7,10 @@ Gutter Width: 15px
  
  
  
-.section 		{margin-bottom: 18px;
+.section        {margin-bottom: 18px;
 }
-.section:after	{content: ".";display: block;height: 0;clear: both;visibility: hidden;}
-.section 		{*zoom: 1;}
+.section:after  {content: ".";display: block;height: 0;clear: both;visibility: hidden;}
+.section        {*zoom: 1;}
  
 .section .firstcolumn,
 .section .firstcol {margin-left: 0;}

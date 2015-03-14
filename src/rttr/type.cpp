@@ -855,7 +855,7 @@ variant type::invoke(const std::string& name, std::vector<detail::argument> args
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get(const char* name)
+type type::get_by_name(const char* name)
 {
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
     const auto orig_type_name = name + std::string(">(void)");
@@ -912,7 +912,7 @@ type type::register_type(const char* name,
         g_get_derived_info_func_list[raw_id]  = get_derived_func;
         g_variant_create_list[db.type_id_counter] = var_func_ptr;
         const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
-		std::size_t index = 0;
+        std::size_t index = 0;
         // remove double entries; can only be happen for virtual inheritance case
         set<type> double_entries;
         for (auto itr = base_classes.rbegin(); itr != base_classes.rend();)
@@ -938,7 +938,7 @@ type type::register_type(const char* name,
         for (const auto& type : base_classes)
         {
             const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
-			for (std::size_t i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
+            for (std::size_t i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
             {
                 if (g_derived_class_list[row + i] == 0)
                 {

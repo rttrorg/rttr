@@ -73,15 +73,15 @@ $( document ).ready(function() {
     $('div.fragment.well div.line:first').css('margin-top', '15px');
     $('div.fragment.well div.line:last').css('margin-bottom', '15px');
 
-	$('table.doxtable').removeClass('doxtable').addClass('table table-striped table-bordered').each(function(){
-		$(this).prepend('<thead></thead>');
-		$(this).find('tbody > tr:first').prependTo($(this).find('thead'));
-		
-		$(this).find('td > span.success').parent().addClass('success');
-		$(this).find('td > span.warning').parent().addClass('warning');
-		$(this).find('td > span.danger').parent().addClass('danger');
-	});
-	
+    $('table.doxtable').removeClass('doxtable').addClass('table table-striped table-bordered').each(function(){
+        $(this).prepend('<thead></thead>');
+        $(this).find('tbody > tr:first').prependTo($(this).find('thead'));
+        
+        $(this).find('td > span.success').parent().addClass('success');
+        $(this).find('td > span.warning').parent().addClass('warning');
+        $(this).find('td > span.danger').parent().addClass('danger');
+    });
+    
 
     if($('div.fragment.well div.ttc').length > 0)
     {
@@ -107,44 +107,44 @@ $( document ).ready(function() {
       $(this).parent().remove();
     });
     
-	
-	function getOriginalWidthOfImg(img_element) {
-		var t = new Image();
-		t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
-		return t.width;
-	}
-	
-	$('div.dyncontent').find('img').each(function(){
-		if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
-			$(this).css('width', '100%');
-	});
-	
-	$(".memitem").removeClass('memitem');
+    
+    function getOriginalWidthOfImg(img_element) {
+        var t = new Image();
+        t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
+        return t.width;
+    }
+    
+    $('div.dyncontent').find('img').each(function(){
+        if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
+            $(this).css('width', '100%');
+    });
+    
+    $(".memitem").removeClass('memitem');
     $(".memproto").removeClass('memproto');
     $(".memdoc").removeClass('memdoc');
-	$("span.mlabel").removeClass('mlabel');
-	$("table.memberdecls").removeClass('memberdecls');
+    $("span.mlabel").removeClass('mlabel');
+    $("table.memberdecls").removeClass('memberdecls');
     $("[class^=memitem]").removeClass('memitem');
     $("span.mlabels").removeClass('mlabels');
     $("table.mlabels").removeClass('mlabels');
     $("td.mlabels-right").removeClass('mlabels-right');
-	$(".navpath").removeClass('navpath');
-	$("li.navelem").removeClass('navelem');
-	$("a.el").removeClass('el');
-	$("div.ah").removeClass('ah');
-	$("div.header").removeClass("header");
-	/*
-	$('.mdescLeft').each(function(){
-		if($(this).html()=="&nbsp;") {
-			$(this).siblings('.mdescRight').attr('colspan', 2);
-			$(this).remove();
-		}
-	});
-	$('td.memItemLeft').each(function(){
-		if($(this).siblings('.memItemRight').html()=="") {
-			$(this).attr('colspan', 2);
-			$(this).siblings('.memItemRight').remove();
-		}
-	});
+    $(".navpath").removeClass('navpath');
+    $("li.navelem").removeClass('navelem');
+    $("a.el").removeClass('el');
+    $("div.ah").removeClass('ah');
+    $("div.header").removeClass("header");
+    /*
+    $('.mdescLeft').each(function(){
+        if($(this).html()=="&nbsp;") {
+            $(this).siblings('.mdescRight').attr('colspan', 2);
+            $(this).remove();
+        }
+    });
+    $('td.memItemLeft').each(function(){
+        if($(this).siblings('.memItemRight').html()=="") {
+            $(this).attr('colspan', 2);
+            $(this).siblings('.memItemRight').remove();
+        }
+    });
   */
 });

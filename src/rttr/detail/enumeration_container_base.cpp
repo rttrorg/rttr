@@ -35,7 +35,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration_container_base::enumeration_container_base(const type declaring_type)
-:	m_declaring_type(declaring_type)
+:   m_declaring_type(declaring_type)
 {
 
 }
