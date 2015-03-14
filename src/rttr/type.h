@@ -670,11 +670,12 @@ class RTTR_API type
         detail::type_converter_base* get_type_converter(const type& target_type) const;
 
         /*!
-         * \brief Returns the amount of pointers in the type. E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
+         * \brief Returns the level of indirection for this this type. A.k.a pointer count. 
+         *        E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
          *
-         * \return The pointer count.
+         * \return The pointer dimension.
          */
-        std::size_t get_pointer_count() const;
+        std::size_t get_pointer_dimension() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////
@@ -702,7 +703,7 @@ class RTTR_API type
                                   bool is_function_pointer,
                                   bool is_member_object_pointer,
                                   bool is_member_function_pointer,
-                                  std::size_t get_pointer_count);
+                                  std::size_t pointer_dimension);
 
         void register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const;
 

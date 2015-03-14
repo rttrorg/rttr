@@ -75,7 +75,7 @@ static bool                                                 *g_is_function_point
 static bool                                                 *g_is_member_object_pointer_list    = nullptr;
 static bool                                                 *g_is_member_function_pointer_list  = nullptr;
 static detail::metadata_container                           *g_metadata_list                    = nullptr;
-static std::size_t                                          *g_get_pointer_count_list           = nullptr;
+static std::size_t                                          *g_pointer_dim_list                 = nullptr;
 static unique_ptr<detail::constructor_container_base>       *g_ctor_list                        = nullptr;
 static unique_ptr<detail::destructor_container_base>        *g_dtor_list                        = nullptr;
 static unique_ptr<detail::enumeration_container_base>       *g_enumeration_list                 = nullptr;
@@ -123,7 +123,7 @@ static void init_globals()
     g_is_member_object_pointer_list     = db.is_member_object_pointer_list;
     g_is_member_function_pointer_list   = db.is_member_function_pointer_list;
     g_metadata_list                     = db.meta_data_list;
-    g_get_pointer_count_list            = db.get_pointer_count_list;
+    g_pointer_dim_list                  = db.pointer_dim_list;
     g_class_data_list                   = db.class_data_list;
     g_ctor_list                         = db.constructor_list;
     g_dtor_list                         = db.destructor_list;
@@ -447,9 +447,9 @@ bool type::is_member_function_pointer() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t type::get_pointer_count() const
+std::size_t type::get_pointer_dimension() const
 {
-    return g_get_pointer_count_list[m_id];
+    return g_pointer_dim_list[m_id];
 }
 
 
@@ -888,7 +888,7 @@ type type::register_type(const char* name,
                          bool is_function_pointer,
                          bool is_member_object_pointer,
                          bool is_member_function_pointer,
-                         std::size_t get_pointer_count)
+                         std::size_t pointer_dimension)
 {
     init_globals();
 
@@ -957,7 +957,7 @@ type type::register_type(const char* name,
         db.is_function_pointer_list         [ret.first->second] = is_function_pointer;
         db.is_member_object_pointer_list    [ret.first->second] = is_member_object_pointer;
         db.is_member_function_pointer_list  [ret.first->second] = is_member_function_pointer;
-        db.get_pointer_count_list           [ret.first->second] = get_pointer_count;
+        db.pointer_dim_list                 [ret.first->second] = pointer_dimension;
     } // else cannot happen!
 
     return type(ret.first->second);

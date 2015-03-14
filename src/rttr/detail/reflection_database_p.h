@@ -151,7 +151,7 @@ class RTTR_LOCAL reflection_database
         bool                                                is_member_object_pointer_list[RTTR_MAX_TYPE_COUNT];
         bool                                                is_member_function_pointer_list[RTTR_MAX_TYPE_COUNT];
         metadata_container                                  meta_data_list[RTTR_MAX_TYPE_COUNT];
-        std::size_t                                         get_pointer_count_list[RTTR_MAX_TYPE_COUNT];
+        std::size_t                                         pointer_dim_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<class_data>                         class_data_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<constructor_container_base>         constructor_list[RTTR_MAX_TYPE_COUNT];
         std::unique_ptr<destructor_container_base>          destructor_list[RTTR_MAX_TYPE_COUNT];
