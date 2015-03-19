@@ -48,7 +48,7 @@ enum E_Alignment
     DOWN
 };
 
-TEST_CASE("TypeInfoTests - BasicTests", "[type]")
+TEST_CASE("Test rttr::type - BasicTests", "[type]")
 {
     using namespace rttr;
 
@@ -111,7 +111,7 @@ TEST_CASE("TypeInfoTests - BasicTests", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - ComplexerTypes", "[type]")
+TEST_CASE("Test rttr::type - ComplexerTypes", "[type]")
 {
     std::vector<int> myList;
     std::vector<int> myList2;
@@ -138,7 +138,7 @@ TEST_CASE("TypeInfoTests - ComplexerTypes", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - SingleClassInheritance", "[type]")
+TEST_CASE("Test rttr::type - SingleClassInheritance", "[type]")
 {
 
     {
@@ -175,7 +175,7 @@ TEST_CASE("TypeInfoTests - SingleClassInheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - MultipleClassInheritance", "[type]")
+TEST_CASE("Test rttr::type - MultipleClassInheritance", "[type]")
 {
     {
         FinalClass final;
@@ -235,7 +235,7 @@ TEST_CASE("TypeInfoTests - MultipleClassInheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Virtual Inheritance", "[type]")
+TEST_CASE("Test rttr::type - Virtual Inheritance", "[type]")
 {
     DiamondBottom diamond;
 
@@ -251,7 +251,7 @@ TEST_CASE("TypeInfoTests - Virtual Inheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - TypeId/ClassInheritance", "[type]")
+TEST_CASE("Test rttr::type - TypeId/ClassInheritance", "[type]")
 {
     ClassSingle6A instance6A;
     ClassSingleBase& baseSingle     = instance6A;
@@ -269,7 +269,19 @@ TEST_CASE("TypeInfoTests - TypeId/ClassInheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_primitive", "[type]")
+TEST_CASE("Test rttr::type - type::get_by_name", "[type]")
+{
+    CHECK(type::get_by_name("std::string").is_valid()   == true);
+    CHECK(type::get_by_name("std::string*").is_valid()  == true);
+
+    CHECK(type::get_by_name("std::string[100]").is_valid()   == false);
+    type::get<std::string[100]>(); // register it first, now it is available also by name lookup too
+    CHECK(type::get_by_name("std::string[100]").is_valid()   == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - Check is_primitive", "[type]")
 {
     CHECK(type::get<int>().is_primitive()               == true);
     CHECK(type::get<float>().is_primitive()             == true);
@@ -286,7 +298,7 @@ TEST_CASE("TypeInfoTests - Check is_primitive", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_class", "[type]")
+TEST_CASE("Test rttr::type - Check is_class", "[type]")
 {
 
     CHECK(type::get<std::string>().is_class()     == true);
@@ -304,7 +316,7 @@ TEST_CASE("TypeInfoTests - Check is_class", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_enum", "[type]")
+TEST_CASE("Test rttr::type - Check is_enum", "[type]")
 {
     CHECK(type::get<E_Alignment>().is_enumeration()     == true);
 
@@ -318,7 +330,7 @@ TEST_CASE("TypeInfoTests - Check is_enum", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_pointer", "[type]")
+TEST_CASE("Test rttr::type - Check is_pointer", "[type]")
 {
     CHECK(type::get<int*>().is_pointer()             == true);
     CHECK(type::get<ClassSingle6A*>().is_pointer()   == true);
@@ -335,7 +347,7 @@ TEST_CASE("TypeInfoTests - Check is_pointer", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_array", "[type]")
+TEST_CASE("Test rttr::type - Check is_array", "[type]")
 {
     CHECK(type::get<int[10]>().is_array()        == true);
     CHECK(type::get<char[10]>().is_array()       == true);
@@ -352,7 +364,7 @@ TEST_CASE("TypeInfoTests - Check is_array", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_function_pointer", "[type]")
+TEST_CASE("Test rttr::type - Check is_function_pointer", "[type]")
 {
     using MyClass = ClassSingleBase;
     CHECK(type::get<void(*)()>().is_function_pointer()              == true);
@@ -367,7 +379,7 @@ TEST_CASE("TypeInfoTests - Check is_function_pointer", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_member_function_pointer", "[type]")
+TEST_CASE("Test rttr::type - Check is_member_function_pointer", "[type]")
 {
     using MyClass = ClassSingleBase;
     CHECK(type::get<void(MyClass::*)()>().is_member_function_pointer()  == true);
@@ -379,7 +391,7 @@ TEST_CASE("TypeInfoTests - Check is_member_function_pointer", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("TypeInfoTests - Check is_member_object_pointer", "[type]")
+TEST_CASE("Test rttr::type - Check is_member_object_pointer", "[type]")
 {
     using MyClass = ClassSingleBase;
     CHECK(type::get<int(MyClass::*)>().is_member_object_pointer()   == true);

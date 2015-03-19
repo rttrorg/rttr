@@ -49,88 +49,94 @@ class argument;
  * With an instance of that class you can set and get values of an array with any dimension level.
  *
  * A \ref variant_array can be created directly with an array type or from a \ref variant with \ref variant::to_array().
- * Use before \ref variant::is_array(), otherwise it might not be possible to create a valid variant_array object.
  *
  * Meta Information
  * ----------------
- * An array is defined by its \ref variant_array::get_rank() "rank", it's \ref variant_array::get_size "size" and whether he is \ref variant_array::is_dynamic() "dynamic" or not.
+ * An array is defined by its \ref variant_array::get_rank() "rank", it's \ref variant_array::get_size "size" and 
+ * whether he is \ref variant_array::is_dynamic() "dynamic" or not.
  *
  * The rank of an array describes the number of dimensions. E.g. `int[10]` has a rank of `1`. `int[2][10]` has an rank of `2` and so on.
- * RTTR allows you to register types with an arbitrary rank count. For retrieving the size of an array use \ref get_size().
+ * For retrieving the size of an array use \ref get_size().
  * With this function it is also possible to determine the size of the array relative to its rank level and it's index.
  * Take a look at following example:
-\code{.cpp}
-    std::vector<std::vector<int>> obj(10, std::vector<int>(20, 0));
-    variant_array array = obj;
-    std::cout << array.get_size()  << std::endl; // prints "10"
-    std::cout << array.get_size(0) << std::endl; // prints "20"
-    std::cout << array.get_size(1) << std::endl; // prints "20"
-    // INVALID call, max index is 9
-    std::cout << array.get_size(10) << std::endl; // undefined behavior
-\endcode
+ * \code{.cpp}
+ *      std::vector<std::vector<int>> obj(10, std::vector<int>(20, 0));
+ *      variant_array array = obj;
+ *      std::cout << array.get_size()  << std::endl; // prints "10"
+ *      std::cout << array.get_size(0) << std::endl; // prints "20"
+ *      std::cout << array.get_size(1) << std::endl; // prints "20"
+ *      // INVALID call, max index is 9
+ *      std::cout << array.get_size(10) << std::endl; // undefined behavior
+ * \endcode
  *
- * When the given array type is \ref variant_array::is_dynamic() "dynamic" you can change the size of the array, therefore \ref variant_array::set_size "set_size()" should be used.
- * A value of an array can be accessed with \ref variant_array::get_value "get_value()" or set with \ref variant_array::set_value "set_value". These function expect an index for up to rank level 3.
+ * When the given array type is \ref variant_array::is_dynamic() "dynamic" you can change the size of the array,
+ * therefore \ref variant_array::set_size "set_size()" should be used.
+ * A value of an array can be accessed with \ref variant_array::get_value "get_value()" or set with 
+ * \ref variant_array::set_value "set_value". These function expect an index for up to rank level 3.
  * The array class has here one interesting feature, you can set and get the value of an array up to its rank count. e.g:
-\code{.cpp}
-    int obj[2][10];
-    int sub_obj[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    array.set_value(0, sub_obj); // set the content of the obj[0] to zeros
-    array.set_value(0, 1, 23);   // equivalent to call obj[0][1] == 23
-\endcode
+ * \code{.cpp}
+ *      int obj[2][10];
+ *      int sub_obj[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+ *      array.set_value(0, sub_obj); // set the content of the obj[0] to zeros
+ *      array.set_value(0, 1, 23);   // equivalent to call obj[0][1] == 23
+ * \endcode
  *
- * When you have arrays bigger then this rank, use the counterpart functions: \ref variant_array::get_value_variadic "get_value_variadic" and \ref variant_array::set_value_variadic "set_value_variadic"
- * which expects a list of indices. When the array is dynamic it is also possible to \ref variant_array::insert_value "insert" or \ref variant_array::remove_value "remove" values.
+ * When you have arrays bigger then this rank, use the counterpart functions: 
+ * \ref variant_array::get_value_variadic "get_value_variadic" and \ref variant_array::set_value_variadic "set_value_variadic"
+ * which expects a list of indices. When the array is dynamic it is also possible to
+ * \ref variant_array::insert_value "insert" or \ref variant_array::remove_value "remove" values.
  *
- * RTTR recognize whether a type is an array or not with the help of an `array_mapper` class template. This class does the mapping for the standard access function
- * defined in the \ref array class. At the moment there exist specializations for following types: `std::array<T, N>`, `std::vector<T>`, `std::list<T>` and raw-arrays `T[N]`.
+ * RTTR recognize whether a type is an array or not with the help of an `array_mapper` class template.
+ * This class does the mapping for the standard access function
+ * defined in the \ref array class. At the moment there exist specializations for following types: 
+ * `std::array<T, N>`, `std::vector<T>`, `std::list<T>` and raw-arrays `T[N]`.
  *
  * When you need to bind an own custom array type, then you have the implement following functions in the class `array_mapper`.
  *
-\code{.cpp}
-namespace rttr
-{
-namespace detail
-{
-template <typename T>
-struct array_mapper< my_fancy_array<T> >
-{
-  using raw_type = typename array_mapper<T>::raw_type;
-  using sub_type = T;
-
-  static bool is_dynamic()
-  {
-      ...
-  }
-  static std::size_t get_size(const my_fancy_array<T>&)
-  {
-      ...
-  }
-  static bool set_size(my_fancy_array<T>&)
-  {
-      ...
-  }
-  static const T& get_value(const my_fancy_array<T>& arr, std::size_t index)
-  {
-      ...
-  }
-  
-  static T& get_value(my_fancy_array<T>& arr, std::size_t index)
-  {
-      ...
-  }
-  static bool insert_value(my_fancy_array<T>&, std::size_t, const T&)
-  {
-      ...
-  }
-  static bool remove_value(my_fancy_array<T>&, std::size_t)
-  {
-    ...
-  }
-};
-} // end namespace detail
-} // end namespace rttr
-\endcode
+ * \code{.cpp}
+ *      namespace rttr
+ *      {
+ *      namespace detail
+ *      {
+ *      template <typename T>
+ *      struct array_mapper< my_fancy_array<T> >
+ *      {
+ *        using raw_type = typename array_mapper<T>::raw_type;
+ *        using sub_type = T;
+ *      
+ *        static bool is_dynamic()
+ *        {
+ *            ...
+ *        }
+ *        static std::size_t get_size(const my_fancy_array<T>&)
+ *        {
+ *            ...
+ *        }
+ *        static bool set_size(my_fancy_array<T>&)
+ *        {
+ *            ...
+ *        }
+ *        static const T& get_value(const my_fancy_array<T>& arr, std::size_t index)
+ *        {
+ *            ...
+ *        }
+ *        
+ *        static T& get_value(my_fancy_array<T>& arr, std::size_t index)
+ *        {
+ *            ...
+ *        }
+ *        static bool insert_value(my_fancy_array<T>&, std::size_t, const T&)
+ *        {
+ *            ...
+ *        }
+ *        static bool remove_value(my_fancy_array<T>&, std::size_t)
+ *        {
+ *          ...
+ *        }
+ *      };
+ *      } // end namespace detail
+ *      } // end namespace rttr
+ * \endcode
  *
  * Remark the namespaces rttr::detail, otherwise your specialization will not be recognized.
  *
@@ -141,28 +147,28 @@ struct array_mapper< my_fancy_array<T> >
  * Typical Usage
  * ----------------------
  * 
-\code{.cpp}
-  int obj[2][10];
-  variant var = obj;
-  if (var.is_array())
-  {
-    variant_array array = var.to_array();
-    for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
-    {
-      for (std::size_t index_2 = 0; index_2 < array.get_size(index_1); ++index_2)
-      {
-        array.set_value(index_1, index_2, 0);
-      }
-    }
-
-    // it is also possible to set the sub array in one step
-    for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
-    {
-      int zeros[10] = {0, 0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0};
-      array.set_value(index_1, zeros);
-    }
-  }
-\endcode
+ * \code{.cpp}
+ *      int obj[2][10];
+ *      variant var = obj;
+ *      if (var.is_array())
+ *      {
+ *        variant_array array = var.to_array();
+ *        for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
+ *        {
+ *          for (std::size_t index_2 = 0; index_2 < array.get_size(index_1); ++index_2)
+ *          {
+ *            array.set_value(index_1, index_2, 0);
+ *          }
+ *        }
+ *      
+ *        // it is also possible to set the sub array in one step
+ *        for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
+ *        {
+ *          int zeros[10] = {0, 0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0};
+ *          array.set_value(index_1, zeros);
+ *        }
+ *      }
+ * \endcode
  *
  * \see variant
  */
@@ -209,7 +215,8 @@ class RTTR_API variant_array
         ~variant_array();
 
         /*!
-         * \brief Returns true if this variant_array is valid, otherwise false.
+         * \brief Returns true if this variant_array is valid, that means the object is holding some data.
+         *        When the variant_array doesn't hold any data it will return false.
          *
          * \return True if this array is valid, otherwise false.
          */

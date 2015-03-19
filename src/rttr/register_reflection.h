@@ -751,7 +751,7 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  * RTTR_REGISTER
  * {
  *     class<Foo>()
-            .method("func", select_overload<void(void)>(&Foo::func))
+            .method("func", select_non_const(&Foo::func))
             .method("func", select_const(&Foo::func));
  * }
  * \endcode
@@ -759,6 +759,35 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  */
 template<typename ClassType, typename ReturnType, typename... Args>
 auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func)
+{
+    return func;
+}
+
+/*!
+ * \brief This is a helper function to register overloaded const member functions.
+ *
+ * Use it like following:
+ * \code{.cpp}
+ *
+ * #include <rttr/register>
+ * using namespace rttr;
+ * struct Foo
+ * {
+ *   void func();
+ *   void func() const;
+ * };
+ * 
+ * RTTR_REGISTER
+ * {
+ *     class<Foo>()
+            .method("func", select_non_const(&Foo::func))
+            .method("func", select_const(&Foo::func));
+ * }
+ * \endcode
+ *
+ */
+template<typename ClassType, typename ReturnType, typename... Args>
+auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
 {
     return func;
 }

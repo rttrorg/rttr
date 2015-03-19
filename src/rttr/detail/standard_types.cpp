@@ -57,7 +57,6 @@ RTTR_REGISTER
     rttr::type::get<std::vector<int>>();
     rttr::type::get<std::vector<float>>();
     rttr::type::get<std::vector<double>>();
-    rttr::impl::register_custom_name(rttr::type::get<std::map<int, std::string>>(), "std::map<int, std::string>");
 
     rttr::class_<std::string>("std::string")
                 .constructor<>()
@@ -69,9 +68,10 @@ RTTR_REGISTER
                 .method("length",       &std::string::length)
                 .method("size",         &std::string::size)
                 .method("empty",        &std::string::empty)
-                .method("at",           static_cast<const char&(std::string::*)(size_t) const>(&std::string::at))
+                .method("at",           rttr::select_const(&std::string::at))
+                .method("at",           rttr::select_non_const(&std::string::at))
                 .method("data",         &std::string::data)
                 .method("c_str",        &std::string::c_str)
-                .method("operator[]",   static_cast<char&(std::string::*)(size_t)>(&std::string::operator[]))
+                .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
            ;
 }

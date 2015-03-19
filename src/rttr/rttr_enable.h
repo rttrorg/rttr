@@ -35,54 +35,9 @@
 namespace rttr
 {
 
-namespace detail
-{
-   
-
-} // end namespace detail
-
 namespace impl
 {
-#if 0
-/////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(&data));
-}
-
-/*!
- * Returns for a given type T, which is not a pointer, the address to it.
- */
-template<typename T>
-static void* get_ptr(T& data, typename std::enable_if<!std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(&data);
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(const T& data, typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return const_cast<void*>(reinterpret_cast<const void*>(data));
-}
-
-/*!
- * Returns for a given type T, which a pointer, the address of the pointed data.
- */
-template<typename T>
-static void* get_ptr(T& data,  typename std::enable_if<std::is_pointer<T>::value>::type* = 0)
-{
-    return reinterpret_cast<void*>(data);
-}
-
-#endif
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef DOXYGEN

@@ -46,6 +46,8 @@ namespace detail
     struct type_converter;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_INLINE type::type()
 :   m_id(0)
 {
@@ -219,6 +221,21 @@ struct raw_type_info<T, false>
     static RTTR_INLINE type get_type() { return MetaTypeInfo<typename detail::raw_type<T>::type>::get_type(); }
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, bool = std::is_same<T, typename detail::raw_array_type<T>::type >::value>
+struct array_raw_type
+{
+    static RTTR_INLINE type get_type() { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct array_raw_type<T, false>
+{
+    static RTTR_INLINE type get_type() { return MetaTypeInfo<typename detail::raw_array_type<T>::type>::get_type(); }
+};
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -235,6 +252,7 @@ struct MetaTypeInfo
         (void) sizeof(type_must_be_complete);
         static const type val = rttr::type::register_type(f<T>(),
                                                           raw_type_info<T>::get_type(),
+                                                          array_raw_type<T>::get_type(),
                                                           std::move(::rttr::detail::base_classes<T>::get_types()),
                                                           ::rttr::detail::get_most_derived_info_func<T>(),
                                                           ::rttr::detail::variant_creater<T>::create(),
@@ -260,6 +278,7 @@ struct MetaTypeInfo<void>
     {
         static const type val = rttr::type::register_type(f<void>(),
                                                           raw_type_info<void>::get_type(),
+                                                          array_raw_type<void>::get_type(),
                                                           std::vector<detail::base_class_info>(),
                                                           ::rttr::detail::get_most_derived_info_func<void>(),
                                                           nullptr,
@@ -285,6 +304,7 @@ struct MetaTypeInfo<T, typename std::enable_if<std::is_function<T>::value>::type
     {
         static const type val = rttr::type::register_type(f<T>(),
                                                           raw_type_info<T>::get_type(),
+                                                          array_raw_type<T>::get_type(),
                                                           std::vector<detail::base_class_info>(),
                                                           ::rttr::detail::get_most_derived_info_func<T>(),
                                                           ::rttr::detail::variant_creater<T>::create(),

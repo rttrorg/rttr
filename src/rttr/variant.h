@@ -357,8 +357,10 @@ class RTTR_API variant
         double to_double(bool* ok = nullptr);
 
         /*!
-         * \brief Creates a valid variant_array object from the underlying value when the containing type 
-         *        is an \ref type::is_array() "array" or it contains a pointer to an array type.
+         * \brief Creates a valid variant_array object from the underlying value,
+         *        when the containing type is an \ref type::is_array() "array" or its \ref type::get_raw_type() "raw type" is an array type.
+         *        So it is possible to create a \ref variant_array also from a pointer to an array.
+         *        To check whether a conversion is possible or not use: `variant::can_convert<variant_array>()`;
          *
          * A typical example is the following:
          *
@@ -371,6 +373,8 @@ class RTTR_API variant
          * \endcode
          *
          * \see can_convert(), convert()
+         *
+         * \remark This function will return an \ref variant_array::is_valid "invalid" object, when a conversion is not possible.
          *
          * \return A variant_array object.
          */

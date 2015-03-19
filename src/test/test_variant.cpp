@@ -99,6 +99,7 @@ TEST_CASE("variant test - BasicTests", "[variant]")
     SECTION("simple basic check")
     {
         variant var = string("hello world");
+
         REQUIRE(var.is_valid() == true);
         REQUIRE(var.is_type<string>() == true);
         const int value = 12;
@@ -136,7 +137,7 @@ TEST_CASE("variant conversion - to bool", "[variant]")
         variant var = true;
         REQUIRE(var.is_valid() == true);
         REQUIRE(var.to_bool() == true);
-        
+
         REQUIRE(var.convert<bool>() == true);
         REQUIRE(var.convert(type::get<bool>()) == true);
         REQUIRE(var.get_value<bool>() == true);
@@ -680,8 +681,7 @@ TEST_CASE("variant test - array", "[variant]")
    SECTION("test raw array")
     {
         int obj[2][10] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-        auto foo = &obj;
-        variant_array int_array = foo;
+        variant_array int_array = &obj;
         REQUIRE(int_array.is_valid() == true);
 
         // check meta information
@@ -722,6 +722,12 @@ TEST_CASE("variant test - array", "[variant]")
     {
         std::vector<int> vec(50, 0);
         variant var = &vec;
+
+        // check whether we can convert to array
+        REQUIRE(var.get_type().is_array()                == false);
+        REQUIRE(var.get_type().get_raw_type().is_array() == true);
+        REQUIRE(var.can_convert<variant_array>()         == true);
+
         variant_array vec_array = var.to_array();
         REQUIRE(vec_array.is_valid()    == true);
         REQUIRE(vec_array.is_dynamic()  == true);

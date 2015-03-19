@@ -53,47 +53,52 @@
 #include <mutex>
 #include <cstring>
 #include <cctype>
+#include <utility>
 
 using namespace std;
 
 namespace rttr
 {
-static detail::reflection_database::NameToTag               *g_name_to_id                       = nullptr;
-static const char*                                          *g_name_list                        = nullptr;
-static type::type_id                                        *g_base_class_list                  = nullptr;
-static type::type_id                                        *g_derived_class_list               = nullptr;
-static detail::reflection_database::rttr_cast_func          *g_conversion_list                  = nullptr;
-static detail::reflection_database::get_derived_info_func   *g_get_derived_info_func_list       = nullptr;
-static detail::variant_create_func                          *g_variant_create_list              = nullptr;
-static type::type_id                                        *g_raw_type_list                    = nullptr;
-static bool                                                 *g_is_class_list                    = nullptr;
-static bool                                                 *g_is_enum_list                     = nullptr;
-static bool                                                 *g_is_array_list                    = nullptr;
-static bool                                                 *g_is_pointer_list                  = nullptr;
-static bool                                                 *g_is_primitive_list                = nullptr;
-static bool                                                 *g_is_function_pointer_list         = nullptr;
-static bool                                                 *g_is_member_object_pointer_list    = nullptr;
-static bool                                                 *g_is_member_function_pointer_list  = nullptr;
-static detail::metadata_container                           *g_metadata_list                    = nullptr;
-static std::size_t                                          *g_pointer_dim_list                 = nullptr;
-static unique_ptr<detail::constructor_container_base>       *g_ctor_list                        = nullptr;
-static unique_ptr<detail::destructor_container_base>        *g_dtor_list                        = nullptr;
-static unique_ptr<detail::enumeration_container_base>       *g_enumeration_list                 = nullptr;
-static std::vector<std::unique_ptr<detail::type_converter_base>> *g_type_converter_list         = nullptr;
-static unique_ptr<detail::reflection_database::class_data>  *g_class_data_list                  = nullptr;
-static detail::reflection_database::property_map            *g_global_properties                = nullptr;
-static detail::reflection_database::method_map              *g_global_methods                   = nullptr;
 
-static detail::reflection_database::constructor_container   *g_constructor_list                 = nullptr;
-static detail::reflection_database::destructor_container    *g_destructor_list                  = nullptr;
-static detail::reflection_database::method_container        *g_method_list                      = nullptr;
-static detail::reflection_database::property_container      *g_property_list                    = nullptr;
+#define RTTR_DECL_DB_TYPE(member) static detail::array_mapper<decltype(std::declval<detail::reflection_database>().member)>::sub_type *
+#define RTTR_DECL_DB_TYPE_2(member) static decltype(std::declval<detail::reflection_database>().member) *
 
-static detail::reflection_database::custom_name_map         *g_custom_name_map                  = nullptr;
+std::vector<const char*>*                               g_orig_names                        = nullptr;
+std::vector<std::string>*                               g_custom_names                      = nullptr;
+std::vector<detail::reflection_database::name_to_id>*   g_orig_names_to_id                  = nullptr;
+std::vector<detail::reflection_database::name_to_id>*   g_custom_names_to_id                = nullptr;
 
 
-static std::mutex                                           *g_register_type_mutex              = nullptr;
-static std::mutex                                           *g_register_custom_name_mutex       = nullptr;
+RTTR_DECL_DB_TYPE(m_base_class_list)                    g_base_class_list                   = nullptr;
+RTTR_DECL_DB_TYPE(m_derived_class_list)                 g_derived_class_list                = nullptr;
+RTTR_DECL_DB_TYPE(m_conversion_list)                    g_conversion_list                   = nullptr;
+RTTR_DECL_DB_TYPE(m_get_derived_info_func_list)         g_get_derived_info_func_list        = nullptr;
+RTTR_DECL_DB_TYPE(m_variant_create_func_list)           g_variant_create_list               = nullptr;
+RTTR_DECL_DB_TYPE(m_raw_type_list)                      g_raw_type_list                     = nullptr;
+RTTR_DECL_DB_TYPE(m_array_raw_type_list)                g_array_raw_type_list               = nullptr;
+RTTR_DECL_DB_TYPE(m_is_class_list)                      g_is_class_list                     = nullptr;
+RTTR_DECL_DB_TYPE(m_is_enum_list)                       g_is_enum_list                      = nullptr;
+RTTR_DECL_DB_TYPE(m_is_array_list)                      g_is_array_list                     = nullptr;
+RTTR_DECL_DB_TYPE(m_is_pointer_list)                    g_is_pointer_list                   = nullptr;
+RTTR_DECL_DB_TYPE(m_is_primitive_list)                  g_is_primitive_list                 = nullptr;
+RTTR_DECL_DB_TYPE(m_is_function_pointer_list)           g_is_function_pointer_list          = nullptr;
+RTTR_DECL_DB_TYPE(m_is_member_object_pointer_list)      g_is_member_object_pointer_list     = nullptr;
+RTTR_DECL_DB_TYPE(m_is_member_function_pointer_list)    g_is_member_function_pointer_list   = nullptr;
+RTTR_DECL_DB_TYPE(m_meta_data_list)                     g_metadata_list                     = nullptr;
+RTTR_DECL_DB_TYPE(m_pointer_dim_list)                   g_pointer_dim_list                  = nullptr;
+RTTR_DECL_DB_TYPE(m_constructor_list)                   g_ctor_list                         = nullptr;
+RTTR_DECL_DB_TYPE(m_destructor_list)                    g_dtor_list                         = nullptr;
+RTTR_DECL_DB_TYPE(m_enumeration_list)                   g_enumeration_list                  = nullptr;
+RTTR_DECL_DB_TYPE(m_type_converter_list)                g_type_converter_list               = nullptr;
+RTTR_DECL_DB_TYPE(m_class_data_list)                    g_class_data_list                   = nullptr;
+RTTR_DECL_DB_TYPE(m_global_properties)                  g_global_properties                 = nullptr;
+RTTR_DECL_DB_TYPE(m_global_methods)                     g_global_methods                    = nullptr;
+RTTR_DECL_DB_TYPE_2(m_constructor_container_list)         g_constructor_list                  = nullptr;
+RTTR_DECL_DB_TYPE_2(m_destructor_container_list)          g_destructor_list                   = nullptr;
+RTTR_DECL_DB_TYPE_2(m_method_list)                        g_method_list                       = nullptr;
+RTTR_DECL_DB_TYPE_2(m_property_list)                      g_property_list                     = nullptr;
+RTTR_DECL_DB_TYPE(m_register_type_mutex)                g_register_type_mutex               = nullptr;
+
 
 // because everything is initialized at static initialization time the call to
 // register_type can be made from another translation unit before global statics
@@ -106,38 +111,41 @@ static void init_globals()
 
     detail::reflection_database& db = detail::reflection_database::instance();
 
-    g_name_to_id                        = &db.name_to_id;
-    g_name_list                         = db.name_list;
-    g_base_class_list                   = db.base_class_list;
-    g_derived_class_list                = db.derived_class_list;
-    g_conversion_list                   = db.conversion_list;
-    g_variant_create_list               = db.variant_create_func_list;
-    g_get_derived_info_func_list        = db.get_derived_info_func_list;
-    g_raw_type_list                     = db.raw_type_list;
-    g_is_class_list                     = db.is_class_list;
-    g_is_enum_list                      = db.is_enum_list;
-    g_is_array_list                     = db.is_array_list;
-    g_is_pointer_list                   = db.is_pointer_list;
-    g_is_primitive_list                 = db.is_primitive_list;
-    g_is_function_pointer_list          = db.is_function_pointer_list;
-    g_is_member_object_pointer_list     = db.is_member_object_pointer_list;
-    g_is_member_function_pointer_list   = db.is_member_function_pointer_list;
-    g_metadata_list                     = db.meta_data_list;
-    g_pointer_dim_list                  = db.pointer_dim_list;
-    g_class_data_list                   = db.class_data_list;
-    g_ctor_list                         = db.constructor_list;
-    g_dtor_list                         = db.destructor_list;
-    g_enumeration_list                  = db.enumeration_list;
-    g_global_properties                 = &db.global_properties;
-    g_global_methods                    = &db.global_methods;
-    g_constructor_list                  = &db.m_constructor_list;
-    g_destructor_list                   = &db.m_destructor_list;
+    g_orig_names                        = &db.m_orig_names;
+    g_custom_names                      = &db.m_custom_names;
+    g_orig_names_to_id                  = &db.m_orig_name_to_id;
+    g_custom_names_to_id                = &db.m_custom_name_to_id;
+
+
+    g_base_class_list                   = db.m_base_class_list;
+    g_derived_class_list                = db.m_derived_class_list;
+    g_conversion_list                   = db.m_conversion_list;
+    g_variant_create_list               = db.m_variant_create_func_list;
+    g_get_derived_info_func_list        = db.m_get_derived_info_func_list;
+    g_raw_type_list                     = db.m_raw_type_list;
+    g_array_raw_type_list               = db.m_array_raw_type_list;
+    g_is_class_list                     = db.m_is_class_list;
+    g_is_enum_list                      = db.m_is_enum_list;
+    g_is_array_list                     = db.m_is_array_list;
+    g_is_pointer_list                   = db.m_is_pointer_list;
+    g_is_primitive_list                 = db.m_is_primitive_list;
+    g_is_function_pointer_list          = db.m_is_function_pointer_list;
+    g_is_member_object_pointer_list     = db.m_is_member_object_pointer_list;
+    g_is_member_function_pointer_list   = db.m_is_member_function_pointer_list;
+    g_metadata_list                     = db.m_meta_data_list;
+    g_pointer_dim_list                  = db.m_pointer_dim_list;
+    g_class_data_list                   = db.m_class_data_list;
+    g_ctor_list                         = db.m_constructor_list;
+    g_dtor_list                         = db.m_destructor_list;
+    g_enumeration_list                  = db.m_enumeration_list;
+    g_global_properties                 = &db.m_global_properties;
+    g_global_methods                    = &db.m_global_methods;
+    g_constructor_list                  = &db.m_constructor_container_list;
+    g_destructor_list                   = &db.m_destructor_container_list;
     g_method_list                       = &db.m_method_list;
     g_property_list                     = &db.m_property_list;
-    g_type_converter_list               = db.type_converter_list;
-    g_custom_name_map                   = &db.m_custom_name_map;
+    g_type_converter_list               = db.m_type_converter_list;
     g_register_type_mutex               = &db.m_register_type_mutex;
-    g_register_custom_name_mutex        = &db.m_register_custom_name_mutex;
 
     initialized = true;
 }
@@ -217,54 +225,60 @@ void insert_space_before(std::string& text, const std::string& part)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::string get_name_impl(type::type_id id)
+static std::string get_name_impl(const char* name)
 {
-    const auto db_string = g_name_list[id];
-    const auto str_length = strlen(db_string);
-    return std::string(db_string, str_length - detail::skip_size_at_end);
+    return std::string(name, strlen(name) - detail::skip_size_at_end);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::string get_custom_name(type source_type, type raw_type)
+static std::string derive_name(const std::string& src_name, const std::string& raw_name, 
+                               const std::string& custom_name)
 {
-    std::string source_name = get_name_impl(source_type.get_id());
+    auto tmp_src_name = src_name;
+    auto tmp_raw_name = raw_name;
 
-    std::lock_guard<std::mutex> lock(*g_register_custom_name_mutex);
-    auto& custom_name_map = *g_custom_name_map;
-    auto orig_src_name  = source_name;
-    auto raw_name       = get_name_impl(raw_type.get_id());
-    auto ret = custom_name_map.find(raw_type);
     // We replace a custom registered name for a type for all derived types, e.g.
     // "std::basic_string<char>" => "std::string"
     // we want to use this also automatically for derived types like pointers, e.g.
     // "const std::basic_string<char>*" => "const std::string*"
     // therefore we have to replace the "raw_type" string
-    if (ret != custom_name_map.end())
-    {
-        const std::string& custom_name = ret->second;
-        remove_whitespaces(raw_name);
-        remove_whitespaces(source_name);
+    remove_whitespaces(tmp_raw_name);
+    remove_whitespaces(tmp_src_name);
 
-        const auto start_pos    = source_name.find(raw_name);
-        const auto end_pos      = start_pos + raw_name.length();
-        if (start_pos == std::string::npos)
-            return orig_src_name; // nothing was found...
+    const auto start_pos = tmp_src_name.find(tmp_raw_name);
+    const auto end_pos = start_pos + tmp_raw_name.length();
+    if (start_pos == std::string::npos)
+        return src_name; // nothing was found...
 
-        // remember the two parts before and after the found "raw_name"
-        const auto start_part   = source_name.substr(0, start_pos);
-        const auto end_part     = source_name.substr(end_pos, source_name.length());
-        
-        source_name.replace(start_pos, raw_name.length(), custom_name);
+    // remember the two parts before and after the found "raw_name"
+    const auto start_part = tmp_src_name.substr(0, start_pos);
+    const auto end_part = tmp_src_name.substr(end_pos, tmp_src_name.length());
 
-        if (is_space_after(orig_src_name, start_part))
-            insert_space_after(source_name, start_part);
+    tmp_src_name.replace(start_pos, tmp_raw_name.length(), custom_name);
 
-        if (is_space_before(orig_src_name, end_part))
-            insert_space_before(source_name, end_part);
-    }
+    if (is_space_after(src_name, start_part))
+        insert_space_after(tmp_src_name, start_part);
 
-    return source_name;
+    if (is_space_before(src_name, end_part))
+        insert_space_before(tmp_src_name, end_part);
+
+    return tmp_src_name;
+}
+ 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string derive_name(const type& array_raw_type, const char* name)
+{
+    if (!array_raw_type.is_valid())
+        return get_name_impl(name); // this type is already the raw_type, so we have to forward just the current name
+
+    type::type_id raw_id = array_raw_type.get_id();
+    const auto custom_name = (*g_custom_names)[raw_id];
+    std::string raw_name_orig = get_name_impl((*g_orig_names)[raw_id]);
+
+    const std::string src_name_orig = get_name_impl(name);
+    return derive_name(src_name_orig, raw_name_orig, custom_name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -272,18 +286,19 @@ static std::string get_custom_name(type source_type, type raw_type)
 std::string type::get_name() const
 {
     if (is_valid())
-    {
-        const type::type_id raw_id = g_raw_type_list[m_id];
-        const type raw_type(raw_id);
-        if (raw_type.is_class() || raw_type.is_enumeration())
-            return get_custom_name(*this, raw_type);
-        else
-            return get_name_impl(m_id);
-    }
-    else
-    {
-        return std::string();
-    }
+        return (*g_custom_names)[m_id];
+
+    return std::string();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string type::get_full_name() const
+{
+    if (is_valid())
+       return get_name_impl((*g_orig_names)[m_id]);
+
+    return std::string();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -458,10 +473,10 @@ std::size_t type::get_pointer_dimension() const
 std::vector<type> type::get_types()
 {
     std::vector<type> result;
-    result.reserve(g_name_to_id->size());
-    for (const auto& value : *g_name_to_id)
+    result.reserve(g_orig_names->size());
+    for (std::size_t id = 1; id < g_orig_names->size(); ++id)
     {
-        result.push_back(value.second);
+        result[id - 1] = type(static_cast<type::type_id>(id));
     }
 
     return result;
@@ -857,18 +872,18 @@ variant type::invoke(const std::string& name, std::vector<detail::argument> args
 
 type type::get_by_name(const char* name)
 {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-    const auto orig_type_name = name + std::string(">(void)");
-#elif RTTR_COMPILER == RTTR_COMPILER_GNUC
-    const auto orig_type_name = name + std::string("]");
-#endif
+    const auto hash_value = std::hash<std::string>()(name);
+    auto itr = std::lower_bound(g_custom_names_to_id->begin(), g_custom_names_to_id->end(), hash_value, detail::reflection_database::order_name());
+    for (; itr != g_custom_names_to_id->end(); ++itr)
+    {
+        if (itr->m_hash_value != hash_value)
+            break;
 
-   const auto itr = g_name_to_id->find(orig_type_name.c_str());
-   if (itr != g_name_to_id->end())
-       return type(itr->second);
-   else
-       return type();
-   
+        if ((*g_custom_names)[itr->m_id].compare(name) == 0)
+            return type(static_cast<type::type_id>(itr->m_id));
+    }
+
+    return type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -877,6 +892,7 @@ type type::get_by_name(const char* name)
 
 type type::register_type(const char* name, 
                          const type& raw_type,
+                         const type& array_raw_type,
                          vector<detail::base_class_info> base_classes,
                          detail::derived_info(*get_derived_func)(void*),
                          detail::variant_create_func var_func_ptr,
@@ -893,24 +909,40 @@ type type::register_type(const char* name,
     init_globals();
 
     std::lock_guard<std::mutex> lock(*g_register_type_mutex);
-    using namespace detail;
 
+    using namespace detail;
     
+    const auto hash_value = std::hash<std::string>()(name);
     reflection_database& db = reflection_database::instance();
     {
-        const auto itr = g_name_to_id->find(name);
-        if (itr != g_name_to_id->end())
-            return type(itr->second);
+        
+        auto itr = std::lower_bound(g_orig_names_to_id->begin(), g_orig_names_to_id->end(), hash_value, detail::reflection_database::order_name());
+        for (; itr != g_orig_names_to_id->end(); ++itr)
+        {
+            if (itr->m_hash_value != hash_value)
+                break;
+
+            if (detail::reflection_database::comparison_char()((*g_orig_names)[itr->m_id], name))
+                return type(static_cast<type::type_id>(itr->m_id));
+        }
     }
 
-    const auto ret = g_name_to_id->emplace(name, ++db.type_id_counter);
-    if (ret.second)
+    g_orig_names_to_id->emplace_back(detail::reflection_database::name_to_id{++db.m_type_id_counter, hash_value});
+    std::sort( g_orig_names_to_id->begin(), g_orig_names_to_id->end(), detail::reflection_database::order_name());
+    g_orig_names->push_back(name);
+    
     {
-        g_name_list[db.type_id_counter] = name;
-        const type::type_id raw_id = ((raw_type.get_id() == 0) ? db.type_id_counter : raw_type.get_id());
-        g_raw_type_list[db.type_id_counter] = raw_id;
+        auto custom_name = derive_name(array_raw_type, name);
+        g_custom_names_to_id->emplace_back(detail::reflection_database::name_to_id{db.m_type_id_counter, std::hash<std::string>()(custom_name)});
+        std::sort( g_custom_names_to_id->begin(), g_custom_names_to_id->end(), detail::reflection_database::order_name());
+        g_custom_names->emplace_back(std::move(custom_name));
+        
+
+        const type::type_id raw_id = ((raw_type.get_id() == 0) ? db.m_type_id_counter : raw_type.get_id());
+        g_raw_type_list[db.m_type_id_counter] = raw_id;
+        g_array_raw_type_list[db.m_type_id_counter] =  array_raw_type.get_id() == 0 ? db.m_type_id_counter : array_raw_type.get_id();
         g_get_derived_info_func_list[raw_id]  = get_derived_func;
-        g_variant_create_list[db.type_id_counter] = var_func_ptr;
+        g_variant_create_list[db.m_type_id_counter] = var_func_ptr;
         const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
         std::size_t index = 0;
         // remove double entries; can only be happen for virtual inheritance case
@@ -942,25 +974,25 @@ type type::register_type(const char* name,
             {
                 if (g_derived_class_list[row + i] == 0)
                 {
-                    g_derived_class_list[row + i] = db.type_id_counter;
+                    g_derived_class_list[row + i] = db.m_type_id_counter;
                     break;
                 }
                     
             }
         }
 
-        db.is_class_list                    [ret.first->second] = is_class;
-        db.is_enum_list                     [ret.first->second] = is_enum;
-        db.is_array_list                    [ret.first->second] = is_array;
-        db.is_pointer_list                  [ret.first->second] = is_pointer;
-        db.is_primitive_list                [ret.first->second] = is_primitive;
-        db.is_function_pointer_list         [ret.first->second] = is_function_pointer;
-        db.is_member_object_pointer_list    [ret.first->second] = is_member_object_pointer;
-        db.is_member_function_pointer_list  [ret.first->second] = is_member_function_pointer;
-        db.pointer_dim_list                 [ret.first->second] = pointer_dimension;
+        db.m_is_class_list                    [db.m_type_id_counter] = is_class;
+        db.m_is_enum_list                     [db.m_type_id_counter] = is_enum;
+        db.m_is_array_list                    [db.m_type_id_counter] = is_array;
+        db.m_is_pointer_list                  [db.m_type_id_counter] = is_pointer;
+        db.m_is_primitive_list                [db.m_type_id_counter] = is_primitive;
+        db.m_is_function_pointer_list         [db.m_type_id_counter] = is_function_pointer;
+        db.m_is_member_object_pointer_list    [db.m_type_id_counter] = is_member_object_pointer;
+        db.m_is_member_function_pointer_list  [db.m_type_id_counter] = is_member_function_pointer;
+        db.m_pointer_dim_list                 [db.m_type_id_counter] = pointer_dimension;
     } // else cannot happen!
 
-    return type(ret.first->second);
+    return type(db.m_type_id_counter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -982,6 +1014,9 @@ detail::type_converter_base* type::get_type_converter(const type& target_type) c
 
 void type::register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const
 {
+    if (!is_valid())
+        return;
+
     std::lock_guard<std::mutex> lock(*g_register_type_mutex); // registration has to be synchronized
 
     const auto& converter_list = g_type_converter_list[m_id];
@@ -999,37 +1034,43 @@ void type::register_type_converter(std::unique_ptr<detail::type_converter_base> 
 namespace impl
 {
 
-void register_property(type curr_type, unique_ptr<detail::property_container_base> prop)
+void register_property(type t, unique_ptr<detail::property_container_base> prop)
 {
-    if (curr_type.is_class())
+    if (!t.is_valid())
+        return;
+
+    if (t.is_class())
     {
-        const type::type_id raw_id = curr_type.get_raw_type().get_id();
+        const type::type_id raw_id = t.get_raw_type().get_id();
         if (!g_class_data_list[raw_id])
-            g_class_data_list[raw_id].reset(new detail::reflection_database::class_data);
+            g_class_data_list[raw_id] = detail::make_unique<detail::reflection_database::class_data>();
 
         detail::reflection_database::register_property(move(prop), g_class_data_list[raw_id]->m_property_map);
     }
     else
     {
-        detail::reflection_database::register_property(move(prop), detail::reflection_database::instance().global_properties);
+        detail::reflection_database::register_property(move(prop), detail::reflection_database::instance().m_global_properties);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void register_method(type curr_type, std::unique_ptr<detail::method_container_base> method)
+void register_method(type t, std::unique_ptr<detail::method_container_base> method)
 {
-    if (curr_type.is_class())
+    if (!t.is_valid())
+        return;
+
+    if (t.is_class())
     {
-        const type::type_id raw_id = curr_type.get_raw_type().get_id();
+        const type::type_id raw_id = t.get_raw_type().get_id();
         if (!g_class_data_list[raw_id])
-            g_class_data_list[raw_id].reset(new detail::reflection_database::class_data);
+            g_class_data_list[raw_id] = detail::make_unique<detail::reflection_database::class_data>();
 
         detail::reflection_database::register_method(move(method), g_class_data_list[raw_id]->m_method_map);
     }
     else
     {
-        detail::reflection_database::register_method(move(method), detail::reflection_database::instance().global_methods);
+        detail::reflection_database::register_method(move(method), detail::reflection_database::instance().m_global_methods);
     }
 }
 
@@ -1037,11 +1078,14 @@ void register_method(type curr_type, std::unique_ptr<detail::method_container_ba
 
 void register_constructor(type t, std::unique_ptr<detail::constructor_container_base> ctor)
 {
+    if (!t.is_valid())
+        return;
+
     if (t.is_class())
     {
         const type::type_id raw_id = t.get_raw_type().get_id();
         if (!g_class_data_list[raw_id])
-            g_class_data_list[raw_id].reset(new detail::reflection_database::class_data);
+            g_class_data_list[raw_id] = detail::make_unique<detail::reflection_database::class_data>();
 
         g_class_data_list[raw_id]->add_constructor(move(ctor));
     }
@@ -1055,6 +1099,9 @@ void register_constructor(type t, std::unique_ptr<detail::constructor_container_
 
 void register_destructor(type t, std::unique_ptr<detail::destructor_container_base> dtor)
 {
+    if (!t.is_valid())
+        return;
+
     g_dtor_list[t.get_raw_type().get_id()] = move(dtor);
 }
 
@@ -1062,29 +1109,43 @@ void register_destructor(type t, std::unique_ptr<detail::destructor_container_ba
 
 void register_enumeration(type t, std::unique_ptr<detail::enumeration_container_base> enum_item)
 {
+    if (!t.is_valid())
+        return;
+
     g_enumeration_list[t.get_raw_type().get_id()] = move(enum_item);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void register_custom_name(type t, std::string name)
+void register_custom_name(type t, std::string custom_name)
 {
-    std::lock_guard<std::mutex> lock(*g_register_custom_name_mutex);
-
-    auto& custom_name_map = *g_custom_name_map;
-
-    if (custom_name_map.find(t) != custom_name_map.end())
+    if (!t.is_valid())
         return;
 
-    custom_name_map.emplace(t, name);
+    std::lock_guard<std::mutex> lock(*g_register_type_mutex);
+
+    (*g_custom_names)[t.get_id()] = std::move(custom_name);
+    const auto& custom_n = (*g_custom_names)[t.get_id()];
+    std::string raw_name = get_name_impl((*g_orig_names)[t.get_id()]);
+    for (auto& name_to_id : *g_custom_names_to_id)
+    {
+        const auto& id = name_to_id.m_id;
+        if (g_array_raw_type_list[id] == t.get_id())
+        {
+
+            (*g_custom_names)[id] = derive_name((*g_custom_names)[id], raw_name, custom_n);
+            name_to_id.m_hash_value = std::hash<std::string>()((*g_custom_names)[id]);
+        }
+    }
     
+    std::sort( g_custom_names_to_id->begin(), g_custom_names_to_id->end(), detail::reflection_database::order_name());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void register_metadata(type t, std::vector< rttr::metadata > metadata)
 {
-     for (auto& item : metadata)
+    for (auto& item : metadata)
     {
         auto key    = item.get_key();
         auto value  = item.get_value();

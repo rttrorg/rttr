@@ -36,6 +36,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <functional>
 
 #define RTTR_MAX_TYPE_COUNT 32767
 #define RTTR_MAX_INHERIT_TYPES_COUNT 50
@@ -52,7 +53,7 @@ namespace detail
 class RTTR_LOCAL reflection_database
 {
     public:
-        reflection_database() {};
+        reflection_database() { m_orig_names.push_back("invalid_type"); m_custom_names.push_back(m_orig_names[0]); };
         static reflection_database& instance() { static reflection_database obj; return obj; }
 
         typedef void*(*rttr_cast_func)(void*);
@@ -82,8 +83,8 @@ class RTTR_LOCAL reflection_database
             }
         };
 
-
-        typedef std::unordered_map<const char*, const rttr::type::type_id, hash_char, comparison_char>  NameToTag;
+        typedef std::unordered_map<const char*, const rttr::type::type_id, hash_char, comparison_char>  CharNameToTypeID;
+        typedef std::unordered_map<std::string, const rttr::type::type_id>                              StringToTypeID;
         typedef std::vector< std::unique_ptr< property_container_base>>                                 property_container;
         typedef std::vector< std::unique_ptr< constructor_container_base>>                              constructor_container;
         typedef std::vector< std::unique_ptr< constructor_container_base>>                              destructor_container;
@@ -92,7 +93,6 @@ class RTTR_LOCAL reflection_database
         typedef std::vector< std::unique_ptr< constructor_container_base>>                              ctor_list;
         typedef std::unordered_map< std::string, property_container::size_type>                         property_map;
         typedef std::unordered_multimap< std::string, method_container::size_type>                      method_map;
-        typedef std::unordered_multimap< type, std::string>                                             custom_name_map;
 
         /*!
          * \brief This function returns true, when the given types in \p param_list are the same type like in \p args,
@@ -133,41 +133,64 @@ class RTTR_LOCAL reflection_database
         reflection_database& operator=(const reflection_database& other);
 
     public:
-        type::type_id                                       type_id_counter;    // the global incremented id counter
-        NameToTag                                           name_to_id;         // a container for mapping the name of a type to its unique id
-        const char*                                         name_list[RTTR_MAX_TYPE_COUNT];
-        type::type_id                                       base_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type its base classes
-        type::type_id                                       derived_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];     // this list contains for every type its derived classes
-        rttr_cast_func                                      conversion_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type a conversion function to its base classes
-        detail::variant_create_func                         variant_create_func_list[RTTR_MAX_TYPE_COUNT];                              // this list contains for every type a create function to a variant
-        get_derived_info_func                               get_derived_info_func_list[RTTR_MAX_TYPE_COUNT];
-        type::type_id                                       raw_type_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_class_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_enum_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_array_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_pointer_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_primitive_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_function_pointer_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_member_object_pointer_list[RTTR_MAX_TYPE_COUNT];
-        bool                                                is_member_function_pointer_list[RTTR_MAX_TYPE_COUNT];
-        metadata_container                                  meta_data_list[RTTR_MAX_TYPE_COUNT];
-        std::size_t                                         pointer_dim_list[RTTR_MAX_TYPE_COUNT];
-        std::unique_ptr<class_data>                         class_data_list[RTTR_MAX_TYPE_COUNT];
-        std::unique_ptr<constructor_container_base>         constructor_list[RTTR_MAX_TYPE_COUNT];
-        std::unique_ptr<destructor_container_base>          destructor_list[RTTR_MAX_TYPE_COUNT];
-        std::unique_ptr<enumeration_container_base>         enumeration_list[RTTR_MAX_TYPE_COUNT];
-        std::vector<std::unique_ptr<type_converter_base>>   type_converter_list[RTTR_MAX_TYPE_COUNT];
-        property_map                                        global_properties;
-        method_map                                          global_methods;
+        struct name_to_id
+        {
+            type::type_id                       m_id;
+            std::hash<std::string>::result_type m_hash_value;
+        };
 
-        constructor_container                               m_constructor_list;
-        destructor_container                                m_destructor_list;
+        struct order_name
+        {
+            RTTR_INLINE bool operator () ( const name_to_id& _left, const name_to_id& _right )  const
+            {
+                return _left.m_hash_value < _right.m_hash_value;
+            }
+            RTTR_INLINE bool operator () ( const std::hash<std::string>::result_type& _left, const name_to_id& _right ) const
+            {
+                return _left < _right.m_hash_value;
+            }
+            RTTR_INLINE bool operator () ( const name_to_id& _left, const std::hash<std::string>::result_type& _right ) const
+            {
+                return _left.m_hash_value < _right;
+            }
+        };
+
+        type::type_id                                       m_type_id_counter;  // the global incremented id counter
+        std::vector<const char*>                            m_orig_names;       // a container for mapping the name of a type to its unique id
+        std::vector<std::string>                            m_custom_names;     // a container for mapping the name of a type to its unique id
+        std::vector<name_to_id>                             m_orig_name_to_id;
+        std::vector<name_to_id>                             m_custom_name_to_id;
+
+        type::type_id                                       m_base_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type its base classes
+        type::type_id                                       m_derived_class_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];     // this list contains for every type its derived classes
+        rttr_cast_func                                      m_conversion_list[RTTR_MAX_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT];        // this list contains for every type a conversion function to its base classes
+        detail::variant_create_func                         m_variant_create_func_list[RTTR_MAX_TYPE_COUNT];                              // this list contains for every type a create function to a variant
+        get_derived_info_func                               m_get_derived_info_func_list[RTTR_MAX_TYPE_COUNT];
+        type::type_id                                       m_raw_type_list[RTTR_MAX_TYPE_COUNT];
+        type::type_id                                       m_array_raw_type_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_class_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_enum_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_array_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_pointer_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_primitive_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_function_pointer_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_member_object_pointer_list[RTTR_MAX_TYPE_COUNT];
+        bool                                                m_is_member_function_pointer_list[RTTR_MAX_TYPE_COUNT];
+        metadata_container                                  m_meta_data_list[RTTR_MAX_TYPE_COUNT];
+        std::size_t                                         m_pointer_dim_list[RTTR_MAX_TYPE_COUNT];
+        std::unique_ptr<class_data>                         m_class_data_list[RTTR_MAX_TYPE_COUNT];
+        std::unique_ptr<constructor_container_base>         m_constructor_list[RTTR_MAX_TYPE_COUNT];
+        std::unique_ptr<destructor_container_base>          m_destructor_list[RTTR_MAX_TYPE_COUNT];
+        std::unique_ptr<enumeration_container_base>         m_enumeration_list[RTTR_MAX_TYPE_COUNT];
+        std::vector<std::unique_ptr<type_converter_base>>   m_type_converter_list[RTTR_MAX_TYPE_COUNT];
+        property_map                                        m_global_properties;
+        method_map                                          m_global_methods;
+
+        constructor_container                               m_constructor_container_list;
+        destructor_container                                m_destructor_container_list;
         method_container                                    m_method_list;
         property_container                                  m_property_list;
-        custom_name_map                                     m_custom_name_map;
-
         std::mutex                                          m_register_type_mutex;
-        std::mutex                                          m_register_custom_name_mutex;
 };
 
 } // end namespace detail

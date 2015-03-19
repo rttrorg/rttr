@@ -44,6 +44,8 @@ namespace detail
 {
     struct derived_info;
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // this trait is for removing cv-type qualifiers and also pointers
     template<class T>
     struct raw_type { typedef T type; };
 
@@ -56,6 +58,16 @@ namespace detail
     template<class T> struct raw_type<T&>           { typedef typename raw_type<T>::type type; };
     template<class T, std::size_t N> 
     struct raw_type<const T[N]>                     { typedef typename raw_type<T[N]>::type type; };
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // this trait includes the above and also the array dimension
+    template<class T>
+    struct raw_array_type { typedef typename raw_type<T>::type type; };
+
+    template<class T> 
+    struct raw_array_type<T*>                      { typedef typename raw_array_type<T>::type type; };
+    template<class T, std::size_t N> 
+    struct raw_array_type<T[N]>                    { typedef typename raw_array_type<T>::type type; };
 
 
     /////////////////////////////////////////////////////////////////////////////////////////

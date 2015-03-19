@@ -677,6 +677,13 @@ class RTTR_API type
          */
         std::size_t get_pointer_dimension() const;
 
+         /*!
+         * \brief Returns the compiler depended name of the type.
+         *
+         * \return The full type name.
+         */
+        std::string get_full_name() const;
+
 
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
@@ -692,6 +699,7 @@ class RTTR_API type
          */
         static type register_type(const char* name, 
                                   const type& raw_type,
+                                  const type& array_raw_type,
                                   std::vector<detail::base_class_info> base_classes, 
                                   detail::derived_info(*get_derived_func)(void*),
                                   detail::variant_create_func var_func_ptr,
