@@ -234,10 +234,6 @@ make_unique(size_t n)
 template<class T, class... Args>
 typename _Unique_if<T>::_Known_bound
 make_unique(Args&&...) = delete;
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T> struct alway_false : std::false_type  { };
         
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -250,13 +246,10 @@ template< typename T >
 RTTR_INLINE const T& as_const(const T& obj) { return obj; }
 
 template<typename T>
-RTTR_INLINE const T as_const(T&& obj) { return std::forward<T>(obj); }
-
-template<typename T>
-RTTR_INLINE const T as_const(const T&& obj) 
+RTTR_INLINE const T as_const(T&& obj) 
 {
-    static_assert(alway_false<T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
-    return std::forward<T>(obj);
+    static_assert(!std::is_const<T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
+    return std::forward<T>(obj); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
