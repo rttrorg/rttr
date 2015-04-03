@@ -25,68 +25,121 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/destructor.h"
-#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/detail/constructor/constructor_container_base.h"
 
 using namespace std;
 
+static const char* is_ref_list[] = {"", " &"};
+static const char* is_const_list[] = {"", " const"};
+
 namespace rttr
 {
-
+namespace detail
+{
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor::destructor(const detail::destructor_container_base* container)
-:   m_container(container)
+constructor_container_base::constructor_container_base()
 {
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool destructor::is_valid() const
+constructor_container_base::~constructor_container_base()
 {
-    return (m_container ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor::operator bool() const
+std::vector<bool> constructor_container_base::get_is_reference() const
 {
-    return (m_container ? true : false);
+    return{};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type destructor::get_destructed_type() const
+std::vector<bool> constructor_container_base::get_is_const() const
 {
-    if (is_valid())
-        return m_container->get_destructed_type();
+    return{};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+string constructor_container_base::get_signature() const
+{
+    auto params = get_parameter_types();
+    string result = get_instanciated_type().get_raw_type().get_name() + "( ";
+    std::size_t index = 0;
+    auto ref_list = get_is_reference();
+    auto const_list = get_is_const();
+    for (const auto& type : params)
+    {
+        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
+        if (index < params.size() - 1)
+            result += ", ";
+
+        ++index;
+    }
+    if (params.empty())
+        result += ")";
     else
-        return detail::get_invalid_type();
+        result += " )";
+
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void destructor::invoke(variant& obj) const
+variant constructor_container_base::invoke() const
 {
-    if (is_valid())
-        m_container->invoke(obj);
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool destructor::operator==(const destructor& other) const
+variant constructor_container_base::invoke(detail::argument& arg1) const
 {
-    return (m_container == other.m_container);
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool destructor::operator!=(const destructor& other) const
+variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2) const
 {
-    return (m_container != other.m_container);
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
+                                           detail::argument& arg5) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
+                                           detail::argument& arg5, detail::argument& arg6) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
 } // end namespace rttr

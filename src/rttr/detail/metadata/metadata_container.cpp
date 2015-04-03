@@ -25,66 +25,55 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#include "rttr/detail/metadata/metadata_container.h"
+#include "rttr/variant.h"
 
-#include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-
-#include <type_traits>
 #include <utility>
+
+using namespace std;
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
-
 namespace detail
 {
-class instance;
 
-/*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
- */
-class RTTR_API argument
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant metadata_container::get_metadata(int key) const
 {
-public:
-    argument();
+    const auto value = m_int_data.find(key);
+    if (value != m_int_data.end())
+        return value->second;
+    else
+        return variant();
+}
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+variant metadata_container::get_metadata(const std::string& key) const
+{
+    const auto value = m_string_data.find(key);
+    if (value != m_string_data.end())
+        return value->second;
+    else
+        return variant();
+}
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+void metadata_container::set_metadata(int key, variant value)
+{
+    m_int_data.emplace(key, value);
+}
 
-    template<typename T>
-    T& get_value() const;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    argument& operator=(const argument& other);
+void metadata_container::set_metadata(std::string key, variant value)
+{
+    m_string_data.emplace(key, value);
+}
 
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_

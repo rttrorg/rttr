@@ -25,66 +25,67 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_PROPERTY_CONTAINER_BASE_H_
+#define RTTR_PROPERTY_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
+#include "rttr/detail/metadata/metadata_container.h"
 
-#include <type_traits>
-#include <utility>
+
+#include <string>
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
-
+  
 namespace detail
 {
 class instance;
-
+class argument;
 /*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
+ * Abstract class for an instance of a Property.
+ * 
+ * This is the base class for all properties of the system.
+ * It provide the basic mechanism for getting all meta data of a property,
+ * but it also define a general interface to set/get properties via string: toString and fromString.
  */
-class RTTR_API argument
+class RTTR_API property_container_base : public metadata_container
 {
-public:
-    argument();
+    public:
+        property_container_base(std::string name, type decalaring_type);
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+        virtual ~property_container_base();
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        // returns the name of this property.
+        std::string get_name() const;
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        //! Returns true whether this is a constant property, otherwise false.
+        virtual bool is_readonly() const = 0;
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+        //! Returns true whether this is a static property, otherwise false.
+        virtual bool is_static() const = 0;
+    
+        //! Returns the type of the underlying property.
+        virtual type get_type() const = 0;
 
-    template<typename T>
-    T& get_value() const;
+        //! Returns the class that declares this property.
+        type get_declaring_type() const;
 
-    argument& operator=(const argument& other);
+        //! Returns true when the underlying property is an array type.
+        virtual bool is_array() const = 0;
 
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+        //! Sets this property of the given instance \p instance to the value of the argument \p argument.
+        virtual bool set_value(detail::instance& object, detail::argument& arg) const = 0;
+
+        //! Returns the value of this property from the given instance \p instance.
+        virtual variant get_value(detail::instance& object) const = 0;
+    private:
+        const std::string   m_name;
+        const type          m_declaring_type;
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_PROPERTY_CONTAINER_BASE_H_

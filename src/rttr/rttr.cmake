@@ -25,85 +25,85 @@
 #                                                                                  #
 ####################################################################################
 
-set(SOURCE_FILES constructor.cpp
-                 destructor.cpp
-                 enumeration.cpp
-                 method.cpp
-                 property.cpp
-                 policy.cpp
-                 type.cpp
-                 variant.cpp
-                 variant_array.cpp
-                 detail/constructor_container_base.cpp
-                 detail/destructor_container_base.cpp
-                 detail/enumeration_container_base.cpp
-                 detail/method_container_base.cpp
-                 detail/property_container_base.cpp
-                 detail/metadata_container.cpp
-                 detail/standard_types.cpp
-                 detail/type_database.cpp
-                 detail/std_conversion_functions.cpp
-                 detail/type_register.cpp
-                 )
-
 set(HEADER_FILES constructor.h
                  destructor.h
                  enumeration.h
                  metadata.h
                  method.h
+                 policy.h
                  property.h
+                 register
+                 register_reflection.h
                  rttr_cast.h
                  rttr_enable.h
+                 type
                  type.h
                  variant.h
                  variant_array.h
-                 register_reflection.h
-                 policy.h
-                 type
-                 register
                  base/core_prerequisites.h
                  base/version.h.in
+                 detail/argument.h
+                 detail/argument_impl.h
+                 detail/instance.h
+                 detail/instance_impl.h
+                 detail/std_conversion_functions.h
+                 detail/array/array_accessor.h
+                 detail/array/array_container.h
+                 detail/array/array_container_base.h
+                 detail/array/array_mapper.h
+                 detail/constructor/constructor_container.h
+                 detail/constructor/constructor_container_base.h
+                 detail/destructor/destructor_container.h
+                 detail/destructor/destructor_container_base.h
+                 detail/enumeration/enumeration_container.h
+                 detail/enumeration/enumeration_container_base.h
+                 detail/metadata/metadata_container.h
+                 detail/method/method_accessor.h
+                 detail/method/method_container.h
+                 detail/method/method_container_base.h
+                 detail/misc/function_traits.h
+                 detail/misc/misc_type_traits.h
+                 detail/misc/utility.h
+                 detail/property/property_accessor.h
+                 detail/property/property_container.h
+                 detail/property/property_container_base.h
+                 detail/property/property_container_func.h
+                 detail/property/property_container_member_func.h
+                 detail/property/property_container_member_object.h
+                 detail/property/property_container_object.h
+                 detail/type/accessor_type.h
+                 detail/type/base_classes.h
+                 detail/type/get_create_variant_func.h
+                 detail/type/get_derived_info_func.h
+                 detail/type/type_converter.h
+                 detail/type/type_database_p.h
+                 detail/type/type_register.h
+                 detail/type/type_register_impl.h
                  impl/register_reflection_impl.h
                  impl/rttr_cast_impl.h
                  impl/type_impl.h
-                 impl/variant_impl.h
-                 impl/variant_default_types_impl.h
                  impl/variant_array_impl.h
-                 detail/argument.h
-                 detail/argument_impl.h
-                 detail/array_mapper.h
-                 detail/array_container.h
-                 detail/array_container_base.h
-                 detail/array_accessor.h
-                 detail/accessor_type.h
-                 detail/base_classes.h
-                 detail/instance.h
-                 detail/instance_impl.h
-                 detail/get_create_variant_func.h
-                 detail/constructor_container.h
-                 detail/constructor_container_base.h
-                 detail/destructor_container.h
-                 detail/destructor_container_base.h
-                 detail/get_derived_info_func.h
-                 detail/method_accessor.h
-                 detail/method_container_base.h
-                 detail/method_container.h
-                 detail/metadata_container.h
-                 detail/function_traits.h
-                 detail/enumeration_container_base.h
-                 detail/enumeration_container.h
-                 detail/property_accessor.h
-                 detail/property_container_base.h
-                 detail/property_container.h
-                 detail/property_container_member_func.h
-                 detail/property_container_func.h
-                 detail/property_container_member_object.h
-                 detail/property_container_object.h
-                 detail/misc_type_traits.h
-                 detail/utility.h
-                 detail/type_database_p.h
-                 detail/std_conversion_functions.h
-                 detail/type_converter.h
-                 detail/type_register.h
-                 detail/type_register_impl.h
+                 impl/variant_default_types_impl.h
+                 impl/variant_impl.h
                 )
+                
+set(SOURCE_FILES constructor.cpp
+                 destructor.cpp
+                 enumeration.cpp
+                 method.cpp
+                 policy.cpp
+                 property.cpp
+                 type.cpp
+                 variant.cpp
+                 variant_array.cpp
+                 detail/standard_types.cpp
+                 detail/std_conversion_functions.cpp
+                 detail/constructor/constructor_container_base.cpp
+                 detail/destructor/destructor_container_base.cpp
+                 detail/enumeration/enumeration_container_base.cpp
+                 detail/metadata/metadata_container.cpp
+                 detail/method/method_container_base.cpp
+                 detail/property/property_container_base.cpp
+                 detail/type/type_database.cpp
+                 detail/type/type_register.cpp
+                 )

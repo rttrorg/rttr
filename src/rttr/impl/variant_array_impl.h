@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/variant.h"
-#include "rttr/detail/array_container.h"
+#include "rttr/detail/array/array_container.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 

@@ -25,66 +25,75 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/argument.h"
+#include "rttr/detail/instance.h"
 
-#include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
+using namespace std;
 
-#include <type_traits>
-#include <utility>
+static const char* is_ref_list[] = {"", " &"};
+static const char* is_const_list[] = {"", " const"};
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
-
 namespace detail
 {
-class instance;
 
-/*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
- */
-class RTTR_API argument
+/////////////////////////////////////////////////////////////////////////////////////////
+
+method_container_base::method_container_base(std::string name, type declaring_type)
+:   m_name(std::move(name)),
+    m_declaring_type(declaring_type)
 {
-public:
-    argument();
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+}
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+method_container_base::~method_container_base()
+{
+}
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    T& get_value() const;
+string method_container_base::get_name() const 
+{
+    return m_name; 
+}
 
-    argument& operator=(const argument& other);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
-};
+type method_container_base::get_declaring_type() const
+{
+    return m_declaring_type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+string method_container_base::get_signature() const
+{
+    auto params = get_parameter_types();
+    string result = m_name + "( ";
+    std::size_t index = 0;
+    auto ref_list = get_is_reference();
+    auto const_list = get_is_const();
+    for (const auto& type : params)
+    {
+        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
+        if (index < params.size() - 1)
+            result += ", ";
+
+        ++index;
+    }
+    if (params.empty())
+        result += ")";
+    else
+        result += " )";
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_

@@ -25,66 +25,35 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_DESTRUCTOR_CONTAINER_H_
+#define RTTR_DESTRUCTOR_CONTAINER_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-
-#include <type_traits>
-#include <utility>
+#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/variant.h"
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
-
 namespace detail
 {
-class instance;
 
-/*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
- */
-class RTTR_API argument
+template<typename ClassType>
+class destructor_container : public destructor_container_base
 {
-public:
-    argument();
+    public:
+        type get_destructed_type() const { return type::get<ClassType*>(); }
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
-
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
-
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
-
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
-
-    template<typename T>
-    T& get_value() const;
-
-    argument& operator=(const argument& other);
-
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+        void invoke(variant& obj) const
+        {
+            if (obj.is_type<ClassType*>())
+            {
+                delete obj.get_value<ClassType*>();
+                obj = variant();
+            }
+        }
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_DESTRUCTOR_CONTAINER_H_

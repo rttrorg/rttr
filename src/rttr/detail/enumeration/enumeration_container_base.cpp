@@ -25,66 +25,33 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
-
-#include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-
-#include <type_traits>
-#include <utility>
+#include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/argument.h"
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
-
 namespace detail
 {
-class instance;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
- */
-class RTTR_API argument
+enumeration_container_base::enumeration_container_base(const type declaring_type)
+:   m_declaring_type(declaring_type)
 {
-public:
-    argument();
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+}
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+enumeration_container_base::~enumeration_container_base()
+{
+}
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    T& get_value() const;
-
-    argument& operator=(const argument& other);
-
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
-};
+type enumeration_container_base::get_declaring_type() const
+{
+    return m_declaring_type;
+}
 
 } // end namespace detail
 } // end namespace rttr
-
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_

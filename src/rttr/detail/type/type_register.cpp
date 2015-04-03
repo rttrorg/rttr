@@ -25,143 +25,104 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/enumeration.h"
-#include "rttr/detail/enumeration/enumeration_container_base.h"
-#include "rttr/detail/argument.h"
+#include "rttr/detail/type/type_register.h"
+#include "rttr/detail/type/type_database_p.h"
 
-#include <utility>
+#include "rttr/detail/constructor/constructor_container_base.h"
+#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/property/property_container.h"
+#include "rttr/detail/array/array_container_base.h"
 
 using namespace std;
 
 namespace rttr
 {
+namespace detail
+{
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::enumeration(const detail::enumeration_container_base* container)
-:   m_container(container)
+void type_register::property(const type& t, unique_ptr<property_container_base> prop)
 {
-
+   type_database::instance().register_property(t, move(prop));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool enumeration::is_valid() const
+void type_register::method(const type& t, std::unique_ptr<detail::method_container_base> method)
 {
-    return (m_container ? true : false);
+    type_database::instance().register_method(t, move(method));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::operator bool() const
+void type_register::constructor(const type& t, std::unique_ptr<detail::constructor_container_base> ctor)
 {
-    return (m_container ? true : false);
+    type_database::instance().register_constructor(t, move(ctor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_underlying_type() const
+void type_register::destructor(const type& t, std::unique_ptr<detail::destructor_container_base> dtor)
 {
-    if (is_valid())
-        return m_container->get_underlying_type();
-    else
-        return detail::get_invalid_type();
+    type_database::instance().register_destructor(t, move(dtor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_type() const
+void type_register::enumeration(const type& t, std::unique_ptr<detail::enumeration_container_base> enum_item)
 {
-    if (is_valid())
-        return m_container->get_type();
-    else
-        return detail::get_invalid_type();
+    type_database::instance().register_enumeration(t, move(enum_item));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_declaring_type() const
+void type_register::custom_name(const type& t, std::string custom_name)
 {
-    if (is_valid())
-        return m_container->get_declaring_type();
-    else
-        return detail::get_invalid_type();
+    type_database::instance().register_custom_name(t, move(custom_name));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::get_metadata(int key) const
+void type_register::metadata(const type& t, std::vector< rttr::metadata > metadata)
 {
-    if (is_valid())
-        return m_container->get_metadata(key);
-    else
-        return variant();
+    type_database::instance().register_metadata(t, move(metadata));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::get_metadata(const std::string& key) const
+void type_register::converter(const type& t, std::unique_ptr<detail::type_converter_base> converter)
 {
-    if (is_valid())
-        return m_container->get_metadata(key);
-    else
-        return variant();
+     type_database::instance().register_converter(t, move(converter));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<string> enumeration::get_keys() const
+uint16 type_register::type_reg(const char* name, 
+                               const type& raw_type,
+                               const type& array_raw_type,
+                               vector<base_class_info> base_classes,
+                               get_derived_func derived_func_ptr,
+                               variant_create_func var_func_ptr,
+                               bool is_class,
+                               bool is_enum,
+                               bool is_array,
+                               bool is_pointer,
+                               bool is_primitive,
+                               bool is_function_pointer,
+                               bool is_member_object_pointer,
+                               bool is_member_function_pointer,
+                               std::size_t pointer_dimension)
 {
-    if (is_valid())
-        return m_container->get_keys();
-    else
-        return vector<string>();
+    return type_database::instance().register_type(name, raw_type, array_raw_type, move(base_classes), 
+                                                   derived_func_ptr, var_func_ptr, is_class, is_enum, 
+                                                   is_array, is_pointer, is_primitive, is_function_pointer, 
+                                                   is_member_object_pointer, is_member_function_pointer, pointer_dimension);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<variant> enumeration::get_values() const
-{
-    if (is_valid())
-        return m_container->get_values();
-    else
-        return vector<variant>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-string enumeration::value_to_key(detail::argument value) const
-{
-    if (is_valid())
-        return m_container->value_to_key(value);
-    else
-        return string();
-}
-        
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant enumeration::key_to_value(const std::string& key) const
-{
-    if (is_valid())
-        return m_container->key_to_value(key);
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool enumeration::operator==(const enumeration& other) const
-{
-    return (m_container == other.m_container);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool enumeration::operator!=(const enumeration& other) const
-{
-    return (m_container != other.m_container);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace rttr
+} // end namespace detail
+} // end

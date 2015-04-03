@@ -25,66 +25,53 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_TYPE_CONVERTER_H_
+#define RTTR_TYPE_CONVERTER_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-
-#include <type_traits>
-#include <utility>
+#include "rttr/detail/array/array_mapper.h"
+#include "rttr/variant.h"
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
 
 namespace detail
 {
-class instance;
 
-/*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
- */
-class RTTR_API argument
+struct RTTR_LOCAL type_converter_base
 {
-public:
-    argument();
+    type_converter_base(const type& target_type) : m_target_type(target_type) {}
+    virtual variant to_variant(void* data, bool& ok) const = 0;
+    virtual ~type_converter_base() {}
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+    type m_target_type;
+};
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+template<typename TargetType>
+struct type_converter_target : type_converter_base
+{
+    type_converter_target(const type& target_type) : type_converter_base(target_type) {}
+    virtual ~type_converter_target() {}
+    variant to_variant(void* data, bool& ok) const { return convert(data, ok); }
+    virtual TargetType convert(void* data, bool& ok) const = 0;
+};
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+template<typename TargetType, typename SourceType, typename F>
+struct type_converter : type_converter_target<TargetType>
+{
+    type_converter(const F& acc) : type_converter_target<TargetType>(type::get<TargetType>()), m_acc(acc) { }
+    virtual ~type_converter() {}
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+    TargetType convert(void* data, bool& ok) const
+    {
+        SourceType* obj = static_cast<SourceType*>(data);
+        return m_acc(*obj, ok);
+    }
 
-    template<typename T>
-    T& get_value() const;
-
-    argument& operator=(const argument& other);
-
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+    F m_acc;
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_TYPE_CONVERTER_H_

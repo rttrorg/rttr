@@ -33,16 +33,16 @@
 #include "rttr/enumeration.h"
 #include "rttr/method.h"
 
-#include "rttr/detail/constructor_container_base.h"
-#include "rttr/detail/destructor_container_base.h"
-#include "rttr/detail/enumeration_container_base.h"
-#include "rttr/detail/method_container_base.h"
-#include "rttr/detail/property_container.h"
-#include "rttr/detail/array_container_base.h"
+#include "rttr/detail/constructor/constructor_container_base.h"
+#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/property/property_container.h"
+#include "rttr/detail/array/array_container_base.h"
 #include "rttr/rttr_enable.h"
 #include "rttr/metadata.h"
 
-#include "rttr/detail/type_database_p.h"
+#include "rttr/detail/type/type_database_p.h"
 
 #include <algorithm>
 #include <unordered_map>

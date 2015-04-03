@@ -25,66 +25,69 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_GET_CREATE_VARIANT_FUNC_H_
+#define RTTR_GET_CREATE_VARIANT_FUNC_H_
 
 #include "rttr/base/core_prerequisites.h"
+#include "rttr/variant.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-
+#include "rttr/detail/argument.h"
 #include <type_traits>
-#include <utility>
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
 
 namespace detail
 {
-class instance;
 
 /*!
- * This class is used for forwarding the arguments to the function calls.
+ * \brief The following code is used for the function bool variant::convert(const type& target_type).
  *
- * \remark You should never explicit instantiate this class by yourself.
+ * With the create_variant function it is possible to perform a rttr_cast internally in variant.
+ * So basically a conversion of source_type* to target_type*.
+ *
+ * Template arguments cannot be forwarded at runtime to some derived or base classes.
  */
-class RTTR_API argument
+
+template<typename T>
+variant create_invalid_variant(const argument& data)
 {
-public:
-    argument();
+    return variant();
+}
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+template<typename T>
+variant create_variant(const argument& data)
+{
+    return data.get_value<T>();
+}
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+typedef variant(*variant_create_func)(const argument&);
 
-    template<typename T>
-    T& get_value() const;
+template<typename Source_Type, typename Enable = void>
+struct variant_creater
+{
+    static variant_create_func create()
+    {
+        return create_variant<Source_Type>;
+    }
+};
 
-    argument& operator=(const argument& other);
-
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+template<typename Source_Type>
+struct variant_creater<Source_Type, typename std::enable_if<std::is_function<Source_Type>::value>::type>
+{
+    static variant_create_func create()
+    {
+        return create_invalid_variant<Source_Type>;
+    }
 };
 
 } // end namespace detail
+
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_GET_CREATE_VARIANT_FUNC_H_

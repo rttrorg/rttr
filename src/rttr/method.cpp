@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/method.h"
-#include "rttr/detail/method_container_base.h"
+#include "rttr/detail/method/method_container_base.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 

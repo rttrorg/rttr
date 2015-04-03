@@ -29,13 +29,13 @@
 #define RTTR_TYPE_IMPL_H_
 
 #include <type_traits>
-#include "rttr/detail/misc_type_traits.h"
-#include "rttr/detail/function_traits.h"
-#include "rttr/detail/base_classes.h"
-#include "rttr/detail/get_derived_info_func.h"
-#include "rttr/detail/get_create_variant_func.h"
-#include "rttr/detail/type_register.h"
-#include "rttr/detail/utility.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/function_traits.h"
+#include "rttr/detail/type/base_classes.h"
+#include "rttr/detail/type/get_derived_info_func.h"
+#include "rttr/detail/type/get_create_variant_func.h"
+#include "rttr/detail/type/type_register.h"
+#include "rttr/detail/misc/utility.h"
 #include "rttr/metadata.h"
 
 namespace rttr

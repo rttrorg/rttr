@@ -25,66 +25,57 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_ENUMERATION_CONTAINER_BASE_H_
+#define RTTR_ENUMERATION_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/variant.h"
+#include "rttr/type.h"
+#include "rttr/detail/metadata/metadata_container.h"
 
-#include <type_traits>
-#include <utility>
+#include <string>
+#include <vector>
+#include <initializer_list>
 
 namespace rttr
 {
-class type;
-class variant;
-class variant_array;
 
 namespace detail
 {
-class instance;
+class argument;
 
 /*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
+ * Abstract class for a method.
+ * 
+ * This is the base class for all methods.
+ * You can invoke the method.
  */
-class RTTR_API argument
+class RTTR_API enumeration_container_base : public metadata_container
 {
-public:
-    argument();
+    public:
+        enumeration_container_base(const type declaring_type);
+        virtual ~enumeration_container_base();
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+        virtual type get_underlying_type() const = 0;
+        
+        virtual type get_type() const = 0;
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        virtual std::vector<std::string> get_keys() const = 0;
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        virtual std::vector<variant> get_values() const = 0;
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+        virtual std::string value_to_key(detail::argument& value) const = 0;
 
-    template<typename T>
-    T& get_value() const;
+        virtual variant key_to_value(const std::string& key) const = 0;
 
-    argument& operator=(const argument& other);
+        // Returns the class that declares this property.
+        type get_declaring_type() const;
 
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+    private:
+        const type  m_declaring_type;
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_ENUMERATION_CONTAINER_BASE_H_

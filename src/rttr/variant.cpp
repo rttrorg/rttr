@@ -33,7 +33,7 @@
 #include <limits>
 #include <string>
 
-#include "rttr/detail/array_container.h"
+#include "rttr/detail/array/array_container.h"
 
 namespace rttr
 {

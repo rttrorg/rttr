@@ -29,7 +29,7 @@
 #define RTTR_VARIANT_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc_type_traits.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 #include <type_traits>
 #include <cstddef>

@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/constructor.h"
-#include "rttr/detail/constructor_container_base.h"
+#include "rttr/detail/constructor/constructor_container_base.h"
 #include "rttr/detail/argument.h"
 
 #include <utility>

@@ -27,7 +27,7 @@
 
 #include "rttr/property.h"
 
-#include "rttr/detail/property_container_base.h"
+#include "rttr/detail/property/property_container_base.h"
 #include "rttr/variant.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"

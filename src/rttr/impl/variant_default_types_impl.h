@@ -25,9 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/misc_type_traits.h"
-#include "rttr/detail/utility.h"
-#include "rttr/detail/type_converter.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/utility.h"
+#include "rttr/detail/type/type_converter.h"
 
 namespace rttr
 {

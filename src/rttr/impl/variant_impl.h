@@ -26,11 +26,11 @@
 *************************************************************************************/
 
 #include "rttr/type.h"
-#include "rttr/detail/misc_type_traits.h"
-#include "rttr/detail/utility.h"
-#include "rttr/detail/type_converter.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/utility.h"
+#include "rttr/detail/type/type_converter.h"
 #include "rttr/detail/std_conversion_functions.h"
-#include "rttr/detail/array_container.h"
+#include "rttr/detail/array/array_container.h"
 
 namespace rttr
 {

@@ -25,66 +25,68 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARGUMENT_H_
-#define RTTR_ARGUMENT_H_
+#ifndef RTTR_METHOD_CONTAINER_BASE_H_
+#define RTTR_METHOD_CONTAINER_BASE_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
+#include "rttr/detail/metadata/metadata_container.h"
 
-#include <type_traits>
-#include <utility>
+#include <string>
+#include <vector>
 
 namespace rttr
 {
 class type;
-class variant;
-class variant_array;
 
 namespace detail
 {
+class argument;
 class instance;
 
 /*!
- * This class is used for forwarding the arguments to the function calls.
- *
- * \remark You should never explicit instantiate this class by yourself.
+ * Abstract class for a method.
+ * 
+ * This is the base class for all methods.
+ * You can invoke the method via method_container_base::invoke.
  */
-class RTTR_API argument
+class RTTR_API method_container_base : public metadata_container
 {
-public:
-    argument();
+    public:
+        method_container_base(std::string name, type declaring_type);
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
+        virtual ~method_container_base();
 
-    template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        std::string get_name() const;
+        type get_declaring_type() const;
+        std::string get_signature() const;
 
-    template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+        virtual type get_return_type() const = 0;
+        virtual bool is_static() const = 0;
+        virtual std::vector<type> get_parameter_types() const = 0;
+        virtual std::vector<bool> get_is_reference() const = 0;
+        virtual std::vector<bool> get_is_const() const = 0;
 
-    template<typename T>
-    bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+        virtual variant invoke(detail::instance& object) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4, detail::argument& arg5) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const = 0;
 
-    template<typename T>
-    T& get_value() const;
+        virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
 
-    argument& operator=(const argument& other);
-
-private:
-    const void*         m_data;
-    const rttr::type    m_type;
+    private:
+        const std::string   m_name;
+        const type          m_declaring_type;
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
-
-#endif // RTTR_ARGUMENT_H_
+#endif // RTTR_METHOD_CONTAINER_BASE_H_
