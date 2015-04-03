@@ -65,7 +65,7 @@ type enumeration::get_underlying_type() const
     if (is_valid())
         return m_container->get_underlying_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ type enumeration::get_type() const
     if (is_valid())
         return m_container->get_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ type enumeration::get_declaring_type() const
     if (is_valid())
         return m_container->get_declaring_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

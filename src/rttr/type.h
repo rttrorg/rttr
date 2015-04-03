@@ -55,16 +55,14 @@ class argument;
 struct derived_info;
 struct base_class_info;
 struct type_converter_base;
+class type_register;
+class type_database;
 
-typedef variant(*variant_create_func)(const argument&);
-} // end namespace detail
-
-namespace impl
-{
 template<typename T, typename Enable = void>
-struct MetaTypeInfo;
+struct type_getter;
+
 static type get_invalid_type();
-} // end namespace impl
+} // end namespace detail
 
 /*!
  * This class holds the type information for any arbitrary object.
@@ -393,7 +391,9 @@ class RTTR_API type
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
          *         inside the class declaration, otherwise the returned information of this function
-         *         is **not correct**.
+         *         is **not correct**. The order of this list depends on the declaration order of classes
+         *         inside RTTR_ENABLE. E.g. RTTR_ENABLE(A1, A2) => A1 will be for A2 in the list.
+         *         Accordingly the root (or parent or base) class is always the first type in the list.
          *
          * \return A list of type objects.
          */
@@ -404,7 +404,8 @@ class RTTR_API type
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
          *         inside the class declaration, otherwise the returned information of this function
-         *         is **not correct**.
+         *         is **not correct**. The order of this list depends on the declaration order of classes
+         *         inside RTTR_ENABLE. E.g. RTTR_ENABLE(A1, A2) => A1 will be for A2 in the list.
          *
          * \return A list of type objects.
          */
@@ -492,6 +493,8 @@ class RTTR_API type
          * \brief Returns a list of all registered properties for this type and
          *        all its base classes.
          *
+         * \remark The properties are sorted after its order of registration.
+         *
          * \return A vector with properties.
          */
         std::vector<property> get_properties() const;
@@ -507,6 +510,10 @@ class RTTR_API type
 
         /*!
          * \brief Returns a list of all registered global properties.
+         *
+         * \remark The order of the properties in the vector is undefined.
+         *         Client code should **not** depend on the order in which properties are returned, 
+         *         because that order varies.
          *
          * \return A vector with properties.
          */
@@ -569,6 +576,8 @@ class RTTR_API type
          * \brief Returns a list of all registered methods for this type and
          *        all its base classes.
          *
+         * \remark The methods are sorted after its order of registration.
+         *
          * \return A vector with method objects
          */
         std::vector<method> get_methods() const;
@@ -594,6 +603,10 @@ class RTTR_API type
 
         /*!
          * \brief Returns a list of all registered global methods.
+         *
+         * \remark The order of the methods in the vector is undefined.
+         *         Client code should **not** depend on the order in which methods are returned, 
+         *         because that order varies.
          *
          * \return A vector with methods.
          */
@@ -623,16 +636,16 @@ class RTTR_API type
          *        This function converts a source Type to a target type.
          *        The signature of this function has to be the following: <TargetType (SourceType, bool& ok)>
          * e.g.:
-            \code{.cpp}
-             std::string conv_func(int value, bool& ok)
-             {
-                std::string result = std::to_string(value);
-                ok = true;
-                return result;
-             }
-             //...
-             type::register_converter_func(conv_func);
-            \endcode
+         *  \code{.cpp}
+         *   std::string conv_func(int value, bool& ok)
+         *   {
+         *      std::string result = std::to_string(value);
+         *      ok = true;
+         *      return result;
+         *   }
+         *   //...
+         *   type::register_converter_func(conv_func);
+         *  \endcode
          */
         template<typename F>
         static void register_converter_func(F func);
@@ -677,63 +690,48 @@ class RTTR_API type
          */
         std::size_t get_pointer_dimension() const;
 
-         /*!
+        /*!
          * \brief Returns the compiler depended name of the type.
          *
          * \return The full type name.
          */
         std::string get_full_name() const;
 
-
-        /////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////
+        /*!
+         * \brief Returns a normalized string of the given compiler depended type name.
+         *
+         * \return A normalized string of the given original type name.
+         */
+        static std::string normalize_orig_name(const char* name);
 
         /*!
-         * \brief Register the type info for the given name
+         * \brief Initialize all the global variables needed to retrieve the type informations.
          *
-         * \remark When a type with the given name is already registered,
-         *         then the type for the already registered type will be returned.
-         *
-         * \return A valid type object.
          */
-        static type register_type(const char* name, 
-                                  const type& raw_type,
-                                  const type& array_raw_type,
-                                  std::vector<detail::base_class_info> base_classes, 
-                                  detail::derived_info(*get_derived_func)(void*),
-                                  detail::variant_create_func var_func_ptr,
-                                  bool is_class,
-                                  bool is_enum,
-                                  bool is_array,
-                                  bool is_pointer,
-                                  bool is_primitive,
-                                  bool is_function_pointer,
-                                  bool is_member_object_pointer,
-                                  bool is_member_function_pointer,
-                                  std::size_t pointer_dimension);
+        static void init_globals();
 
-        void register_type_converter(std::unique_ptr<detail::type_converter_base> converter) const;
+
+        /////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////
 
         //! Creates a variant from the given argument data.
         variant create_variant(const detail::argument& data) const;
 
-        template<typename T, typename Enable>
-        friend struct impl::MetaTypeInfo;
-
-        template<typename T>
-        friend class class_;
-
-        friend type impl::get_invalid_type();
         friend class variant;
-
-        friend class detail::instance;
-        
         template<typename TargetType, typename SourceType>
         friend TargetType rttr_cast(SourceType object);
 
+        template<typename T, typename Enable>
+        friend struct detail::type_getter;
+        friend class detail::instance;
+        friend class detail::type_register;
+        friend type detail::get_invalid_type();
+        friend class detail::type_database;
+        
     private:
         type_id  m_id;
+        static const type_id m_invalid_id = 0;
 };
 
 } // end namespace rttr

@@ -36,7 +36,7 @@ namespace rttr
 namespace detail
 {
 
-RTTR_INLINE instance::instance() : m_data(nullptr), m_type(impl::get_invalid_type()) {}
+RTTR_INLINE instance::instance() : m_data(nullptr), m_type(get_invalid_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

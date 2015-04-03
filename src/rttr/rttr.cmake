@@ -41,8 +41,9 @@ set(SOURCE_FILES constructor.cpp
                  detail/property_container_base.cpp
                  detail/metadata_container.cpp
                  detail/standard_types.cpp
-                 detail/reflection_database.cpp
+                 detail/type_database.cpp
                  detail/std_conversion_functions.cpp
+                 detail/type_register.cpp
                  )
 
 set(HEADER_FILES constructor.h
@@ -100,7 +101,9 @@ set(HEADER_FILES constructor.h
                  detail/property_container_object.h
                  detail/misc_type_traits.h
                  detail/utility.h
-                 detail/reflection_database_p.h
+                 detail/type_database_p.h
                  detail/std_conversion_functions.h
                  detail/type_converter.h
+                 detail/type_register.h
+                 detail/type_register_impl.h
                 )

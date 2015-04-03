@@ -345,10 +345,11 @@ TEST_CASE("Test method signature", "[method]")
     const auto methods = type::get<method_test_final>().get_methods();
     REQUIRE(methods.size() == 19);
 
-    REQUIRE(methods[0].get_signature() == "method_13( )");
-    REQUIRE(methods[5].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");
-    REQUIRE(methods[6].get_signature() == "method_5( double* )");
-    REQUIRE(methods[7].get_signature() == "method_5( int, double )");
+    REQUIRE(methods[0].get_signature() == "method_1( )");
+    REQUIRE(methods[3].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");
+    REQUIRE(methods[4].get_signature() == "method_5( double* )");
+    REQUIRE(methods[5].get_signature() == "method_5( int, double )");
+    REQUIRE(methods[18].get_signature() == "method_13( )");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

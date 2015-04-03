@@ -84,7 +84,7 @@ type method::get_return_type() const
     if (is_valid())
         return m_container->get_return_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ type method::get_declaring_type() const
     if (is_valid())
         return m_container->get_declaring_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

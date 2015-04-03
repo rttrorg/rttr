@@ -48,6 +48,15 @@ namespace detail
 class RTTR_API metadata_container
 {
     public:
+        metadata_container()
+        {}
+
+        metadata_container(metadata_container&& other)
+        :   m_int_data(std::move(other.m_int_data)),
+            m_string_data(std::move(other.m_string_data))
+        {
+        }
+
         variant get_metadata(int key) const;
         variant get_metadata(const std::string& key) const;
 

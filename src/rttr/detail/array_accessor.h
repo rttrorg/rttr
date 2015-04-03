@@ -717,7 +717,7 @@ struct array_accessor
         if (index <= rank<ArrayType>::value)
             return array_accessor_impl<ArrayType, std::integral_constant<std::size_t, rank<ArrayType>::value>>::get_ranke_type(index);
         else
-            return ::rttr::impl::get_invalid_type();
+            return get_invalid_type();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////

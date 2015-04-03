@@ -112,7 +112,7 @@ RTTR_INLINE variant& variant::operator=(variant&& other)
 
 RTTR_INLINE type variant::get_type() const
 {
-    return (m_holder ? m_holder->get_type() : impl::get_invalid_type());
+    return (m_holder ? m_holder->get_type() : detail::get_invalid_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ RTTR_INLINE void* variant::get_ptr() const
 
 RTTR_INLINE type variant::get_raw_type() const
 {
-    return (m_holder ? m_holder->get_raw_type() : impl::get_invalid_type());
+    return (m_holder ? m_holder->get_raw_type() : detail::get_invalid_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////

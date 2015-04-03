@@ -77,7 +77,7 @@ type variant_array::get_rank_type(std::size_t index) const
     if (is_valid())
         return m_container->get_rank_type(index);
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ type variant_array::get_type() const
     if (is_valid())
         return m_container->get_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

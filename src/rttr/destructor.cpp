@@ -62,7 +62,7 @@ type destructor::get_destructed_type() const
     if (is_valid())
         return m_container->get_destructed_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

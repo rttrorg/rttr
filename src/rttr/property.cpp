@@ -97,7 +97,7 @@ enumeration property::get_enumeration() const
     if (is_valid())
         return m_container->get_type().get_enumeration();
     else
-        return impl::get_invalid_type().get_enumeration();
+        return detail::get_invalid_type().get_enumeration();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ type property::get_type() const
     if (is_valid())
         return m_container->get_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ type property::get_declaring_type() const
     if (is_valid())
         return m_container->get_declaring_type();
     else
-        return impl::get_invalid_type();
+        return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

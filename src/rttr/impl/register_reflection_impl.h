@@ -36,6 +36,7 @@
 #include "rttr/detail/accessor_type.h"
 #include "rttr/detail/misc_type_traits.h"
 #include "rttr/detail/utility.h"
+#include "rttr/detail/type_register.h"
 
 #include <type_traits>
 #include <memory>
@@ -43,145 +44,12 @@
 namespace rttr
 {
 
-namespace impl
-{
-// helper method to store the metadata
-template<typename T>
-void store_metadata(T& obj, std::vector<rttr::metadata> data)
-{
-    for (auto& item : data)
-    {
-        auto key    = item.get_key();
-        auto value  = item.get_value();
-        if (key.is_type<int>())
-            obj->set_metadata(key.get_value<int>(), std::move(value));
-        else if (key.is_type<std::string>())
-            obj->set_metadata(std::move(key.get_value<std::string>()), std::move(value));
-    }
-}
-
-} // end namespace impl
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-namespace impl
-{
-
-template<typename ClassType, typename... Args>
-void constructor_impl(std::vector< rttr::metadata > data)
-{
-    using namespace std;
-    const type type = type::get<ClassType>();
-    auto ctor = detail::make_unique<detail::constructor_container<ClassType, Args...>>();
-    // register the type with the following call:
-    ctor->get_instanciated_type();
-    ctor->get_parameter_types();
-
-    impl::store_metadata(ctor, std::move(data));
-    impl::register_constructor(type, move(ctor));
-    impl::register_destructor(type, detail::make_unique<detail::destructor_container<ClassType>>());
-    
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ClassType, typename A, typename Policy>
-void property_impl(const std::string& name, A accessor, std::vector<rttr::metadata> data, const Policy&)
-{
-    using namespace std;
-    using getter_policy = typename detail::get_getter_policy<Policy>::type;
-    using setter_policy = typename detail::get_setter_policy<Policy>::type;
-    using acc_type      = typename detail::property_type<A>::type;
-
-    auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
-    // register the type with the following call:
-    prop->get_type();
-    impl::store_metadata(prop, std::move(data));
-    impl::register_property(type::get<ClassType>(), move(prop));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ClassType, typename A1, typename A2, typename Policy>
-void property_impl(const std::string& name, A1 getter, A2 setter, std::vector<rttr::metadata> data, const Policy&)
-{
-    using namespace std;
-    using getter_policy = typename detail::get_getter_policy<Policy>::type;
-    using setter_policy = typename detail::get_setter_policy<Policy>::type;
-    using acc_type      = typename detail::property_type<A1>::type;
-
-    auto prop = detail::make_unique<detail::property_container<acc_type, A1, A2, getter_policy, setter_policy>>(name, type::get<ClassType>(), getter, setter);
-    // register the type with the following call:
-    prop->get_type();
-    impl::store_metadata(prop, std::move(data));
-    impl::register_property(type::get<ClassType>(), move(prop));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ClassType, typename A, typename Policy>
-void property_readonly_impl(const std::string& name, A accessor, std::vector<rttr::metadata> data, const Policy&)
-{
-    using namespace std;
-    using getter_policy = typename detail::get_getter_policy<Policy>::type;
-    using setter_policy = detail::read_only;
-    using acc_type      = typename detail::property_type<A>::type;
-
-    auto prop = detail::make_unique<detail::property_container<acc_type, A, void, getter_policy, setter_policy>>(name, type::get<ClassType>(), accessor);
-    // register the type with the following call:
-    prop->get_type();
-    impl::store_metadata(prop, std::move(data));
-    impl::register_property(type::get<ClassType>(), move(prop));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ClassType, typename F, typename Policy>
-void method_impl(const std::string& name, F function, std::vector< rttr::metadata > data, const Policy&)
-{
-    using namespace std;
-    using method_policy = typename detail::get_method_policy<Policy>::type;
-
-    auto meth = detail::make_unique<detail::method_container<F, method_policy>>(name, type::get<ClassType>(), function);
-    // register the underlying type with the following call:
-    meth->get_return_type();
-    meth->get_parameter_types();
-    impl::store_metadata(meth, std::move(data));
-    impl::register_method(type::get<ClassType>(), move(meth));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ClassType, typename EnumType>
-void enumeration_impl(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
-{
-    using namespace std;
-    static_assert(is_enum<EnumType>::value, "No enum type provided, please call this method with an enum type!");
-
-    type enum_type = type::get<EnumType>();
-    if (!name.empty())
-        impl::register_custom_name(enum_type, std::move(name));
-
-    type declar_type = impl::get_invalid_type();
-    if (!std::is_same<ClassType, void>::value)
-        declar_type = type::get<ClassType>();
-
-    auto enum_item = detail::make_unique<detail::enumeration_container<EnumType>>(declar_type, move(enum_data));
-    // register the underlying type with the following call:
-    enum_item->get_type();
-
-    impl::store_metadata(enum_item, std::move(data));
-    impl::register_enumeration(enum_type, move(enum_item));
-}
-
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 void constructor_(std::vector< rttr::metadata > data)
 {
-    impl::constructor_impl<T>(std::move(data));
+    detail::type_register::constructor<T>(std::move(data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -191,8 +59,7 @@ void property_(const std::string& name, A acc)
 {
     using namespace std;
     static_assert(is_pointer<A>::value, "No valid property accessor provided!");
-    impl::property_impl<void, A>(name, acc, std::vector< rttr::metadata >(),
-                                 detail::default_property_policy);
+    detail::type_register::property<void, A>(name, acc, std::vector< rttr::metadata >(), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +69,7 @@ void property_(const std::string& name, A acc, std::vector< rttr::metadata > dat
 {
     using namespace std;
     static_assert(is_pointer<A>::value, "No valid property accessor provided!");
-    impl::property_impl<void, A>(name, acc, std::move(data), detail::default_property_policy);
+    detail::type_register::property<void, A>(name, acc, std::move(data), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -213,8 +80,7 @@ void property_(const std::string& name, A acc,
 {
     using namespace std;
     static_assert(is_pointer<A>::value, "No valid property accessor provided!");
-    impl::property_impl<void, A>(name, acc, std::vector< rttr::metadata >(),
-                                 policy);
+    detail::type_register::property<void, A>(name, acc, std::vector< rttr::metadata >(), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -225,8 +91,7 @@ void property_(const std::string& name, A acc, std::vector< rttr::metadata > dat
 {
     using namespace std;
     static_assert(is_pointer<A>::value, "No valid property accessor provided!");
-    impl::property_impl<void, A>(name, acc, std::move(data), 
-                                 policy);
+    detail::type_register::property<void, A>(name, acc, std::move(data), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -240,8 +105,7 @@ void property_(const std::string& name, A1 getter, A2 setter,
                   detail::is_function_ptr<A1>::value || detail::is_function_ptr<A2>::value ||
                   detail::is_std_function<A1>::value || detail::is_std_function<A2>::value, 
                   "No valid property accessor provided!");
-    impl::property_impl<void, A1, A2>(name, getter, setter, std::vector< rttr::metadata >(),
-                                      detail::default_property_policy);
+    detail::type_register::property<void, A1, A2>(name, getter, setter, std::vector< rttr::metadata >(), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -254,8 +118,7 @@ void property_(const std::string& name, A1 getter, A2 setter, std::vector< rttr:
                   detail::is_function_ptr<A1>::value || detail::is_function_ptr<A2>::value ||
                   detail::is_std_function<A1>::value || detail::is_std_function<A2>::value, 
                   "No valid property accessor provided!");
-    impl::property_impl<void, A1, A2>(name, getter, setter, move(data), 
-                                      detail::default_property_policy);
+    detail::type_register::property<void, A1, A2>(name, getter, setter, move(data), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -269,8 +132,7 @@ void property_(const std::string& name, A1 getter, A2 setter,
                   detail::is_function_ptr<A1>::value || detail::is_function_ptr<A2>::value ||
                   detail::is_std_function<A1>::value || detail::is_std_function<A2>::value, 
                   "No valid property accessor provided!");
-    impl::property_impl<void, A1, A2>(name, getter, setter, std::vector< rttr::metadata >(),
-                                      policy);
+    detail::type_register::property<void, A1, A2>(name, getter, setter, std::vector< rttr::metadata >(), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -284,8 +146,7 @@ void property_(const std::string& name, A1 getter, A2 setter, std::vector< rttr:
                   detail::is_function_ptr<A1>::value || detail::is_function_ptr<A2>::value ||
                   detail::is_std_function<A1>::value || detail::is_std_function<A2>::value, 
                   "No valid property accessor provided!");
-    impl::property_impl<void, A1, A2>(name, getter, setter, std::move(data),
-                                      policy);
+    detail::type_register::property<void, A1, A2>(name, getter, setter, std::move(data), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -296,8 +157,7 @@ void property_readonly_(const std::string& name, A acc)
     using namespace std;
     static_assert(is_pointer<A>::value || detail::is_function_ptr<A>::value || detail::is_std_function<A>::value,
                   "No valid property accessor provided!");
-    impl::property_readonly_impl<void, A>(name, acc, std::vector< rttr::metadata >(),
-                                          detail::default_property_policy);
+    detail::type_register::property_readonly<void, A>(name, acc, std::vector< rttr::metadata >(), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -308,8 +168,7 @@ void property_readonly_(const std::string& name, A acc, std::vector< rttr::metad
     using namespace std;
     static_assert(is_pointer<A>::value || detail::is_function_ptr<A>::value || detail::is_std_function<A>::value,
                   "No valid property accessor provided!");
-    impl::property_readonly_impl<void, A>(name, acc, std::move(data),
-                                          detail::default_property_policy);
+    detail::type_register::property_readonly<void, A>(name, acc, std::move(data), detail::default_property_policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -320,8 +179,7 @@ void property_readonly_(const std::string& name, A acc, const Policy& policy)
     using namespace std;
     static_assert(is_pointer<A>::value || detail::is_function_ptr<A>::value || detail::is_std_function<A>::value,
                   "No valid property accessor provided!");
-    impl::property_readonly_impl<void, A>(name, acc, std::vector< rttr::metadata >(),
-                                          policy);
+    detail::type_register::property_readonly<void, A>(name, acc, std::vector< rttr::metadata >(), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -332,8 +190,7 @@ void property_readonly_(const std::string& name, A acc, std::vector< rttr::metad
     using namespace std;
     static_assert(is_pointer<A>::value || detail::is_function_ptr<A>::value || detail::is_std_function<A>::value,
                   "No valid property accessor provided!");
-    impl::property_readonly_impl<void, A>(name, acc, std::move(data),
-                                          policy);
+    detail::type_register::property_readonly<void, A>(name, acc, std::move(data), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +198,7 @@ void property_readonly_(const std::string& name, A acc, std::vector< rttr::metad
 template<typename F>
 void method_(const std::string& name, F function)
 {
-    impl::method_impl<void>(name, function, std::vector< rttr::metadata >(), detail::default_invoke());
+    detail::type_register::method<void>(name, function, std::vector< rttr::metadata >(), detail::default_invoke());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +206,7 @@ void method_(const std::string& name, F function)
 template<typename F>
 void method_(const std::string& name, F function, std::vector< rttr::metadata > data)
 {
-    impl::method_impl<void>(name, function, std::move(data), detail::default_invoke());
+    detail::type_register::method<void>(name, function, std::move(data), detail::default_invoke());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -357,7 +214,7 @@ void method_(const std::string& name, F function, std::vector< rttr::metadata > 
 template<typename F, typename Policy>
 void method_(const std::string& name, F function, const Policy& policy)
 {
-    impl::method_impl<void>(name, function, std::vector< rttr::metadata >(), policy);
+    detail::type_register::method<void>(name, function, std::vector< rttr::metadata >(), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -365,7 +222,7 @@ void method_(const std::string& name, F function, const Policy& policy)
 template<typename F, typename Policy>
 void method_(const std::string& name, F function, std::vector< rttr::metadata > data, const Policy& policy)
 {
-    impl::method_impl<void>(name, function, std::move(data), policy);
+    detail::type_register::method<void>(name, function, std::move(data), policy);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +230,7 @@ void method_(const std::string& name, F function, std::vector< rttr::metadata > 
 template<typename EnumType>
 void enumeration_(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
 {
-    impl::enumeration_impl<void, EnumType>(std::move(name), std::move(enum_data), std::move(data));
+    detail::type_register::enumeration<void, EnumType>(std::move(name), std::move(enum_data), std::move(data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -384,11 +241,11 @@ template<typename ClassType>
 class_<ClassType>::class_(std::string name, std::vector< rttr::metadata > data)
 {
     auto t = type::get<ClassType>();
-    
-    if (!name.empty())
-        impl::register_custom_name(t, std::move(name));
 
-    impl::register_metadata(t, std::move(data));
+    if (!name.empty())
+        detail::type_register::custom_name(t, std::move(name));
+
+    detail::type_register::metadata(t, std::move(data));
 
     static_assert(std::is_class<ClassType>::value, "Reflected type is not a class or struct.");
 }
@@ -408,7 +265,7 @@ template<typename ClassType>
 template<typename... Args>
 class_<ClassType>& class_<ClassType>::constructor(std::vector<rttr::metadata> data)
 {
-    impl::constructor_impl<ClassType, Args...>(std::move(data));
+    detail::type_register::constructor<ClassType, Args...>(std::move(data));
     return *this;
 }
 
@@ -422,8 +279,8 @@ class_<ClassType>& class_<ClassType>::property(const std::string& name, A acc)
                   std::is_pointer<A>::value,
                   "No valid property accessor provided!");
 
-    impl::property_impl<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
-                                      detail::default_property_policy);
+    detail::type_register::property<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
+                                                  detail::default_property_policy);
     return *this;
 }
 
@@ -436,8 +293,8 @@ class_<ClassType>& class_<ClassType>::property(const std::string& name, A acc, s
     static_assert(std::is_member_object_pointer<A>::value ||
                   std::is_pointer<A>::value,
                   "No valid property accessor provided!");
-    impl::property_impl<ClassType, A>(name, acc, std::move(data), 
-                                      detail::default_property_policy);
+    detail::type_register::property<ClassType, A>(name, acc, std::move(data), 
+                                                  detail::default_property_policy);
     return *this;
 }
 
@@ -451,8 +308,8 @@ class_<ClassType>& class_<ClassType>::property(const std::string& name, A acc, c
     static_assert(std::is_member_object_pointer<A>::value ||
                   std::is_pointer<A>::value,
                   "No valid property accessor provided!");
-    impl::property_impl<ClassType, A>(name, acc, std::vector<rttr::metadata>(), 
-                                      policy);
+    detail::type_register::property<ClassType, A>(name, acc, std::vector<rttr::metadata>(), 
+                                                  policy);
     return *this;
 }
 
@@ -466,8 +323,8 @@ class_<ClassType>& class_<ClassType>::property(const std::string& name, A acc, s
     static_assert(std::is_member_object_pointer<A>::value ||
                   std::is_pointer<A>::value,
                   "No valid property accessor provided!");
-    impl::property_impl<ClassType, A>(name, acc, std::move(data),
-                                      policy);
+    detail::type_register::property<ClassType, A>(name, acc, std::move(data),
+                                                  policy);
     return *this;
 }
 
@@ -478,8 +335,8 @@ template<typename A1, typename A2>
 class_<ClassType>& class_<ClassType>::property(const std::string& name, A1 getter, A2 setter,
                                                typename std::enable_if<!detail::contains<A2, detail::policy_list>::value>::type*)
 {
-    impl::property_impl<ClassType, A1, A2>(name, getter, setter, std::vector<rttr::metadata>(),
-                                           detail::default_property_policy);
+    detail::type_register::property<ClassType, A1, A2>(name, getter, setter, std::vector<rttr::metadata>(),
+                                                       detail::default_property_policy);
     return *this;
 }
 
@@ -489,8 +346,8 @@ template<typename ClassType>
 template<typename A1, typename A2>
 class_<ClassType>& class_<ClassType>::property(const std::string& name, A1 getter, A2 setter, std::vector<rttr::metadata> data)
 {
-    impl::property_impl<ClassType, A1, A2>(name, getter, setter, std::move(data),
-                                           detail::default_property_policy);
+    detail::type_register::property<ClassType, A1, A2>(name, getter, setter, std::move(data),
+                                                       detail::default_property_policy);
     return *this;
 }
 
@@ -500,8 +357,8 @@ template<typename ClassType>
 template<typename A1, typename A2, typename Policy>
 class_<ClassType>& class_<ClassType>::property(const std::string& name, A1 getter, A2 setter, const Policy& policy)
 {
-    impl::property_impl<ClassType, A1, A2>(name, getter, setter, std::vector<rttr::metadata>(), 
-                                           policy);
+    detail::type_register::property<ClassType, A1, A2>(name, getter, setter, std::vector<rttr::metadata>(), 
+                                                       policy);
     return *this;
 }
 
@@ -512,8 +369,8 @@ template<typename A1, typename A2, typename Policy>
 class_<ClassType>& class_<ClassType>::property(const std::string& name, A1 getter, A2 setter, 
                                                std::vector<rttr::metadata> data, const Policy& policy)
 {
-    impl::property_impl<ClassType, A1, A2>(name, getter, setter, std::move(data),
-                                           policy);
+    detail::type_register::property<ClassType, A1, A2>(name, getter, setter, std::move(data),
+                                                       policy);
     return *this;
 }
 
@@ -523,8 +380,8 @@ template<typename ClassType>
 template<typename A>
 class_<ClassType>& class_<ClassType>::property_readonly(const std::string& name, A acc)
 {
-    impl::property_readonly_impl<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
-                                               detail::default_property_policy);
+    detail::type_register::property_readonly<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
+                                                           detail::default_property_policy);
     return *this;
 }
 
@@ -534,8 +391,8 @@ template<typename ClassType>
 template<typename A>
 class_<ClassType>& class_<ClassType>::property_readonly(const std::string& name, A acc, std::vector<rttr::metadata> data)
 {
-    impl::property_readonly_impl<ClassType, A>(name, acc, std::move(data),
-                                               detail::default_property_policy);
+    detail::type_register::property_readonly<ClassType, A>(name, acc, std::move(data),
+                                                           detail::default_property_policy);
     return *this;
 }
 
@@ -545,8 +402,8 @@ template<typename ClassType>
 template<typename A, typename Policy>
 class_<ClassType>& class_<ClassType>::property_readonly(const std::string& name, A acc, const Policy& policy)
 {
-    impl::property_readonly_impl<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
-                                               policy);
+    detail::type_register::property_readonly<ClassType, A>(name, acc, std::vector<rttr::metadata>(),
+                                                           policy);
     return *this;
 }
 
@@ -557,8 +414,8 @@ template<typename A, typename Policy>
 class_<ClassType>& class_<ClassType>::property_readonly(const std::string& name, A acc, std::vector<rttr::metadata> data,
                                                         const Policy& policy)
 {
-    impl::property_readonly_impl<ClassType, A>(name, acc, std::move(data),
-                                               policy);
+    detail::type_register::property_readonly<ClassType, A>(name, acc, std::move(data),
+                                                           policy);
     return *this;
 }
 
@@ -568,7 +425,7 @@ template<typename ClassType>
 template<typename F>
 class_<ClassType>& class_<ClassType>::method(const std::string& name, F function)
 {
-    impl::method_impl<ClassType>(name, function, std::vector< rttr::metadata >(), detail::default_invoke());
+    detail::type_register::method<ClassType>(name, function, std::vector< rttr::metadata >(), detail::default_invoke());
     return *this;
 }
 
@@ -578,7 +435,7 @@ template<typename ClassType>
 template<typename F>
 class_<ClassType>& class_<ClassType>::method(const std::string& name, F function, std::vector< rttr::metadata > data)
 {
-    impl::method_impl<ClassType>(name, function, std::move(data), detail::default_invoke());
+    detail::type_register::method<ClassType>(name, function, std::move(data), detail::default_invoke());
     return *this;
 }
 
@@ -588,7 +445,7 @@ template<typename ClassType>
 template<typename F, typename Policy>
 class_<ClassType>& class_<ClassType>::method(const std::string& name, F function, const Policy& policy)
 {
-    impl::method_impl<ClassType>(name, function, std::vector< rttr::metadata >(), policy);
+    detail::type_register::method<ClassType>(name, function, std::vector< rttr::metadata >(), policy);
     return *this;
 }
 
@@ -598,7 +455,7 @@ template<typename ClassType>
 template<typename F, typename Policy>
 class_<ClassType>& class_<ClassType>::method(const std::string& name, F function, std::vector< rttr::metadata > data, const Policy& policy)
 {
-    impl::method_impl<ClassType>(name, function, std::move(data), policy);
+    detail::type_register::method<ClassType>(name, function, std::move(data), policy);
     return *this;
 }
 
@@ -608,7 +465,7 @@ template<typename ClassType>
 template<typename EnumType>
 class_<ClassType>& class_<ClassType>::enumeration(std::string name, std::vector< std::pair< std::string, EnumType> > enum_data, std::vector<rttr::metadata> data)
 {
-    impl::enumeration_impl<ClassType, EnumType>(std::move(name), std::move(enum_data), std::move(data));
+    detail::type_register::enumeration<ClassType, EnumType>(std::move(name), std::move(enum_data), std::move(data));
     return *this;
 }
 

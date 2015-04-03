@@ -500,44 +500,42 @@ TEST_CASE("Test property inheritance", "[property]")
     auto props = t.get_properties();
     REQUIRE(props.size() == 7);
 
-    REQUIRE(props[0].get_name() == "p5"); // bottom
-    REQUIRE(props[1].get_name() == "callback"); // bottom
-    REQUIRE(props[2].get_name() == "p2"); // left
-    REQUIRE(props[3].get_name() == "p3"); // right
-    REQUIRE(props[4].get_name() == "p2"); // right
-    REQUIRE(props[5].get_name() == "p1"); // top
-    REQUIRE(props[6].get_name() == "p4"); // right
-    
-    
+    CHECK(props[0].get_name() == "p1"); // top
+    CHECK(props[1].get_name() == "p2"); // left
+    CHECK(props[2].get_name() == "p3"); // right
+    CHECK(props[3].get_name() == "p2"); // right
+    CHECK(props[4].get_name() == "p4"); // right2
+    CHECK(props[5].get_name() == "p5"); // bottom
+    CHECK(props[6].get_name() == "callback"); // bottom
 
-    REQUIRE(props[5] == props[5]);
-    REQUIRE(props[5] != props[1]);
+    CHECK(props[5] == props[5]);
+    CHECK(props[5] != props[1]);
 
     ns_property::bottom instance;
     ns_property::top* top = &instance;
     // try access from top instance a property in the most derived class (bottom)
     variant ret = props[0].get_value(top);
-    REQUIRE(ret.is_type<double>() == true);
-    REQUIRE(ret.get_value<double>() == 23.0);
+    REQUIRE(ret.is_type<int>() == true);
+    CHECK(ret.get_value<int>() == 12);
     // try to change the value
-    props[0].set_value(top, 42.0);
-    REQUIRE(instance._p5 == 42.0);
+    props[0].set_value(top, 2000);
+    CHECK(instance._p1 == 2000);
     
     // and now the other way around, from bottom a top property
     ret = props[5].get_value(&instance);
-    REQUIRE(ret.is_type<int>() == true);
-    REQUIRE(ret.get_value<int>() == 12);
+    REQUIRE(ret.is_type<double>() == true);
+    CHECK(ret.get_value<double>() == 23.0);
     // try to change the value
-    props[5].set_value(top, 2000);
-    REQUIRE(instance._p1 == 2000);
+    props[5].set_value(top, 42.0);
+    CHECK(instance._p5 == 42.0);
 
     // check double declared property is from left class
-    REQUIRE(props[2].get_declaring_type() == type::get<ns_property::left>());
+    CHECK(props[1].get_declaring_type() == type::get<ns_property::left>());
     // the right class has still its property?
-    REQUIRE(type::get<ns_property::right>().get_property("p2").is_valid() == true);
+    CHECK(type::get<ns_property::right>().get_property("p2").is_valid() == true);
 
     property p1 = type::get<ns_property::bottom>().get_property("p1");
-    REQUIRE(bool(p1) == true);
+    CHECK(bool(p1) == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -546,15 +544,15 @@ TEST_CASE("Test get/set global property", "[property]")
 {
     property pi_prop = type::get_global_property("PI");
     REQUIRE(bool(pi_prop) == true);
-    REQUIRE(pi_prop.set_value(empty_instance(), 3.2) == false);
+    CHECK(pi_prop.set_value(empty_instance(), 3.2) == false);
 
     property global_text = type::get_global_property("Global_Text");
     REQUIRE(bool(global_text) == true);
-    REQUIRE(global_text.set_value(empty_instance(), std::string("Hello World")) == true);
-    REQUIRE(global_text.get_value(empty_instance()).get_value<std::string>() == "Hello World");
+    CHECK(global_text.set_value(empty_instance(), std::string("Hello World")) == true);
+    CHECK(global_text.get_value(empty_instance()).get_value<std::string>() == "Hello World");
 
     auto list = type::get_global_properties();
-    REQUIRE(list.size() >= 2);
+    CHECK(list.size() >= 2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -610,11 +608,10 @@ TEST_CASE("Test get_base_classes", "[property]")
     const auto base_list = type::get(b).get_base_classes();
     REQUIRE(base_list.size() == 4);
 
-    REQUIRE(base_list[0] == type::get<ns_property::left>());
-    REQUIRE(base_list[1] == type::get<ns_property::right>());
-    REQUIRE(base_list[2] == type::get<ns_property::top>());
+    REQUIRE(base_list[0] == type::get<ns_property::top>());
+    REQUIRE(base_list[1] == type::get<ns_property::left>());
+    REQUIRE(base_list[2] == type::get<ns_property::right>());
     REQUIRE(base_list[3] == type::get<ns_property::right_2>());
-
 
     REQUIRE(type::get(b).is_derived_from(type::get<ns_property::top>()) == true); // dynamic
     REQUIRE(type::get(b).is_derived_from<ns_property::top>() == true); // static

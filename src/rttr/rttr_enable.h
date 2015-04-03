@@ -35,7 +35,7 @@
 namespace rttr
 {
 
-namespace impl
+namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ namespace impl
     template<typename... U> struct type_list {};
 #endif
 
-} // end namespace impl
+} // end namespace detail
 } // end namespace rttr
 
 #ifdef DOXYGEN
@@ -91,13 +91,13 @@ namespace impl
 
 #else
 
-#define TYPE_LIST(...)      rttr::impl::type_list<__VA_ARGS__>
+#define TYPE_LIST(...)      rttr::detail::type_list<__VA_ARGS__>
 
 #define RTTR_ENABLE(...) \
 public:\
-    virtual RTTR_INLINE rttr::type get_type() const { return rttr::impl::get_type_from_instance(this); }  \
+    virtual RTTR_INLINE rttr::type get_type() const { return rttr::detail::get_type_from_instance(this); }  \
     virtual RTTR_INLINE void* get_ptr() { return reinterpret_cast<void*>(this); } \
-    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::impl::get_type_from_instance(this)}; } \
+    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::detail::get_type_from_instance(this)}; } \
     typedef TYPE_LIST(__VA_ARGS__) base_class_list; \
 private:
 
