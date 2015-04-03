@@ -78,7 +78,6 @@ set(HEADER_FILES constructor.h
                  detail/type/type_converter.h
                  detail/type/type_database_p.h
                  detail/type/type_register.h
-                 detail/type/type_register_impl.h
                  impl/register_reflection_impl.h
                  impl/rttr_cast_impl.h
                  impl/type_impl.h
