@@ -201,130 +201,133 @@ auto copy_array(const ElementType (&in)[Count], ElementType (&out)[Count])
 /////////////////////////////////////////////////////////////////////////////////////////
 // make_unqiue implementation for C++11
 
-    template<class T> struct _Unique_if 
-    {
-        typedef std::unique_ptr<T> _Single_object;
-    };
+template<class T> struct _Unique_if 
+{
+    typedef std::unique_ptr<T> _Single_object;
+};
 
-    template<class T> struct _Unique_if<T[]> 
-    {
-        typedef std::unique_ptr<T[]> _Unknown_bound;
-    };
+template<class T> struct _Unique_if<T[]> 
+{
+    typedef std::unique_ptr<T[]> _Unknown_bound;
+};
 
-    template<class T, size_t N> struct _Unique_if<T[N]> 
-    {
-        typedef void _Known_bound;
-    };
+template<class T, size_t N> struct _Unique_if<T[N]> 
+{
+    typedef void _Known_bound;
+};
 
-    template<class T, class... Args>
-    typename _Unique_if<T>::_Single_object
-    make_unique(Args&&... args) 
-    {
-        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-    }
+template<class T, class... Args>
+typename _Unique_if<T>::_Single_object
+make_unique(Args&&... args) 
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
-    template<class T>
-    typename _Unique_if<T>::_Unknown_bound
-    make_unique(size_t n) 
-    {
-        typedef typename std::remove_extent<T>::type U;
-        return std::unique_ptr<T>(new U[n]());
-    }
+template<class T>
+typename _Unique_if<T>::_Unknown_bound
+make_unique(size_t n) 
+{
+    typedef typename std::remove_extent<T>::type U;
+    return std::unique_ptr<T>(new U[n]());
+}
 
-    template<class T, class... Args>
-    typename _Unique_if<T>::_Known_bound
-    make_unique(Args&&...) = delete;
+template<class T, class... Args>
+typename _Unique_if<T>::_Known_bound
+make_unique(Args&&...) = delete;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T> struct alway_false : std::false_type  { };
         
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    template< typename T >
-    RTTR_INLINE const T& as_const(T& obj) { return const_cast<T&>(obj); }
+template< typename T >
+RTTR_INLINE const T& as_const(T& obj) { return const_cast<T&>(obj); }
 
-    template< typename T >
-    RTTR_INLINE const T& as_const(const T& obj) { return obj; }
+template< typename T >
+RTTR_INLINE const T& as_const(const T& obj) { return obj; }
 
-    template<typename T>
-    RTTR_INLINE const T as_const(T&& obj) { return std::forward<T>(obj); }
+template<typename T>
+RTTR_INLINE const T as_const(T&& obj) { return std::forward<T>(obj); }
 
-    template<typename T>
-    RTTR_INLINE const T as_const(const T&& obj) 
-    {
-        static_assert(!std::is_same<T, T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
-        return std::forward<T>(obj);
-    }
+template<typename T>
+RTTR_INLINE const T as_const(const T&& obj) 
+{
+    static_assert(alway_false<T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
+    return std::forward<T>(obj);
+}
 
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    /*!
-     * Helper class to iterate in a ranged-based for loops backwards through a container.
-     * use it like following: 
-     * \code{.cpp}
-     *   for(const auto& value: reverse(my_vector))
-     *      std::cout << value << std::endl;
-     * \endcode                
-     */
-    template<class T>
-    class reverse_wrapper
-    {
-        public:
-            reverse_wrapper(T& container) : m_container(container) { }
-            decltype(std::declval<T>().rbegin()) begin() { return m_container.rbegin(); }
-            decltype(std::declval<T>().rend()) end() { return m_container.rend(); }
+/*!
+ * Helper class to iterate in a ranged-based for loops backwards through a container.
+ * use it like following: 
+ * \code{.cpp}
+ *   for(const auto& value: reverse(my_vector))
+ *      std::cout << value << std::endl;
+ * \endcode                
+ */
+template<class T>
+class reverse_wrapper
+{
+    public:
+        reverse_wrapper(T& container) : m_container(container) { }
+        decltype(std::declval<T>().rbegin()) begin() { return m_container.rbegin(); }
+        decltype(std::declval<T>().rend()) end() { return m_container.rend(); }
 
-            decltype(std::declval<T>().crbegin()) begin() const { return m_container.crbegin(); }
-            decltype(std::declval<T>().crend()) end() const { return m_container.crend(); }
-    
-        private:
-            T& m_container;
-    };
+        decltype(std::declval<T>().crbegin()) begin() const { return m_container.crbegin(); }
+        decltype(std::declval<T>().crend()) end() const { return m_container.crend(); }
 
-    template<class T>
-    class reverse_move_wrapper
-    {
-        public:
-            reverse_move_wrapper(T&& container) : m_container(std::move(container)) { }
-            decltype(std::declval<T>().rbegin()) begin() { return m_container.rbegin(); }
-            decltype(std::declval<T>().rend()) end() { return m_container.rend(); }
-            decltype(std::declval<T>().crbegin()) begin() const { return m_container.crbegin(); }
-            decltype(std::declval<T>().crend()) end() const { return m_container.crend(); }
-    
-        private:
-            T m_container;
-    };
+    private:
+        T& m_container;
+};
+
+template<class T>
+class reverse_move_wrapper
+{
+    public:
+        reverse_move_wrapper(T&& container) : m_container(std::move(container)) { }
+        decltype(std::declval<T>().rbegin()) begin() { return m_container.rbegin(); }
+        decltype(std::declval<T>().rend()) end() { return m_container.rend(); }
+        decltype(std::declval<T>().crbegin()) begin() const { return m_container.crbegin(); }
+        decltype(std::declval<T>().crend()) end() const { return m_container.crend(); }
+
+    private:
+        T m_container;
+};
 
 
-    template<class T>
-    reverse_move_wrapper<T> reverse(T&& container) 
-    {
-        return reverse_move_wrapper<T>(std::forward<T>(container));
-    }
+template<class T>
+reverse_move_wrapper<T> reverse(T&& container) 
+{
+    return reverse_move_wrapper<T>(std::forward<T>(container));
+}
 
-    template<class T>
-    const reverse_move_wrapper<const T> reverse(const T&& container) 
-    {
-        return reverse_move_wrapper<const T>(std::forward<const T>(container));
-    }
+template<class T>
+const reverse_move_wrapper<const T> reverse(const T&& container) 
+{
+    return reverse_move_wrapper<const T>(std::forward<const T>(container));
+}
 
-    template<class T>
-    reverse_wrapper<T> reverse(T& container) 
-    {
-         return reverse_wrapper<T>(container);
-    }
+template<class T>
+reverse_wrapper<T> reverse(T& container) 
+{
+     return reverse_wrapper<T>(container);
+}
 
-    template<class T>
-    const reverse_wrapper<const T> reverse(const T& container) 
-    {
-         return reverse_wrapper<const T>(container);
-    }
+template<class T>
+const reverse_wrapper<const T> reverse(const T& container) 
+{
+     return reverse_wrapper<const T>(container);
+}
 
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
