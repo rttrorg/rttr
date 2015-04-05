@@ -33,6 +33,9 @@
 struct constructor_test
 {
     constructor_test() : _x(0), _y(0), _p1(0.0) {}
+    constructor_test(const constructor_test& other) : _x(other._x), _y(other._y), _p1(other._p1), _text(other._text) {}
+    constructor_test(constructor_test&& other) : _x(std::move(other._x)), _y(std::move(other._y)), _p1(std::move(other._p1)), _text(std::move(other._text)) {}
+
     constructor_test(int x, int y) : _x(x), _y(y), _p1(0.0) {}
     constructor_test(const std::string& text) : _x(0), _y(0), _p1(0.0), _text(text) {}
     constructor_test(int p1, int p2, int p3, int p4, int p5, int p6, const int* p7) : _x(p1), _y(p2), _p1(0.0) {}
@@ -41,6 +44,19 @@ struct constructor_test
     int _y;
     double _p1;
     std::string _text;
+};
+
+class factory_test
+{
+    
+    public:
+        static factory_test create() { factory_test obj; return obj; };
+        static factory_test* create_as_ptr() { auto obj = new factory_test; return obj; };
+
+        void my_func() { }
+        int my_func_2(){ return 42; }
+    private:
+        factory_test() {}
 };
 
 #endif // TEST_CONSTRUCTOR_REFLECTION_H_

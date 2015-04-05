@@ -30,9 +30,13 @@
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/constructor/constructor_container_base.h"
+#include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/misc/utility.h"
+#include "rttr/detail/misc/function_traits.h"
 #include "rttr/variant.h"
+#include "rttr/policy.h"
+#include "rttr/detail/method/method_accessor.h"
 
 #include <vector>
 #include <utility>
@@ -47,11 +51,14 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename... Args>
-class constructor_container : public constructor_container_base
+template<typename ClassType, typename Constructor_Type, typename Policy, typename... Args>
+class constructor_container;
+
+template<typename ClassType, typename Policy, typename... Args>
+class constructor_container<ClassType, class_ctor, Policy, Args...> : public constructor_container_base
 {
     public:
-        constructor_container() : constructor_container_base() {}
+        constructor_container() {}
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Args>()...}; }
         std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Args) != 0>()); }
@@ -135,6 +142,56 @@ class constructor_container : public constructor_container_base
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ClassType, typename Policy, typename F>
+class constructor_container<ClassType, return_func, Policy, F> : public constructor_container_base
+{
+    public:
+        constructor_container(F creator_func) : m_creator_func(creator_func) {}
+
+        type get_instanciated_type()            const { return type::get<ClassType>();                              }
+        type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
+        std::vector<bool> get_is_reference()    const { return method_accessor<F, Policy>::get_is_reference();      }
+        std::vector<bool> get_is_const()        const { return method_accessor<F, Policy>::get_is_const();          }
+        std::vector<type> get_parameter_types() const { return method_accessor<F, Policy>::get_parameter_types();   }
+
+        variant invoke() const
+        {
+           return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance());
+        }
+        variant invoke(detail::argument& arg1) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1);
+        }
+        variant invoke(detail::argument& arg1, detail::argument& arg2) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2);
+        }
+        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3);
+        }
+        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4);
+        }
+        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5);
+        }
+        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5, arg6);
+        }
+        variant invoke_variadic(std::vector<detail::argument>& args) const
+        {
+            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), args);
+        }
+    private:
+         F  m_creator_func;
+};
 
 } // end namespace detail
 } // end namespace rttr

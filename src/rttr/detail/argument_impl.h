@@ -99,10 +99,19 @@ RTTR_INLINE void* argument::get_ptr() const { return const_cast<void *>(m_data);
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-T& argument::get_value() const
+typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
     return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& argument::get_value() const
+{
+    using raw_type = typename std::remove_reference<T>::type;
+    return std::move(*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

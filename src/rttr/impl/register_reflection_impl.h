@@ -77,16 +77,30 @@ public:
     template<typename ClassType, typename... Args>
     static void constructor(std::vector< rttr::metadata > data)
     {
-        using namespace std;
-        const type type = type::get<ClassType>();
-        auto ctor = detail::make_unique<constructor_container<ClassType, Args...>>();
+        auto ctor = detail::make_unique<constructor_container<ClassType, class_ctor, default_invoke, Args...>>();
         // register the type with the following call:
         ctor->get_instanciated_type();
         ctor->get_parameter_types();
 
         store_metadata(ctor, std::move(data));
-        type_register::constructor(type, move(ctor));
-        type_register::destructor(type, detail::make_unique<destructor_container<ClassType>>());
+        const type t = type::get<ClassType>();
+        type_register::constructor(t, std::move(ctor));
+        type_register::destructor(t, detail::make_unique<destructor_container<ClassType>>());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename ClassType, typename F>
+    static void constructor(F function, std::vector< rttr::metadata > data)
+    {
+        static_assert(std::is_same<return_func, typename method_type<F>::type>::value, "For creating this 'class type', please provide a function pointer or std::function with a return value.");
+        auto ctor = detail::make_unique<constructor_container<ClassType, return_func, default_invoke, F>>(function);
+        ctor->get_instanciated_type();
+        ctor->get_parameter_types();
+
+        store_metadata(ctor, std::move(data));
+        const type t = type::get<ClassType>();
+        type_register::constructor(t, std::move(ctor));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +420,16 @@ template<typename... Args>
 class_<ClassType>& class_<ClassType>::constructor(std::vector<rttr::metadata> data)
 {
     detail::register_helper::constructor<ClassType, Args...>(std::move(data));
+    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ClassType>
+template<typename F>
+class_<ClassType>& class_<ClassType>::constructor(F function, std::vector< rttr::metadata > data)
+{
+    detail::register_helper::constructor<ClassType, F>(function, std::move(data));
     return *this;
 }
 

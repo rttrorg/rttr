@@ -62,10 +62,11 @@ public:
     argument(const variant_array& var);
 
     template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
-
+    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = nullptr);
     template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = 0);
+    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = nullptr);
+
+    argument& operator=(const argument& other);
 
     template<typename T>
     bool is_type() const;
@@ -73,9 +74,9 @@ public:
     void* get_ptr() const;
 
     template<typename T>
-    T& get_value() const;
-
-    argument& operator=(const argument& other);
+    typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& get_value() const;
+    template<typename T>
+    typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& get_value() const;
 
 private:
     const void*         m_data;

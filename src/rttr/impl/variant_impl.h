@@ -165,7 +165,7 @@ variant::variant(T&& param,
                 typename std::enable_if<!std::is_same<variant&, T>::value >::type*,
                 typename std::enable_if<!std::is_const<T>::value >::type*
                 )
-:   m_holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(static_cast<T&&>(param)))
+:   m_holder(new variant_container<typename std::remove_cv<typename std::remove_reference<T>::type>::type>(std::forward<T>(param)))
 {
 }
 

@@ -118,6 +118,11 @@ namespace detail
     {
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    struct class_ctor
+    {};
+
 } // end namespace detail
 } // end namespace rttr
 

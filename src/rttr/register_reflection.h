@@ -147,6 +147,9 @@ class class_
         template<typename... Args>
         class_& constructor(std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
 
+        template<typename F>
+        class_& constructor(F function, std::vector< rttr::metadata > data = std::vector< rttr::metadata >());
+
 
         /*!
          * \brief Register a property with read and write access to this class.
