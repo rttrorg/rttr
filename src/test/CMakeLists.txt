@@ -37,6 +37,7 @@ set(SOURCE_FILES main.cpp
                  test_method_reflection.cpp
                  test_property_reflection.cpp
                  test_enumeration_reflection.cpp
+                 test_misc.cpp
     )
 
 set(HEADER_FILES test_classes.h

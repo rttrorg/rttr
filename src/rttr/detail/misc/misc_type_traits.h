@@ -29,9 +29,10 @@
 #define RTTR_MISC_TYPE_TRAITS_H_
 
 #include "rttr/base/core_prerequisites.h"
-#include "rttr/detail/misc/function_traits.h"
 
+#include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/array/array_mapper.h"
+#include "rttr/detail/misc/std_type_traits.h"
 
 #include <type_traits>
 
@@ -46,29 +47,57 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////////
     // this trait is for removing cv-type qualifiers and also pointers
-    template<class T>
-    struct raw_type { typedef T type; };
+    template<typename T, typename Enable = void>
+    struct raw_type
+    {
+        typedef typename detail::remove_cv<T>::type type; 
+    };
 
-    template<class T> struct raw_type<const T>      { typedef typename raw_type<T>::type type; };
+    template<typename T> struct raw_type<T, typename std::enable_if<std::is_pointer<T>::value && !detail::is_function_ptr<T>::value>::type> 
+    {
+        typedef typename raw_type<typename detail::remove_pointer<T>::type>::type type; 
+    };
 
-    template<class T> struct raw_type<T*>           { typedef typename raw_type<T>::type type; };
-    template<class T> struct raw_type<T* const>     { typedef typename raw_type<T>::type type; };
-    template<class T> struct raw_type<T* volatile>  { typedef typename raw_type<T>::type type; };
+    template<typename T> struct raw_type<T, typename std::enable_if<std::is_reference<T>::value>::type> 
+    {
+        typedef typename raw_type<typename std::remove_reference<T>::type>::type type; 
+    };
 
-    template<class T> struct raw_type<T&>           { typedef typename raw_type<T>::type type; };
-    template<class T, std::size_t N> 
-    struct raw_type<const T[N]>                     { typedef typename raw_type<T[N]>::type type; };
+    template<typename T>
+    using raw_type_t = typename raw_type<T>::type;
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    // this trait includes the above and also the array dimension
-    template<class T>
-    struct raw_array_type { typedef typename raw_type<T>::type type; };
+    // this trait removes all pointers
 
-    template<class T> 
-    struct raw_array_type<T*>                      { typedef typename raw_array_type<T>::type type; };
-    template<class T, std::size_t N> 
-    struct raw_array_type<T[N]>                    { typedef typename raw_array_type<T>::type type; };
+    template<typename T, typename Enable = void>
+    struct remove_pointers { typedef T type; };
+    template<typename T>
+    struct remove_pointers<T, typename std::enable_if<std::is_pointer<T>::value>::type>
+    {
+        typedef typename remove_pointers<typename remove_pointer<T>::type>::type type; 
+    };
+    
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // this trait removes all pointers except one
 
+    template<typename T, typename Enable = void>
+    struct remove_pointers_except_one { typedef T type; };
+    template<typename T>
+    struct remove_pointers_except_one<T, typename std::enable_if<std::is_pointer<T>::value>::type>
+    {
+        typedef typename std::conditional<std::is_pointer<typename remove_pointer<T>::type>::value,
+                                          typename remove_pointers_except_one<typename remove_pointer<T>::type>::type,
+                                          T>::type type;
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // this trait includes the above and also removes the array dimension
+    template<typename T, typename Enable = void>
+    struct raw_array_type  { typedef typename raw_type<T>::type type; };
+
+    template<typename T, std::size_t N>
+    struct raw_array_type<T[N]> { typedef typename raw_array_type<T>::type type; };
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -207,8 +236,10 @@ namespace detail
     {};
 
     /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T>
+        template<typename T>
     struct get_ptr_impl
     {
         static RTTR_INLINE void* get(T& data)
@@ -256,6 +287,11 @@ namespace detail
         return get_ptr_impl<T>::get(data);
     }
 
+
+
+    
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T, typename... Types>
@@ -283,8 +319,8 @@ namespace detail
         static const bool value = (sizeof(check<array_mapper<T> >(0)) == sizeof(YesType));
     };
 
-    template<class T>
-    struct is_array : std::conditional<is_array_impl<T>::value,
+    template<typename T>
+    struct is_array : std::conditional<is_array_impl<typename remove_cv<typename std::remove_reference<T>::type>::type>::value,
                                        std::true_type,
                                        std::false_type>::type
     {};
@@ -359,12 +395,11 @@ namespace detail
     };
 
     template<typename T>
-    struct pointer_count_impl<T*, typename std::enable_if<std::is_pointer<T*>::value &&
-                                                          !is_function_ptr<T*>::value &&
-                                                          !std::is_member_object_pointer<T*>::value &&
-                                                          !std::is_member_function_pointer<T*>::value>::type>
+    struct pointer_count_impl<T, typename std::enable_if<std::is_pointer<T>::value &&
+                                                         !is_function_ptr<T>::value &&
+                                                         !std::is_member_pointer<T>::value>::type>
     {
-        static const std::size_t size = pointer_count_impl<T>::size + 1;
+        static const std::size_t size = pointer_count_impl<typename remove_pointer<T>::type>::size + 1;
     };
 
     template<typename T>
@@ -401,6 +436,8 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////
 
+   
+   
 } // end namespace detail
 
 } // end namespace rttr

@@ -33,15 +33,6 @@
 namespace rttr
 {
 
-namespace detail
-{
-template<typename T>
-array_container_base* create_array_container(const T& value);
-
-template<typename T>
-array_container_base* create_array_container_moved(T&& value);
-} 
-
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array()
@@ -56,7 +47,7 @@ variant_array::variant_array(const T& param)
 :   m_container(detail::create_array_container(param))
 
 {
-   static_assert(detail::is_array<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
+   static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
    static_assert(!detail::is_array<variant>::value, "No allowed to create a variant_array from variant.");
 }
 
@@ -67,11 +58,10 @@ variant_array::variant_array(T&& param,
                 typename std::enable_if<!std::is_same<variant_array&, T>::value >::type*,
                 typename std::enable_if<!std::is_const<T>::value >::type*
                 )
-:   m_container(detail::create_array_container_moved(std::move(param)))
+:   m_container(detail::create_array_container(std::forward<T>(param)))
 {
-   using type = typename detail::raw_type<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::type;
-   static_assert(detail::is_array<type>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
-   static_assert(!detail::is_array<variant>::value, "No allowed to create a variant_array from variant.");
+   static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
+   static_assert(!detail::is_array<variant>::value, "Not allowed to create a variant_array from variant.");
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +105,7 @@ RTTR_INLINE void variant_array::swap(variant_array& other)
 template<typename T>
 RTTR_INLINE variant_array& variant_array::operator=(T&& other)
 {
-    variant_array(static_cast<T&&>(other)).swap(*this);
+    variant_array(std::forward<T>(other)).swap(*this);
     return *this;
 }
 

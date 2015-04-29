@@ -29,6 +29,8 @@
 #define RTTR_FUNCTION_TRAITS_H_
 
 #include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/std_type_traits.h"
 
 #include <type_traits>
 #include <functional>
@@ -68,7 +70,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     template<typename T>
     struct is_function_ptr : std::integral_constant<bool, std::is_pointer<T>::value && 
-                                                          std::is_function<typename std::remove_pointer<T>::type>::value>
+                                                          std::is_function<typename ::rttr::detail::remove_pointer<T>::type>::value>
     {
     };
 

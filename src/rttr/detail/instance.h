@@ -30,6 +30,7 @@
 
 #include "rttr/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/data_address_container.h"
 
 namespace rttr
 {
@@ -55,7 +56,7 @@ public:
 
     instance(instance&& other);
 
-    template<typename T>
+    template<typename T> // TO DO DISALLOW VARIANT ACCESS!!
     instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
 
     template<typename T>
@@ -73,8 +74,7 @@ private:
     instance& operator=(const instance& other);
 
 private:
-    void*               m_data;
-    const rttr::type    m_type;
+    data_address_container m_data_container;
 };
 
 } // end namespace detail

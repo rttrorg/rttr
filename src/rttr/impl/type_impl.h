@@ -36,6 +36,7 @@
 #include "rttr/detail/type/get_create_variant_func.h"
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/misc/utility.h"
+#include "rttr/wrapper_mapper.h"
 #include "rttr/metadata.h"
 
 namespace rttr
@@ -196,7 +197,23 @@ struct raw_type_info
 template<typename T>
 struct raw_type_info<T, false>
 {
-    static RTTR_INLINE type get_type() { return type_getter<typename raw_type<T>::type>::get_type(); }
+    static RTTR_INLINE type get_type() { return type::get<typename raw_type<T>::type>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, bool = is_wrapper<T>::value>
+struct wrapper_type_info
+{
+    static RTTR_INLINE type get_type() { return type::get<typename wrapper_mapper<T>::wrapped_type>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct wrapper_type_info<T, false>
+{
+    static RTTR_INLINE type get_type() { return get_invalid_type(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +229,7 @@ struct array_raw_type
 template<typename T>
 struct array_raw_type<T, false>
 {
-    static RTTR_INLINE type get_type() { return type_getter<typename raw_array_type<T>::type>::get_type(); }
+    static RTTR_INLINE type get_type() { return type::get<typename raw_array_type<T>::type>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +247,7 @@ struct type_getter
         (void) sizeof(type_must_be_complete);
         static const type val = type_register::type_reg(f<T>(),
                                                         raw_type_info<T>::get_type(),
+                                                        wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         std::move(base_classes<T>::get_types()),
                                                         get_most_derived_info_func<T>(),
@@ -256,6 +274,7 @@ struct type_getter<void>
     {
         static const type val = type_register::type_reg(f<void>(),
                                                         raw_type_info<void>::get_type(),
+                                                        wrapper_type_info<void>::get_type(),
                                                         array_raw_type<void>::get_type(),
                                                         std::vector<base_class_info>(),
                                                         get_most_derived_info_func<void>(),
@@ -282,6 +301,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
     {
         static const type val = type_register::type_reg(f<T>(),
                                                         raw_type_info<T>::get_type(),
+                                                        wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         std::vector<detail::base_class_info>(),
                                                         get_most_derived_info_func<T>(),

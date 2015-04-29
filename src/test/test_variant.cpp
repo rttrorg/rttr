@@ -793,6 +793,80 @@ TEST_CASE("variant test - array", "[variant]")
         var_arr.insert_value(25, true);
         REQUIRE(orig_vec[25] == true);
     }
+
+    SECTION("check array with wrapper type")
+    {
+        std::vector<int> vec(50, 0);
+
+        std::reference_wrapper<decltype(vec)> ref_vec = std::ref(vec);
+        variant var = ref_vec;
+        variant_array vec_array = var.to_array();
+        REQUIRE(vec_array.is_valid()    == true);
+       
+        vec_array.set_size(70);
+        CHECK(vec_array.get_size()      == 70);
+        CHECK(vec.size()                == 70);
+
+        vec_array.set_value(50, 23);
+        variant ret = vec_array.get_value(50);
+        REQUIRE(ret.is_type<int>()      == true);
+        REQUIRE(ret.get_value<int>()    == 23);
+    }
+
+    SECTION("check moved array type")
+    {
+        std::vector<int> vec(50, 0);
+        variant_array vec_array = std::move(vec);
+        REQUIRE(vec_array.is_valid()    == true);
+        REQUIRE(vec.size()              == 0);
+       
+        vec_array.set_size(70);
+        CHECK(vec_array.get_size()      == 70);
+
+        vec_array.set_value(50, 23);
+        variant ret = vec_array.get_value(50);
+        REQUIRE(ret.is_type<int>()      == true);
+        REQUIRE(ret.get_value<int>()    == 23);
+    }
+
+    SECTION("check std::shared_ptr wrapper array type")
+    {
+        variant_array vec_array;
+        std::weak_ptr<std::vector<int>> weak_ptr_obj;
+        // we want to check if the shared_ptr is internally hold by the variant_array (makes a copy)
+        {
+            std::shared_ptr<std::vector<int>> obj = std::make_shared<std::vector<int>>(50, 0);
+            weak_ptr_obj = obj;
+            vec_array = obj;
+            REQUIRE(vec_array.is_valid()    == true);
+            CHECK(vec_array.get_size()      == 50);
+            // obj will be destroyed, but not the ptr
+        }
+        REQUIRE(weak_ptr_obj.expired()  == false);
+        CHECK(vec_array.is_valid()    == true);
+        vec_array.set_size(70);
+        CHECK(vec_array.get_size()      == 70);
+
+        vec_array.set_value(50, 23);
+        variant ret = vec_array.get_value(50);
+        CHECK(ret.is_type<int>()      == true);
+        CHECK(ret.get_value<int>()    == 23);
+    }
+
+    SECTION("check moved wrapper array type")
+    {
+        variant_array vec_array = std::make_shared<std::vector<int>>(50, 0);
+        REQUIRE(vec_array.is_valid()    == true);
+        CHECK(vec_array.get_size()      == 50);
+       
+        vec_array.set_size(70);
+        CHECK(vec_array.get_size()      == 70);
+
+        vec_array.set_value(50, 23);
+        variant ret = vec_array.get_value(50);
+        REQUIRE(ret.is_type<int>()      == true);
+        REQUIRE(ret.get_value<int>()    == 23);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

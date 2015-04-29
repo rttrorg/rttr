@@ -102,6 +102,7 @@ void type_register::converter(const type& t, std::unique_ptr<detail::type_conver
 
 uint16 type_register::type_reg(const char* name, 
                                const type& raw_type,
+                               const type& wrapped_type,
                                const type& array_raw_type,
                                vector<base_class_info> base_classes,
                                get_derived_func derived_func_ptr,
@@ -116,8 +117,8 @@ uint16 type_register::type_reg(const char* name,
                                bool is_member_function_pointer,
                                std::size_t pointer_dimension)
 {
-    return type_database::instance().register_type(name, raw_type, array_raw_type, move(base_classes), 
-                                                   derived_func_ptr, var_func_ptr, is_class, is_enum, 
+    return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes), 
+                                                   derived_func_ptr, var_func_ptr, is_class, is_enum,
                                                    is_array, is_pointer, is_primitive, is_function_pointer, 
                                                    is_member_object_pointer, is_member_function_pointer, pointer_dimension);
 }

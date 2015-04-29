@@ -48,6 +48,7 @@ namespace detail
     class argument;
     class instance;
     class array_container_base;
+    struct data_address_container;
 }
 
 /*!
@@ -394,23 +395,33 @@ class RTTR_API variant
          */
         void* get_ptr() const;
 
-        /*!
-         * \brief Returns a pointer to the underlying data
+         /*!
+         * \brief Returns the type object of the underlying data
          *
          * \remark You do not have to use this method directly.
          *
-         * \return
+         * \return Type object.
+         */
+        type get_raw_type() const;
+
+        /*!
+         * \brief Returns a pointer to the underlying data.
+         *        This will return 
+         *
+         * \remark You do not have to use this method directly.
+         *
+         * \return Raw void pointer.
          */
         void* get_raw_ptr() const;
 
         /*!
-         * \brief Returns a pointer to the underlying data
+         * \brief Returns a pointer to the underlying object pointer wrapped in a smart_ptr.
          *
          * \remark You do not have to use this method directly.
          *
-         * \return
+         * \return Type object of the wrapped pointer object.
          */
-        type get_raw_type() const;
+        detail::data_address_container get_data_address_container() const;
 
         class variant_container_base
         {
@@ -425,6 +436,8 @@ class RTTR_API variant
                 
                 virtual void* get_raw_ptr() const = 0;
 
+                virtual detail::data_address_container get_data_address_container() const = 0;
+                
                 virtual bool is_array() const = 0;
 
                 virtual detail::array_container_base* to_array() const = 0;
@@ -461,6 +474,8 @@ class RTTR_API variant
                 
                 void* get_raw_ptr() const;
 
+                detail::data_address_container get_data_address_container() const;
+                
                 bool is_array() const;
 
                 detail::array_container_base* to_array() const;
@@ -494,6 +509,8 @@ class RTTR_API variant
                 type get_raw_type() const;
                 
                 void* get_raw_ptr() const;
+
+                detail::data_address_container get_data_address_container() const;
 
                 bool can_convert(const type& target_type) const;
 
@@ -529,6 +546,8 @@ class RTTR_API variant
                 
                 void* get_raw_ptr() const;
 
+                detail::data_address_container get_data_address_container() const;
+                
                 bool can_convert(const type& target_type) const;
 
                 bool is_array() const;

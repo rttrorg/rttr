@@ -337,6 +337,78 @@ TEST_CASE("Test Properties", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Invoke property via wrapper", "[property]") 
+{
+    SECTION("test property access via shared_ptr wrapper")
+    {
+        std::shared_ptr<property_test> obj = std::make_shared<property_test>();
+
+        type obj_t = type::get(obj);
+        REQUIRE(obj_t.is_wrapper() == true);
+
+        type wrapper_t = obj_t.get_wrapped_type();
+        REQUIRE(wrapper_t.is_wrapper() == false);
+        REQUIRE(wrapper_t == type::get<property_test*>());
+        property p1 = wrapper_t.get_property("p1");
+        CHECK(p1.is_readonly() == false);
+        // access
+        bool ret = p1.set_value(obj, 2);
+        CHECK(ret == true);
+    
+        variant val = p1.get_value(obj);
+        CHECK(val.is_type<int>() == true);
+    
+        CHECK(val.get_value<int>() == 2);
+        CHECK(obj.get()->_p1 == 2);
+    }
+
+    SECTION("test property access via variant with shared_ptr wrapper")
+    {
+        variant var = std::make_shared<property_test>();
+        CHECK(var.get_type().is_wrapper() == true);
+        CHECK(var.get_type() == type::get<shared_ptr<property_test>>());
+        CHECK(var.get_type().get_wrapped_type() == type::get<property_test*>());
+
+        type wrapper_t = var.get_type().get_wrapped_type();
+        property p1 = wrapper_t.get_property("p1");
+        CHECK(p1.is_readonly() == false);
+        // access
+        bool ret = p1.set_value(var, 2);
+        CHECK(ret == true);
+    
+        variant val = p1.get_value(var);
+        CHECK(val.is_type<int>() == true);
+        CHECK(val.get_value<int>() == 2);
+    }
+
+    SECTION("test property access via reference_wrapper")
+    {
+        property_test instance;
+        std::reference_wrapper<property_test> obj = std::ref(instance);
+
+        type obj_t = type::get(obj);
+        REQUIRE(obj_t.is_wrapper() == true);
+
+        type wrapper_t = obj_t.get_wrapped_type();
+        CHECK(wrapper_t.is_wrapper() == false);
+        CHECK(wrapper_t == type::get<property_test>());
+
+        property p1 = wrapper_t.get_property("p1");
+        CHECK(p1.is_readonly() == false);
+        // access
+        bool ret = p1.set_value(obj, 2);
+        CHECK(ret == true);
+    
+        variant val = p1.get_value(obj);
+        CHECK(val.is_type<int>() == true);
+        CHECK(val.get_value<int>() == 2);
+        CHECK(obj.get()._p1 == 2);
+        CHECK(instance._p1 == 2);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test property array access", "[property]") 
 {
 
@@ -453,7 +525,6 @@ TEST_CASE("Test property policy", "[property]")
         for (std::size_t i = 0; i < other_array.get_size(); ++i)
             REQUIRE(obj._other_array[i] == i * 2);
 
-        auto foo = other_array.get_type().get_name();
         bool wasSet = array_prop.set_value(obj, other_array);
         REQUIRE(wasSet == true);
     }

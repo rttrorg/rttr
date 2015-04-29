@@ -50,6 +50,8 @@ class RTTR_API variant::variant_container<void> : public variant_container_base
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool can_convert(const type& target_type) const;
 
         bool is_array() const;
@@ -86,6 +88,8 @@ class RTTR_API variant::variant_container<std::string> : public variant_containe
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool can_convert(const type& target_type) const;
 
         bool is_array() const;
@@ -124,6 +128,8 @@ class RTTR_API variant::variant_container<int> : public variant_container_base
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool can_convert(const type& target_type) const;
 
         bool is_array() const;
@@ -162,6 +168,8 @@ class RTTR_API variant::variant_container<bool> : public variant_container_base
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool can_convert(const type& target_type) const;
 
         bool is_array() const;
@@ -200,6 +208,8 @@ class RTTR_API variant::variant_container<float> : public variant_container_base
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool is_array() const;
 
         detail::array_container_base* to_array() const;
@@ -238,6 +248,8 @@ class RTTR_API variant::variant_container<double> : public variant_container_bas
         
         void* get_raw_ptr() const;
 
+        detail::data_address_container get_data_address_container() const;
+                
         bool is_array() const;
 
         detail::array_container_base* to_array() const;

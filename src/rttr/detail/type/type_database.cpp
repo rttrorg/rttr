@@ -79,7 +79,9 @@ type_database::type_database()
     m_pointer_dim_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     
     
-    // for the invalid type we have to fill some dummy text
+    // The following inserts are done, because we use the type_id directly
+    // as index for the vector to access the following type information
+    // type_id 0 is the invalid type, therfore we have to fill some dummy data
     m_orig_names.push_back("!invalid_type!");
     m_custom_names.push_back(m_orig_names[0]);
     
@@ -89,6 +91,7 @@ type_database::type_database()
     m_get_derived_info_func_list.push_back(nullptr);
     
     m_raw_type_list.push_back(0);
+    m_wrapped_type_list.push_back(0);
     m_array_raw_type_list.push_back(0);
     m_variant_create_func_list.push_back(nullptr);
     
@@ -939,6 +942,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 
 uint16 type_database::register_type(const char* name, 
                                     const type& raw_type,
+                                    const type& wrapped_type,
                                     const type& array_raw_type,
                                     vector<base_class_info> base_classes,
                                     get_derived_func derived_func_ptr,
@@ -966,6 +970,8 @@ uint16 type_database::register_type(const char* name,
     // to do check: why return an invalid type anyway?
     const type::type_id raw_id = ((raw_type.get_id() == 0) ? id : raw_type.get_id());
     m_raw_type_list.push_back(raw_id);
+    m_wrapped_type_list.push_back(wrapped_type.get_id());
+
     m_array_raw_type_list.push_back(array_raw_type.get_id() == 0 ? id : array_raw_type.get_id());
     m_get_derived_info_func_list.resize(std::max(m_get_derived_info_func_list.size(), static_cast<std::size_t>(raw_id + 1)));
     m_get_derived_info_func_list[raw_id]  = derived_func_ptr;

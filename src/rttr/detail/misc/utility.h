@@ -256,6 +256,23 @@ RTTR_INLINE const T as_const(T&& obj)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+RTTR_FORCE_INLINE typename std::enable_if<std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
+{
+    return const_cast<void*>(reinterpret_cast<const void*>(obj));
+}
+
+
+template<typename T>
+RTTR_FORCE_INLINE typename std::enable_if<!std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
+{
+    return const_cast<void*>(reinterpret_cast<const void*>(&obj));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * Helper class to iterate in a ranged-based for loops backwards through a container.
  * use it like following: 
@@ -321,6 +338,70 @@ const reverse_wrapper<const T> reverse(const T& container)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
+        
+template<typename T>
+using return_type_normal = typename std::add_pointer<typename remove_pointers<T>::type>::type;
+
+template<typename T>
+using raw_addressof_return_type = typename std::conditional<is_function_ptr<typename remove_pointers_except_one<T>::type>::value,
+                                                            typename std::add_pointer<typename remove_pointers_except_one<T>::type>::type,
+                                                            return_type_normal<T> >;
+template<typename T>
+using raw_addressof_return_type_t = typename raw_addressof_return_type<T>::type;
+
+template<typename T, typename Enable = void>
+struct raw_addressof_impl
+{
+    static RTTR_INLINE raw_addressof_return_type_t<T> get(T& data)
+    {
+        return std::addressof(data);
+    }
+};
+
+template<typename T>
+using is_raw_void_pointer = std::is_same<void*, typename std::add_pointer<typename raw_type<T>::type>::type>;
+
+template<typename T>
+using is_void_pointer = std::integral_constant<bool, std::is_pointer<T>::value && is_raw_void_pointer<T>::value && pointer_count<T>::value == 1>;
+
+template<typename T>
+struct raw_addressof_impl<T, typename std::enable_if<(std::is_pointer<T>::value && pointer_count<T>::value >= 1 && !is_void_pointer<T>::value) ||
+                                                      (pointer_count<T>::value == 1 && std::is_member_pointer<typename remove_pointer<T>::type>::value)
+                                                     >::type >
+{
+    static RTTR_INLINE raw_addressof_return_type_t<T> get(T& data)
+    {
+        return raw_addressof_impl<typename remove_pointer<T>::type>::get(*data);
+    }
+};
+
+template<typename T>
+struct raw_addressof_impl<T, typename std::enable_if<is_void_pointer<T>::value>::type >
+{
+    static RTTR_INLINE raw_addressof_return_type_t<T> get(T& data)
+    {
+        return data; // void pointer cannot be dereferenced to type "void"
+    }
+};
+
+/*!
+ * \brief This function will return from its raw type \p T
+ *        its address as pointer.
+ *
+ * \see detail::raw_type
+ *
+ * \return The address of the raw type from the given object \p data as pointer.
+ */
+template<typename T>
+static RTTR_INLINE raw_addressof_return_type_t<T> raw_addressof(T& data)
+{
+    return raw_addressof_impl<T>::get(data);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+ 
 
 } // end namespace detail
 } // end namespace rttr

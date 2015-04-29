@@ -25,14 +25,17 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "test_classes.h"
-#include <catch.hpp>
+#include "test/test_type.h"
 
+#include "test/test_classes.h"
+
+#include <catch.hpp>
 #include <rttr/type>
 
 #include <vector>
 #include <map>
 #include <string>
+#include <memory>
 
 using namespace rttr;
 
@@ -364,6 +367,26 @@ TEST_CASE("Test rttr::type - Check is_array", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Test rttr::type - Check is_wrapper", "[type]")
+{
+    CHECK(type::get<std::shared_ptr<int>>().is_wrapper()        == true);
+    CHECK(type::get<std::reference_wrapper<int>>().is_wrapper() == true);
+
+    std::shared_ptr<ClassSingle6A> sharedPtr = std::make_shared<ClassSingle6A>();
+    CHECK(type::get(sharedPtr).is_wrapper()         == true);
+
+    CHECK(type::get<int>().is_wrapper()             == false);
+    CHECK(type::get<float>().is_wrapper()           == false);
+    CHECK(type::get<int*>().is_wrapper()            == false);
+    CHECK(type::get<float*>().is_wrapper()          == false);
+    CHECK(type::get<double>().is_wrapper()          == false);
+    CHECK(type::get<char>().is_wrapper()            == false);
+    CHECK(type::get<bool>().is_wrapper()            == false);
+    CHECK(type::get<ClassSingle6A*>().is_wrapper()  == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test rttr::type - Check is_function_pointer", "[type]")
 {
     using MyClass = ClassSingleBase;
@@ -399,6 +422,36 @@ TEST_CASE("Test rttr::type - Check is_member_object_pointer", "[type]")
     CHECK(type::get<void(void)>().is_member_object_pointer()        == false);
     CHECK(type::get<void*(*)()>().is_member_object_pointer()        == false);
     CHECK(type::get<int(MyClass::*)()>().is_member_object_pointer() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - Check get_wrapped_type", "[type]")
+{
+    CHECK(type::get<std::shared_ptr<int>>().get_wrapped_type()          == type::get<int*>());
+    CHECK(type::get<std::reference_wrapper<int>>().get_wrapped_type()   == type::get<int>());
+
+    CHECK(type::get<std::shared_ptr<const int>>().get_wrapped_type()          == type::get<const int*>());
+    CHECK(type::get<std::reference_wrapper<const int>>().get_wrapped_type()   == type::get<int>());
+    
+    std::shared_ptr<ClassSingle6A> sharedPtr = std::make_shared<ClassSingle6A>();
+    CHECK(type::get(sharedPtr).get_wrapped_type()           == type::get<ClassSingle6A*>());
+
+    // negative test
+    CHECK(type::get<int>().get_wrapped_type().is_valid()    == false);
+    CHECK(type::get<float>().get_wrapped_type().is_valid()  == false);
+    CHECK(type::get<int*>().get_wrapped_type().is_valid()   == false);
+    CHECK(type::get<float*>().get_wrapped_type().is_valid() == false);
+    CHECK(type::get<ClassSingle6A>().get_wrapped_type().is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - Check custom wrapper type", "[type]")
+{
+    CHECK(type::get<custom_wrapper<int>>().get_wrapped_type()          == type::get<int>());
+
+    CHECK(type::get<custom_wrapper<const int>>().get_wrapped_type()    == type::get<int>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

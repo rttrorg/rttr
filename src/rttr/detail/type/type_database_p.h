@@ -72,6 +72,7 @@ class RTTR_LOCAL type_database
 
         uint16 register_type(const char* name, 
                              const type& raw_type,
+                             const type& wrapped_type,
                              const type& array_raw_type,
                              std::vector<base_class_info> base_classes, 
                              get_derived_func derived_func_ptr,
@@ -318,6 +319,7 @@ class RTTR_LOCAL type_database
         std::vector<rttr_cast_func>                                 m_conversion_list;      //!< This list contains for every type a conversion function to its base classes
 
         std::vector<type::type_id>                                  m_raw_type_list;
+        std::vector<type::type_id>                                  m_wrapped_type_list;
         std::vector<type::type_id>                                  m_array_raw_type_list;
         std::vector<variant_create_func>                            m_variant_create_func_list; //!< This list contains a function to create from an 'argument' a variant
 

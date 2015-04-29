@@ -74,6 +74,7 @@ RTTR_DECL_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
 RTTR_DECL_DB_TYPE(m_conversion_list, g_conversion_list)
 
 RTTR_DECL_DB_TYPE(m_raw_type_list, g_raw_type_list)
+RTTR_DECL_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
 RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
 RTTR_DECL_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
@@ -111,6 +112,7 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_conversion_list, g_conversion_list)
 
     RTTR_SET_DB_TYPE(m_raw_type_list, g_raw_type_list)
+    RTTR_SET_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
     RTTR_SET_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
     RTTR_SET_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
@@ -160,6 +162,16 @@ type type::get_raw_type() const
 {
     if (is_valid())
         return type((*g_raw_type_list)[m_id]);
+    else
+        return type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type type::get_wrapped_type() const
+{
+    if (is_valid())
+        return type((*g_wrapped_type_list)[m_id]);
     else
         return type();
 }
@@ -270,6 +282,14 @@ bool type::is_enumeration() const
 {
     return (*g_is_enum_list)[m_id];
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type::is_wrapper() const
+{
+    return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

@@ -321,6 +321,13 @@ void* variant::variant_container<void>::get_raw_ptr() const
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
+detail::data_address_container variant::variant_container<void>::get_data_address_container() const
+{
+    return detail::data_address_container{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr};
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 bool variant::variant_container<void>::is_array() const
 {
     return false;
@@ -401,6 +408,8 @@ variant::variant_container<std::string>::variant_container(const std::string& ar
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
 variant::variant_container<std::string>::variant_container(std::string&& arg)
 : m_value(std::move(arg))
 {
@@ -422,21 +431,31 @@ type variant::variant_container<std::string>::get_type() const
     
 void* variant::variant_container<std::string>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
+    return detail::as_void_ptr(std::addressof(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 type variant::variant_container<std::string>::get_raw_type() const
 {
-    return type::get<detail::raw_type<std::string>::type>();
+    return type::get<std::string>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void* variant::variant_container<std::string>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(m_value);
+    return detail::as_void_ptr(std::addressof(m_value));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+detail::data_address_container variant::variant_container<std::string>::get_data_address_container() const
+{
+    return detail::data_address_container{type::get<std::string>(), 
+                                          type::get<std::string>(),
+                                          detail::as_void_ptr(std::addressof(m_value)), 
+                                          detail::as_void_ptr(std::addressof(m_value))};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -544,21 +563,31 @@ type variant::variant_container<int>::get_type() const
     
 void* variant::variant_container<int>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
+    return detail::as_void_ptr(std::addressof(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 type variant::variant_container<int>::get_raw_type() const
 {
-    return type::get<detail::raw_type<int>::type>();
+    return type::get<int>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void* variant::variant_container<int>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(m_value);
+    return detail::as_void_ptr(std::addressof(m_value));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+detail::data_address_container variant::variant_container<int>::get_data_address_container() const
+{
+    return detail::data_address_container{type::get<int>(), 
+                                          type::get<int>(), 
+                                          detail::as_void_ptr(std::addressof(m_value)),
+                                          detail::as_void_ptr(std::addressof(m_value))};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -651,6 +680,8 @@ variant::variant_container<bool>::variant_container(const bool& arg)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
 variant::variant_container<bool>::variant_container(bool&& arg)
 : m_value(std::move(arg))
 {
@@ -672,21 +703,31 @@ type variant::variant_container<bool>::get_type() const
     
 void* variant::variant_container<bool>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
+    return detail::as_void_ptr(std::addressof(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 type variant::variant_container<bool>::get_raw_type() const
 {
-    return type::get<detail::raw_type<bool>::type>();
+    return type::get<bool>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void* variant::variant_container<bool>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(m_value);
+    return detail::as_void_ptr(std::addressof(m_value));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+detail::data_address_container variant::variant_container<bool>::get_data_address_container() const
+{
+    return detail::data_address_container{type::get<bool>(),
+                                          type::get<bool>(),
+                                          detail::as_void_ptr(std::addressof(m_value)),
+                                          detail::as_void_ptr(std::addressof(m_value))};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -782,10 +823,14 @@ variant::variant_container<float>::variant_container(const float& arg)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
 variant::variant_container<float>::variant_container(float&& arg)
 : m_value(std::move(arg))
 {
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
 
 variant::variant_container_base* variant::variant_container<float>::clone() const
 {
@@ -803,21 +848,31 @@ type variant::variant_container<float>::get_type() const
     
 void* variant::variant_container<float>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
+    return detail::as_void_ptr(std::addressof(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 type variant::variant_container<float>::get_raw_type() const
 {
-    return type::get<detail::raw_type<float>::type>();
+    return type::get<float>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void* variant::variant_container<float>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(m_value);
+    return detail::as_void_ptr(std::addressof(m_value));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+detail::data_address_container variant::variant_container<float>::get_data_address_container() const
+{
+    return detail::data_address_container{type::get<float>(),
+                                          type::get<float>(),
+                                          detail::as_void_ptr(std::addressof(m_value)),
+                                          detail::as_void_ptr(std::addressof(m_value))};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -913,6 +968,8 @@ variant::variant_container<double>::variant_container(const double& arg)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
 variant::variant_container<double>::variant_container(double&& arg)
 : m_value(std::move(arg))
 {
@@ -934,21 +991,31 @@ type variant::variant_container<double>::get_type() const
     
 void* variant::variant_container<double>::get_ptr() const
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(std::addressof(m_value)));
+    return detail::as_void_ptr(std::addressof(m_value));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 type variant::variant_container<double>::get_raw_type() const
 {
-    return type::get<detail::raw_type<double>::type>();
+    return type::get<double>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void* variant::variant_container<double>::get_raw_ptr() const
 {
-    return detail::get_void_ptr(m_value);
+    return detail::as_void_ptr(std::addressof(m_value));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+detail::data_address_container variant::variant_container<double>::get_data_address_container() const
+{
+    return detail::data_address_container{type::get<float>(),
+                                          type::get<float>(),
+                                          detail::as_void_ptr(std::addressof(m_value)),
+                                          detail::as_void_ptr(std::addressof(m_value))};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

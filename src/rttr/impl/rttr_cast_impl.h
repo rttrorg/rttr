@@ -40,8 +40,8 @@ RTTR_INLINE TargetType rttr_cast(SourceType object)
     static_assert(detail::pointer_count<TargetType>::value == 1, "Argument type must be a pointer");
     static_assert(rttr::detail::has_get_type_func<SourceType>::value, "Class has not type defined - please use the macro RTTR_ENABLE().");
 
-    typedef typename std::remove_pointer<TargetType>::type ReturnType;
-    typedef typename std::remove_pointer<SourceType>::type ArgType;
+    typedef typename detail::remove_pointer<TargetType>::type ReturnType;
+    typedef typename detail::remove_pointer<SourceType>::type ArgType;
     static_assert( (std::is_const<ArgType>::value && std::is_const<ReturnType>::value) ||
                    (!std::is_const<ArgType>::value && std::is_const<ReturnType>::value) ||
                    (!std::is_const<ArgType>::value && !std::is_const<ReturnType>::value), "Return type must have const qualifier");

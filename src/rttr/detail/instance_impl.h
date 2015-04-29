@@ -30,35 +30,34 @@
 
 #include "rttr/variant.h"
 #include "rttr/type.h"
+#include "rttr/wrapper_mapper.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-RTTR_INLINE instance::instance() : m_data(nullptr), m_type(get_invalid_type()) {}
+RTTR_INLINE instance::instance() : m_data_container(data_address_container{get_invalid_type(), get_invalid_type(), nullptr, nullptr}) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(variant& var)
-:   m_data(var.get_raw_ptr()),
-    m_type(var.get_raw_type())
+:   m_data_container(var.get_data_address_container())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(const instance& other)
-:   m_data(other.m_data),
-    m_type(other.m_type)
+:   m_data_container(other.m_data_container)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE instance::instance(instance&& other)
-:   m_data(other.m_data),
-    m_type(other.m_type)
+:   m_data_container(other.m_data_container)
 {
 }
 
@@ -66,8 +65,9 @@ RTTR_INLINE instance::instance(instance&& other)
 
 template<typename T>
 RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   m_data(detail::get_void_ptr(data)),
-    m_type(rttr::type::get<typename raw_type<T>::type>())
+:   m_data_container(data_address_container{
+                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_adress_return_type_t<T>>(),
+                     detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
 }
@@ -76,8 +76,9 @@ RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_s
 
 template<typename T>
 RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   m_data(detail::get_void_ptr(data)),
-    m_type(rttr::type::get<typename raw_type<T>::type>())
+:   m_data_container(data_address_container{
+                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_adress_return_type_t<T>>(),
+                     detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
 }
@@ -87,20 +88,25 @@ RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<in
 template<typename TargetType>
 RTTR_INLINE TargetType* instance::try_convert() const
 {
-    return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data, m_type, type::get<TargetType>())));
+    TargetType* target = static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type, type::get<TargetType>()));
+    
+    if (!target)
+        return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address_wrapped_type, m_data_container.m_wrapped_type, type::get<TargetType>())));
+    
+    return target;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool instance::is_valid() const { return (m_data != nullptr); }
+RTTR_INLINE bool instance::is_valid() const { return (m_data_container.m_data_address != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::operator bool() const { return (m_data != nullptr); }
+RTTR_INLINE instance::operator bool() const { return (m_data_container.m_data_address != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type instance::get_type() const { return m_type; }
+RTTR_INLINE type instance::get_type() const { return m_data_container.m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

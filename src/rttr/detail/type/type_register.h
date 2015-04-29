@@ -102,6 +102,7 @@ public:
      */
     static uint16 type_reg(const char* name, 
                            const type& raw_type,
+                           const type& wrapped_type,
                            const type& array_raw_type,
                            std::vector<base_class_info> base_classes, 
                            get_derived_func derived_func_ptr,

@@ -91,7 +91,7 @@ if (${CUSTOM_DOXYGEN_STYLE})
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/js/doxy-boot.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/img/favicon.ico DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
 endif()
-add_custom_target(Doc ALL 
+add_custom_target(doc ALL 
                   COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE}"
                   WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
                   COMMENT "Building documentation...")

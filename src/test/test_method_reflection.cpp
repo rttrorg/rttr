@@ -122,7 +122,7 @@ TEST_CASE("Test method", "[method]")
     method_test* null = nullptr; // workaround for catch compile error
     REQUIRE(inst.get_value<method_test*>() != null);
     method_test& obj = *inst.get_value<method_test*>();
-    
+
     ////////////////////////////////////////////////////////////
     // invoke tests
     variant ret = t_meth.get_method("method_1").invoke(inst);
@@ -382,6 +382,65 @@ TEST_CASE("method policies", "[method]")
     ret = meth_g_void.invoke(empty_instance());
     REQUIRE(ret.is_valid() == true);
     REQUIRE(ret.is_type<void>() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Invoke method via wrapper", "[method]") 
+{
+    SECTION("test method invoke via shared_ptr wrapper")
+    {
+        std::shared_ptr<method_test> obj = std::make_shared<method_test>();
+
+        type obj_t = type::get(obj);
+        REQUIRE(obj_t.is_wrapper() == true);
+
+        type wrapper_t = obj_t.get_wrapped_type();
+        REQUIRE(wrapper_t.is_wrapper() == false);
+        REQUIRE(wrapper_t == type::get<method_test*>());
+        method m1 = wrapper_t.get_method("method_1");
+
+        variant ret = m1.invoke(obj);
+        CHECK(obj->method_1_called == true);
+        CHECK(ret.is_valid() == true);
+        CHECK(ret.is_type<void>() == true);
+    }
+
+    SECTION("test method invoke via variant with shared_ptr wrapper")
+    {
+        variant var = std::make_shared<method_test>();
+        type obj_t = var.get_type();
+        REQUIRE(obj_t.is_wrapper() == true);
+
+        type wrapper_t = obj_t.get_wrapped_type();
+        REQUIRE(wrapper_t.is_wrapper() == false);
+        REQUIRE(wrapper_t == type::get<method_test*>());
+        method m1 = wrapper_t.get_method("method_1");
+
+        variant ret = m1.invoke(var);
+        CHECK(var.get_value<std::shared_ptr<method_test>>()->method_1_called == true);
+        CHECK(ret.is_valid() == true);
+        CHECK(ret.is_type<void>() == true);
+    }
+
+    SECTION("test method invoke via reference_wrapper")
+    {
+        method_test instance;
+        std::reference_wrapper<method_test> obj = std::ref(instance);
+
+        type obj_t = type::get(obj);
+        REQUIRE(obj_t.is_wrapper() == true);
+
+        type wrapper_t = obj_t.get_wrapped_type();
+        CHECK(wrapper_t.is_wrapper() == false);
+        CHECK(wrapper_t == type::get<method_test>());
+
+        method m1 = wrapper_t.get_method("method_1");
+        variant ret = m1.invoke(obj);
+        CHECK(obj.get().method_1_called == true);
+        CHECK(ret.is_valid() == true);
+        CHECK(ret.is_type<void>() == true);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -40,15 +40,19 @@ set(HEADER_FILES constructor.h
                  type.h
                  variant.h
                  variant_array.h
+                 wrapper_mapper.h
                  base/core_prerequisites.h
                  base/version.h.in
                  detail/argument.h
                  detail/argument_impl.h
+                 detail/data_address_container.h
                  detail/instance.h
                  detail/instance_impl.h
                  detail/std_conversion_functions.h
                  detail/array/array_accessor.h
+                 detail/array/array_accessor_impl.h
                  detail/array/array_container.h
+                 detail/array/array_container_impl.h
                  detail/array/array_container_base.h
                  detail/array/array_mapper.h
                  detail/constructor/constructor_container.h
@@ -63,6 +67,7 @@ set(HEADER_FILES constructor.h
                  detail/method/method_container_base.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/property/property_accessor.h
                  detail/property/property_container.h
@@ -84,6 +89,7 @@ set(HEADER_FILES constructor.h
                  impl/variant_array_impl.h
                  impl/variant_default_types_impl.h
                  impl/variant_impl.h
+                 impl/wrapper_mapper_impl.h
                 )
                 
 set(SOURCE_FILES constructor.cpp

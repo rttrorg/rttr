@@ -25,38 +25,33 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TEST_TYPE_H_
-#define RTTR_TEST_TYPE_H_
+#ifndef RTTR_DATA_ADDRESS_CONTAINER_H_
+#define RTTR_DATA_ADDRESS_CONTAINER_H_
 
-#include <rttr/type>
+#include "rttr/base/core_prerequisites.h"
 
-template<typename T>
-struct custom_wrapper
-{
-    public:
-        custom_wrapper(T& obj) : m_value(std::addressof(obj)) {}
-        T& get_data() const { return *m_value; }
-    private:
-        T* m_value;
-};
+#include <memory>
 
 namespace rttr
 {
-template<typename T>
-struct wrapper_mapper<custom_wrapper<T>>
+
+class type;
+
+namespace detail
 {
-    typedef decltype(std::declval<custom_wrapper<T>>().get_data()) wrapped_type;
-    typedef custom_wrapper<T> type;
-    inline static wrapped_type get(const type& obj)
-    {
-       return obj.get_data();
-    }
-    inline static type create(const wrapped_type& value)
-    {
-       return custom_wrapper<T>(value);
-    }
+/*!
+ * This class bundles all the data necessary to forward
+ * data to ctors, dtors, properties or methods.
+ */
+struct data_address_container
+{
+    type    m_type;
+    type    m_wrapped_type;
+    void*   m_data_address;
+    void*   m_data_address_wrapped_type;
 };
 
-}
+} // end namespace detail
+} // end namespace rttr
 
-#endif // RTTR_TEST_TYPE_H_
+#endif // RTTR_WRAPPER_MAPPER_H_

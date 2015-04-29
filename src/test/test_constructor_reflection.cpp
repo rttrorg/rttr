@@ -65,7 +65,6 @@ RTTR_REGISTER
 TEST_CASE("Test constructor/destructor", "[constructor]") 
 {
     type p_type = type::get<constructor_test>();
-
     REQUIRE(p_type.is_valid() == true);
         
     SECTION("Test default ctor")

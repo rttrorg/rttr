@@ -39,14 +39,17 @@ namespace rttr
 {
 namespace detail
 {
+
+struct invalid_array_type {};
 //////////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief
  */
 template <typename T>
 struct array_mapper
 {
-    using no_array_type = int;
+    using no_array_type = invalid_array_type;
     using raw_type = T;
     using sub_type = T;
 };
