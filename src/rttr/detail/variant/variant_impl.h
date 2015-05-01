@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef RTTR_VARIANT_IMPL_H_
+#define RTTR_VARIANT_IMPL_H_
+
 #include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
@@ -498,3 +501,5 @@ double variant::variant_container<T>::to_double(bool* ok) const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace rttr
+
+#endif // RTTR_VARIANT_IMPL_H_

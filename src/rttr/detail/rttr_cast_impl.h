@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef RTTR_CAST_IMPL_H_
+#define RTTR_CAST_IMPL_H_
+
 #include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 
@@ -50,3 +53,5 @@ RTTR_INLINE TargetType rttr_cast(SourceType object)
 }
 
 }
+
+#endif // RTTR_CAST_IMPL_H_

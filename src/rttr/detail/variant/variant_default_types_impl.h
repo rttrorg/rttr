@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef RTTR_VARIANT_DEFAULT_TYPES_IMPL_H_
+#define RTTR_VARIANT_DEFAULT_TYPES_IMPL_H_
+
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_converter.h"
@@ -273,3 +276,5 @@ class RTTR_API variant::variant_container<double> : public variant_container_bas
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace rttr
+
+#endif // RTTR_VARIANT_DEFAULT_TYPES_IMPL_H_

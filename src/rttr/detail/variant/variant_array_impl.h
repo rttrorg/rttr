@@ -25,6 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#ifndef RTTR_VARIANT_ARRAY_IMPL_H_
+#define RTTR_VARIANT_ARRAY_IMPL_H_
+
 #include "rttr/variant.h"
 #include "rttr/detail/array/array_container.h"
 #include "rttr/detail/argument.h"
@@ -129,3 +132,5 @@ RTTR_INLINE variant_array& variant_array::operator=(variant_array&& other)
 /////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace rttr
+
+#endif // RTTR_VARIANT_ARRAY_IMPL_H_

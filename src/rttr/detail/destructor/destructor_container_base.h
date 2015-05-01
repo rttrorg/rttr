@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_DESTRUCTORCONTAINERBASE_H_
-#define RTTR_DESTRUCTORCONTAINERBASE_H_
+#ifndef RTTR_DESTRUCTOR_CONTAINERBASE_H_
+#define RTTR_DESTRUCTOR_CONTAINERBASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/type.h"
@@ -58,4 +58,4 @@ class RTTR_API destructor_container_base
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_DESTRUCTORCONTAINERBASE_H_
+#endif // RTTR_DESTRUCTOR_CONTAINERBASE_H_
