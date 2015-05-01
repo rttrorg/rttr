@@ -91,11 +91,10 @@ RTTR_REGISTER
     type::register_converter_func(convert_to_vector);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("variant test - BasicTests", "[variant]")
 {
-    using namespace rttr;
-
     SECTION("simple basic check")
     {
         variant var = string("hello world");
@@ -130,119 +129,156 @@ TEST_CASE("variant test - BasicTests", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant move test", "[variant]")
+{
+    SECTION("simple move")
+    {
+        string text("hello world");
+
+        variant var = std::move(text);
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<string>() == true);
+        CHECK(text.empty() == true);
+    }
+
+    SECTION("rvalue move")
+    {
+        variant var = std::vector<int>(50, 0);
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<std::vector<int>>() == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant conversion - to bool", "[variant]")
 {
     SECTION("bool to bool")
     {
         variant var = true;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
+        REQUIRE(var.can_convert<bool>() == true);
 
-        REQUIRE(var.convert<bool>() == true);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == true);
+        CHECK(var.to_bool() == true);
+
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
 
         var = false;
-        REQUIRE(var.to_bool() == false);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == false);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
     }
 
     SECTION("char to bool")
     {
         variant var = "true";
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
-        REQUIRE(var.convert<bool>() == true);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == true);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
 
         var = "fdsfsdf";
-        REQUIRE(var.to_bool() == true);
-        REQUIRE(var.convert<bool>() == true);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == true);
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
     
         var = "false";
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = "false   ";
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = "   false   ";
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = "   FALSE   ";
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = " \n  FALSE\n";
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
 
-        REQUIRE(var.convert<bool>() == false);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
     }
 
     SECTION("std::string to bool")
     {
         variant var = std::string("true");
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
 
         var = std::string("fdsfsdf");
-        REQUIRE(var.to_bool() == true);
+        CHECK(var.to_bool() == true);
     
         var = std::string("false");
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = std::string("false   ");
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = std::string("   false   ");
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = std::string("   FALSE   ");
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
         var = std::string(" \n  FALSE\n");
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
     }
     
     SECTION("int to bool")
     {
         variant var = 1;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
-        REQUIRE(var.convert<bool>() == true);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == true);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
 
         var = 0;
-        REQUIRE(var.to_bool() == false);
-        REQUIRE(var.convert<bool>() == false);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == false);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
     }
 
     SECTION("float to bool")
     {
         variant var = 1.0f;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
-        REQUIRE(var.convert<bool>() == true);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == true);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
 
         var = 0.0f;
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
 
         var = 1.0f / 10000000.0f;
-        REQUIRE(var.to_bool() == false);
-        REQUIRE(var.convert<bool>() == false);
-        REQUIRE(var.convert(type::get<bool>()) == true);
-        REQUIRE(var.get_value<bool>() == false);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
     }
 
     SECTION("double to bool")
     {
         variant var = 1.0;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_bool() == true);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
 
         var = 0.0;
-        REQUIRE(var.to_bool() == false);
+        CHECK(var.to_bool() == false);
+
+        var = 0.5;
+        CHECK(var.to_bool() == true);
     }
 }
 
@@ -254,100 +290,113 @@ TEST_CASE("variant conversion - to int", "[variant]")
     {
         variant var = 12;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 12);
-        REQUIRE(var.convert<int>() == 12);
-        REQUIRE(var.convert(type::get<int>()) == true);
-        REQUIRE(var.get_value<int>() == 12);
+        REQUIRE(var.can_convert<int>() == true);
+
+        CHECK(var.to_int() == 12);
+        CHECK(var.convert<int>() == 12);
+        CHECK(var.convert(type::get<int>()) == true);
+        CHECK(var.get_value<int>() == 12);
 
         var = -23;
-        REQUIRE(var.to_int() == -23);
-        REQUIRE(var.convert<int>() == -23);
-        REQUIRE(var.convert(type::get<int>()) == true);
-        REQUIRE(var.get_value<int>() == -23);
+        CHECK(var.to_int() == -23);
+        CHECK(var.convert<int>() == -23);
+        CHECK(var.convert(type::get<int>()) == true);
+        CHECK(var.get_value<int>() == -23);
     }
 
     SECTION("char to int")
     {
         variant var = "23";
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 23);
-        REQUIRE(var.convert<int>() == 23);
-        REQUIRE(var.convert(type::get<int>()) == true);
-        REQUIRE(var.get_value<int>() == 23);
+        REQUIRE(var.can_convert<int>() == true);
+        CHECK(var.can_convert(type::get<int>()) == true);
+
+        CHECK(var.to_int() == 23);
+        CHECK(var.convert<int>() == 23);
+        CHECK(var.convert(type::get<int>()) == true);
+        CHECK(var.get_value<int>() == 23);
 
         var = "-12";
-        REQUIRE(var.to_int() == -12);
+        CHECK(var.to_int() == -12);
     
         var = "text 34 and text";
         bool ok = false;
-        REQUIRE(var.to_int(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_int(&ok) == 0);
+        CHECK(ok == false);
 
         var = "34 and text";
         ok = false;
-        REQUIRE(var.to_int(&ok) == 0);
-        REQUIRE(ok == false);
-        REQUIRE(var.convert<int>() == 0);
-        REQUIRE(var.convert(type::get<int>()) == false);
+        CHECK(var.to_int(&ok) == 0);
+        CHECK(ok == false);
+        CHECK(var.convert<int>() == 0);
+        CHECK(var.convert(type::get<int>()) == false);
     }
 
     SECTION("std::string to int")
     {
         variant var = std::string("23");
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 23);
-        REQUIRE(var.convert<int>() == 23);
-        REQUIRE(var.convert(type::get<int>()) == true);
-        REQUIRE(var.get_value<int>() == 23);
+        REQUIRE(var.can_convert<int>() == true);
+
+        CHECK(var.to_int() == 23);
+        CHECK(var.convert<int>() == 23);
+        CHECK(var.convert(type::get<int>()) == true);
+        CHECK(var.get_value<int>() == 23);
 
         var = std::string("-12");
-        REQUIRE(var.to_int() == -12);
+        CHECK(var.to_int() == -12);
     
         var = std::string("text 34 and text");
         bool ok = false;
-        REQUIRE(var.to_int(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_int(&ok) == 0);
+        CHECK(ok == false);
 
         var = std::string("34 and text");
         ok = false;
-        REQUIRE(var.to_int(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_int(&ok) == 0);
+        CHECK(ok == false);
     }
     
     SECTION("bool to int")
     {
         variant var = true;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 1);
+        REQUIRE(var.can_convert<int>() == true);
+
+        CHECK(var.to_int() == 1);
 
         var = false;
-        REQUIRE(var.to_int() == 0);
+        CHECK(var.to_int() == 0);
     }
 
     SECTION("float to int")
     {
         variant var = 1.5f;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 1);
+        REQUIRE(var.can_convert<int>() == true);
+
+        CHECK(var.to_int() == 1);
 
         var = 3.1423f;
-        REQUIRE(var.to_int() == 3);
+        CHECK(var.to_int() == 3);
 
         var = 0.0f;
-        REQUIRE(var.to_int() == 0);
+        CHECK(var.to_int() == 0);
     }
 
     SECTION("double to int")
     {
         variant var = 1.5;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_int() == 1);
+        REQUIRE(var.can_convert<int>() == true);
+
+        CHECK(var.to_int() == 1);
 
         var = 3.1423f;
-        REQUIRE(var.to_int() == 3);
+        CHECK(var.to_int() == 3);
 
         var = 0.0;
-        REQUIRE(var.to_int() == 0);
+        CHECK(var.to_int() == 0);
     }
 }
 
@@ -359,69 +408,81 @@ TEST_CASE("variant conversion - to std::string", "[variant]")
     {
         variant var = 12;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "12");
-        REQUIRE(var.convert<std::string>() == "12");
-        REQUIRE(var.convert(type::get<std::string>()) == true);
-        REQUIRE(var.get_value<std::string>() == "12");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "12");
+        CHECK(var.convert<std::string>() == "12");
+        CHECK(var.convert(type::get<std::string>()) == true);
+        CHECK(var.get_value<std::string>() == "12");
 
         var = -23;
-        REQUIRE(var.to_string() == "-23");
+        CHECK(var.to_string() == "-23");
     }
 
     SECTION("char to std::string")
     {
         variant var = "text";
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "text");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "text");
 
         var = "text 42";
-        REQUIRE(var.to_string() == "text 42");
+        CHECK(var.to_string() == "text 42");
     }
 
     SECTION("std::string to std::string")
     {
         variant var = std::string("23");
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "23");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "23");
 
         var = std::string("-12");
-        REQUIRE(var.to_string() == "-12");
+        CHECK(var.to_string() == "-12");
     }
     
     SECTION("bool to std::string")
     {
         variant var = true;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "true");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "true");
 
         var = false;
-        REQUIRE(var.to_string() == "false");
+        CHECK(var.to_string() == "false");
     }
 
     SECTION("float to std::string")
     {
         variant var = 1.567f;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "1.567");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "1.567");
 
         var = 3.12345678f;
-        REQUIRE(var.to_string() == "3.12346");
+        CHECK(var.to_string() == "3.12346");
 
         var = 0.0f;
-        REQUIRE(var.to_string() == "0");
+        CHECK(var.to_string() == "0");
     }
 
     SECTION("double to std::string")
     {
         variant var = 1.567;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_string() == "1.567");
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "1.567");
 
         var = 3.12345678;
-        REQUIRE(var.to_string() == "3.12345678");
+        CHECK(var.to_string() == "3.12345678");
 
         var = 0.0;
-        REQUIRE(var.to_string() == "0");
+        CHECK(var.to_string() == "0");
     }
 }
 
@@ -433,38 +494,42 @@ TEST_CASE("variant conversion - to float", "[variant]")
     {
         variant var = 12;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_float() == 12.0f);
-        REQUIRE(var.convert<float>() == 12.0f);
-        REQUIRE(var.convert(type::get<float>()) == true);
-        REQUIRE(var.get_value<float>() == 12.0f);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(var.to_float() == 12.0f);
+        CHECK(var.convert<float>() == 12.0f);
+        CHECK(var.convert(type::get<float>()) == true);
+        CHECK(var.get_value<float>() == 12.0f);
 
         var = -23;
-        REQUIRE(var.to_float() == -23.0f);
+        CHECK(var.to_float() == -23.0f);
     }
 
     SECTION("char to float")
     {
         variant var = "23.0";
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_float() == 23.0f);
-        REQUIRE(var.convert<float>() == 23.0f);
-        REQUIRE(var.convert(type::get<float>()) == true);
-        REQUIRE(var.get_value<float>() == 23.0f);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(var.to_float() == 23.0f);
+        CHECK(var.convert<float>() == 23.0f);
+        CHECK(var.convert(type::get<float>()) == true);
+        CHECK(var.get_value<float>() == 23.0f);
 
         var = "text 42";
         bool ok = false;
-        REQUIRE(var.to_float(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_float(&ok) == 0);
+        CHECK(ok == false);
 
         var = "1.23456";
         ok = false;
-        REQUIRE(var.to_float(&ok) == 1.23456f);
-        REQUIRE(ok == true);
+        CHECK(var.to_float(&ok) == 1.23456f);
+        CHECK(ok == true);
 
         var = "1.23456 Text";
         ok = false;
-        REQUIRE(var.to_float(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_float(&ok) == 0);
+        CHECK(ok == false);
 
     }
 
@@ -472,58 +537,66 @@ TEST_CASE("variant conversion - to float", "[variant]")
     {
         variant var = std::string("23.0");
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_float() == 23.0f);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(var.to_float() == 23.0f);
 
         var = std::string("text 42");
         bool ok = false;
-        REQUIRE(var.to_float(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_float(&ok) == 0);
+        CHECK(ok == false);
 
         var = std::string("1.23456");
         ok = false;
-        REQUIRE(var.to_float(&ok) == 1.23456f);
-        REQUIRE(ok == true);
+        CHECK(var.to_float(&ok) == 1.23456f);
+        CHECK(ok == true);
 
         var = std::string("1.23456 Text");
         ok = false;
-        REQUIRE(var.to_float(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_float(&ok) == 0);
+        CHECK(ok == false);
     }
     
     SECTION("bool to float")
     {
         variant var = true;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_float() == 1.0f);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(var.to_float() == 1.0f);
 
         var = false;
-        REQUIRE(var.to_float() == 0.0f);
+        CHECK(var.to_float() == 0.0f);
     }
 
     SECTION("float to float")
     {
         variant var = 1.567f;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(almost_equal(var.to_float(), 1.567f) == true);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(almost_equal(var.to_float(), 1.567f) == true);
 
         var = 3.12345678f;
-        REQUIRE(almost_equal(var.to_float(), 3.1234567f) == true);
+        CHECK(almost_equal(var.to_float(), 3.1234567f) == true);
 
         var = 0.0f;
-        REQUIRE(almost_equal(var.to_float(), 0.0f) == true);
+        CHECK(almost_equal(var.to_float(), 0.0f) == true);
     }
 
     SECTION("double to float")
     {
         variant var = 1.567;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(almost_equal(var.to_float(), 1.567f) == true);
+        REQUIRE(var.can_convert<float>() == true);
+
+        CHECK(almost_equal(var.to_float(), 1.567f) == true);
 
         var = 3.12345678;
-        REQUIRE(almost_equal(var.to_float(), 3.1234567f) == true);
+        CHECK(almost_equal(var.to_float(), 3.1234567f) == true);
 
         var = 0.0;
-        REQUIRE(almost_equal(var.to_float(), 0.0f) == true);
+        CHECK(almost_equal(var.to_float(), 0.0f) == true);
     }
 }
 
@@ -535,93 +608,105 @@ TEST_CASE("variant conversion - to double", "[variant]")
     {
         variant var = 12;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_double() == 12.0);
-        REQUIRE(var.convert<double>() == 12.0);
-        REQUIRE(var.convert(type::get<double>()) == true);
-        REQUIRE(var.get_value<double>() == 12.0);
+        REQUIRE(var.can_convert<double>() == true);
+
+        CHECK(var.to_double() == 12.0);
+        CHECK(var.convert<double>() == 12.0);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 12.0);
 
         var = -23;
-        REQUIRE(var.to_double() == -23.0);
+        CHECK(var.to_double() == -23.0);
     }
 
     SECTION("char to double")
     {
         variant var = "23.0";
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_double() == 23.0);
+        REQUIRE(var.can_convert<double>() == true);
+
+        CHECK(var.to_double() == 23.0);
 
         var = "text 42";
         bool ok = false;
-        REQUIRE(var.to_double(&ok) == 0);
-        REQUIRE(ok == false);
+        CHECK(var.to_double(&ok) == 0);
+        CHECK(ok == false);
 
         var = "1.23456";
         ok = false;
-        REQUIRE(var.to_double(&ok) == 1.23456);
-        REQUIRE(ok == true);
+        CHECK(var.to_double(&ok) == 1.23456);
+        CHECK(ok == true);
 
         var = "1.23456 Text";
         ok = false;
-        REQUIRE(var.to_double(&ok) == 0.0);
-        REQUIRE(ok == false);
+        CHECK(var.to_double(&ok) == 0.0);
+        CHECK(ok == false);
     }
 
     SECTION("std::string to double")
     {
         variant var = std::string("23.0");
         REQUIRE(var.is_valid() == true);
+        REQUIRE(var.can_convert<double>() == true);
+
         REQUIRE(var.to_double() == 23.0);
 
         var = std::string("text 42");
         bool ok = false;
-        REQUIRE(var.to_double(&ok) == 0.0);
-        REQUIRE(ok == false);
+        CHECK(var.to_double(&ok) == 0.0);
+        CHECK(ok == false);
 
         var = std::string("1.23456");
         ok = false;
-        REQUIRE(var.to_double(&ok) == 1.23456);
-        REQUIRE(ok == true);
+        CHECK(var.to_double(&ok) == 1.23456);
+        CHECK(ok == true);
 
         var = std::string("1.23456 Text");
         ok = false;
-        REQUIRE(var.to_double(&ok) == 0.0);
-        REQUIRE(ok == false);
+        CHECK(var.to_double(&ok) == 0.0);
+        CHECK(ok == false);
     }
     
     SECTION("bool to double")
     {
         variant var = true;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(var.to_double() == 1.0);
+        REQUIRE(var.can_convert<double>() == true);
+
+        CHECK(var.to_double() == 1.0);
 
         var = false;
-        REQUIRE(var.to_double() == 0.0);
+        CHECK(var.to_double() == 0.0);
     }
 
     SECTION("float to double")
     {
         variant var = 1.567f;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(almost_equal(var.to_double(), 1.5670000314712524) == true);
+        REQUIRE(var.can_convert<double>() == true);
+
+        CHECK(almost_equal(var.to_double(), 1.5670000314712524) == true);
 
         var = 3.123456f;
-        REQUIRE(almost_equal(var.to_double(), 3.1234560012817383) == true);
+        CHECK(almost_equal(var.to_double(), 3.1234560012817383) == true);
 
         var = 0.0f;
-        REQUIRE(almost_equal(var.to_double(), 0.0) == true);
+        CHECK(almost_equal(var.to_double(), 0.0) == true);
     }
 
     SECTION("double to double")
     {
         variant var = 1.567;
         REQUIRE(var.is_valid() == true);
-        REQUIRE(almost_equal(var.to_double(), 1.567) == true);
+        REQUIRE(var.can_convert<double>() == true);
+
+        CHECK(almost_equal(var.to_double(), 1.567) == true);
 
         var = 3.12345678;
-        REQUIRE(almost_equal(var.to_double(), 3.12345678) == true);
+        CHECK(almost_equal(var.to_double(), 3.12345678) == true);
 
         var = 0.0;
-        REQUIRE(almost_equal(var.to_double(), 0.0) == true);
+        CHECK(almost_equal(var.to_double(), 0.0) == true);
     }
 }
 
@@ -638,15 +723,15 @@ TEST_CASE("variant test - convert custom types", "[variant]")
     REQUIRE(var.can_convert<std::string>() == true);
     REQUIRE(var.can_convert<vector2d>() == true);
 
-    REQUIRE(var.convert(type::get<std::string>())   == true);
+    CHECK(var.convert(type::get<std::string>())   == true);
     REQUIRE(var.is_type<std::string>()              == true);
-    REQUIRE(var.get_value<std::string>()            == "12, 34");
+    CHECK(var.get_value<std::string>()            == "12, 34");
 
     // convert to other custom type
     var = point(12, 34);
     bool ret = var.convert(type::get<vector2d>());
-    REQUIRE(ret == true);
-    REQUIRE(var.is_type<vector2d>() == true);
+    CHECK(ret == true);
+    CHECK(var.is_type<vector2d>() == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -663,15 +748,16 @@ TEST_CASE("variant test - convert internal", "[variant]")
     var = b;
     REQUIRE(var.can_convert(type::get<derived>())   == false);
     REQUIRE(var.can_convert(type::get<derived*>())  == true);
+    REQUIRE(var.can_convert(type::get<derived**>()) == false);
     
     bool could_convert = var.convert(type::get<derived**>());
-    REQUIRE(could_convert == false);
+    CHECK(could_convert == false);
 
     could_convert = var.convert(type::get<derived*>());
-    REQUIRE(could_convert == true);
-    REQUIRE(var.is_type<derived*>() == true);
-    REQUIRE(var.get_value<derived*>() == d);
-    REQUIRE(var.convert<base*>() == b);
+    CHECK(could_convert == true);
+    CHECK(var.is_type<derived*>() == true);
+    CHECK(var.get_value<derived*>() == d);
+    CHECK(var.convert<base*>() == b);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -792,6 +878,21 @@ TEST_CASE("variant test - array", "[variant]")
 
         var_arr.insert_value(25, true);
         REQUIRE(orig_vec[25] == true);
+
+        // check copied array
+        var =  std::vector<bool>({true, false, false});
+        var_arr = var.to_array();
+        REQUIRE(var_arr.get_size() == 3);
+
+        var_arr.set_value(0, false);
+        CHECK(var_arr.get_value(0).get_value<bool>() == false);
+        CHECK(var_arr.get_value(1).get_value<bool>() == false);
+        CHECK(var_arr.get_value(2).get_value<bool>() == false);
+
+        var_arr.set_value(1, true);
+        var_arr.set_value(2, true);
+        CHECK(var_arr.get_value(1).get_value<bool>() == true);
+        CHECK(var_arr.get_value(2).get_value<bool>() == true);
     }
 
     SECTION("check array with wrapper type")

@@ -99,6 +99,9 @@ namespace detail
     template<typename T, std::size_t N>
     struct raw_array_type<T[N]> { typedef typename raw_array_type<T>::type type; };
 
+    template<typename T>
+    using raw_array_type_t = typename raw_array_type<T>::type;
+
     /////////////////////////////////////////////////////////////////////////////////////////
 
     template <bool... b> struct static_all_of;
@@ -411,32 +414,11 @@ namespace detail
     //      is_char_array<int[10]>::value => false
     //      is_char_array<char>::value => false
     template<typename T>
-    struct char_array_impl : std::false_type
-    {
-    };
-
-
-    template<std::size_t N>
-    struct char_array_impl<char[N]> : std::true_type
-    {
-    };
-
-    template<typename T>
-    using is_char_array = char_array_impl<T>;
-
-    template<typename T>
-    struct is_one_dim_char_array : std::integral_constant<bool, is_char_array<T>::value && (std::rank<T>::value == 1)>
-    {};
-
-    template<typename T>
-    struct is_array_and_not_one_dim_char_array : std::integral_constant<bool, std::is_array<T>::value && !is_one_dim_char_array<T>::value>
-    {
-        
-    };
+    using is_one_dim_char_array = std::integral_constant<bool, std::is_array<T>::value && 
+                                                               std::is_same<char, raw_array_type_t<T>>::value &&
+                                                               (std::rank<T>::value == 1)>;
 
     /////////////////////////////////////////////////////////////////////////////////////
-
-   
    
 } // end namespace detail
 

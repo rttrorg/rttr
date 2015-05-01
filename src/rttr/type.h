@@ -734,6 +734,15 @@ class RTTR_API type
         std::size_t get_pointer_dimension() const;
 
         /*!
+         * \brief Returns the raw type of an array
+         *        E.g.  for type `int[100]` it will return the type object of `int`;
+         *              `const int[10][25]` will return also `int`; etc...
+         *
+         * \return The raw array type.
+         */
+        type get_raw_array_type() const;
+
+        /*!
          * \brief Returns the compiler depended name of the type.
          *
          * \return The full type name.

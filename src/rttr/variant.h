@@ -270,7 +270,7 @@ class RTTR_API variant
          * \return A reference to the stored value.
          */
         template<typename T>
-        T& get_value() const;
+        T& get_value();
 
 
         /*!
@@ -384,7 +384,33 @@ class RTTR_API variant
 
     private:
         template<typename T, typename SourceType>
-        static T get_value_with_default_value(const SourceType& source, T default_value, bool* ok);
+        static typename std::enable_if<!detail::is_one_dim_char_array<SourceType>::value, T>::type 
+        get_value_with_default_value(const SourceType& source, T default_value, bool* ok);
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        template<typename SourceType>
+        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, bool>::type 
+        get_value_with_default_value(const SourceType& source, bool default_value, bool* ok);
+
+        template<typename SourceType>
+        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, int>::type 
+        get_value_with_default_value(const SourceType& source, int default_value, bool* ok);
+
+        template<typename SourceType>
+        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, std::string>::type 
+        get_value_with_default_value(const SourceType& source, std::string default_value, bool* ok);
+
+        template<typename SourceType>
+        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, float>::type 
+        get_value_with_default_value(const SourceType& source, float default_value, bool* ok);
+
+        template<typename SourceType>
+        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, double>::type 
+        get_value_with_default_value(const SourceType& source, double default_value, bool* ok);
+
+        /////////////////////////////////////////////////////////////////////////////////
+
 
         /*!
          * \brief Returns a pointer to the underlying data
@@ -456,11 +482,15 @@ class RTTR_API variant
 
         };
 
-        template<typename T, typename Enable = void>
+        template<typename T>
         class variant_container : public variant_container_base
         {
             public:
-                variant_container(const T& arg);
+                template<typename U = T>
+                variant_container(const T& arg, typename std::enable_if<!std::is_array<U>::value>::type* = nullptr);
+
+                template<typename U = T>
+                variant_container(const T& arg, typename std::enable_if<std::is_array<U>::value>::type* = nullptr);
 
                 variant_container(T&& arg);
 
@@ -489,78 +519,6 @@ class RTTR_API variant
                 double to_double(bool* ok) const;
 
                 T m_value; // the stored data
-
-            private: // unimplemented
-                variant_container & operator=(const variant_container &);
-        };
-
-        template<typename T>
-        class variant_container<T, typename std::enable_if<detail::is_array_and_not_one_dim_char_array<T>::value>::type> : public variant_container_base
-        {
-            public:
-                variant_container(const T& arg);
-
-                variant_container_base* clone() const;
-
-                type get_type() const;
-
-                void* get_ptr() const;
-
-                type get_raw_type() const;
-                
-                void* get_raw_ptr() const;
-
-                detail::data_address_container get_data_address_container() const;
-
-                bool can_convert(const type& target_type) const;
-
-                bool is_array() const;
-
-                detail::array_container_base* to_array() const;
-
-                std::string to_string(bool* ok) const;
-                int to_int(bool* ok) const;
-                bool to_bool(bool* ok) const;
-                float to_float(bool* ok) const;
-                double to_double(bool* ok) const;
-
-                T m_value; // the stored data
-
-            private: // unimplemented
-                variant_container & operator=(const variant_container &);
-        };
-
-        template<std::size_t N>
-        class variant_container<char[N]> : public variant_container_base
-        {
-            public:
-                variant_container(const char (&arg)[N]);
-
-                variant_container_base* clone() const;
-
-                type get_type() const;
-
-                void* get_ptr() const;
-
-                type get_raw_type() const;
-                
-                void* get_raw_ptr() const;
-
-                detail::data_address_container get_data_address_container() const;
-                
-                bool can_convert(const type& target_type) const;
-
-                bool is_array() const;
-
-                detail::array_container_base* to_array() const;
-
-                std::string to_string(bool* ok) const;
-                int to_int(bool* ok) const;
-                bool to_bool(bool* ok) const;
-                float to_float(bool* ok) const;
-                double to_double(bool* ok) const;
-
-                char m_value[N]; // the stored data
 
             private: // unimplemented
                 variant_container & operator=(const variant_container &);
