@@ -37,4 +37,4 @@
 #include "property.h"
 #include "enumeration.h"
 
-#endif //RTTR_TYPE_HEADERS_H_
+#endif // RTTR_TYPE_HEADERS_H_

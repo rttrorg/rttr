@@ -28,7 +28,7 @@
 #ifndef RTTR_DATA_ADDRESS_CONTAINER_H_
 #define RTTR_DATA_ADDRESS_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <memory>
 

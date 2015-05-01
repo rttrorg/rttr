@@ -28,7 +28,7 @@
 #ifndef RTTR_ENUMERATION_CONTAINER_H_
 #define RTTR_ENUMERATION_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/enumeration/enumeration_container_base.h"
 #include "rttr/detail/argument.h"
 #include "rttr/variant.h"

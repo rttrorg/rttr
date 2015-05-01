@@ -28,7 +28,7 @@
 #ifndef RTTR_ARRAY_CONTAINER_IMPL_H_
 #define RTTR_ARRAY_CONTAINER_IMPL_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/array/array_container_base.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/array/array_accessor.h"

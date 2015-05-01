@@ -28,7 +28,7 @@
 #ifndef RTTR_MISC_TYPE_TRAITS_H_
 #define RTTR_MISC_TYPE_TRAITS_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/array/array_mapper.h"

@@ -25,13 +25,24 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef __RTTR_VERSION_H__
-#define __RTTR_VERSION_H__
+#ifndef RTTR_PCH_H_
+#define RTTR_PCH_H_
 
-#define RTTR_VERSION_MAJOR @RTTR_VERSION_MAJOR@
-#define RTTR_VERSION_MINOR @RTTR_VERSION_MINOR@
-#define RTTR_VERSION_PATCH @RTTR_VERSION_PATCH@
-#define RTTR_VERSION       @RTTR_VERSION_CALC@
-#define RTTR_VERSION_STR   "@RTTR_VERSION_STR@"
+// std stuff
+#include <map>
+#include <string>
+#include <vector>
+#include <set>
+#include <list>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+#include <tuple>
+#include <algorithm>
+#include <cassert>
+#include <memory>
+#include <type_traits>
 
-#endif // __RTTR_VERSION_H__
+#endif // RTTR_PCH_H_

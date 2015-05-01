@@ -28,7 +28,7 @@
 #ifndef RTTR_METHOD_CONTAINER_H_
 #define RTTR_METHOD_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/method/method_container_base.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/argument.h"

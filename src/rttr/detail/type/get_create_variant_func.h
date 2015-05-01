@@ -28,7 +28,7 @@
 #ifndef RTTR_GET_CREATE_VARIANT_FUNC_H_
 #define RTTR_GET_CREATE_VARIANT_FUNC_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/variant.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/argument.h"

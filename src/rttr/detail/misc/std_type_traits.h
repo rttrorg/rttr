@@ -28,7 +28,7 @@
 #ifndef RTTR_STD_TYPE_TRAITS_H_
 #define RTTR_STD_TYPE_TRAITS_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <type_traits>
 

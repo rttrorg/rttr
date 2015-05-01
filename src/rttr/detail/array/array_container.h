@@ -28,7 +28,7 @@
 #ifndef RTTR_ARRAY_CONTAINER_H_
 #define RTTR_ARRAY_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/array/array_mapper.h"
 #include "rttr/wrapper_mapper.h"

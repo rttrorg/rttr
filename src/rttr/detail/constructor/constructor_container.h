@@ -28,7 +28,7 @@
 #ifndef RTTR_CONSTRUCTOR_CONTAINER_H_
 #define RTTR_CONSTRUCTOR_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/constructor/constructor_container_base.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/argument.h"

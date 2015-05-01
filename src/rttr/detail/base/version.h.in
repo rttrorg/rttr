@@ -25,17 +25,13 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_REGISTER_HEADERS_H_
-#define RTTR_REGISTER_HEADERS_H_
+#ifndef RTTR_VERSION_H_
+#define RTTR_VERSION_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "register_reflection.h"
+#define RTTR_VERSION_MAJOR @RTTR_VERSION_MAJOR@
+#define RTTR_VERSION_MINOR @RTTR_VERSION_MINOR@
+#define RTTR_VERSION_PATCH @RTTR_VERSION_PATCH@
+#define RTTR_VERSION       @RTTR_VERSION_CALC@
+#define RTTR_VERSION_STR   "@RTTR_VERSION_STR@"
 
-#endif // RTTR_REGISTER_HEADERS_H_
+#endif // RTTR_VERSION_H_

@@ -28,7 +28,7 @@
 #ifndef RTTR_METHOD_CONTAINER_BASE_H_
 #define RTTR_METHOD_CONTAINER_BASE_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/detail/metadata/metadata_container.h"

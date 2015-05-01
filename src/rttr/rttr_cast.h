@@ -47,6 +47,6 @@ TargetType rttr_cast(SourceType object);
 
 }
 
-#include "rttr/impl/rttr_cast_impl.h"
+#include "rttr/detail/rttr_cast_impl.h"
 
 #endif // RTTR_RTTR_CAST_H_

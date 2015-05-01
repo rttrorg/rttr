@@ -37,11 +37,11 @@ if (CREATE_UNITY_BUILD)
 endif()
 
 if (USE_PCH)
-  activate_precompiled_headers("pch.h" SRC_FILES)
+  activate_precompiled_headers("detail/base/pch.h" SRC_FILES)
 endif()
 
 if (MSVC)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/detail/base/version.rc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/version.rc
                  @ONLY)
   add_library(rttr SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)

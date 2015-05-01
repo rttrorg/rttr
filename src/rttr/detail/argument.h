@@ -28,7 +28,7 @@
 #ifndef RTTR_ARGUMENT_H_
 #define RTTR_ARGUMENT_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 
 #include <type_traits>

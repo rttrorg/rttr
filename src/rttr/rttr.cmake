@@ -41,20 +41,23 @@ set(HEADER_FILES constructor.h
                  variant.h
                  variant_array.h
                  wrapper_mapper.h
-                 base/core_prerequisites.h
-                 base/version.h.in
                  detail/argument.h
                  detail/argument_impl.h
                  detail/data_address_container.h
                  detail/instance.h
                  detail/instance_impl.h
                  detail/std_conversion_functions.h
+                 detail/register_reflection_impl.h
+                 detail/rttr_cast_impl.h
+                 detail/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
                  detail/array/array_container.h
                  detail/array/array_container_impl.h
                  detail/array/array_container_base.h
                  detail/array/array_mapper.h
+                 detail/base/core_prerequisites.h
+                 detail/base/version.h.in
                  detail/constructor/constructor_container.h
                  detail/constructor/constructor_container_base.h
                  detail/destructor/destructor_container.h
@@ -83,13 +86,10 @@ set(HEADER_FILES constructor.h
                  detail/type/type_converter.h
                  detail/type/type_database_p.h
                  detail/type/type_register.h
-                 impl/register_reflection_impl.h
-                 impl/rttr_cast_impl.h
-                 impl/type_impl.h
-                 impl/variant_array_impl.h
-                 impl/variant_default_types_impl.h
-                 impl/variant_impl.h
-                 impl/wrapper_mapper_impl.h
+                 detail/type/type_impl.h
+                 detail/variant/variant_array_impl.h
+                 detail/variant/variant_default_types_impl.h
+                 detail/variant/variant_impl.h
                 )
                 
 set(SOURCE_FILES constructor.cpp

@@ -28,7 +28,7 @@
 #ifndef RTTR_INSTANCE_H_
 #define RTTR_INSTANCE_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/data_address_container.h"
 

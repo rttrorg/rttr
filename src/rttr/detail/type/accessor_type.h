@@ -28,7 +28,7 @@
 #ifndef RTTR_ACCESSOR_TYPE_H_
 #define RTTR_ACCESSOR_TYPE_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 

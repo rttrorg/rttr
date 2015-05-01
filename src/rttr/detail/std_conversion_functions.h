@@ -28,7 +28,7 @@
 #ifndef RTTR_STD_CONVERSION_FUNCTIONS_H_
 #define RTTR_STD_CONVERSION_FUNCTIONS_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include <string>
 
 namespace rttr

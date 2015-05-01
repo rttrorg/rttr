@@ -28,7 +28,7 @@
 #ifndef RTTR_TYPE_H_
 #define RTTR_TYPE_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <type_traits>
 #include <vector>
@@ -788,6 +788,6 @@ class RTTR_API type
 
 } // end namespace rttr
 
-#include "rttr/impl/type_impl.h"
+#include "rttr/detail/type/type_impl.h"
 
 #endif // RTTR_TYPE_H_

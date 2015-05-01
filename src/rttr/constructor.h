@@ -27,7 +27,7 @@
 #ifndef RTTR_CONSTRUCTOR_H_
 #define RTTR_CONSTRUCTOR_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <initializer_list>
 #include <string>

@@ -28,7 +28,7 @@
 #ifndef RTTR_ARRAY_ACCESSOR_H_
 #define RTTR_ARRAY_ACCESSOR_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 namespace rttr
 {

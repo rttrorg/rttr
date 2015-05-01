@@ -28,7 +28,7 @@
 #ifndef RTTR_TYPE_REGISTER_H_
 #define RTTR_TYPE_REGISTER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <memory>
 #include <string>

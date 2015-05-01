@@ -28,7 +28,7 @@
 #ifndef RTTR_PROPERTY_CONTAINER_H_
 #define RTTR_PROPERTY_CONTAINER_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/property/property_container_base.h"
 #include "rttr/detail/instance.h"

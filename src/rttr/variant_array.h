@@ -28,7 +28,7 @@
 #ifndef RTTR_VARIANT_ARRAY_H_
 #define RTTR_VARIANT_ARRAY_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include <cstddef>
 #include <vector>
 
@@ -515,6 +515,6 @@ class RTTR_API variant_array
 
 } // end namespace rttr
 
-#include "rttr/impl/variant_array_impl.h"
+#include "rttr/detail/variant/variant_array_impl.h"
 
 #endif // RTTR_VARIANT_ARRAY_H_

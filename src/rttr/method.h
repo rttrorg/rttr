@@ -28,7 +28,7 @@
 #ifndef RTTR_METHOD_H_
 #define RTTR_METHOD_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
 #include <string>
 #include <vector>

@@ -28,7 +28,7 @@
 #ifndef RTTR_REGISTER_REFLECTION_H_
 #define RTTR_REGISTER_REFLECTION_H_
 
-#include "rttr/base/core_prerequisites.h"
+#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/metadata.h"
 #include "rttr/policy.h"
 
@@ -842,6 +842,6 @@ RTTR_REGISTER
 
 } // end namespace rttr
 
-#include "rttr/impl/register_reflection_impl.h"
+#include "rttr/detail/register_reflection_impl.h"
 
 #endif //RTTR_REGISTER_REFLECTION_H_
