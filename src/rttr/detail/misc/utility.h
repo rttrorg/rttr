@@ -259,14 +259,14 @@ RTTR_INLINE const T as_const(T&& obj)
 template<typename T>
 RTTR_FORCE_INLINE typename std::enable_if<std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(obj));
+    return const_cast<void*>(reinterpret_cast<const volatile void*>(obj));
 }
 
 
 template<typename T>
 RTTR_FORCE_INLINE typename std::enable_if<!std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
 {
-    return const_cast<void*>(reinterpret_cast<const void*>(&obj));
+    return const_cast<void*>(reinterpret_cast<const volatile void*>(&obj));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

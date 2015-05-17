@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TESTCLASSES_H__
-#define RTTR_TESTCLASSES_H__
+#ifndef RTTR_TESTCLASSES_H_
+#define RTTR_TESTCLASSES_H_
 
 #include <rttr/type>
 
@@ -160,4 +160,4 @@ CLASS_INHERIT(ClassDiamondRight6, ClassDiamondRight5)
 
 CLASS_MULTI_INHERIT_3(ClassDiamondFinal, ClassDiamondLeft5, ClassDiamondMiddle5, ClassDiamondRight5)
 
-#endif // RTTR_TESTCLASSES_H__
+#endif // RTTR_TESTCLASSES_H_

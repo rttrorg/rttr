@@ -34,9 +34,15 @@ MESSAGE(STATUS ${LIBRARY_OUTPUT_DIRECTORY})
 MESSAGE(STATUS "Copy Dependencies...")
 MESSAGE(STATUS "===========================")
 
+set(Boost_USE_STATIC_LIBS       ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+set(BOOST_ALL_DYN_LINK          OFF) 
+
+find_package(Boost COMPONENTS chrono system)
+find_package(Threads REQUIRED)
+
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_SOURCE_DIR}/README"
-        DESTINATION "${RTTR_INSTALL_DIR}"
+        DESTINATION "."
         PERMISSIONS OWNER_READ)
-    
        
 MESSAGE(STATUS "Finished copying dependencies!")

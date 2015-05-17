@@ -69,7 +69,6 @@ target_include_directories(rttr PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-#set_target_properties(rttr PROPERTIES OUTPUT_NAME foo)
 target_compile_definitions(rttr PRIVATE RTTR_DLL_EXPORTS)
 target_compile_definitions(rttr PUBLIC RTTR_DLL )
 

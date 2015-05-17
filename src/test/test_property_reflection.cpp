@@ -36,7 +36,7 @@ using namespace std;
 #include <memory>
 #include <functional>
 
-#include <catch.hpp>
+#include <catch/catch.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // init static variables and some global functions added as properties to the test class

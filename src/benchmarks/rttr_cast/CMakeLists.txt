@@ -25,44 +25,44 @@
 #                                                                                  #
 ####################################################################################
 
-project(unit-tests)
+project(bench-rttr-cast)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
+                    
 set(SOURCE_FILES main.cpp
-                 test_type.cpp
-                 test_variant.cpp
-                 test_constructor_reflection.cpp
-                 test_method_reflection.cpp
-                 test_property_reflection.cpp
-                 test_enumeration_reflection.cpp
-                 test_misc.cpp
+                 benchmark_rttr_cast.cpp
     )
 
 set(HEADER_FILES test_classes.h
-                 test_type.h
-                 test_constructor_reflection.h
-                 test_method_reflection.h
-                 test_property_reflection.h
-                 test_enumeration_reflection.h
-                 ${RTTR_3RD_PARTY_DIR}/catch/catch.hpp)
+    )
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SOURCE_FILES)
 endif()
 
-add_executable(unit-tests ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(unit-tests rttr)
-add_dependencies(unit-tests rttr)
-target_include_directories(unit-tests PUBLIC ${RTTR_3RD_PARTY_DIR})
+add_executable(bench-rttr-cast ${SOURCE_FILES} ${HEADER_FILES})
+if (MSVC)
+  target_link_libraries(bench-rttr-cast rttr ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+else()
+  target_link_libraries(bench-rttr-cast rttr ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
-# run tests
-add_custom_target(run-tests ALL
-                  COMMAND "$<TARGET_FILE:unit-tests>"
-                  DEPENDS unit-tests
-                  COMMENT "Running unit-tests")
+target_include_directories(bench-rttr-cast PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
+target_compile_definitions(bench-rttr-cast PUBLIC BOOST_ALL_NO_LIB)
+if(MSVC)
+    set_target_properties(bench-rttr-cast PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+endif()
 
+set_target_properties(bench-rttr-cast PROPERTIES DEBUG_POSTFIX _d)
 
+add_dependencies(bench-rttr-cast rttr)
+
+install(TARGETS bench-rttr-cast
+        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
+        )
+        
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

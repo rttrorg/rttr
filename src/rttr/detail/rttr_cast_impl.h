@@ -45,11 +45,17 @@ RTTR_INLINE TargetType rttr_cast(SourceType object)
 
     typedef typename detail::remove_pointer<TargetType>::type ReturnType;
     typedef typename detail::remove_pointer<SourceType>::type ArgType;
+
+    static_assert((std::is_volatile<ArgType>::value && std::is_volatile<ReturnType>::value) ||
+                   (!std::is_volatile<ArgType>::value && std::is_volatile<ReturnType>::value) ||
+                   (!std::is_volatile<ArgType>::value && !std::is_volatile<ReturnType>::value) , "Return type must have volatile qualifier");
+
     static_assert( (std::is_const<ArgType>::value && std::is_const<ReturnType>::value) ||
                    (!std::is_const<ArgType>::value && std::is_const<ReturnType>::value) ||
                    (!std::is_const<ArgType>::value && !std::is_const<ReturnType>::value), "Return type must have const qualifier");
    
-    return static_cast<TargetType>(type::apply_offset(object->get_ptr(), object->get_type(), type::get<TargetType>()));
+    using source_type_no_cv = typename detail::remove_cv<typename detail::remove_pointer<SourceType>::type>::type;
+    return static_cast<TargetType>(type::apply_offset(const_cast<source_type_no_cv*>(object)->get_ptr(), const_cast<source_type_no_cv*>(object)->get_type(), type::get<TargetType>()));
 }
 
 }

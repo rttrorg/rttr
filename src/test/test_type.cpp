@@ -29,7 +29,7 @@
 
 #include "test/test_classes.h"
 
-#include <catch.hpp>
+#include <catch/catch.hpp>
 #include <rttr/type>
 
 #include <vector>

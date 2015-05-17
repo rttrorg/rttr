@@ -62,12 +62,10 @@ endif()
 set(CMAKE_DEBUG_POSTFIX "_d")
 
 # detect architecture
-include(CheckTypeSize)
-check_type_size(void* SIZEOF_VOID_PTR)
-if(${SIZEOF_VOID_PTR} MATCHES "^8$")
-  set(RTTR_NATIVE_ARCH 64)
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(RTTR_NATIVE_ARCH 64)
 else()
-  set(RTTR_NATIVE_ARCH 32)
+    set(RTTR_NATIVE_ARCH 32)
 endif()
 
 enable_rtti(BUILD_WITH_RTTI)

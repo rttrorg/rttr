@@ -32,4 +32,4 @@
 
 add_subdirectory (rttr)
 add_subdirectory (test)
-add_subdirectory (benchmark)
+add_subdirectory (benchmarks)

@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/type>
+#include "test/test_classes.h"
 
 using namespace rttr;
 using namespace std;
@@ -34,7 +35,7 @@ using namespace std;
 #include <memory>
 #include <functional>
 
-#include <catch.hpp>
+#include <catch/catch.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,9 +58,44 @@ namespace
     typedef int(*func_ptr_t)(void);
 } // end namespace anonymous
 
+template<typename T>
+void dummy()
+{
+}
+
+
+
+template<typename TargetType, typename SourceType>
+TargetType rttr_cast2(SourceType object)
+{
+
+   
+    typedef typename detail::remove_pointer<TargetType>::type ReturnType;
+    typedef typename detail::remove_pointer<SourceType>::type ArgType;
+
+    static_assert((std::is_volatile<ArgType>::value && std::is_volatile<ReturnType>::value) ||
+                   (!std::is_volatile<ArgType>::value && std::is_volatile<ReturnType>::value) ||
+                   (!std::is_volatile<ArgType>::value && !std::is_volatile<ReturnType>::value) , "Return type must have volatile qualifier");
+
+
+    //return static_cast<TargetType>(type::apply_offset(object->get_ptr(), object->get_type(), type::get<TargetType>()));
+    using source_type_no_cv = typename detail::remove_cv<typename detail::remove_pointer<SourceType>::type>::type;
+    //const_cast<source_type_no_cv*>(object)->get_ptr();
+        dummy<ReturnType>();
+        dummy<ArgType>();
+        return nullptr;
+
+    //return static_cast<TargetType>(type::apply_offset(const_cast<source_type_no_cv*>(object)->get_ptr(), object->get_type(), type::get<TargetType>()));
+}
 
 TEST_CASE("Test raw_adressof", "[raw_adressof]") 
 {
+
+    //using t = detail::remove_cv<detail::remove_pointer<volatile custom_type*>::type>::type;
+    volatile ClassSingleBase* obj = nullptr;
+//
+  // rttr_cast2<ClassSingleBase*>(obj);
+
     SECTION("Test pointer type")
     {
         int value = 23;

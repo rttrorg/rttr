@@ -25,30 +25,8 @@
 #                                                                                  #
 ####################################################################################
 
-project(benchmark)
-
-message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
-message(STATUS "===========================")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-                    
-add_definitions(-DRTTR_DLL)
-
-set(SOURCE_FILES main.cpp
-                 benchmark_rttr_cast.cpp
-    )
-
-set(HEADER_FILES test_classes.h
-                 benchmark_utils.h
-    )
-
-if (USE_PCH)
-  activate_precompiled_headers("pch.h" SOURCE_FILES)
+if (Boost_FOUND)
+    add_subdirectory (rttr_cast)
+else()
+    message(STATUS "Boost was not found - NO benchmark projectes created.")
 endif()
-  
-add_executable(benchmark ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(benchmark rttr)
-add_dependencies(benchmark rttr)
-
-message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
-message(STATUS "")
