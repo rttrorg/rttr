@@ -1709,7 +1709,7 @@
 "        text: '{$barchart_title}'\n"
 "    },\n"
 "    subtitle: {\n"
-"        text: null\n"
+"        text: '{$barchart_subtitle}'\n"
 "    },\n"
 "    xAxis: {\n"
 "        categories: [],\n"

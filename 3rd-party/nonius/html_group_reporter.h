@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <memory>
+#include <ctime>
 
 namespace nonius {
     struct collected_data
@@ -52,6 +53,10 @@ namespace nonius {
         m_output_file_path = file_path;
     }
 
+    void set_enable_print_datetime(bool enable) {
+        m_can_print_datetime = enable;
+    }
+
     void generate_report() const {
 
         const std::string file_name = gen_unique_filename(m_output_file_path);
@@ -67,8 +72,9 @@ namespace nonius {
         map["page_title"]           = escape(title);
         map["height_barchart"]      = m_barchart_height;
         map["height_scatterchart"]  = m_scatterchart_height;
-        map["barchart_title"]   = escape(title);
-        map["barchart_unit"]    = detail::units_for_magnitude(mean_magnitude);
+        map["barchart_title"]       = escape(title);
+        map["barchart_subtitle"]    = m_can_print_datetime ? escape(get_current_datetime()) : std::string("");
+        map["barchart_unit"]        = detail::units_for_magnitude(mean_magnitude);
 
         for(const auto& bench_group : m_all_benchmarks) {
             cpptempl::data_map benchmark_group;
@@ -336,12 +342,21 @@ namespace nonius {
             return new_path;
         }
 
+        static inline std::string get_current_datetime() {
+            auto t = std::time(nullptr);
+            const auto tm = std::localtime(&t);
+            char buffer[20];
+            std::strftime(buffer, 20, "%Y-%m-%d %H:%M:%S", tm);
+            return buffer;
+        }
+
         int n_samples = 0;
         int n_resamples = 0;
         bool verbose = false;
         bool summary = false;
         std::string m_barchart_height = "600px";
         std::string m_scatterchart_height = "250px";
+        bool m_can_print_datetime = true;
         std::string m_output_file_path;
 
         std::string title;

@@ -415,7 +415,7 @@ var barchart_options = {
         text: '{$barchart_title}'
     },
     subtitle: {
-        text: null
+        text: '{$barchart_subtitle}'
     },
     xAxis: {
         categories: [],
