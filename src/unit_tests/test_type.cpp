@@ -25,9 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "test/test_type.h"
+#include "unit_tests/test_type.h"
 
-#include "test/test_classes.h"
+#include "unit_tests/test_classes.h"
 
 #include <catch/catch.hpp>
 #include <rttr/type>

@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(unit-tests)
+project(unit_tests)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -52,16 +52,16 @@ if (USE_PCH)
   activate_precompiled_headers("pch.h" SOURCE_FILES)
 endif()
 
-add_executable(unit-tests ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(unit-tests rttr_core)
-add_dependencies(unit-tests rttr_core)
-target_include_directories(unit-tests PUBLIC ${RTTR_3RD_PARTY_DIR})
+add_executable(unit_tests ${SOURCE_FILES} ${HEADER_FILES})
+target_link_libraries(unit_tests rttr_core)
+add_dependencies(unit_tests rttr_core)
+target_include_directories(unit_tests PUBLIC ${RTTR_3RD_PARTY_DIR})
 
 # run tests
-add_custom_target(run-tests ALL
-                  COMMAND "$<TARGET_FILE:unit-tests>"
-                  DEPENDS unit-tests
-                  COMMENT "Running unit-tests")
+add_custom_target(run_tests ALL
+                  COMMAND "$<TARGET_FILE:unit_tests>"
+                  DEPENDS unit_tests
+                  COMMENT "Running unit_tests")
 
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")

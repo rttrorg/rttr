@@ -25,8 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
+#include "unit_tests/test_classes.h"
+
 #include <rttr/type>
-#include "test/test_classes.h"
 
 using namespace rttr;
 using namespace std;

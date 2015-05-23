@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench-rttr-cast)
+project(bench_rttr_cast)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -43,24 +43,24 @@ if (USE_PCH)
   activate_precompiled_headers("pch.h" SOURCE_FILES)
 endif()
 
-add_executable(bench-rttr-cast ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(bench_rttr_cast ${SOURCE_FILES} ${HEADER_FILES})
 if (MSVC)
-  target_link_libraries(bench-rttr-cast rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+  target_link_libraries(bench_rttr_cast rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 else()
-  target_link_libraries(bench-rttr-cast rttr_core ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(bench_rttr_cast rttr_core ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-target_include_directories(bench-rttr-cast PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
-target_compile_definitions(bench-rttr-cast PUBLIC BOOST_ALL_NO_LIB)
+target_include_directories(bench_rttr_cast PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
+target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
 if(MSVC)
-    set_target_properties(bench-rttr-cast PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+    set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
 endif()
 
-set_target_properties(bench-rttr-cast PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d)
 
-add_dependencies(bench-rttr-cast rttr_core)
+add_dependencies(bench_rttr_cast rttr_core)
 
-install(TARGETS bench-rttr-cast
+install(TARGETS bench_rttr_cast
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
         )
         

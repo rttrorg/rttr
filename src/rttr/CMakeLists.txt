@@ -86,8 +86,14 @@ if (BUILD_STATIC)
     
     set_target_properties(rttr_core_lib PROPERTIES 
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_Lib
-                          OUTPUT_NAME librttr_core)
+                          EXPORT_NAME Core_Lib)
+    if (MSVC)
+        set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
+    elseif (CMAKE_COMPILER_IS_GNUCXX)
+        set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME rttr_core)
+    else()
+        message(SEND_ERROR "Do now know how to to name the static library.")
+    endif()
 endif()
 
 if (BUILD_WITH_STATIC_RUNTIME_LIBS)
@@ -132,12 +138,12 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         
         set_target_properties(rttr_core_lib_s PROPERTIES 
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                              EXPORT_NAME Core_Lib_STL
-                              OUTPUT_NAME librttr_core_s)
+                              EXPORT_NAME Core_Lib_STL)
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
+            set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core_s)
         elseif(CMAKE_COMPILER_IS_GNUCXX)
-            set_target_properties(rttr_core_lib_s PROPERTIES LINK_FLAGS "-static-libstdc++")
+            set_target_properties(rttr_core_lib_s PROPERTIES LINK_FLAGS "-static-libstdc++" OUTPUT_NAME rttr_core_s)
         else()
             message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
         endif()

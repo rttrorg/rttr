@@ -31,5 +31,5 @@
 #############################################
 
 add_subdirectory (rttr)
-add_subdirectory (test)
+add_subdirectory (unit_tests)
 add_subdirectory (benchmarks)

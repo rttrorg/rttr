@@ -57,7 +57,7 @@ option(USE_PCH "Use precompiled header files for compilation" TRUE)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documenation; Otherwise the default will be used" TRUE)
 
 include(config)
-include(installDependencies)
+include(3rd_party_libs)
 include(installer)
 
 # here we add our source code
