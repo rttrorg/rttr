@@ -49,8 +49,8 @@ endif ()
 include(utility)
 
 # set up option variable for cmake
-option(BUILD_STATIC "Build RTTR as static library" FALSE)
-option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" FALSE)
+option(BUILD_STATIC "Build RTTR as static library" TRUE)
+option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" TRUE)
 option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
 option(CREATE_UNITY_BUILD "Creates a unity build" FALSE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)

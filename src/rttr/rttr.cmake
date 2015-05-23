@@ -58,6 +58,7 @@ set(HEADER_FILES constructor.h
                  detail/array/array_mapper.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
+                 detail/base/version.rc.in
                  detail/constructor/constructor_container.h
                  detail/constructor/constructor_container_base.h
                  detail/destructor/destructor_container.h

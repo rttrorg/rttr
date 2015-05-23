@@ -32,7 +32,7 @@
 
 ####################################################################################
 # create hierarchical source groups, useful for big VS-Projects
-# FILE_LIST <= a list of files with absolut path
+# FILE_LIST <= a list of files with absolute path
 ####################################################################################
 function (createSrcGroups FILE_LIST )
   # we want to get the relative path from the 
@@ -67,7 +67,7 @@ endfunction()
     endforeach()
     # MOC_SOURCES => outputfiles
     # MOC_HEADERS => inputfiless
-   QT4_WRAP_CPP(${MOC_SOURCES} ${MOC_HEADERS})
+   qt5_wrap_cpp(${MOC_SOURCES} ${MOC_HEADERS})
    source_group("Generated Files" FILES ${${MOC_SOURCES}})
 endmacro ()
 
@@ -151,6 +151,9 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
   set(FULL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${FOLDER}.cmake)
   include(${FULL_PATH})
   get_filename_component(ABS_PATH_TO_FILES ${FULL_PATH} PATH)
+  set(shouldInstall ${ARGV3})
+  set(MOC_HEADERS)
+  
   foreach(headerFile ${HEADER_FILES} )
     if (${headerFile} MATCHES ".*.h.in$")
       string ( REGEX REPLACE ".h.in$" ".h" out_path ${headerFile} )
@@ -163,8 +166,18 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
         source_group ( ${normalized_path} FILES ${FULL_HEADER_PATH} )
       endif()
       list(APPEND ALL_HPP_FILES ${FULL_HEADER_PATH})
+    elseif (${headerFile} MATCHES ".*.rc.in$")
+      string ( REGEX REPLACE ".rc.in$" ".rc" out_path ${headerFile} )
+      configure_file(${headerFile} ${CMAKE_CURRENT_BINARY_DIR}/${out_path} @ONLY)
+      source_group("Generated Files" FILES ${CMAKE_CURRENT_BINARY_DIR}/${out_path})
+      list(APPEND ALL_HPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${out_path})
     else()
       set(FULL_HEADER_PATH ${ABS_PATH_TO_FILES}/${headerFile})
+      file(STRINGS ${FULL_HEADER_PATH} var REGEX "Q_OBJECT")
+      if(var)
+         list(APPEND MOC_HEADERS ${FULL_HEADER_PATH})
+      endif()
+      
       # returns the relative path, from the current source dir
       getRelativePath(FULL_HEADER_PATH REL_PATH)
       list(APPEND HEADER_LIST_OF_CUR_DIR ${FULL_HEADER_PATH})
@@ -172,17 +185,44 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
     # get the name of the current directory
     getNameOfDir(CMAKE_CURRENT_SOURCE_DIR DIRNAME)
     # we don't want to install header files which are marked as private
-    if (NOT ${FULL_HEADER_PATH} MATCHES ".*_p.h$")
-      install(FILES ${FULL_HEADER_PATH} DESTINATION "include/${DIRNAME}/${REL_PATH}" PERMISSIONS OWNER_READ)
+    if (${shouldInstall})
+      if (NOT ${FULL_HEADER_PATH} MATCHES ".*_p.h$")
+        install(FILES ${FULL_HEADER_PATH} DESTINATION "include/${DIRNAME}/${REL_PATH}" PERMISSIONS OWNER_READ)
+      endif()
     endif()
   endforeach()
-    # and now the source files
+  
+  # and now the source files
+  list(APPEND QML_SOURCES)
   foreach(srcFile ${SOURCE_FILES} )
-      list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
-  endforeach()
+    # the source_group placement doesn't work at the moment
+     if (${srcFile} MATCHES ".*.qml$")
+       string(REGEX REPLACE "[\\/]" "_" qrc_resource_file ${srcFile} )
+       string(REGEX REPLACE ".qml$" ".qrc" qrc_resource_file ${qrc_resource_file} )
+       set(qrc_resource_file ${CMAKE_CURRENT_BINARY_DIR}/${qrc_resource_file})
+       message(STATUS "FOO" ${qrc_resource_file})
+       file(WRITE ${qrc_resource_file} "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource prefix=\"/\"><file alias=\"${srcFile}\">${ABS_PATH_TO_FILES}/${srcFile}</file></qresource></RCC>")
+       qt5_add_resources(compiled_resource_file ${qrc_resource_file})
+       source_group("Generated Files" FILES ${compiled_resource_file})
+       source_group("Generated Files" FILES ${qrc_resource_file})
+       message(STATUS "QRC FILE: " ${compiled_resource_file})
+       list(APPEND QML_SOURCES ${compiled_resource_file})
+     else()
+       list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
+     endif()
     
+    list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
+  endforeach()
+ 
+  list(APPEND MOC_SOURCES)
+ 
+  if (MOC_HEADERS)
+    qt5_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
+    source_group("Generated Files" FILES ${MOC_SOURCES})
+  endif()
+  
   list(APPEND ALL_HPP_FILES ${${_HEADER_FILES}} ${HEADER_LIST_OF_CUR_DIR})
-  list(APPEND ALL_CPP_FILES ${${_SOURCE_FILES}} ${SOURCE_LIST_OF_CUR_DIR})
+  list(APPEND ALL_CPP_FILES ${${_SOURCE_FILES}} ${SOURCE_LIST_OF_CUR_DIR} ${MOC_SOURCES} ${QML_SOURCES})
   set(${_HEADER_FILES} ${ALL_HPP_FILES} PARENT_SCOPE)
   set(${_SOURCE_FILES} ${ALL_CPP_FILES} PARENT_SCOPE)
 
@@ -207,6 +247,7 @@ endfunction()
 # Copy a release dependency in the correct CMAKE_RUNTIME_OUTPUT_DIRECTORY
 # _INPUT The full path of the dependency incl. FileName
 # _OUTPUT The directory where the libraries should be installed.
+# OPTIONAL: RELATIVE Path - as third argument an optional relative path can be specified
 ####################################################################################
 
 function(copy_dependency_release _INPUT _OUTPUT)
@@ -218,30 +259,47 @@ function(copy_dependency_release _INPUT _OUTPUT)
       return()
     endif()
   endif()
-
+  # as third argument an optional relative path can be specified
+  set(REL_PATH ${ARGV2})
   set(_PATH ${_INPUT})
   # make the path to normal path with / as dir separator
-  string ( REGEX REPLACE "[\\/]" "////" FILE_PATH ${_PATH} )
+  string ( REGEX REPLACE "[\\/]" "/" FILE_PATH ${_PATH} )
   get_filename_component(FILE_NAME ${FILE_PATH} NAME)
   
   if (VS_BUILD)
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${FILE_NAME} COPYONLY)  
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/RelWithDebInfo/${FILE_NAME} COPYONLY) 
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MinSizeRel/${FILE_NAME} COPYONLY) 
+    if (IS_DIRECTORY ${_INPUT})
+      file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${REL_PATH})
+    else()
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${REL_PATH}/${FILE_NAME} COPYONLY)  
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/RelWithDebInfo/${REL_PATH}/${FILE_NAME} COPYONLY) 
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MinSizeRel/${REL_PATH}/${FILE_NAME} COPYONLY) 
+    endif()
   else()
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE_NAME} COPYONLY)  
+    if (IS_DIRECTORY ${_INPUT})
+      file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH})
+    else()
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH}/${FILE_NAME} COPYONLY)
+    endif()
   endif()
   
-  install(FILES 
-          ${FILE_PATH}
-          DESTINATION ${_OUTPUT}
-          CONFIGURATIONS Release)
+  if (IS_DIRECTORY ${_INPUT})
+    install(DIRECTORY
+            ${_PATH}
+            DESTINATION ${_OUTPUT}/${REL_PATH}
+            CONFIGURATIONS Release)
+  else()
+    install(FILES 
+            ${FILE_PATH}
+            DESTINATION ${_OUTPUT}/${REL_PATH}
+            CONFIGURATIONS Release)
+  endif()
 endfunction()
 
 ####################################################################################
 # Copy a debug dependency in the correct CMAKE_RUNTIME_OUTPUT_DIRECTORY
 # _INPUT The full path of the dependency incl. FileName
 # _OUTPUT The directory where the libraries should be installed.
+# OPTIONAL: RELATIVE Path - as third argument an optional relative path can be specified
 ####################################################################################
 
 function(copy_dependency_debug _INPUT _OUTPUT)
@@ -253,22 +311,38 @@ function(copy_dependency_debug _INPUT _OUTPUT)
       return()
     endif()
   endif()
-  
+  # as third argument an optional relative path can be specified
+  set(REL_PATH ${ARGV2})
   set(_PATH ${_INPUT})
   # make the path to normal path with / as dir separator
   string ( REGEX REPLACE "[\\/]" "////" FILE_PATH ${_PATH} )
   get_filename_component(FILE_NAME ${FILE_PATH} NAME)
     
   if (VS_BUILD)
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${FILE_NAME} COPYONLY)  
+    if (IS_DIRECTORY ${_INPUT})
+      file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${REL_PATH})
+     else()
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${REL_PATH}/${FILE_NAME} COPYONLY)  
+    endif()
   else()
-    configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FILE_NAME} COPYONLY)  
+    if (IS_DIRECTORY ${_INPUT})
+      file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH})
+    else()
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH}/${FILE_NAME} COPYONLY)  
+    endif()
   endif()
   
-  install(FILES 
-          ${FILE_PATH}
-          DESTINATION ${_OUTPUT}
-          CONFIGURATIONS Debug)
+ if (IS_DIRECTORY ${_INPUT})
+   install(DIRECTORY
+           ${_PATH}
+           DESTINATION ${_OUTPUT}/${REL_PATH}
+           CONFIGURATIONS Debug)
+ else()
+   install(FILES 
+           ${FILE_PATH}
+           DESTINATION ${_OUTPUT}/${REL_PATH}
+           CONFIGURATIONS Debug)
+  endif()
 endfunction()
 
 ####################################################################################
@@ -400,3 +474,16 @@ macro(getenv_path VAR)
      string( REGEX REPLACE "\\\\" "/" ENV_${VAR} ${ENV_${VAR}} )
    endif ()
 endmacro()
+
+macro(generateLibraryVersionVariables MAJOR MINOR PATCH PRODUCT_NAME PRODUCT_CPY_RIGHT PRODUCT_LICENSE)
+  set(LIBRARY_VERSION_MAJOR ${MAJOR})
+  set(LIBRARY_VERSION_MINOR ${MINOR})
+  set(LIBRARY_VERSION_PATCH ${PATCH})
+  set(LIBRARY_VERSION ${LIBRARY_VERSION_MAJOR}.${LIBRARY_VERSION_MINOR}.${LIBRARY_VERSION_PATCH})
+  set(LIBRARY_VERSION_STR "${LIBRARY_VERSION_MAJOR}.${LIBRARY_VERSION_MINOR}.${LIBRARY_VERSION_PATCH}")
+  math(EXPR LIBRARY_VERSION_CALC "${LIBRARY_VERSION_MAJOR}*1000 + ${LIBRARY_VERSION_MINOR}*100 + ${LIBRARY_VERSION_PATCH}")
+  set(LIBRARY_PRODUCT_NAME ${PRODUCT_NAME})
+  set(LIBRARY_COPYRIGHT ${PRODUCT_CPY_RIGHT})
+  set(LIBRARY_LICENSE ${PRODUCT_LICENSE})
+endmacro()
+

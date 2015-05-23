@@ -53,8 +53,8 @@ if (USE_PCH)
 endif()
 
 add_executable(unit-tests ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(unit-tests rttr)
-add_dependencies(unit-tests rttr)
+target_link_libraries(unit-tests rttr_core)
+add_dependencies(unit-tests rttr_core)
 target_include_directories(unit-tests PUBLIC ${RTTR_3RD_PARTY_DIR})
 
 # run tests

@@ -45,9 +45,9 @@ endif()
 
 add_executable(bench-rttr-cast ${SOURCE_FILES} ${HEADER_FILES})
 if (MSVC)
-  target_link_libraries(bench-rttr-cast rttr ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+  target_link_libraries(bench-rttr-cast rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 else()
-  target_link_libraries(bench-rttr-cast rttr ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(bench-rttr-cast rttr_core ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 target_include_directories(bench-rttr-cast PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
@@ -58,7 +58,7 @@ endif()
 
 set_target_properties(bench-rttr-cast PROPERTIES DEBUG_POSTFIX _d)
 
-add_dependencies(bench-rttr-cast rttr)
+add_dependencies(bench-rttr-cast rttr_core)
 
 install(TARGETS bench-rttr-cast
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 

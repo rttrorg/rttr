@@ -30,109 +30,118 @@ project(rttr)
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
-loadFolder("rttr" HPP_FILES SRC_FILES)
+generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH} 
+                                "RTTR" "Copyright (c) 2014, 2015 Axel Menzel <info@axelmenzel.de>" "MIT License")
+
+loadFolder("rttr" HPP_FILES SRC_FILES True)
 
 if (CREATE_UNITY_BUILD)
-  generateUnityFile(UnityBuild SRC_FILES)
+    generateUnityFile(UnityBuild SRC_FILES)
 endif()
 
 if (USE_PCH)
-  activate_precompiled_headers("detail/base/pch.h" SRC_FILES)
+    activate_precompiled_headers("detail/base/pch.h" SRC_FILES)
 endif()
 
-if (MSVC)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/detail/base/version.rc.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/version.rc
-                 @ONLY)
-  add_library(rttr SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-else()
-  add_library(rttr SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-endif()
-  
-install(TARGETS rttr EXPORT rttr_lib
+add_library(rttr_core SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
+
+install(TARGETS rttr_core EXPORT rttr_targets
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
         LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
         ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
 
 # install the shared object also into the lib directory
-install(TARGETS rttr
+install(TARGETS rttr_core
         RUNTIME DESTINATION ${RTTR_LIB_INSTALL_DIR}
         LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
         
-install(EXPORT rttr_lib
+install(EXPORT rttr_targets
         DESTINATION cmake
+        NAMESPACE RTTR::
         FILE rttr-config.cmake)
         
-target_include_directories(rttr PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_compile_definitions(rttr PRIVATE RTTR_DLL_EXPORTS)
-target_compile_definitions(rttr PUBLIC RTTR_DLL )
-
-set_target_properties(rttr PROPERTIES VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION})
-
-if (BUILD_STATIC)
-  add_library(rttr-static STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-  
-  install(TARGETS rttr-static EXPORT rttr_lib
-          ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-          LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
-        
-  target_include_directories(rttr-static PUBLIC
+target_include_directories(rttr_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
   $<INSTALL_INTERFACE:include>)
-  
-  set_target_properties(rttr-static PROPERTIES VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION})
+
+target_compile_definitions(rttr_core PRIVATE RTTR_DLL_EXPORTS)
+target_compile_definitions(rttr_core PUBLIC RTTR_DLL )
+
+set_target_properties(rttr_core PROPERTIES 
+                      VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
+                      EXPORT_NAME Core)
+
+if (BUILD_STATIC)
+    add_library(rttr_core_lib STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
+    
+    install(TARGETS rttr_core_lib EXPORT rttr_targets
+            ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
+            LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+            
+    target_include_directories(rttr_core_lib PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<INSTALL_INTERFACE:include>)
+    
+    set_target_properties(rttr_core_lib PROPERTIES 
+                          VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
+                          EXPORT_NAME Core_Lib
+                          OUTPUT_NAME librttr_core)
 endif()
 
 if (BUILD_WITH_STATIC_RUNTIME_LIBS)
-  if (MSVC)
-    add_library(rttr-stdstatic SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-  else()
-    add_library(rttr-stdstatic SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-  endif()
+    add_library(rttr_core_s SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
+ 
+    install(TARGETS rttr_core_s EXPORT rttr_targets
+            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
+            ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
+            LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+            
+    install(TARGETS rttr_core_s
+            RUNTIME DESTINATION ${RTTR_LIB_INSTALL_DIR}
+            LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
 
-  add_library(rttr-static-stdstatic STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-  
-  install(TARGETS rttr-stdstatic EXPORT rttr_lib
-          RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-          ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-          LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
-          
-  install(TARGETS rttr-stdstatic
-          RUNTIME DESTINATION ${RTTR_LIB_INSTALL_DIR}
-          LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
-          
-  install(TARGETS rttr-static-stdstatic EXPORT rttr_lib
-          ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-          LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+    target_include_directories(rttr_core_s PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<INSTALL_INTERFACE:include>)
+
+    set_target_properties(rttr_core_s PROPERTIES 
+                          VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
+                          EXPORT_NAME Core_STL)
+    if (MSVC)
+        target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
+    elseif(CMAKE_COMPILER_IS_GNUCXX)
+        set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS "-static-libstdc++")
+    else()
+        message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
+    endif()
+    
+    if (BUILD_STATIC)
+        add_library(rttr_core_lib_s STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
         
-  target_include_directories(rttr-stdstatic PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-  $<INSTALL_INTERFACE:include>)
-  
-  target_include_directories(rttr-static-stdstatic PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-  $<INSTALL_INTERFACE:include>)
-  
-  set_target_properties(rttr-stdstatic PROPERTIES VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION})
-  set_target_properties(rttr-static-stdstatic PROPERTIES VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION})
-
-  if (MSVC)
-    target_compile_options(rttr-stdstatic PUBLIC "/MT$<$<CONFIG:Debug>:d>")
-    target_compile_options(rttr-static-stdstatic PUBLIC "/MT$<$<CONFIG:Debug>:d>")
-  elseif(CMAKE_COMPILER_IS_GNUCXX)
-    set_target_properties(rttr-stdstatic PROPERTIES LINK_FLAGS "-static-libstdc++")
-    set_target_properties(rttr-static-stdstatic PROPERTIES LINK_FLAGS "-static-libstdc++")
-  else()
-    message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
-  endif()
+        install(TARGETS rttr_core_lib_s EXPORT rttr_targets
+                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
+                LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                
+        target_include_directories(rttr_core_lib_s PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+        $<INSTALL_INTERFACE:include>)
+        
+        set_target_properties(rttr_core_lib_s PROPERTIES 
+                              VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
+                              EXPORT_NAME Core_Lib_STL
+                              OUTPUT_NAME librttr_core_s)
+        if (MSVC)
+            target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
+        elseif(CMAKE_COMPILER_IS_GNUCXX)
+            set_target_properties(rttr_core_lib_s PROPERTIES LINK_FLAGS "-static-libstdc++")
+        else()
+            message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
+        endif()
+    endif()
 endif()
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
