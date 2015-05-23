@@ -906,10 +906,6 @@ void start_rttr_cast_benchmark()
     nonius::benchmark benchmarks_group_9[] = { bench_cross_cast_dynamic_cast_2(), bench_cross_cast_rttr_cast_2() };
     nonius::go(cfg, std::begin(benchmarks_group_9), std::end(benchmarks_group_9), reporter);
 
-    //reporter.set_current_group_name("retrieve type");
-    //nonius::benchmark benchmarks_group_3[] = { bench_level_6_dynamic_cast(), bench_level_6_rttr_cast() };
-    //nonius::go(cfg, std::begin(benchmarks_group_3), std::end(benchmarks_group_3), reporter);
-
     reporter.generate_report();
 }
 

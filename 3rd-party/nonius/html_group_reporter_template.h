@@ -370,13 +370,8 @@
 "dow(b)?b.document.documentElement[\"client\"+a]:9===b.nodeType?(e=b.documentElement,Math.max(b.body[\"scroll\"+a],e[\"scroll\"+a],b.body[\"offset\"+a],e[\"offset\"+a],e[\"client\"+a])):void 0===d?n.css(b,c,g):n.style(b,c,d,g)},b,f?d:void 0,f,null)}})}),n.fn.size=function(){return this.length},n.fn.andSelf=n.fn.addBack,\"function\"==typeof define&&define.amd&&define(\"jquery\",[],function(){return n});var Kc=a.jQuery,Lc=a.$;return n.noConflict=function(b){return a.$===n&&(a.$=Lc),b&&a.jQuery===n&&(a.jQuery=Kc),n"
 ,
 "},typeof b===U&&(a.jQuery=a.$=n),n});\n"
-"/*\n"
-" Highcharts JS v4.1.5 (2015-04-13)\n"
 "\n"
-" (c) 2009-2014 Torstein Honsi\n"
-"\n"
-" License: www.highcharts.com/license\n"
-"*/\n"
+"/* Highcharts JS v4.1.5 (2015-04-13) (c) 2009-2014 Torstein Honsi License: www.highcharts.com/license */\n"
 ,
 "(function(){function z(){var a,b=arguments,c,d={},e=function(a,b){var c,d;typeof a!==\"object\"&&(a={});for(d in b)b.hasOwnProperty(d)&&(c=b[d],a[d]=c&&typeof c===\"object\"&&Object.prototype.toString.call(c)!==\"[object Array]\"&&d!==\"renderTo\"&&typeof c.nodeType!==\"number\"?e(a[d]||{},c):b[d]);return a};b[0]===!0&&(d=b[1],b=Array.prototype.slice.call(b,2));c=b.length;for(a=0;a<c;a++)d=e(d,b[a]);return d}function B(a,b){return parseInt(a,b||10)}function Da(a){return typeof a===\"string\"}function ca(a){"
 ,
@@ -1642,6 +1637,72 @@
 ,
 "hAnim:zb,\n"
 "getOptions:function(){return P},hasBidiBug:Nb,isTouchDevice:Jb,setOptions:function(a){P=z(!0,P,a);Cb();return P},addEvent:N,removeEvent:Y,createElement:Z,discardElement:Ra,css:F,each:m,map:Ua,merge:z,splat:ra,extendClass:ja,pInt:B,svg:ba,canvas:ea,vml:!ba&&!ea,product:\"Highcharts\",version:\"4.1.5\"})})();\n"
+"\n"
+"/* Highcharts JS v4.1.5 (2015-04-13) Exporting module (c) 2010-2014 Torstein Honsi License: www.highcharts.com/license */\n"
+,
+"(function(f){var z=f.Chart,s=f.addEvent,A=f.removeEvent,B=HighchartsAdapter.fireEvent,j=f.createElement,p=f.discardElement,u=f.css,l=f.merge,m=f.each,q=f.extend,E=f.splat,F=Math.max,k=document,C=window,G=f.isTouchDevice,H=f.Renderer.prototype.symbols,r=f.getOptions(),x;q(r.lang,{printChart:\"Print chart\",downloadPNG:\"Download PNG image\",downloadJPEG:\"Download JPEG image\",downloadPDF:\"Download PDF document\",downloadSVG:\"Download SVG vector image\",contextButtonTitle:\"Chart context menu\"});r.navigat"
+,
+"ion=\n"
+,
+"{menuStyle:{border:\"1px solid #A0A0A0\",background:\"#FFFFFF\",padding:\"5px 0\"},menuItemStyle:{padding:\"0 10px\",background:\"none\",color:\"#303030\",fontSize:G?\"14px\":\"11px\"},menuItemHoverStyle:{background:\"#4572A5\",color:\"#FFFFFF\"},buttonOptions:{symbolFill:\"#E0E0E0\",symbolSize:14,symbolStroke:\"#666\",symbolStrokeWidth:3,symbolX:12.5,symbolY:10.5,align:\"right\",buttonSpacing:3,height:22,theme:{fill:\"white\",stroke:\"none\"},verticalAlign:\"top\",width:24}};r.exporting={type:\"image/png\",url:\"http://export.hi"
+,
+"ghcharts.com/\",\n"
+,
+"buttons:{contextButton:{menuClassName:\"highcharts-contextmenu\",symbol:\"menu\",_titleKey:\"contextButtonTitle\",menuItems:[{textKey:\"printChart\",onclick:function(){this.print()}},{separator:!0},{textKey:\"downloadPNG\",onclick:function(){this.exportChart()}},{textKey:\"downloadJPEG\",onclick:function(){this.exportChart({type:\"image/jpeg\"})}},{textKey:\"downloadPDF\",onclick:function(){this.exportChart({type:\"application/pdf\"})}},{textKey:\"downloadSVG\",onclick:function(){this.exportChart({type:\"image/svg+x"
+,
+"ml\"})}}]}}};\n"
+,
+"f.post=function(b,a,e){var c,b=j(\"form\",l({method:\"post\",action:b,enctype:\"multipart/form-data\"},e),{display:\"none\"},k.body);for(c in a)j(\"input\",{type:\"hidden\",name:c,value:a[c]},null,b);b.submit();p(b)};q(z.prototype,{sanitizeSVG:function(b){return b.replace(/zIndex=\"[^\"]+\"/g,\"\").replace(/isShadow=\"[^\"]+\"/g,\"\").replace(/symbolName=\"[^\"]+\"/g,\"\").replace(/jQuery[0-9]+=\"[^\"]+\"/g,\"\").replace(/url\\([^#]+#/g,\"url(#\").replace(/<svg /,'<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" ').replace(/ (NS[0"
+,
+"-9]+\\:)?href=/g,\n"
+,
+"\" xlink:href=\").replace(/\\n/,\" \").replace(/<\\/svg>.*?$/,\"</svg>\").replace(/(fill|stroke)=\"rgba\\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\\.]+)\\)\"/g,'$1=\"rgb($2)\" $1-opacity=\"$3\"').replace(/&nbsp;/g,\" \").replace(/&shy;/g,\"­\").replace(/<IMG /g,\"<image \").replace(/height=([^\" ]+)/g,'height=\"$1\"').replace(/width=([^\" ]+)/g,'width=\"$1\"').replace(/hc-svg-href=\"([^\"]+)\">/g,'xlink:href=\"$1\"/>').replace(/ id=([^\" >]+)/g,'id=\"$1\"').replace(/class=([^\" >]+)/g,'class=\"$1\"').replace(/ transform /g,\" \").replace(/:(p"
+,
+"ath|rect)/g,\n"
+,
+"\"$1\").replace(/style=\"([^\"]+)\"/g,function(a){return a.toLowerCase()})},getSVG:function(b){var a=this,e,c,g,y,h,d=l(a.options,b);if(!k.createElementNS)k.createElementNS=function(a,b){return k.createElement(b)};c=j(\"div\",null,{position:\"absolute\",top:\"-9999em\",width:a.chartWidth+\"px\",height:a.chartHeight+\"px\"},k.body);g=a.renderTo.style.width;h=a.renderTo.style.height;g=d.exporting.sourceWidth||d.chart.width||/px$/.test(g)&&parseInt(g,10)||600;h=d.exporting.sourceHeight||d.chart.height||/px$/.test"
+,
+"(h)&&\n"
+,
+"parseInt(h,10)||400;q(d.chart,{animation:!1,renderTo:c,forExport:!0,width:g,height:h});d.exporting.enabled=!1;delete d.data;d.series=[];m(a.series,function(a){y=l(a.options,{animation:!1,enableMouseTracking:!1,showCheckbox:!1,visible:a.visible});y.isInternal||d.series.push(y)});b&&m([\"xAxis\",\"yAxis\"],function(a){m(E(b[a]),function(b,c){d[a][c]=l(d[a][c],b)})});e=new f.Chart(d,a.callback);m([\"xAxis\",\"yAxis\"],function(b){m(a[b],function(a,d){var c=e[b][d],g=a.getExtremes(),h=g.userMin,g=g.userMax;"
+,
+"c&&\n"
+,
+"(h!==void 0||g!==void 0)&&c.setExtremes(h,g,!0,!1)})});g=e.container.innerHTML;d=null;e.destroy();p(c);g=this.sanitizeSVG(g);return g=g.replace(/(url\\(#highcharts-[0-9]+)&quot;/g,\"$1\").replace(/&quot;/g,\"'\")},getSVGForExport:function(b,a){var e=this.options.exporting;return this.getSVG(l({chart:{borderRadius:0}},e.chartOptions,a,{exporting:{sourceWidth:b&&b.sourceWidth||e.sourceWidth,sourceHeight:b&&b.sourceHeight||e.sourceHeight}}))},exportChart:function(b,a){var e=this.getSVGForExport(b,a),b=l"
+,
+"(this.options.exporting,\n"
+,
+"b);f.post(b.url,{filename:b.filename||\"chart\",type:b.type,width:b.width||0,scale:b.scale||2,svg:e},b.formAttributes)},print:function(){var b=this,a=b.container,e=[],c=a.parentNode,g=k.body,f=g.childNodes;if(!b.isPrinting)b.isPrinting=!0,B(b,\"beforePrint\"),m(f,function(a,b){if(a.nodeType===1)e[b]=a.style.display,a.style.display=\"none\"}),g.appendChild(a),C.focus(),C.print(),setTimeout(function(){c.appendChild(a);m(f,function(a,b){if(a.nodeType===1)a.style.display=e[b]});b.isPrinting=!1;B(b,\"afterP"
+,
+"rint\")},\n"
+,
+"1E3)},contextMenu:function(b,a,e,c,g,f,h){var d=this,l=d.options.navigation,D=l.menuItemStyle,n=d.chartWidth,o=d.chartHeight,k=\"cache-\"+b,i=d[k],t=F(g,f),v,w,p,r=function(a){d.pointer.inClass(a.target,b)||w()};if(!i)d[k]=i=j(\"div\",{className:b},{position:\"absolute\",zIndex:1E3,padding:t+\"px\"},d.container),v=j(\"div\",null,q({MozBoxShadow:\"3px 3px 10px #888\",WebkitBoxShadow:\"3px 3px 10px #888\",boxShadow:\"3px 3px 10px #888\"},l.menuStyle),i),w=function(){u(i,{display:\"none\"});h&&h.setState(0);d.openMe"
+,
+"nu=\n"
+,
+"!1},s(i,\"mouseleave\",function(){p=setTimeout(w,500)}),s(i,\"mouseenter\",function(){clearTimeout(p)}),s(document,\"mouseup\",r),s(d,\"destroy\",function(){A(document,\"mouseup\",r)}),m(a,function(a){if(a){var b=a.separator?j(\"hr\",null,null,v):j(\"div\",{onmouseover:function(){u(this,l.menuItemHoverStyle)},onmouseout:function(){u(this,D)},onclick:function(){w();a.onclick&&a.onclick.apply(d,arguments)},innerHTML:a.text||d.options.lang[a.textKey]},q({cursor:\"pointer\"},D),v);d.exportDivElements.push(b)}}),d.e"
+,
+"xportDivElements.push(v,\n"
+,
+"i),d.exportMenuWidth=i.offsetWidth,d.exportMenuHeight=i.offsetHeight;a={display:\"block\"};e+d.exportMenuWidth>n?a.right=n-e-g-t+\"px\":a.left=e-t+\"px\";c+f+d.exportMenuHeight>o&&h.alignOptions.verticalAlign!==\"top\"?a.bottom=o-c-t+\"px\":a.top=c+f-t+\"px\";u(i,a);d.openMenu=!0},addButton:function(b){var a=this,e=a.renderer,c=l(a.options.navigation.buttonOptions,b),g=c.onclick,k=c.menuItems,h,d,m={stroke:c.symbolStroke,fill:c.symbolFill},j=c.symbolSize||12;if(!a.btnCount)a.btnCount=0;if(!a.exportDivElemen"
+,
+"ts)a.exportDivElements=\n"
+,
+"[],a.exportSVGElements=[];if(c.enabled!==!1){var n=c.theme,o=n.states,p=o&&o.hover,o=o&&o.select,i;delete n.states;g?i=function(){g.apply(a,arguments)}:k&&(i=function(){a.contextMenu(d.menuClassName,k,d.translateX,d.translateY,d.width,d.height,d);d.setState(2)});c.text&&c.symbol?n.paddingLeft=f.pick(n.paddingLeft,25):c.text||q(n,{width:c.width,height:c.height,padding:0});d=e.button(c.text,0,0,i,n,p,o).attr({title:a.options.lang[c._titleKey],\"stroke-linecap\":\"round\"});d.menuClassName=b.menuClassN"
+,
+"ame||\n"
+,
+"\"highcharts-menu-\"+a.btnCount++;c.symbol&&(h=e.symbol(c.symbol,c.symbolX-j/2,c.symbolY-j/2,j,j).attr(q(m,{\"stroke-width\":c.symbolStrokeWidth||1,zIndex:1})).add(d));d.add().align(q(c,{width:d.width,x:f.pick(c.x,x)}),!0,\"spacingBox\");x+=(d.width+c.buttonSpacing)*(c.align===\"right\"?-1:1);a.exportSVGElements.push(d,h)}},destroyExport:function(b){var b=b.target,a,e;for(a=0;a<b.exportSVGElements.length;a++)if(e=b.exportSVGElements[a])e.onclick=e.ontouchstart=null,b.exportSVGElements[a]=e.destroy();for"
+,
+"(a=\n"
+"0;a<b.exportDivElements.length;a++)e=b.exportDivElements[a],A(e,\"mouseleave\"),b.exportDivElements[a]=e.onmouseout=e.onmouseover=e.ontouchstart=e.onclick=null,p(e)}});H.menu=function(b,a,e,c){return[\"M\",b,a+2.5,\"L\",b+e,a+2.5,\"M\",b,a+c/2+0.5,\"L\",b+e,a+c/2+0.5,\"M\",b,a+c-1.5,\"L\",b+e,a+c-1.5]};z.prototype.callbacks.push(function(b){var a,e=b.options.exporting,c=e.buttons;x=0;if(e.enabled!==!1){for(a in c)b.addButton(c[a]);s(b,\"destroy\",b.destroyExport)}})})(Highcharts);\n"
+"\n"
+"/* Highcharts plugin for dragging a legend box Author: Torstein Hønsi, Masih License: MIT License Requires: Highcharts 3.0+ Usage: Set draggable:true and floating:true in the legend options. The legend preserves its alignment after dragging. For example if it is aligned to the right, it will keep the same distance to the right edge even after chart resize or when exporting to a different size. */\n"
+,
+"!function(e){var t=e.addEvent;e.wrap(e.Chart.prototype,\"init\",function(r){r.apply(this,Array.prototype.slice.call(arguments,1));var n,o,a,i,c,h,l,p=this,g=p.legend,s=g.box,d=g.options;d.draggable&&(s.css({cursor:\"move\"}),t(s.element,\"mousedown\",function(e){e=p.pointer.normalize(e),o=e.chartX,a=e.chartY,i=d.x,c=d.y,h=g.group.attr(\"translateX\"),l=g.group.attr(\"translateY\"),n=!0}),t(p.container,\"mousemove\",function(t){if(n){t=p.pointer.normalize(t);var r=t.chartX-o,s=t.chartY-a;d.x=i+r,d.y=c+s,h+r>"
+,
+"0&&h+r+g.legendWidth<p.chartWidth&&l+s>0&&l+s+g.legendHeight<p.chartHeight&&(g.group.placed=!1,g.group.align(e.extend({width:g.legendWidth,height:g.legendHeight},d),!0,\"spacingBox\")),p.pointer.selectionMarker&&(p.pointer.selectionMarker=p.pointer.selectionMarker.destroy())}}),t(document,\"mouseup\",function(){n=!1}))})}(Highcharts);\n"
+"\n"
 "</script>\n"
 "<script type=\"text/javascript\">\n"
 "    $(document).ready(\n"
@@ -1763,10 +1824,11 @@
 "        layout: 'vertical',\n"
 "        align: 'right',\n"
 "        verticalAlign: 'top',\n"
-"        floating: true,\n"
 "        borderWidth: 1,\n"
 "        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),\n"
-"        shadow: true\n"
+"        shadow: false,\n"
+"        floating: true,\n"
+"        draggable: true\n"
 "    },\n"
 "    credits: {\n"
 "        enabled: false\n"
@@ -1809,9 +1871,11 @@
 "        layout: 'vertical',\n"
 "        align: 'right',\n"
 "        verticalAlign: 'top',\n"
+"        borderWidth: 1,\n"
+"        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),\n"
+"        shadow: false,\n"
 "        floating: true,\n"
-"        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',\n"
-"        borderWidth: 1\n"
+"        draggable: true\n"
 "    },\n"
 "    tooltip: {\n"
 "        valueSuffix: ''\n"
@@ -1895,15 +1959,16 @@
 "        options.xAxis.categories.push(benchmark_groups[i].title);\n"
 "    }\n"
 "    var series_group_data = get_series_group_data(benchmark_groups);\n"
-"    var count = 0;\n"
+"    var benchmark_count = Object.keys(series_group_data).length;\n"
+"    var current_index = 0;\n"
 "    for (var key in series_group_data) {\n"
 "        options.series.push({\n"
 "            name: key,\n"
-"            index: benchmark_groups.length - count - 1,\n"
-"            legendIndex: count,\n"
+"            index: benchmark_count - current_index - 1,\n"
+"            legendIndex: current_index,\n"
 "            data: jQuery.extend( true, [], series_group_data[key].data)\n"
 "        });\n"
-"        ++count;\n"
+"        ++current_index;\n"
 "    }\n"
 "    \n"
 "    new Highcharts.Chart(options)\n"
