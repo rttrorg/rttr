@@ -35,9 +35,9 @@ namespace nonius {
 
     struct html_group_reporter : reporter {
 
-    void set_current_group_name(std::string benchmark_group){
+    void set_current_group_name(std::string benchmark_group, std::string tooltip = std::string()){
         
-        m_all_benchmarks.push_back(std::make_pair(benchmark_group, benchmark_list()));
+        m_all_benchmarks.push_back(std::make_pair(group_data{benchmark_group, tooltip}, benchmark_list()));
         current_benchmark_group = std::move(benchmark_group);
     }
 
@@ -78,7 +78,8 @@ namespace nonius {
 
         for(const auto& bench_group : m_all_benchmarks) {
             cpptempl::data_map benchmark_group;
-            benchmark_group["title"] = escape(bench_group.first);
+            benchmark_group["title"] = escape(bench_group.first.title);
+            benchmark_group["title_tooltip"] = escape(bench_group.first.tooltip);
             benchmark_group["unit"] = detail::units_for_magnitude(samples_magnitude);
             cpptempl::data_map bench_list_data;
 
@@ -363,10 +364,14 @@ namespace nonius {
         std::string current_benchmark;
         std::string current_benchmark_group;
         
-
-        std::unordered_map<std::string, std::vector<fp_seconds>> data;
+        struct group_data
+        {
+            std::string title;
+            std::string tooltip;
+        };
+        
         typedef std::vector<std::pair<std::string, collected_data>> benchmark_list;
-        std::vector<std::pair<std::string, benchmark_list>> m_all_benchmarks;
+        std::vector<std::pair<group_data, benchmark_list>> m_all_benchmarks;
         
     };
 

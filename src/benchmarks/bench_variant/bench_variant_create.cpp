@@ -235,7 +235,7 @@ void bench_variant_create()
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_variant.html");
     
-    reporter.set_current_group_name("constructor");
+    reporter.set_current_group_name("constructor", "The construction of a variant with automatic storage.");
     nonius::benchmark benchmarks_group_1[] = { bench_variant_string_ctor(),
                                                bench_variant_char_ctor(),
                                                bench_variant_double_ctor(),
@@ -244,7 +244,7 @@ void bench_variant_create()
                                                bench_variant_bool_ctor()};
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
-    reporter.set_current_group_name("destructor");
+    reporter.set_current_group_name("destructor", "The destruction of a variant with automatic storage.");
     nonius::benchmark benchmarks_group_2[] = { bench_variant_string_dtor(),
                                                bench_variant_char_dtor(),
                                                bench_variant_double_dtor(),

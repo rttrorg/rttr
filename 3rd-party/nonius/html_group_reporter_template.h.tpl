@@ -388,6 +388,7 @@ function create_charts() {
 
 var benchmark_groups = [{% for benchmark_list in benchmark_groups %} {
                         title: '{$benchmark_list.title}',
+                        tooltip: '{$benchmark_list.title_tooltip}',
                         unit: '{$benchmark_list.unit}',
                         data: [ {% for benchmark in benchmark_list.data %} {
                                     name: '{$benchmark.name}',
@@ -439,8 +440,9 @@ var barchart_options = {
             text: null
         },
         labels: {
+            useHTML: true,
             formatter: function () {
-                return '<span style="cursor:pointer">' + this.value + '</span>';
+                return '<span title ="' + this.value.tooltip + '" style="cursor:pointer">' + this.value.title + '</span>';
             }
         }
     },
@@ -585,8 +587,8 @@ create_scatter_chart(scatter_options, benchmark_groups[0]);
 bind_barchart_click();
 
 function bind_barchart_click() {
-    $('#bar_chart .highcharts-xaxis-labels text').off('click');
-    $('#bar_chart .highcharts-xaxis-labels text').on('click', function () {
+    $('#bar_chart .highcharts-xaxis-labels span').off('click');
+    $('#bar_chart .highcharts-xaxis-labels span').on('click', function () {
         var index = $(this).index();
         var scatter_chart = $('#scatter_chart').highcharts();
         if (scatter_chart) {
@@ -617,7 +619,8 @@ function create_bar_chart(options, benchmark_groups) {
     options.series = [];
 
     for (var i = 0; i < benchmark_groups.length; ++i) {
-        options.xAxis.categories.push(benchmark_groups[i].title);
+        options.xAxis.categories.push({title : benchmark_groups[i].title,
+                                       tooltip : benchmark_groups[i].tooltip});
     }
     var series_group_data = get_series_group_data(benchmark_groups);
     var benchmark_count = Object.keys(series_group_data).length;
