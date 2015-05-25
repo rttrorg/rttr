@@ -25,41 +25,10 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench_variant)
-
-message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
-message(STATUS "===========================")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-                    
-set(SOURCE_FILES main.cpp
-                 bench_variant_conversion.cpp
-                 bench_variant_create.cpp)
-
-if (USE_PCH)
-  activate_precompiled_headers("pch.h" SOURCE_FILES)
-endif()
-
-add_executable(bench_variant ${SOURCE_FILES} ${HEADER_FILES})
-if (MSVC)
-  target_link_libraries(bench_variant rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-else()
-  target_link_libraries(bench_variant rttr_core ${CMAKE_THREAD_LIBS_INIT})
-endif()
-
-target_include_directories(bench_variant PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
-target_compile_definitions(bench_variant PUBLIC BOOST_ALL_NO_LIB)
-if(MSVC)
-    set_target_properties(bench_variant PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
-endif()
-
-set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d)
-
-add_dependencies(bench_variant rttr_core)
-
-install(TARGETS bench_variant
-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
-        )
-        
-message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
-message(STATUS "")
+set(HEADER_FILES test_classes.h
+                 version.rc.in
+                 )
+                
+set(SOURCE_FILES benchmark_rttr_cast.cpp
+                 main.cpp
+                 )

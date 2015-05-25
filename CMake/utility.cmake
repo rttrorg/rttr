@@ -462,6 +462,17 @@ function(getCompilerName _COMPILER_NAME)
   set(${_COMPILER_NAME} ${COMPILER_NAME} PARENT_SCOPE)    
 endfunction()
 
+####################################################################################
+# This will install the PDB files also into the "bin" folder of the installation directory
+# _TARGET_NAME The name of the target
+####################################################################################
+
+function(install_pdb_files _TARGET_NAME)
+    if (MSVC)
+        install(FILES $<TARGET_PDB_FILE:${_TARGET_NAME}> DESTINATION "bin" CONFIGURATIONS Debug RelWithDebInfo)
+    endif()
+endfunction()
+
 
 ####################################################################################
 # Get environment variable, define it as ENV_$var and make sure backslashes are converted to forward slashes

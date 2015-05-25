@@ -26,8 +26,8 @@
 ####################################################################################
 
 if (Boost_FOUND)
-    add_subdirectory (rttr_cast)
-    add_subdirectory (variant)
+    add_subdirectory (bench_rttr_cast)
+    add_subdirectory (bench_variant)
 else()
     message(STATUS "Boost was not found - NO benchmark projectes created.")
 endif()

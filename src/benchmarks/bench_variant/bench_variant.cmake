@@ -25,32 +25,8 @@
 #                                                                                  #
 ####################################################################################
 
-project(unit_tests)
-
-message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
-message(STATUS "===========================")
-
-generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH} 
-                                "RTTR unit_tests" "Copyright (c) 2014, 2015 Axel Menzel <info@axelmenzel.de>" "MIT License")
-                                
-loadFolder("unit_tests" HPP_FILES SRC_FILES)
-
-if (USE_PCH)
-  activate_precompiled_headers("pch.h" SRC_FILES)
-endif()
-
-add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(unit_tests rttr_core)
-add_dependencies(unit_tests rttr_core)
-target_include_directories(unit_tests PUBLIC ${RTTR_3RD_PARTY_DIR})
-set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX _d)
-
-# run tests
-add_custom_target(run_tests ALL
-                  COMMAND "$<TARGET_FILE:unit_tests>"
-                  DEPENDS unit_tests
-                  COMMENT "Running unit_tests")
-
-
-message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
-message(STATUS "")
+set(HEADER_FILES version.rc.in)
+                
+set(SOURCE_FILES main.cpp
+                 bench_variant_conversion.cpp
+                 bench_variant_create.cpp)

@@ -49,11 +49,6 @@ install(TARGETS rttr_core EXPORT rttr_targets
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
         LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
         ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
-
-# install the shared object also into the lib directory
-install(TARGETS rttr_core
-        RUNTIME DESTINATION ${RTTR_LIB_INSTALL_DIR}
-        LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
         
 install(EXPORT rttr_targets
         DESTINATION cmake
@@ -66,11 +61,14 @@ target_include_directories(rttr_core PUBLIC
   $<INSTALL_INTERFACE:include>)
 
 target_compile_definitions(rttr_core PRIVATE RTTR_DLL_EXPORTS)
-target_compile_definitions(rttr_core PUBLIC RTTR_DLL )
+target_compile_definitions(rttr_core PUBLIC RTTR_DLL)
 
 set_target_properties(rttr_core PROPERTIES 
                       VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                       EXPORT_NAME Core)
+
+# install also pdb file
+install_pdb_files(rttr_core)
 
 if (BUILD_STATIC)
     add_library(rttr_core_lib STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
@@ -100,13 +98,12 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     add_library(rttr_core_s SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
  
     install(TARGETS rttr_core_s EXPORT rttr_targets
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-            ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-            LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
+            LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
+            ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
             
-    install(TARGETS rttr_core_s
-            RUNTIME DESTINATION ${RTTR_LIB_INSTALL_DIR}
-            LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+    target_compile_definitions(rttr_core_s PRIVATE RTTR_DLL_EXPORTS)
+    target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
 
     target_include_directories(rttr_core_s PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
@@ -116,6 +113,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     set_target_properties(rttr_core_s PROPERTIES 
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL)
+                          
+    install_pdb_files(rttr_core_s)
+
     if (MSVC)
         target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
     elseif(CMAKE_COMPILER_IS_GNUCXX)
@@ -123,7 +123,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     else()
         message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
     endif()
-    
+   
     if (BUILD_STATIC)
         add_library(rttr_core_lib_s STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
         

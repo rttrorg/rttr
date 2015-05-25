@@ -25,44 +25,22 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench_rttr_cast)
-
-message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
-message(STATUS "===========================")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-                    
-set(SOURCE_FILES main.cpp
-                 benchmark_rttr_cast.cpp
-    )
-
 set(HEADER_FILES test_classes.h
-    )
-
-if (USE_PCH)
-  activate_precompiled_headers("pch.h" SOURCE_FILES)
-endif()
-
-add_executable(bench_rttr_cast ${SOURCE_FILES} ${HEADER_FILES})
-if (MSVC)
-  target_link_libraries(bench_rttr_cast rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-else()
-  target_link_libraries(bench_rttr_cast rttr_core ${CMAKE_THREAD_LIBS_INIT})
-endif()
-
-target_include_directories(bench_rttr_cast PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
-target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
-if(MSVC)
-    set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
-endif()
-
-set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d)
-
-add_dependencies(bench_rttr_cast rttr_core)
-
-install(TARGETS bench_rttr_cast
-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
-        )
-        
-message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
-message(STATUS "")
+                 test_constructor_reflection.h
+                 test_enumeration_reflection.h
+                 test_method_reflection.h
+                 test_property_reflection.h
+                 test_type.h
+                 test_variant.h
+                 version.rc.in
+                 )
+                
+set(SOURCE_FILES main.cpp
+                 test_misc.cpp
+                 test_property_reflection.cpp
+                 test_type.cpp
+                 test_variant.cpp
+                 test_constructor_reflection.cpp
+                 test_enumeration_reflection.cpp
+                 test_method_reflection.cpp
+                 )

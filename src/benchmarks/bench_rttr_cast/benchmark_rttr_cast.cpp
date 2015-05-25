@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "benchmarks/rttr_cast/test_classes.h"
+#include "benchmarks/bench_rttr_cast/test_classes.h"
 
 #include <rttr/type>
 #include <rttr/register>
