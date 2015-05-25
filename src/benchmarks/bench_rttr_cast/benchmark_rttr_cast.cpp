@@ -162,35 +162,31 @@ bench_data_virtual setup_virtual_inheritance_level_6()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-using bench_data_multiple = bench_data<ClassMultipleBaseA>;
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bench_data_multiple setup_multiple_class_hierachy()
+bench_data<ClassMultipleBaseC> setup_multiple_class_hierachy()
 {
-    std::vector<std::shared_ptr<ClassMultipleBaseA> > vec;
+    std::vector<std::shared_ptr<ClassMultipleBaseC> > vec;
     vec.reserve(ITEM_COUNT * 7);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
         vec.push_back(detail::make_unique<FinalClass>());
-        vec.push_back(detail::make_unique<ClassMultiple5A>());
+        vec.push_back(detail::make_unique<ClassMultiple5C>());
         vec.push_back(detail::make_unique<FinalClass>());
-        vec.push_back(detail::make_unique<ClassMultiple4A>());
+        vec.push_back(detail::make_unique<ClassMultiple4C>());
         vec.push_back(detail::make_unique<FinalClass>());
-        vec.push_back(detail::make_unique<ClassMultiple5A>());
+        vec.push_back(detail::make_unique<ClassMultiple5C>());
         vec.push_back(detail::make_unique<FinalClass>());
     }
 
-    return bench_data_multiple{std::move(vec)};
+    return bench_data<ClassMultipleBaseC>{std::move(vec)};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bench_data_multiple setup_cross_cast_class_hierachy()
+bench_data<ClassMultiple3A> setup_cross_cast_class_hierachy_1()
 {
-    std::vector<std::shared_ptr<ClassMultipleBaseA> > vec;
+    std::vector<std::shared_ptr<ClassMultiple3A> > vec;
     vec.reserve(ITEM_COUNT * 2);
     for (int i = 0; i < ITEM_COUNT; ++i)
     {
@@ -198,7 +194,22 @@ bench_data_multiple setup_cross_cast_class_hierachy()
         vec.push_back(detail::make_unique<ClassMultiple6A>());
     }
 
-    return bench_data_multiple{std::move(vec)};
+    return bench_data<ClassMultiple3A>{std::move(vec)};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bench_data<ClassMultiple6A> setup_cross_cast_class_hierachy_2()
+{
+    std::vector<std::shared_ptr<ClassMultiple6A> > vec;
+    vec.reserve(ITEM_COUNT * 2);
+    for (int i = 0; i < ITEM_COUNT; ++i)
+    {
+        vec.push_back(detail::make_unique<FinalClass>());
+        vec.push_back(detail::make_unique<ClassMultiple6A>());
+    }
+
+    return bench_data<ClassMultiple6A>{std::move(vec)};
 }
 
 
@@ -453,15 +464,15 @@ nonius::benchmark bench_virtual_inheritance_level_1_dynamic_cast()
             {
                 if (ClassDiamondLeft1* item = dynamic_cast<ClassDiamondLeft1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle1* item = dynamic_cast<ClassDiamondMiddle1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight1* item = dynamic_cast<ClassDiamondRight1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -484,15 +495,15 @@ nonius::benchmark bench_virtual_inheritance_level_1_rttr_cast()
             {
                 if (ClassDiamondLeft1* item = rttr_cast<ClassDiamondLeft1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle1* item = rttr_cast<ClassDiamondMiddle1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight1* item = rttr_cast<ClassDiamondRight1*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -515,15 +526,15 @@ nonius::benchmark bench_virtual_inheritance_level_3_dynamic_cast()
             {
                 if (ClassDiamondLeft3* item = dynamic_cast<ClassDiamondLeft3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle3* item = dynamic_cast<ClassDiamondMiddle3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight3* item = dynamic_cast<ClassDiamondRight3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -546,15 +557,15 @@ nonius::benchmark bench_virtual_inheritance_level_3_rttr_cast()
             {
                 if (ClassDiamondLeft3* item = rttr_cast<ClassDiamondLeft3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle3* item = rttr_cast<ClassDiamondMiddle3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight3* item = rttr_cast<ClassDiamondRight3*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -578,15 +589,15 @@ nonius::benchmark bench_virtual_inheritance_level_6_dynamic_cast()
             {
                 if (ClassDiamondLeft6* item = dynamic_cast<ClassDiamondLeft6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle6* item = dynamic_cast<ClassDiamondMiddle6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight6* item = dynamic_cast<ClassDiamondRight6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -609,15 +620,15 @@ nonius::benchmark bench_virtual_inheritance_level_6_rttr_cast()
             {
                 if (ClassDiamondLeft6* item = rttr_cast<ClassDiamondLeft6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondMiddle6* item = rttr_cast<ClassDiamondMiddle6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassDiamondRight6* item = rttr_cast<ClassDiamondRight6*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -634,7 +645,7 @@ nonius::benchmark bench_multiple_inheritance_dynamic_cast()
 {
     return nonius::benchmark("dynamic_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_multiple_class_hierachy();
+        auto bench_data = setup_multiple_class_hierachy();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
@@ -642,7 +653,7 @@ nonius::benchmark bench_multiple_inheritance_dynamic_cast()
             {
                 if (FinalClass* item = dynamic_cast<FinalClass*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -657,7 +668,7 @@ nonius::benchmark bench_multiple_inheritance_rttr_cast()
 {
     return nonius::benchmark("rttr_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_multiple_class_hierachy();
+        auto bench_data = setup_multiple_class_hierachy();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
@@ -665,7 +676,7 @@ nonius::benchmark bench_multiple_inheritance_rttr_cast()
             {
                 if (FinalClass* item = rttr_cast<FinalClass*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -682,15 +693,15 @@ nonius::benchmark bench_cross_cast_dynamic_cast_1()
 {
     return nonius::benchmark("dynamic_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_cross_cast_class_hierachy();
+        auto bench_data = setup_cross_cast_class_hierachy_1();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
-                if (ClassMultiple1B* item = dynamic_cast<ClassMultiple1B*>(bench_data.m_vec[i].get()))
+                if (ClassMultiple3C* item = dynamic_cast<ClassMultiple3C*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -705,15 +716,15 @@ nonius::benchmark bench_cross_cast_rttr_cast_1()
 {
     return nonius::benchmark("rttr_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_cross_cast_class_hierachy();
+        auto bench_data = setup_cross_cast_class_hierachy_1();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
-                if (ClassMultiple1B* item = rttr_cast<ClassMultiple1B*>(bench_data.m_vec[i].get()))
+                if (ClassMultiple3C* item = rttr_cast<ClassMultiple3C*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -728,15 +739,15 @@ nonius::benchmark bench_cross_cast_dynamic_cast_2()
 {
     return nonius::benchmark("dynamic_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_cross_cast_class_hierachy();
+        auto bench_data = setup_cross_cast_class_hierachy_2();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
-                if (ClassMultiple1E* item = dynamic_cast<ClassMultiple1E*>(bench_data.m_vec[i].get()))
+                if (ClassMultiple6E* item = dynamic_cast<ClassMultiple6E*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -751,15 +762,15 @@ nonius::benchmark bench_cross_cast_rttr_cast_2()
 {
     return nonius::benchmark("rttr_cast", [](nonius::chronometer meter)
     {
-        bench_data_multiple bench_data = setup_cross_cast_class_hierachy();
+        auto bench_data = setup_cross_cast_class_hierachy_2();
         volatile std::size_t value = 0;
         meter.measure([&]() 
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
-                if (ClassMultiple1E* item = rttr_cast<ClassMultiple1E*>(bench_data.m_vec[i].get()))
+                if (ClassMultiple6E* item = rttr_cast<ClassMultiple6E*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -785,23 +796,23 @@ nonius::benchmark bench_level_6_typeid()
             {
                 if (ClassSingle1A* item = dynamic_cast<ClassSingle1A*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1B* item = dynamic_cast<ClassSingle1B*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1C* item = dynamic_cast<ClassSingle1C*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1D* item = dynamic_cast<ClassSingle1D*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1E* item = dynamic_cast<ClassSingle1E*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -824,23 +835,23 @@ nonius::benchmark bench_level_6_type()
             {
                 if (ClassSingle1A* item = rttr_cast<ClassSingle1A*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1B* item = rttr_cast<ClassSingle1B*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1C* item = rttr_cast<ClassSingle1C*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1D* item = rttr_cast<ClassSingle1D*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
                 else if (ClassSingle1E* item = rttr_cast<ClassSingle1E*>(bench_data.m_vec[i].get()))
                 {
-                    value += 1;;
+                    value += 1;
                 }
             }
 
@@ -863,46 +874,46 @@ void start_rttr_cast_benchmark()
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_dynamic_cast_vs_rttr_cast.html");
 
-    reporter.set_current_group_name("downcast to level 1");
+    reporter.set_current_group_name("downcast to level 1", "A cast from the base class one hierarchy level down.");
     nonius::benchmark benchmarks_group_1[] = { bench_level_1_dynamic_cast(), bench_level_1_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
-    reporter.set_current_group_name("downcast to level 3");
+    reporter.set_current_group_name("downcast to level 3", "A cast from the base class three hierarchy levels down.");
     nonius::benchmark benchmarks_group_2[] = { bench_level_3_dynamic_cast(), bench_level_3_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_2), std::end(benchmarks_group_2), reporter);
 
-    reporter.set_current_group_name("downcast to level 6");
+    reporter.set_current_group_name("downcast to level 6", "A cast from the base class six hierarchy levels down.");
     nonius::benchmark benchmarks_group_3[] = { bench_level_6_dynamic_cast(), bench_level_6_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_3), std::end(benchmarks_group_3), reporter);
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    reporter.set_current_group_name("virtual inheritance level 1");
+    reporter.set_current_group_name("virtual inheritance level 1", "A cast from virtual base class one hierarchy levels down.");
     nonius::benchmark benchmarks_group_4[] = { bench_virtual_inheritance_level_1_dynamic_cast(), bench_virtual_inheritance_level_1_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_4), std::end(benchmarks_group_4), reporter);
 
-    reporter.set_current_group_name("virtual inheritance level 3");
+    reporter.set_current_group_name("virtual inheritance level 3", "A cast from virtual base class three hierarchy levels down.");
     nonius::benchmark benchmarks_group_5[] = { bench_virtual_inheritance_level_3_dynamic_cast(), bench_virtual_inheritance_level_3_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_5), std::end(benchmarks_group_5), reporter);
 
-    reporter.set_current_group_name("virtual inheritance level 6");
+    reporter.set_current_group_name("virtual inheritance level 6", "A cast from virtual base class six hierarchy levels down.");
     nonius::benchmark benchmarks_group_6[] = { bench_virtual_inheritance_level_6_dynamic_cast(), bench_virtual_inheritance_level_6_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_6), std::end(benchmarks_group_6), reporter);
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    reporter.set_current_group_name("multiple inheritance");
+    reporter.set_current_group_name("multiple inheritance", "A cast from virtual base class to the most derived class, which itself is derived from 5 other classes (all 7 hierarchy levels deep).");
     nonius::benchmark benchmarks_group_7[] = { bench_multiple_inheritance_dynamic_cast(), bench_multiple_inheritance_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_7), std::end(benchmarks_group_7), reporter);
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    reporter.set_current_group_name("cross cast 1");
+    reporter.set_current_group_name("cross cast 1", "A cross cast in the 4th hierarchy level (out of 8) to the third (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_8[] = { bench_cross_cast_dynamic_cast_1(), bench_cross_cast_rttr_cast_1() };
     nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
       
     
-    reporter.set_current_group_name("cross cast 2");
+    reporter.set_current_group_name("cross cast 2", "A cross cast in the 7th hierarchy level (out of 8) to the fifth (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_9[] = { bench_cross_cast_dynamic_cast_2(), bench_cross_cast_rttr_cast_2() };
     nonius::go(cfg, std::begin(benchmarks_group_9), std::end(benchmarks_group_9), reporter);
 
