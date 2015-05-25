@@ -68,10 +68,19 @@ RTTR_REGISTER
                 .method("length",       &std::string::length)
                 .method("size",         &std::string::size)
                 .method("empty",        &std::string::empty)
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
+                .method("at",           static_cast<char&(std::string::*)(std::size_t)>(&std::string::at))
+                .method("at",           static_cast<const char&(std::string::*)(std::size_t) const>(&std::string::at))
+                .method("operator[]",   static_cast<char&(std::string::*)(std::size_t)>(&std::string::operator[]))
+                .method("operator[]",   static_cast<const char&(std::string::*)(std::size_t) const>(&std::string::operator[]))
+#else
                 .method("at",           rttr::select_const(&std::string::at))
                 .method("at",           rttr::select_non_const(&std::string::at))
+                .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
+                .method("operator[]",   rttr::select_non_const(&std::string::operator[]))
+#endif
                 .method("data",         &std::string::data)
                 .method("c_str",        &std::string::c_str)
-                .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
+                
            ;
 }

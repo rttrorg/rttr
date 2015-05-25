@@ -77,9 +77,15 @@ RTTR_REGISTER
         .method("method_2", &method_test::method_2)    
         .method("method_3", &method_test::method_3)
         .method("method_4", &method_test::method_4)
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
+        .method("method_5", static_cast<int(method_test::*)(double*)>(&method_test::method_5))
+        .method("method_5", static_cast<int(method_test::*)(int,double)>(&method_test::method_5))
+        .method("method_5", static_cast<int(method_test::*)(int,double) const>(&method_test::method_5))
+#else
         .method("method_5", select_overload<int(double*)>(&method_test::method_5))
         .method("method_5", select_overload<int(int,double)>(&method_test::method_5))
         .method("method_5", select_const(&method_test::method_5))
+#endif
         .method("method_6", &method_test::method_6)
         .method("method_7", &method_test::method_7)
         .method("method_8", &method_test::method_8, {metadata(E_MetaData::SCRIPTABLE, true), metadata("TAG",  42)})
