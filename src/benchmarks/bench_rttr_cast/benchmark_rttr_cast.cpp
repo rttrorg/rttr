@@ -902,18 +902,18 @@ void start_rttr_cast_benchmark()
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    reporter.set_current_group_name("multiple inheritance", "A cast from virtual base class to the most derived class, which itself is derived from 5 other classes (all 7 hierarchy levels deep).");
+    reporter.set_current_group_name("multiple inheritance", "A cast from virtual base class to the most derived class,<br>which itself is derived from 5 other classes (all 7 hierarchy levels deep).");
     nonius::benchmark benchmarks_group_7[] = { bench_multiple_inheritance_dynamic_cast(), bench_multiple_inheritance_rttr_cast() };
     nonius::go(cfg, std::begin(benchmarks_group_7), std::end(benchmarks_group_7), reporter);
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    reporter.set_current_group_name("cross cast 1", "A cross cast in the 4th hierarchy level (out of 8) to the third (out of 5 class wide hierarchy).");
+    reporter.set_current_group_name("cross cast 1", "A cross cast in the 4th hierarchy level (out of 8)<br>to the third (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_8[] = { bench_cross_cast_dynamic_cast_1(), bench_cross_cast_rttr_cast_1() };
     nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
       
     
-    reporter.set_current_group_name("cross cast 2", "A cross cast in the 7th hierarchy level (out of 8) to the fifth (out of 5 class wide hierarchy).");
+    reporter.set_current_group_name("cross cast 2", "A cross cast in the 7th hierarchy level (out of 8)<br>to the fifth (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_9[] = { bench_cross_cast_dynamic_cast_2(), bench_cross_cast_rttr_cast_2() };
     nonius::go(cfg, std::begin(benchmarks_group_9), std::end(benchmarks_group_9), reporter);
 
