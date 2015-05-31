@@ -27,7 +27,11 @@
 
 # first step set up all necessary variables
 if(WIN32 AND NOT UNIX)
-    set(CPACK_GENERATOR ZIP)
+    if (NOT CMAKE_VERSION VERSION_LESS 3.1.0)
+        set(CPACK_GENERATOR 7Z)
+    else()
+        set(CPACK_GENERATOR ZIP)
+    endif()
 elseif(UNIX AND NOT APPLE)
     set(CPACK_GENERATOR TGZ;TBZ2)
 elseif(APPLE)

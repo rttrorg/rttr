@@ -1942,7 +1942,7 @@ namespace nonius {
             auto n_magic = std::count_if(first, last, [&magic](char c) { return magic.find(c) != std::string::npos; });
 
             std::string escaped;
-            escaped.reserve(source.size() + n_magic*6);
+            escaped.reserve(source.size() + n_magic * 6);
 
             while(first != last) {
                 auto next_magic = std::find_first_of(first, last, magic.begin(), magic.end());

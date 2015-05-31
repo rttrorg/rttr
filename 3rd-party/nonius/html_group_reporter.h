@@ -57,6 +57,10 @@ namespace nonius {
         m_can_print_datetime = enable;
     }
 
+    void set_place_legend_below_chart(bool enable) {
+        place_legend_below = enable;
+    }
+
     void generate_report() const {
 
         const std::string file_name = gen_unique_filename(m_output_file_path);
@@ -75,6 +79,7 @@ namespace nonius {
         map["barchart_title"]       = escape(title);
         map["barchart_subtitle"]    = m_can_print_datetime ? escape(get_current_datetime()) : std::string("");
         map["barchart_unit"]        = detail::units_for_magnitude(mean_magnitude);
+        map["place_legend_below"]   = place_legend_below;
 
         for(const auto& bench_group : m_all_benchmarks) {
             cpptempl::data_map benchmark_group;
@@ -305,6 +310,7 @@ namespace nonius {
                 { '>',  "&gt;"   },
                 { '&',  "&amp;"  },
                 { '\\',  "\\\\"  },
+                { '\n',  "\\n"   },
             };
             return detail::escape(source, escapes);
         }
@@ -355,7 +361,8 @@ namespace nonius {
         int n_resamples = 0;
         bool verbose = false;
         bool summary = false;
-        std::string m_barchart_height = "600px";
+        bool place_legend_below = false;
+        std::string m_barchart_height = "580px";
         std::string m_scatterchart_height = "250px";
         bool m_can_print_datetime = true;
         std::string m_output_file_path;

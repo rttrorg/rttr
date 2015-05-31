@@ -31,59 +31,127 @@
 #include <nonius/nonius.h++>
 #include <nonius/html_group_reporter.h>
 
+#include <locale>
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static int setup_integer()
+{
+    return 12345;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_int_string_to_int()
+static float setup_float()
 {
-    return nonius::benchmark("int", [](nonius::chronometer meter)
+    return 123.12345f;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static double setup_double()
+{
+    return 123456.123456;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static bool setup_bool()
+{
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string setup_string_integer()
+{
+    return std::string("12345");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string setup_string_float()
+{
+    return std::string("123.12345");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string setup_string_double()
+{
+    return std::string("123456.123456");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string setup_string_bool()
+{
+    return std::string("1");
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_native_int_to_string()
+{
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23";
+        int var = setup_integer();
+        std::string result;
         meter.measure([&]()
         {
-           return var.to_int();
+            result = std::to_string(var);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_int_string_to_float()
+nonius::benchmark bench_variant_int_to_string()
 {
-    return nonius::benchmark("float", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23";
+        rttr::variant var = setup_integer();
+        std::string result;
         meter.measure([&]()
         {
-            return var.to_float();
+            result = var.to_string();
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_int_string_to_double()
+nonius::benchmark bench_native_string_to_int()
 {
-    return nonius::benchmark("double", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23";
+        std::string number_string = setup_string_integer();
+        int result = 0;
         meter.measure([&]()
         {
-            return var.to_double();
+            std::size_t pos = 0;
+            result = std::stoi(number_string, &pos);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_int_string_to_bool()
+nonius::benchmark bench_variant_string_to_int()
 {
-    return nonius::benchmark("bool", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23";
+        rttr::variant var = setup_string_integer();
+        int result = 0;
         meter.measure([&]()
         {
-            return var.to_bool();
+            result = var.to_int();
         });
     });
 }
@@ -92,57 +160,62 @@ nonius::benchmark bench_variant_int_string_to_bool()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-nonius::benchmark bench_variant_float_string_to_int()
+nonius::benchmark bench_native_float_to_string()
 {
-    return nonius::benchmark("int", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0f";
+        float var = setup_float();
+        std::string result;
         meter.measure([&]()
         {
-           return var.to_int();
+            result = std::to_string(var);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_float_string_to_float()
+nonius::benchmark bench_variant_float_to_string()
 {
-    return nonius::benchmark("float", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0f";
+        rttr::variant var = setup_float();
+        std::string result;
         meter.measure([&]()
         {
-            return var.to_float();
+            result = var.to_string();
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_float_string_to_double()
+nonius::benchmark bench_native_string_to_float()
 {
-    return nonius::benchmark("double", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0f";
+        std::string number_string = setup_string_float();
+        float result;
         meter.measure([&]()
         {
-            return var.to_double();
+            std::size_t pos = 0;
+            result = std::stof(number_string, &pos);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_float_string_to_bool()
+nonius::benchmark bench_variant_string_to_float()
 {
-    return nonius::benchmark("bool", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0f";
+        rttr::variant var = setup_string_float();
+        float result = 0.0f;
         meter.measure([&]()
         {
-            return var.to_bool();
+            result = var.to_float();
         });
     });
 }
@@ -151,57 +224,62 @@ nonius::benchmark bench_variant_float_string_to_bool()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-nonius::benchmark bench_variant_double_string_to_int()
+nonius::benchmark bench_native_double_to_string()
 {
-    return nonius::benchmark("int", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0";
+        double var = setup_double();
+        std::string result;
         meter.measure([&]()
         {
-           return var.to_int();
+            result = std::to_string(var);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_double_string_to_float()
+nonius::benchmark bench_variant_double_to_string()
 {
-    return nonius::benchmark("float", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0";
+        rttr::variant var = setup_double();
+        std::string result;
         meter.measure([&]()
         {
-            return var.to_float();
+            result = var.to_string();
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_double_string_to_double()
+nonius::benchmark bench_native_string_to_double()
 {
-    return nonius::benchmark("double", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0";
+        std::string number_string = setup_string_double();
+        double result;
         meter.measure([&]()
         {
-            return var.to_double();
+            std::size_t pos = 0;
+            result = std::stod(number_string, &pos);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_double_string_to_bool()
+nonius::benchmark bench_variant_string_to_double()
 {
-    return nonius::benchmark("bool", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "23.0";
+        rttr::variant var = setup_string_double();
+        double result = 0.0;
         meter.measure([&]()
         {
-            return var.to_bool();
+            result = var.to_double();
         });
     });
 }
@@ -210,170 +288,77 @@ nonius::benchmark bench_variant_double_string_to_bool()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-nonius::benchmark bench_variant_bool_string_to_int()
+nonius::benchmark bench_native_bool_to_string()
 {
-    return nonius::benchmark("int", [](nonius::chronometer meter)
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "true";
+        bool value = setup_bool();
+        std::string result;
         meter.measure([&]()
         {
-           return var.to_int();
+            result = value ? std::string("true") : std::string("false");
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_bool_string_to_float()
+nonius::benchmark bench_variant_bool_to_string()
 {
-    return nonius::benchmark("float", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "true";
+        rttr::variant var = setup_bool();
+        std::string result;
         meter.measure([&]()
         {
-            return var.to_float();
+            result = var.to_string();
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_bool_string_to_double()
+static bool string_to_bool(std::string text)
 {
-    return nonius::benchmark("double", [](nonius::chronometer meter)
+    std::transform(text.cbegin(), text.cend(), text.begin(), ::tolower);
+    text.erase( std::remove_if( text.begin(), text.end(), []( char ch ) { return std::isspace<char>( ch, std::locale::classic() ); } ), text.end() );
+
+    return !(text == "false" || text == "0" || text.empty());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_native_string_to_bool()
+{
+    return nonius::benchmark("native", [](nonius::chronometer meter)
     {
-        rttr::variant var = "true";
+        std::string bool_string = setup_string_bool();
+        bool result = false;
         meter.measure([&]()
         {
-            return var.to_double();
+            result = string_to_bool(bool_string);
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-nonius::benchmark bench_variant_bool_string_to_bool()
+nonius::benchmark bench_variant_string_to_bool()
 {
-    return nonius::benchmark("bool", [](nonius::chronometer meter)
+    return nonius::benchmark("rttr::variant", [](nonius::chronometer meter)
     {
-        rttr::variant var = "true";
+        rttr::variant var = setup_string_bool();
+        bool result = false;
         meter.measure([&]()
         {
-            return var.to_bool();
-        });
-    });
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-#if 0
-nonius::benchmark bench_variant_string_dtor()
-{
-    return nonius::benchmark("std::string", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct(std::string("normal text"));
-
-        meter.measure([&](int i ) 
-        {
-           vec[i].destruct();
+            result = var.to_bool();
         });
     });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-nonius::benchmark bench_variant_char_dtor()
-{
-    return nonius::benchmark("char", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct("normal text");
-
-        meter.measure([&](int i ) 
-        {
-           vec[i].destruct();
-        });
-    });
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////
-
-nonius::benchmark bench_variant_float_dtor()
-{
-    return nonius::benchmark("float", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct(42.0f);
-
-        meter.measure([&](int i ) 
-        {
-           vec[i].destruct();
-        });
-    });
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-nonius::benchmark bench_variant_double_dtor()
-{
-    return nonius::benchmark("double", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct(42.0);
-
-        meter.measure([&](int i ) 
-        {
-           vec[i].destruct();
-        });
-    });
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-nonius::benchmark bench_variant_int_dtor()
-{
-    return nonius::benchmark("int", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct(static_cast<int>(42));
-
-        meter.measure([&](int i ) 
-        {
-            vec[i].destruct();
-        });
-    });
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-nonius::benchmark bench_variant_bool_dtor()
-{
-    return nonius::benchmark("bool", [](nonius::chronometer meter)
-    {
-        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
-        for(auto&& item : vec)
-            item.construct(true);
-
-        meter.measure([&](int i ) 
-        {
-           vec[i].destruct();
-        });
-    });
-}
-
-#endif
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void bench_variant_conversion()
@@ -383,46 +368,88 @@ void bench_variant_conversion()
     
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_variant_conversion.html");
-    
+
     //////////////////////////////////
 
-    reporter.set_current_group_name("int string to type");
-    nonius::benchmark benchmarks_group_1[] = { bench_variant_int_string_to_int(),
-                                               bench_variant_int_string_to_float(),
-                                               bench_variant_int_string_to_double(),
-                                               bench_variant_int_string_to_bool(),
-                                               };
+    reporter.set_current_group_name("int to string", "Converts an integer number to a <code>std::string</code>:<br><pre>rttr::variant var = 12345;\nvar.to_string();</pre>");
+
+    nonius::benchmark benchmarks_group_1[] = { bench_native_int_to_string(),
+                                               bench_variant_int_to_string()
+                                              };
+
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
     //////////////////////////////////
 
-    reporter.set_current_group_name("float string to type");
-    nonius::benchmark benchmarks_group_2[] = { bench_variant_float_string_to_int(),
-                                               bench_variant_float_string_to_float(),
-                                               bench_variant_float_string_to_double(),
-                                               bench_variant_float_string_to_bool(),
-                                               };
+    reporter.set_current_group_name("string to int", "Converts a <code>std::string</code> to an integer:<br><pre>rttr::variant var = std::string(\"12345\");\nvar.to_int()</pre>");
+
+    nonius::benchmark benchmarks_group_2[] = { bench_native_string_to_int(),
+                                               bench_variant_string_to_int()
+                                              };
+
     nonius::go(cfg, std::begin(benchmarks_group_2), std::end(benchmarks_group_2), reporter);
 
     //////////////////////////////////
 
-    reporter.set_current_group_name("double string to type");
-    nonius::benchmark benchmarks_group_3[] = { bench_variant_double_string_to_int(),
-                                               bench_variant_double_string_to_float(),
-                                               bench_variant_double_string_to_double(),
-                                               bench_variant_double_string_to_bool(),
-                                               };
+    reporter.set_current_group_name("float to string", "Converts a floating point number to a <code>std::string</code>:<br><pre>rttr::variant var = 123.12345f;\nvar.to_string();</pre>");
+
+    nonius::benchmark benchmarks_group_3[] = { bench_native_string_to_float(),
+                                               bench_variant_string_to_float()
+                                              };
+
     nonius::go(cfg, std::begin(benchmarks_group_3), std::end(benchmarks_group_3), reporter);
 
     //////////////////////////////////
 
-    reporter.set_current_group_name("bool string to type");
-    nonius::benchmark benchmarks_group_4[] = { bench_variant_bool_string_to_int(),
-                                               bench_variant_bool_string_to_float(),
-                                               bench_variant_bool_string_to_double(),
-                                               bench_variant_bool_string_to_bool(),
-                                               };
+    reporter.set_current_group_name("string to float", "Converts a <code>std::string</code> to a floating point number:<br><pre>rttr::variant var = std::string(\"123.12345\");\nvar.to_float().");
+
+    nonius::benchmark benchmarks_group_4[] = { bench_native_float_to_string(),
+                                               bench_variant_float_to_string()
+                                              };
+
     nonius::go(cfg, std::begin(benchmarks_group_4), std::end(benchmarks_group_4), reporter);
+
+    //////////////////////////////////
+
+    reporter.set_current_group_name("double to string", "Converts a double number to a <code>std::string</code>:<br><pre>rttr::variant var = 123456.123456;\nvar.to_string();</pre>");
+
+    nonius::benchmark benchmarks_group_5[] = { bench_native_string_to_double(),
+                                               bench_variant_string_to_double()
+                                              };
+
+    nonius::go(cfg, std::begin(benchmarks_group_5), std::end(benchmarks_group_5), reporter);
+
+    //////////////////////////////////
+
+    reporter.set_current_group_name("string to double", "Converts a <code>std::string</code> to a double number:<br><pre>rttr::variant var = std::string(\"123456.123456\");\nvar.to_double();</pre>");
+
+    nonius::benchmark benchmarks_group_6[] = { bench_native_double_to_string(),
+                                               bench_variant_double_to_string()
+                                              };
+
+    nonius::go(cfg, std::begin(benchmarks_group_6), std::end(benchmarks_group_6), reporter);
+
+    //////////////////////////////////
+
+    reporter.set_current_group_name("bool to string", "Converts a bool number to a <code>std::string</code>:<br><pre>rttr::variant var = 123456.123456;\nvar.to_string();</pre>");
+
+    nonius::benchmark benchmarks_group_7[] = { bench_native_string_to_bool(),
+                                               bench_variant_string_to_bool()
+                                              };
+
+    nonius::go(cfg, std::begin(benchmarks_group_7), std::end(benchmarks_group_7), reporter);
+
+    //////////////////////////////////
+
+    reporter.set_current_group_name("string to bool", "Converts a <code>std::string</code> to a bool number:<br><pre>rttr::variant var = std::string(\"123456.123456\");\nvar.to_bool();</pre>");
+
+    nonius::benchmark benchmarks_group_8[] = { bench_native_bool_to_string(),
+                                               bench_variant_bool_to_string()
+                                              };
+
+    nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
+
+    //////////////////////////////////
 
     reporter.generate_report();
 }

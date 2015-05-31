@@ -34,6 +34,34 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+nonius::benchmark bench_variant_empty_ctor()
+{
+    return nonius::benchmark("empty", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
+        meter.measure([&](int i ) 
+        {
+           vec[i].construct();
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_variant_void_ctor()
+{
+    return nonius::benchmark("void", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
+        meter.measure([&](int i ) 
+        {
+           vec[i].construct(rttr::detail::void_variant);
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 nonius::benchmark bench_variant_string_ctor()
 {
     return nonius::benchmark("std::string", [](nonius::chronometer meter)
@@ -121,6 +149,39 @@ nonius::benchmark bench_variant_bool_ctor()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+nonius::benchmark bench_variant_empty_dtor()
+{
+    return nonius::benchmark("empty", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
+        for(auto&& item : vec)
+            item.construct();
+
+        meter.measure([&](int i ) 
+        {
+           vec[i].destruct();
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_variant_void_dtor()
+{
+    return nonius::benchmark("void", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
+        for(auto&& item : vec)
+            item.construct(rttr::detail::void_variant);
+
+        meter.measure([&](int i ) 
+        {
+           vec[i].destruct();
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 nonius::benchmark bench_variant_string_dtor()
 {
@@ -233,10 +294,12 @@ void bench_variant_create()
     cfg.title = "rttr::variant creation";
     
     nonius::html_group_reporter reporter;
-    reporter.set_output_file("benchmark_variant.html");
+    reporter.set_output_file("benchmark_variant_creation.html");
     
-    reporter.set_current_group_name("constructor", "The construction of a variant with automatic storage.");
-    nonius::benchmark benchmarks_group_1[] = { bench_variant_string_ctor(),
+    reporter.set_current_group_name("constructor", "The construction of a <code>rttr::variant</code> with automatic storage.");
+    nonius::benchmark benchmarks_group_1[] = { bench_variant_empty_ctor(),
+                                               bench_variant_void_ctor(),
+                                               bench_variant_string_ctor(),
                                                bench_variant_char_ctor(),
                                                bench_variant_double_ctor(),
                                                bench_variant_float_ctor(),
@@ -244,8 +307,10 @@ void bench_variant_create()
                                                bench_variant_bool_ctor()};
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
-    reporter.set_current_group_name("destructor", "The destruction of a variant with automatic storage.");
-    nonius::benchmark benchmarks_group_2[] = { bench_variant_string_dtor(),
+    reporter.set_current_group_name("destructor", "The destruction of a <code>rttr::variant</code> with automatic storage.");
+    nonius::benchmark benchmarks_group_2[] = { bench_variant_empty_dtor(),
+                                               bench_variant_void_dtor(),
+                                               bench_variant_string_dtor(),
                                                bench_variant_char_dtor(),
                                                bench_variant_double_dtor(),
                                                bench_variant_float_dtor(),
