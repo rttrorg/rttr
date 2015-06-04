@@ -25,15 +25,14 @@
 *                                                                                   *
 *************************************************************************************/
 
-extern void bench_variant_create();
-extern void bench_variant_conversion();
-
+extern void bench_method();
+extern void bench_invoke_method();
 /////////////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
 {
-    bench_variant_create();
-    bench_variant_conversion();
+    bench_method();
+    bench_invoke_method();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

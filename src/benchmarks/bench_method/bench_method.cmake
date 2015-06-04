@@ -25,10 +25,12 @@
 #                                                                                  #
 ####################################################################################
 
-if (Boost_FOUND)
-    add_subdirectory (bench_method)
-    add_subdirectory (bench_rttr_cast)
-    add_subdirectory (bench_variant)
-else()
-    message(STATUS "Boost was not found - NO benchmark projectes created.")
-endif()
+set(HEADER_FILES version.rc.in
+                  test_methods.h
+                  )
+                
+set(SOURCE_FILES main.cpp
+                 bench_method.cpp
+                 bench_find_method.cpp
+                 bench_invoke_method.cpp
+                 test_methods.cpp)

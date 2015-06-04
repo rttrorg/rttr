@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>
 
-// This file was automatically generated on 2015-03-04T15:20:13.056695Z
+// This file was automatically generated on 2015-06-04T10:40:35.011525Z
 // Do not edit it directly
 // slightly modified by Axel Menzel (fixed compiler warnings)
 
@@ -62,7 +62,13 @@
 
 #define NONIUS_CLOCK_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER < 1900) // MSVC <chrono> is borken and had little to no testing done before shipping (Dev14/VS15 CTP fixes it)
+#if defined(_MSC_VER) && (_MSC_VER) < 1900
+#if !defined(NONIUS_USE_BOOST_CHRONO)
+#define NONIUS_USE_BOOST_CHRONO
+#endif // NONIUS_USE_BOOST_CHRONO
+#endif // MSVC <chrono> is borken and had little to no testing done before shipping (Dev14/VS15 CTP fixes it)
+
+#if defined(NONIUS_USE_BOOST_CHRONO)
 #include <boost/chrono.hpp>
 #else
 #include <chrono>
@@ -70,7 +76,7 @@
 #endif
 
 namespace nonius {
-#if defined(_MSC_VER) && (_MSC_VER < 1900) // MSVC <chrono> is borken and had little to no testing done before shipping (Dev14/VS15 CTP fixes it)
+#if defined(NONIUS_USE_BOOST_CHRONO)
     namespace chrono = boost::chrono;
     template <unsigned Num, unsigned Den = 1>
     using ratio = boost::ratio<Num, Den>;
@@ -1317,7 +1323,7 @@ namespace nonius {
 // #included from: detail/stats.h++
 // Nonius - C++ benchmarking tool
 //
-// Written in 2014 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2014-2015 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -1445,6 +1451,7 @@ namespace nonius {
             double point = estimator(first, last);
             // Degenerate case with a single sample
             if(n_samples == 1) return { point, point, point, confidence_level };
+
             sample jack = jackknife(estimator, first, last);
             double jack_mean = mean(jack.begin(), jack.end());
             double sum_squares, sum_cubes;
@@ -1460,6 +1467,7 @@ namespace nonius {
             double prob_n = std::count_if(resample.begin(), resample.end(), [point](double x) { return x < point; }) /(double) n;
             // degenerate case with uniform samples
             if(prob_n == 0) return { point, point, point, confidence_level };
+
             double bias = bm::quantile(bm::normal{}, prob_n);
             double z1 = bm::quantile(bm::normal{}, (1. - confidence_level) / 2.);
 
@@ -1475,7 +1483,7 @@ namespace nonius {
             return { point, resample[lo], resample[hi], confidence_level };
         }
 
-        inline double outlier_variance(estimate<double> mean, estimate<double> stddev, std::size_t n) {
+        inline double outlier_variance(estimate<double> mean, estimate<double> stddev, int n) {
             double sb = stddev.point;
             double mn = mean.point / n;
             double mg_min = mn / 2.;
@@ -1487,7 +1495,7 @@ namespace nonius {
                 double k = mn - x;
                 double d = k * k;
                 double nd = n * d;
-                double k0 = (-1) * n * nd;
+                double k0 = -n * nd;
                 double k1 = sb2 - n * sg2 + nd;
                 double det = k1 * k1 - 4 * sg2 * k0;
                 return (int)(-2. * k0 / (k1 + std::sqrt(det)));
@@ -1531,7 +1539,7 @@ namespace nonius {
             auto mean_estimate = mean_future.get();
             auto stddev_estimate = stddev_future.get();
 
-            double outlier_variance = detail::outlier_variance(mean_estimate, stddev_estimate, n);
+            double outlier_variance = detail::outlier_variance(mean_estimate, stddev_estimate, static_cast<int>(n));
 
             return { mean_estimate, stddev_estimate, outlier_variance };
         }
@@ -1743,9 +1751,9 @@ namespace nonius {
     template <typename Clock = default_clock, typename Iterator>
     void validate_benchmarks(Iterator first, Iterator last) {
         struct strings_lt_through_pointer {
-            bool operator()(std::string* a, std::string* b) const { return *a < *b; };
+            bool operator()(const std::string* a, const std::string* b) const { return *a < *b; };
         };
-        std::set<std::string*, strings_lt_through_pointer> names;
+        std::set<const std::string*, strings_lt_through_pointer> names;
         for(; first != last; ++first) {
             if(!names.insert(&first->name).second)
                 throw duplicate_benchmarks();
@@ -1761,14 +1769,16 @@ namespace nonius {
         }
     };
     template <typename Clock = default_clock>
-    void go(configuration cfg, benchmark_registry& benchmarks = global_benchmark_registry(), reporter_registry& reporters = global_reporter_registry()) {
+    void go(configuration cfg, const benchmark_registry& benchmarks = global_benchmark_registry(), reporter_registry& reporters = global_reporter_registry()) {
         auto it = reporters.find(cfg.reporter);
         if(it == reporters.end()) throw no_such_reporter();
-        validate_benchmarks(benchmarks.begin(), benchmarks.end());
-        go(cfg, benchmarks.begin(), benchmarks.end(), *it->second);
+        validate_benchmarks(benchmarks.cbegin(), benchmarks.cend());
+        go(cfg, benchmarks.cbegin(), benchmarks.cend(), *it->second);
     }
 } // namespace nonius
 
+#ifndef NONIUS_DISABLE_EXTRA_REPORTERS
+#ifndef NONIUS_DISABLE_CSV_REPORTER
 // #included from: reporters/csv_reporter.h++
 // Nonius - C++ benchmarking tool
 //
@@ -1892,6 +1902,8 @@ namespace nonius {
     NONIUS_REPORTER("csv", csv_reporter);
 } // namespace nonius
 
+#endif // NONIUS_DISABLE_CSV_REPORTER
+#ifndef NONIUS_DISABLE_JUNIT_REPORTER
 // #included from: reporters/junit_reporter.h++
 // Nonius - C++ benchmarking tool
 //
@@ -1942,7 +1954,7 @@ namespace nonius {
             auto n_magic = std::count_if(first, last, [&magic](char c) { return magic.find(c) != std::string::npos; });
 
             std::string escaped;
-            escaped.reserve(source.size() + n_magic * 6);
+            escaped.reserve(source.size() + n_magic*6);
 
             while(first != last) {
                 auto next_magic = std::find_first_of(first, last, magic.begin(), magic.end());
@@ -2092,6 +2104,8 @@ namespace nonius {
     NONIUS_REPORTER("junit", junit_reporter);
 } // namespace nonius
 
+#endif // NONIUS_DISABLE_JUNIT_REPORTER
+#ifndef NONIUS_DISABLE_HTML_REPORTER
 // #included from: reporters/html_reporter.h++
 // Nonius - C++ benchmarking tool
 //
@@ -2493,7 +2507,7 @@ namespace cpptempl
         // quoted string
         if (key[0] == '\"')
         {
-            return make_data(boost::trim_copy_if(key, [](char c){ return c == '"'; }));
+			return make_data(boost::trim_copy_if(key, [](char c){ return c == '"'; }));
         }
         // check for dotted notation, i.e [foo.bar]
         size_t index = key.find(".") ;
@@ -3352,6 +3366,9 @@ namespace nonius {
     NONIUS_REPORTER("html", html_reporter);
 } // namespace nonius
 
+#endif // NONIUS_DISABLE_HTML_REPORTER
+#endif // NONIUS_DISABLE_EXTRA_REPORTERS
+
 #endif // NONIUS_HPP
 
 #ifdef NONIUS_RUNNER
@@ -3471,7 +3488,7 @@ namespace nonius {
         template <typename Iterator, typename Projection>
         int get_max_width(Iterator first, Iterator last, Projection proj) {
             auto it = std::max_element(first, last, [&proj](option const& a, option const& b) { return proj(a) < proj(b); });
-            return proj(*it);
+            return static_cast<int>(proj(*it));
         }
 
         inline std::ostream& operator<<(std::ostream& os, help_text h) {

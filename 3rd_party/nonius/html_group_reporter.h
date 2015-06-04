@@ -284,10 +284,11 @@ namespace nonius {
             std::vector<fp_seconds> mins;
             for(auto bench_groups : m_all_benchmarks) {
                 for(auto bench_list : bench_groups.second) {
-                    mins.push_back(*std::min_element(bench_list.second.m_sample_data.begin(), bench_list.second.m_sample_data.end()));
+                    if (!bench_list.second.m_sample_data.empty())
+                        mins.push_back(*std::min_element(bench_list.second.m_sample_data.begin(), bench_list.second.m_sample_data.end()));
                 }
             }
-            auto min = *std::min_element(mins.begin(), mins.end());
+            auto min = mins.empty() ? fp_seconds() : *std::min_element(mins.begin(), mins.end());
             return detail::get_magnitude(min);
         }
 
@@ -298,7 +299,7 @@ namespace nonius {
                     mins.push_back(bench_list.second.m_analysis.mean.point);
                 }
             }
-            auto min = *std::min_element(mins.begin(), mins.end());
+            auto min = mins.empty() ? fp_seconds() : *std::min_element(mins.begin(), mins.end());
             return detail::get_magnitude(min);
         }
         

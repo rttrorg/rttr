@@ -25,15 +25,21 @@
 *                                                                                   *
 *************************************************************************************/
 
-extern void bench_variant_create();
-extern void bench_variant_conversion();
+#include <rttr/type>
+#include <rttr/register>
+
+#include "benchmarks/bench_method/test_methods.h"
+
+#include <nonius/nonius.h++>
+#include <nonius/html_group_reporter.h>
+
+extern void bench_find_method();
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char** argv)
+void bench_method()
 {
-    bench_variant_create();
-    bench_variant_conversion();
+    bench_find_method();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
