@@ -49,9 +49,12 @@ struct method_class
     int int_method();
     std::string string_method();
 
-    void void_method_arg_1(int value_1);
-    void void_method_arg_2(int value_1, int value_2);
-    void void_method_arg_3(int value_1, int value_2, int value_3);
+    void void_method_arg_1(int arg_1);
+    void void_method_arg_2(int arg_1, int arg_2);
+    void void_method_arg_3(int arg_1, int arg_2, int arg_3);
+    void void_method_arg_8(int arg_1, int arg_2, int arg_3,
+                           int arg_4, int arg_5, int arg_6,
+                           int arg_7, int arg_8);
     
 
     RTTR_ENABLE()
@@ -65,6 +68,11 @@ struct method_class
     int value_1 = 0;
     int value_2 = 0;
     int value_3 = 0;
+    int value_4 = 0;
+    int value_5 = 0;
+    int value_6 = 0;
+    int value_7 = 0;
+    int value_8 = 0;
 };
 
 struct method_class_d_1 : method_class

@@ -44,6 +44,7 @@ RTTR_REGISTER
         .method("void_method_arg_1",    &ns_foo::method_class::void_method_arg_1)
         .method("void_method_arg_2",    &ns_foo::method_class::void_method_arg_2)
         .method("void_method_arg_3",    &ns_foo::method_class::void_method_arg_3)
+        .method("void_method_arg_8",    &ns_foo::method_class::void_method_arg_8)
 
         ;
 
@@ -159,6 +160,22 @@ void method_class::void_method_arg_3(int arg_1, int arg_2, int arg_3)
     value_1 = arg_1;
     value_2 = arg_2;
     value_3 = arg_3;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method_class::void_method_arg_8(int arg_1, int arg_2, int arg_3,
+                                     int arg_4, int arg_5, int arg_6,
+                                     int arg_7, int arg_8)
+{
+    value_1 = arg_1;
+    value_2 = arg_2;
+    value_3 = arg_3;
+    value_4 = arg_4;
+    value_5 = arg_5;
+    value_6 = arg_6;
+    value_7 = arg_7;
+    value_8 = arg_8;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
