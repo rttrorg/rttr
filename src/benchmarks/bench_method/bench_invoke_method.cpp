@@ -300,6 +300,7 @@ void bench_invoke_method()
     nonius::benchmark benchmarks_group_1[] = { bench_native_invoke_method_void_return_value(),
                                                bench_rttr_invoke_method_void_return_value()};
 
+    nonius::go(cfg, nonius::benchmark_registry{bench_rttr_invoke_method_void_return_value()});
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
     /////////////////////////////////////
@@ -446,12 +447,16 @@ void bench_invoke_method()
                                               "<pre>"
                                               "// Foo.h\n"
                                               "struct Foo {\n"
-                                              "    void method(int arg_1, int arg_2, int arg_3, ..., int arg_8);\n"
-                                              "    int value_1; int value_2; int value_3; ...; int value_8;\n"
+                                              "    void method(int arg_1, int arg_2, int arg_3,\n"
+                                              "                ..., int arg_8);\n"
+                                              "    int value_1; int value_2; int value_3;\n"
+                                              "     ...; int value_8;\n"
                                               "};\n"
                                               "// Foo.cpp\n"
-                                              "void Foo::method(int arg_1, int arg_2, int arg_3, ..., int arg_8);\n"
-                                              "{ value_1 = arg_1; value_2 = arg_2; value_3 = arg_3; ... value_8 = arg_8;}\n"
+                                              "void Foo::method(int arg_1, int arg_2, int arg_3,\n"
+                                              "                 ..., int arg_8);\n"
+                                              "{ value_1 = arg_1; value_2 = arg_2; value_3 = arg_3;\n"
+                                              "   ... value_8 = arg_8;}\n"
                                               "\n"
                                               "// Setup\n"
                                               "Foo obj;\n"
