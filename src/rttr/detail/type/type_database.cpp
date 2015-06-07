@@ -67,7 +67,8 @@ type_database::type_database()
     m_array_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_variant_create_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     
-    
+    m_type_size.reserve(RTTR_DEFAULT_TYPE_COUNT);
+
     m_is_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_enum_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_array_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
@@ -95,6 +96,8 @@ type_database::type_database()
     m_array_raw_type_list.push_back(0);
     m_variant_create_func_list.push_back(nullptr);
     
+    m_type_size.push_back(0);
+
     m_is_class_list.push_back(false);
     m_is_enum_list.push_back(false);
     m_is_array_list.push_back(false);
@@ -947,6 +950,7 @@ uint16 type_database::register_type(const char* name,
                                     vector<base_class_info> base_classes,
                                     get_derived_func derived_func_ptr,
                                     variant_create_func var_func_ptr,
+                                    std::size_t type_size,
                                     bool is_class,
                                     bool is_enum,
                                     bool is_array,
@@ -976,6 +980,8 @@ uint16 type_database::register_type(const char* name,
     m_get_derived_info_func_list.resize(std::max(m_get_derived_info_func_list.size(), static_cast<std::size_t>(raw_id + 1)));
     m_get_derived_info_func_list[raw_id]  = derived_func_ptr;
     m_variant_create_func_list.push_back(var_func_ptr);
+
+    m_type_size.push_back(type_size);
 
     m_is_class_list.push_back(is_class);
     m_is_enum_list.push_back(is_enum);

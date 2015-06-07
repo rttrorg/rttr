@@ -284,6 +284,23 @@ TEST_CASE("Test rttr::type - type::get_by_name", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Test rttr::type - Check get_sizeof", "[type]")
+{
+    CHECK(type::get<bool>().get_sizeof()        == 1);
+    CHECK(type::get<char>().get_sizeof()        == 1);
+    CHECK(type::get<int>().get_sizeof()         == 4);
+    CHECK(type::get<void>().get_sizeof()        == 0);
+    CHECK(type::get<void(int)>().get_sizeof()   == 0);
+
+#if RTTR_ARCH_TYPE == RTTR_ARCH_64
+    CHECK(type::get<int*>().get_sizeof()         == 8);
+#else
+    CHECK(type::get<int*>().get_sizeof()         == 4);
+#endif
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test rttr::type - Check is_primitive", "[type]")
 {
     CHECK(type::get<int>().is_primitive()               == true);

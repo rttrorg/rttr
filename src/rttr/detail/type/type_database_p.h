@@ -77,6 +77,7 @@ class RTTR_LOCAL type_database
                              std::vector<base_class_info> base_classes, 
                              get_derived_func derived_func_ptr,
                              variant_create_func var_func_ptr,
+                             std::size_t type_size,
                              bool is_class,
                              bool is_enum,
                              bool is_array,
@@ -322,6 +323,8 @@ class RTTR_LOCAL type_database
         std::vector<type::type_id>                                  m_wrapped_type_list;
         std::vector<type::type_id>                                  m_array_raw_type_list;
         std::vector<variant_create_func>                            m_variant_create_func_list; //!< This list contains a function to create from an 'argument' a variant
+
+        std::vector<std::size_t>                                    m_type_size;
 
         std::vector<bool>                                           m_is_class_list;
         std::vector<bool>                                           m_is_enum_list;

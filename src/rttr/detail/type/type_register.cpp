@@ -107,6 +107,7 @@ uint16 type_register::type_reg(const char* name,
                                vector<base_class_info> base_classes,
                                get_derived_func derived_func_ptr,
                                variant_create_func var_func_ptr,
+                               std::size_t type_size,
                                bool is_class,
                                bool is_enum,
                                bool is_array,
@@ -118,9 +119,10 @@ uint16 type_register::type_reg(const char* name,
                                std::size_t pointer_dimension)
 {
     return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes), 
-                                                   derived_func_ptr, var_func_ptr, is_class, is_enum,
-                                                   is_array, is_pointer, is_primitive, is_function_pointer, 
-                                                   is_member_object_pointer, is_member_function_pointer, pointer_dimension);
+                                                   derived_func_ptr, var_func_ptr, 
+                                                   type_size,
+                                                   is_class, is_enum, is_array, is_pointer, is_primitive, 
+                                                   is_function_pointer, is_member_object_pointer, is_member_function_pointer, pointer_dimension);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

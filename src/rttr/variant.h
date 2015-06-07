@@ -134,7 +134,7 @@ class RTTR_API variant
          * \see is_valid()
          */
         variant();
-       
+
         /*!
          * \brief Constructs a new variant with the given value \p param of type \p T.
          *        The value will be copied into the variant.

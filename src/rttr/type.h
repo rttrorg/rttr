@@ -315,6 +315,13 @@ class RTTR_API type
         static std::vector<type> get_types();
 
         /*!
+         * \brief Returns the size in bytes of the object representation of the current type (i.e. `sizeof(T)`).
+         *
+         * \return The size of the type in bytes.
+         */
+        std::size_t get_sizeof() const;
+
+        /*!
          * \brief Returns true whether the given type is class; that is not an atomic type or a method.
          *
          * \return True if the type is a class, otherwise false.

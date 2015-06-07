@@ -107,6 +107,7 @@ public:
                            std::vector<base_class_info> base_classes, 
                            get_derived_func derived_func_ptr,
                            variant_create_func var_func_ptr,
+                           std::size_t type_size,
                            bool is_class,
                            bool is_enum,
                            bool is_array,
