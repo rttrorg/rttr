@@ -31,7 +31,6 @@
 
 namespace rttr
 {
-
 namespace detail
 {
     
@@ -61,19 +60,14 @@ class has_base_class_list_impl
     static NoType& test(...);
 
 public:
-    static const bool value = (sizeof(YesType) == sizeof(test<T>(0)));
+    static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(YesType) == sizeof(test<T>(0)));
 };
 
 /*!
  * If T has a typedef called \a 'base_class_list' then inherits from true_type, otherwise inherits from false_type. 
  */
-template<typename T, typename = void>
-struct has_base_class_list : std::integral_constant<bool, false> 
-{};
-
 template<typename T>
-struct has_base_class_list<T, typename std::enable_if<has_base_class_list_impl<T>::value>::type > : std::integral_constant<bool, true>
-{};
+using has_base_class_list = std::integral_constant<bool, has_base_class_list_impl<T>::value>;
 
 typedef std::vector<detail::base_class_info> info_container;
 
@@ -86,18 +80,19 @@ struct type_from_base_classes;
 template<typename DerivedClass>
 struct type_from_base_classes<DerivedClass> 
 {
-    RTTR_INLINE static void fill(info_container&) 
+    static RTTR_INLINE void fill(info_container&) 
     { 
     }
 };
 
 /*!
- * \brief This is the trick to make the replacement of `dynamic_cast` possible.
- *        For every \p DerivedType is a function pointer stored, which performs a
- *        static_cast operation to it's BaseType.
- *        The given \p ptr is a void* ptr and has to be of type \p DerivedType,
- *        otherwise we would get undefined behavior.
- *        Therefore the \ref get_derived_info() function is used. It will return this information.
+ * This is the trick to make the replacement of `dynamic_cast` possible.
+ *
+ * For every \p DerivedType is a function pointer stored, which performs a
+ * static_cast operation to it's BaseType.
+ * The given \p ptr is a void* ptr and has to be of type \p DerivedType,
+ * otherwise we would get undefined behavior.
+ * Therefore the \ref get_derived_info() function is used. It will return this information.
  */
 template<typename DerivedType, typename BaseType>
 static void* rttr_cast_impl(void* ptr)
@@ -108,7 +103,7 @@ static void* rttr_cast_impl(void* ptr)
 template<typename DerivedClass, typename BaseClass, typename... U> 
 struct type_from_base_classes<DerivedClass, BaseClass, U...>
 {
-    RTTR_INLINE static void fill(info_container& vec)
+    static RTTR_INLINE void fill(info_container& vec)
     {
         static_assert(has_base_class_list<BaseClass>::value, "The parent class has no base class list defined - please use the macro RTTR_ENABLE");
         vec.emplace_back(type::get<BaseClass>(), &rttr_cast_impl<DerivedClass, BaseClass>);
@@ -120,38 +115,37 @@ struct type_from_base_classes<DerivedClass, BaseClass, U...>
     }
 };
 
-template<typename DerivedClass, class... BaseClassList, template<class...> class ClassContainer>
-struct type_from_base_classes<DerivedClass, ClassContainer<BaseClassList...>> : type_from_base_classes<DerivedClass, BaseClassList...> { };
+template<typename... U> struct type_list;
+
+template<typename DerivedClass, class... BaseClassList>
+struct type_from_base_classes<DerivedClass, type_list<BaseClassList...>> : type_from_base_classes<DerivedClass, BaseClassList...> { };
 
 /*!
  * This helper trait returns a vector with type object of all base classes.
  * When there is no type_list defined or the class has no base class, an empty vector is returned.
  */
-template<typename ClassType>
+template<typename T, typename Enable = void>
 struct base_classes
 {
-    private:
-        // extract the info
-        RTTR_INLINE static void get_types_impl(info_container& vec, std::true_type)
-        {
-            type_from_base_classes<ClassType, typename ClassType::base_class_list>::fill(vec);
-        }
+    static RTTR_INLINE info_container get_types()
+    {
+        info_container result;
+        return result;
+    }
+};
 
-        // no type list defined
-        RTTR_INLINE static void get_types_impl(info_container&, std::false_type)
-        {
-        }
-    public:
-        RTTR_INLINE static info_container get_types()
-        {
-            info_container result;
-            get_types_impl(result, typename has_base_class_list<ClassType>::type());
-            return result;
-        }
+template<typename T>
+struct base_classes<T, typename std::enable_if<has_base_class_list<T>::value>::type>
+{
+    static RTTR_INLINE info_container get_types()
+    {
+        info_container result;
+        type_from_base_classes<T, typename T::base_class_list>::fill(result);
+        return result;
+    }
 };
 
 } // end namespace detail
-
 } // end namespace rttr
 
 #endif // RTTR_BASE_CLASSES_H_
