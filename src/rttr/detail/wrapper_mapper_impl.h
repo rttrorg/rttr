@@ -112,7 +112,7 @@ struct wrapper_mapper<std::weak_ptr<T>>
 
     static RTTR_INLINE type create(const wrapped_type& t)
     {
-        return type; // empty type, weak pointer can only be created by a referencing shared_ptr
+        return type(); // empty type, weak pointer can only be created by a referencing shared_ptr
     }
 };
 
