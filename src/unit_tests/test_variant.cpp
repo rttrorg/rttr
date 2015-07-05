@@ -48,6 +48,12 @@ typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
 struct point
 {
     point(int x, int y) : _x(x), _y(y) {}
+
+    point(const point& other) : _x(other._x), _y(other._y) { }
+
+    point(point&& other) : _x(other._x), _y(other._y) { other._x = 0; other._y = 0; }
+
+    bool operator ==(const point& other) { return (_x == other._x && _y == other._y); }
     int _x;
     int _y;
 };
@@ -95,6 +101,13 @@ RTTR_REGISTER
 
 TEST_CASE("variant test - BasicTests", "[variant]")
 {
+    SECTION("empty type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+    }
+
     SECTION("simple basic check")
     {
         variant var = string("hello world");
@@ -109,8 +122,8 @@ TEST_CASE("variant test - BasicTests", "[variant]")
         var = 42;
         REQUIRE(var.is_type<int>() == true);
         
-        var = "hello char array";
-        REQUIRE(var.is_type<char[17]>() == true);
+        var = "hello string";
+        REQUIRE(var.is_type<std::string>() == true);
 
         var = 42.0;
         REQUIRE(var.is_type<double>() == true);
@@ -129,13 +142,127 @@ TEST_CASE("variant test - BasicTests", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant copy test", "[variant]")
+{
+    SECTION("primitive type")
+    {
+        int value = 23;
+        variant var = value;
+        variant var_cpy = var;
+        REQUIRE(var_cpy.is_valid() == true);
+        REQUIRE(var_cpy.is_type<int>() == true);
+        CHECK(var_cpy.get_value<int>() == value);
+    }
+
+    SECTION("small custom type")
+    {
+        point value = point(23, 42);
+        variant var = value;
+        variant var_cpy = var;
+        REQUIRE(var_cpy.is_valid() == true);
+        REQUIRE(var_cpy.is_type<point>() == true);
+        CHECK(var_cpy.get_value<point>() == value);
+    }
+
+    SECTION("big custom type")
+    {
+        std::string text = std::string("hello world");
+        variant var = text;
+        variant var_cpy = var;
+        REQUIRE(var_cpy.is_valid() == true);
+        REQUIRE(var_cpy.is_type<std::string>() == true);
+        CHECK(var_cpy.get_value<std::string>() == text);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant assignment test", "[variant]")
+{
+    SECTION("primitive type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+
+        var = 23;
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<int>() == true);
+        CHECK(var.get_value<int>() == 23);
+    }
+
+    SECTION("small custom type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+
+        point value = point(23, 42);
+        var = value;
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<point>() == true);
+        CHECK(var.get_value<point>() == value);
+    }
+
+    SECTION("big custom type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+
+        std::string text = std::string("hello world");
+        var = text;
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<std::string>() == true);
+        CHECK(var.get_value<std::string>() == text);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant move test", "[variant]")
 {
-    SECTION("simple move")
+    SECTION("move ctor - small custom type")
+    {
+        point value = point(23, 42);
+
+        variant var = std::move(value);
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<point>() == true);
+        CHECK(value == point(0, 0)); // when empty, it was moved
+    }
+
+    SECTION("move ctor - big custom type")
     {
         string text("hello world");
 
         variant var = std::move(text);
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<string>() == true);
+        CHECK(text.empty() == true);
+    }
+
+    SECTION("move assignment - small custom type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+
+        point value = point(23, 42);
+        var = std::move(value);
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.is_type<point>() == true);
+        CHECK(value == point(0, 0)); // when empty, it was moved
+    }
+
+    SECTION("move assignment - big custom type")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        CHECK(var.get_type().is_valid() == false);
+
+        string text("hello world");
+        var = std::move(text);
         REQUIRE(var.is_valid() == true);
         REQUIRE(var.is_type<string>() == true);
         CHECK(text.empty() == true);
@@ -147,6 +274,27 @@ TEST_CASE("variant move test", "[variant]")
         REQUIRE(var.is_valid() == true);
         REQUIRE(var.is_type<std::vector<int>>() == true);
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant swap test", "[variant]")
+{
+    string text("hello world");
+    point point_value = point(23, 42);
+
+    variant var1 = text;
+    variant var2 = point_value;
+
+    var1.swap(var2);
+
+    REQUIRE(var1.is_valid() == true);
+    REQUIRE(var1.is_type<point>() == true);
+    CHECK(var1.get_value<point>() == point_value);
+
+    REQUIRE(var2.is_valid() == true);
+    REQUIRE(var2.is_type<string>() == true);
+    CHECK(var2.get_value<std::string>() == text);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -259,11 +407,13 @@ TEST_CASE("variant conversion - to bool", "[variant]")
         var = 0.0f;
         CHECK(var.to_bool() == false);
 
-        var = 1.0f / 10000000.0f;
+        var = 1.17149435e-38f;
         CHECK(var.to_bool() == false);
-        CHECK(var.convert<bool>() == false);
+        var = 1.17149435e-37f;
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
         CHECK(var.convert(type::get<bool>()) == true);
-        CHECK(var.get_value<bool>() == false);
+        CHECK(var.get_value<bool>() == true);
     }
 
     SECTION("double to bool")

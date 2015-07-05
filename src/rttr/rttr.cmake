@@ -71,6 +71,7 @@ set(HEADER_FILES constructor.h
                  detail/method/method_container_base.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/number_conversion.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/property/property_accessor.h
@@ -89,7 +90,13 @@ set(HEADER_FILES constructor.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
                  detail/variant/variant_array_impl.h
-                 detail/variant/variant_default_types_impl.h
+                 detail/variant/variant_data.h
+                 detail/variant/variant_data_converter.h
+                 detail/variant/variant_data_policy.h
+                 detail/variant/variant_data_policy_arithmetic.h
+                 detail/variant/variant_data_policy_empty.h
+                 detail/variant/variant_data_policy_void.h
+                 detail/variant/variant_data_policy_string.h
                  detail/variant/variant_impl.h
                 )
                 

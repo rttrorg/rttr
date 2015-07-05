@@ -32,163 +32,116 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_converter.h"
-#include "rttr/detail/std_conversion_functions.h"
 #include "rttr/detail/array/array_container.h"
 #include "rttr/detail/data_address_container.h"
+#include "rttr/detail/variant/variant_data_policy.h"
+#include "rttr/detail/variant/variant_data_policy_arithmetic.h"
+#include "rttr/detail/variant/variant_data_policy_string.h"
+#include "rttr/detail/variant/variant_data_policy_void.h"
+#include "rttr/detail/variant/variant_data_policy_empty.h"
 
 namespace rttr
 {
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_INLINE variant::variant()
-:   m_holder(0)
+:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant::variant(const variant& other)
-:   m_holder(other.m_holder ? other.m_holder->clone() : nullptr)
+template<typename T, typename Tp>
+RTTR_INLINE variant::variant(T&& val)
+:   m_variant_policy(&detail::variant_policy<Tp>::invoke)
 {
-}
+    static_assert(std::is_copy_constructible<Tp>::value || std::is_array<Tp>::value, 
+                  "The given value is not copy constructible, try to add a copy constructor to the class.");
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant::variant(variant&& other)
-:   m_holder(other.m_holder)
-{
-    other.m_holder = nullptr;
+    detail::variant_policy<Tp>::create(std::forward<T>(val), m_variant_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::~variant()
 {
-    delete m_holder;
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        m_holder = nullptr;
-#   else
-#       error "Please check if this lead to still to a crash."
-#   endif
-#endif
+   m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE void variant::swap(variant& other)
+template<typename T, typename Tp>
+RTTR_INLINE variant& variant::operator=(T&& other)
 {
-    std::swap(m_holder, other.m_holder);
+    variant(std::forward<T>(other)).swap(*this);
+    return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE variant& variant::operator=(T&& other)
+RTTR_INLINE T& variant::get_value()
 {
-    variant(static_cast<T&&>(other)).swap(*this);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant& variant::operator =(const variant& other)
-{
-    variant(other).swap(*this);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant& variant::operator=(variant&& other)
-{
-    other.swap(*this);
-    variant().swap(other);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE type variant::get_type() const
-{
-    return (m_holder ? m_holder->get_type() : detail::get_invalid_type());
+    detail::any arg;
+    m_variant_policy(detail::variant_policy_operation::GET_VALUE, m_variant_data, &arg);
+    typedef typename detail::remove_cv<T>::type nonRef;
+    return *reinterpret_cast<nonRef*>(arg.m_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void* variant::get_ptr() const
 {
-    return (m_holder ? m_holder->get_ptr() : nullptr);
+    detail::any arg;
+    m_variant_policy(detail::variant_policy_operation::GET_PTR, m_variant_data, &arg);
+    return arg.m_data;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type variant::get_raw_type() const
 {
-    return (m_holder ? m_holder->get_raw_type() : detail::get_invalid_type());
+    type result(type::m_invalid_id);
+    detail::any arg(&result);
+    m_variant_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_variant_data, &arg);
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void* variant::get_raw_ptr() const
 {
-    return (m_holder ? m_holder->get_raw_ptr() : nullptr);
+    detail::any arg;
+    m_variant_policy(detail::variant_policy_operation::GET_RAW_PTR, m_variant_data, &arg);
+    return arg.m_data;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE detail::data_address_container variant::get_data_address_container() const
 {
-    return (m_holder ? m_holder->get_data_address_container() : detail::data_address_container{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE bool variant::is_valid() const
-{
-    return (m_holder ? true : false); 
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant::variant_container_base::~variant_container_base()
-{
-
+    detail::data_address_container result{type(type::m_invalid_id), type(type::m_invalid_id), nullptr, nullptr};
+    detail::any arg(&result);
+    m_variant_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_variant_data, &arg);
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-variant::variant(const T& param)
-:   m_holder(new variant_container<typename detail::remove_cv<typename std::remove_reference<T>::type>::type>(param))
+RTTR_INLINE bool variant::is_type() const
 {
+    type src_type(type::m_invalid_id);
+    detail::any arg(&src_type);
+    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, &arg);
+    return (type::get<T>() == src_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-variant::variant(T&& param,
-                typename std::enable_if<!std::is_same<variant&, T>::value >::type*,
-                typename std::enable_if<!std::is_const<T>::value >::type*
-                )
-:   m_holder(new variant_container<typename detail::remove_cv<typename std::remove_reference<T>::type>::type>(std::forward<T>(param)))
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::is_type() const
-{
-    if (!is_valid())
-        return false;
-    else
-        return (type::get<T>() == m_holder->get_type());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::can_convert() const
+RTTR_INLINE bool variant::can_convert() const
 {
     return can_convert(type::get<T>());
 }
@@ -196,308 +149,39 @@ bool variant::can_convert() const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-T& variant::get_value()
+RTTR_INLINE T variant::convert(bool* ok) const
 {
-    typedef typename detail::remove_cv<T>::type nonRef;
-    return static_cast<variant_container<nonRef> *>(m_holder)->m_value;
-}
+    static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
+                                                           "You can only convert to a type, with a default constructor.");
+    bool tmp_ok = false;
+    T result;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-T variant::convert(bool* ok) const
-{
-    const type& source_type = m_holder->get_type();
-    const type& target_type = type::get<T>();
+    const type source_type = get_type();
+    const type target_type = type::get<T>();
     if (target_type == source_type)
     {
-        if (ok)
-            *ok = true;
-        typedef typename std::remove_cv<T>::type nonRef;
-        return static_cast<variant_container<nonRef> *>(m_holder)->m_value;
+        result = const_cast<variant&>(*this).get_value<T>();
     }
-    else
+    else if (const auto& converter = source_type.get_type_converter(target_type))
     {
-        const auto& converter = source_type.get_type_converter(target_type);
-        void* data = m_holder->get_ptr();
-        using t_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-        if (const auto& targert_converter = static_cast<detail::type_converter_target<t_type>*>(converter))
-        {
-            if (ok)
-            {
-                return targert_converter->convert(data, *ok);
-            }
-            else
-            {
-                bool ok_ref = false;
-                return targert_converter->convert(data, ok_ref);
-            }
-        }
-
-        if (detail::pointer_count<T>::value == 1 && source_type.is_pointer())
-        {
-            if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
-            {
-                if (ok)
-                    *ok = true;
-                return static_cast<T>(ptr);
-            }
-        }
-        if (ok)
-            *ok = false;
-        
-        // danger the conversion doesn't worked
-        return static_cast<T>(nullptr);
+        detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
+        result = target_converter->convert(get_ptr(), tmp_ok);
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename SourceType>
-typename std::enable_if<!detail::is_one_dim_char_array<SourceType>::value, T>::type 
-variant::get_value_with_default_value(const SourceType& source, T default_value, bool* ok)
-{
-    const type& source_type = type::get<SourceType>();
-    const type& target_type = type::get<T>();
-    if (const auto& converter = source_type.get_type_converter(target_type))
-    {
-        void* data = const_cast<void*>(reinterpret_cast<const void*>(std::addressof(source)));
-        using t_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-        const auto& targert_converter = static_cast<detail::type_converter_target<t_type>*>(converter);
-        if (ok)
-        {
-            return targert_converter->convert(data, *ok);
-        }
-        else
-        {
-            bool ok_ref = false;
-            return targert_converter->convert(data, ok_ref);
-        }
-    }
-    else
-    {
-        return default_value;
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename SourceType>
-typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, bool>::type 
-variant::get_value_with_default_value(const SourceType& source, bool default_value, bool* ok)
-{
-    // TO DO provide dimension
-    return detail::char_to_bool(source, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename SourceType>
-typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, int>::type 
-variant::get_value_with_default_value(const SourceType& source, int default_value, bool* ok)
-{
-    return detail::char_to_int(source, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename SourceType>
-typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, std::string>::type 
-variant::get_value_with_default_value(const SourceType& source, std::string default_value, bool* ok)
-{
-    if (ok)
-        *ok = true;
-    
-    return std::string(source);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename SourceType>
-typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, float>::type 
-variant::get_value_with_default_value(const SourceType& source, float default_value, bool* ok)
-{
-    return detail::char_to_float(source, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename SourceType>
-typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, double>::type 
-variant::get_value_with_default_value(const SourceType& source, double default_value, bool* ok)
-{
-    return detail::char_to_double(source, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename U>
-variant::variant_container<T>::variant_container(const T& arg, typename std::enable_if<!std::is_array<U>::value>::type*)
-:   m_value(arg)
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename U>
-variant::variant_container<T>::variant_container(const T& arg, typename std::enable_if<std::is_array<U>::value>::type*)
-{
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        detail::copy_array(const_cast<typename detail::remove_const<T>::type&>(arg), m_value);
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
-    detail::copy_array(arg, m_value);
-#endif
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-variant::variant_container<T>::variant_container(T&& arg)
-:   m_value(std::forward<T>(arg))
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-variant::variant_container_base* variant::variant_container<T>::clone() const
-{
-    return (new variant_container<T>(m_value));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-type variant::variant_container<T>::get_type() const
-{
-    return type::get<T>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>           
-void* variant::variant_container<T>::get_ptr() const
-{
-    return detail::as_void_ptr(std::addressof(m_value));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-type variant::variant_container<T>::get_raw_type() const
-{
-    return type::get<typename detail::raw_type<T>::type>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>            
-void* variant::variant_container<T>::get_raw_ptr() const
-{
-    return detail::as_void_ptr(detail::raw_addressof(m_value));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-detail::data_address_container variant::variant_container<T>::get_data_address_container() const
-{
-    return detail::data_address_container{type::get< detail::raw_addressof_return_type_t<T> >(), 
-                                          type::get< detail::wrapper_adress_return_type_t<T> >(),
-                                          detail::as_void_ptr(detail::raw_addressof(m_value)),
-                                          detail::as_void_ptr(detail::wrapped_raw_addressof(m_value))};
-    
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::variant_container<T>::can_convert(const type& target_type) const
-{
-    const auto& source_type = type::get<T>();
-    if (source_type == target_type)
-        return true;
-    
-    if (source_type.get_type_converter(target_type))
-        return true;
-   
-    if (detail::pointer_count<T>::value == 1 && target_type.get_pointer_dimension() == 1)
+    else if (detail::pointer_count<T>::value == 1 && source_type.is_pointer())
     {
         if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
-            return true;
+        {
+            tmp_ok = true;
+            result = static_cast<T>(ptr);
+        }
     }
 
-    return false;
+    if (ok)
+        *ok = tmp_ok;
+
+    return result;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::variant_container<T>::is_array() const
-{
-    return detail::is_array<typename detail::raw_type<T>::type>::value;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-detail::array_container_base* variant::variant_container<T>::to_array() const
-{
-    return detail::create_array_container(m_value);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-std::string variant::variant_container<T>::to_string(bool* ok) const
-{
-    return variant::get_value_with_default_value(m_value, std::string(), ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-int variant::variant_container<T>::to_int(bool* ok) const
-{
-    return variant::get_value_with_default_value(m_value, 0, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::variant_container<T>::to_bool(bool* ok) const
-{
-    return variant::get_value_with_default_value(m_value, false, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-float variant::variant_container<T>::to_float(bool* ok) const
-{
-    return variant::get_value_with_default_value(m_value, 0.0f, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-double variant::variant_container<T>::to_double(bool* ok) const
-{
-    return variant::get_value_with_default_value(m_value, 0.0, ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace rttr

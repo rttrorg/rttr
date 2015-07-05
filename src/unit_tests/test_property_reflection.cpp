@@ -157,7 +157,7 @@ TEST_CASE("Test Properties", "[property]")
     SECTION("Test properties - read/write")
     {
         variant prop_inst = prop_type.create({});
-        REQUIRE(prop_type.is_valid() == true);
+        REQUIRE(prop_inst.is_valid() == true);
 
         property p1 = prop_type.get_property("p1");
         REQUIRE(p1.is_readonly() == false);

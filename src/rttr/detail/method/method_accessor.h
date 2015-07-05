@@ -91,7 +91,7 @@ struct method_accessor_invoker<F, default_invoke, void_member_func, index_sequen
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             (ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);
-            return void_variant;
+            return void_variant_type{};
         }
         else
             return variant();
@@ -107,7 +107,7 @@ struct method_accessor_invoker<F, default_invoke, void_func, index_sequence<ArgC
         if (check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             func(args.template get_value<typename param_types<F, ArgCount>::type>()...);
-            return void_variant;
+            return void_variant_type{};
         }
         else
             return variant();
@@ -153,7 +153,7 @@ struct method_accessor_invoker<F, discard_return, return_member_func, index_sequ
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             (ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);
-            return void_variant;
+            return void_variant_type{};
         }
         else
             return variant();
@@ -169,7 +169,7 @@ struct method_accessor_invoker<F, discard_return, return_func, index_sequence<Ar
         if (check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             func(args.template get_value<typename param_types<F, ArgCount>::type>()...);
-            return void_variant;
+            return void_variant_type{};
         }
         else
             return variant();

@@ -112,7 +112,7 @@ public:
                            bool is_enum,
                            bool is_array,
                            bool is_pointer,
-                           bool is_primitive,
+                           bool is_arithmetic,
                            bool is_function_pointer,
                            bool is_member_object_pointer,
                            bool is_member_function_pointer,

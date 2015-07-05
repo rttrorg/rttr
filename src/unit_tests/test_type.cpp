@@ -301,19 +301,20 @@ TEST_CASE("Test rttr::type - Check get_sizeof", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test rttr::type - Check is_primitive", "[type]")
+TEST_CASE("Test rttr::type - Check is_arithmetic", "[type]")
 {
-    CHECK(type::get<int>().is_primitive()               == true);
-    CHECK(type::get<float>().is_primitive()             == true);
-    CHECK(type::get<double>().is_primitive()            == true);
-    CHECK(type::get<char>().is_primitive()              == true);
-    CHECK(type::get<bool>().is_primitive()              == true);
+    CHECK(type::get<int>().is_arithmetic()               == true);
+    CHECK(type::get<float>().is_arithmetic()             == true);
+    CHECK(type::get<double>().is_arithmetic()            == true);
+    CHECK(type::get<char>().is_arithmetic()              == true);
+    CHECK(type::get<bool>().is_arithmetic()              == true);
 
-    CHECK(type::get<std::string>().is_primitive()       == false);
-    CHECK(type::get<ClassSingle6A>().is_primitive()     == false);
-    CHECK(type::get<ClassMultiple2B>().is_primitive()   == false);
-    CHECK(type::get<FinalClass>().is_primitive()        == false);
-    CHECK(type::get<E_Alignment>().is_primitive()       == false);
+    CHECK(type::get<std::string>().is_arithmetic()       == false);
+    CHECK(type::get<ClassSingle6A>().is_arithmetic()     == false);
+    CHECK(type::get<ClassMultiple2B>().is_arithmetic()   == false);
+    CHECK(type::get<FinalClass>().is_arithmetic()        == false);
+    CHECK(type::get<E_Alignment>().is_arithmetic()       == false);
+    CHECK(type::get<int*>().is_arithmetic()              == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -30,9 +30,11 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/variant/variant_data.h"
 
 #include <type_traits>
 #include <cstddef>
+#include <cstdint>
 #include <algorithm>
 
 namespace rttr
@@ -44,11 +46,18 @@ class variant;
 
 namespace detail
 {
-    RTTR_LOCAL variant create_void_variant();
     class argument;
     class instance;
     class array_container_base;
     struct data_address_container;
+    struct variant_data_policy_base;
+    enum class variant_policy_operation : uint8_t;
+    struct any;
+
+    template<typename T, typename Decayed = decay_t<T>>
+    using decay_variant_t = typename std::enable_if<!std::is_same<Decayed, variant>::value, Decayed>::type;
+
+    typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, any*);
 }
 
 /*!
@@ -136,23 +145,11 @@ class RTTR_API variant
         variant();
 
         /*!
-         * \brief Constructs a new variant with the given value \p param of type \p T.
-         *        The value will be copied into the variant.
+         * \brief Constructs a new variant with the new value \p val.
+         *        The value will be copied or moved into the variant.
          */
-        template<typename T>
-        variant(const T& param);
-
-        /*!
-         * \brief Constructs a new variant with the new value \p param.
-         *        The value will be moved into the variant.
-         */
-        template<typename T>
-        variant(T&& param 
-#ifndef DOXYGEN
-                , typename std::enable_if<!std::is_same<variant&, T>::value >::type* = 0
-                , typename std::enable_if<!std::is_const<T>::value >::type* = 0
-#endif
-                );
+        template<typename T, typename Tp = detail::decay_variant_t<T>>
+        variant(T&& val);
 
         /*!
          * \brief Constructs a new variant object from the given variant \p other.
@@ -170,18 +167,13 @@ class RTTR_API variant
         ~variant();
 
         /*!
-         * \brief Swaps the content of this variant with the \p other variant.
-         */
-        void swap(variant& other);
-
-        /*!
          * Assigns the value of the \p other object to this variant.
          *
          * \return A reference to the variant with the new data.
          */
-        template<typename T>
+        template<typename T, typename Tp = detail::decay_variant_t<T>>
         variant& operator=(T&& other);
-       
+
         /*!
          * \brief Assigns the value of the \a other variant to this variant.
          *
@@ -195,6 +187,18 @@ class RTTR_API variant
          * \return A reference to the variant with the new data.
          */
         variant& operator=(const variant& other);
+
+        /*!
+         * \brief When the variant contains a value, then this function will clear the content.
+         *
+         * \remark After calling this function \ref is_valid will return false.
+         */
+        void clear();
+
+        /*!
+         * \brief Swaps the content of this variant with \p other variant.
+         */
+        void swap(variant& other);
         
         /*!
          * \brief Returns true if this variant data is of the given template type \a T.
@@ -227,6 +231,15 @@ class RTTR_API variant
         bool is_valid() const;
 
         /*!
+         * \brief Convenience function to check if this \ref variant is valid or not.
+         *
+         * \see is_valid()
+         *
+         * \return True if this \ref variant is valid, otherwise false.
+         */
+        explicit operator bool() const;
+
+        /*!
          * \brief Returns true if the contained value can be converted to the given type \p T.
          *        Otherwise false.
          * 
@@ -238,6 +251,11 @@ class RTTR_API variant
         /*!
          * \brief Returns true if the contained value can be converted to the given type \p target_type;
          *        otherwise false.
+         *
+         * The returned value indicates that a conversion is in general possible.
+         * However a conversion might still fail when doing the actual conversion with \ref convert.
+         * An example is the conversion from a string to a number. 
+         * When the string does not contain any number, the conversion will not succeed.
          * 
          * \return True if this variant can be converted to \p target_type; otherwise false.
          */
@@ -249,7 +267,7 @@ class RTTR_API variant
          *        When the conversion fails, then the containing variant value stays the same and the function will return false.
          *
          *        A variant containing a pointer to a custom type will also convert and return \p true
-         *        for this function if a \ref rttr_cast to the type described by \p target_type would succeed.
+         *        for this function, if a \ref rttr_cast to the type described by \p target_type would succeed.
          *
          * \see can_convert()
          * 
@@ -279,7 +297,7 @@ class RTTR_API variant
          *
          *
          * \remark Only call this method when it is possible to return the containing value as type \p T.
-         *         Use therefore the method can_convert().
+         *         Use therefore the method \ref can_convert().
          *         Otherwise the call leads to undefined behaviour.
          *
          * \see can_convert()
@@ -383,32 +401,6 @@ class RTTR_API variant
 
 
     private:
-        template<typename T, typename SourceType>
-        static typename std::enable_if<!detail::is_one_dim_char_array<SourceType>::value, T>::type 
-        get_value_with_default_value(const SourceType& source, T default_value, bool* ok);
-
-        /////////////////////////////////////////////////////////////////////////////////
-
-        template<typename SourceType>
-        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, bool>::type 
-        get_value_with_default_value(const SourceType& source, bool default_value, bool* ok);
-
-        template<typename SourceType>
-        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, int>::type 
-        get_value_with_default_value(const SourceType& source, int default_value, bool* ok);
-
-        template<typename SourceType>
-        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, std::string>::type 
-        get_value_with_default_value(const SourceType& source, std::string default_value, bool* ok);
-
-        template<typename SourceType>
-        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, float>::type 
-        get_value_with_default_value(const SourceType& source, float default_value, bool* ok);
-
-        template<typename SourceType>
-        static typename std::enable_if<detail::is_one_dim_char_array<SourceType>::value, double>::type 
-        get_value_with_default_value(const SourceType& source, double default_value, bool* ok);
-
         /////////////////////////////////////////////////////////////////////////////////
 
 
@@ -449,107 +441,45 @@ class RTTR_API variant
          */
         detail::data_address_container get_data_address_container() const;
 
-        class variant_container_base
-        {
-            public:
-                virtual ~variant_container_base();
-
-                virtual type get_type() const = 0;
-                
-                virtual void* get_ptr() const = 0;
-
-                virtual type get_raw_type() const = 0;
-                
-                virtual void* get_raw_ptr() const = 0;
-
-                virtual detail::data_address_container get_data_address_container() const = 0;
-                
-                virtual bool is_array() const = 0;
-
-                virtual detail::array_container_base* to_array() const = 0;
-
-                virtual std::string to_string(bool* ok) const = 0;
-                virtual int to_int(bool* ok) const = 0;
-                virtual bool to_bool(bool* ok) const = 0;
-                virtual float to_float(bool* ok) const = 0;
-                virtual double to_double(bool* ok) const = 0;
-
-                std::size_t to_size_t(bool* ok) const;
-
-                virtual variant_container_base* clone() const = 0;
-
-                virtual bool can_convert(const type& target_type) const = 0;
-
-        };
-
+        /*!
+         * \brief Converts the containing data to the given target type \p T.
+         *
+         * \remark The containing data will not be removed,
+         *         instead a copy with the new target type will be returned.
+         *
+         * \return The converted type T. When the conversion failed, the argument \p ok will be set to false.
+         */
         template<typename T>
-        class variant_container : public variant_container_base
-        {
-            public:
-                template<typename U = T>
-                variant_container(const T& arg, typename std::enable_if<!std::is_array<U>::value>::type* = nullptr);
+        T convert_to_basic_type(bool* ok) const;
 
-                template<typename U = T>
-                variant_container(const T& arg, typename std::enable_if<std::is_array<U>::value>::type* = nullptr);
-
-                variant_container(T&& arg);
-
-                variant_container_base* clone() const;
-
-                type get_type() const;
-
-                void* get_ptr() const;
-
-                type get_raw_type() const;
-                
-                void* get_raw_ptr() const;
-
-                detail::data_address_container get_data_address_container() const;
-                
-                bool is_array() const;
-
-                detail::array_container_base* to_array() const;
-                
-                bool can_convert(const type& target_type) const;
-
-                std::string to_string(bool* ok) const;
-                int to_int(bool* ok) const;
-                bool to_bool(bool* ok) const;
-                float to_float(bool* ok) const;
-                double to_double(bool* ok) const;
-
-                T m_value; // the stored data
-
-            private: // unimplemented
-                variant_container & operator=(const variant_container &);
-        };
+        /*!
+         * \brief
+         *
+         */
+        template<typename T>
+        bool convert_to_basic_type(T& to) const;
 
     private:
-        friend variant detail::create_void_variant();
         friend detail::argument;
         friend detail::instance;
-        variant_container_base*         m_holder;
+
+        detail::variant_data            m_variant_data;
+        detail::variant_policy_func     m_variant_policy;
 };
 
 #ifndef DOXYGEN
-template<> RTTR_API std::string variant::convert<std::string>(bool* ok) const;
-template<> RTTR_API int variant::convert<int>(bool* ok) const;
-template<> RTTR_API bool variant::convert<bool>(bool* ok) const;
-template<> RTTR_API float variant::convert<float>(bool* ok) const;
-template<> RTTR_API double variant::convert<double>(bool* ok) const;
-template<> RTTR_API variant_array variant::convert<variant_array>(bool* ok) const;
+    template<> RTTR_API std::string variant::convert<std::string>(bool* ok) const;
+    template<> RTTR_API int variant::convert<int>(bool* ok) const;
+    template<> RTTR_API bool variant::convert<bool>(bool* ok) const;
+    template<> RTTR_API float variant::convert<float>(bool* ok) const;
+    template<> RTTR_API double variant::convert<double>(bool* ok) const;
+    template<> RTTR_API variant_array variant::convert<variant_array>(bool* ok) const;
 
-template<> RTTR_API bool variant::can_convert<variant_array>() const;
+    template<> RTTR_API bool variant::can_convert<variant_array>() const;
 #endif
-
-namespace detail
-{
-    RTTR_API extern variant void_variant;
-} // end namespace impl
 
 } // end namespace rttr
 
 #include "rttr/detail/variant/variant_impl.h"
-#include "rttr/detail/variant/variant_default_types_impl.h"
 
 #endif // RTTR_VARIANT_H_

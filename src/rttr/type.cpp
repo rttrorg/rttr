@@ -84,7 +84,7 @@ RTTR_DECL_DB_TYPE(m_is_class_list, g_is_class_list)
 RTTR_DECL_DB_TYPE(m_is_enum_list, g_is_enum_list)
 RTTR_DECL_DB_TYPE(m_is_array_list, g_is_array_list)
 RTTR_DECL_DB_TYPE(m_is_pointer_list, g_is_pointer_list)
-RTTR_DECL_DB_TYPE(m_is_primitive_list, g_is_primitive_list)
+RTTR_DECL_DB_TYPE(m_is_arithmetic_list, g_is_arithmetic_list)
 RTTR_DECL_DB_TYPE(m_is_function_pointer_list, g_is_function_pointer_list)
 RTTR_DECL_DB_TYPE(m_is_member_object_pointer_list, g_is_member_object_pointer_list)
 RTTR_DECL_DB_TYPE(m_is_member_function_pointer_list, g_is_member_function_pointer_list)
@@ -124,7 +124,7 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_is_enum_list, g_is_enum_list)
     RTTR_SET_DB_TYPE(m_is_array_list, g_is_array_list)
     RTTR_SET_DB_TYPE(m_is_pointer_list, g_is_pointer_list)
-    RTTR_SET_DB_TYPE(m_is_primitive_list, g_is_primitive_list)
+    RTTR_SET_DB_TYPE(m_is_arithmetic_list, g_is_arithmetic_list)
     RTTR_SET_DB_TYPE(m_is_function_pointer_list, g_is_function_pointer_list)
     RTTR_SET_DB_TYPE(m_is_member_object_pointer_list, g_is_member_object_pointer_list)
     RTTR_SET_DB_TYPE(m_is_member_function_pointer_list, g_is_member_function_pointer_list)
@@ -318,9 +318,9 @@ bool type::is_pointer() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_primitive() const
+bool type::is_arithmetic() const
 {
-    return (*g_is_primitive_list)[m_id];
+    return (*g_is_arithmetic_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

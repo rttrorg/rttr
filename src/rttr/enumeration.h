@@ -37,7 +37,7 @@
 namespace rttr
 {
 class type;
-class Variant;
+class variant;
 
 namespace detail
 {

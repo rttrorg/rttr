@@ -112,7 +112,7 @@ uint16 type_register::type_reg(const char* name,
                                bool is_enum,
                                bool is_array,
                                bool is_pointer,
-                               bool is_primitive,
+                               bool is_arithmetic,
                                bool is_function_pointer,
                                bool is_member_object_pointer,
                                bool is_member_function_pointer,
@@ -121,7 +121,7 @@ uint16 type_register::type_reg(const char* name,
     return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes), 
                                                    derived_func_ptr, var_func_ptr, 
                                                    type_size,
-                                                   is_class, is_enum, is_array, is_pointer, is_primitive, 
+                                                   is_class, is_enum, is_array, is_pointer, is_arithmetic, 
                                                    is_function_pointer, is_member_object_pointer, is_member_function_pointer, pointer_dimension);
 }
 

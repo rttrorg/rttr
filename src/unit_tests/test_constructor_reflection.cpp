@@ -53,7 +53,7 @@ RTTR_REGISTER
         .constructor<>()
         .constructor<const constructor_test&>()
         .constructor<int, int>()
-        .constructor<const std::string&>({metadata("SCRIPTABLE", true), metadata(TOOL_TIP, string("This is a ToolTip"))})
+        .constructor<const std::string&>({metadata("SCRIPTABLE", true), metadata(TOOL_TIP, "This is a ToolTip")})
         .constructor<int, int, int, int, int, int, const int* const>();
 
     class_<factory_test>("factory_test")
@@ -66,7 +66,7 @@ TEST_CASE("Test constructor/destructor", "[constructor]")
 {
     type p_type = type::get<constructor_test>();
     REQUIRE(p_type.is_valid() == true);
-        
+
     SECTION("Test default ctor")
     {
         constructor default_ctor = p_type.get_constructor();
@@ -230,8 +230,8 @@ TEST_CASE("Test metadata in constructor", "[constructor]")
 
     value = type::get<constructor_test>().get_metadata(DESCRIPTION);
 
-    REQUIRE(value.is_type<char[10]>() == true);
-    CHECK(std::string(value.get_value<char[10]>()) == std::string("some text"));
+    REQUIRE(value.is_type<std::string>() == true);
+    CHECK(std::string(value.get_value<std::string>()) == std::string("some text"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

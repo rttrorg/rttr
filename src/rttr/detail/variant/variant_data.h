@@ -25,77 +25,36 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_RTTR_ENABLE_H_
-#define RTTR_RTTR_ENABLE_H_
+#ifndef RTTR_VARIANT_DATA_H_
+#define RTTR_VARIANT_DATA_H_
 
-#include <type_traits>
-
-#include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include <type_traits>
 
 namespace rttr
 {
 namespace detail
 {
-#ifndef DOXYGEN
-    template<typename... U> struct type_list;
-#endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+using variant_basic_types = type_list<bool, 
+                                      signed char, unsigned char, char, wchar_t,
+                                      short int, unsigned short int, int, unsigned int,
+                                      long int, unsigned long int, long long int,
+                                      unsigned long long int, float, double, void*>;
+
+/*!
+ * This is the data storage for the \ref variant class.
+ */
+typedef std::aligned_storage<max_sizeof_list<variant_basic_types>::value,
+                             max_alignof_list<variant_basic_types>::value>::type variant_data;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+struct RTTR_API void_variant_type {};
+
 } // end namespace detail
 } // end namespace rttr
 
-#ifdef DOXYGEN
-
-/*!
- * \brief This macro is necessary in order to retrieve type information about the
- *        inheritance graph of a class.
- * 
- * Put the macro inside every class, where you need the complete inheritance information about the class type.
- *
- * \code{.cpp}
- * struct Base
- * {
- *   RTTR_ENABLE()
- * };
- * \endcode
- *
- * Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public, 
- * protected or private class accessor section.
- *
- * Into the derived class you put the same macro, but now as argument the name of the parent class.
- * Which is in this case `Base`.
- * \code{.cpp}
- *   struct Derived : Base
- *   {
- *     RTTR_ENABLE(Base)
- *   };
- * \endcode
- *
- *  When you use multiple inheritance you simply separate every class with a comma.
- * \code{.cpp}
- *   struct MultipleDerived : Base, Other
- *   {
- *     RTTR_ENABLE(Base, Other)
- *   };
- * \endcode
- *
- * \remark Without this macro, it will not be possible to use \ref rttr::rttr_cast "rttr_cast" or 
- *         meta information in the type class, like: \ref rttr::type::get_base_classes() "get_base_classes()" or 
- *         \ref rttr::type::get_derived_classes() "get_derived_classes()".
- */
-#define RTTR_ENABLE(...)
-
-#else
-
-#define TYPE_LIST(...)      rttr::detail::type_list<__VA_ARGS__>
-
-#define RTTR_ENABLE(...) \
-public:\
-    virtual RTTR_INLINE rttr::type get_type() const { return rttr::detail::get_type_from_instance(this); }  \
-    virtual RTTR_INLINE void* get_ptr() { return reinterpret_cast<void*>(this); } \
-    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::detail::get_type_from_instance(this)}; } \
-    typedef TYPE_LIST(__VA_ARGS__) base_class_list; \
-private:
-
-#endif // DOXYGEN
-
-#endif // RTTR_RTTR_ENABLE_H_
+#endif // RTTR_VARIANT_DATA_H_

@@ -46,7 +46,7 @@ namespace detail
     struct derived_info;
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    // this trait is for removing cv-type qualifiers and also pointers
+    // This trait will removes cv-qualifiers, pointers and reference from type T.
     template<typename T, typename Enable = void>
     struct raw_type
     {
@@ -92,12 +92,22 @@ namespace detail
 
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    // this trait includes the above and also removes the array dimension
+    // this trait will remove the cv-qualifier, pointer types, reference type and also the array dimension
+
     template<typename T, typename Enable = void>
     struct raw_array_type  { typedef typename raw_type<T>::type type; };
 
+    template<typename T>
+    struct raw_array_type_impl;
+
     template<typename T, std::size_t N>
-    struct raw_array_type<T[N]> { typedef typename raw_array_type<T>::type type; };
+    struct raw_array_type_impl<T[N]> { typedef typename raw_array_type<T>::type type; };
+
+    template<typename T>
+    struct raw_array_type<T, typename std::enable_if<std::is_array<T>::value>::type> 
+    {
+        typedef typename raw_array_type_impl<typename remove_cv<T>::type>::type type; 
+    };
 
     template<typename T>
     using raw_array_type_t = typename raw_array_type<T>::type;
@@ -419,9 +429,144 @@ namespace detail
                                                                (std::rank<T>::value == 1)>;
 
     /////////////////////////////////////////////////////////////////////////////////////
-   
-} // end namespace detail
 
+
+    template <typename T, typename... Ts> 
+    struct is_type_in_list_impl;
+
+    template <typename T, typename U> 
+    struct is_type_in_list_impl<T, U>
+    {
+        static RTTR_CONSTEXPR_OR_CONST bool value = std::is_same<T, U>::value;
+    };
+
+    template<typename T, typename T2, typename... U> 
+    struct is_type_in_list_impl<T, T2, U...> 
+    {
+        static RTTR_CONSTEXPR_OR_CONST bool value = std::is_same<T, T2>::value || is_type_in_list_impl<T, U...>::value;
+    };
+
+    template<typename T, class... Ts, template<class...> class List>
+    struct is_type_in_list_impl<T, List<Ts...>>
+    {
+        static RTTR_CONSTEXPR_OR_CONST bool value = is_type_in_list_impl<T, Ts...>::value;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Returns true when the type T is contained in a list of template parameters.
+    // use it like this:
+    // is_type_in_list<int, primitive_list<bool, double, int>>::value => true
+    // is_type_in_list<int, primitive_list<bool, double, void>>::value => false
+    // or
+    // is_type_in_list<int, bool, double, void>::value => false
+
+    template<typename T, typename List>
+    using is_type_in_list = std::integral_constant<bool, is_type_in_list_impl<T, List>::value>;
+   
+    /////////////////////////////////////////////////////////////////////////////////////
+    
+    template <typename T, typename...Ts> 
+    struct max_sizeof_list_impl;
+
+     template <typename T> 
+    struct max_sizeof_list_impl<T>
+    {
+        static RTTR_CONSTEXPR_OR_CONST size_t value = sizeof(T);
+    };
+
+    template<typename T1, typename T2, typename... U> 
+    struct max_sizeof_list_impl<T1, T2, U...> 
+    {
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl<
+                                                          typename std::conditional<sizeof(T1) >= sizeof(T2), 
+                                                                                    T1, T2>::type,
+                                                                                    U...>::value;
+    };
+
+    template<class... Ts, template<class...> class List>
+    struct max_sizeof_list_impl<List<Ts...>>
+    {
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl<Ts...>::value;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Returns the maximum sizeof value from all given types
+    // use it like this:
+    // max_size_of_list<int, bool, double>::value => 8
+
+    template<typename... Ts>
+    using max_sizeof_list = std::integral_constant<std::size_t, max_sizeof_list_impl<Ts...>::value>;
+
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    
+    template <typename T, typename...Ts> 
+    struct max_alignof_list_impl;
+
+     template <typename T> 
+    struct max_alignof_list_impl<T>
+    {
+        static RTTR_CONSTEXPR_OR_CONST size_t value = std::alignment_of<T>::value;
+    };
+
+    template<typename T1, typename T2, typename... U> 
+    struct max_alignof_list_impl<T1, T2, U...> 
+    {
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_alignof_list_impl<
+                                                          typename std::conditional<std::alignment_of<T1>::value >= std::alignment_of<T2>::value,
+                                                                                    T1, T2>::type,
+                                                                                    U...>::value;
+    };
+
+    template<class... Ts, template<class...> class List>
+    struct max_alignof_list_impl<List<Ts...>>
+    {
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_alignof_list_impl<Ts...>::value;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Returns the maximum sizeof value from all given types
+    // use it like this:
+    // max_alignof_list<int, bool, double>::value => 8
+
+    template<typename... Ts>
+    using max_alignof_list = std::integral_constant<std::size_t, max_alignof_list_impl<Ts...>::value>;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // A simple list for types
+    // use it like this:
+    // using my_list = type_list<int, bool>;
+
+    template<typename... T>
+    struct type_list {};
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    using remove_cv_ref_t = typename detail::remove_cv<typename std::remove_reference<T>::type>::type;
+
+    /*!
+     * A slightly different decay than in the standard, the extent of arrays are not removed.
+     * Applies lvalue-to-rvalue, function-to-pointer implicit conversions to the type T and removes cv-qualifiers.
+     */
+    template<typename T>
+    struct decay 
+    {
+        typedef typename std::remove_reference<T>::type Tp;
+        typedef typename std::conditional<std::is_function<Tp>::value,
+                                          typename std::add_pointer<Tp>::type,
+                                          typename remove_cv<Tp>::type
+                                         >::type type;
+    };
+
+    template<typename T>
+    using decay_t = typename decay<T>::type;
+
+} // end namespace detail
 } // end namespace rttr
 
 #endif // RTTR_MISC_TYPE_TRAITS_H_

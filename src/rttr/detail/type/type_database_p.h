@@ -82,7 +82,7 @@ class RTTR_LOCAL type_database
                              bool is_enum,
                              bool is_array,
                              bool is_pointer,
-                             bool is_primitive,
+                             bool is_arithmetic,
                              bool is_function_pointer,
                              bool is_member_object_pointer,
                              bool is_member_function_pointer,
@@ -330,7 +330,7 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_enum_list;
         std::vector<bool>                                           m_is_array_list;
         std::vector<bool>                                           m_is_pointer_list;
-        std::vector<bool>                                           m_is_primitive_list;
+        std::vector<bool>                                           m_is_arithmetic_list;
         std::vector<bool>                                           m_is_function_pointer_list;
         std::vector<bool>                                           m_is_member_object_pointer_list;
         std::vector<bool>                                           m_is_member_function_pointer_list;

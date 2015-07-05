@@ -27,9 +27,19 @@
 
 #include <rttr/type>
 #include <rttr/register>
+#include <rttr/variant.h>
 
 #include <nonius/nonius.h++>
 #include <nonius/html_group_reporter.h>
+
+struct MyCustomType
+{
+    int         m_data_i;
+    bool        m_data_b;
+    double      m_data_d;
+    float       m_data_f;
+    std::size_t m_data_st;
+};
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +65,7 @@ nonius::benchmark bench_variant_void_ctor()
         std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
         meter.measure([&](int i ) 
         {
-           vec[i].construct(rttr::detail::void_variant);
+            vec[i].construct(rttr::detail::void_variant_type{});
         });
     });
 }
@@ -69,7 +79,7 @@ nonius::benchmark bench_variant_string_ctor()
         std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
         meter.measure([&](int i ) 
         {
-           vec[i].construct(std::string("normal text"));
+           vec[i].construct(std::string("hello"));
         });
     });
 }
@@ -83,7 +93,7 @@ nonius::benchmark bench_variant_char_ctor()
         std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
         meter.measure([&](int i ) 
         {
-           vec[i].construct("normal text");
+           vec[i].construct("hello");
         });
     });
 }
@@ -130,7 +140,6 @@ nonius::benchmark bench_variant_int_ctor()
     });
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 nonius::benchmark bench_variant_bool_ctor()
@@ -141,6 +150,20 @@ nonius::benchmark bench_variant_bool_ctor()
         meter.measure([&](int i ) 
         {
            vec[i].construct(true);
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_variant_custom_ctor()
+{
+    return nonius::benchmark("custom", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::storage_for<rttr::variant>> vec(meter.runs());
+        meter.measure([&](int i ) 
+        {
+           vec[i].construct(MyCustomType());
         });
     });
 }
@@ -172,7 +195,7 @@ nonius::benchmark bench_variant_void_dtor()
     {
         std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
         for(auto&& item : vec)
-            item.construct(rttr::detail::void_variant);
+            item.construct(rttr::detail::void_variant_type{});
 
         meter.measure([&](int i ) 
         {
@@ -189,7 +212,7 @@ nonius::benchmark bench_variant_string_dtor()
     {
         std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
         for(auto&& item : vec)
-            item.construct(std::string("normal text"));
+            item.construct(std::string("hello"));
 
         meter.measure([&](int i ) 
         {
@@ -206,7 +229,7 @@ nonius::benchmark bench_variant_char_dtor()
     {
         std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
         for(auto&& item : vec)
-            item.construct("normal text");
+            item.construct("hello");
 
         meter.measure([&](int i ) 
         {
@@ -266,7 +289,6 @@ nonius::benchmark bench_variant_int_dtor()
     });
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 nonius::benchmark bench_variant_bool_dtor()
@@ -276,6 +298,23 @@ nonius::benchmark bench_variant_bool_dtor()
         std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
         for(auto&& item : vec)
             item.construct(true);
+
+        meter.measure([&](int i ) 
+        {
+           vec[i].destruct();
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_variant_custom_dtor()
+{
+    return nonius::benchmark("custom", [](nonius::chronometer meter)
+    {
+        std::vector<nonius::destructable_object<rttr::variant>> vec(meter.runs());
+        for(auto&& item : vec)
+            item.construct(MyCustomType());
 
         meter.measure([&](int i ) 
         {
@@ -304,7 +343,8 @@ void bench_variant_create()
                                                bench_variant_double_ctor(),
                                                bench_variant_float_ctor(),
                                                bench_variant_int_ctor(),
-                                               bench_variant_bool_ctor()};
+                                               bench_variant_bool_ctor(),
+                                               bench_variant_custom_ctor()};
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
     reporter.set_current_group_name("destructor", "The destruction of a <code>rttr::variant</code> with automatic storage.");
@@ -315,6 +355,7 @@ void bench_variant_create()
                                                bench_variant_double_dtor(),
                                                bench_variant_float_dtor(),
                                                bench_variant_int_dtor(),
+                                               bench_variant_custom_dtor(),
                                                bench_variant_bool_dtor()};
     nonius::go(cfg, std::begin(benchmarks_group_2), std::end(benchmarks_group_2), reporter);
 

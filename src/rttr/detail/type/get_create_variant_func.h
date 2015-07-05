@@ -49,14 +49,13 @@ namespace detail
  * Template arguments cannot be forwarded at runtime to some derived or base classes.
  */
 
-template<typename T>
-variant create_invalid_variant(const argument& data)
+static variant create_invalid_variant(const argument& data)
 {
     return variant();
 }
 
 template<typename T>
-variant create_variant(const argument& data)
+static variant create_variant(const argument& data)
 {
     return data.get_value<T>();
 }
@@ -78,11 +77,11 @@ struct variant_creater
 };
 
 template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<std::is_function<Source_Type>::value>::type>
+struct variant_creater<Source_Type, typename std::enable_if<!std::is_copy_constructible<Source_Type>::value>::type>
 {
     static variant_create_func create()
     {
-        return create_invalid_variant<Source_Type>;
+        return create_invalid_variant;
     }
 };
 

@@ -382,12 +382,13 @@ class RTTR_API type
         bool is_pointer() const;
 
         /*!
-         * \brief Returns true whether the given type represents an primitive type.
-         *        e.g. `int`, `bool`, etc...
+         * \brief Returns true whether the given type represents an arithmetic type.
+         *        An arithmetic type is a integral type or a floating point type.
+         *        e.g. `bool`, `int`, `float`, etc...
          *
-         * \return True if the type is a primitive type, otherwise false.
+         * \return True if the type is a arithmetic type, otherwise false.
          */
-        bool is_primitive() const;
+        bool is_arithmetic() const;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a function 

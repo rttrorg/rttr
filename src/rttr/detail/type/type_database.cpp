@@ -73,7 +73,7 @@ type_database::type_database()
     m_is_enum_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_array_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_is_primitive_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
+    m_is_arithmetic_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_function_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_member_object_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_member_function_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
@@ -102,7 +102,7 @@ type_database::type_database()
     m_is_enum_list.push_back(false);
     m_is_array_list.push_back(false);
     m_is_pointer_list.push_back(false);
-    m_is_primitive_list.push_back(false);
+    m_is_arithmetic_list.push_back(false);
     m_is_function_pointer_list.push_back(false);
     m_is_member_object_pointer_list.push_back(false);
     m_is_member_function_pointer_list.push_back(false);
@@ -955,7 +955,7 @@ uint16 type_database::register_type(const char* name,
                                     bool is_enum,
                                     bool is_array,
                                     bool is_pointer,
-                                    bool is_primitive,
+                                    bool is_arithmetic,
                                     bool is_function_pointer,
                                     bool is_member_object_pointer,
                                     bool is_member_function_pointer,
@@ -987,7 +987,7 @@ uint16 type_database::register_type(const char* name,
     m_is_enum_list.push_back(is_enum);
     m_is_array_list.push_back(is_array);
     m_is_pointer_list.push_back(is_pointer);
-    m_is_primitive_list.push_back(is_primitive);
+    m_is_arithmetic_list.push_back(is_arithmetic);
     m_is_function_pointer_list.push_back(is_function_pointer);
     m_is_member_object_pointer_list.push_back(is_member_object_pointer);
     m_is_member_function_pointer_list.push_back(is_member_function_pointer);
