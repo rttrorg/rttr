@@ -89,6 +89,12 @@ struct derived : virtual base
     RTTR_ENABLE(base)
 };
 
+struct other_derived : virtual base
+{
+    double dummy3;
+    RTTR_ENABLE(base)
+};
+
 } // end anonymous namespace
 
 RTTR_REGISTER
@@ -899,8 +905,12 @@ TEST_CASE("variant test - convert internal", "[variant]")
     REQUIRE(var.can_convert(type::get<derived>())   == false);
     REQUIRE(var.can_convert(type::get<derived*>())  == true);
     REQUIRE(var.can_convert(type::get<derived**>()) == false);
-    
+    REQUIRE(var.can_convert(type::get<other_derived*>())  == false);
+        
     bool could_convert = var.convert(type::get<derived**>());
+    CHECK(could_convert == false);
+
+    could_convert = var.convert(type::get<other_derived*>());
     CHECK(could_convert == false);
 
     could_convert = var.convert(type::get<derived*>());
