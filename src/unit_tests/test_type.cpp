@@ -389,6 +389,8 @@ TEST_CASE("Test rttr::type - Check is_wrapper", "[type]")
 {
     CHECK(type::get<std::shared_ptr<int>>().is_wrapper()        == true);
     CHECK(type::get<std::reference_wrapper<int>>().is_wrapper() == true);
+    CHECK(type::get<std::unique_ptr<int>>().is_wrapper()        == true);
+    CHECK(type::get<std::weak_ptr<int>>().is_wrapper()          == true);
 
     std::shared_ptr<ClassSingle6A> sharedPtr = std::make_shared<ClassSingle6A>();
     CHECK(type::get(sharedPtr).is_wrapper()         == true);

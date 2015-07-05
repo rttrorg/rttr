@@ -48,12 +48,12 @@ struct wrapper_mapper<std::shared_ptr<T>>
     typedef decltype(std::shared_ptr<T>().get()) wrapped_type;
     typedef std::shared_ptr<T> type;
 
-    RTTR_INLINE static wrapped_type get(const type& obj)
+    static RTTR_INLINE wrapped_type get(const type& obj)
     {
         return obj.get();
     }
 
-    RTTR_INLINE static type create(const wrapped_type& t)
+    static RTTR_INLINE type create(const wrapped_type& t)
     {
         return type(t);
     }
@@ -67,14 +67,52 @@ struct wrapper_mapper<std::reference_wrapper<T>>
     typedef decltype(std::declval<std::reference_wrapper<T>>().get()) wrapped_type;
     typedef std::reference_wrapper<T> type;
 
-    RTTR_INLINE static wrapped_type get(const type& obj)
+    static RTTR_INLINE wrapped_type get(const type& obj)
     {
         return obj.get();
     }
 
-    RTTR_INLINE static type create(const wrapped_type& t)
+    static RTTR_INLINE type create(const wrapped_type& t)
     {
         return type(t);
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct wrapper_mapper<std::unique_ptr<T>>
+{
+    typedef decltype(std::declval<std::unique_ptr<T>>().get()) wrapped_type;
+    typedef std::unique_ptr<T> type;
+
+    static RTTR_INLINE wrapped_type get(const type& obj)
+    {
+        return obj.get();
+    }
+
+    static RTTR_INLINE type create(const wrapped_type& t)
+    {
+        return type(t);
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct wrapper_mapper<std::weak_ptr<T>>
+{
+    typedef decltype(std::declval<std::weak_ptr<T>>().lock().get()) wrapped_type;
+    typedef std::weak_ptr<T> type;
+
+    static RTTR_INLINE wrapped_type get(const type& obj)
+    {
+        return obj.lock().get();
+    }
+
+    static RTTR_INLINE type create(const wrapped_type& t)
+    {
+        return type; // empty type, weak pointer can only be created by a referencing shared_ptr
     }
 };
 
