@@ -251,7 +251,7 @@ struct type_getter
                                                         array_raw_type<T>::get_type(),
                                                         std::move(base_classes<T>::get_types()),
                                                         get_most_derived_info_func<T>(),
-                                                        variant_creater<T>::create(),
+                                                        &create_variant_func<T>::create_variant,
                                                         sizeof(T),
                                                         std::is_class<T>::value,
                                                         std::is_enum<T>::value,
@@ -268,6 +268,10 @@ struct type_getter
 
 /////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * Explicit specializations for type void;
+ * because we cannot implement the check whether a type is completely defined for type `void`
+ */
 template <>
 struct type_getter<void>
 {
@@ -294,8 +298,12 @@ struct type_getter<void>
     }
 };
 
-// explicit specializations for function types
+/////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * Explicit specializations for function types;
+ * because we cannot implement the check whether a type is completly defined for functions
+ */
 template <typename T>
 struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
@@ -307,7 +315,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
                                                         array_raw_type<T>::get_type(),
                                                         std::vector<detail::base_class_info>(),
                                                         get_most_derived_info_func<T>(),
-                                                        variant_creater<T>::create(),
+                                                        &create_variant_func<T>::create_variant,
                                                         0,
                                                         std::is_class<T>::value,
                                                         std::is_enum<T>::value,
@@ -322,12 +330,10 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
     }
 };
 
-
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 static RTTR_INLINE type get_type_from_instance(const T*)
 {

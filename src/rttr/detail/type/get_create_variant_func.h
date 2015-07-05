@@ -40,6 +40,8 @@ namespace rttr
 namespace detail
 {
 
+typedef variant(*variant_create_func)(const argument&);
+
 /*!
  * \brief The following code is used for the function bool variant::convert(const type& target_type).
  *
@@ -48,45 +50,43 @@ namespace detail
  *
  * Template arguments cannot be forwarded at runtime to some derived or base classes.
  */
-
-static variant create_invalid_variant(const argument& data)
-{
-    return variant();
-}
-
 template<typename T>
-static variant create_variant(const argument& data)
+struct create_variant_policy
 {
-    return data.get_value<T>();
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-typedef variant(*variant_create_func)(const argument&);
-
-template<typename Source_Type, typename Enable = void>
-struct variant_creater
-{
-    static variant_create_func create()
+    static variant create_variant(const argument& data)
     {
-        return create_variant<Source_Type>;
+        return data.get_value<T>();
     }
 };
 
-template<typename Source_Type>
-struct variant_creater<Source_Type, typename std::enable_if<!std::is_copy_constructible<Source_Type>::value>::type>
+struct create_invalid_variant_policy
 {
-    static variant_create_func create()
+    static variant create_variant(const argument& data)
     {
-        return create_invalid_variant;
+        return variant();
     }
 };
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
+    // for unknown reason, unique_ptr is in this version of MSVC copy constructible, which is of course a bug...
+    template<typename T>
+    using create_variant_func = conditional_t<std::is_copy_constructible<T>::value && !is_unique_ptr<T>::value,
+                                              create_variant_policy<T>,
+                                              create_invalid_variant_policy>;
+#   else
+#       error "Check new MSVC Compiler!"
+#   endif
+#else
+template<typename T>
+using create_variant_func = conditional_t<std::is_copy_constructible<T>::value,
+                                          create_variant_policy<T>,
+                                          create_invalid_variant_policy>;
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
-
 } // end namespace rttr
 
 #endif // RTTR_GET_CREATE_VARIANT_FUNC_H_
