@@ -32,7 +32,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_converter.h"
-#include "rttr/detail/array/array_container.h"
+#include "rttr/detail/variant_array/array_container.h"
 #include "rttr/detail/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/detail/variant/variant_data_policy_arithmetic.h"

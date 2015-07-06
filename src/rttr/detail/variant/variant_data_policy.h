@@ -31,7 +31,7 @@
 #include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
-#include "rttr/detail/array/array_container.h"
+#include "rttr/detail/variant_array/array_container.h"
 
 #include <cstdint>
 

@@ -52,9 +52,6 @@ set(HEADER_FILES constructor.h
                  detail/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
-                 detail/array/array_container.h
-                 detail/array/array_container_impl.h
-                 detail/array/array_container_base.h
                  detail/array/array_mapper.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
@@ -89,7 +86,6 @@ set(HEADER_FILES constructor.h
                  detail/type/type_database_p.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
-                 detail/variant/variant_array_impl.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
@@ -98,6 +94,10 @@ set(HEADER_FILES constructor.h
                  detail/variant/variant_data_policy_void.h
                  detail/variant/variant_data_policy_string.h
                  detail/variant/variant_impl.h
+                 detail/variant_array/variant_array_impl.h
+                 detail/variant_array/array_container.h
+                 detail/variant_array/array_container_impl.h
+                 detail/variant_array/array_container_base.h
                 )
                 
 set(SOURCE_FILES constructor.cpp

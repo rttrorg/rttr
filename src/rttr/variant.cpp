@@ -30,7 +30,7 @@
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/variant_array.h"
 #include "rttr/detail/argument.h"
-#include "rttr/detail/array/array_container.h"
+#include "rttr/detail/variant_array/array_container.h"
 
 #include <algorithm>
 #include <limits>

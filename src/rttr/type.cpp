@@ -38,7 +38,7 @@
 #include "rttr/detail/enumeration/enumeration_container_base.h"
 #include "rttr/detail/method/method_container_base.h"
 #include "rttr/detail/property/property_container.h"
-#include "rttr/detail/array/array_container_base.h"
+#include "rttr/detail/variant_array/array_container_base.h"
 #include "rttr/rttr_enable.h"
 #include "rttr/metadata.h"
 

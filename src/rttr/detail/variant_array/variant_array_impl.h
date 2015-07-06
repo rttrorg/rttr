@@ -29,7 +29,7 @@
 #define RTTR_VARIANT_ARRAY_IMPL_H_
 
 #include "rttr/variant.h"
-#include "rttr/detail/array/array_container.h"
+#include "rttr/detail/variant_array/array_container.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 
@@ -45,22 +45,8 @@ RTTR_INLINE variant_array::variant_array()
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-variant_array::variant_array(const T& param)
-:   m_container(detail::create_array_container(param))
-
-{
-   static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
-   static_assert(!detail::is_array<variant>::value, "No allowed to create a variant_array from variant.");
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-variant_array::variant_array(T&& param,
-                typename std::enable_if<!std::is_same<variant_array&, T>::value >::type*,
-                typename std::enable_if<!std::is_const<T>::value >::type*
-                )
+template<typename T, typename Tp>
+variant_array::variant_array(T&& param)
 :   m_container(detail::create_array_container(std::forward<T>(param)))
 {
    static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
@@ -105,7 +91,7 @@ RTTR_INLINE void variant_array::swap(variant_array& other)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
+template<typename T, typename Tp>
 RTTR_INLINE variant_array& variant_array::operator=(T&& other)
 {
     variant_array(std::forward<T>(other)).swap(*this);

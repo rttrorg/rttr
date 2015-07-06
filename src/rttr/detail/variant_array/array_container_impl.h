@@ -29,7 +29,7 @@
 #define RTTR_ARRAY_CONTAINER_IMPL_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/array/array_container_base.h"
+#include "rttr/detail/variant_array/array_container_base.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/array/array_accessor.h"
 #include "rttr/detail/array/array_mapper.h"

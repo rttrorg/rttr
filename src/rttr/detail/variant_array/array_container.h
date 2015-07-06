@@ -103,6 +103,6 @@ array_container_base* create_array_container(T&& value);
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/array/array_container_impl.h"
+#include "rttr/detail/variant_array/array_container_impl.h"
 
 #endif // RTTR_ARRAY_CONTAINER_H_

@@ -29,19 +29,25 @@
 #define RTTR_VARIANT_ARRAY_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+
 #include <cstddef>
 #include <vector>
 
 namespace rttr
 {
-class variant;
-class type;
+    class type;
+    class variant;
+    class variant_array;
 
 namespace detail
 {
-class array_container_base;
-class instance;
-class argument;
+    class array_container_base;
+    class instance;
+    class argument;
+
+    template<typename T, typename Decayed = decay_t<T>>
+    using decay_variant_array_t = typename std::enable_if<!std::is_same<Decayed, variant_array>::value, Decayed>::type;
 }
 
 /*!
@@ -182,22 +188,12 @@ class RTTR_API variant_array
          */
         variant_array();
        
-        /*!
-         * \brief Constructs a variant_array from the given argument \p value of type \p T.
-         */
-        template<typename T>
-        variant_array(const T& value);
 
         /*!
          * \brief Perfect forwarding of a \p value.
          */
-        template<typename T>
-        variant_array(T&& value 
-#ifndef DOXYGEN
-                , typename std::enable_if<!std::is_same<variant_array&, T>::value >::type* = 0
-                , typename std::enable_if<!std::is_const<T>::value >::type* = 0
-#endif
-                );
+        template<typename T, typename Tp = detail::decay_variant_array_t<T>>
+        variant_array(T&& value);
 
         /*!
          * \brief Constructs a copy of the given variant_array \p other.
@@ -232,7 +228,7 @@ class RTTR_API variant_array
          *
          * \return A reference to the variant_array with the new data.
          */
-        template<typename T>
+        template<typename T, typename Tp = detail::decay_variant_array_t<T>>
         variant_array& operator=(T&& other);
        
         /*!
@@ -515,6 +511,6 @@ class RTTR_API variant_array
 
 } // end namespace rttr
 
-#include "rttr/detail/variant/variant_array_impl.h"
+#include "rttr/detail/variant_array/variant_array_impl.h"
 
 #endif // RTTR_VARIANT_ARRAY_H_
