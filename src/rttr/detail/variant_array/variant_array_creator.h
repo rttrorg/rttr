@@ -25,17 +25,30 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#ifndef RTTR_VARIANT_ARRAY_CREATOR_H_
+#define RTTR_VARIANT_ARRAY_CREATOR_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "variant_array.h"
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/variant_array/variant_array_traits.h"
+#include "rttr/detail/variant_array/variant_array_data.h"
 
-#endif // RTTR_TYPE_HEADERS_H_
+#include <tuple>
+
+namespace rttr
+{
+namespace detail
+{
+
+template<typename T, typename Tp = decay_t<T>>
+typename std::enable_if<can_create_array_container<T>::value, variant_array_data>::type create_variant_array(T&& value);
+
+template<typename T, typename Tp = decay_t<T>>
+typename std::enable_if<!can_create_array_container<T>::value, variant_array_data>::type create_variant_array(T&& value);
+
+} // end namespace detail
+} // end namespace rttr
+
+#include "rttr/detail/variant_array/variant_array_creator_impl.h"
+
+#endif // RTTR_VARIANT_ARRAY_CREATOR_H_

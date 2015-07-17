@@ -128,18 +128,19 @@ using wrapper_mapper_t = typename wrapper_mapper<typename remove_cv<typename std
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-using is_wrapper = std::integral_constant<bool, !std::is_same<invalid_wrapper_type, 
-                                                              wrapper_mapper_t< T >>::value>;
+using is_wrapper = std::integral_constant<bool, !std::is_same<invalid_wrapper_type, wrapper_mapper_t<T>>::value >;
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-using wrapper_adress_return_type_t = typename raw_addressof_return_type< wrapper_mapper_t< T > >::type;
+using wrapper_address_return_type_t = conditional_t<is_wrapper<T>::value,
+                                                    raw_addressof_return_type_t< wrapper_mapper_t< T > >,
+                                                    raw_addressof_return_type_t<T>>;
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<is_wrapper<T>::value, wrapper_adress_return_type_t<T>>::type wrapped_raw_addressof(T& obj)
+typename std::enable_if<is_wrapper<T>::value, raw_addressof_return_type_t< wrapper_mapper_t<T>> >::type wrapped_raw_addressof(T& obj)
 {
     using raw_wrapper_type = typename remove_cv<typename std::remove_reference<T>::type>::type;
     wrapper_mapper_t<T> value = wrapper_mapper<raw_wrapper_type>::get(obj);
@@ -149,13 +150,11 @@ typename std::enable_if<is_wrapper<T>::value, wrapper_adress_return_type_t<T>>::
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<!is_wrapper<T>::value, T*>::type wrapped_raw_addressof(T& obj)
+typename std::enable_if<!is_wrapper<T>::value, raw_addressof_return_type_t<T>>::type wrapped_raw_addressof(T& obj)
 {
-   return std::addressof(obj);
+    return raw_addressof(obj);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail

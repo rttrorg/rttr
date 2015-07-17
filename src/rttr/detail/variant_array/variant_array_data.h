@@ -25,17 +25,30 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#ifndef RTTR_VARIANT_ARRAY_DATA_H_
+#define RTTR_VARIANT_ARRAY_DATA_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "variant_array.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include <tuple>
 
-#endif // RTTR_TYPE_HEADERS_H_
+namespace rttr
+{
+namespace detail
+{
+
+enum class variant_array_policy_operation : uint8_t;
+struct argument_wrapper;
+
+typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
+
+struct variant_array_data
+{
+    void*                       m_address;
+    variant_array_policy_func   m_policy;
+
+};
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_VARIANT_ARRAY_DATA_H_

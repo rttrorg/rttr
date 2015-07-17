@@ -66,6 +66,7 @@ set(HEADER_FILES constructor.h
                  detail/method/method_accessor.h
                  detail/method/method_container.h
                  detail/method/method_container_base.h
+                 detail/misc/argument_wrapper.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
                  detail/misc/number_conversion.h
@@ -95,9 +96,11 @@ set(HEADER_FILES constructor.h
                  detail/variant/variant_data_policy_string.h
                  detail/variant/variant_impl.h
                  detail/variant_array/variant_array_impl.h
-                 detail/variant_array/array_container.h
-                 detail/variant_array/array_container_impl.h
-                 detail/variant_array/array_container_base.h
+                 detail/variant_array/variant_array_creator.h
+                 detail/variant_array/variant_array_creator_impl.h
+                 detail/variant_array/variant_array_data.h
+                 detail/variant_array/variant_array_policy.h
+                 detail/variant_array/variant_array_policy_empty.h
                 )
                 
 set(SOURCE_FILES constructor.cpp
@@ -109,6 +112,7 @@ set(SOURCE_FILES constructor.cpp
                  type.cpp
                  variant.cpp
                  variant_array.cpp
+                 detail/argument.cpp
                  detail/standard_types.cpp
                  detail/std_conversion_functions.cpp
                  detail/constructor/constructor_container_base.cpp

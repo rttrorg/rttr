@@ -343,9 +343,9 @@ template<typename T>
 using return_type_normal = typename std::add_pointer<typename remove_pointers<T>::type>::type;
 
 template<typename T>
-using raw_addressof_return_type = typename std::conditional<is_function_ptr<typename remove_pointers_except_one<T>::type>::value,
-                                                            typename std::add_pointer<typename remove_pointers_except_one<T>::type>::type,
-                                                            return_type_normal<T> >;
+using raw_addressof_return_type = std::conditional<is_function_ptr<typename remove_pointers_except_one<T>::type>::value,
+                                                   typename std::add_pointer<typename remove_pointers_except_one<T>::type>::type,
+                                                   return_type_normal<T> >;
 template<typename T>
 using raw_addressof_return_type_t = typename raw_addressof_return_type<T>::type;
 

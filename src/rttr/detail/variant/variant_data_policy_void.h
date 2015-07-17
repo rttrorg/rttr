@@ -45,7 +45,7 @@ namespace detail
  */
 struct RTTR_API variant_data_policy_void
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         switch (op)
         {
@@ -56,33 +56,31 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = nullptr;
+                arg.get_value<void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<void>();
+                arg.get_value<type>() = type::get<void>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = nullptr;
+                arg.get_value<void*>() = nullptr;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<void>();
+                arg.get_value<type>() = type::get<void>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = nullptr;
+                arg.get_value<void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
+                data_address_container& data        = arg.get_value<data_address_container>();
 
                 data.m_type                         = type::get<void>();
                 data.m_wrapped_type                 = type::get<void>();
@@ -96,7 +94,7 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = nullptr;
+                arg.get_value<void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::IS_VALID:

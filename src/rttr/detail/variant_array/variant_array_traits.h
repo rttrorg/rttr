@@ -25,28 +25,18 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARRAY_CONTAINER_H_
-#define RTTR_ARRAY_CONTAINER_H_
+#ifndef RTTR_VARIANT_ARRAY_TRAITS_H_
+#define RTTR_VARIANT_ARRAY_TRAITS_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/array/array_mapper.h"
 #include "rttr/wrapper_mapper.h"
 
-#include <type_traits>
-#include <cstddef>
-
 namespace rttr
 {
-
 namespace detail
 {
-
-class array_container_base;
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 using is_raw_array_type = ::rttr::detail::is_array<typename raw_type<T>::type>;
@@ -60,49 +50,7 @@ using is_pointer_array_type = std::integral_constant<bool, is_raw_array_type<T>:
 template<typename T>
 using can_create_array_container = std::integral_constant<bool, ::rttr::detail::is_array<T>::value || is_wrapper_array_type<T>::value || is_pointer_array_type<T>::value>;
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-typename std::enable_if<!can_create_array_container<T>::value,
-                        array_container_base*>::type 
-create_array_container_impl(T&& value);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-typename std::enable_if<::rttr::detail::is_array<T>::value, 
-                        array_container_base*>::type 
-create_array_container_impl(T&& value);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-typename std::enable_if<is_wrapper_array_type<T>::value && 
-                        !is_pointer_array_type<T>::value, 
-                        array_container_base*>::type 
-create_array_container_impl(T&& value);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-typename std::enable_if<!is_wrapper_array_type<T>::value && 
-                         is_pointer_array_type<T>::value,
-                         array_container_base*>::type 
-create_array_container_impl(T&& value);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-array_container_base* create_array_container(T&& value);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/variant_array/array_container_impl.h"
-
-#endif // RTTR_ARRAY_CONTAINER_H_
+#endif // RTTR_VARIANT_ARRAY_TRAITS_H_

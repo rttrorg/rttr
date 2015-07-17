@@ -66,7 +66,7 @@ RTTR_INLINE instance::instance(instance&& other)
 template<typename T>
 RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
 :   m_data_container(data_address_container{
-                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_adress_return_type_t<T>>(),
+                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
@@ -77,7 +77,7 @@ RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_s
 template<typename T>
 RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
 :   m_data_container(data_address_container{
-                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_adress_return_type_t<T>>(),
+                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");

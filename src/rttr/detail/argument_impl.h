@@ -30,7 +30,6 @@
 
 #include "rttr/type.h"
 #include "rttr/variant.h"
-#include "rttr/variant_array.h"
 
 namespace rttr
 {
@@ -54,14 +53,6 @@ RTTR_INLINE argument::argument(variant& var) : m_data(var.get_ptr()), m_type(var
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE argument::argument(const variant& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE argument::argument(variant_array& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE argument::argument(const variant_array& var) : m_data(var.get_ptr()), m_type(var.get_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

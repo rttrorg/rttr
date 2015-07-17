@@ -30,7 +30,6 @@
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/variant_array.h"
 #include "rttr/detail/argument.h"
-#include "rttr/detail/variant_array/array_container.h"
 
 #include <algorithm>
 #include <limits>
@@ -45,8 +44,7 @@ namespace rttr
 variant::variant(const variant& other)
 :   m_variant_policy(other.m_variant_policy)
 {
-    detail::any arg(&m_variant_data);
-    m_variant_policy(detail::variant_policy_operation::CLONE, other.m_variant_data, &arg);
+    m_variant_policy(detail::variant_policy_operation::CLONE, other.m_variant_data, m_variant_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +54,23 @@ variant::variant(variant&& other)
 {
     m_variant_data = other.m_variant_data;
     other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant::variant(variant_array&& array)
+:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
+{
+    array.m_variant.swap(*this);
+    array.m_data.m_policy = &detail::variant_array_policy_empty::invoke;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant::variant(const variant_array& array)
+:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
+{
+    variant(array.m_variant).swap(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -109,9 +124,17 @@ variant::operator bool() const
 type variant::get_type() const
 {
     type src_type(type::m_invalid_id);
-    detail::any arg(&src_type);
-    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, &arg);
+    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, src_type);
     return src_type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+detail::variant_array_data variant::to_array() const
+{
+    detail::variant_array_data result;
+    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, result);
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -142,14 +165,6 @@ bool variant::can_convert(const type& target_type) const
     return ((source_is_arithmetic && target_is_arithmetic) ||
             (source_is_arithmetic && target_type == string_type) ||
             (source_type == string_type && target_is_arithmetic));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<> 
-bool variant::can_convert<variant_array>() const
-{
-    return m_variant_policy(detail::variant_policy_operation::IS_ARRAY, m_variant_data, nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -189,21 +204,10 @@ double variant::to_double(bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant_array variant::to_array() const
-{
-    detail::any arg;
-    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, &arg);
-    return static_cast<detail::array_container_base*>(arg.m_data);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T>
 bool variant::convert_to_basic_type(T& to) const
 {
-    detail::argument result_arg = to;
-    detail::any any_arg(&result_arg);
-    return m_variant_policy(detail::variant_policy_operation::CONVERT, m_variant_data, &any_arg);
+    return m_variant_policy(detail::variant_policy_operation::CONVERT, m_variant_data, detail::argument(to));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -413,34 +417,4 @@ std::string variant::convert<std::string>(bool* ok) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-variant_array variant::convert<variant_array>(bool* ok) const
-{
-    detail::any arg;
-    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, &arg);
-    variant_array result = static_cast<detail::array_container_base*>(arg.m_data);
-    
-    if (ok && result.is_valid())
-        *ok = false;
-
-    return std::move(result);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-namespace detail
-{
-#if 0
-variant create_void_variant()
-{
-    return variant(void_variant_type{});
-}
-
-variant void_variant = create_void_variant();
-#endif
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace detail
 } // end namespace rttr

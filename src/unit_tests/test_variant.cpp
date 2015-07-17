@@ -179,6 +179,15 @@ TEST_CASE("variant copy test", "[variant]")
         REQUIRE(var_cpy.is_type<std::string>() == true);
         CHECK(var_cpy.get_value<std::string>() == text);
     }
+
+    SECTION("variant_array")
+    {
+        variant_array array = std::array<int, 100>();
+        REQUIRE(array.get_size() == 100);
+
+        variant var = array;
+        CHECK((var.get_type() == type::get<std::array<int, 100>>()));
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +288,16 @@ TEST_CASE("variant move test", "[variant]")
         variant var = std::vector<int>(50, 0);
         REQUIRE(var.is_valid() == true);
         REQUIRE(var.is_type<std::vector<int>>() == true);
+    }
+
+    SECTION("variant_array")
+    {
+        variant_array array = std::array<int, 100>();
+        REQUIRE(array.get_size() == 100);
+        
+        variant var = std::move(array);
+        CHECK(array.is_valid() == false);
+        CHECK((var.get_type() == type::get<std::array<int, 100>>()));
     }
 }
 
@@ -966,19 +985,16 @@ TEST_CASE("variant test - array", "[variant]")
 
     SECTION("test dynamic array")
     {
-        std::vector<int> vec(50, 0);
-        variant var = &vec;
+        variant var = std::vector<int>(50, 0);
 
         // check whether we can convert to array
-        REQUIRE(var.get_type().is_array()                == false);
-        REQUIRE(var.get_type().get_raw_type().is_array() == true);
-        REQUIRE(var.can_convert<variant_array>()         == true);
+        REQUIRE(var.get_type().is_array()                == true);
 
-        variant_array vec_array = var.to_array();
+        variant_array vec_array = var;
         REQUIRE(vec_array.is_valid()    == true);
         REQUIRE(vec_array.is_dynamic()  == true);
         REQUIRE(vec_array.get_rank()        == 1);
-        REQUIRE(vec_array.get_rank_type(0)  == type::get(vec));
+        REQUIRE(vec_array.get_rank_type(0)  == type::get(std::vector<int>()));
         REQUIRE(vec_array.get_rank_type(1)  == type::get<int>());
 
         REQUIRE(vec_array.get_size()        == 50);
@@ -1015,7 +1031,7 @@ TEST_CASE("variant test - array", "[variant]")
     {
         const std::vector<int> vec(50, 0);
         variant var = &vec;
-        variant_array vec_array = var.to_array();
+        variant_array vec_array = var;
         // pointer to const array cannot be changed
         REQUIRE(vec_array.set_size(0)   == false);
     }
@@ -1026,7 +1042,7 @@ TEST_CASE("variant test - array", "[variant]")
         variant var = &orig_vec;
         REQUIRE(*var.get_value<std::vector<bool>*>() == orig_vec);
 
-        variant_array var_arr = var.to_array();
+        variant_array var_arr = var;
         var_arr.set_value(0, false);
         REQUIRE(orig_vec[0] == false);
 
@@ -1041,7 +1057,7 @@ TEST_CASE("variant test - array", "[variant]")
 
         // check copied array
         var =  std::vector<bool>({true, false, false});
-        var_arr = var.to_array();
+        var_arr = var;
         REQUIRE(var_arr.get_size() == 3);
 
         var_arr.set_value(0, false);
@@ -1061,7 +1077,7 @@ TEST_CASE("variant test - array", "[variant]")
 
         std::reference_wrapper<decltype(vec)> ref_vec = std::ref(vec);
         variant var = ref_vec;
-        variant_array vec_array = var.to_array();
+        variant_array vec_array = var;
         REQUIRE(vec_array.is_valid()    == true);
        
         vec_array.set_size(70);
@@ -1127,6 +1143,26 @@ TEST_CASE("variant test - array", "[variant]")
         variant ret = vec_array.get_value(50);
         REQUIRE(ret.is_type<int>()      == true);
         REQUIRE(ret.get_value<int>()    == 23);
+    }
+
+    SECTION("copy variant into variant_array")
+    {
+        variant var = std::vector<int>(100, 0);
+        variant_array array = var;
+
+        CHECK(var.is_valid() == true);
+        CHECK(array.get_size() == 100);
+        CHECK((array.get_type() == type::get<std::vector<int>>()));
+    }
+
+    SECTION("move variant into variant_array")
+    {
+        variant var = std::vector<int>(100, 0);
+        variant_array array = std::move(var);
+
+        CHECK(var.is_valid() == false);
+        CHECK(array.get_size() == 100);
+        CHECK((array.get_type() == type::get<std::vector<int>>()));
     }
 }
 

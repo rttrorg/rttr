@@ -28,15 +28,17 @@
 #ifndef RTTR_VARIANT_DATA_POLICY_STRING_H_
 #define RTTR_VARIANT_DATA_POLICY_STRING_H_
 
-#include "rttr/type.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/variant/variant_data_policy.h"
+#include "rttr/detail/variant/variant_data.h"
 #include "rttr/detail/variant/variant_data_converter.h"
+
+#include <string>
 
 namespace rttr
 {
 namespace detail
 {
+
+enum class variant_policy_operation : uint8_t;
 
 /*!
  * This policy will manage the type std::string.
@@ -45,10 +47,10 @@ namespace detail
 template<typename Converter>
 struct variant_data_policy_string
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         #define EXTRACT_DATA(src) *reinterpret_cast<std::string*&>(const_cast<variant_data&>(src))
-
+    
         switch (op)
         {
             case variant_policy_operation::DESTROY: 
@@ -59,43 +61,41 @@ struct variant_data_policy_string
             }
             case variant_policy_operation::CLONE:
             {
-                variant_data& dest = *static_cast<variant_data*>(arg->m_data);
+                variant_data& dest = arg.get_value<variant_data>();
                 reinterpret_cast<std::string*&>(dest) = new std::string(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = &EXTRACT_DATA(src_data);
+                arg.get_value<void*>() = &EXTRACT_DATA(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<std::string>();
+                arg.get_value<type>() = type::get<std::string>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<typename raw_type<std::string>::type>();
+                arg.get_value<type>() = type::get<typename raw_type<std::string>::type>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
-
+                data_address_container& data        = arg.get_value<data_address_container>();
+    
                 data.m_type                         = type::get< raw_addressof_return_type_t<std::string> >();
-                data.m_wrapped_type                 = type::get< wrapper_adress_return_type_t<std::string> >();
+                data.m_wrapped_type                 = type::get< wrapper_address_return_type_t<std::string> >();
                 data.m_data_address                 = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
@@ -106,7 +106,7 @@ struct variant_data_policy_string
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = create_array_container(EXTRACT_DATA(src_data));
+                arg.get_value<variant_array_data&>() = create_variant_array(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::IS_VALID:
@@ -115,7 +115,7 @@ struct variant_data_policy_string
             }
             case variant_policy_operation::CONVERT:
             {
-                argument& arg_1 = *static_cast<argument*>(arg->m_data);
+                argument& arg_1 = arg.get_value<argument>();
                 const type target_type = arg_1.get_type();
                 bool result = false;
                 if (target_type == type::get<bool>())
@@ -146,12 +146,12 @@ struct variant_data_policy_string
                     return Converter::convert(EXTRACT_DATA(src_data), arg_1.get_value<std::string>());
                 else
                     return false;
-
+    
                 break;
             }
             default: return false;
         }
-
+    
         return true;
         #undef EXTRACT_DATA
     }
@@ -168,8 +168,6 @@ struct variant_data_policy_string
         reinterpret_cast<std::string*&>(dest) = new std::string(value, N - 1);
     }
 };
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

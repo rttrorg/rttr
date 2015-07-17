@@ -32,13 +32,13 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_converter.h"
-#include "rttr/detail/variant_array/array_container.h"
 #include "rttr/detail/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/detail/variant/variant_data_policy_arithmetic.h"
 #include "rttr/detail/variant/variant_data_policy_string.h"
 #include "rttr/detail/variant/variant_data_policy_void.h"
 #include "rttr/detail/variant/variant_data_policy_empty.h"
+#include "rttr/variant_array.h"
 
 namespace rttr
 {
@@ -66,7 +66,7 @@ RTTR_INLINE variant::variant(T&& val)
 
 RTTR_INLINE variant::~variant()
 {
-   m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, nullptr);
+   m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -83,19 +83,19 @@ RTTR_INLINE variant& variant::operator=(T&& other)
 template<typename T>
 RTTR_INLINE T& variant::get_value()
 {
-    detail::any arg;
-    m_variant_policy(detail::variant_policy_operation::GET_VALUE, m_variant_data, &arg);
+    void* value;
+    m_variant_policy(detail::variant_policy_operation::GET_VALUE, m_variant_data, value);
     typedef typename detail::remove_cv<T>::type nonRef;
-    return *reinterpret_cast<nonRef*>(arg.m_data);
+    return *reinterpret_cast<nonRef*>(value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void* variant::get_ptr() const
 {
-    detail::any arg;
-    m_variant_policy(detail::variant_policy_operation::GET_PTR, m_variant_data, &arg);
-    return arg.m_data;
+    void* value;
+    m_variant_policy(detail::variant_policy_operation::GET_PTR, m_variant_data, value);
+    return value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -103,8 +103,7 @@ RTTR_INLINE void* variant::get_ptr() const
 RTTR_INLINE type variant::get_raw_type() const
 {
     type result(type::m_invalid_id);
-    detail::any arg(&result);
-    m_variant_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_variant_data, &arg);
+    m_variant_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_variant_data, result);
     return result;
 }
 
@@ -112,9 +111,9 @@ RTTR_INLINE type variant::get_raw_type() const
 
 RTTR_INLINE void* variant::get_raw_ptr() const
 {
-    detail::any arg;
-    m_variant_policy(detail::variant_policy_operation::GET_RAW_PTR, m_variant_data, &arg);
-    return arg.m_data;
+    void* result;
+    m_variant_policy(detail::variant_policy_operation::GET_RAW_PTR, m_variant_data, result);
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +121,7 @@ RTTR_INLINE void* variant::get_raw_ptr() const
 RTTR_INLINE detail::data_address_container variant::get_data_address_container() const
 {
     detail::data_address_container result{type(type::m_invalid_id), type(type::m_invalid_id), nullptr, nullptr};
-    detail::any arg(&result);
-    m_variant_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_variant_data, &arg);
+    m_variant_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_variant_data, result);
     return result;
 }
 
@@ -133,8 +131,7 @@ template<typename T>
 RTTR_INLINE bool variant::is_type() const
 {
     type src_type(type::m_invalid_id);
-    detail::any arg(&src_type);
-    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, &arg);
+    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, src_type);
     return (type::get<T>() == src_type);
 }
 

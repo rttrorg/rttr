@@ -25,17 +25,44 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#ifndef RTTR_ARGUMENT_WRAPPER_H_
+#define RTTR_ARGUMENT_WRAPPER_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "variant_array.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
-#endif // RTTR_TYPE_HEADERS_H_
+#include <memory>
+#include <type_traits>
+
+namespace rttr
+{
+namespace detail
+{
+
+/*!
+ * This class holds the address to any given data in m_data.
+ *
+ * What kind of data it holds, depends on the operation it will be used for.
+ * That means there will be also kind of check what kind of data it contains.
+ * The caller has to make sure the data it will forward, matches the expected data in the invoke function.
+ */
+struct argument_wrapper
+{
+    argument_wrapper() {}
+
+    template<typename T, typename Tp = typename std::enable_if<!std::is_same<T, argument_wrapper>::value, T>::type>
+    argument_wrapper(T&& data) : m_data(const_cast<void*>(reinterpret_cast<const void*>(std::addressof(data)))) {}
+
+    template<typename T>
+    T& get_value() const 
+    {
+        using raw_type = typename std::remove_reference<T>::type;
+        return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
+    }
+
+    void* m_data;
+};
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_ARGUMENT_WRAPPER_H_

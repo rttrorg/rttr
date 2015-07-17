@@ -411,7 +411,6 @@ TEST_CASE("Invoke property via wrapper", "[property]")
 
 TEST_CASE("Test property array access", "[property]") 
 {
-
     SECTION("test raw array")
     {
         property_test obj;
@@ -420,15 +419,12 @@ TEST_CASE("Test property array access", "[property]")
         REQUIRE(bool(prop) == true);
         variant var = prop.get_value(obj);
         REQUIRE(var.is_type<std::vector<int>>() == true);
-        REQUIRE(var.can_convert<variant_array>()== true);
         
-        variant_array var_array = var.to_array();
+        variant_array var_array = var;
         var_array.set_size(10);
         prop.set_value(obj, var_array);
         REQUIRE(obj._array.size()                == 10);
     }
-
-    
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -511,7 +507,7 @@ TEST_CASE("Test property policy", "[property]")
         property array_prop = prop_type.get_property("raw_array");
         REQUIRE(array_prop.is_array() == true);
         variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
-        variant_array other_array = array_obj.to_array();
+        variant_array other_array = array_obj;
         REQUIRE(other_array.is_valid() == true);
 
         variant ret = other_array.get_value(23);
@@ -536,7 +532,7 @@ TEST_CASE("Test property policy", "[property]")
         property array_prop = prop_type.get_property("array");
         REQUIRE(array_prop.is_array() == true);
         variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
-        variant_array vec_array = array_obj.to_array();
+        variant_array vec_array = array_obj;
         REQUIRE(vec_array.is_valid() == true);
         REQUIRE(array_obj.is_type<std::vector<int>*>() == true);
         REQUIRE(array_obj.get_value<std::vector<int>*>() == &obj._array);

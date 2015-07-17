@@ -39,6 +39,7 @@ class type;
 
 namespace detail
 {
+
 /*!
  * This class bundles all the data necessary to forward
  * data to ctors, dtors, properties or methods.
@@ -54,4 +55,4 @@ struct data_address_container
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_WRAPPER_MAPPER_H_
+#endif // RTTR_DATA_ADDRESS_CONTAINER_H_

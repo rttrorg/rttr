@@ -25,17 +25,34 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#include "rttr/type.h"
+#include "rttr/detail/argument.h"
+#include "rttr/variant_array.h"
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "variant_array.h"
 
-#endif // RTTR_TYPE_HEADERS_H_
+namespace rttr
+{
+namespace detail
+{
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+argument::argument(variant_array& var) 
+:   m_data(var.get_ptr()), 
+    m_type(var.get_type()) 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+argument::argument(const variant_array& var)
+:   m_data(var.get_ptr()), 
+    m_type(var.get_type()) 
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr

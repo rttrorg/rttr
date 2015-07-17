@@ -25,17 +25,37 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#ifndef RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
+#define RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "variant_array.h"
+#include "rttr/detail/variant_array/variant_array_policy.h"
 
-#endif // RTTR_TYPE_HEADERS_H_
+namespace rttr
+{
+namespace detail
+{
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp>
+typename std::enable_if<can_create_array_container<T>::value, variant_array_data>::type 
+create_variant_array(T&& value)
+{
+    return variant_array_data{as_void_ptr(wrapped_raw_addressof(value)), &variant_array_policy<Tp>::invoke};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp>
+typename std::enable_if<!can_create_array_container<T>::value, variant_array_data>::type 
+create_variant_array(T&& value)
+{
+    return variant_array_data{nullptr, nullptr};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_

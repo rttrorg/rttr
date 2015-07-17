@@ -25,16 +25,16 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_DATA_POLICY_EMPTY_H_
-#define RTTR_VARIANT_DATA_POLICY_EMPTY_H_
+#ifndef RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
+#define RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
 
-#include "rttr/detail/variant/variant_data_policy.h"
+#include "rttr/detail/variant_array/variant_array_policy.h"
 
 namespace rttr
 {
 namespace detail
 {
-    class argument;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -42,75 +42,26 @@ namespace detail
  *
  * With this approach we avoid checking for an valid variant. E.g. during destruction.
  */
-struct RTTR_API variant_data_policy_empty
+struct RTTR_API variant_array_policy_empty
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
+    static bool invoke(variant_array_policy_operation op, void* const& src_data, argument_wrapper arg)
     {
+
         switch (op)
         {
-            case variant_policy_operation::DESTROY: 
-            case variant_policy_operation::CLONE:
-            {
-                break;
-            }
-            case variant_policy_operation::GET_VALUE:
-            {
-                arg.get_value<void*>() = nullptr;
-                break;
-            }
-            case variant_policy_operation::GET_TYPE:
-            {
-                arg.get_value<type>() = get_invalid_type();
-                break;
-            }
-            case variant_policy_operation::GET_PTR:
-            {
-                arg.get_value<void*>() = nullptr;
-                break;
-            }
-            case variant_policy_operation::GET_RAW_TYPE:
-            {
-                arg.get_value<type>() = get_invalid_type();
-                break;
-            }
-            case variant_policy_operation::GET_RAW_PTR:
-            {
-                arg.get_value<void*>() = nullptr;
-                break;
-            }
-            case variant_policy_operation::GET_ADDRESS_CONTAINER:
-            {
-                data_address_container& data        = arg.get_value<data_address_container>();
-
-                data.m_type                         = get_invalid_type();
-                data.m_wrapped_type                 = get_invalid_type();
-                data.m_data_address                 = nullptr;
-                data.m_data_address_wrapped_type    = nullptr;
-                break;
-            }
-            case variant_policy_operation::IS_ARRAY:
+            case variant_array_policy_operation::IS_VALID:
             {
                 return false;
-            }
-            case variant_policy_operation::TO_ARRAY:
-            {
-                arg.get_value<void*>() = nullptr;
                 break;
             }
-            case variant_policy_operation::IS_VALID:
-            {
-                return false;
-            }
-            case variant_policy_operation::CONVERT:
-            {
-                return false;
-            }
+            default: return false;
         }
+
         return true;
     }
 
     template<typename U>
-    static RTTR_INLINE void create(U&&, variant_data&)
+    static RTTR_INLINE void create(U&&, const void*&)
     {
     }
 };
@@ -120,4 +71,4 @@ struct RTTR_API variant_data_policy_empty
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_DATA_POLICY_EMPTY_H_
+#endif // RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_

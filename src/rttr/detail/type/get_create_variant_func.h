@@ -67,22 +67,16 @@ struct create_invalid_variant_policy
     }
 };
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-    // for unknown reason, unique_ptr is in this version of MSVC copy constructible, which is of course a bug...
-    template<typename T>
-    using create_variant_func = conditional_t<std::is_copy_constructible<T>::value && !is_unique_ptr<T>::value,
-                                              create_variant_policy<T>,
-                                              create_invalid_variant_policy>;
-#   else
-#       error "Check new MSVC Compiler!"
-#   endif
-#else
+/*!
+ * \brief With this functions we want to create only variants for pointer types.
+ *
+ * \remark When we would create for every registered type such a function pointer,
+ *         we might get infinite recursion for pointer types.
+ */
 template<typename T>
-using create_variant_func = conditional_t<std::is_copy_constructible<T>::value,
+using create_variant_func = conditional_t<detail::pointer_count<T>::value == 1,
                                           create_variant_policy<T>,
                                           create_invalid_variant_policy>;
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

@@ -31,6 +31,8 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
+#include "rttr/detail/variant_array/variant_array_data.h"
+#include "rttr/detail/misc/argument_wrapper.h"
 
 #include <type_traits>
 #include <cstddef>
@@ -48,16 +50,14 @@ namespace detail
 {
     class argument;
     class instance;
-    class array_container_base;
     struct data_address_container;
-    struct variant_data_policy_base;
     enum class variant_policy_operation : uint8_t;
-    struct any;
 
     template<typename T, typename Decayed = decay_t<T>>
-    using decay_variant_t = typename std::enable_if<!std::is_same<Decayed, variant>::value, Decayed>::type;
+    using decay_variant_t = typename std::enable_if<!std::is_same<Decayed, variant>::value &&
+                                                    !std::is_same<Decayed, variant_array>::value, Decayed>::type;
 
-    typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, any*);
+    typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, argument_wrapper);
 }
 
 /*!
@@ -160,6 +160,18 @@ class RTTR_API variant
          * \brief Constructs a new variant via move constructor.
          */
         variant(variant&& other);
+
+        /*!
+         * \brief Move-constructs a variant from the given variant_array \p array.
+         *        The value will be moved into the variant.
+         */
+        variant(variant_array&& array);
+
+        /*!
+         * \brief Constructs a variant from the given variant \p var.
+         *        The value will be copied into the variant_array.
+         */
+        variant(const variant_array& array);
 
         /*!
          * \brief Destroys the variant and the contained object.
@@ -375,31 +387,6 @@ class RTTR_API variant
          */
         double to_double(bool* ok = nullptr);
 
-        /*!
-         * \brief Creates a valid variant_array object from the underlying value,
-         *        when the containing type is an \ref type::is_array() "array" or its \ref type::get_raw_type() "raw type" is an array type.
-         *        So it is possible to create a \ref variant_array also from a pointer to an array.
-         *        To check whether a conversion is possible or not use: `variant::can_convert<variant_array>()`;
-         *
-         * A typical example is the following:
-         *
-         * \code{.cpp}
-         *   int obj_array[100];
-         *   variant var = obj_array;              // copies the content of obj_array into var
-         *   variant_array array = var.to_array(); // copies the content of var to a variant_array object
-         *   auto x = array.get_size();            // set x to 100
-         *   array.set_value(0, 42);               // set the first index to the value 42
-         * \endcode
-         *
-         * \see can_convert(), convert()
-         *
-         * \remark This function will return an \ref variant_array::is_valid "invalid" object, when a conversion is not possible.
-         *
-         * \return A variant_array object.
-         */
-        variant_array to_array() const;
-
-
     private:
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -453,15 +440,23 @@ class RTTR_API variant
         T convert_to_basic_type(bool* ok) const;
 
         /*!
-         * \brief
+         * \brief Tries to convert the internal type to the given type \p to.
          *
+         * \return True, when the conversion was successful, otherwise false.
          */
         template<typename T>
         bool convert_to_basic_type(T& to) const;
 
+        /*!
+         * \brief Converts the containing data to \ref variant_array_data
+         * 
+         */
+        detail::variant_array_data to_array() const;
+
     private:
         friend detail::argument;
         friend detail::instance;
+        friend class variant_array;
 
         detail::variant_data            m_variant_data;
         detail::variant_policy_func     m_variant_policy;
@@ -473,9 +468,6 @@ class RTTR_API variant
     template<> RTTR_API bool variant::convert<bool>(bool* ok) const;
     template<> RTTR_API float variant::convert<float>(bool* ok) const;
     template<> RTTR_API double variant::convert<double>(bool* ok) const;
-    template<> RTTR_API variant_array variant::convert<variant_array>(bool* ok) const;
-
-    template<> RTTR_API bool variant::can_convert<variant_array>() const;
 #endif
 
 } // end namespace rttr

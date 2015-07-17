@@ -30,6 +30,8 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/variant_array/variant_array_data.h"
+#include "rttr/variant.h"
 
 #include <cstddef>
 #include <vector>
@@ -37,17 +39,21 @@
 namespace rttr
 {
     class type;
-    class variant;
     class variant_array;
 
 namespace detail
 {
-    class array_container_base;
     class instance;
     class argument;
+    enum class variant_array_policy_operation : uint8_t;
+    enum class variant_policy_operation : uint8_t;
+    struct argument_wrapper;
 
     template<typename T, typename Decayed = decay_t<T>>
-    using decay_variant_array_t = typename std::enable_if<!std::is_same<Decayed, variant_array>::value, Decayed>::type;
+    using decay_variant_array_t = typename std::enable_if<!std::is_same<Decayed, variant_array>::value &&
+                                                          !std::is_same<Decayed, variant>::value, Decayed>::type;
+
+    typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
 }
 
 /*!
@@ -190,10 +196,11 @@ class RTTR_API variant_array
        
 
         /*!
-         * \brief Perfect forwarding of a \p value.
+         * \brief Constructs a variant_array with the new value \p val.
+         *        The value will be copied or moved into the variant_array.
          */
         template<typename T, typename Tp = detail::decay_variant_array_t<T>>
-        variant_array(T&& value);
+        variant_array(T&& val);
 
         /*!
          * \brief Constructs a copy of the given variant_array \p other.
@@ -204,6 +211,18 @@ class RTTR_API variant_array
          * \brief Constructs a new variant_array via move constructor.
          */
         variant_array(variant_array&& other);
+
+        /*!
+         * \brief Move-constructs a variant_array from the given variant \p var.
+         *        The value will be moved into the variant_array.
+         */
+        variant_array(variant&& var);
+
+        /*!
+         * \brief Constructs a variant_array from the given variant \p var.
+         *        The value will be copied into the variant_array.
+         */
+        variant_array(const variant& var);
 
         /*!
          * \brief Destroys the variant_array and the contained data.
@@ -217,6 +236,22 @@ class RTTR_API variant_array
          * \return True if this array is valid, otherwise false.
          */
         bool is_valid() const;
+
+        /*!
+         * \brief Convenience function to check if this \ref variant_array is valid or not.
+         *
+         * \see is_valid()
+         *
+         * \return True if this \ref variant_array is valid, otherwise false.
+         */
+        explicit operator bool() const;
+
+        /*!
+         * \brief When the variant_array contains a value, then this function will clear the content.
+         *
+         * \remark After calling this function \ref is_valid will return false.
+         */
+        void clear();
         
         /*!
          * \brief Swaps this variant_array with the \a other variant_array.
@@ -492,9 +527,7 @@ class RTTR_API variant_array
         bool remove_value_variadic(const std::vector<std::size_t>& index_list);
 
     private:
-        variant_array(detail::array_container_base* container);
-    
-         /*!
+        /*!
          * \brief Returns a pointer to the underlying data
          *
          * \return void pointer.
@@ -504,10 +537,10 @@ class RTTR_API variant_array
     private:
         friend class variant;
         friend class detail::argument;
-        detail::array_container_base* m_container;
-};
 
-/////////////////////////////////////////////////////////////////////////////////////////
+        variant                             m_variant;
+        detail::variant_array_data          m_data;
+};
 
 } // end namespace rttr
 

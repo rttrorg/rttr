@@ -28,10 +28,10 @@
 #ifndef RTTR_VARIANT_DATA_POLICY_H_
 #define RTTR_VARIANT_DATA_POLICY_H_
 
-#include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
-#include "rttr/detail/variant_array/array_container.h"
+#include "rttr/detail/misc/argument_wrapper.h"
+#include "rttr/detail/variant_array/variant_array_creator.h"
 
 #include <cstdint>
 
@@ -40,7 +40,6 @@ namespace rttr
 namespace detail
 {
 
-struct data_address_container;
 template<typename T>
 struct variant_data_policy_big;
 template<typename T>
@@ -125,24 +124,6 @@ enum class variant_policy_operation : uint8_t
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * This class holds the address to any given data in m_data.
- *
- * What kind of data it holds, depends on the operation it will be used for.
- * That means there will be also kind of check what kind of data it contains.
- * The caller (implementation of variant) has to make sure the data it will forward,
- * matches the expected data in the invoke function.
- */
-struct any
-{
-    void* m_data;
-    any() {}
-    any(void* ptr) : m_data(ptr) {}
-    any(const void* ptr) : m_data(const_cast<void*>(ptr)) {}
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-/*!
  * This policy is used for small custom data types.
  *
  * These are types which will fit into the storage of \ref variant_data.
@@ -152,7 +133,7 @@ struct any
 template<typename T>
 struct variant_data_policy_small
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         #define EXTRACT_DATA(src) reinterpret_cast<T&>(const_cast<variant_data&>(src))
 
@@ -165,43 +146,41 @@ struct variant_data_policy_small
             }
             case variant_policy_operation::CLONE:
             {
-                variant_data& dest = *static_cast<variant_data*>(arg->m_data);
+                variant_data& dest = arg.get_value<variant_data>();
                 new (&dest) T(reinterpret_cast<const T&>(src_data)); 
                 break;
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = &EXTRACT_DATA(src_data);
+                arg.get_value<void*>() = &EXTRACT_DATA(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<T>();
+                arg.get_value<type>() = type::get<T>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<typename raw_type<T>::type>();
+                arg.get_value<type>() = type::get<typename raw_type<T>::type>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
+                data_address_container& data        = arg.get_value<data_address_container>();
 
                 data.m_type                         = type::get< raw_addressof_return_type_t<T> >();
-                data.m_wrapped_type                 = type::get< wrapper_adress_return_type_t<T> >();
+                data.m_wrapped_type                 = type::get< wrapper_address_return_type_t<T> >();
                 data.m_data_address                 = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
@@ -212,7 +191,9 @@ struct variant_data_policy_small
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = create_array_container(EXTRACT_DATA(src_data));
+                arg.get_value<variant_array_data&>() = create_variant_array(EXTRACT_DATA(src_data));
+                //auto& data = *static_cast<std::tuple<void*, >*>(arg->m_data);
+                //arg->m_data = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::IS_VALID:
@@ -242,7 +223,7 @@ struct variant_data_policy_small
 template<typename T>
 struct variant_data_policy_big
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         #define EXTRACT_DATA(src) *reinterpret_cast<T*&>(const_cast<variant_data&>(src))
 
@@ -256,43 +237,41 @@ struct variant_data_policy_big
             }
             case variant_policy_operation::CLONE:
             {
-                variant_data& dest = *static_cast<variant_data*>(arg->m_data);
+                variant_data& dest = arg.get_value<variant_data>();
                 reinterpret_cast<T*&>(dest) = new T(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = &EXTRACT_DATA(src_data);
+                arg.get_value<void*>() = &EXTRACT_DATA(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<T>();
+                arg.get_value<type>() = type::get<T>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<typename raw_type<T>::type>();
+                arg.get_value<type>() = type::get<typename raw_type<T>::type>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
+                data_address_container& data        = arg.get_value<data_address_container>();
 
                 data.m_type                         = type::get< raw_addressof_return_type_t<T> >();
-                data.m_wrapped_type                 = type::get< wrapper_adress_return_type_t<T> >();
+                data.m_wrapped_type                 = type::get< wrapper_address_return_type_t<T> >();
                 data.m_data_address                 = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
@@ -303,7 +282,7 @@ struct variant_data_policy_big
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = create_array_container(EXTRACT_DATA(src_data));
+                arg.get_value<variant_array_data&>() = create_variant_array(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::IS_VALID:
@@ -334,7 +313,7 @@ struct variant_data_policy_big
 template<typename T>
 struct variant_data_policy_array_small
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         #define EXTRACT_DATA(src) reinterpret_cast<T&>(const_cast<variant_data&>(src))
         switch (op)
@@ -345,54 +324,52 @@ struct variant_data_policy_array_small
             }
             case variant_policy_operation::CLONE:
             {
-                variant_data& dest = *static_cast<variant_data*>(arg->m_data);
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
+                variant_data& dest = arg.get_value<variant_data>();
+    #if RTTR_COMPILER == RTTR_COMPILER_MSVC
+    #   if RTTR_COMP_VER <= 1800
                 copy_array(const_cast<typename remove_const<T>::type&>(reinterpret_cast<const T&>(src_data)),
                            reinterpret_cast<T&>(dest));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
+    #   else
+            #error "Check new MSVC Compiler!"
+    #   endif
+    #else
                 copy_array(reinterpret_cast<const T&>(src_data),
                            reinterpret_cast<T&>(dest));
-#endif
+    #endif
 
-                break;
-            }
+            break;
+           }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = &EXTRACT_DATA(src_data);
+                arg.get_value<void*>() = &EXTRACT_DATA(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<T>();
+                arg.get_value<type>() = type::get<T>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<typename raw_type<T>::type>();
+                arg.get_value<type>() = type::get<typename raw_type<T>::type>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
-
+                data_address_container& data        = arg.get_value<data_address_container>();
+        
                 data.m_type                         = type::get< raw_addressof_return_type_t<T> >();
-                data.m_wrapped_type                 = type::get< wrapper_adress_return_type_t<T> >();
+                data.m_wrapped_type                 = type::get< wrapper_address_return_type_t<T> >();
                 data.m_data_address                 = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
@@ -403,7 +380,7 @@ struct variant_data_policy_array_small
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = create_array_container(EXTRACT_DATA(src_data));
+                arg.get_value<variant_array_data&>() = create_variant_array(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::IS_VALID:
@@ -412,10 +389,11 @@ struct variant_data_policy_array_small
             }
             default: return false;
         }
-
+    
         return true;
         #undef EXTRACT_DATA
     }
+
 
     template<typename U>
     static RTTR_INLINE void create(U&& value, variant_data& dest)
@@ -445,7 +423,7 @@ struct variant_data_policy_array_small
 template<typename T>
 struct variant_data_policy_array_big
 {
-    static bool invoke(variant_policy_operation op, const variant_data& src_data, any* arg)
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
     {
         using array_dest_type = decltype(new T);
         #define EXTRACT_DATA(src) reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(const_cast<variant_data&>(src)))
@@ -460,56 +438,54 @@ struct variant_data_policy_array_big
             }
             case variant_policy_operation::CLONE:
             {
-                variant_data& dest = *static_cast<variant_data*>(arg->m_data);
+                variant_data& dest = arg.get_value<variant_data>();
                 reinterpret_cast<array_dest_type&>(dest) = new T;
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
+    #if RTTR_COMPILER == RTTR_COMPILER_MSVC
+    #   if RTTR_COMP_VER <= 1800
                 copy_array(const_cast<typename remove_const<T>::type&>(EXTRACT_DATA(src_data)),
                            reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
+    #   else
+                #error "Check new MSVC Compiler!"
+    #   endif
+    #else
                 copy_array(reinterpret_cast<const T&>(*reinterpret_cast<const array_dest_type&>(src_data)),
                            reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#endif
+    #endif
 
                 break;
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg->m_data = &EXTRACT_DATA(src_data);
+                arg.get_value<void*>() = &EXTRACT_DATA(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<T>();
+                arg.get_value<type>() = type::get<T>();
                 break;
             }
             case variant_policy_operation::GET_PTR:
             {
-                arg->m_data = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(std::addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_RAW_TYPE:
             {
-                type& t = *static_cast<type*>(arg->m_data);
-                t = type::get<typename raw_type<T>::type>();
+                arg.get_value<type>() = type::get<typename raw_type<T>::type>();
                 break;
             }
             case variant_policy_operation::GET_RAW_PTR:
             {
-                arg->m_data = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 break;
             }
             case variant_policy_operation::GET_ADDRESS_CONTAINER:
             {
-                data_address_container& data        = *static_cast<data_address_container*>(arg->m_data);
+                data_address_container& data        = arg.get_value<data_address_container>();
 
                 data.m_type                         = type::get< raw_addressof_return_type_t<T> >();
-                data.m_wrapped_type                 = type::get< wrapper_adress_return_type_t<T> >();
+                data.m_wrapped_type                 = type::get< wrapper_address_return_type_t<T> >();
                 data.m_data_address                 = as_void_ptr(raw_addressof(EXTRACT_DATA(src_data)));
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(EXTRACT_DATA(src_data)));
                 break;
@@ -520,7 +496,7 @@ struct variant_data_policy_array_big
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg->m_data = create_array_container(EXTRACT_DATA(src_data));
+                arg.get_value<variant_array_data&>() = create_variant_array(EXTRACT_DATA(src_data));
                 break;
             }
             case variant_policy_operation::IS_VALID:

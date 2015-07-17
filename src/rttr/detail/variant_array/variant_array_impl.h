@@ -29,7 +29,12 @@
 #define RTTR_VARIANT_ARRAY_IMPL_H_
 
 #include "rttr/variant.h"
-#include "rttr/detail/variant_array/array_container.h"
+#include "rttr/detail/variant_array/variant_array_policy.h"
+#include "rttr/detail/variant_array/variant_array_policy_empty.h"
+
+#include "rttr/detail/variant/variant_data_policy.h"
+#include "rttr/detail/variant/variant_data_policy_empty.h"
+
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 
@@ -39,15 +44,17 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array()
-:   m_container(nullptr)
+:    m_data({nullptr, &detail::variant_array_policy_empty::invoke})
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-variant_array::variant_array(T&& param)
-:   m_container(detail::create_array_container(std::forward<T>(param)))
+variant_array::variant_array(T&& val)
+:   m_variant(std::forward<T>(val)),
+    m_data(m_variant.to_array())
+
 {
    static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
    static_assert(!detail::is_array<variant>::value, "Not allowed to create a variant_array from variant.");
@@ -56,37 +63,50 @@ variant_array::variant_array(T&& param)
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array(const variant_array& other)
-:   m_container(other.m_container ? other.m_container->clone() : nullptr)
+:   m_variant(other.m_variant),
+    m_data(m_variant.to_array())
 {
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::variant_array(variant_array&& other)
-:   m_container(other.m_container)
+:   m_variant(std::move(other.m_variant)),
+    m_data(m_variant.to_array())
 {
-    other.m_container = nullptr;
+    other.m_data = {nullptr, &detail::variant_array_policy_empty::invoke};
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE variant_array::variant_array(const variant& var)
+:   m_variant(var),
+    m_data(m_variant.to_array())
+
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE variant_array::variant_array(variant&& var)
+:   m_variant(std::move(var)),
+    m_data(m_variant.to_array())
+{
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array::~variant_array()
 {
-    delete m_container;
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        m_container = nullptr;
-#   else
-#       error "Please check if this lead to still to a crash."
-#   endif
-#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE void variant_array::swap(variant_array& other)
 {
-    std::swap(m_container, other.m_container);
+    std::swap(m_variant, other.m_variant);
+    std::swap(m_data, other.m_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +120,7 @@ RTTR_INLINE variant_array& variant_array::operator=(T&& other)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array& variant_array::operator =(const variant_array& other)
+RTTR_INLINE variant_array& variant_array::operator=(const variant_array& other)
 {
     variant_array(other).swap(*this);
     return *this;
