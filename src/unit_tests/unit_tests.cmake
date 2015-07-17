@@ -31,7 +31,7 @@ set(HEADER_FILES test_classes.h
                  test_method_reflection.h
                  test_property_reflection.h
                  test_type.h
-                 test_variant.h
+                 variant/test_variant.h
                  version.rc.in
                  )
                 
@@ -39,7 +39,7 @@ set(SOURCE_FILES main.cpp
                  test_misc.cpp
                  test_property_reflection.cpp
                  test_type.cpp
-                 test_variant.cpp
+                 variant/test_variant.cpp
                  test_constructor_reflection.cpp
                  test_enumeration_reflection.cpp
                  test_method_reflection.cpp
