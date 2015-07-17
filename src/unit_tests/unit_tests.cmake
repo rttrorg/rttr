@@ -31,7 +31,6 @@ set(HEADER_FILES test_classes.h
                  test_method_reflection.h
                  test_property_reflection.h
                  test_type.h
-                 variant/test_variant.h
                  version.rc.in
                  )
                 
