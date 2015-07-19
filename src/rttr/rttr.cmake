@@ -90,10 +90,6 @@ set(HEADER_FILES constructor.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
-                 detail/variant/variant_data_policy_arithmetic.h
-                 detail/variant/variant_data_policy_empty.h
-                 detail/variant/variant_data_policy_void.h
-                 detail/variant/variant_data_policy_string.h
                  detail/variant/variant_impl.h
                  detail/variant_array/variant_array_impl.h
                  detail/variant_array/variant_array_creator.h

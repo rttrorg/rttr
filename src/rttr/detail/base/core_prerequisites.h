@@ -136,6 +136,12 @@ namespace rttr
 #   else
 #       error "Please check for working constexpr support in new compiler version."
 #   endif
+#
+#   if RTTR_COMP_VER <= 1800
+#       define BOOST_NO_CXX11_NOEXCEPT
+#   else
+#       error "Please check for working constexpr support in new compiler version."
+#   endif
 #endif
 
 #if defined(RTTR_NO_CXX11_CONSTEXPR)
@@ -144,6 +150,14 @@ namespace rttr
 #else
 #   define RTTR_CONSTEXPR constexpr
 #   define RTTR_CONSTEXPR_OR_CONST constexpr
+#endif
+
+#ifdef BOOST_NO_CXX11_NOEXCEPT
+#   define RTTR_NOEXCEPT
+#   define RTTR_NOEXCEPT_OR_NOTHROW throw()
+#else
+#   define RTTR_NOEXCEPT noexcept
+#   define RTTR_NOEXCEPT_OR_NOTHROW noexcept
 #endif
 
 

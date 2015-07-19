@@ -38,8 +38,11 @@ set(SOURCE_FILES main.cpp
                  test_misc.cpp
                  test_property_reflection.cpp
                  test_type.cpp
-                 variant/test_variant.cpp
                  test_constructor_reflection.cpp
                  test_enumeration_reflection.cpp
                  test_method_reflection.cpp
+                 variant/test_variant.cpp
+                 variant/variant_conv_test.cpp
+                 variant/variant_ctor_test.cpp
+                 variant/variant_assign_test.cpp
                  )

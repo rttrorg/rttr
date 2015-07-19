@@ -34,10 +34,6 @@
 #include "rttr/detail/type/type_converter.h"
 #include "rttr/detail/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/detail/variant/variant_data_policy_arithmetic.h"
-#include "rttr/detail/variant/variant_data_policy_string.h"
-#include "rttr/detail/variant/variant_data_policy_void.h"
-#include "rttr/detail/variant/variant_data_policy_empty.h"
 #include "rttr/variant_array.h"
 
 namespace rttr
@@ -74,7 +70,7 @@ RTTR_INLINE variant::~variant()
 template<typename T, typename Tp>
 RTTR_INLINE variant& variant::operator=(T&& other)
 {
-    variant(std::forward<T>(other)).swap(*this);
+    *this = variant(std::forward<T>(other));
     return *this;
 }
 

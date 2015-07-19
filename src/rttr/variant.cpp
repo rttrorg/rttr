@@ -52,7 +52,7 @@ variant::variant(const variant& other)
 variant::variant(variant&& other)
 :   m_variant_policy(other.m_variant_policy)
 {
-    m_variant_data = other.m_variant_data;
+    other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, m_variant_data);
     other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
 }
 
@@ -77,15 +77,44 @@ variant::variant(const variant_array& array)
 
 void variant::swap(variant& other)
 {
-    std::swap(m_variant_policy, other.m_variant_policy);
-    std::swap(m_variant_data, other.m_variant_data);
+    const bool is_this_valid = is_valid();
+    const bool is_other_valid = other.is_valid();
+
+    if (!is_this_valid && !is_other_valid)
+        return;
+    
+    if (is_this_valid && is_other_valid)
+    {
+        detail::variant_data tmp_data;
+        detail::variant_policy_func tmp_policy_func = other.m_variant_policy;
+        other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, tmp_data);
+        
+        m_variant_policy(detail::variant_policy_operation::SWAP, m_variant_data, other.m_variant_data);
+        other.m_variant_policy = m_variant_policy;
+
+        tmp_policy_func(detail::variant_policy_operation::SWAP, tmp_data, m_variant_data);
+        m_variant_policy = tmp_policy_func;
+    }
+    else
+    {
+        detail::variant_data& full_data = is_this_valid ? m_variant_data : other.m_variant_data;
+        detail::variant_data& empty_data = is_this_valid ? other.m_variant_data : m_variant_data;
+        detail::variant_policy_func full_policy_func = is_this_valid ? m_variant_policy : other.m_variant_policy;
+
+        full_policy_func(detail::variant_policy_operation::SWAP, full_data, empty_data);
+
+        std::swap(m_variant_policy, other.m_variant_policy);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant& variant::operator=(const variant& other)
 {
-    variant(other).swap(*this);
+    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
+    other.m_variant_policy(detail::variant_policy_operation::CLONE, other.m_variant_data, m_variant_data);
+    m_variant_policy = other.m_variant_policy;
+
     return *this;
 }
 
@@ -93,8 +122,11 @@ variant& variant::operator=(const variant& other)
 
 variant& variant::operator=(variant&& other)
 {
-    other.swap(*this);
-    variant().swap(other);
+    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
+    other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, m_variant_data);
+    m_variant_policy = other.m_variant_policy;
+    other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
+
     return *this;
 }
 
@@ -102,21 +134,22 @@ variant& variant::operator=(variant&& other)
 
 void variant::clear()
 {
-    variant().swap(*this);
+    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
+    m_variant_policy = &detail::variant_data_policy_empty::invoke;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant::is_valid() const
 {
-    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, nullptr);
+    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant::operator bool() const
 {
-    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, nullptr);
+    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -32,9 +32,6 @@
 #include "rttr/detail/variant_array/variant_array_policy.h"
 #include "rttr/detail/variant_array/variant_array_policy_empty.h"
 
-#include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/detail/variant/variant_data_policy_empty.h"
-
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 

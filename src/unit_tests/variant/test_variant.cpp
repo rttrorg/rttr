@@ -105,49 +105,6 @@ RTTR_REGISTER
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant test - BasicTests", "[variant]")
-{
-    SECTION("empty type")
-    {
-        variant var;
-        CHECK(var.is_valid() == false);
-        CHECK(var.get_type().is_valid() == false);
-    }
-
-    SECTION("simple basic check")
-    {
-        variant var = string("hello world");
-
-        REQUIRE(var.is_valid() == true);
-        REQUIRE(var.is_type<string>() == true);
-        const int value = 12;
-        variant foo(&value);
-        const int* result = foo.get_value<const int*>();
-        REQUIRE(result == &value);
-
-        var = 42;
-        REQUIRE(var.is_type<int>() == true);
-        
-        var = "hello string";
-        REQUIRE(var.is_type<std::string>() == true);
-
-        var = 42.0;
-        REQUIRE(var.is_type<double>() == true);
-    }
-
-    SECTION("extracting tests")
-    {
-        variant var = string("hello world");
-        REQUIRE(var.get_value<string>() == string("hello world"));
-
-        var = 42;
-        REQUIRE(var.get_value<int>() == 42);
-    }
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 TEST_CASE("variant copy test", "[variant]")
 {
     SECTION("primitive type")
