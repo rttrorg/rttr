@@ -41,8 +41,9 @@ set(SOURCE_FILES main.cpp
                  test_constructor_reflection.cpp
                  test_enumeration_reflection.cpp
                  test_method_reflection.cpp
-                 variant/test_variant.cpp
+                 variant/variant_array_test.cpp
+                 variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
                  variant/variant_ctor_test.cpp
-                 variant/variant_assign_test.cpp
+                 variant/variant_misc_test.cpp
                  )

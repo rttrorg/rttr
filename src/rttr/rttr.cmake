@@ -97,6 +97,7 @@ set(HEADER_FILES constructor.h
                  detail/variant_array/variant_array_data.h
                  detail/variant_array/variant_array_policy.h
                  detail/variant_array/variant_array_policy_empty.h
+                 detail/variant_array/variant_array_traits.h
                 )
                 
 set(SOURCE_FILES constructor.cpp

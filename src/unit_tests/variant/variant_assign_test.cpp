@@ -28,3 +28,135 @@
 #include <catch/catch.hpp>
 
 #include <rttr/type>
+
+using namespace rttr;
+
+struct point
+{
+    point(int x, int y) : _x(x), _y(y) {}
+
+    point(const point& other) : _x(other._x), _y(other._y) { }
+
+    point(point&& other) : _x(other._x), _y(other._y) { other._x = 0; other._y = 0; }
+
+    bool operator ==(const point& other) { return (_x == other._x && _y == other._y); }
+    int _x;
+    int _y;
+};
+
+struct simple_type
+{
+    simple_type() {}
+    simple_type(const simple_type& other) 
+    :   moved(other.moved),
+        moved_from(other.moved_from)
+    {
+    }
+    simple_type(simple_type&& other)
+    :   moved(true) 
+    { 
+        other.moved_from = true; 
+    }
+
+    bool moved = false;
+    bool moved_from = false;
+};
+
+struct big_type : simple_type
+{
+    big_type() {}
+    big_type(const big_type& other) : simple_type(other) {}
+
+    big_type(big_type&& other) : simple_type(std::forward<simple_type>(other)) {}
+
+    double value;
+    double value_2;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("basic assignment", "[variant]")
+{
+    SECTION("empty type")
+    {
+        variant a;
+        variant b;
+        
+        a = b;
+        CHECK(a.is_valid() == false);
+        CHECK((bool)a      == false);
+        CHECK(a.get_type().is_valid() == false);
+
+        a = std::move(b);
+        CHECK(a.is_valid() == false);
+        CHECK((bool)a      == false);
+        CHECK(a.get_type().is_valid() == false);
+
+        CHECK(b.is_valid() == false);
+        CHECK((bool)b      == false);
+        CHECK(b.get_type().is_valid() == false);
+    }
+
+    SECTION("insert arithmetic type")
+    {
+        variant a;
+        variant b(1);
+
+        a = b;
+
+        CHECK(a.is_valid() == true);
+        CHECK((bool)a      == true);
+        CHECK(a.get_type().is_valid() == true);
+        CHECK(a.get_type() == type::get<int>());
+
+        a = std::move(b);
+
+        CHECK(a.is_valid() == true);
+        CHECK((bool)a      == true);
+        CHECK(a.get_type().is_valid() == true);
+        CHECK(a.get_type() == type::get<int>());
+
+
+        CHECK(b.is_valid() == false);
+        CHECK((bool)b      == false);
+        CHECK(b.get_type().is_valid() == false);
+
+        a = b;
+        CHECK(a.is_valid() == false);
+        CHECK((bool)a      == false);
+        CHECK(a.get_type().is_valid() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("move assignment", "[variant]")
+{
+    SECTION("small type")
+    {
+        simple_type obj;
+        variant a;
+        a = obj;
+        CHECK(obj.moved_from == false);
+    
+        variant b;
+        b = std::move(obj);
+        CHECK(obj.moved_from == true);
+        CHECK(b.get_value<simple_type>().moved == true );
+    }
+
+    SECTION("big type")
+    {
+        big_type obj;
+        variant a;
+        a = obj;
+        CHECK(obj.moved_from == false);
+    
+        variant b;
+        b = std::move(obj);
+        CHECK(obj.moved_from == true);
+        CHECK(b.get_value<big_type>().moved == true );
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

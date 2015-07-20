@@ -103,18 +103,44 @@ struct simple_type
     bool moved_from = false;
 };
 
+struct big_type : simple_type
+{
+    big_type() {}
+    big_type(const big_type& other) : simple_type(other) {}
+
+    big_type(big_type&& other) : simple_type(std::forward<simple_type>(other)) {}
+
+    double value;
+    double value_2;
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("move custom type", "[variant]")
+TEST_CASE("move ctor", "[variant]")
 {
-    simple_type obj;
-    variant var(obj);
+    SECTION("small type")
+    {
+        simple_type obj;
+        variant var(obj);
 
-    CHECK(obj.moved_from == false);
+        CHECK(obj.moved_from == false);
     
-    variant var_2(std::move(obj));
-    CHECK(obj.moved_from == true);
-    CHECK(var_2.get_value<simple_type>().moved == true );
+        variant var_2(std::move(obj));
+        CHECK(obj.moved_from == true);
+        CHECK(var_2.get_value<simple_type>().moved == true );
+    }
+
+    SECTION("big type")
+    {
+        big_type obj;
+        variant var(obj);
+
+        CHECK(obj.moved_from == false);
+    
+        variant var_2(std::move(obj));
+        CHECK(obj.moved_from == true);
+        CHECK(var_2.get_value<simple_type>().moved == true );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -129,33 +155,64 @@ bool is_stored_internally(void* obj, const rttr::variant& var)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct BigObj 
+struct big_custom_type
 { 
     // two doubles, cannot be stored internally inside variant
     std::aligned_storage<sizeof(double[2]),8>::type m_data;
 };
 
+// this type should be stored internally inside variant class.
+struct small_custom_type 
+{ 
+    float value;
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("check variant storage type", "[variant]")
+TEST_CASE("check storage type", "[variant]")
 {
-    variant var = BigObj{};
-    BigObj& obj = var.get_value<BigObj>();
-    CHECK( !is_stored_internally(&obj, var) );
+    {
+        variant var = big_custom_type{};
+        big_custom_type& obj_big = var.get_value<big_custom_type>();
+        CHECK( !is_stored_internally(&obj_big, var) );
+    }
 
-    var = 'D';
-    char& ref_char = var.get_value<char>();
-    CHECK( is_stored_internally(&ref_char, var) );
+    {
+        variant var = small_custom_type{12.0f};
+        small_custom_type& obj_small = var.get_value<small_custom_type>();
+        CHECK( is_stored_internally(&obj_small, var) );
+    }
 
-    var = 23;
-    int& ref_int = var.get_value<int>();
-    CHECK( is_stored_internally(&ref_int, var) );
+    {
+        variant var = true;
+        bool& ref_b = var.get_value<bool>();
+        CHECK( is_stored_internally(&ref_b, var) );
+    }
 
-    bool bool_array[4] = {true, false, true, false};
-    var = bool_array;
-    auto& ref_bool_array = var.get_value<bool[4]>();
-    CHECK( is_stored_internally(&ref_bool_array, var) );
+    {
+        variant var = 'D';
+        char& ref_c = var.get_value<char>();
+        CHECK( is_stored_internally(&ref_c, var) );
+    }
+
+    {
+        variant var = 23;
+        int& ref_i = var.get_value<int>();
+        CHECK( is_stored_internally(&ref_i, var) );
+    }
+
+    {
+        variant var = 42.0;
+        double& ref_d = var.get_value<double>();
+        CHECK( is_stored_internally(&ref_d, var) );
+    }
+
+    {
+        bool bool_array[4] = {true, false, true, false};
+        variant var = bool_array;
+        auto& ref_b_array = var.get_value<bool[4]>();
+        CHECK( is_stored_internally(&ref_b_array, var) );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
