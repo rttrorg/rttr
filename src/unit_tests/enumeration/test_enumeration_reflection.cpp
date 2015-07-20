@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "test_enumeration_reflection.h"
+#include "unit_tests/enumeration/test_enumeration_reflection.h"
 
 #include <rttr/register>
 

@@ -26,21 +26,21 @@
 ####################################################################################
 
 set(HEADER_FILES test_classes.h
-                 test_constructor_reflection.h
-                 test_enumeration_reflection.h
-                 test_method_reflection.h
-                 test_property_reflection.h
-                 test_type.h
+                 constructor/test_constructor_reflection.h
+                 enumeration/test_enumeration_reflection.h
+                 method/test_method_reflection.h
+                 property/test_property_reflection.h
+                 type/test_type.h
                  version.rc.in
                  )
                 
 set(SOURCE_FILES main.cpp
-                 test_misc.cpp
-                 test_property_reflection.cpp
-                 test_type.cpp
-                 test_constructor_reflection.cpp
-                 test_enumeration_reflection.cpp
-                 test_method_reflection.cpp
+                 misc/test_misc.cpp
+                 property/test_property_reflection.cpp
+                 type/test_type.cpp
+                 constructor/test_constructor_reflection.cpp
+                 enumeration/test_enumeration_reflection.cpp
+                 method/test_method_reflection.cpp
                  variant/variant_array_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp

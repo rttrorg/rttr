@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "test_property_reflection.h"
+#include "unit_tests/property/test_property_reflection.h"
 
 #include <rttr/register>
 

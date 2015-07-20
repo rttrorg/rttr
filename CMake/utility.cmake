@@ -47,7 +47,7 @@ function (createSrcGroups FILE_LIST )
     
     string ( REGEX REPLACE "[\\/]" "\\\\" normPath ${curStr} )
     string ( REGEX MATCH "\\\\(.*)\\\\" ouput ${normPath} )
-    if(NOT "${CMAKE_MATCH_1}" STREQUAL "")
+    if(NOT CMAKE_MATCH_1 STREQUAL "")
       source_group ( ${CMAKE_MATCH_1} FILES ${SOURCE} )
     endif()
   endforeach()

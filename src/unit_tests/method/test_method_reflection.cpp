@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "test_method_reflection.h"
+#include "unit_tests/method/test_method_reflection.h"
 
 #include <rttr/register>
 
