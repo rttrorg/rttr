@@ -57,7 +57,7 @@ RTTR_INLINE argument::argument(const variant& var) : m_data(var.get_ptr()), m_ty
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-argument::argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type*) 
+argument::argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type*) 
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {
@@ -67,7 +67,7 @@ argument::argument(const T& data, typename std::enable_if<!std::is_same<argument
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-argument::argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type*) 
+argument::argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type*) 
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {

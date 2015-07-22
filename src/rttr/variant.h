@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
-#include "rttr/detail/variant_array/variant_array_data.h"
+#include "rttr/detail/variant_array_view/variant_array_view_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
 
 #include <type_traits>
@@ -42,7 +42,7 @@
 namespace rttr
 {
 
-class variant_array;
+class variant_array_view;
 class type;
 class variant;
 
@@ -55,7 +55,7 @@ namespace detail
 
     template<typename T, typename Decayed = decay_t<T>>
     using decay_variant_t = typename std::enable_if<!std::is_same<Decayed, variant>::value &&
-                                                    !std::is_same<Decayed, variant_array>::value, Decayed>::type;
+                                                    !std::is_same<Decayed, variant_array_view>::value, Decayed>::type;
 
     typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, argument_wrapper);
 }
@@ -162,18 +162,6 @@ class RTTR_API variant
         variant(variant&& other);
 
         /*!
-         * \brief Move-constructs a variant from the given variant_array \p array.
-         *        The value will be moved into the variant.
-         */
-        variant(variant_array&& array);
-
-        /*!
-         * \brief Constructs a variant from the given variant \p var.
-         *        The value will be copied into the variant_array.
-         */
-        variant(const variant_array& array);
-
-        /*!
          * \brief Destroys the variant and the contained object.
          */
         ~variant();
@@ -250,6 +238,15 @@ class RTTR_API variant
          * \return True if this \ref variant is valid, otherwise false.
          */
         explicit operator bool() const;
+
+        /*!
+         * \brief When the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type" 
+         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array",
+         *        then this function will return true, otherwise false.
+         * 
+         * \return True if the containing value is an array; otherwise false.
+         */
+        bool is_array() const;
 
         /*!
          * \brief Returns true if the contained value can be converted to the given type \p T.
@@ -387,6 +384,31 @@ class RTTR_API variant
          */
         double to_double(bool* ok = nullptr);
 
+        /*!
+         * \brief Creates a \ref variant_array_view from the containing value,
+         *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type" 
+         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array".
+         *        Otherwise a default constructed variant_array_view will be returned.
+         *        For shorten this check, use the function \ref is_array().
+         *
+         * A typical example is the following:
+         *
+         * \code{.cpp}
+         *   int obj_array[100];
+         *   variant var = obj_array;                            // copies the content of obj_array into var
+         *   variant_array_view array = var.create_array_view(); // copies the content of var to a variant_array object
+         *   auto x = array.get_size();                          // set x to 100
+         *   array.set_value(0, 42);                             // set the first index to the value 42
+         * \endcode
+         *
+         * \see can_convert(), convert()
+         *
+         * \remark This function will return an \ref variant_array_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no array.
+         *
+         * \return A variant_array_view object.
+         */
+        variant_array_view create_array_view() const;
+
     private:
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -447,16 +469,9 @@ class RTTR_API variant
         template<typename T>
         bool convert_to_basic_type(T& to) const;
 
-        /*!
-         * \brief Converts the containing data to \ref variant_array_data
-         * 
-         */
-        detail::variant_array_data to_array() const;
-
     private:
         friend detail::argument;
         friend detail::instance;
-        friend class variant_array;
 
         detail::variant_data            m_variant_data;
         detail::variant_policy_func     m_variant_policy;

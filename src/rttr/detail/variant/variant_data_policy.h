@@ -31,7 +31,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
-#include "rttr/detail/variant_array/variant_array_creator.h"
+#include "rttr/detail/variant_array_view/variant_array_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
 
 #include <cstdint>
@@ -195,7 +195,7 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg.get_value<variant_array_data&>() = create_variant_array(Tp::get_value(src_data));
+                arg.get_value<variant_array_view_data&>() = create_variant_array_view(Tp::get_value(src_data));
                 break;
             }
             case variant_policy_operation::CONVERT:

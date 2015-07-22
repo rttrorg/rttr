@@ -25,30 +25,50 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_DATA_H_
-#define RTTR_VARIANT_ARRAY_DATA_H_
+#ifndef RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
+#define RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
 
-#include "rttr/detail/misc/misc_type_traits.h"
-#include <tuple>
+#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-enum class variant_array_policy_operation : uint8_t;
-struct argument_wrapper;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
-
-struct variant_array_data
+/*!
+ * This policy is used when the variant does not contain any data. So in fact an invalid variant.
+ *
+ * With this approach we avoid checking for an valid variant. E.g. during destruction.
+ */
+struct RTTR_API variant_array_view_policy_empty
 {
-    void*                       m_address;
-    variant_array_policy_func   m_policy;
+    static bool invoke(variant_array_policy_operation op, void* const& src_data, argument_wrapper arg)
+    {
 
+        switch (op)
+        {
+            case variant_array_policy_operation::IS_VALID:
+            {
+                return false;
+                break;
+            }
+            default: return false;
+        }
+
+        return true;
+    }
+
+    template<typename U>
+    static RTTR_INLINE void create(U&&, const void*&)
+    {
+    }
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ARRAY_DATA_H_
+#endif // RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_

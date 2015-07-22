@@ -25,34 +25,30 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/type.h"
-#include "rttr/detail/argument.h"
-#include "rttr/variant_array.h"
+#ifndef RTTR_VARIANT_ARRAY_DATA_H_
+#define RTTR_VARIANT_ARRAY_DATA_H_
 
+#include "rttr/detail/misc/misc_type_traits.h"
+#include <tuple>
 
 namespace rttr
 {
 namespace detail
 {
 
-/////////////////////////////////////////////////////////////////////////////////////////
+enum class variant_array_policy_operation : uint8_t;
+struct argument_wrapper;
 
-argument::argument(variant_array& var) 
-:   m_data(var.get_ptr()), 
-    m_type(var.get_type()) 
+typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
+
+struct variant_array_view_data
 {
-}
+    void*                       m_address;
+    variant_array_policy_func   m_policy;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-argument::argument(const variant_array& var)
-:   m_data(var.get_ptr()), 
-    m_type(var.get_type()) 
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+};
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_VARIANT_ARRAY_DATA_H_

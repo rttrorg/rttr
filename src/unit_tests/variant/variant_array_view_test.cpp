@@ -43,7 +43,8 @@ TEST_CASE("variant test - array", "[variant]")
    SECTION("test raw array")
     {
         int obj[2][10] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-        variant_array int_array = &obj;
+        variant var = &obj;
+        variant_array_view int_array = var.create_array_view();
         REQUIRE(int_array.is_valid() == true);
 
         // check meta information
@@ -87,7 +88,7 @@ TEST_CASE("variant test - array", "[variant]")
         // check whether we can convert to array
         REQUIRE(var.get_type().is_array()                == true);
 
-        variant_array vec_array = var;
+        variant_array_view vec_array = var.create_array_view();
         REQUIRE(vec_array.is_valid()    == true);
         REQUIRE(vec_array.is_dynamic()  == true);
         REQUIRE(vec_array.get_rank()        == 1);
@@ -128,7 +129,7 @@ TEST_CASE("variant test - array", "[variant]")
     {
         const std::vector<int> vec(50, 0);
         variant var = &vec;
-        variant_array vec_array = var;
+        variant_array_view vec_array = var.create_array_view();
         // pointer to const array cannot be changed
         REQUIRE(vec_array.set_size(0)   == false);
     }
@@ -139,7 +140,7 @@ TEST_CASE("variant test - array", "[variant]")
         variant var = &orig_vec;
         REQUIRE(*var.get_value<std::vector<bool>*>() == orig_vec);
 
-        variant_array var_arr = var;
+        variant_array_view var_arr = var.create_array_view();
         var_arr.set_value(0, false);
         REQUIRE(orig_vec[0] == false);
 
@@ -154,7 +155,7 @@ TEST_CASE("variant test - array", "[variant]")
 
         // check copied array
         var =  std::vector<bool>({true, false, false});
-        var_arr = var;
+        var_arr = var.create_array_view();
         REQUIRE(var_arr.get_size() == 3);
 
         var_arr.set_value(0, false);
@@ -174,7 +175,7 @@ TEST_CASE("variant test - array", "[variant]")
 
         std::reference_wrapper<decltype(vec)> ref_vec = std::ref(vec);
         variant var = ref_vec;
-        variant_array vec_array = var;
+        variant_array_view vec_array = var.create_array_view();
         REQUIRE(vec_array.is_valid()    == true);
        
         vec_array.set_size(70);
@@ -187,49 +188,11 @@ TEST_CASE("variant test - array", "[variant]")
         REQUIRE(ret.get_value<int>()    == 23);
     }
 
-    SECTION("check moved array type")
-    {
-        std::vector<int> vec(50, 0);
-        variant_array vec_array = std::move(vec);
-        REQUIRE(vec_array.is_valid()    == true);
-        REQUIRE(vec.size()              == 0);
-       
-        vec_array.set_size(70);
-        CHECK(vec_array.get_size()      == 70);
-
-        vec_array.set_value(50, 23);
-        variant ret = vec_array.get_value(50);
-        REQUIRE(ret.is_type<int>()      == true);
-        REQUIRE(ret.get_value<int>()    == 23);
-    }
-
-    SECTION("check std::shared_ptr wrapper array type")
-    {
-        variant_array vec_array;
-        std::weak_ptr<std::vector<int>> weak_ptr_obj;
-        // we want to check if the shared_ptr is internally hold by the variant_array (makes a copy)
-        {
-            std::shared_ptr<std::vector<int>> obj = std::make_shared<std::vector<int>>(50, 0);
-            weak_ptr_obj = obj;
-            vec_array = obj;
-            REQUIRE(vec_array.is_valid()    == true);
-            CHECK(vec_array.get_size()      == 50);
-            // obj will be destroyed, but not the ptr
-        }
-        REQUIRE(weak_ptr_obj.expired()  == false);
-        CHECK(vec_array.is_valid()    == true);
-        vec_array.set_size(70);
-        CHECK(vec_array.get_size()      == 70);
-
-        vec_array.set_value(50, 23);
-        variant ret = vec_array.get_value(50);
-        CHECK(ret.is_type<int>()      == true);
-        CHECK(ret.get_value<int>()    == 23);
-    }
-
     SECTION("check moved wrapper array type")
     {
-        variant_array vec_array = std::make_shared<std::vector<int>>(50, 0);
+        variant var = std::make_shared<std::vector<int>>(50, 0);
+        //if (var.can_create_array_view())
+        variant_array_view vec_array = var.create_array_view();
         REQUIRE(vec_array.is_valid()    == true);
         CHECK(vec_array.get_size()      == 50);
        
@@ -242,32 +205,15 @@ TEST_CASE("variant test - array", "[variant]")
         REQUIRE(ret.get_value<int>()    == 23);
     }
 
-    SECTION("copy variant into variant_array")
+    SECTION("copy variant into variant_array_view")
     {
         variant var = std::vector<int>(100, 0);
-        variant_array array = var;
+        variant_array_view array = var.create_array_view();
 
         CHECK(var.is_valid() == true);
         CHECK(array.get_size() == 100);
         CHECK((array.get_type() == type::get<std::vector<int>>()));
     }
-
-    SECTION("move variant into variant_array")
-    {
-        variant var = std::vector<int>(100, 0);
-        variant_array array = std::move(var);
-
-        CHECK(var.is_valid() == false);
-        CHECK(array.get_size() == 100);
-        CHECK((array.get_type() == type::get<std::vector<int>>()));
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("variant_array test - array", "[variant]")
-{
-    variant_array array = std::vector<int>(50, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

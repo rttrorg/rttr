@@ -25,10 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
-#define RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
+#ifndef RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
+#define RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
 
-#include "rttr/detail/variant_array/variant_array_policy.h"
+#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
 
 namespace rttr
 {
@@ -37,38 +37,25 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * This policy is used when the variant does not contain any data. So in fact an invalid variant.
- *
- * With this approach we avoid checking for an valid variant. E.g. during destruction.
- */
-struct RTTR_API variant_array_policy_empty
+template<typename T, typename Tp>
+typename std::enable_if<can_create_array_container<T>::value, variant_array_view_data>::type 
+create_variant_array_view(T&& value)
 {
-    static bool invoke(variant_array_policy_operation op, void* const& src_data, argument_wrapper arg)
-    {
+    return variant_array_view_data{as_void_ptr(wrapped_raw_addressof(value)), &variant_array_policy<Tp>::invoke};
+}
 
-        switch (op)
-        {
-            case variant_array_policy_operation::IS_VALID:
-            {
-                return false;
-                break;
-            }
-            default: return false;
-        }
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        return true;
-    }
-
-    template<typename U>
-    static RTTR_INLINE void create(U&&, const void*&)
-    {
-    }
-};
+template<typename T, typename Tp>
+typename std::enable_if<!can_create_array_container<T>::value, variant_array_view_data>::type 
+create_variant_array_view(T&& value)
+{
+    return variant_array_view_data{nullptr, nullptr};
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ARRAY_POLICY_EMPTY_H_
+#endif // RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_

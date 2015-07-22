@@ -25,8 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/variant_array.h"
-#include "rttr/detail/variant_array/variant_array_policy.h"
+#include "rttr/variant_array_view.h"
+
+#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
 
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
@@ -40,35 +41,28 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::is_valid() const
+bool variant_array_view::is_valid() const
 {
     return m_data.m_policy(detail::variant_array_policy_operation::IS_VALID, m_data.m_address, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant_array::operator bool() const
+variant_array_view::operator bool() const
 {
     return m_data.m_policy(detail::variant_array_policy_operation::IS_VALID, m_data.m_address, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void variant_array::clear()
-{
-    variant_array().swap(*this);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant_array::is_dynamic() const
+bool variant_array_view::is_dynamic() const
 {
     return m_data.m_policy(detail::variant_array_policy_operation::IS_DYNAMIC, m_data.m_address, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-size_t variant_array::get_rank() const
+size_t variant_array_view::get_rank() const
 {
     std::size_t result = 0;
     m_data.m_policy(detail::variant_array_policy_operation::GET_RANK, m_data.m_address, result);
@@ -78,7 +72,7 @@ size_t variant_array::get_rank() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
  
-type variant_array::get_rank_type(std::size_t index) const
+type variant_array_view::get_rank_type(std::size_t index) const
 {
     std::tuple<std::size_t, type> param = std::make_tuple(index, detail::get_invalid_type());
     m_data.m_policy(detail::variant_array_policy_operation::GET_RANK_TYPE, m_data.m_address, param);
@@ -89,21 +83,23 @@ type variant_array::get_rank_type(std::size_t index) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type variant_array::get_type() const
+type variant_array_view::get_type() const
 {
-    return m_variant.get_type();
+    type result = detail::get_invalid_type();
+    m_data.m_policy(detail::variant_array_policy_operation::GET_TYPE, m_data.m_address, result);
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::is_raw_array() const
+bool variant_array_view::is_raw_array() const
 {
     return m_data.m_policy(detail::variant_array_policy_operation::IS_RAW_ARRAY, m_data.m_address, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array::get_size() const
+std::size_t variant_array_view::get_size() const
 {
     std::size_t result = 0;
     m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE, m_data.m_address, result);
@@ -113,7 +109,7 @@ std::size_t variant_array::get_size() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array::get_size(std::size_t index_1) const
+std::size_t variant_array_view::get_size(std::size_t index_1) const
 {
     m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_1, m_data.m_address, index_1);
     return index_1;
@@ -121,7 +117,7 @@ std::size_t variant_array::get_size(std::size_t index_1) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array::get_size(std::size_t index_1, std::size_t index_2) const
+std::size_t variant_array_view::get_size(std::size_t index_1, std::size_t index_2) const
 {
     std::tuple<std::size_t, std::size_t> param = std::make_tuple(index_1, index_2);
     m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_1, m_data.m_address, param);
@@ -131,7 +127,7 @@ std::size_t variant_array::get_size(std::size_t index_1, std::size_t index_2) co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array::get_size_variadic(const std::vector<std::size_t>& index_list) const
+std::size_t variant_array_view::get_size_variadic(const std::vector<std::size_t>& index_list) const
 {
     std::tuple<const std::vector<std::size_t>&, std::size_t> param = std::make_tuple(index_list, 0);
     m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_1, m_data.m_address, param);
@@ -141,14 +137,14 @@ std::size_t variant_array::get_size_variadic(const std::vector<std::size_t>& ind
         
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_size(std::size_t new_size)
+bool variant_array_view::set_size(std::size_t new_size)
 {
     return m_data.m_policy(detail::variant_array_policy_operation::SET_SIZE, m_data.m_address, new_size);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_size(std::size_t new_size, std::size_t index_1)
+bool variant_array_view::set_size(std::size_t new_size, std::size_t index_1)
 {
     std::tuple<std::size_t&, std::size_t&> param = std::tie(new_size, index_1);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_SIZE_1, m_data.m_address, param);
@@ -156,7 +152,7 @@ bool variant_array::set_size(std::size_t new_size, std::size_t index_1)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_size(std::size_t new_size, std::size_t index_1, std::size_t index_2)
+bool variant_array_view::set_size(std::size_t new_size, std::size_t index_1, std::size_t index_2)
 {
     std::tuple<std::size_t&, std::size_t&, std::size_t&> param = std::tie(new_size, index_1, index_2);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_SIZE_2, m_data.m_address, param);
@@ -164,7 +160,7 @@ bool variant_array::set_size(std::size_t new_size, std::size_t index_1, std::siz
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list)
+bool variant_array_view::set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list)
 {
     std::tuple<const std::vector<std::size_t>&, std::size_t&> param = std::tie(index_list, new_size);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_SIZE_VARIADIC, m_data.m_address, param);
@@ -172,14 +168,14 @@ bool variant_array::set_size_variadic(std::size_t new_size, const std::vector<st
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_value(detail::argument arg)
+bool variant_array_view::set_value(detail::argument arg)
 {
     return m_data.m_policy(detail::variant_array_policy_operation::SET_VALUE, m_data.m_address, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_value(std::size_t index_1, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&> param = std::tie(arg, index_1);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_VALUE_1, m_data.m_address, param);
@@ -187,7 +183,7 @@ bool variant_array::set_value(std::size_t index_1, detail::argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&, std::size_t&> param = std::tie(arg, index_1, index_2);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_VALUE_2, m_data.m_address, param);
@@ -195,7 +191,7 @@ bool variant_array::set_value(std::size_t index_1, std::size_t index_2, detail::
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&, std::size_t&, std::size_t&> param = std::tie(arg, index_1, index_2, index_3);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_VALUE_3, m_data.m_address, param);
@@ -203,7 +199,7 @@ bool variant_array::set_value(std::size_t index_1, std::size_t index_2, std::siz
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
+bool variant_array_view::set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
 {
     std::tuple<detail::argument&, const std::vector<std::size_t>&> param = std::tie(arg, index_list);
     return m_data.m_policy(detail::variant_array_policy_operation::SET_VALUE_VARIADIC, m_data.m_address, param);
@@ -211,7 +207,7 @@ bool variant_array::set_value_variadic(const std::vector<std::size_t>& index_lis
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_array::get_value(std::size_t index_1) const
+variant variant_array_view::get_value(std::size_t index_1) const
 {
     std::tuple<variant, std::size_t> param = std::make_tuple(variant(), index_1);
     m_data.m_policy(detail::variant_array_policy_operation::GET_VALUE, m_data.m_address, param);
@@ -220,7 +216,7 @@ variant variant_array::get_value(std::size_t index_1) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_array::get_value(std::size_t index_1, std::size_t index_2) const
+variant variant_array_view::get_value(std::size_t index_1, std::size_t index_2) const
 {
     std::tuple<variant, std::size_t, std::size_t> param = std::make_tuple(variant(), index_1, index_2);
     m_data.m_policy(detail::variant_array_policy_operation::GET_VALUE_1, m_data.m_address, param);
@@ -229,7 +225,7 @@ variant variant_array::get_value(std::size_t index_1, std::size_t index_2) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_array::get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
+variant variant_array_view::get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const
 {
     std::tuple<variant, std::size_t, std::size_t, std::size_t> param = std::make_tuple(variant(), index_1, index_2, index_3);
     m_data.m_policy(detail::variant_array_policy_operation::GET_VALUE_1, m_data.m_address, param);
@@ -238,7 +234,7 @@ variant variant_array::get_value(std::size_t index_1, std::size_t index_2, std::
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_array::get_value_variadic(const std::vector<std::size_t>& index_list) const
+variant variant_array_view::get_value_variadic(const std::vector<std::size_t>& index_list) const
 {
     std::tuple<variant, const std::vector<std::size_t>&> param = std::make_tuple(variant(), index_list);
     m_data.m_policy(detail::variant_array_policy_operation::GET_VALUE_1, m_data.m_address, param);
@@ -247,7 +243,7 @@ variant variant_array::get_value_variadic(const std::vector<std::size_t>& index_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::insert_value(std::size_t index_1, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&> param = std::tie(arg, index_1);
     return m_data.m_policy(detail::variant_array_policy_operation::INSERT_VALUE, m_data.m_address, param);
@@ -255,7 +251,7 @@ bool variant_array::insert_value(std::size_t index_1, detail::argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::insert_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&, std::size_t&> param = std::tie(arg, index_1, index_2);
     return m_data.m_policy(detail::variant_array_policy_operation::INSERT_VALUE_1, m_data.m_address, param);
@@ -263,7 +259,7 @@ bool variant_array::insert_value(std::size_t index_1, std::size_t index_2, detai
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
 {
     std::tuple<detail::argument&, std::size_t&, std::size_t&, std::size_t&> param = std::tie(arg, index_1, index_2, index_3);
     return m_data.m_policy(detail::variant_array_policy_operation::INSERT_VALUE_2, m_data.m_address, param);
@@ -271,7 +267,7 @@ bool variant_array::insert_value(std::size_t index_1, std::size_t index_2, std::
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
+bool variant_array_view::insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
 {
     std::tuple<detail::argument&, const std::vector<std::size_t>&> param = std::tie(arg, index_list);
     return m_data.m_policy(detail::variant_array_policy_operation::INSERT_VALUE_VARIADIC, m_data.m_address, param);
@@ -279,14 +275,14 @@ bool variant_array::insert_value_variadic(const std::vector<std::size_t>& index_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::remove_value(std::size_t index_1)
+bool variant_array_view::remove_value(std::size_t index_1)
 {
     return m_data.m_policy(detail::variant_array_policy_operation::REMOVE_VALUE, m_data.m_address, index_1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::remove_value(std::size_t index_1, std::size_t index_2)
+bool variant_array_view::remove_value(std::size_t index_1, std::size_t index_2)
 {
     std::tuple<std::size_t&, std::size_t&> param = std::tie(index_1, index_2);
     return m_data.m_policy(detail::variant_array_policy_operation::REMOVE_VALUE_1, m_data.m_address, param);
@@ -294,7 +290,7 @@ bool variant_array::remove_value(std::size_t index_1, std::size_t index_2)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::remove_value(std::size_t index_1, std::size_t index_2, std::size_t index_3)
+bool variant_array_view::remove_value(std::size_t index_1, std::size_t index_2, std::size_t index_3)
 {
     std::tuple<std::size_t&, std::size_t&, std::size_t&> param = std::tie(index_1, index_2, index_3);
     return m_data.m_policy(detail::variant_array_policy_operation::REMOVE_VALUE_2, m_data.m_address, param);
@@ -302,16 +298,11 @@ bool variant_array::remove_value(std::size_t index_1, std::size_t index_2, std::
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array::remove_value_variadic(const std::vector<std::size_t>& index_list)
+bool variant_array_view::remove_value_variadic(const std::vector<std::size_t>& index_list)
 {
     return m_data.m_policy(detail::variant_array_policy_operation::REMOVE_VALUE_VARIADIC, m_data.m_address, index_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-void* variant_array::get_ptr() const
-{
-    return m_variant.get_ptr();
-}
 
 } // end namespace rttr

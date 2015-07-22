@@ -39,7 +39,7 @@ set(HEADER_FILES constructor.h
                  type
                  type.h
                  variant.h
-                 variant_array.h
+                 variant_array_view.h
                  wrapper_mapper.h
                  detail/argument.h
                  detail/argument_impl.h
@@ -91,13 +91,13 @@ set(HEADER_FILES constructor.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
                  detail/variant/variant_impl.h
-                 detail/variant_array/variant_array_impl.h
-                 detail/variant_array/variant_array_creator.h
-                 detail/variant_array/variant_array_creator_impl.h
-                 detail/variant_array/variant_array_data.h
-                 detail/variant_array/variant_array_policy.h
-                 detail/variant_array/variant_array_policy_empty.h
-                 detail/variant_array/variant_array_traits.h
+                 detail/variant_array_view/variant_array_view_impl.h
+                 detail/variant_array_view/variant_array_view_creator.h
+                 detail/variant_array_view/variant_array_view_creator_impl.h
+                 detail/variant_array_view/variant_array_view_data.h
+                 detail/variant_array_view/variant_array_view_policy.h
+                 detail/variant_array_view/variant_array_view_policy_empty.h
+                 detail/variant_array_view/variant_array_view_traits.h
                 )
                 
 set(SOURCE_FILES constructor.cpp
@@ -108,8 +108,7 @@ set(SOURCE_FILES constructor.cpp
                  property.cpp
                  type.cpp
                  variant.cpp
-                 variant_array.cpp
-                 detail/argument.cpp
+                 variant_array_view.cpp
                  detail/standard_types.cpp
                  detail/std_conversion_functions.cpp
                  detail/constructor/constructor_container_base.cpp

@@ -36,6 +36,5 @@
 #include "method.h"
 #include "property.h"
 #include "enumeration.h"
-#include "variant_array.h"
 
 #endif // RTTR_TYPE_HEADERS_H_

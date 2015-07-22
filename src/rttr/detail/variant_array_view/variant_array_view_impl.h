@@ -25,110 +25,53 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_IMPL_H_
-#define RTTR_VARIANT_ARRAY_IMPL_H_
+#ifndef RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
+#define RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
 
 #include "rttr/variant.h"
-#include "rttr/detail/variant_array/variant_array_policy.h"
-#include "rttr/detail/variant_array/variant_array_policy_empty.h"
+#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
+#include "rttr/detail/variant_array_view/variant_array_view_policy_empty.h"
 
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
+#include "rttr/variant.h"
 
 namespace rttr
 {
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array::variant_array()
-:    m_data({nullptr, &detail::variant_array_policy_empty::invoke})
+RTTR_INLINE variant_array_view::variant_array_view()
+:    m_data({nullptr, &detail::variant_array_view_policy_empty::invoke})
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp>
-variant_array::variant_array(T&& val)
-:   m_variant(std::forward<T>(val)),
-    m_data(m_variant.to_array())
-
-{
-   static_assert(detail::can_create_array_container<T>::value, "No Array type provided, please provide a specialization with rttr::detail::array_mapper<T>.");
-   static_assert(!detail::is_array<variant>::value, "Not allowed to create a variant_array from variant.");
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array::variant_array(const variant_array& other)
-:   m_variant(other.m_variant),
-    m_data(m_variant.to_array())
+RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& other)
+:   m_data(other.m_data)
 {
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array::variant_array(variant_array&& other)
-:   m_variant(std::move(other.m_variant)),
-    m_data(m_variant.to_array())
-{
-    other.m_data = {nullptr, &detail::variant_array_policy_empty::invoke};
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array::variant_array(const variant& var)
-:   m_variant(var),
-    m_data(m_variant.to_array())
-
+RTTR_INLINE variant_array_view::~variant_array_view()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array::variant_array(variant&& var)
-:   m_variant(std::move(var)),
-    m_data(m_variant.to_array())
+RTTR_INLINE void variant_array_view::swap(variant_array_view& other)
 {
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array::~variant_array()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE void variant_array::swap(variant_array& other)
-{
-    std::swap(m_variant, other.m_variant);
     std::swap(m_data, other.m_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp>
-RTTR_INLINE variant_array& variant_array::operator=(T&& other)
+RTTR_INLINE variant_array_view& variant_array_view::operator=(const variant_array_view& other)
 {
-    variant_array(std::forward<T>(other)).swap(*this);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array& variant_array::operator=(const variant_array& other)
-{
-    variant_array(other).swap(*this);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array& variant_array::operator=(variant_array&& other)
-{
-    other.swap(*this);
-    variant_array().swap(other);
+    variant_array_view(other).swap(*this);
     return *this;
 }
 
@@ -136,4 +79,4 @@ RTTR_INLINE variant_array& variant_array::operator=(variant_array&& other)
 
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ARRAY_IMPL_H_
+#endif // RTTR_VARIANT_ARRAY_VIEW_IMPL_H_

@@ -28,7 +28,7 @@
 #include "rttr/variant.h"
 
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/variant_array.h"
+#include "rttr/variant_array_view.h"
 #include "rttr/detail/argument.h"
 
 #include <algorithm>
@@ -54,23 +54,6 @@ variant::variant(variant&& other)
 {
     other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, m_variant_data);
     other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant::variant(variant_array&& array)
-:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
-{
-    array.m_variant.swap(*this);
-    array.m_data.m_policy = &detail::variant_array_policy_empty::invoke;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant::variant(const variant_array& array)
-:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
-{
-    variant(array.m_variant).swap(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +137,13 @@ variant::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool variant::is_array() const
+{
+    return m_variant_policy(detail::variant_policy_operation::IS_ARRAY, m_variant_data, detail::argument_wrapper());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type variant::get_type() const
 {
     type src_type(type::m_invalid_id);
@@ -163,10 +153,10 @@ type variant::get_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-detail::variant_array_data variant::to_array() const
+variant_array_view variant::create_array_view() const
 {
-    detail::variant_array_data result;
-    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, result);
+    variant_array_view result;
+    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, result.m_data);
     return result;
 }
 

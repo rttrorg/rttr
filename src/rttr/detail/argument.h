@@ -58,13 +58,11 @@ public:
     argument(const argument& other);
     argument(variant& var);
     argument(const variant& var);
-    argument(variant_array& var);
-    argument(const variant_array& var);
 
     template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = nullptr);
+    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type* = nullptr);
     template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value >::type* = nullptr);
+    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type* = nullptr);
 
     argument& operator=(const argument& other);
 

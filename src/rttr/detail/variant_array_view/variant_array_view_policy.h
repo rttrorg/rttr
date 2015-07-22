@@ -34,7 +34,7 @@
 #include "rttr/detail/array/array_mapper.h"
 #include "rttr/detail/array/array_accessor.h"
 #include "rttr/wrapper_mapper.h"
-#include "rttr/detail/variant_array/variant_array_traits.h"
+#include "rttr/detail/variant_array_view/variant_array_view_traits.h"
 
 #include <tuple>
 
@@ -67,10 +67,10 @@ using variant_array_policy = conditional_t<can_create_array_container<T>::value,
  */
 enum class variant_array_policy_operation : uint8_t
 {
-    CLONE,
     IS_DYNAMIC,
     GET_RANK,
     GET_RANK_TYPE,
+    GET_TYPE,
     IS_RAW_ARRAY,
     IS_VALID,
 
@@ -109,11 +109,6 @@ enum class variant_array_policy_operation : uint8_t
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-void dummy()
-{
-}
-
 /*!
  * This policy is used for raw array types of arbitrary rank, which fit NOT into \p variant_data.
  *
@@ -129,16 +124,14 @@ struct variant_array_policy_impl
 
         switch (op)
         {
-            case variant_array_policy_operation::CLONE:
-            {
-                //auto& param = arg.get_value<std::tuple<void*, void*&>>();
-                //const T& value = *reinterpret_cast<T*>(std::get<0>(param));
-                //std::get<1>(param) = as_void_ptr(wrapped_raw_addressof(value));
-                break;
-            }
             case variant_array_policy_operation::IS_DYNAMIC:
             {
                 return array_mapper<Array_Type>::is_dynamic();
+                break;
+            }
+            case variant_array_policy_operation::GET_TYPE:
+            {
+                arg.get_value<type>() = type::get<T>();
                 break;
             }
             case variant_array_policy_operation::GET_RANK:

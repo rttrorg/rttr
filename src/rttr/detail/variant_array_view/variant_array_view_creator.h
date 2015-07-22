@@ -30,8 +30,8 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/variant_array/variant_array_traits.h"
-#include "rttr/detail/variant_array/variant_array_data.h"
+#include "rttr/detail/variant_array_view/variant_array_view_traits.h"
+#include "rttr/detail/variant_array_view/variant_array_view_data.h"
 
 #include <tuple>
 
@@ -41,14 +41,14 @@ namespace detail
 {
 
 template<typename T, typename Tp = decay_t<T>>
-typename std::enable_if<can_create_array_container<T>::value, variant_array_data>::type create_variant_array(T&& value);
+typename std::enable_if<can_create_array_container<T>::value, variant_array_view_data>::type create_variant_array_view(T&& value);
 
 template<typename T, typename Tp = decay_t<T>>
-typename std::enable_if<!can_create_array_container<T>::value, variant_array_data>::type create_variant_array(T&& value);
+typename std::enable_if<!can_create_array_container<T>::value, variant_array_view_data>::type create_variant_array_view(T&& value);
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/variant_array/variant_array_creator_impl.h"
+#include "rttr/detail/variant_array_view/variant_array_view_creator_impl.h"
 
 #endif // RTTR_VARIANT_ARRAY_CREATOR_H_

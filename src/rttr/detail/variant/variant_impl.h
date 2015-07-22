@@ -34,7 +34,7 @@
 #include "rttr/detail/type/type_converter.h"
 #include "rttr/detail/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/variant_array.h"
+#include "rttr/variant_array_view.h"
 
 namespace rttr
 {

@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/variant_array/variant_array_data.h"
+#include "rttr/detail/variant_array_view/variant_array_view_data.h"
 #include "rttr/variant.h"
 
 #include <cstddef>
@@ -39,33 +39,28 @@
 namespace rttr
 {
     class type;
-    class variant_array;
+    class variant_array_view;
 
 namespace detail
 {
     class instance;
     class argument;
     enum class variant_array_policy_operation : uint8_t;
-    enum class variant_policy_operation : uint8_t;
     struct argument_wrapper;
-
-    template<typename T, typename Decayed = decay_t<T>>
-    using decay_variant_array_t = typename std::enable_if<!std::is_same<Decayed, variant_array>::value &&
-                                                          !std::is_same<Decayed, variant>::value, Decayed>::type;
 
     typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
 }
 
 /*!
- * The \ref variant_array class is a specialization of a \ref variant, but for array types.
+ * The \ref variant_array_view class is a specialization of a \ref variant, but for array types.
  * With an instance of that class you can set and get values of an array with any dimension level.
  *
- * A \ref variant_array can be created directly with an array type or from a \ref variant with \ref variant::to_array().
+ * A \ref variant_array_view can be created directly with an array type or from a \ref variant with \ref variant::to_array().
  *
  * Meta Information
  * ----------------
- * An array is defined by its \ref variant_array::get_rank() "rank", it's \ref variant_array::get_size "size" and 
- * whether he is \ref variant_array::is_dynamic() "dynamic" or not.
+ * An array is defined by its \ref variant_array_view::get_rank() "rank", it's \ref variant_array_view::get_size "size" and 
+ * whether he is \ref variant_array_view::is_dynamic() "dynamic" or not.
  *
  * The rank of an array describes the number of dimensions. E.g. `int[10]` has a rank of `1`. `int[2][10]` has an rank of `2` and so on.
  * For retrieving the size of an array use \ref get_size().
@@ -73,7 +68,7 @@ namespace detail
  * Take a look at following example:
  * \code{.cpp}
  *      std::vector<std::vector<int>> obj(10, std::vector<int>(20, 0));
- *      variant_array array = obj;
+ *      variant_array_view array = obj;
  *      std::cout << array.get_size()  << std::endl; // prints "10"
  *      std::cout << array.get_size(0) << std::endl; // prints "20"
  *      std::cout << array.get_size(1) << std::endl; // prints "20"
@@ -81,10 +76,10 @@ namespace detail
  *      std::cout << array.get_size(10) << std::endl; // undefined behavior
  * \endcode
  *
- * When the given array type is \ref variant_array::is_dynamic() "dynamic" you can change the size of the array,
- * therefore \ref variant_array::set_size "set_size()" should be used.
- * A value of an array can be accessed with \ref variant_array::get_value "get_value()" or set with 
- * \ref variant_array::set_value "set_value". These function expect an index for up to rank level 3.
+ * When the given array type is \ref variant_array_view::is_dynamic() "dynamic" you can change the size of the array,
+ * therefore \ref variant_array_view::set_size "set_size()" should be used.
+ * A value of an array can be accessed with \ref variant_array_view::get_value "get_value()" or set with 
+ * \ref variant_array_view::set_value "set_value". These function expect an index for up to rank level 3.
  * The array class has here one interesting feature, you can set and get the value of an array up to its rank count. e.g:
  * \code{.cpp}
  *      int obj[2][10];
@@ -94,9 +89,9 @@ namespace detail
  * \endcode
  *
  * When you have arrays bigger then this rank, use the counterpart functions: 
- * \ref variant_array::get_value_variadic "get_value_variadic" and \ref variant_array::set_value_variadic "set_value_variadic"
+ * \ref variant_array_view::get_value_variadic "get_value_variadic" and \ref variant_array_view::set_value_variadic "set_value_variadic"
  * which expects a list of indices. When the array is dynamic it is also possible to
- * \ref variant_array::insert_value "insert" or \ref variant_array::remove_value "remove" values.
+ * \ref variant_array_view::insert_value "insert" or \ref variant_array_view::remove_value "remove" values.
  *
  * RTTR recognize whether a type is an array or not with the help of an `array_mapper` class template.
  * This class does the mapping for the standard access function
@@ -154,7 +149,7 @@ namespace detail
  *
  * Copying and Assignment
  * ----------------------
- * A \ref variant_array object is can be copied and assigned, however each copy will perform a copy of the contained value.
+ * A \ref variant_array_view object is can be copied and assigned, however each copy will perform a copy of the contained value.
  *
  * Typical Usage
  * ----------------------
@@ -164,7 +159,7 @@ namespace detail
  *      variant var = obj;
  *      if (var.is_array())
  *      {
- *        variant_array array = var.to_array();
+ *        variant_array_view array = var.to_array();
  *        for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
  *        {
  *          for (std::size_t index_2 = 0; index_2 < array.get_size(index_1); ++index_2)
@@ -184,102 +179,54 @@ namespace detail
  *
  * \see variant
  */
-class RTTR_API variant_array
+class RTTR_API variant_array_view
 {
     public:
         /*!
-         * \brief Constructs an invalid variant_array object.
+         * \brief Constructs an invalid variant_array_view object.
          *
          * \see is_valid()
          */
-        variant_array();
-       
+        variant_array_view();
 
         /*!
-         * \brief Constructs a variant_array with the new value \p val.
-         *        The value will be copied or moved into the variant_array.
+         * \brief Constructs a copy of the given variant_array_view \p other.
          */
-        template<typename T, typename Tp = detail::decay_variant_array_t<T>>
-        variant_array(T&& val);
+        variant_array_view(const variant_array_view& other);
 
         /*!
-         * \brief Constructs a copy of the given variant_array \p other.
+         * \brief Destroys the variant_array_view and the contained data.
          */
-        variant_array(const variant_array& other);
+        ~variant_array_view();
 
         /*!
-         * \brief Constructs a new variant_array via move constructor.
-         */
-        variant_array(variant_array&& other);
-
-        /*!
-         * \brief Move-constructs a variant_array from the given variant \p var.
-         *        The value will be moved into the variant_array.
-         */
-        variant_array(variant&& var);
-
-        /*!
-         * \brief Constructs a variant_array from the given variant \p var.
-         *        The value will be copied into the variant_array.
-         */
-        variant_array(const variant& var);
-
-        /*!
-         * \brief Destroys the variant_array and the contained data.
-         */
-        ~variant_array();
-
-        /*!
-         * \brief Returns true if this variant_array is valid, that means the object is holding some data.
-         *        When the variant_array doesn't hold any data it will return false.
+         * \brief Returns true if this variant_array_view is valid, that means the object is holding some data.
+         *        When the variant_array_view doesn't hold any data it will return false.
          *
          * \return True if this array is valid, otherwise false.
          */
         bool is_valid() const;
 
         /*!
-         * \brief Convenience function to check if this \ref variant_array is valid or not.
+         * \brief Convenience function to check if this \ref variant_array_view is valid or not.
          *
          * \see is_valid()
          *
-         * \return True if this \ref variant_array is valid, otherwise false.
+         * \return True if this \ref variant_array_view is valid, otherwise false.
          */
         explicit operator bool() const;
 
         /*!
-         * \brief When the variant_array contains a value, then this function will clear the content.
-         *
-         * \remark After calling this function \ref is_valid will return false.
+         * \brief Swaps this variant_array_view with the \a other variant_array_view.
          */
-        void clear();
-        
-        /*!
-         * \brief Swaps this variant_array with the \a other variant_array.
-         */
-        void swap(variant_array& other);
-
-        /*!
-         * \brief Assigns the value of the \p other object to this variant_array.
-         *
-         * \return A reference to the variant_array with the new data.
-         */
-        template<typename T, typename Tp = detail::decay_variant_array_t<T>>
-        variant_array& operator=(T&& other);
+        void swap(variant_array_view& other);
        
         /*!
-         * \brief Assigns the value of the \a other variant_array to this variant_array.
+         * \brief Assigns the value of the \a other variant_array_view to this variant_array_view.
          *
-         * \return A reference to the variant_array with the new data.
+         * \return A reference to the variant_array_view with the new data.
          */
-        variant_array& operator=(variant_array&& other);
-
-        /*!
-         * \brief Assigns the value of the \a other variant_array to this variant_array.
-         *
-         * \return A reference to the variant_array with the new data.
-         */
-        variant_array& operator=(const variant_array& other);
-        
+        variant_array_view& operator=(const variant_array_view& other);
 
         /*!
          * \brief Returns true if this array is dynamic, that means the size can be changed; otherwise false.
@@ -527,23 +474,14 @@ class RTTR_API variant_array
         bool remove_value_variadic(const std::vector<std::size_t>& index_list);
 
     private:
-        /*!
-         * \brief Returns a pointer to the underlying data
-         *
-         * \return void pointer.
-         */
-        void* get_ptr() const;
-
-    private:
         friend class variant;
         friend class detail::argument;
 
-        variant                             m_variant;
-        detail::variant_array_data          m_data;
+        detail::variant_array_view_data          m_data;
 };
 
 } // end namespace rttr
 
-#include "rttr/detail/variant_array/variant_array_impl.h"
+#include "rttr/detail/variant_array_view/variant_array_view_impl.h"
 
 #endif // RTTR_VARIANT_ARRAY_H_
