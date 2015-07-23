@@ -71,7 +71,6 @@ enum class variant_array_policy_operation : uint8_t
     GET_RANK,
     GET_RANK_TYPE,
     GET_TYPE,
-    IS_RAW_ARRAY,
     IS_VALID,
 
     GET_SIZE,
@@ -117,10 +116,14 @@ enum class variant_array_policy_operation : uint8_t
 template<typename T, typename Address_Type>
 struct variant_array_policy_impl
 {
+    static RTTR_INLINE typename remove_pointer<Address_Type>::type& get_value(void* const& data)
+    {
+        return *reinterpret_cast<Address_Type>(const_cast<void*>(data));
+    }
+
     static bool invoke(variant_array_policy_operation op, void* const& src_data, argument_wrapper arg)
     {
         using Array_Type = raw_type_t<Address_Type>;
-        #define GET_VALUE(src) *reinterpret_cast<Address_Type>(const_cast<void*>(src))
 
         switch (op)
         {
@@ -131,7 +134,7 @@ struct variant_array_policy_impl
             }
             case variant_array_policy_operation::GET_TYPE:
             {
-                arg.get_value<type>() = type::get<T>();
+                arg.get_value<type>() = type::get<Array_Type>();
                 break;
             }
             case variant_array_policy_operation::GET_RANK:
@@ -145,10 +148,6 @@ struct variant_array_policy_impl
                 std::get<1>(param) = array_accessor<Array_Type>::get_ranke_type(std::get<0>(param));
                 break;
             }
-            case variant_array_policy_operation::IS_RAW_ARRAY:
-            {
-                return std::is_array<Array_Type>::value;
-            }
             case variant_array_policy_operation::IS_VALID:
             {
                 return true;
@@ -156,160 +155,159 @@ struct variant_array_policy_impl
             }
             case variant_array_policy_operation::GET_SIZE:
             {
-                arg.get_value<std::size_t>() = array_accessor<Array_Type>::get_size(GET_VALUE(src_data));
+                arg.get_value<std::size_t>() = array_accessor<Array_Type>::get_size(get_value(src_data));
                 break;
             }
             case variant_array_policy_operation::GET_SIZE_1:
             {
                 auto& index = arg.get_value<std::size_t>();
                 // a little "trick" to avoid unnecessary data cpy, the incoming index will be reused for the result
-                index = array_accessor<Array_Type>::get_size(GET_VALUE(src_data), index);
+                index = array_accessor<Array_Type>::get_size(get_value(src_data), index);
                 break;
             }
             case variant_array_policy_operation::GET_SIZE_2:
             {
-                auto& param = arg.get_value<std::tuple<std::size_t, std::size_t>>();
+                auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&>>();
                 // a little "trick" to avoid unnecessary data cpy, the incoming index will be reused for the result
-                std::get<1>(param) = array_accessor<Array_Type>::get_size(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                std::get<1>(param) = array_accessor<Array_Type>::get_size(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::GET_SIZE_VARIADIC:
             {
-                auto& param = arg.get_value<std::tuple<const std::vector<std::size_t>&, std::size_t>>();
-                std::get<1>(param) = array_accessor<Array_Type>::get_size(GET_VALUE(src_data), std::get<0>(param));
+                auto& param = arg.get_value<std::tuple<const std::vector<std::size_t>&, std::size_t&>>();
+                std::get<1>(param) = array_accessor<Array_Type>::get_size(get_value(src_data), std::get<0>(param));
                 break;
             }
 
             case variant_array_policy_operation::SET_SIZE:
             {
-                return array_accessor<Array_Type>::set_size(GET_VALUE(src_data), arg.get_value<std::size_t>());
+                return array_accessor<Array_Type>::set_size(get_value(src_data), arg.get_value<std::size_t>());
             }
             case variant_array_policy_operation::SET_SIZE_1:
             {
                 auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_size(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::set_size(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::SET_SIZE_2:
             {
                 auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_size(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
+                return array_accessor<Array_Type>::set_size(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
                 break;
             }
             case variant_array_policy_operation::SET_SIZE_VARIADIC:
             {
                 auto& param = arg.get_value<std::tuple<const std::vector<std::size_t>&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_size(GET_VALUE(src_data), std::get<1>(param), std::get<0>(param));
+                return array_accessor<Array_Type>::set_size(get_value(src_data), std::get<1>(param), std::get<0>(param));
                 break;
             }
 
             case variant_array_policy_operation::SET_VALUE:
             {
-                return array_accessor<Array_Type>::set_value(GET_VALUE(src_data), arg.get_value<argument>());
+                return array_accessor<Array_Type>::set_value(get_value(src_data), arg.get_value<argument>());
                 break;
             }
             case variant_array_policy_operation::SET_VALUE_1:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::set_value(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::SET_VALUE_2:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
+                return array_accessor<Array_Type>::set_value(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
                 break;
             }
             case variant_array_policy_operation::SET_VALUE_3:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::set_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
+                return array_accessor<Array_Type>::set_value(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
                 break;
             }
             case variant_array_policy_operation::SET_VALUE_VARIADIC:
             {
                 auto& param = arg.get_value<std::tuple<detail::argument&, const std::vector<std::size_t>&>>();
-                return array_accessor<Array_Type>::set_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::set_value(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
 
             case variant_array_policy_operation::GET_VALUE:
             {
                 auto& param = arg.get_value<std::tuple<variant, std::size_t>>();
-                std::get<0>(param) = array_accessor<Array_Type>::get_value(GET_VALUE(src_data), std::get<1>(param));
+                std::get<0>(param) = array_accessor<Array_Type>::get_value(get_value(src_data), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::GET_VALUE_1:
             {
                 auto& param = arg.get_value<std::tuple<variant, std::size_t, std::size_t>>();
-                std::get<0>(param) = array_accessor<Array_Type>::get_value(GET_VALUE(src_data), std::get<1>(param), std::get<2>(param));
+                std::get<0>(param) = array_accessor<Array_Type>::get_value(get_value(src_data), std::get<1>(param), std::get<2>(param));
                 break;
             }
             case variant_array_policy_operation::GET_VALUE_2:
             {
                 auto& param = arg.get_value<std::tuple<variant, std::size_t, std::size_t, std::size_t, std::size_t>>();
-                std::get<0>(param) = array_accessor<Array_Type>::get_value(GET_VALUE(src_data), std::get<1>(param), std::get<2>(param), std::get<3>(param));
+                std::get<0>(param) = array_accessor<Array_Type>::get_value(get_value(src_data), std::get<1>(param), std::get<2>(param), std::get<3>(param));
                 break;
             }
             case variant_array_policy_operation::GET_VALUE_VARIADIC:
             {
                 auto& param = arg.get_value<std::tuple<variant, const std::vector<std::size_t>&>>();
-                std::get<0>(param) = array_accessor<Array_Type>::get_value(GET_VALUE(src_data), std::get<1>(param));
+                std::get<0>(param) = array_accessor<Array_Type>::get_value(get_value(src_data), std::get<1>(param));
                 break;
             }
 
             case variant_array_policy_operation::INSERT_VALUE:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&>>();
-                return array_accessor<Array_Type>::insert_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::insert_value(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::INSERT_VALUE_1:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::insert_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
+                return array_accessor<Array_Type>::insert_value(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
                 break;
             }
             case variant_array_policy_operation::INSERT_VALUE_2:
             {
                 auto& param = arg.get_value<std::tuple<argument&, std::size_t&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::insert_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
+                return array_accessor<Array_Type>::insert_value(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
                 break;
             }
             case variant_array_policy_operation::INSERT_VALUE_VARIADIC:
             {
                 auto& param = arg.get_value<std::tuple<argument&, const std::vector<std::size_t>&>>();
-                return array_accessor<Array_Type>::insert_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::insert_value(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
 
             case variant_array_policy_operation::REMOVE_VALUE:
             {
-                return array_accessor<Array_Type>::remove_value(GET_VALUE(src_data), arg.get_value<std::size_t>());
+                return array_accessor<Array_Type>::remove_value(get_value(src_data), arg.get_value<std::size_t>());
                 break;
             }
             case variant_array_policy_operation::REMOVE_VALUE_1:
             {
                 auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::remove_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param));
+                return array_accessor<Array_Type>::remove_value(get_value(src_data), std::get<0>(param), std::get<1>(param));
                 break;
             }
             case variant_array_policy_operation::REMOVE_VALUE_2:
             {
                 auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&, std::size_t&>>();
-                return array_accessor<Array_Type>::remove_value(GET_VALUE(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
+                return array_accessor<Array_Type>::remove_value(get_value(src_data), std::get<0>(param), std::get<1>(param), std::get<2>(param));
                 break;
             }
             case variant_array_policy_operation::REMOVE_VALUE_VARIADIC:
             {
-                return array_accessor<Array_Type>::remove_value(GET_VALUE(src_data), arg.get_value<std::vector<std::size_t>>());
+                return array_accessor<Array_Type>::remove_value(get_value(src_data), arg.get_value<std::vector<std::size_t>>());
                 break;
             }
             default: return false;
         }
 
         return true;
-        #undef GET_VALUE
     }
 
     template<typename U>

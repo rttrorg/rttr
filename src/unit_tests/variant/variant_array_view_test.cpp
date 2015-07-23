@@ -27,7 +27,7 @@
 
 #include <catch/catch.hpp>
 
-#include <rttr/register>
+#include <rttr/type>
 
 #include <vector>
 #include <map>
@@ -38,6 +38,291 @@ using namespace std;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("ctor", "[variant_array_view]")
+{
+   SECTION("empty")
+   {
+        variant_array_view a;
+        CHECK(a.is_valid() == false);
+        
+        variant_array_view b(a);
+        CHECK(b.is_valid() == false);
+        
+        variant var;
+        variant_array_view c = var.create_array_view();
+        CHECK(c.is_valid() == false);
+   }
+
+
+   SECTION("full")
+   {
+        variant var = std::array<int, 10>();
+        variant_array_view a = var.create_array_view();
+        CHECK(a.is_valid() == true);
+        
+        variant_array_view b(a);
+        CHECK(b.is_valid() == true);
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("assignment", "[variant_array_view]")
+{
+   SECTION("empty")
+   {
+        variant_array_view a;
+        variant_array_view b;
+        b = a;
+        CHECK(b.is_valid() == false);
+        
+        variant var;
+        variant_array_view c;
+        c = var.create_array_view();
+        CHECK(c.is_valid() == false);
+   }
+
+   SECTION("full")
+   {
+        variant var = std::array<int, 10>();
+        variant_array_view a;
+        a = var.create_array_view();
+        CHECK(a.is_valid() == true);
+        
+        variant_array_view b;
+        b = a;
+        CHECK(b.is_valid() == true);
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("get_type", "[variant_array_view]")
+{
+   SECTION("empty")
+   {
+        variant_array_view a;
+        CHECK(a.get_type().is_valid() == false);
+   }
+
+   SECTION("array")
+   {
+        variant var = std::array<int, 10>();
+        variant_array_view a = var.create_array_view();
+        CHECK((a.get_type() == type::get<std::array<int, 10>>()));
+   }
+
+   SECTION("raw array")
+   {
+        int array[2] = {1, 2};
+        variant var = array;
+        variant_array_view a = var.create_array_view();
+        CHECK((a.get_type() == type::get<int[2]>()));
+   }
+
+   SECTION("pointer")
+   {
+        std::array<int, 10> array;
+        variant var = &array;
+        CHECK((var.get_type() == type::get<std::array<int, 10>*>()));
+
+        variant_array_view a = var.create_array_view();
+        CHECK((a.get_type() == type::get<std::array<int, 10>>()));
+   }
+
+   SECTION("wrapper")
+   {
+        std::array<int, 10> array;
+        variant var = std::ref(array);
+        CHECK((var.get_type() == type::get<std::reference_wrapper<std::array<int, 10>>>()));
+
+        variant_array_view a = var.create_array_view();
+        CHECK((a.get_type() == type::get<std::array<int, 10>>()));
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("swap", "[variant_array_view]")
+{
+   SECTION("empty")
+   {
+        variant_array_view a;
+        variant_array_view b;
+        a.swap(b);
+        CHECK(b.is_valid() == false);
+        CHECK(a.is_valid() == false);
+   }
+
+   SECTION("full")
+   {
+        variant var = std::array<int, 10>();
+        variant_array_view a = var.create_array_view();
+        variant_array_view b;
+        a.swap(b);
+
+        CHECK(a.is_valid() == false);
+        CHECK(b.is_valid() == true);
+
+        a = b;
+        CHECK(a.is_valid() == true);
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("is_dynamic", "[variant_array_view]")
+{
+    SECTION("static")
+    {
+        variant var = std::array<int, 10>();
+        variant_array_view a = var.create_array_view();
+        CHECK(a.is_dynamic() == false);
+    }
+
+    SECTION("dynamic")
+    {
+        variant var = std::vector<int>();
+        variant_array_view a = var.create_array_view();
+        CHECK(a.is_dynamic() == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("get_rank", "[variant_array_view]")
+{
+    SECTION("1D")
+    {
+        int obj[2] = {0, 0};
+        variant var = obj;
+
+        variant_array_view array = var.create_array_view();
+        CHECK(array.get_rank() == 1);
+    }
+
+    SECTION("2D")
+    {
+        int obj[2][2] = {{0, 0}, {0, 0}};
+        variant var = obj;
+
+        variant_array_view array = var.create_array_view();
+        CHECK(array.get_rank() == 2);
+    }
+
+    SECTION("3D")
+    {
+        int obj[2][2][2] = {{{0, 0}, {0, 0}}, {{0, 0}, {0, 0}}};
+        variant var = obj;
+
+        variant_array_view array = var.create_array_view();
+        CHECK(array.get_rank() == 3);
+    }
+
+    SECTION("dynamic 2D")
+    {
+        std::vector<std::vector<int>> vec_2d;
+        variant var = vec_2d;
+
+        variant_array_view array = var.create_array_view();
+        CHECK(array.get_rank() == 2);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("get_rank_type", "[variant_array_view]")
+{
+    SECTION("2D")
+    {
+        int obj[2][10] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+        variant var = obj;
+
+        variant_array_view array = var.create_array_view();
+        CHECK(array.get_rank_type(0) == type::get<int[2][10]>());
+        CHECK(array.get_rank_type(1) == type::get<int[10]>());
+        CHECK(array.get_rank_type(2) == type::get<int>());
+        CHECK(array.get_rank_type(3).is_valid() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("get_size", "[variant_array_view]")
+{
+    SECTION("1D")
+    {
+        variant var = std::vector<int>(50, 0);
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()  == 50);
+        CHECK(array.get_size(0) == 0);
+    }
+
+    SECTION("2D")
+    {
+        int obj[2][10] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+        variant var = obj;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()  == 2);
+        CHECK(array.get_size(0) == 10);
+        CHECK(array.get_size(1) == 10);
+    }
+
+    SECTION("2D")
+    {
+        std::vector<std::vector<int>> vec;
+        vec.push_back(std::vector<int>(10, 0));
+        vec.push_back(std::vector<int>(20, 0));
+        vec.push_back(std::vector<int>(30, 0));
+        vec.push_back(std::vector<int>(40, 0));
+        vec.push_back(std::vector<int>(50, 0));
+        
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()  == 5);
+        CHECK(array.get_size(0) == 10);
+        CHECK(array.get_size(1) == 20);
+        CHECK(array.get_size(2) == 30);
+        CHECK(array.get_size(3) == 40);
+        CHECK(array.get_size(4) == 50);
+    }
+
+    SECTION("3D")
+    {
+        int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}}, {{6, 7}, {8, 9}, {10, 11}}, {{12, 13}, {14, 15}, {16, 17}}};
+       
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()  == 4);
+        CHECK(array.get_size(0) == 3);
+        CHECK(array.get_size(0, 0) == 2);
+    }
+
+    SECTION("get_size_variadic")
+    {
+        int vec[6][5][4][3] = {0};
+       
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()  == 6);
+        CHECK(array.get_size(0) == 5);
+        CHECK(array.get_size(0, 0) == 4);
+
+        CHECK(array.get_size_variadic({}) == 6);
+        CHECK(array.get_size_variadic({0}) == 5);
+        CHECK((array.get_size_variadic({0, 0}) == 4));
+        CHECK((array.get_size_variadic({0, 0, 0}) == 3));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#if 0
 TEST_CASE("variant test - array", "[variant]")
 {
    SECTION("test raw array")
@@ -215,5 +500,7 @@ TEST_CASE("variant test - array", "[variant]")
         CHECK((array.get_type() == type::get<std::vector<int>>()));
     }
 }
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////

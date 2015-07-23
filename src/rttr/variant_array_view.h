@@ -200,6 +200,13 @@ class RTTR_API variant_array_view
         ~variant_array_view();
 
         /*!
+         * \brief Assigns the value of the \a other variant_array_view to this variant_array_view.
+         *
+         * \return A reference to the variant_array_view with the new data.
+         */
+        variant_array_view& operator=(const variant_array_view& other);
+
+        /*!
          * \brief Returns true if this variant_array_view is valid, that means the object is holding some data.
          *        When the variant_array_view doesn't hold any data it will return false.
          *
@@ -221,12 +228,6 @@ class RTTR_API variant_array_view
          */
         void swap(variant_array_view& other);
        
-        /*!
-         * \brief Assigns the value of the \a other variant_array_view to this variant_array_view.
-         *
-         * \return A reference to the variant_array_view with the new data.
-         */
-        variant_array_view& operator=(const variant_array_view& other);
 
         /*!
          * \brief Returns true if this array is dynamic, that means the size can be changed; otherwise false.
@@ -262,13 +263,6 @@ class RTTR_API variant_array_view
          * \return \ref type "Type" of the array.
          */
         type get_type() const;
-
-        /*!
-         * \brief Returns true when this array is a raw array i.e. int[10].
-         *
-         * \return True if the array is a raw build in array, otherwise false.
-         */
-        bool is_raw_array() const;
 
         /*!
          * \brief Returns the size of the first dimension from the array.

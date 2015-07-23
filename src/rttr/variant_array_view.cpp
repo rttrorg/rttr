@@ -92,13 +92,6 @@ type variant_array_view::get_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::is_raw_array() const
-{
-    return m_data.m_policy(detail::variant_array_policy_operation::IS_RAW_ARRAY, m_data.m_address, detail::argument_wrapper());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 std::size_t variant_array_view::get_size() const
 {
     std::size_t result = 0;
@@ -119,8 +112,8 @@ std::size_t variant_array_view::get_size(std::size_t index_1) const
 
 std::size_t variant_array_view::get_size(std::size_t index_1, std::size_t index_2) const
 {
-    std::tuple<std::size_t, std::size_t> param = std::make_tuple(index_1, index_2);
-    m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_1, m_data.m_address, param);
+    std::tuple<std::size_t&, std::size_t&> param = std::tie(index_1, index_2);
+    m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_2, m_data.m_address, param);
 
     return std::get<1>(param);
 }
@@ -129,10 +122,11 @@ std::size_t variant_array_view::get_size(std::size_t index_1, std::size_t index_
 
 std::size_t variant_array_view::get_size_variadic(const std::vector<std::size_t>& index_list) const
 {
-    std::tuple<const std::vector<std::size_t>&, std::size_t> param = std::make_tuple(index_list, 0);
-    m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_1, m_data.m_address, param);
+    std::size_t ret_size;
+    std::tuple<const std::vector<std::size_t>&, std::size_t&> param = std::tie(index_list, ret_size);
+    m_data.m_policy(detail::variant_array_policy_operation::GET_SIZE_VARIADIC, m_data.m_address, param);
 
-    return std::get<1>(param);
+    return ret_size;
 }
         
 /////////////////////////////////////////////////////////////////////////////////////////
