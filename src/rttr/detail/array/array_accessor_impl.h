@@ -56,7 +56,10 @@ struct get_size_from_array_impl<Array_Type, std::true_type>
     {
         using sub_type = typename array_mapper<Array_Type>::sub_type;
         using go_one_dim_deeper = typename std::integral_constant<bool,  (sizeof...(Indices) > 0)>::type;
-        return get_size_from_array_impl<sub_type, go_one_dim_deeper>::get_size(array_mapper<Array_Type>::get_value(array, index), args...);
+        if (index < array_mapper<Array_Type>::get_size(array))
+            return get_size_from_array_impl<sub_type, go_one_dim_deeper>::get_size(array_mapper<Array_Type>::get_value(array, index), args...);
+        else
+            return 0;
     }
 };
 

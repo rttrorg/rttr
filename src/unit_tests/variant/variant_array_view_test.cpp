@@ -268,6 +268,7 @@ TEST_CASE("get_size", "[variant_array_view]")
         CHECK(array.get_size()  == 2);
         CHECK(array.get_size(0) == 10);
         CHECK(array.get_size(1) == 10);
+        CHECK(array.get_size(3) == 0);
     }
 
     SECTION("2D")
@@ -288,18 +289,29 @@ TEST_CASE("get_size", "[variant_array_view]")
         CHECK(array.get_size(2) == 30);
         CHECK(array.get_size(3) == 40);
         CHECK(array.get_size(4) == 50);
+        CHECK(array.get_size(5) == 0);
     }
 
     SECTION("3D")
     {
-        int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}}, {{6, 7}, {8, 9}, {10, 11}}, {{12, 13}, {14, 15}, {16, 17}}};
+        int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}}, 
+                             {{6, 7}, {8, 9}, {10, 11}},
+                             {{12, 13}, {14, 15}, {16, 17}},
+                             {{18, 19}, {20, 21}, {22, 23}} };
        
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
         CHECK(array.get_size()  == 4);
         CHECK(array.get_size(0) == 3);
+        CHECK(array.get_size(1) == 3);
+        CHECK(array.get_size(2) == 3);
+        CHECK(array.get_size(3) == 3);
+        CHECK(array.get_size(4) == 0);
         CHECK(array.get_size(0, 0) == 2);
+        CHECK(array.get_size(0, 1) == 2);
+        CHECK(array.get_size(0, 2) == 2);
+        CHECK(array.get_size(0, 3) == 0);
     }
 
     SECTION("get_size_variadic")
@@ -317,6 +329,7 @@ TEST_CASE("get_size", "[variant_array_view]")
         CHECK(array.get_size_variadic({0}) == 5);
         CHECK((array.get_size_variadic({0, 0}) == 4));
         CHECK((array.get_size_variadic({0, 0, 0}) == 3));
+        CHECK((array.get_size_variadic({0, 0, 0, 0}) == 0));
     }
 }
 
