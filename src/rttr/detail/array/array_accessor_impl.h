@@ -93,7 +93,10 @@ struct set_size_to_array_impl<Array_Type, std::true_type>
     {
         using sub_type = typename array_mapper<Array_Type>::sub_type;
         using go_one_dim_deeper = typename std::integral_constant<bool,  (sizeof...(Indices) > 0)>::type;
-        return set_size_to_array_impl<sub_type, go_one_dim_deeper>::set_size(array_mapper<Array_Type>::get_value(array, index), new_size, args...);
+        if (index < array_mapper<Array_Type>::get_size(array))
+            return set_size_to_array_impl<sub_type, go_one_dim_deeper>::set_size(array_mapper<Array_Type>::get_value(array, index), new_size, args...);
+        else
+            return false;
     }
 };
 

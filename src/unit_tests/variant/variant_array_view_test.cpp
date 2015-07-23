@@ -335,6 +335,129 @@ TEST_CASE("get_size", "[variant_array_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("set_size", "[variant_array_view]")
+{
+    SECTION("empty")
+    {
+        variant var;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.set_size(10) == false);
+    }
+
+    SECTION("static array")
+    {
+        int obj[10] = {0};
+        variant var = obj;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.set_size(5) == false);
+    }
+
+    SECTION("dynamic array")
+    {
+        variant var = std::vector<int>(50, 0);
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()      == 50);
+        CHECK(array.set_size(10)    == true);
+        CHECK(array.get_size()      == 10);
+    }
+
+    SECTION("2D - dynamic")
+    {
+        std::vector<std::vector<int>> vec;
+        
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()      == 0);
+        CHECK(array.set_size(10)    == true);
+        CHECK(array.get_size()      == 10);
+
+        CHECK(array.get_size(0)     == 0);
+        CHECK(array.set_size(10, 0) == true);
+        CHECK(array.get_size(0)     == 10);
+
+        CHECK(array.get_size(9)     == 0);
+        CHECK(array.set_size(10, 9) == true);
+        CHECK(array.get_size(9)     == 10);
+
+        CHECK(array.get_size(10)    == 0);
+        CHECK(array.set_size(10, 10)== false);
+        CHECK(array.get_size(10)    == 0);
+    }
+
+    SECTION("3D - dynamic")
+    {
+        std::vector<std::vector<std::vector<int>>> vec;
+        
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()      == 0);
+        CHECK(array.set_size(10)    == true);
+        CHECK(array.get_size()      == 10);
+
+        CHECK(array.get_size(0)      == 0);
+        CHECK(array.set_size(8, 0)   == true);
+        CHECK(array.get_size(0)      == 8);
+
+        CHECK(array.get_size(0, 0)   == 0);
+        CHECK(array.set_size(6, 0, 0)== true);
+        CHECK(array.get_size(0, 0)   == 6);
+
+        CHECK(array.get_size(0, 1)   == 0);
+        CHECK(array.set_size(4, 0, 1)== true);
+        CHECK(array.get_size(0, 1)   == 4);
+    }
+
+    SECTION("set_size_variadic")
+    {
+        std::vector<std::vector<std::vector<int>>> vec;
+        
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size_variadic({})       == 0);
+        CHECK(array.set_size_variadic(10, {})   == true);
+        CHECK(array.get_size_variadic({})       == 10);
+
+        CHECK(array.get_size_variadic({0})      == 0);
+        CHECK(array.set_size_variadic(8, {0})   == true);
+        CHECK(array.get_size_variadic({0})      == 8);
+
+        CHECK(array.get_size_variadic({0, 0})   == 0);
+        CHECK(array.set_size_variadic(6, {0, 0})== true);
+        CHECK(array.get_size_variadic({0, 0})   == 6);
+
+        CHECK(array.get_size_variadic({0, 1})   == 0);
+        CHECK(array.set_size_variadic(4, {0, 1})== true);
+        CHECK(array.get_size_variadic({0, 1})   == 4);
+
+        // negative test
+        CHECK(array.get_size_variadic({0, 1, 2})    == 0);
+        CHECK(array.set_size_variadic(4, {0, 1, 2}) == false);
+    }
+
+    SECTION("Mix dynamic/static")
+    {
+        std::vector<std::array<int, 5>> vec;
+        variant var = vec;
+        variant_array_view array = var.create_array_view();
+
+        CHECK(array.get_size()      == 0);
+        CHECK(array.set_size(10)    == true);
+        CHECK(array.get_size()      == 10);
+
+        CHECK(array.get_size(0)      == 5);
+        CHECK(array.set_size(8, 0)   == false);
+        CHECK(array.get_size(0)      == 5);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 #if 0
 TEST_CASE("variant test - array", "[variant]")
 {
