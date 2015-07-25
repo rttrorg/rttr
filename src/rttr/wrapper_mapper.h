@@ -38,11 +38,11 @@ namespace rttr
 namespace detail { struct invalid_wrapper_type { }; }
 
 /*!
- * The \ref wrapper_mapper class is an interface class to register custom wrapper types.
+ * The \ref wrapper_mapper class is a class template to access different wrapper types via one common interface.
  *
  * A wrapper type is a class which encapsulate an instance of another type.
  * This are for instance smart pointer classes, e.g. `std::shared_ptr<T>` or `std::unique_ptr<T>`.
- * Out of the box, RTTR recognize following wrapper classes:
+ * Out of the box, RTTR recognize following wrapper types:
  * - \p `std::shared_ptr<T>` 
  * - \p `std::reference_wrapper<T>`
  * - \p `std::weak_ptr<T>`
@@ -51,7 +51,7 @@ namespace detail { struct invalid_wrapper_type { }; }
  * Custom wrapper types
  * --------------------
  * In order to work with custom wrapper types, its required to specialize the class 
- * \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>". Therefore you have to provide two typedefs:
+ * \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>". Therefore you have to provide two nested typedefs:
  * 1. `typedef T::encapsulated_type wrapped_type;`
  * 2. `typedef T type`
  *

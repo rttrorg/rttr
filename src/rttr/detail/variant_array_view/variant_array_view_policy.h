@@ -31,7 +31,7 @@
 #include "rttr/type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/detail/array/array_mapper.h"
+#include "rttr/array_mapper.h"
 #include "rttr/detail/array/array_accessor.h"
 #include "rttr/wrapper_mapper.h"
 #include "rttr/detail/variant_array_view/variant_array_view_traits.h"

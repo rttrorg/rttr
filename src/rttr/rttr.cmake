@@ -25,7 +25,8 @@
 #                                                                                  #
 ####################################################################################
 
-set(HEADER_FILES constructor.h
+set(HEADER_FILES array_mapper.h
+                 constructor.h
                  destructor.h
                  enumeration.h
                  metadata.h
@@ -52,7 +53,7 @@ set(HEADER_FILES constructor.h
                  detail/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
-                 detail/array/array_mapper.h
+                 detail/array/array_mapper_impl.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in

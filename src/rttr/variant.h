@@ -132,7 +132,7 @@ namespace detail
  *     var.to_string();                    // converts from custom_type to std::string
  * \endcode
  *
- * \see variant_array
+ * \see variant_array_view
  */
 class RTTR_API variant
 {

@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ARRAY_MAPPER_H_
-#define RTTR_ARRAY_MAPPER_H_
+#ifndef RTTR_ARRAY_MAPPER_IMPL_H_
+#define RTTR_ARRAY_MAPPER_IMPL_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 
@@ -37,22 +37,6 @@
 
 namespace rttr
 {
-namespace detail
-{
-
-struct invalid_array_type {};
-//////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * \brief
- */
-template <typename T>
-struct array_mapper
-{
-    using no_array_type = invalid_array_type;
-    using raw_type = T;
-    using sub_type = T;
-};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -293,7 +277,8 @@ struct array_mapper<std::array<T, N> >
     }
 };
 
-} // end namespace detail
+//////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace rttr
 
-#endif // RTTR_ARRAY_MAPPER_H_
+#endif // RTTR_ARRAY_MAPPER_IMPL_H_
