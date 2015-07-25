@@ -94,7 +94,10 @@ $( document ).ready(function() {
         $(this).siblings('.memItemLeft').attr('align', 'left');
     });
     */
-    
+    $(".memItemLeft>a:contains('RTTR_INLINE')").each(function(){
+        $(this).remove();
+    });
+   
     $('.mdescLeft').each(function(){
       $(this).parent().remove();
     });

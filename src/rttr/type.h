@@ -154,42 +154,42 @@ class RTTR_API type
          * \brief Assigns a type to another one.
          *
          */
-        type(const type& other);
+        RTTR_INLINE type(const type& other);
 
         /*!
          * \brief Assigns a type to another one.
          *
          * \return A type object.
          */
-        type& operator=(const type& other);
+        RTTR_INLINE type& operator=(const type& other);
 
         /*!
          * \brief Comparison operator for sorting the type data according to some internal criterion.
          *
          * \return True if this type is less than the \a other.
          */
-        bool operator<(const type& other) const;
+        RTTR_INLINE bool operator<(const type& other) const;
 
         /*!
          * \brief Comparison operator for sorting the type data according to some internal criterion.
          *
          * \return True if this type is greater than the \a other.
          */
-        bool operator>(const type& other) const;
+        RTTR_INLINE bool operator>(const type& other) const;
 
         /*!
          * \brief Comparison operator for sorting the type data according to some internal criterion.
          *
          * \return True if this type is greater than or equal to \a other.
          */
-        bool operator>=(const type& other) const;
+        RTTR_INLINE bool operator>=(const type& other) const;
 
         /*!
          * \brief Comparison operator for sorting the type data according to some internal criterion.
          *
          * \return True if this type is less than or equal to \a other.
          */
-        bool operator<=(const type& other) const;
+        RTTR_INLINE bool operator<=(const type& other) const;
 
         /*!
          * \brief Compares this type with the \a other type and returns true 
@@ -197,7 +197,7 @@ class RTTR_API type
          *
          * \return True if both type are equal, otherwise false.
          */
-        bool operator==(const type& other) const;
+        RTTR_INLINE bool operator==(const type& other) const;
 
         /*!
          * \brief Compares this type with the \a other type and returns true 
@@ -205,7 +205,7 @@ class RTTR_API type
          *
          * \return True if both type are \b not equal, otherwise false.
          */
-        bool operator!=(const type& other) const;
+        RTTR_INLINE bool operator!=(const type& other) const;
 
         /*!
          * \brief Returns the id of this type.
@@ -215,7 +215,7 @@ class RTTR_API type
          *
          * \return The type id.
          */
-        type_id get_id() const;
+        RTTR_INLINE type_id get_id() const;
 
         /*!
          * \brief Returns the unique and human-readable name of the type.
@@ -231,14 +231,14 @@ class RTTR_API type
          * 
          * \return True if this type is valid, otherwise false.
          */
-        bool is_valid() const;
+        RTTR_INLINE bool is_valid() const;
 
         /*!
          * \brief Convenience function to check if this \ref type is valid or not.
          *
          * \return True if this \ref type is valid, otherwise false.
          */
-        explicit operator bool() const;
+         RTTR_INLINE explicit operator bool() const;
 
         /*!
          * \brief Returns a type object which represent the raw type.
@@ -706,14 +706,14 @@ class RTTR_API type
         /*!
          * Constructs an empty and invalid type object.
          */
-        type();
+        RTTR_INLINE type();
 
         /*!
          * \brief Constructs a valid type object.
          *
          * \param id The unique id of the data type.
          */
-        type(type_id id);
+        RTTR_INLINE type(type_id id);
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type

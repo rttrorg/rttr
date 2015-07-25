@@ -142,7 +142,7 @@ class RTTR_API variant
          *  
          * \see is_valid()
          */
-        variant();
+        RTTR_INLINE variant();
 
         /*!
          * \brief Constructs a new variant with the new value \p val.
@@ -164,7 +164,7 @@ class RTTR_API variant
         /*!
          * \brief Destroys the variant and the contained object.
          */
-        ~variant();
+        RTTR_INLINE ~variant();
 
         /*!
          * Assigns the value of the \p other object to this variant.
@@ -420,7 +420,7 @@ class RTTR_API variant
          *
          * \return
          */
-        void* get_ptr() const;
+        RTTR_INLINE void* get_ptr() const;
 
          /*!
          * \brief Returns the type object of the underlying data
@@ -429,7 +429,7 @@ class RTTR_API variant
          *
          * \return Type object.
          */
-        type get_raw_type() const;
+        RTTR_INLINE type get_raw_type() const;
 
         /*!
          * \brief Returns a pointer to the underlying data.
@@ -439,7 +439,7 @@ class RTTR_API variant
          *
          * \return Raw void pointer.
          */
-        void* get_raw_ptr() const;
+        RTTR_INLINE void* get_raw_ptr() const;
 
         /*!
          * \brief Returns a pointer to the underlying object pointer wrapped in a smart_ptr.
@@ -448,7 +448,7 @@ class RTTR_API variant
          *
          * \return Type object of the wrapped pointer object.
          */
-        detail::data_address_container get_data_address_container() const;
+        RTTR_INLINE detail::data_address_container get_data_address_container() const;
 
         /*!
          * \brief Converts the containing data to the given target type \p T.
