@@ -138,7 +138,7 @@ template<typename Return_Type, typename T>
 struct get_value_from_array_impl<Return_Type, T, std::false_type>
 {
     template<typename... Indices>
-    static const Return_Type& get_value(const T& value, Indices... args)
+    static const T& get_value(const T& value, Indices... args)
     {
         return value;
     }
@@ -284,7 +284,10 @@ struct remove_value_from_array_impl<Array_Type, std::true_type>
     {
         using sub_type = typename array_mapper<Array_Type>::sub_type;
         using arg_count_valid = typename std::integral_constant<bool,  (sizeof...(Indices) > 1) >::type;
-        return remove_value_from_array_impl<sub_type, arg_count_valid>::remove_value(array_mapper<Array_Type>::get_value(array, index), args...);
+        if (index < array_mapper<Array_Type>::get_size(array))
+            return remove_value_from_array_impl<sub_type, arg_count_valid>::remove_value(array_mapper<Array_Type>::get_value(array, index), args...);
+        else
+            return false;
     }
 };
 
@@ -293,7 +296,10 @@ struct remove_value_from_array_impl<Array_Type, std::false_type>
 {
     static bool remove_value(Array_Type& array, std::size_t index)
     {
-        return array_mapper<Array_Type>::remove_value(array, index);
+        if (index < array_mapper<Array_Type>::get_size(array))
+            return array_mapper<Array_Type>::remove_value(array, index);
+        else
+            return false;
     }
 };
 
@@ -468,7 +474,7 @@ struct array_accessor_variadic<Array_Type, index_sequence<N...>>
 
     static bool insert_value(Array_Type& obj, argument& arg, const std::vector<std::size_t>& index_list)
     {
-        using is_rank_in_range = typename std::integral_constant<bool, (sizeof...(N) < rank<Array_Type>::value) >::type;
+        using is_rank_in_range = typename std::integral_constant<bool, (sizeof...(N) <= rank<Array_Type>::value) >::type;
         return array_accessor_impl<Array_Type, is_rank_in_range>::insert_value(obj, arg, index_list[N]...);
     }
 
@@ -476,7 +482,7 @@ struct array_accessor_variadic<Array_Type, index_sequence<N...>>
 
     static bool remove_value(Array_Type& obj, const std::vector<std::size_t>& index_list)
     {
-        using is_rank_in_range = typename std::integral_constant<bool, (sizeof...(N) < rank<Array_Type>::value) >::type;
+        using is_rank_in_range = typename std::integral_constant<bool, (sizeof...(N) <= rank<Array_Type>::value) >::type;
         return array_accessor_impl<Array_Type, is_rank_in_range>::remove_value(obj, index_list[N]...);
     }
 
@@ -751,8 +757,8 @@ bool array_accessor<Array_Type>::insert_value(Array_Type& array, argument& arg, 
 template<typename Array_Type>
 bool array_accessor<Array_Type>::insert_value(Array_Type& array, argument& arg, const std::vector<std::size_t>& index_list)
 {
-    if (index_list.size() < rank<Array_Type>::value)
-        return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value - 1>>::insert_value(array, arg, index_list);
+    if (index_list.size() <= rank<Array_Type>::value)
+        return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value>>::insert_value(array, arg, index_list);
     else
         return false;
 }
@@ -784,8 +790,8 @@ bool array_accessor<Array_Type>::remove_value(Array_Type& array, Indices... indi
 template<typename Array_Type>
 bool array_accessor<Array_Type>::remove_value(Array_Type& array, const std::vector<std::size_t>& index_list)
 {
-    if (index_list.size() < rank<Array_Type>::value)
-        return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value - 1>>::remove_value(array, index_list);
+    if (index_list.size() <= rank<Array_Type>::value)
+        return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value>>::remove_value(array, index_list);
     else
         return false;
 }

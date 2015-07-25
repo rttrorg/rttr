@@ -52,10 +52,10 @@ namespace detail
 }
 
 /*!
- * The \ref variant_array_view class is a specialization of a \ref variant, but for array types.
+ * The \ref variant_array_view describes a class that refers to an array inside a \ref variant.
  * With an instance of that class you can set and get values of an array with any dimension level.
  *
- * A \ref variant_array_view can be created directly with an array type or from a \ref variant with \ref variant::to_array().
+ * A \ref variant_array_view can be created directly from a \ref variant with \ref variant::create_array_view().
  *
  * Meta Information
  * ----------------
@@ -67,8 +67,8 @@ namespace detail
  * With this function it is also possible to determine the size of the array relative to its rank level and it's index.
  * Take a look at following example:
  * \code{.cpp}
- *      std::vector<std::vector<int>> obj(10, std::vector<int>(20, 0));
- *      variant_array_view array = obj;
+ *      variant var = std::vector<std::vector<int>>(10, std::vector<int>(20, 0));
+ *      variant_array_view array = var.create_array_view();
  *      std::cout << array.get_size()  << std::endl; // prints "10"
  *      std::cout << array.get_size(0) << std::endl; // prints "20"
  *      std::cout << array.get_size(1) << std::endl; // prints "20"
