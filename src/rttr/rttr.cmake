@@ -97,7 +97,6 @@ set(HEADER_FILES array_mapper.h
                  detail/variant_array_view/variant_array_view_creator_impl.h
                  detail/variant_array_view/variant_array_view_data.h
                  detail/variant_array_view/variant_array_view_policy.h
-                 detail/variant_array_view/variant_array_view_policy_empty.h
                  detail/variant_array_view/variant_array_view_traits.h
                 )
                 

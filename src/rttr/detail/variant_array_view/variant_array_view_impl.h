@@ -30,7 +30,6 @@
 
 #include "rttr/variant.h"
 #include "rttr/detail/variant_array_view/variant_array_view_policy.h"
-#include "rttr/detail/variant_array_view/variant_array_view_policy_empty.h"
 
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"

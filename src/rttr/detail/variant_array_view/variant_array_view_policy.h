@@ -319,6 +319,122 @@ struct variant_array_policy_impl
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * This policy is used when the variant_array_view does not contain any data.
+ * This happens when a default created variant_array_view or when an variant_array_view
+ * will be created from a variant, which is not an array.
+ *
+ * With this approach we avoid checking every time before accessing the array for a valid view.
+ */
+struct RTTR_API variant_array_view_policy_empty
+{
+    static bool invoke(variant_array_policy_operation op, void* const& src_data, argument_wrapper arg)
+    {
+
+        switch (op)
+        {
+            case variant_array_policy_operation::IS_DYNAMIC:
+            {
+                return false;
+                break;
+            }
+            case variant_array_policy_operation::GET_TYPE:
+            {
+                arg.get_value<type>() = get_invalid_type();
+                break;
+            }
+            case variant_array_policy_operation::GET_RANK:
+            {
+                arg.get_value<std::size_t>() = 0;
+                break;
+            }
+            case variant_array_policy_operation::GET_RANK_TYPE:
+            {
+                auto& param = arg.get_value<std::tuple<std::size_t, type>>();
+                std::get<1>(param) = get_invalid_type();
+                break;
+            }
+            case variant_array_policy_operation::IS_VALID:
+            {
+                return false;
+                break;
+            }
+            case variant_array_policy_operation::GET_SIZE:
+            {
+                arg.get_value<std::size_t>() = 0;
+                break;
+            }
+            case variant_array_policy_operation::GET_SIZE_1:
+            {
+                arg.get_value<std::size_t>() = 0;
+                break;
+            }
+            case variant_array_policy_operation::GET_SIZE_2:
+            {
+                auto& param = arg.get_value<std::tuple<std::size_t&, std::size_t&>>();
+                std::get<1>(param) = 0;
+                break;
+            }
+            case variant_array_policy_operation::GET_SIZE_VARIADIC:
+            {
+                auto& param = arg.get_value<std::tuple<const std::vector<std::size_t>&, std::size_t&>>();
+                std::get<1>(param) = 0;
+                break;
+            }
+
+            case variant_array_policy_operation::SET_SIZE:
+            case variant_array_policy_operation::SET_SIZE_1:
+            case variant_array_policy_operation::SET_SIZE_VARIADIC:
+            {
+                return false;
+                break;
+            }
+
+            case variant_array_policy_operation::SET_VALUE:
+            case variant_array_policy_operation::SET_VALUE_1:
+            case variant_array_policy_operation::SET_VALUE_2:
+            case variant_array_policy_operation::SET_VALUE_3:
+            case variant_array_policy_operation::SET_VALUE_VARIADIC:
+            {
+                return false;
+                break;
+            }
+
+            case variant_array_policy_operation::GET_VALUE:
+            case variant_array_policy_operation::GET_VALUE_1:
+            case variant_array_policy_operation::GET_VALUE_2:
+            case variant_array_policy_operation::GET_VALUE_VARIADIC:
+            {
+                return false;
+                break;
+            }
+
+            case variant_array_policy_operation::INSERT_VALUE:
+            case variant_array_policy_operation::INSERT_VALUE_1:
+            case variant_array_policy_operation::INSERT_VALUE_2:
+            case variant_array_policy_operation::INSERT_VALUE_VARIADIC:
+            {
+                return false;
+                break;
+            }
+
+            case variant_array_policy_operation::REMOVE_VALUE:
+            case variant_array_policy_operation::REMOVE_VALUE_1:
+            case variant_array_policy_operation::REMOVE_VALUE_2:
+            case variant_array_policy_operation::REMOVE_VALUE_VARIADIC:
+            {
+                return false;
+                break;
+            }
+            default: return false;
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 
