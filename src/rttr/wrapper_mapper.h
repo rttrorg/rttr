@@ -32,7 +32,6 @@
 
 namespace rttr
 {
-
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace detail { struct invalid_wrapper_type { }; }
@@ -98,7 +97,11 @@ namespace detail { struct invalid_wrapper_type { }; }
  *  } // end namespace rttr
  * \endcode
  *
- * Remark that it is very important that the typedef for `wrapped_type` is the actual return type of the getter function.
+ * \remark
+ * It is very important that the typedef for `wrapped_type` is the actual return type of the getter function.
+ * Make also sure you put your specialization inside the namespace `rttr`. 
+ * The best place for this code, is below the declaration of your wrapper type.
+ * When this is not possible, include your specialization code before registering your types to RTTR.
  */
 template<typename T>
 struct wrapper_mapper

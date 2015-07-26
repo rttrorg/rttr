@@ -53,10 +53,10 @@ namespace detail
 
 /*!
  * The \ref variant_array_view describes a class that refers to an array inside a \ref variant.
- * With an instance of that class you can set/get values of an array with any dimension level,
+ * With an instance of that class you can set/get values of an array,
  * without having access to the type declaration of the type or it's elements.
  * 
- * A \ref variant_array_view can be created directly from a \ref variant with \ref variant::create_array_view() "create_array_view()".
+ * A \ref variant_array_view can be created directly from a \ref variant with its member function \ref variant::create_array_view() "create_array_view()".
  * \remark The instance of an variant_array_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_array_view
  *         is undefined behaviour.
  *
@@ -101,13 +101,13 @@ namespace detail
  * RTTR recognize whether a type is an array or not with the help of the \ref array_mapper class template.
  * This call can access different array types via one common interface. 
  * At the moment there exist specializations for following types: 
- * `std::array<T, N>`, `std::vector<T>`, `std::list<T>`, `std::string` and raw-arrays `T[N]`.
+ * `std::array<T, N>`, `std::vector<T>`, `std::list<T>` and raw-arrays `T[N]`.
  *
  *
  * Copying and Assignment
  * ----------------------
  * A \ref variant_array_view object can be copied and assigned, 
- * however each copy will reference the address of same underlying variant array value.
+ * however each copy will reference the address of same underlying \ref variant array value.
  *
  * Typical Usage
  * ----------------------
@@ -188,9 +188,11 @@ class RTTR_API variant_array_view
        
 
         /*!
-         * \brief Returns true if this array is dynamic, that means the size can be changed; otherwise false.
+         * \brief Returns true if this array is dynamic, otherwise false.
+         *        When an array is dynamic, it is possible to change its \ref set_size "size"
+         *        or \ref insert_value "insert" and \ref remove_value "remove" values from it.
          *
-         * \see get_size()
+         * \see set_size(), insert_value(), remove_value()
          *
          * \return A boolean flag which indicates whether this array is dynamic or not.
          */
@@ -198,7 +200,12 @@ class RTTR_API variant_array_view
 
         /*!
          * \brief Gets the rank (number of dimensions) of the array. 
-         *        For example, int[10] returns 1; int[2][10] returns 2, and so on.
+         *
+         * Take a look at following return values:
+         *  - \p `int[4]` => `1`
+         *  - \p `int[4][4]` => `2`
+         *  - \p `int[4][4][4]` => `3`
+         *  - ...
          *
          * \return Returns the rank of the array.
          */
@@ -206,8 +213,12 @@ class RTTR_API variant_array_view
 
         /*!
          * \brief Gets the type of the given rank index.
-         *        For example, an array of type int[2][10] returns for get_rank_type(0) => int[2][10]
-         *        get_rank_type(1) => int[10]; get_rank_type(2) => int
+         *
+         * Take a look at following return value for an array of type: `int[2][10]`
+         *  - \p `get_rank_type(0)` => `int[2][10]`
+         *  - \p `get_rank_type(1)` => `int[10]`
+         *  - \p `get_rank_type(2)` => `int`
+         *  - \p `get_rank_type(3)` => **INVALID**
          *
          * \return The rank type at the given dimension \p index.
          */

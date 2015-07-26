@@ -67,9 +67,7 @@ namespace detail
  * (using containers you can hold multiple types e.g. `std::vector<int>`). Remark that the content is copied
  * into the variant class. Even raw arrays (e.g. `int[10]`) are copied.
  *
- * In order to use this class with your custom `Type`, you have to register it with \ref #RTTR_DECLARE_TYPE(Type).
  * This class is mainly used for returning values from calls. See et.al. \ref property::get_value() or \ref method::invoke().
- *
  *
  * Copying and Assignment
  * ----------------------
@@ -84,12 +82,12 @@ namespace detail
  *     int x = var.to_int();                   // x = 23
  * 
  *     var = std::string("Hello World");       // variant contains now a std::string
- *     var = "Hello World";                    // variant contains now a char[12] array
+ *     var = "Hello World";                    // implicit conversion of char array to a std::string
  *     int y = var.to_int();                   // y = 0, because invalid conversion
- *     std::string text = var.to_string();     // text = "Hello World", char array to string converted
+ *     std::string text = var.to_string();     // text = "Hello World", std::string converted
  * 
- *     var = "42";                             // contains now char[3] array
- *     std::cout << var.to_int();              // convert char array to integer and prints "42"
+ *     var = "42";                             // contains now std::string
+ *     std::cout << var.to_int();              // convert char std::string to integer and prints "42"
  * 
  *     int my_array[100];
  *     var = my_array;                         // copies the content of my_array into var

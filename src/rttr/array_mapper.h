@@ -47,24 +47,22 @@ struct invalid_array_type {};
 /*!
  * The \ref array_mapper class is a class template to access different array types via one common interface.
  *
- * An array is a data structure consisting of a collection of elements, which can be accessed by an index or a key.
- * This class will be used internally by the \ref variant_array_view class to get access to the elements.
+ * This class will be only used **internally** by RTTR via the \ref variant_array_view class to get access to elements
+ * of an array. In order to use your own custom array type, you have to provide a specialization of this class.
  *
- * Out of the box, RTTR recognize following array types:
+ * Out of the box, RTTR has specialization for following array types:
  * - \p `T[N]`, raw arrays
  * - \p `std::vector<T>` 
  * - \p `std::array<T, N>`
  * - \p `std::list<T>`
- * - \p `std::string`
  *
  * Custom array types
  * --------------------
- * In order to work with custom array types, its required to specialize the class 
- * \ref rttr::array_mapper<T> "array_mapper<T>". Therefore you have to provide two nested alias templates:
+ * For a specialization of the class \ref rttr::array_mapper<T> "array_mapper<T>" you have to provide two nested alias templates:
  * 1. `using raw_type = typename array_mapper<T>::raw_type;`
  * 2. `using sub_type = T;`
  *
- * And following member functions:
+ * and following member functions:
  * 1. `static bool is_dynamic();`
  * 2. `static bool set_size(array_type& arr, std::size_t new_size);`
  * 3. `static const T& get_value(const array_type& arr, std::size_t index);`
@@ -73,7 +71,7 @@ struct invalid_array_type {};
  * 6. `static bool remove_value(array_type& arr, std::size_t index);`
  * 
  *
- * Following code example illustrates how to add a specialization:
+ * Following code example for `std::vector<T>` illustrates how to add a specialization:
  *
  * \code{.cpp}
  *  namespace rttr
@@ -125,7 +123,10 @@ struct invalid_array_type {};
  *  } // end namespace rttr
  * \endcode
  *
- * Make sure you put your custom specialization inside the namespace rttr.
+ * \remark
+ * Make sure you put your specialization inside the namespace `rttr`. 
+ * The best place for this code, is below the declaration of your custom array type.
+ * When this is not possible, include your specialization code before registering your types to RTTR.
  *
  */
 template <typename T>
