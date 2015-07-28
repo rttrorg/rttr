@@ -142,35 +142,44 @@ RTTR_INLINE bool variant::can_convert() const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE T variant::convert(bool* ok) const
+RTTR_INLINE bool variant::convert(T& value) const
 {
-    static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
-                                                           "You can only convert to a type, with a default constructor.");
-    bool tmp_ok = false;
-    T result;
+    bool ok = false;
 
     const type source_type = get_type();
     const type target_type = type::get<T>();
     if (target_type == source_type)
     {
-        result = const_cast<variant&>(*this).get_value<T>();
+        value = const_cast<variant&>(*this).get_value<T>();
     }
     else if (const auto& converter = source_type.get_type_converter(target_type))
     {
         detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
-        result = target_converter->convert(get_ptr(), tmp_ok);
+        value = target_converter->convert(get_ptr(), ok);
     }
     else if (detail::pointer_count<T>::value == 1 && source_type.is_pointer())
     {
         if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
         {
-            tmp_ok = true;
-            result = static_cast<T>(ptr);
+            ok = true;
+            value = reinterpret_cast<T>(ptr);
         }
     }
 
+    return ok;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE T variant::convert(bool* ok) const
+{
+    static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
+                                                           "You can only convert to a type, with a default constructor.");
+    T result;
+    const bool coud_convert = convert<T>(result);
     if (ok)
-        *ok = tmp_ok;
+        *ok = coud_convert;
 
     return result;
 }

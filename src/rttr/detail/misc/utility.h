@@ -180,7 +180,8 @@ struct copy_array_helper_impl
 };
 
 template<typename ElementType, std::size_t Count>
-struct copy_array_helper_impl<ElementType[Count]> {
+struct copy_array_helper_impl<ElementType[Count]>
+{
     void operator()(const ElementType (&in)[Count], ElementType (&out)[Count])
     {
         for(std::size_t i = 0; i < Count; ++i)
@@ -194,6 +195,41 @@ auto copy_array(const ElementType (&in)[Count], ElementType (&out)[Count])
 {
     copy_array_helper_impl<ElementType[Count]>()(in, out);
     return out;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// compare whether two arrays are the same or not
+// the comparison will go down till element wise comparison
+
+template<typename ElementType>
+struct cmp_array_helper_impl
+{
+    bool operator()(const ElementType &in, const ElementType &out)
+    {
+        return (out == in);
+    }
+};
+
+template<typename ElementType, std::size_t Count>
+struct cmp_array_helper_impl<ElementType[Count]> 
+{
+    bool operator()(const ElementType (&in)[Count], const ElementType (&out)[Count])
+    {
+        for(std::size_t i = 0; i < Count; ++i)
+        {
+            if (!cmp_array_helper_impl<ElementType>()(in[i], out[i]))
+                return false;
+        }
+
+        return true;
+    }
+};
+
+template<typename ElementType, std::size_t Count>
+bool compare_arrays(const ElementType (&in)[Count], const ElementType (&out)[Count])
+{
+    return cmp_array_helper_impl<ElementType[Count]>()(in, out);
 }
 
 

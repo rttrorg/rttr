@@ -61,74 +61,124 @@ namespace detail
 }
 
 /*!
- * The variant class allows to store data of any type and convert between these types transparently.
+ * The \ref variant class allows to store data of any type and convert between these types transparently.
  * 
- * This class serves as container for any given single type. It can hold one value at a time
+ * This class serves as container for any given single \ref get_type() "type". It can hold one value at a time
  * (using containers you can hold multiple types e.g. `std::vector<int>`). Remark that the content is copied
- * into the variant class. Even raw arrays (e.g. `int[10]`) are copied.
+ * into the variant class. Even raw arrays (e.g. `int[10]`) are copied. However, the internal implementation of variant
+ * has an optimization for storing small types, which avoid heap allocation.
  *
- * This class is mainly used for returning values from calls. See et.al. \ref property::get_value() or \ref method::invoke().
+ * The main purpose of this class is to be the return value for \ref property::get_value() "property" and 
+ * \ref method::invoke() "method" invokes or as container for storing meta data.
  *
  * Copying and Assignment
  * ----------------------
- * A \ref variant object is can be copied and assigned, however each copy will perform a copy of the contained value.
+ * A \ref variant object can be copied and assigned, however each copy will perform a copy of the contained value.
  *
  * Typical Usage
- * ----------------------
+ * -------------
  * 
  * \code{.cpp}
- *     variant var;
- *     var = 23;                               // copy integer
- *     int x = var.to_int();                   // x = 23
- * 
- *     var = std::string("Hello World");       // variant contains now a std::string
- *     var = "Hello World";                    // implicit conversion of char array to a std::string
- *     int y = var.to_int();                   // y = 0, because invalid conversion
- *     std::string text = var.to_string();     // text = "Hello World", std::string converted
- * 
- *     var = "42";                             // contains now std::string
- *     std::cout << var.to_int();              // convert char std::string to integer and prints "42"
- * 
- *     int my_array[100];
- *     var = my_array;                         // copies the content of my_array into var
- *     auto& arr = var.get_value<int[100]>();  // extracts the content of var by reference
+ *  variant var;
+ *  var = 23;                               // copy integer
+ *  int x = var.to_int();                   // x = 23
+ *  
+ *  var = "Hello World";                    // var contains now a std::string (implicit conversion of string literals to std::string)
+ *  int y = var.to_int();                   // y = 0, because invalid conversion
+ *  
+ *  var = "42";                             // contains a std::string
+ *  std::cout << var.to_int();              // convert std::string to integer and prints "42"
+ *  
+ *  int my_array[100];
+ *  var = my_array;                         // copies the content of my_array into var
+ *  auto& arr = var.get_value<int[100]>();  // extracts the content of var by reference
  * \endcode
  *
- * 
- * It's of course also possible to store own custom types in a variant,
- * take a look at following code:
+ * Extract Value
+ * -------------
+ * For extracting a value out of a variant you can use the \ref get_value() function.
+ * This will return a *const reference* to the contained value.
+ * However, you must instantiated this function with the exact type of the stored value,
+ * otherwise undefined behaviour will occur.
+ * Therefore you **should** check it's \ref get_type() "type" before extracting with \ref is_type<T>().
  *
+ * See following example:
  * \code{.cpp}
- *     struct custom_type
- *     {
- *         //...
- *     };
- * 
- *     variant var = custom_type(...);
- *     bool b = var.is_type<custom_type>();                // b = true
- *     custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
- * \endcode
- *
- * The variant class allows to convert also custom types,
- * therefore you have to register a convert function:
- *
- * \code{.cpp}
- *     std::string converter_func(const custom_type& value, bool& ok)
- *     {
- *         ok = true;
- *         // convert value to std::string
- *         return std::string(...);
- *     }
- *     
+ *  struct custom_type
+ *  {
  *     //...
- *     variant var = custom_type(...);
- *     var.can_convert<std::string>();     // return false
- *     // will register a convert from custom_type to std::string
- *     type::register_converter_func(converter_func);
- * 
- *     var.can_convert<std::string>();     // return true
- *     var.to_string();                    // converts from custom_type to std::string
+ *  };
+ *  
+ *  variant var = custom_type{};
+ *  if (var.is_type<custom_type>())                             // yields to true
+ *    const custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
  * \endcode
+ *
+ * Conversion
+ * ----------
+ * The \ref variant class offers three possibilities to convert to a new type.
+ * - \ref convert(const type& target_type) "convert(const type& target_type)" - convert the variant internally to a new type
+ * - \ref variant::convert_to<T>(bool* ok) "convert_to\<T\>(bool *ok)" - convert the contained value to an internally default created value of type \p T
+ * - \ref variant::convert_to<T>(T& value) "convert_to\<T\>(T& value)" - convert the contained value to a given \p value of type \p T
+ *
+ * See following example code:
+ * \code{.cpp}
+ *  variant var = 500;                          // var contains an int
+ *  if(var.can_convert<std::string>())          // check whether conversion is possible
+ *  {
+ *    var.convert(type::get<std::string>());    // var contains now a std::string, with value => "23"
+ *    var.is_type<std::string>();               // yields to 'true'
+ *  }
+ *
+ *  bool ok = false;
+ *  int int_value = var.convert<int>(&ok);      // int_value == 23, ok yields to 'true'
+ *  // or
+ *  uint8_t small_int = 0;
+ *  bool result = var.convert<uint8_t>(small_int); // result == false, because small_int cannot hold the value '500'
+ * 
+ * \endcode
+ *
+ * \remark
+ * It is possible that \ref can_convert() will return `true`, but \ref convert() will actually fail and return `false`.
+ * The reason for this is \ref can_convert() will return the general ability of converting between types given suitable data; 
+ * when no suitable data is given, the conversion cannot be performed.
+ *
+ * A good example is the conversion from `std::string` to `int`.
+ * \code{.cpp}
+ *  variant var = "Answer: 42";
+ *  var.can_convert<int>();             // yields to 'true'
+ *  int number;
+ *  bool result = var.convert(number);  // yields to 'false', because the string contains non-numeric characters
+ *
+ * \endcode
+ *
+ * Hence, it is important to have both functions return true for a successful conversion.
+ *
+ * Custom Converter
+ * ----------------
+ * The variant class allows to convert from and to user-defined types, 
+ * therefore you have to register a conversion function.
+ *
+ * See following example code:
+ * \code{.cpp}
+ *  std::string converter_func(const custom_type& value, bool& ok)
+ *  {
+ *      ok = true;
+ *      // convert value to std::string
+ *      return std::string(...);
+ *  }
+ *  
+ *  //...
+ *  variant var = custom_type(...);
+ *  var.can_convert<std::string>();     // return 'false'
+ *  // register the conversion function
+ *  type::register_converter_func(converter_func);
+ *  
+ *  var.can_convert<std::string>();     // return 'true'
+ *  var.to_string();                    // converts from 'custom_type' to 'std::string'
+ * \endcode
+ *
+ * For more information see \ref type::register_converter_func()
  *
  * \see variant_array_view
  */
@@ -187,9 +237,46 @@ class RTTR_API variant
         variant& operator=(const variant& other);
 
         /*!
+         * \brief Compares this variant with \p other and returns `true` if they are equal; otherwise returns `false`.
+         * 
+         * The variant uses the equality operator of the containing \ref get_type() "type" to check for equality.
+         * When \p other is not of the same type as the containing type, it will try to convert to it and do then the equality check.
+         *
+         * \see bool operator!=(const variant&) const;
+         *
+         * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
+         */
+        bool operator==(const variant& other) const;
+
+        /*!
+         * \brief Compares this variant with \p other and returns `true` if they are **not** equal; otherwise returns `false`.
+         *
+         * \see bool operator==(const variant&) const;
+         *
+         * \return A boolean with value `true`, that indicates both variant's are **not** equal, otherwise `false`.
+         */
+        bool operator!=(const variant& other) const;
+
+        /*!
+         * \brief Compares this variant with \p other and returns `true` if this is less than \p other, otherwise returns `false`.
+         * 
+         * The variant uses the less than operator of the containing \ref get_type() "type".
+         * When \p other is not of the same type as the containing type, it will try to convert to it and do then the less-than check.
+         *
+         * \see bool operator!=(const variant&) const;
+         *
+         * \return A boolean with value `true`, that indicates that this variant is less than the other, otherwise `false`.
+         */
+        bool operator<(const variant& other) const;
+        bool operator>(const variant& other) const;
+        
+        bool operator<=(const variant& other) const;
+        bool operator>=(const variant& other) const;
+
+        /*!
          * \brief When the variant contains a value, then this function will clear the content.
          *
-         * \remark After calling this function \ref is_valid will return false.
+         * \remark After calling this function \ref is_valid() will return `false`.
          */
         void clear();
 
@@ -199,19 +286,19 @@ class RTTR_API variant
         void swap(variant& other);
         
         /*!
-         * \brief Returns true if this variant data is of the given template type \a T.
+         * \brief Returns `true` if the containing variant data is of the given template type `T`.
          * 
-         * \return True if variant is the same like \a T, otherwise false.
+         * \return True if variant data is of type `T`, otherwise false.
          */
         template<typename T>
         bool is_type() const;
 
         /*!
-         * \brief Returns the type object of underlying data type.
+         * \brief Returns the \ref type object of underlying data.
          *
-         * \remark When the variant has not stored any data, then an invalid type object is returned.
+         * \remark When the variant has not stored any data, then an invalid \ref type object is returned.
          * 
-         * \return type of the underlying data type.
+         * \return \ref type of the underlying data type.
          */
         type get_type() const;
 
@@ -224,7 +311,7 @@ class RTTR_API variant
          *         which has no return value, was successfully. In this case, there is no data actually stored,
          *         but this function will return true.
          * 
-         * \return True if this variant is valid, otherwise false.
+         * \return `True` if this variant is valid, otherwise `false`.
          */
         bool is_valid() const;
 
@@ -247,48 +334,23 @@ class RTTR_API variant
         bool is_array() const;
 
         /*!
-         * \brief Returns true if the contained value can be converted to the given type \p T.
-         *        Otherwise false.
-         * 
-         * \return True if this variant can be converted to \p T; otherwise false.
-         */
-        template<typename T>
-        bool can_convert() const;
-
-        /*!
-         * \brief Returns true if the contained value can be converted to the given type \p target_type;
-         *        otherwise false.
-         *
-         * The returned value indicates that a conversion is in general possible.
-         * However a conversion might still fail when doing the actual conversion with \ref convert.
-         * An example is the conversion from a string to a number. 
-         * When the string does not contain any number, the conversion will not succeed.
-         * 
-         * \return True if this variant can be converted to \p target_type; otherwise false.
-         */
-        bool can_convert(const type& target_type) const;
-
-        /*!
-         * \brief Converts the containing variant internally to the given type \p target_type.
-         *        When the conversion was successfully the function will return \p true. 
-         *        When the conversion fails, then the containing variant value stays the same and the function will return false.
-         *
-         *        A variant containing a pointer to a custom type will also convert and return \p true
-         *        for this function, if a \ref rttr_cast to the type described by \p target_type would succeed.
-         *
-         * \see can_convert()
-         * 
-         * \return True if this variant can be converted to \p target_type; otherwise false.
-         */
-        bool convert(const type& target_type);
-
-        /*!
          * \brief Returns a reference to the containing value as type \p T.
          *
+         * \code{.cpp}
+         *  struct custom_type
+         *  {
+         *     //...
+         *  };
+         *  
+         *  variant var = custom_type{};
+         *  if (var.is_type<custom_type>())                             // yields to true
+         *    const custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
+         * \endcode
+         *
          * \remark Only call this method when it is possible to return the containing value as the given type \p T.
-         *         Use therefore the method is_type().
+         *         Use therefore the method \ref is_type().
          *         Otherwise the call leads to undefined behaviour.
-         *         Make sure you don't clean this variant, when you still hold a reference to the containing value.
+         *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
          *
          * \see is_type()
          *
@@ -297,29 +359,112 @@ class RTTR_API variant
         template<typename T>
         T& get_value();
 
+        /*!
+         * \brief Returns `true` if the contained value can be converted to the given type \p T.
+         *        Otherwise `false`.
+         * 
+         * \return `True` if this variant can be converted to `T`; otherwise `false`.
+         */
+        template<typename T>
+        bool can_convert() const;
 
         /*!
-         * \brief Converts the containing value to type \p T and returns the value.
-         *        If \a ok is non-null: \a *ok is set to true if the value could be converted to an \p T; otherwise \a *ok is set to false.
+         * \brief Returns `true` if the contained value can be converted to the given type \p target_type;
+         *        otherwise `false`.
          *
+         * The returned value indicates that a conversion is in general possible.
+         * However a conversion might still fail when doing the actual conversion with \ref convert().
+         * An example is the conversion from a string to a number. 
+         * When the string does not contain non-numeric characters, the conversion will not succeed.
+         * 
+         * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
+         */
+        bool can_convert(const type& target_type) const;
+
+        /*!
+         * \brief Converts the containing variant internally to the given type \p target_type.
+         *        When the conversion was successfully the function will return `true`. 
+         *        When the conversion fails, then the containing variant value stays the same and the function will return `false`.
          *
-         * \remark Only call this method when it is possible to return the containing value as type \p T.
-         *         Use therefore the method \ref can_convert().
-         *         Otherwise the call leads to undefined behaviour.
+         * A variant containing a pointer to a custom type will be also converted and return `true`
+         * for this function, if a \ref rttr_cast to the type described by \p target_type would succeed.
+         *
+         * See therefore following example code:
+         * \code{.cpp}
+         *  struct base { virtual ~base(){} };
+         *  struct derived : base { };
+         *  derived d;
+         *  variant var = static_cast<base*>(&d);           // var contains a '*base' ptr
+         *  bool ret = var.convert(type::get<derived*>());  // yields to 'true'
+         *  var.is_type<derived*>();                        // yields to 'true'
+         * \endcode
+         *
+         * \see can_convert()
+         * 
+         * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
+         */
+        bool convert(const type& target_type);
+
+        /*!
+         * \brief Converts the containing data to a *new value* of type \p T and return this *value*.
+         *        If \p ok is non-null: \p *ok is set to `true` when the value was successfully converted to \p T; otherwise \p *ok is set to `false`.
+         *        The type \p T must meet the requirement to be *default constructible*.
+         *
+         * \code{.cpp}
+         *  variant val = 12;
+         *  if (val.can_convert<float>())
+         *  {
+         *    bool ok = false;
+         *    float result = val.convert<float>(&ok);
+         *    if (ok)
+         *    // ...
+         *  }
+         * \endcode
+         *
+         * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
+         *         with the function \ref can_convert(). When the conversion fails, a default constructed value of type \p T is returned.
          *
          * \see can_convert()
          *
          * \return The converted value as type \p T.
          */
-         template<typename T>
-         T convert(bool* ok = nullptr) const;
+        template<typename T>
+        T convert(bool* ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as \p int value when the type is an integer,
-         *        or when a conversion function for the underlying type to \p int was registered;
-         *        otherwise returns 0.
+         * \brief Converts the containing data to the given value \p value and returns a `bool` flag that indicated whether the conversion
+         *        was successful or not.
          *
-         *        If \a ok is non-null: \a *ok is set to true if the value could be converted to an \p int; otherwise \a *ok is set to false.
+         * When you need to convert to a type which cannot be default constructed use this function.
+         *
+         * See following example code:
+         * \code{.cpp}
+         *  variant val = 12;
+         *  if (val.can_convert<custom_type>())
+         *  {
+         *    custom_type obj(42); // non-default ctor type
+         *    bool result = val.convert(obj);
+         *    if (result)
+         *    // ...
+         *  }
+         * \endcode
+         *
+         * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
+         *         with the function \ref can_convert()
+         *
+         * \see can_convert()
+         *
+         * \return `True` if the contained data could be converted to \p value; otherwise `false`.
+         */
+        template<typename T>
+        bool convert(T& value) const;
+
+        /*!
+         * \brief Returns the containing variant as `int` value when the type is an integer,
+         *        or when a conversion function for the underlying type to `int` was registered;
+         *        otherwise returns `0`.
+         *
+         *        If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int`; otherwise \p *ok is set to `false`.
          *
          * \see can_convert(), is_type()
          *
@@ -466,6 +611,13 @@ class RTTR_API variant
          */
         template<typename T>
         bool convert_to_basic_type(T& to) const;
+
+        /*!
+         * \brief Compares the containing and the given variant \p other for equality.
+         *
+         * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
+         */
+        bool compare_equal(const variant& other) const;
 
     private:
         friend detail::argument;

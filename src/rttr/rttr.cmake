@@ -68,6 +68,8 @@ set(HEADER_FILES array_mapper.h
                  detail/method/method_container.h
                  detail/method/method_container_base.h
                  detail/misc/argument_wrapper.h
+                 detail/misc/compare_equal.h
+                 detail/misc/compare_less.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
                  detail/misc/number_conversion.h

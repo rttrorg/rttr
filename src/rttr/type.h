@@ -683,10 +683,13 @@ class RTTR_API type
         static variant invoke(const std::string& name, std::vector<detail::argument> args);
 
         /*!
-         * \brief Register a converter func `F`.
-         *        This function converts a source Type to a target type.
-         *        The signature of this function has to be the following: <TargetType (SourceType, bool& ok)>
-         * e.g.:
+         * \brief Register a converter func `F`, which will be used internally by the 
+         *        \ref variant class to convert between types.
+         *
+         *  This function converts a *source* type to a *target* type.
+         *  The signature of this function has to be the following: `TargetType (SourceType, bool& ok)`
+         *
+         * See following example code:
          *  \code{.cpp}
          *   std::string conv_func(int value, bool& ok)
          *   {
@@ -694,9 +697,11 @@ class RTTR_API type
          *      ok = true;
          *      return result;
          *   }
-         *   //...
+         *   // register the conversion function
          *   type::register_converter_func(conv_func);
          *  \endcode
+         *
+         * \see variant::convert()
          */
         template<typename F>
         static void register_converter_func(F func);

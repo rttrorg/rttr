@@ -31,19 +31,6 @@
 
 using namespace rttr;
 
-struct point
-{
-    point(int x, int y) : _x(x), _y(y) {}
-
-    point(const point& other) : _x(other._x), _y(other._y) { }
-
-    point(point&& other) : _x(other._x), _y(other._y) { other._x = 0; other._y = 0; }
-
-    bool operator ==(const point& other) { return (_x == other._x && _y == other._y); }
-    int _x;
-    int _y;
-};
-
 struct simple_type
 {
     simple_type() {}

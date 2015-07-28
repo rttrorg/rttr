@@ -33,6 +33,7 @@
 #include "rttr/detail/misc/argument_wrapper.h"
 #include "rttr/detail/variant_array_view/variant_array_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
+#include "rttr/detail/misc/compare_equal.h"
 
 #include <cstdint>
 
@@ -116,7 +117,8 @@ enum class variant_policy_operation : uint8_t
     IS_ARRAY,
     TO_ARRAY,
     IS_VALID,
-    CONVERT
+    CONVERT,
+    COMPARE_EQUAL
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +208,25 @@ struct variant_data_base_policy
             case variant_policy_operation::IS_VALID:
             {
                 return true;
+                break;
+            }
+            case variant_policy_operation::COMPARE_EQUAL:
+            {
+                const type src_type = type::get<T>();
+                auto& rhs = arg.get_value<variant>();
+                const type dest_type = rhs.get_type();
+                if (src_type != dest_type)
+                {
+                    variant var_tmp = rhs;
+                    if (var_tmp.convert(src_type))
+                        return compare_equal(Tp::get_value(src_data), var_tmp.get_value<T>());
+                }
+                else
+                {
+                    return compare_equal(Tp::get_value(src_data), rhs.get_value<T>());
+                }
+
+                return false;
                 break;
             }
         }
@@ -538,6 +559,11 @@ struct RTTR_API variant_data_policy_empty
             {
                 return false;
             }
+            case variant_policy_operation::COMPARE_EQUAL:
+            {
+                auto& other = arg.get_value<variant>();
+                return !other.is_valid();
+            }
         }
         return true;
     }
@@ -619,6 +645,11 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::CONVERT:
             {
                 return false;
+            }
+            case variant_policy_operation::COMPARE_EQUAL:
+            {
+                auto& other = arg.get_value<variant>();
+                return other.is_type<void>();
             }
         }
         return true;

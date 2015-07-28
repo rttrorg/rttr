@@ -42,7 +42,7 @@ struct point
 
     point(point&& other) : _x(other._x), _y(other._y) { other._x = 0; other._y = 0; }
 
-    bool operator ==(const point& other) { return (_x == other._x && _y == other._y); }
+    bool operator ==(const point& other) const { return (_x == other._x && _y == other._y); }
     int _x;
     int _y;
 };

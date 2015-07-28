@@ -39,7 +39,6 @@
 
 namespace rttr
 {
-
 class type;
 
 namespace detail
@@ -581,7 +580,31 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+    // checks whether the given type T has a less than operator
+    template<typename T, typename = decltype(std::declval<T>() < std::declval<T>() )> 
+    std::true_type  supports_less_than_test(const T&);
+    std::false_type supports_less_than_test(...);
 
+    template<typename T>
+    struct has_less_than_operator : std::integral_constant<bool, std::is_same<std::true_type, 
+                                                                             decltype(supports_less_than_test(std::declval<T>()))>::value> {};
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // checks whether the given type T has the equal operator
+    template<typename T, typename = decltype(std::declval<T>() == std::declval<T>() )> 
+    std::true_type  supports_equal_test(const T&);
+    std::false_type supports_equal_test(...);
+
+
+    template<typename T>
+    struct has_equal_operator : std::integral_constant<bool, std::is_same<std::true_type, 
+                                                                          decltype(supports_equal_test(std::declval<T>()))>::value> {};
+ 
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
 } // end namespace detail
 } // end namespace rttr
 
