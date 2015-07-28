@@ -623,8 +623,8 @@ class RTTR_API variant
         friend detail::argument;
         friend detail::instance;
 
-        detail::variant_data            m_variant_data;
-        detail::variant_policy_func     m_variant_policy;
+        detail::variant_data            m_data;
+        detail::variant_policy_func     m_policy;
 };
 
 #ifndef DOXYGEN

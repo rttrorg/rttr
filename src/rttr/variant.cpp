@@ -42,18 +42,18 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant::variant(const variant& other)
-:   m_variant_policy(other.m_variant_policy)
+:   m_policy(other.m_policy)
 {
-    m_variant_policy(detail::variant_policy_operation::CLONE, other.m_variant_data, m_variant_data);
+    m_policy(detail::variant_policy_operation::CLONE, other.m_data, m_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant::variant(variant&& other)
-:   m_variant_policy(other.m_variant_policy)
+:   m_policy(other.m_policy)
 {
-    other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, m_variant_data);
-    other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
+    other.m_policy(detail::variant_policy_operation::SWAP, other.m_data, m_data);
+    other.m_policy = &detail::variant_data_policy_empty::invoke;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -69,24 +69,24 @@ void variant::swap(variant& other)
     if (is_this_valid && is_other_valid)
     {
         detail::variant_data tmp_data;
-        detail::variant_policy_func tmp_policy_func = other.m_variant_policy;
-        other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, tmp_data);
+        detail::variant_policy_func tmp_policy_func = other.m_policy;
+        other.m_policy(detail::variant_policy_operation::SWAP, other.m_data, tmp_data);
         
-        m_variant_policy(detail::variant_policy_operation::SWAP, m_variant_data, other.m_variant_data);
-        other.m_variant_policy = m_variant_policy;
+        m_policy(detail::variant_policy_operation::SWAP, m_data, other.m_data);
+        other.m_policy = m_policy;
 
-        tmp_policy_func(detail::variant_policy_operation::SWAP, tmp_data, m_variant_data);
-        m_variant_policy = tmp_policy_func;
+        tmp_policy_func(detail::variant_policy_operation::SWAP, tmp_data, m_data);
+        m_policy = tmp_policy_func;
     }
     else
     {
-        detail::variant_data& full_data = is_this_valid ? m_variant_data : other.m_variant_data;
-        detail::variant_data& empty_data = is_this_valid ? other.m_variant_data : m_variant_data;
-        detail::variant_policy_func full_policy_func = is_this_valid ? m_variant_policy : other.m_variant_policy;
+        detail::variant_data& full_data = is_this_valid ? m_data : other.m_data;
+        detail::variant_data& empty_data = is_this_valid ? other.m_data : m_data;
+        detail::variant_policy_func full_policy_func = is_this_valid ? m_policy : other.m_policy;
 
         full_policy_func(detail::variant_policy_operation::SWAP, full_data, empty_data);
 
-        std::swap(m_variant_policy, other.m_variant_policy);
+        std::swap(m_policy, other.m_policy);
     }
 }
 
@@ -94,9 +94,9 @@ void variant::swap(variant& other)
 
 variant& variant::operator=(const variant& other)
 {
-    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
-    other.m_variant_policy(detail::variant_policy_operation::CLONE, other.m_variant_data, m_variant_data);
-    m_variant_policy = other.m_variant_policy;
+    m_policy(detail::variant_policy_operation::DESTROY, m_data, detail::argument_wrapper());
+    other.m_policy(detail::variant_policy_operation::CLONE, other.m_data, m_data);
+    m_policy = other.m_policy;
 
     return *this;
 }
@@ -105,10 +105,10 @@ variant& variant::operator=(const variant& other)
 
 variant& variant::operator=(variant&& other)
 {
-    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
-    other.m_variant_policy(detail::variant_policy_operation::SWAP, other.m_variant_data, m_variant_data);
-    m_variant_policy = other.m_variant_policy;
-    other.m_variant_policy = &detail::variant_data_policy_empty::invoke;
+    m_policy(detail::variant_policy_operation::DESTROY, m_data, detail::argument_wrapper());
+    other.m_policy(detail::variant_policy_operation::SWAP, other.m_data, m_data);
+    m_policy = other.m_policy;
+    other.m_policy = &detail::variant_data_policy_empty::invoke;
 
     return *this;
 }
@@ -117,7 +117,7 @@ variant& variant::operator=(variant&& other)
 
 bool variant::compare_equal(const variant& other) const
 {
-    return m_variant_policy(detail::variant_policy_operation::COMPARE_EQUAL, m_variant_data, other);
+    return m_policy(detail::variant_policy_operation::COMPARE_EQUAL, m_data, other);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -166,29 +166,29 @@ bool variant::operator>=(const variant& other) const
 
 void variant::clear()
 {
-    m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
-    m_variant_policy = &detail::variant_data_policy_empty::invoke;
+    m_policy(detail::variant_policy_operation::DESTROY, m_data, detail::argument_wrapper());
+    m_policy = &detail::variant_data_policy_empty::invoke;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant::is_valid() const
 {
-    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, detail::argument_wrapper());
+    return m_policy(detail::variant_policy_operation::IS_VALID, m_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant::operator bool() const
 {
-    return m_variant_policy(detail::variant_policy_operation::IS_VALID, m_variant_data, detail::argument_wrapper());
+    return m_policy(detail::variant_policy_operation::IS_VALID, m_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant::is_array() const
 {
-    return m_variant_policy(detail::variant_policy_operation::IS_ARRAY, m_variant_data, detail::argument_wrapper());
+    return m_policy(detail::variant_policy_operation::IS_ARRAY, m_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ bool variant::is_array() const
 type variant::get_type() const
 {
     type src_type(type::m_invalid_id);
-    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, src_type);
+    m_policy(detail::variant_policy_operation::GET_TYPE, m_data, src_type);
     return src_type;
 }
 
@@ -205,7 +205,7 @@ type variant::get_type() const
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;
-    m_variant_policy(detail::variant_policy_operation::TO_ARRAY, m_variant_data, result.m_data);
+    m_policy(detail::variant_policy_operation::TO_ARRAY, m_data, result.m_data);
     return result;
 }
 
@@ -279,7 +279,7 @@ double variant::to_double(bool* ok)
 template<typename T>
 bool variant::convert_to_basic_type(T& to) const
 {
-    return m_variant_policy(detail::variant_policy_operation::CONVERT, m_variant_data, detail::argument(to));
+    return m_policy(detail::variant_policy_operation::CONVERT, m_data, detail::argument(to));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

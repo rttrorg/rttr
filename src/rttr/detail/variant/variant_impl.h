@@ -42,7 +42,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::variant()
-:   m_variant_policy(&detail::variant_data_policy_empty::invoke)
+:   m_policy(&detail::variant_data_policy_empty::invoke)
 {
 }
 
@@ -50,19 +50,19 @@ RTTR_INLINE variant::variant()
 
 template<typename T, typename Tp>
 RTTR_INLINE variant::variant(T&& val)
-:   m_variant_policy(&detail::variant_policy<Tp>::invoke)
+:   m_policy(&detail::variant_policy<Tp>::invoke)
 {
     static_assert(std::is_copy_constructible<Tp>::value || std::is_array<Tp>::value, 
                   "The given value is not copy constructible, try to add a copy constructor to the class.");
 
-    detail::variant_policy<Tp>::create(std::forward<T>(val), m_variant_data);
+    detail::variant_policy<Tp>::create(std::forward<T>(val), m_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant::~variant()
 {
-   m_variant_policy(detail::variant_policy_operation::DESTROY, m_variant_data, detail::argument_wrapper());
+   m_policy(detail::variant_policy_operation::DESTROY, m_data, detail::argument_wrapper());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ template<typename T>
 RTTR_INLINE T& variant::get_value()
 {
     void* value;
-    m_variant_policy(detail::variant_policy_operation::GET_VALUE, m_variant_data, value);
+    m_policy(detail::variant_policy_operation::GET_VALUE, m_data, value);
     typedef typename detail::remove_cv<T>::type nonRef;
     return *reinterpret_cast<nonRef*>(value);
 }
@@ -90,7 +90,7 @@ RTTR_INLINE T& variant::get_value()
 RTTR_INLINE void* variant::get_ptr() const
 {
     void* value;
-    m_variant_policy(detail::variant_policy_operation::GET_PTR, m_variant_data, value);
+    m_policy(detail::variant_policy_operation::GET_PTR, m_data, value);
     return value;
 }
 
@@ -99,7 +99,7 @@ RTTR_INLINE void* variant::get_ptr() const
 RTTR_INLINE type variant::get_raw_type() const
 {
     type result(type::m_invalid_id);
-    m_variant_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_variant_data, result);
+    m_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_data, result);
     return result;
 }
 
@@ -108,7 +108,7 @@ RTTR_INLINE type variant::get_raw_type() const
 RTTR_INLINE void* variant::get_raw_ptr() const
 {
     void* result;
-    m_variant_policy(detail::variant_policy_operation::GET_RAW_PTR, m_variant_data, result);
+    m_policy(detail::variant_policy_operation::GET_RAW_PTR, m_data, result);
     return result;
 }
 
@@ -117,7 +117,7 @@ RTTR_INLINE void* variant::get_raw_ptr() const
 RTTR_INLINE detail::data_address_container variant::get_data_address_container() const
 {
     detail::data_address_container result{type(type::m_invalid_id), type(type::m_invalid_id), nullptr, nullptr};
-    m_variant_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_variant_data, result);
+    m_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_data, result);
     return result;
 }
 
@@ -127,7 +127,7 @@ template<typename T>
 RTTR_INLINE bool variant::is_type() const
 {
     type src_type(type::m_invalid_id);
-    m_variant_policy(detail::variant_policy_operation::GET_TYPE, m_variant_data, src_type);
+    m_policy(detail::variant_policy_operation::GET_TYPE, m_data, src_type);
     return (type::get<T>() == src_type);
 }
 
