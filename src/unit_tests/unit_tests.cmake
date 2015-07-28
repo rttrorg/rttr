@@ -41,10 +41,10 @@ set(SOURCE_FILES main.cpp
                  constructor/test_constructor_reflection.cpp
                  enumeration/test_enumeration_reflection.cpp
                  method/test_method_reflection.cpp
-                 variant/variant_array_view_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
                  variant/variant_ctor_test.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_misc_test.cpp
+                 variant_array_view/variant_array_view_test.cpp
                  )
