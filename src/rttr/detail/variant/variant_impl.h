@@ -142,6 +142,41 @@ RTTR_INLINE bool variant::can_convert() const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
+RTTR_INLINE bool variant::try_basic_type_conversion(T& to) const
+{
+    return m_policy(detail::variant_policy_operation::CONVERT, m_data, detail::argument(to));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+typename std::enable_if<detail::pointer_count<T>::value == 1, bool>::type
+RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, const type& target_type) const
+{
+    if (!source_type.is_pointer())
+        return false;
+
+    if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
+    {
+        to = reinterpret_cast<T>(ptr);
+        return true;
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+typename std::enable_if<detail::pointer_count<T>::value != 1, bool>::type 
+RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, const type& target_type) const
+{
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
 RTTR_INLINE bool variant::convert(T& value) const
 {
     bool ok = false;
@@ -152,20 +187,20 @@ RTTR_INLINE bool variant::convert(T& value) const
     {
         value = const_cast<variant&>(*this).get_value<T>();
     }
+    else if(try_basic_type_conversion(value))
+    {
+        ok = true;
+    }
     else if (const auto& converter = source_type.get_type_converter(target_type))
     {
         detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
         value = target_converter->convert(get_ptr(), ok);
     }
-    else if (detail::pointer_count<T>::value == 1 && source_type.is_pointer())
+    else
     {
-        if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
-        {
-            ok = true;
-            value = reinterpret_cast<T>(ptr);
-        }
+        ok = try_pointer_conversion(value, source_type, target_type);
     }
-
+    
     return ok;
 }
 

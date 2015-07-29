@@ -118,8 +118,8 @@ namespace detail
  * ----------
  * The \ref variant class offers three possibilities to convert to a new type.
  * - \ref convert(const type& target_type) "convert(const type& target_type)" - convert the variant internally to a new type
- * - \ref variant::convert_to<T>(bool* ok) "convert_to\<T\>(bool *ok)" - convert the contained value to an internally default created value of type \p T
- * - \ref variant::convert_to<T>(T& value) "convert_to\<T\>(T& value)" - convert the contained value to a given \p value of type \p T
+ * - \ref variant::convert(bool* ok) "convert\<T\>(bool *ok)" - convert the contained value to an internally default created value of type \p T
+ * - \ref variant::convert(T& value) "convert\<T\>(T& value)" - convert the contained value to a given \p value of type \p T
  *
  * See following example code:
  * \code{.cpp}
@@ -320,7 +320,7 @@ class RTTR_API variant
          *
          * \see is_valid()
          *
-         * \return True if this \ref variant is valid, otherwise false.
+         * \return `True` if this \ref variant is valid, otherwise `false`.
          */
         explicit operator bool() const;
 
@@ -460,74 +460,6 @@ class RTTR_API variant
         bool convert(T& value) const;
 
         /*!
-         * \brief Returns the containing variant as `int` value when the type is an integer,
-         *        or when a conversion function for the underlying type to `int` was registered;
-         *        otherwise returns `0`.
-         *
-         *        If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int`; otherwise \p *ok is set to `false`.
-         *
-         * \see can_convert(), is_type()
-         *
-         * \return An integer value.
-         */
-        int to_int(bool *ok = nullptr) const;
-
-        /*!
-         * \brief Returns the containing variant as \p std::string when the type is an \p std::string,
-         *        or when a conversion function for the underlying type to \p std::string was registered;
-         *        otherwise returns an empty default constructed \p std::string object is returned.
-         *
-         *        If \a ok is non-null: \a *ok is set to true if the value could be converted to an \p std::string; otherwise \a *ok is set to false.
-         *
-         * \see can_convert(), is_type()
-         *
-         * \return An std::string value.
-         */
-        std::string to_string(bool *ok = nullptr) const;
-
-        /*!
-         * \brief Returns the variant as a \p bool if the variant has is_type() bool.
-         *
-         *        Returns true if the variant is of type \p int, \p bool, \p float, \p double and the value is non-zero.
-         *        or if the variant has type `std::string` or `char[]` and its lower-case content is not one of the following:
-         *        empty, \p "0" or \p "false"; otherwise returns false.
-         *
-         *        When the type is a custom type and a conversion function to \p bool was registered,
-         *        then this call will try to convert the value to \p bool.
-         *
-         * \see can_convert(), is_type()
-         *
-         * \return A bool value.
-         */
-        bool to_bool() const;
-
-        /*!
-         * \brief Returns the containing variant as \p float value when the type is a \p float,
-         *        or when a conversion function for the underlying type to \p float was registered;
-         *        otherwise returns 0.
-         *
-         *        If \a ok is non-null: \a *ok is set to true if the value could be converted to an \p float; otherwise \a *ok is set to false.
-         *
-         * \see can_convert(), is_type()
-         *
-         * \return An float value.
-         */
-        float to_float(bool* ok = nullptr);
-
-        /*!
-         * \brief Returns the containing variant as \p double value when the type is a \p double,
-         *        or when a conversion function for the underlying type to \p double was registered;
-         *        otherwise returns 0.
-         *
-         *        If \a ok is non-null: \a *ok is set to true if the value could be converted to an \p double; otherwise \a *ok is set to false.
-         *
-         * \see can_convert(), is_type()
-         *
-         * \return An double value.
-         */
-        double to_double(bool* ok = nullptr);
-
-        /*!
          * \brief Creates a \ref variant_array_view from the containing value,
          *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type" 
          *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array".
@@ -551,6 +483,250 @@ class RTTR_API variant
          * \return A variant_array_view object.
          */
         variant_array_view create_array_view() const;
+
+        /*!
+         * \brief Returns the variant as a `bool` if this variant is of \ref is_type() "type" `bool`.
+         *
+         * Returns `true` if the variant contains an \ref type::is_arithmetic() "arithmetic type" which value is non-zero
+         * or if the variant contains a `std::string` and its lower-case content is not one of the following:
+         * `""` (empty), `"0"` or `"false"`; otherwise returns `false`.
+         *
+         * Also any user-defined \ref type::register_converter_func() "conversion function" from the 
+         * \ref is_type() "source type" to `bool` will be executed when necessary.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `bool` value.
+         */
+        bool to_bool() const;
+
+        /*!
+         * \brief Returns the containing variant as an `int` when the \ref is_type() "type" is an `integer`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return An `int` value.
+         */
+        int to_int(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as a `float` when the \ref is_type() "type" is a `float`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `float`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `float` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `float`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `float`, the conversion will fail.
+         *         Precision loss, such as in conversion from `double` to `float` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `float` value.
+         */
+        float to_float(bool* ok = nullptr);
+
+        /*!
+         * \brief Returns the containing variant as a `double` when the \ref is_type() "type" is a `double`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `double`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `double` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `double`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `double`, the conversion will fail.
+         *         Precision loss, such as in conversion from `double` to `float` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `double` value.
+         */
+        double to_double(bool* ok = nullptr);
+
+        /*!
+         * \brief Returns the containing variant as a `std::string` when the \ref is_type() "type" is a `std::string`.
+         *
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" then a conversion to `std::string` will be done.
+         * Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `std::string` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `std::string`; otherwise \p *ok is set to `false`.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `std::string` value.
+         */
+        std::string to_string(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `int8` when the \ref is_type() "type" is an `int8`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int8`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int8` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int8`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int8`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int8` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `int8` value.
+         */
+        int8 to_int8(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `int16` when the \ref is_type() "type" is an `int16`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int16`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int16` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int16`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int16`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int16` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `int16` value.
+         */
+        int16 to_int16(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `int32` when the \ref is_type() "type" is an `int32`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int32`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int32` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int32`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int32`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int32` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `int32` value.
+         */
+        int32 to_int32(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `int64` when the \ref is_type() "type" is an `int64`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int64`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int64` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int64`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int64`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int64` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `int64` value.
+         */
+        int64 to_int64(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `uint8` when the \ref is_type() "type" is an `uint8`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint8`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint8` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint8`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint8`.
+         *         Precision loss, such as in conversion from floating-point to `uint8` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `uint8` value.
+         */
+        uint8 to_uint8(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `uint16` when the \ref is_type() "type" is an `uint16`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint16`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint16` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint16`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint16`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint16`.
+         *         Precision loss, such as in conversion from floating-point to `uint16` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `uint16` value.
+         */
+        uint16 to_uint16(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `uint32` when the \ref is_type() "type" is an `uint32`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint32`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint32` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint32`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint32`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint32`.
+         *         Precision loss, such as in conversion from floating-point to `uint32` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `uint32` value.
+         */
+        uint32 to_uint32(bool *ok = nullptr) const;
+
+        /*!
+         * \brief Returns the containing variant as an `uint64` when the \ref is_type() "type" is an `uint64`.
+         *       
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint64`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint64` 
+         * will be executed when necessary.
+         *
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8`; otherwise \p *ok is set to `false`.
+         *
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint64`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint64`.
+         *         Precision loss, such as in conversion from floating-point to `uint64` on platforms where they differ in size is allowed.
+         *         A conversion from `std::string` which contains non-numeric characters will fail.
+         *
+         * \see can_convert(), is_type()
+         *
+         * \return A `uint64` value.
+         */
+        uint64 to_uint64(bool *ok = nullptr) const;
 
     private:
         /////////////////////////////////////////////////////////////////////////////////
@@ -594,23 +770,30 @@ class RTTR_API variant
         RTTR_INLINE detail::data_address_container get_data_address_container() const;
 
         /*!
-         * \brief Converts the containing data to the given target type \p T.
-         *
-         * \remark The containing data will not be removed,
-         *         instead a copy with the new target type will be returned.
-         *
-         * \return The converted type T. When the conversion failed, the argument \p ok will be set to false.
-         */
-        template<typename T>
-        T convert_to_basic_type(bool* ok) const;
-
-        /*!
          * \brief Tries to convert the internal type to the given type \p to.
          *
-         * \return True, when the conversion was successful, otherwise false.
+         * \return `True`, when the conversion was successful, otherwise `false`.
          */
         template<typename T>
-        bool convert_to_basic_type(T& to) const;
+        bool try_basic_type_conversion(T& to) const;
+
+        /*!
+         * \brief Tries to convert the internal pointer type to the given pointer type \p T.
+         *
+         * \return `True`, when the conversion was successful, otherwise `false`.
+         */
+        template<typename T>
+        typename std::enable_if<detail::pointer_count<T>::value == 1, bool>::type
+        try_pointer_conversion(T& to, const type& source_type, const type& target_type) const;
+
+        /*!
+         * \brief A dummy method which does in fact always return `falsev.
+         *
+         * \return `False`.
+         */
+        template<typename T>
+        typename std::enable_if<detail::pointer_count<T>::value != 1, bool>::type
+        try_pointer_conversion(T& to, const type& source_type, const type& target_type) const;
 
         /*!
          * \brief Compares the containing and the given variant \p other for equality.
@@ -626,14 +809,6 @@ class RTTR_API variant
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;
 };
-
-#ifndef DOXYGEN
-    template<> RTTR_API std::string variant::convert<std::string>(bool* ok) const;
-    template<> RTTR_API int variant::convert<int>(bool* ok) const;
-    template<> RTTR_API bool variant::convert<bool>(bool* ok) const;
-    template<> RTTR_API float variant::convert<float>(bool* ok) const;
-    template<> RTTR_API double variant::convert<double>(bool* ok) const;
-#endif
 
 } // end namespace rttr
 

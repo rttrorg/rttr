@@ -309,6 +309,16 @@ TEST_CASE("Test rttr::type - Check is_arithmetic", "[type]")
     CHECK(type::get<char>().is_arithmetic()              == true);
     CHECK(type::get<bool>().is_arithmetic()              == true);
 
+    CHECK(type::get<int8_t>().is_arithmetic()            == true);
+    CHECK(type::get<int16_t>().is_arithmetic()           == true);
+    CHECK(type::get<int32_t>().is_arithmetic()           == true);
+    CHECK(type::get<int64_t>().is_arithmetic()           == true);
+
+    CHECK(type::get<uint8_t>().is_arithmetic()           == true);
+    CHECK(type::get<uint16_t>().is_arithmetic()          == true);
+    CHECK(type::get<uint32_t>().is_arithmetic()          == true);
+    CHECK(type::get<uint64_t>().is_arithmetic()          == true);
+
     CHECK(type::get<std::string>().is_arithmetic()       == false);
     CHECK(type::get<ClassSingle6A>().is_arithmetic()     == false);
     CHECK(type::get<ClassMultiple2B>().is_arithmetic()   == false);

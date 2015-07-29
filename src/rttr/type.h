@@ -369,7 +369,7 @@ class RTTR_API type
          *
          * \return True if the type is an array, otherwise false.
          *
-         * \see array_mapper<T>
+         * \see \ref array_mapper "array_mapper<T>"
          */
         bool is_array() const;
 

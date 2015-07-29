@@ -241,49 +241,6 @@ bool variant::can_convert(const type& target_type) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant::to_bool() const
-{
-    return convert_to_basic_type<bool>(nullptr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-int variant::to_int(bool *ok) const
-{
-    return convert_to_basic_type<int>(ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::string variant::to_string(bool *ok) const
-{
-    return convert_to_basic_type<std::string>(ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-float variant::to_float(bool* ok)
-{
-    return convert_to_basic_type<float>(ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-double variant::to_double(bool* ok)
-{
-    return convert_to_basic_type<double>(ok);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool variant::convert_to_basic_type(T& to) const
-{
-    return m_policy(detail::variant_policy_operation::CONVERT, m_data, detail::argument(to));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool variant::convert(const type& target_type)
 {
     if (!is_valid())
@@ -307,79 +264,79 @@ bool variant::convert(const type& target_type)
         if (target_type == type::get<bool>())
         {
             bool value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<char>())
         {
             char value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<int8>())
         {
             int8 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<int16>())
         {
             int16 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<int32>())
         {
             int32 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<int64>())
         {
             int64 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<uint8>())
         {
             uint8 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<uint16>())
         {
             uint16 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<uint32>())
         {
             uint32 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<uint64>())
         {
             uint64 value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<float>())
         {
             float value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == type::get<double>())
         {
             double value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = value;
         }
         else if (target_type == string_type)
         {
             std::string value;
-            if (convert_to_basic_type(value))
+            if (try_basic_type_conversion(value))
                 new_var = std::move(value);
         }
         
@@ -416,75 +373,93 @@ bool variant::convert(const type& target_type)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-RTTR_FORCE_INLINE T variant::convert_to_basic_type(bool* ok) const
+bool variant::to_bool() const
 {
-    static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
-                                                           "You can only convert to a type, with a default constructor.");
-    bool tmp_ok = false;
-    T result;
-    const type source_type = get_type();
-    const type target_type = type::get<T>();
-
-    if (target_type == source_type)
-    {
-        result = const_cast<variant&>(*this).get_value<T>();
-    }
-    else if (convert_to_basic_type(result))
-    {
-        tmp_ok = true;
-    }
-    else if (const auto& converter = source_type.get_type_converter(target_type))
-    {
-        detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
-        void* raw_ptr = get_ptr();
-        result = target_converter->convert(raw_ptr, tmp_ok);
-    }
-    
-    if (ok)
-        *ok = tmp_ok;
-
-    return result;
+    return convert<bool>(nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-bool variant::convert<bool>(bool* ok) const
+int variant::to_int(bool *ok) const
 {
-    return convert_to_basic_type<bool>(ok);
+    return convert<int>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-int variant::convert<int>(bool* ok) const
+std::string variant::to_string(bool *ok) const
 {
-    return convert_to_basic_type<int>(ok);
+    return convert<std::string>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-float variant::convert<float>(bool* ok) const
+float variant::to_float(bool* ok)
 {
-    return convert_to_basic_type<float>(ok);
+    return convert<float>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-double variant::convert<double>(bool* ok) const
+double variant::to_double(bool* ok)
 {
-    return convert_to_basic_type<double>(ok);
+    return convert<double>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
-std::string variant::convert<std::string>(bool* ok) const
+int8 variant::to_int8(bool *ok) const
 {
-    return convert_to_basic_type<std::string>(ok);
+    return convert<int8>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+int16 variant::to_int16(bool *ok) const
+{
+    return convert<int16>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+int32 variant::to_int32(bool *ok) const
+{
+    return convert<int32>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+int64 variant::to_int64(bool *ok) const
+{
+    return convert<int64>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint8 variant::to_uint8(bool *ok) const
+{
+    return convert<uint8>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint16 variant::to_uint16(bool *ok) const
+{
+    return convert<uint16>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint32 variant::to_uint32(bool *ok) const
+{
+    return convert<uint32>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint64 variant::to_uint64(bool *ok) const
+{
+    return convert<uint64>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
