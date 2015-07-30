@@ -34,6 +34,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <algorithm>
 
 namespace rttr
 {
@@ -171,7 +172,7 @@ static RTTR_INLINE bool check_all_true(bool arg1, BoolArgs... args) { return arg
 // works with every dimension
 
 template<typename ElementType>
-struct copy_array_helper_impl
+struct copy_array_impl
 {
     void operator()(const ElementType &in, ElementType &out)
     {
@@ -180,12 +181,12 @@ struct copy_array_helper_impl
 };
 
 template<typename ElementType, std::size_t Count>
-struct copy_array_helper_impl<ElementType[Count]>
+struct copy_array_impl<ElementType[Count]>
 {
     void operator()(const ElementType (&in)[Count], ElementType (&out)[Count])
     {
         for(std::size_t i = 0; i < Count; ++i)
-            copy_array_helper_impl<ElementType>()(in[i], out[i]);
+            copy_array_impl<ElementType>()(in[i], out[i]);
     }
 };
 
@@ -193,7 +194,7 @@ template<typename ElementType, std::size_t Count>
 auto copy_array(const ElementType (&in)[Count], ElementType (&out)[Count])
     -> ElementType (&)[Count]
 {
-    copy_array_helper_impl<ElementType[Count]>()(in, out);
+    copy_array_impl<ElementType[Count]>()(in, out);
     return out;
 }
 
@@ -203,22 +204,22 @@ auto copy_array(const ElementType (&in)[Count], ElementType (&out)[Count])
 // the comparison will go down till element wise comparison
 
 template<typename ElementType>
-struct cmp_array_helper_impl
+struct compare_array_equal_impl
 {
-    bool operator()(const ElementType &in, const ElementType &out)
+    bool operator()(const ElementType &lhs, const ElementType &rhs)
     {
-        return (out == in);
+        return (lhs == rhs);
     }
 };
 
 template<typename ElementType, std::size_t Count>
-struct cmp_array_helper_impl<ElementType[Count]> 
+struct compare_array_equal_impl<ElementType[Count]> 
 {
-    bool operator()(const ElementType (&in)[Count], const ElementType (&out)[Count])
+    bool operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
     {
         for(std::size_t i = 0; i < Count; ++i)
         {
-            if (!cmp_array_helper_impl<ElementType>()(in[i], out[i]))
+            if (!compare_array_equal_impl<ElementType>()(lhs[i], rhs[i]))
                 return false;
         }
 
@@ -227,11 +228,49 @@ struct cmp_array_helper_impl<ElementType[Count]>
 };
 
 template<typename ElementType, std::size_t Count>
-bool compare_arrays(const ElementType (&in)[Count], const ElementType (&out)[Count])
+bool compare_array_equal(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
 {
-    return cmp_array_helper_impl<ElementType[Count]>()(in, out);
+    return compare_array_equal_impl<ElementType[Count]>()(lhs, rhs);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// compare whether array lhs is less than rhs
+// the comparison will go down till element wise comparison
+
+template<typename ElementType>
+struct compare_array_less_impl
+{
+    int operator()(const ElementType &lhs, const ElementType &rhs)
+    {
+        return (lhs < rhs ? - 1 : ((rhs < lhs) ? 1 : 0));
+    }
+};
+ 
+template<typename ElementType, std::size_t Count>
+struct compare_array_less_impl<ElementType[Count]> 
+{
+    int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+    {
+    	int flag = 0;
+        for(std::size_t i = 0; i < Count; ++i)
+        {
+            if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)
+                return flag;
+        }
+ 
+        return 0;
+    }
+};
+ 
+template<typename ElementType, std::size_t Count>
+bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+{
+    if (compare_array_less_impl<ElementType[Count]>()(lhs, rhs) == -1)
+        return true;
+
+    return false;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

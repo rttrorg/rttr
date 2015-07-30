@@ -44,28 +44,28 @@ namespace detail
  *         otherwise this function will return false.
  */
 template<typename T>
-typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
 compare_equal(const T& lhs, const T& rhs)
 {
     return lhs == rhs;
 }
 
 template<typename T>
-typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
 compare_equal(const T& lhs, const T& rhs)
 {
     return !memcmp(&lhs, &rhs, sizeof(T));
 }
 
 template<typename T>
-typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
 compare_equal(const T& lhs, const T& rhs)
 {
-    return compare_arrays(lhs, rhs);
+    return compare_array_equal(lhs, rhs);
 }
 
 template<typename T>
-typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
 compare_equal(const T& lhs, const T& rhs)
 {
     return !memcmp(&lhs, &rhs, sizeof(T));

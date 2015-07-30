@@ -76,13 +76,34 @@ RTTR_INLINE variant& variant::operator=(T&& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-RTTR_INLINE T& variant::get_value()
+RTTR_INLINE bool variant::operator==(const variant& other) const
 {
-    void* value;
+    return compare_equal(other);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool variant::operator!=(const variant& other) const
+{
+    return !compare_equal(other);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool variant::operator<(const variant& other) const
+{
+    return compare_less(other);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE const T& variant::get_value() const
+{
+    const void* value;
     m_policy(detail::variant_policy_operation::GET_VALUE, m_data, value);
     typedef typename detail::remove_cv<T>::type nonRef;
-    return *reinterpret_cast<nonRef*>(value);
+    return *reinterpret_cast<const nonRef*>(value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

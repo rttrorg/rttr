@@ -359,7 +359,7 @@ function(activate_precompiled_headers _PRECOMPILED_HEADER _SOURCE_FILES)
   if(MSVC)
     # First specify the name of the PCH file
     # it seems to be that nmake build cant handle the $(IntDir) variable
-    if(${CMAKE_GENERATOR} MATCHES "NMake")
+    if(NOT MSVC_IDE)
       set(pch_bin ${CMAKE_CURRENT_BINARY_DIR}/${pch_basename}.pch)
     else()
       set(pch_bin "$(IntDir)/${pch_basename}.pch")

@@ -60,6 +60,9 @@ variant::variant(variant&& other)
 
 void variant::swap(variant& other)
 {
+    if (this == &other)
+        return;
+
     const bool is_this_valid = is_valid();
     const bool is_other_valid = other.is_valid();
 
@@ -94,6 +97,9 @@ void variant::swap(variant& other)
 
 variant& variant::operator=(const variant& other)
 {
+    if (this == &other)
+        return *this;
+
     m_policy(detail::variant_policy_operation::DESTROY, m_data, detail::argument_wrapper());
     other.m_policy(detail::variant_policy_operation::CLONE, other.m_data, m_data);
     m_policy = other.m_policy;
@@ -122,44 +128,9 @@ bool variant::compare_equal(const variant& other) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant::operator==(const variant& other) const
+bool variant::compare_less(const variant& other) const
 {
-    return compare_equal(other);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant::operator!=(const variant& other) const
-{
-    return !compare_equal(other);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant::operator<(const variant& other) const
-{
-    return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant::operator>(const variant& other) const
-{
-    return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant::operator<=(const variant& other) const
-{
-    return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool variant::operator>=(const variant& other) const
-{
-    return true;
+    return m_policy(detail::variant_policy_operation::COMPARE_LESS, m_data,  std::tie(*this, other));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -241,20 +212,20 @@ bool variant::can_convert(const type& target_type) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant::convert(const type& target_type)
+bool variant::convert(const type& target_type, variant& target_var) const
 {
     if (!is_valid())
         return false;
 
     bool ok = false;
 
-    variant new_var;
     const type source_type = get_type();
     const bool source_is_arithmetic = source_type.is_arithmetic();
     const bool target_is_arithmetic = target_type.is_arithmetic();
     const type string_type = type::get<std::string>();
     if (target_type == source_type)
     {
+        target_var = *this;
         return true; // the current variant is already the target type, we don't need to do anything
     }
     else if ((source_is_arithmetic && target_is_arithmetic) ||
@@ -264,91 +235,88 @@ bool variant::convert(const type& target_type)
         if (target_type == type::get<bool>())
         {
             bool value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<char>())
         {
             char value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<int8>())
         {
             int8 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<int16>())
         {
             int16 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<int32>())
         {
             int32 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<int64>())
         {
             int64 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<uint8>())
         {
             uint8 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<uint16>())
         {
             uint16 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<uint32>())
         {
             uint32 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<uint64>())
         {
             uint64 value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<float>())
         {
             float value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == type::get<double>())
         {
             double value;
-            if (try_basic_type_conversion(value))
-                new_var = value;
+            if (ok = try_basic_type_conversion(value))
+                target_var = value;
         }
         else if (target_type == string_type)
         {
             std::string value;
-            if (try_basic_type_conversion(value))
-                new_var = std::move(value);
+            if (ok = try_basic_type_conversion(value))
+                target_var = std::move(value);
         }
-        
-        if (new_var.is_valid())
-            ok = true;
     }
     else
     {
         if (const auto& converter = source_type.get_type_converter(target_type))
         {
             void* raw_ptr = get_ptr();
-            new_var = converter->to_variant(raw_ptr, ok);
+            target_var = converter->to_variant(raw_ptr, ok);
         }
         else if (source_type.is_pointer() &&
                  (source_type.get_pointer_dimension() == 1 && target_type.get_pointer_dimension() == 1))
@@ -358,17 +326,21 @@ bool variant::convert(const type& target_type)
             {
                 // although we forward a void* to create a variant,
                 // it will create a variant for the specific class type
-                new_var = target_type.create_variant(casted_ptr);
-                if (new_var.is_valid())
+                target_var = target_type.create_variant(casted_ptr);
+                if (target_var.is_valid())
                     ok = true;
             }
         }
     }
 
-    if (ok)
-        swap(new_var);
-
     return ok;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool variant::convert(const type& target_type)
+{
+    return convert(target_type, *this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -394,14 +366,14 @@ std::string variant::to_string(bool *ok) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-float variant::to_float(bool* ok)
+float variant::to_float(bool* ok) const
 {
     return convert<float>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-double variant::to_double(bool* ok)
+double variant::to_double(bool* ok) const
 {
     return convert<double>(ok);
 }

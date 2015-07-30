@@ -26,11 +26,10 @@
 *************************************************************************************/
 
 #include <catch/catch.hpp>
-#include <iostream>
+
 #include <rttr/type>
 
 using namespace rttr;
-using namespace std;
 
 struct type_with_no_equal_operator
 {
@@ -55,7 +54,7 @@ TEST_CASE("variant::operator==() - empty", "[variant]")
         CHECK((a != b) == false);
     }
 
-    SECTION("full type lhs")
+    SECTION("valid type - lhs")
     {
         variant a = 23;
         variant b;
@@ -64,7 +63,7 @@ TEST_CASE("variant::operator==() - empty", "[variant]")
         CHECK((a != b) == true);
     }
 
-    SECTION("full type rhs")
+    SECTION("valid type - rhs")
     {
         variant a;
         variant b = 23;
@@ -78,7 +77,7 @@ TEST_CASE("variant::operator==() - empty", "[variant]")
 
 TEST_CASE("variant::operator==() - basic", "[variant]")
 {
-    SECTION("integer - equal")
+    SECTION("int - equal")
     {
         variant a = 23;
         variant b = 23;
@@ -87,7 +86,7 @@ TEST_CASE("variant::operator==() - basic", "[variant]")
         CHECK((a != b) == false);
     }
 
-    SECTION("integer - NOT equal")
+    SECTION("int - NOT equal")
     {
         variant a = 23;
         variant b = 12;
@@ -96,13 +95,31 @@ TEST_CASE("variant::operator==() - basic", "[variant]")
         CHECK((a != b) == true);
     }
 
-    SECTION("integer - uint8_t")
+    SECTION("int - uint8_t")
     {
         variant a = 12;
         variant b = static_cast<uint8_t>(12);
 
         CHECK((a == b) == true);
         CHECK((a != b) == false);
+    }
+
+    SECTION("double - float")
+    {
+        variant a = 12.5f;
+        variant b = 12.5;
+
+        CHECK((a == b) == true);
+        CHECK((a != b) == false);
+    }
+
+    SECTION("float - double")
+    {
+        variant a = 12.1234;
+        variant b = 12.1234f;
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
     }
 }
 

@@ -145,7 +145,7 @@ TEST_CASE("move ctor", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool is_stored_internally(void* obj, const rttr::variant& var)
+bool is_stored_internally(const void* obj, const rttr::variant& var)
 {
   std::uintptr_t a_addr = reinterpret_cast<std::uintptr_t>(&var);
   std::uintptr_t a_end = a_addr + sizeof(var);
@@ -173,37 +173,37 @@ TEST_CASE("check storage type", "[variant]")
 {
     {
         variant var = big_custom_type{};
-        big_custom_type& obj_big = var.get_value<big_custom_type>();
+        const big_custom_type& obj_big = var.get_value<big_custom_type>();
         CHECK( !is_stored_internally(&obj_big, var) );
     }
 
     {
         variant var = small_custom_type{12.0f};
-        small_custom_type& obj_small = var.get_value<small_custom_type>();
+        const small_custom_type& obj_small = var.get_value<small_custom_type>();
         CHECK( is_stored_internally(&obj_small, var) );
     }
 
     {
         variant var = true;
-        bool& ref_b = var.get_value<bool>();
+        const bool& ref_b = var.get_value<bool>();
         CHECK( is_stored_internally(&ref_b, var) );
     }
 
     {
         variant var = 'D';
-        char& ref_c = var.get_value<char>();
+        const char& ref_c = var.get_value<char>();
         CHECK( is_stored_internally(&ref_c, var) );
     }
 
     {
         variant var = 23;
-        int& ref_i = var.get_value<int>();
+        const int& ref_i = var.get_value<int>();
         CHECK( is_stored_internally(&ref_i, var) );
     }
 
     {
         variant var = 42.0;
-        double& ref_d = var.get_value<double>();
+        const double& ref_d = var.get_value<double>();
         CHECK( is_stored_internally(&ref_d, var) );
     }
 

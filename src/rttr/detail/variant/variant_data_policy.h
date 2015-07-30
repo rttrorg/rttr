@@ -34,6 +34,7 @@
 #include "rttr/detail/variant_array_view/variant_array_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
 #include "rttr/detail/misc/compare_equal.h"
+#include "rttr/detail/misc/compare_less.h"
 
 #include <cstdint>
 
@@ -118,12 +119,47 @@ enum class variant_policy_operation : uint8_t
     TO_ARRAY,
     IS_VALID,
     CONVERT,
-    COMPARE_EQUAL
+    COMPARE_EQUAL,
+    COMPARE_LESS
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, argument_wrapper);
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// some ugly workaround for MSVC < v. 1800
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC                                                
+#   if RTTR_COMP_VER <= 1800
+    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs) \
+        compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
+#   else                                                                               
+        #error "Check new MSVC Compiler!"                                              
+#   endif                                                                              
+#else                                                                             
+    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
+        compare_equal(Tp::get_value(src_data), rhs.get_value<T>());                        
+#endif
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC                                                
+#   if RTTR_COMP_VER <= 1800
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs) \
+        compare_less(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
+#   else                                                                               
+        #error "Check new MSVC Compiler!"                                              
+#   endif                                                                              
+#else                                                                             
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs)                                            \
+        compare_less(Tp::get_value(src_data), rhs.get_value<T>());                        
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static bool is_floating_point(const type& type)
+{
+    return (type == type::get<float>() || type == type::get<double>());
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +170,7 @@ typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data
  * The template parameter \p Tp represents the derived class, which will be invoked. 
  * Hopefully, the function call to derived class will be inlined.
  */
-template<typename T, typename Tp, typename Converter = empty_type_converter<T>>
+template<typename T, typename Tp, typename Converter>
 struct variant_data_base_policy
 {
     static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
@@ -143,7 +179,7 @@ struct variant_data_base_policy
         {
             case variant_policy_operation::DESTROY: 
             {
-                Tp::destroy(Tp::get_value(src_data));
+                Tp::destroy(const_cast<T&>(Tp::get_value(src_data)));
                 break;
             }
             case variant_policy_operation::CLONE:
@@ -153,12 +189,12 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::SWAP:
             {
-                Tp::swap(Tp::get_value(src_data), arg.get_value<variant_data>());
+                Tp::swap(const_cast<T&>(Tp::get_value(src_data)), arg.get_value<variant_data>());
                 break;
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg.get_value<void*>() = &Tp::get_value(src_data);
+                arg.get_value<const void*>() = &Tp::get_value(src_data);
                 break;
             }
             case variant_policy_operation::GET_TYPE:
@@ -212,18 +248,56 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const type src_type = type::get<T>();
-                auto& rhs = arg.get_value<variant>();
-                const type dest_type = rhs.get_type();
-                if (src_type != dest_type)
+                const variant& rhs = arg.get_value<variant>();
+                const type rhs_type = rhs.get_type();
+                const type lhs_type = type::get<T>();
+                if (lhs_type == rhs_type)
                 {
-                    variant var_tmp = rhs;
-                    if (var_tmp.convert(src_type))
-                        return compare_equal(Tp::get_value(src_data), var_tmp.get_value<T>());
+                    return COMPARE_EQUAL_PRE_PROC(src_data, rhs);
                 }
                 else
                 {
-                    return compare_equal(Tp::get_value(src_data), rhs.get_value<T>());
+                    variant var_tmp;
+                    if (rhs.convert(lhs_type, var_tmp))
+                        return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
+                }
+
+                return false;
+                break;
+            }
+            case variant_policy_operation::COMPARE_LESS:
+            {
+                const auto& param = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs = std::get<0>(param);
+                const variant& rhs = std::get<1>(param);
+                const type rhs_type = rhs.get_type();
+                const type lhs_type = type::get<T>();
+                if (lhs_type == rhs_type)
+                {
+                    return COMPARE_LESS_PRE_PROC(src_data, rhs);
+                }
+                else if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
+                {
+                    if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
+                    {
+                        return (lhs.to_double() < rhs.to_double());
+                    }
+                    else
+                    {
+                        return (lhs.to_int64() < rhs.to_int64());
+                    }
+                }
+                else
+                {
+                    variant rhs_tmp;
+                    if (rhs.convert(lhs_type, rhs_tmp))
+                        return COMPARE_LESS_PRE_PROC(src_data, rhs_tmp);
+
+                    variant lhs_tmp;
+                    if (lhs.convert(rhs_type, lhs_tmp))
+                        return lhs_tmp.compare_less(rhs);
+                    else
+                        return (lhs_type < rhs_type);
                 }
 
                 return false;
@@ -247,9 +321,9 @@ struct variant_data_base_policy
 template<typename T, typename Converter>
 struct variant_data_policy_small : variant_data_base_policy<T, variant_data_policy_small<T>, Converter>
 {
-    static RTTR_INLINE T& get_value(const variant_data& data)
+    static RTTR_INLINE const T& get_value(const variant_data& data)
     {
-        return reinterpret_cast<T&>(const_cast<variant_data&>(data));
+        return reinterpret_cast<const T&>(data);
     }
     
     static RTTR_INLINE void destroy(T& value)
@@ -285,9 +359,9 @@ struct variant_data_policy_small : variant_data_base_policy<T, variant_data_poli
 template<typename T, typename Converter>
 struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy_big<T>, Converter>
 {
-    static RTTR_INLINE T& get_value(const variant_data& data)
+    static RTTR_INLINE const T& get_value(const variant_data& data)
     {
-        return *reinterpret_cast<T*&>(const_cast<variant_data&>(data));
+        return *reinterpret_cast<T* const &>(data);
     }
     
     static RTTR_INLINE void destroy(T& value)
@@ -314,6 +388,18 @@ struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   if RTTR_COMP_VER <= 1800
+    #define COPY_ARRAY_PRE_PROC(value, dest) \
+                copy_array(const_cast<typename remove_const<T>::type&>(value), const_cast<typename remove_const<T>::type&>(get_value(dest)))
+#   else
+        #error "Check new MSVC Compiler!"
+#   endif
+#else
+    #define COPY_ARRAY_PRE_PROC(value, dest) \
+                copy_array(value, const_cast<typename remove_const<T>::type&>(get_value(dest)));
+#endif
+
 /*!
  * This policy is used for small raw array types, which fit in \p variant_data.
  *
@@ -322,9 +408,9 @@ struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy
 template<typename T>
 struct variant_data_policy_array_small : variant_data_base_policy<T, variant_data_policy_array_small<T>>
 {
-    static RTTR_INLINE T& get_value(const variant_data& data)
+    static RTTR_INLINE const T& get_value(const variant_data& data)
     {
-        return reinterpret_cast<T&>(const_cast<variant_data&>(data));
+        return reinterpret_cast<const T&>(data);
     }
     
     static RTTR_INLINE void destroy(T& value)
@@ -333,16 +419,7 @@ struct variant_data_policy_array_small : variant_data_base_policy<T, variant_dat
     
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        copy_array(const_cast<typename remove_const<T>::type&>(value),
-                   reinterpret_cast<T&>(dest));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
-        copy_array(value, reinterpret_cast<T&>(dest));
-#endif
+        COPY_ARRAY_PRE_PROC(value, dest);
     }
 
     static RTTR_INLINE void swap(T& value, variant_data& dest)
@@ -353,16 +430,7 @@ struct variant_data_policy_array_small : variant_data_base_policy<T, variant_dat
     template<typename U>
     static RTTR_INLINE void create(U&& value, variant_data& dest)
     {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        copy_array(const_cast<typename remove_const<T>::type&>(value),
-                   reinterpret_cast<T&>(dest));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
-        copy_array(value, reinterpret_cast<T&>(dest));
-#endif
+        COPY_ARRAY_PRE_PROC(value, dest);
     }
 };
 
@@ -378,9 +446,9 @@ struct variant_data_policy_array_big : variant_data_base_policy<T, variant_data_
 {
     using array_dest_type = decltype(new T);
 
-    static RTTR_INLINE T& get_value(const variant_data& data)
+    static RTTR_INLINE const T& get_value(const variant_data& data)
     {
-        return reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(const_cast<variant_data&>(data)));
+        return reinterpret_cast<const T&>(*reinterpret_cast<const array_dest_type&>(data));
     }
     
     static RTTR_INLINE void destroy(T& value)
@@ -392,17 +460,7 @@ struct variant_data_policy_array_big : variant_data_base_policy<T, variant_data_
     {
         reinterpret_cast<array_dest_type&>(dest) = new T;
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        copy_array(const_cast<typename remove_const<T>::type&>(value),
-                   reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
-        copy_array(value,
-                   reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#endif
+        COPY_ARRAY_PRE_PROC(value, dest);
     }
 
     static RTTR_INLINE void swap(T& value, variant_data& dest)
@@ -416,16 +474,7 @@ struct variant_data_policy_array_big : variant_data_base_policy<T, variant_data_
         using array_dest_type = decltype(new T);
         reinterpret_cast<array_dest_type&>(dest) = new T;
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-        copy_array(const_cast<typename remove_const<T>::type&>(value),
-                   reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
-#else
-        copy_array(value, reinterpret_cast<T&>(*reinterpret_cast<array_dest_type&>(dest)));
-#endif
+        COPY_ARRAY_PRE_PROC(value, dest);
     }
 };
 
@@ -439,9 +488,9 @@ struct variant_data_policy_array_big : variant_data_base_policy<T, variant_data_
 template<typename T>
 struct variant_data_policy_arithmetic : variant_data_base_policy<T, variant_data_policy_arithmetic<T>, default_type_converter<T>>
 {
-    static RTTR_INLINE T& get_value(const variant_data& data)
+    static RTTR_INLINE const T& get_value(const variant_data& data)
     {
-        return reinterpret_cast<T&>(const_cast<variant_data&>(data));
+        return reinterpret_cast<const T&>(data);
     }
     
     static RTTR_INLINE void destroy(T& value)
@@ -564,6 +613,10 @@ struct RTTR_API variant_data_policy_empty
                 auto& other = arg.get_value<variant>();
                 return !other.is_valid();
             }
+            case variant_policy_operation::COMPARE_LESS:
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -650,6 +703,10 @@ struct RTTR_API variant_data_policy_void
             {
                 auto& other = arg.get_value<variant>();
                 return other.is_type<void>();
+            }
+            case variant_policy_operation::COMPARE_LESS:
+            {
+                return false;
             }
         }
         return true;

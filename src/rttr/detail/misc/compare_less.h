@@ -43,28 +43,28 @@ namespace detail
  *         otherwise this function will return false.
  */
 template<typename T>
-typename std::enable_if<has_less_than_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_less_than_operator<T>::value && !std::is_array<T>::value, bool>::type 
 compare_less(const T& lhs, const T& rhs)
 {
-    return lhs < rhs;
+    return (lhs < rhs);
 }
 
 template<typename T>
-typename std::enable_if<!has_less_than_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<!has_less_than_operator<T>::value && !std::is_array<T>::value, bool>::type 
 compare_less(const T& lhs, const T& rhs)
 {
     return false;
 }
 
 template<typename T>
-typename std::enable_if<std::is_array<T>::value && has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
 compare_less(const T& lhs, const T& rhs)
 {
-    return false
+    return compare_array_less(lhs, rhs);
 }
 
 template<typename T>
-typename std::enable_if<std::is_array<T>::value && !has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
 compare_less(const T& lhs, const T& rhs)
 {
     return false;

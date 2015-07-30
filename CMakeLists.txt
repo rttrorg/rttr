@@ -56,6 +56,17 @@ option(CREATE_UNITY_BUILD "Creates a unity build" FALSE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documenation; Otherwise the default will be used" TRUE)
 
+# one precompiled headers cannot be used for multipleninja targets
+# thats why we have to disable this option, when BUILD_STATIC or 
+# BUILD_WITH_STATIC_RUNTIME_LIBS is ON (every target will create the same PCH.pch file)
+# to get it working, we need the feature to enable different source properties
+# for different targets
+if (USE_PCH)
+  if (BUILD_STATIC OR BUILD_WITH_STATIC_RUNTIME_LIBS)
+    set(USE_PCH FALSE)
+  endif()
+endif()
+
 include(config)
 include(3rd_party_libs)
 include(installer)

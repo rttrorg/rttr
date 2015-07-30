@@ -51,6 +51,12 @@ namespace detail
     class argument;
     class instance;
     struct data_address_container;
+    template<typename T>
+    struct empty_type_converter;
+
+    template<typename T, typename Tp, typename Converter = empty_type_converter<T>>
+    struct variant_data_base_policy;
+
     enum class variant_policy_operation : uint8_t;
 
     template<typename T, typename Decayed = decay_t<T>>
@@ -242,36 +248,32 @@ class RTTR_API variant
          * The variant uses the equality operator of the containing \ref get_type() "type" to check for equality.
          * When \p other is not of the same type as the containing type, it will try to convert to it and do then the equality check.
          *
-         * \see bool operator!=(const variant&) const;
+         * \see \ref variant::operator!=(const variant&) const "operator!="
          *
          * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
          */
-        bool operator==(const variant& other) const;
+        RTTR_INLINE bool operator==(const variant& other) const;
 
         /*!
          * \brief Compares this variant with \p other and returns `true` if they are **not** equal; otherwise returns `false`.
          *
-         * \see bool operator==(const variant&) const;
+         * \see \ref variant::operator==(const variant&) const "operator=="
          *
          * \return A boolean with value `true`, that indicates both variant's are **not** equal, otherwise `false`.
          */
-        bool operator!=(const variant& other) const;
+        RTTR_INLINE bool operator!=(const variant& other) const;
 
         /*!
-         * \brief Compares this variant with \p other and returns `true` if this is less than \p other, otherwise returns `false`.
+         * \brief Compares this variant with \p other and returns `true` if this is *less than* \p other, otherwise returns `false`.
          * 
-         * The variant uses the less than operator of the containing \ref get_type() "type".
-         * When \p other is not of the same type as the containing type, it will try to convert to it and do then the less-than check.
+         * The variant uses the *less than* operator of the containing \ref get_type() "type".
+         * When \p other is not of the same type as the containing type, it will try to convert to it and do then the *less than* check.
          *
-         * \see bool operator!=(const variant&) const;
+         * \see \ref variant::operator>(const variant&) const "operator\>"
          *
-         * \return A boolean with value `true`, that indicates that this variant is less than the other, otherwise `false`.
+         * \return A boolean with value `true`, that indicates that this variant is *less than* \p other, otherwise `false`.
          */
-        bool operator<(const variant& other) const;
-        bool operator>(const variant& other) const;
-        
-        bool operator<=(const variant& other) const;
-        bool operator>=(const variant& other) const;
+        RTTR_INLINE bool operator<(const variant& other) const;
 
         /*!
          * \brief When the variant contains a value, then this function will clear the content.
@@ -357,7 +359,7 @@ class RTTR_API variant
          * \return A reference to the stored value.
          */
         template<typename T>
-        T& get_value();
+        const T& get_value() const;
 
         /*!
          * \brief Returns `true` if the contained value can be converted to the given type \p T.
@@ -536,7 +538,7 @@ class RTTR_API variant
          *
          * \return A `float` value.
          */
-        float to_float(bool* ok = nullptr);
+        float to_float(bool* ok = nullptr) const;
 
         /*!
          * \brief Returns the containing variant as a `double` when the \ref is_type() "type" is a `double`.
@@ -555,7 +557,7 @@ class RTTR_API variant
          *
          * \return A `double` value.
          */
-        double to_double(bool* ok = nullptr);
+        double to_double(bool* ok = nullptr) const;
 
         /*!
          * \brief Returns the containing variant as a `std::string` when the \ref is_type() "type" is a `std::string`.
@@ -769,6 +771,8 @@ class RTTR_API variant
          */
         RTTR_INLINE detail::data_address_container get_data_address_container() const;
 
+        bool convert(const type& target_type, variant& var) const;
+
         /*!
          * \brief Tries to convert the internal type to the given type \p to.
          *
@@ -802,9 +806,20 @@ class RTTR_API variant
          */
         bool compare_equal(const variant& other) const;
 
+        /*!
+         * \brief Compares the containing and the given variant \p other for less than.
+         *
+         * \return A boolean with value `true`, that indicates this variant is less than the \p other, otherwise `false`.
+         */
+        bool compare_less(const variant& other) const;
+
     private:
-        friend detail::argument;
-        friend detail::instance;
+        friend class detail::argument;
+        friend class detail::instance;
+
+        template<typename T, typename Tp, typename Converter>
+        friend struct detail::variant_data_base_policy;
+
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;
