@@ -49,15 +49,23 @@ enum E_MetaData
 
 RTTR_REGISTER
 {
-    class_<constructor_test>("constructor_test", {metadata("CUSTOM_DATA", static_cast<int>(42)), metadata(DESCRIPTION, "some text")})
+    registration::class_<constructor_test>("constructor_test")
+        (
+            meta_data("CUSTOM_DATA", 42),
+            meta_data(DESCRIPTION, "some text")
+        )
         .constructor<>()
         .constructor<const constructor_test&>()
         .constructor<int, int>()
-        .constructor<const std::string&>({metadata("SCRIPTABLE", true), metadata(TOOL_TIP, "This is a ToolTip")})
+        .constructor<const std::string&>()
+        (
+            meta_data("SCRIPTABLE", true),
+            meta_data(TOOL_TIP, "This is a ToolTip")
+        )
         .constructor<int, int, int, int, int, int, const int* const>();
 
-    class_<factory_test>("factory_test")
-          .constructor(&factory_test::create);
+    registration::class_<factory_test>("factory_test")
+        .constructor(&factory_test::create);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

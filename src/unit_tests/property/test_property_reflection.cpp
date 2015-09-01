@@ -81,60 +81,95 @@ const int* ptr_type;
 RTTR_REGISTER
 {
     using namespace rttr;
-    class_<property_test>("property_test")
+
+    registration::class_<property_test>("property_test")
         .constructor<>()
         .property("p1",    &property_test::_p1)
         .property_readonly("p2",     &property_test::_p2)
         .property("p3",    &property_test::_p3)
         .property_readonly("p4",     &property_test::_p4)
-        .property("p5",    &property_test::_p5, {metadata(E_MetaData::SCRIPTABLE, true), metadata(E_MetaData::TOOL_TIP, string("This is property 5."))})
-        .property_readonly("p6",     &property_test::_p6, {metadata(E_MetaData::SCRIPTABLE, false)})
+        .property("p5",    &property_test::_p5)
+        (
+            meta_data(E_MetaData::SCRIPTABLE, true), 
+            meta_data(E_MetaData::TOOL_TIP, "This is property 5.")
+        )
+        .property_readonly("p6",     &property_test::_p6)
+        (
+            meta_data(E_MetaData::SCRIPTABLE, false)
+        )
         .property("p7",    &property_test::get_p7, &property_test::set_p7)
-        .property("p8",    &singleton_property,  {metadata("Global_Tag", true)})
+        .property("p8",    &singleton_property)
+        (
+            meta_data("Global_Tag", true)
+        )
         .property_readonly("p9",     &get_propert_p9)
         .property_readonly("p10",    std::function<int()>([](){ return 45;}))
         .property("p11",   &my_p11_getter, &my_p11_setter)
         .property("p12",   std::function<const string&(void)>(&my_p11_getter), std::function<void(const std::string&)>(&my_p11_setter))
         .property("array_copy", &property_test::_array)
-        .property("array", &property_test::_array, bind_property_as_ptr)
-        .property("raw_array", &property_test::_other_array, bind_property_as_ptr)
-        .property_readonly("p7_as_ptr_read_only", &property_test::get_p7, bind_property_as_ptr)
-        .property("p7_as_ptr", &property_test::get_p7, &property_test::set_p7, bind_property_as_ptr)
+        .property("array", &property_test::_array)
+        (
+            policy::bind_property_as_ptr
+        )
+        .property("raw_array", &property_test::_other_array)
+        (
+            policy::bind_property_as_ptr
+        )
+        .property_readonly("p7_as_ptr_read_only", &property_test::get_p7)
+        (
+            policy::bind_property_as_ptr
+        )
+        .property("p7_as_ptr", &property_test::get_p7, &property_test::set_p7)
+        (
+            policy::bind_property_as_ptr
+        )
         ;
+
 
     /////////////////////////////////////////
 
-    class_<ns_property::top>("ns_property::top")
+    registration::class_<ns_property::top>("ns_property::top")
         .property("p1", &ns_property::top::_p1);
 
-    class_<ns_property::left>("ns_property::left")
+    registration::class_<ns_property::left>("ns_property::left")
         .constructor<>()
         .property("p2", &ns_property::left::_p2);
 
-    class_<ns_property::right>("ns_property::right")
+    registration::class_<ns_property::right>("ns_property::right")
         .constructor<>()
         .property("p3", &ns_property::right::_p3)
         .property("p2", &p11); // double property
 
-    class_<ns_property::right_2>("ns_property::right_2")
+    registration::class_<ns_property::right_2>("ns_property::right_2")
         .constructor<>()
         .property("p4", &ns_property::right_2::_p4);
 
-    class_<ns_property::bottom>("ns_property::bottom")
+    registration::class_<ns_property::bottom>("ns_property::bottom")
         .constructor<>()
         .property("p5", &ns_property::bottom::_p5)
         .property("callback", &ns_property::bottom::get_function_cb, &ns_property::bottom::set_function_cb);
 
     /////////////////////////////////////////
 
-    property_readonly_("PI", &pi);
-    property_("Global_Text", &Global_Text);
-
-    // test policies
-    property_("p1_as_ptr", &global_array, bind_property_as_ptr);
-    property_readonly_("p2_as_ptr", &get_global_text, bind_property_as_ptr);
-    property_readonly_("p3_as_ptr", std::function<const string&(void)>(&my_p11_getter), bind_property_as_ptr);
-    property_("p4_as_ptr", std::function<const string&(void)>(&my_p11_getter), std::function<void(const std::string&)>(&my_p11_setter), bind_property_as_ptr);
+    registration::property_readonly("PI", &pi)
+        .property("Global_Text", &Global_Text)
+        // test policies
+        .property("p1_as_ptr", &global_array)
+        (
+            policy::bind_property_as_ptr
+        )
+        .property_readonly("p2_as_ptr", &get_global_text)
+        (
+            policy::bind_property_as_ptr
+        )
+        .property_readonly("p3_as_ptr", std::function<const string&(void)>(&my_p11_getter))
+        (
+            policy::bind_property_as_ptr
+        )
+        .property("p4_as_ptr", std::function<const string&(void)>(&my_p11_getter), std::function<void(const std::string&)>(&my_p11_setter))
+        (
+            policy::bind_property_as_ptr
+        );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

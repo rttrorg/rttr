@@ -71,7 +71,7 @@ bool method_test::method_7_called = false;
 
 RTTR_REGISTER
 {
-    class_<method_test>("method_test")
+    registration::class_<method_test>("method_test")
         .constructor<>()
         .method("method_1", &method_test::method_1)
         .method("method_2", &method_test::method_2)    
@@ -88,32 +88,50 @@ RTTR_REGISTER
 #endif
         .method("method_6", &method_test::method_6)
         .method("method_7", &method_test::method_7)
-        .method("method_8", &method_test::method_8, {metadata(E_MetaData::SCRIPTABLE, true), metadata("TAG",  42)})
-        .method("method_9", &method_test::method_9, {metadata(E_MetaData::SCRIPTABLE, false)})
+        .method("method_8", &method_test::method_8)
+        (
+            meta_data(E_MetaData::SCRIPTABLE, true),
+            meta_data("TAG",  42)
+        )
+        .method("method_9", &method_test::method_9)
+        (
+            meta_data(E_MetaData::SCRIPTABLE, false)
+        )
         .method("method_10", std::function<int(double, bool)>([](double, bool)->int{ return 42;}))
         .method("method_raw_array", &method_test::method_raw_array)
         .method("method_default",   &method_test::method_default_arg)
-        .method("method_6_ret_ptr", &method_test::method_6, return_reference_as_ptr)
-        .method("method_6_void",     &method_test::method_6, discard_return_value)
+        .method("method_6_ret_ptr", &method_test::method_6)
+        (
+            policy::return_reference_as_ptr
+        )
+        .method("method_6_void",     &method_test::method_6)
+        (
+            policy::discard_return_value
+        )
         .method("method_fun_ptr_arg", &method_test::method_fun_ptr_arg)
         ;
 
-    class_<method_test_derived>("method_test_derived")
+    registration::class_<method_test_derived>("method_test_derived")
         .constructor<>()
         .method("method_10", &method_test_derived::method_10);
 
-    class_<method_test_right>("method_test_right")
+    registration::class_<method_test_right>("method_test_right")
         .method("method_12", &method_test_right::method_12);
 
-    class_<method_test_final>("method_test_final")
+    registration::class_<method_test_final>("method_test_final")
         .method("method_13", &method_test_final::method_13);
 
     // test free functions
-    method_("free_function", static_cast<void(*)(bool)>(&free_function));
-    method_("free_function", static_cast<void(*)(int&)>(&free_function));
-
-    method_("get_global_string_ptr", &get_global_string, return_reference_as_ptr);
-    method_("get_global_string_void", &get_global_string, discard_return_value);
+    registration::method("free_function", static_cast<void(*)(bool)>(&free_function))
+        .method("free_function", static_cast<void(*)(int&)>(&free_function))
+        .method("get_global_string_ptr", &get_global_string)
+        (
+            policy::return_reference_as_ptr
+        )
+        .method("get_global_string_void", &get_global_string)
+        (
+            policy::discard_return_value
+        );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

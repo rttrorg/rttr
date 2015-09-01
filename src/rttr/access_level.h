@@ -25,17 +25,52 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_REGISTER_HEADERS_H_
-#define RTTR_REGISTER_HEADERS_H_
+#ifndef RTTR_ACCESS_LEVEL_H_
+#define RTTR_ACCESS_LEVEL_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "registration.h"
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
-#endif // RTTR_REGISTER_HEADERS_H_
+namespace rttr
+{
+namespace detail
+{
+    struct public_access    {};
+    struct protected_access {};
+    struct private_access   {};
+
+    using access_level_list = type_list<public_access, protected_access, private_access>;
+}
+
+/*!
+ * The \ref access_level class contains three static members, which can be used to specify
+ * the access control for \ref method "methods" or \ref property "properties"
+ *
+ * \code{.cpp}
+ *
+ *  registration::class<foo>("foo")
+ *      .method("test", &foo::func_1, access_level::public_access);
+ *
+ * \endcode
+ */
+struct RTTR_API access_level
+{
+    /*!
+     * Declares the visibility of class member as *public*.
+     */
+    static const detail::public_access      public_access;
+
+    /*!
+     * Declares the visibility of class member as *protected*.
+     */
+    static const detail::protected_access   protected_access;
+
+    /*!
+     * Declares the visibility of class member as *private*.
+     */
+    static const detail::private_access     private_access;
+};
+
+} // end namespace rttr
+
+#endif // RTTR_ACCESS_LEVEL_H_

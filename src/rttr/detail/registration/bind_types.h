@@ -25,17 +25,28 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_REGISTER_HEADERS_H_
-#define RTTR_REGISTER_HEADERS_H_
+#ifndef RTTR_BIND_H_
+#define RTTR_BIND_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "registration.h"
+#include "rttr/detail/base/core_prerequisites.h"
 
-#endif // RTTR_REGISTER_HEADERS_H_
+namespace rttr
+{
+namespace detail
+{
+    struct ctor { };
+
+    struct ctor_func { };
+
+    struct prop { };
+
+    struct prop_readonly { };
+
+    struct meth { };
+
+    struct enum_{};
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_BIND_H_

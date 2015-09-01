@@ -162,7 +162,7 @@ struct class_multiple_final_D : class_multiple_final
 } // end namespace ns_foo
 
 #define CLASS_REGISTER(CLASS_NAME, NUMBER) \
-    class_<ns_foo::CLASS_NAME>("ns_foo::" #CLASS_NAME) \
+    registration::class_<ns_foo::CLASS_NAME>("ns_foo::" #CLASS_NAME) \
         .constructor<>() \
         .method("method_" #NUMBER, &ns_foo::CLASS_NAME::RTTR_CAT(method_,NUMBER)) \
         ;

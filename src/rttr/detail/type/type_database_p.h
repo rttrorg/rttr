@@ -349,7 +349,7 @@ class RTTR_LOCAL type_database
         std::vector<type_data<metadata_container>>                  m_meta_data_list;
         std::vector<type_data<enumeration_container_base>>          m_enumeration_list;
 
-        std::mutex                                          m_register_type_mutex;
+        std::mutex                                                  m_register_type_mutex;
 };
 
 } // end namespace detail

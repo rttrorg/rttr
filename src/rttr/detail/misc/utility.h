@@ -477,6 +477,58 @@ static RTTR_INLINE raw_addressof_return_type_t<T> raw_addressof(T& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
  
+/*!
+ * The \ref move_wrapper class wraps a move-only type in a copyable object.
+ *
+ */
+template<typename T>
+struct move_wrapper
+{
+    move_wrapper(T&& value) : m_value(std::move(value)) { }
+
+    move_wrapper(const move_wrapper& other) : m_value(std::move(other.m_value)) { }
+
+    move_wrapper(move_wrapper&& other) : m_value(std::move(other.m_value)) { }
+
+    move_wrapper& operator=(const move_wrapper& other)
+    {
+        m_value = std::move(other.m_value);
+        return *this;
+    }
+
+    move_wrapper& operator=(move_wrapper&& other)
+    {
+        m_value = std::move(other.m_value);
+        return *this;
+    }
+
+    mutable T m_value;
+};
+
+/*!
+ * \brief This function creates an instance of a move_wrapper class for type \p T.
+ *
+ * \return An instance of move_wrapper<T>.
+ */
+template<typename T>
+static RTTR_INLINE move_wrapper<T> make_rref(T&& value)
+{
+    return {std::move(value)};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief When the given shared_ptr \p obj is empty, it will create a new default one,
+ *        otherwise returns a copy.
+ */
+template<typename T>
+static RTTR_INLINE std::shared_ptr<T> create_if_empty(const std::shared_ptr<T>& obj)
+{
+    return (obj.get() ? obj : std::make_shared<T>());
+}
 
 } // end namespace detail
 } // end namespace rttr

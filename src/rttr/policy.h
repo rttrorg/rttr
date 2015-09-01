@@ -29,6 +29,7 @@
 #define RTTR_POLICY_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 namespace rttr
 {
@@ -135,25 +136,41 @@ struct get_method_policy<discard_return_value_policy>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_API extern return_as_copy default_property_policy;
+using method_policy_list    = type_list<discard_return_value_policy, return_reference_as_ptr_policy>;
+using property_policy_list  = type_list<return_reference_as_ptr_policy, bind_property_as_ptr_policy, read_only>;
+using ctor_policy_list      = type_list<>;
 
 } // end namespace detail;
 
 /*!
- * \brief 
+ * The \ref policy class contains all policies that can be used during the registration of reflection information.
+ *
+ * \code{.cpp}
+ *
+ *  registration::method("test", &func_1)
+ *  (
+ *       policy::discard_return_value
+ *  );
+ *
+ * \endcode
  */
-RTTR_API extern detail::bind_property_as_ptr_policy      bind_property_as_ptr;
+struct RTTR_API policy
+{
+    /*!
+     * Add documentation here
+     */
+    static const detail::bind_property_as_ptr_policy        bind_property_as_ptr;
 
-/*!
- * \brief 
- */
-RTTR_API extern detail::return_reference_as_ptr_policy   return_reference_as_ptr;
+    /*!
+     * Add documentation here
+     */
+    static const detail::return_reference_as_ptr_policy     return_reference_as_ptr;
 
-/*!
- * \brief 
- */
-RTTR_API extern detail::discard_return_value_policy      discard_return_value;
-
+    /*!
+     * Add documentation here
+     */
+    static const detail::discard_return_value_policy        discard_return_value;
+};
 
 } // end namespace rttr
 

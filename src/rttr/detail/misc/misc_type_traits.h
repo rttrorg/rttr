@@ -300,19 +300,86 @@ namespace detail
         return get_ptr_impl<T>::get(data);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // A simple list for types
+    // use it like this:
+    // using my_list = type_list<int, bool>;
 
+    template<typename... T>
+    struct type_list {};
 
+    template<typename...T>
+    struct as_type_list
+    {
+        using type = type_list<T...>;
+    };
+
+    template<template<class...> class Type_List, typename...Ts>
+    struct as_type_list<Type_List<Ts...>>
+    {
+        using type = type_list<Ts...>;
+    };
+
+    template<typename...T>
+    using as_type_list_t = typename as_type_list<T...>::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // as_std_tuple
+    // use it like this:
+    // typename as_std_tuple<int, bool>::type => std::tuple<int, bool>
+
+    template<typename...T>
+    struct as_std_tuple
+    {
+        using type = std::tuple<T...>;
+    };
+
+    template<template<class...> class Type_List, typename...Ts>
+    struct as_std_tuple<Type_List<Ts...>>
+    {
+        using type = std::tuple<Ts...>;
+    };
+
+    template<typename...T>
+    using as_std_tuple_t = typename as_std_tuple<T...>::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Returns the size of the type_list
+    // e.g.: type_list_size<int, bool>::value => 2
+    // e.g.: type_list_size<>::value => 0
+    template<typename T>
+    struct type_list_size_impl;
+
+    template<typename...Ts>
+    struct type_list_size_impl<type_list<Ts...>> : std::integral_constant<std::size_t, sizeof...(Ts)>
+    {
+    };
+
+    template<typename...T>
+    using type_list_size = typename type_list_size_impl<as_type_list_t<T...>>::type;
     
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+    // checks if type \p T is given in the list of \p Types
+    // e.g.:
+    // contains<int, std::tuple<bool, double, int>>::value => true
+    // contains<int, std::tuple<bool, double, void>>::value => false
+    // or
+    // contains<int, bool, double, void>::value => false
 
     template<typename T, typename... Types>
     struct contains : static_any_of<std::is_same<T, Types>::value...>
     {
     };
 
-    template<typename T, typename... Types, template<class...> class TContainer>
+    template<typename T, template<class...> class TContainer, typename... Types>
     struct contains<T, TContainer<Types...>> : contains<T, Types...>
     {
     };
@@ -430,41 +497,6 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-
-    template <typename T, typename... Ts> 
-    struct is_type_in_list_impl;
-
-    template <typename T, typename U> 
-    struct is_type_in_list_impl<T, U>
-    {
-        static RTTR_CONSTEXPR_OR_CONST bool value = std::is_same<T, U>::value;
-    };
-
-    template<typename T, typename T2, typename... U> 
-    struct is_type_in_list_impl<T, T2, U...> 
-    {
-        static RTTR_CONSTEXPR_OR_CONST bool value = std::is_same<T, T2>::value || is_type_in_list_impl<T, U...>::value;
-    };
-
-    template<typename T, class... Ts, template<class...> class List>
-    struct is_type_in_list_impl<T, List<Ts...>>
-    {
-        static RTTR_CONSTEXPR_OR_CONST bool value = is_type_in_list_impl<T, Ts...>::value;
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    // Returns true when the type T is contained in a list of template parameters.
-    // use it like this:
-    // is_type_in_list<int, primitive_list<bool, double, int>>::value => true
-    // is_type_in_list<int, primitive_list<bool, double, void>>::value => false
-    // or
-    // is_type_in_list<int, bool, double, void>::value => false
-
-    template<typename T, typename List>
-    using is_type_in_list = std::integral_constant<bool, is_type_in_list_impl<T, List>::value>;
-   
-    /////////////////////////////////////////////////////////////////////////////////////
-    
     template <typename T, typename...Ts> 
     struct max_sizeof_list_impl;
 
@@ -483,7 +515,7 @@ namespace detail
                                                                                     U...>::value;
     };
 
-    template<class... Ts, template<class...> class List>
+    template<template<class...> class List, class... Ts>
     struct max_sizeof_list_impl<List<Ts...>>
     {
         static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl<Ts...>::value;
@@ -518,7 +550,7 @@ namespace detail
                                                                                     U...>::value;
     };
 
-    template<class... Ts, template<class...> class List>
+    template<template<class...> class List, typename... Ts>
     struct max_alignof_list_impl<List<Ts...>>
     {
         static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_alignof_list_impl<Ts...>::value;
@@ -531,16 +563,6 @@ namespace detail
 
     template<typename... Ts>
     using max_alignof_list = std::integral_constant<std::size_t, max_alignof_list_impl<Ts...>::value>;
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    // A simple list for types
-    // use it like this:
-    // using my_list = type_list<int, bool>;
-
-    template<typename... T>
-    struct type_list {};
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
@@ -601,10 +623,92 @@ namespace detail
     template<typename T>
     struct has_equal_operator : std::integral_constant<bool, std::is_same<std::true_type, 
                                                                           decltype(supports_equal_test(std::declval<T>()))>::value> {};
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // count the number of type in a variadic template list
+    // e.g. count_type<int, std::tuple<bool, int, bool, int, int, std::string>>::value => 3
  
+    template <typename T, typename Type_List> 
+    struct count_type_impl;
+
+    template<typename T>
+    struct count_type_impl<T, type_list<>>
+    {
+        static const std::size_t value = 0;
+    };
+
+    template<typename T, typename... Tail>
+    struct count_type_impl<T, type_list<T, Tail...>>
+    {
+        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value + 1; 
+    };
+
+    template<typename T, typename U, typename... Tail>
+    struct count_type_impl<T, type_list<U, Tail...>>
+    {
+        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value; 
+    };
+
+    template<typename T, typename Type_List>
+    using count_type = std::integral_constant<std::size_t, count_type_impl<T, as_type_list_t<Type_List>>::value>;
+
+
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+    // find from a list of types
+    // find_types<std::tuple<int, bool>, bool, float>::type => std::tuple<bool>
+
+    template<typename Result_List, typename Types_To_Find, typename Types_To_Iterate> 
+    struct find_types_impl;
+
+    template<typename...Rs, typename...Tf> 
+    struct find_types_impl<type_list<Rs...>, type_list<Tf...>, type_list<>>
+    {
+        using type = type_list<Rs...>;
+    };
+    
+
+    template<typename...Rs, typename Types_To_Find, typename T, typename...Tail> 
+    struct find_types_impl<type_list<Rs...>, Types_To_Find, type_list<T, Tail...>>
+    {
+        using type = conditional_t< contains<T, Types_To_Find>::value,
+                                    typename find_types_impl<type_list<Rs..., T>, Types_To_Find, type_list<Tail...>>::type,
+                                    typename find_types_impl<type_list<Rs...>, Types_To_Find, type_list<Tail...>>::type
+                                   >;
+    };
+
+    template<typename Types_To_Find, typename Types_To_Iterate>  
+    using find_types = find_types_impl<type_list<>, as_type_list_t<Types_To_Find>, as_type_list_t<Types_To_Iterate>>;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // returns true when in the given list is a double item
+    // has_double_types<std::tuple<int, bool, int>>::value => true
+
+    template<typename O, typename T>
+    struct has_double_types_impl;
+
+    template<typename...Orig_Types>
+    struct has_double_types_impl<type_list<Orig_Types...>, type_list<>> : std::false_type
+    {
+    };
+
+    template<typename...Orig_Types, typename T, typename... Tail>
+    struct has_double_types_impl<type_list<Orig_Types...>, type_list<T, Tail...>> 
+    :   conditional_t< count_type<T, type_list<Orig_Types...>>::value >= 2,
+                       std::true_type,
+                       typename has_double_types_impl<type_list<Orig_Types...>, type_list<Tail...>>::type
+                     >
+    {
+    };
+
+    template <typename... T> 
+    using has_double_types = typename has_double_types_impl<as_type_list_t<T...>, as_type_list_t<T...>>::type;
+
 } // end namespace detail
 } // end namespace rttr
 

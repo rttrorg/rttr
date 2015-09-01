@@ -25,7 +25,8 @@
 #                                                                                  #
 ####################################################################################
 
-set(HEADER_FILES array_mapper.h
+set(HEADER_FILES access_level.h
+                 array_mapper.h
                  constructor.h
                  destructor.h
                  enumeration.h
@@ -34,7 +35,7 @@ set(HEADER_FILES array_mapper.h
                  policy.h
                  property.h
                  register
-                 register_reflection.h
+                 registration.h
                  rttr_cast.h
                  rttr_enable.h
                  type
@@ -48,7 +49,6 @@ set(HEADER_FILES array_mapper.h
                  detail/instance.h
                  detail/instance_impl.h
                  detail/std_conversion_functions.h
-                 detail/register_reflection_impl.h
                  detail/rttr_cast_impl.h
                  detail/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
@@ -68,6 +68,7 @@ set(HEADER_FILES array_mapper.h
                  detail/method/method_container.h
                  detail/method/method_container_base.h
                  detail/misc/argument_wrapper.h
+                 detail/misc/argument_extractor.h
                  detail/misc/compare_equal.h
                  detail/misc/compare_less.h
                  detail/misc/function_traits.h
@@ -82,6 +83,10 @@ set(HEADER_FILES array_mapper.h
                  detail/property/property_container_member_func.h
                  detail/property/property_container_member_object.h
                  detail/property/property_container_object.h
+                 detail/registration/bind_types.h
+                 detail/registration/bind_impl.h
+                 detail/registration/registration_impl.h
+                 detail/registration/registration_executer.h
                  detail/type/accessor_type.h
                  detail/type/base_classes.h
                  detail/type/get_create_variant_func.h
@@ -102,7 +107,8 @@ set(HEADER_FILES array_mapper.h
                  detail/variant_array_view/variant_array_view_traits.h
                 )
                 
-set(SOURCE_FILES constructor.cpp
+set(SOURCE_FILES access_level.cpp
+                 constructor.cpp
                  destructor.cpp
                  enumeration.cpp
                  method.cpp
@@ -119,6 +125,7 @@ set(SOURCE_FILES constructor.cpp
                  detail/metadata/metadata_container.cpp
                  detail/method/method_container_base.cpp
                  detail/property/property_container_base.cpp
+                 detail/registration/registration_executer.cpp
                  detail/type/type_database.cpp
                  detail/type/type_register.cpp
                  )

@@ -44,6 +44,7 @@ namespace detail
 class enumeration_container_base;
 class argument;
 }
+
 /*!
  * The \ref enumeration class provides several meta information about an enum.
  * 

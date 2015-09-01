@@ -30,14 +30,10 @@
 namespace rttr
 {
 
-namespace detail
-{
-    return_as_copy default_property_policy;
-} // end namespace detail;
+const detail::bind_property_as_ptr_policy policy::bind_property_as_ptr = {};
 
-detail::bind_property_as_ptr_policy      bind_property_as_ptr;
-detail::return_reference_as_ptr_policy   return_reference_as_ptr;
-detail::discard_return_value_policy      discard_return_value;
+const detail::return_reference_as_ptr_policy policy::return_reference_as_ptr = {};
 
+const detail::discard_return_value_policy policy::discard_return_value = {};
 
 } // end namespace rttr

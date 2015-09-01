@@ -25,17 +25,16 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_REGISTER_HEADERS_H_
-#define RTTR_REGISTER_HEADERS_H_
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "registration.h"
+#include "rttr/access_level.h"
 
-#endif // RTTR_REGISTER_HEADERS_H_
+namespace rttr
+{
+
+const detail::public_access access_level::public_access = {};
+
+const detail::protected_access access_level::protected_access = {};
+
+const detail::private_access access_level::private_access = {};
+
+} // end namespace rttr

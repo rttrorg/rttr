@@ -34,7 +34,7 @@ RTTR_REGISTER
 {
     using namespace rttr;
 
-    class_<ns_foo::method_class>("ns_foo::method_class")
+    registration::class_<ns_foo::method_class>("ns_foo::method_class")
         .constructor<>()
         .method("method_0",             &ns_foo::method_class::method_0)
         .method("method_v",             &ns_foo::method_class::method_v)
@@ -45,7 +45,6 @@ RTTR_REGISTER
         .method("void_method_arg_2",    &ns_foo::method_class::void_method_arg_2)
         .method("void_method_arg_3",    &ns_foo::method_class::void_method_arg_3)
         .method("void_method_arg_8",    &ns_foo::method_class::void_method_arg_8)
-
         ;
 
 

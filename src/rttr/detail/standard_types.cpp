@@ -34,6 +34,8 @@
 
 RTTR_REGISTER
 {
+    using namespace rttr;
+
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(void)
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(rttr::type)
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(bool)
@@ -53,12 +55,12 @@ RTTR_REGISTER
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(double)
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(long double)
     RTTR_REGISTER_STANDARD_TYPE_VARIANTS(std::string)
-    rttr::type::get<std::vector<bool>>();
-    rttr::type::get<std::vector<int>>();
-    rttr::type::get<std::vector<float>>();
-    rttr::type::get<std::vector<double>>();
+    type::get<std::vector<bool>>();
+    type::get<std::vector<int>>();
+    type::get<std::vector<float>>();
+    type::get<std::vector<double>>();
 
-    rttr::class_<std::string>("std::string")
+    registration::class_<std::string>("std::string")
                 .constructor<>()
                 .constructor<const std::string&>()
                 .constructor<const std::string&, unsigned int, unsigned int>()
@@ -80,7 +82,5 @@ RTTR_REGISTER
                 .method("operator[]",   rttr::select_non_const(&std::string::operator[]))
 #endif
                 .method("data",         &std::string::data)
-                .method("c_str",        &std::string::c_str)
-                
-           ;
+                .method("c_str",        &std::string::c_str);
 }

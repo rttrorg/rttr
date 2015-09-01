@@ -41,24 +41,24 @@ namespace rttr
 namespace detail
 {
 
-template<typename EnumType>
+template<typename Enum_Type>
 class enumeration_container : public enumeration_container_base
 {
     public:
-        enumeration_container(const type declaring_type, std::vector< std::pair<std::string, EnumType> > data)
+        enumeration_container(const type declaring_type, std::vector< std::pair<std::string, Enum_Type> > data)
         :   enumeration_container_base(declaring_type),
-            m_keyToValue(move(data))
+            m_key_value_list(move(data))
         {
-            static_assert(std::is_enum<EnumType>::value, "No enum type provided, please create an instance of this class only for enum types!");
+            static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
 
-        type get_type() const { return type::get<EnumType>(); }
-        type get_underlying_type() const { return type::get<typename std::underlying_type<EnumType>::type>(); }
+        type get_type() const { return type::get<Enum_Type>(); }
+        type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
         std::vector<std::string> get_keys() const
         {
             std::vector<std::string> result;
-            for (const auto& item : m_keyToValue)
+            for (const auto& item : m_key_value_list)
             {
                 result.push_back(item.first);
             }
@@ -68,7 +68,7 @@ class enumeration_container : public enumeration_container_base
         std::vector<variant> get_values() const
         {
             std::vector<variant> result;
-            for (const auto& item : m_keyToValue)
+            for (const auto& item : m_key_value_list)
             {
                 result.push_back(item.second);
             }
@@ -77,14 +77,14 @@ class enumeration_container : public enumeration_container_base
 
         std::string value_to_key(detail::argument& value) const
         {
-            if (!value.is_type<EnumType>() &&
-                !value.is_type<typename std::underlying_type<EnumType>::type>())
+            if (!value.is_type<Enum_Type>() &&
+                !value.is_type<typename std::underlying_type<Enum_Type>::type>())
             {
                 return std::string();
             }
 
-            EnumType enum_value = value.get_value<EnumType>();
-            for (const auto& item : m_keyToValue)
+            Enum_Type enum_value = value.get_value<Enum_Type>();
+            for (const auto& item : m_key_value_list)
             {
                 if (item.second == enum_value)
                     return item.first;
@@ -97,7 +97,7 @@ class enumeration_container : public enumeration_container_base
             if (key.empty())
                 return variant();
 
-            for (const auto& item : m_keyToValue)
+            for (const auto& item : m_key_value_list)
             {
                 if (item.first == key)
                     return item.second;
@@ -106,7 +106,7 @@ class enumeration_container : public enumeration_container_base
         }
 
     private:
-        std::vector<std::pair<std::string, EnumType> > m_keyToValue;
+        std::vector<std::pair<std::string, Enum_Type> > m_key_value_list;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

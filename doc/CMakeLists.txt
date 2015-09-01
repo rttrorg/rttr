@@ -37,7 +37,7 @@ set(DOXYGEN_DOC_INSTALL_DIR   "doc")
 set(DOXYGEN_CONFIG_FILE       "DoxyFile.cfg")
 set(DOXYGEN_EXCLUDE           "")
 set(DOXYGEN_STRIP_FROM_PATH   "${CMAKE_SOURCE_DIR}/src/rttr")
-set(DOXYGEN_PREDEFINED        "RTTR_EXPORT= DOXYGEN")
+set(DOXYGEN_PREDEFINED        "DOXYGEN")
 set(DOXYGEN_EXCLUDE_SYMBOLS   "impl* \\
                                impl::* \\
                                detail* \\
@@ -52,6 +52,7 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
                               *PCH.h* \\
                               *_impl.h* \\
                               *_p.h* \\
+                              */src/rttr/detail/* \\
                               */src/test/* \\
                               */src/benchmark/*")
 if (${CUSTOM_DOXYGEN_STYLE})
