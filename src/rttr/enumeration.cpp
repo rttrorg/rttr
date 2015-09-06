@@ -90,20 +90,10 @@ type enumeration::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::get_metadata(int key) const
+variant enumeration::get_metadata(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_metadata(key);
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant enumeration::get_metadata(const std::string& key) const
-{
-    if (is_valid())
-        return m_container->get_metadata(key);
+        return m_container->get_meta_data(key);
     else
         return variant();
 }

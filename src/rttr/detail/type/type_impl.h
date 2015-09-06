@@ -37,7 +37,6 @@
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/wrapper_mapper.h"
-#include "rttr/metadata.h"
 
 namespace rttr
 {

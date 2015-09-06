@@ -25,42 +25,38 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_METADATA_H_
-#define RTTR_METADATA_H_
+#ifndef RTTR_META_DATA_HANDLER_H_
+#define RTTR_META_DATA_HANDLER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/meta_data/meta_data.h"
 #include "rttr/variant.h"
-
-#include <algorithm>
-#include <string>
-#include <utility>
 
 namespace rttr
 {
+namespace detail
+{
 
 /*!
- * This class is used to add custom meta data to the binding of a type.
- *
- *
- * \see method, property, enumeration, constructor and destructor
+ * This class holds an index to possible meta data.
+ * This can be also a name or the declaring type of a property or method.
  */
-class RTTR_API metadata
+class RTTR_API meta_data_handler
 {
     public:
-        metadata(const metadata& other) : m_key(other.m_key), m_value(other.m_value) {}
-        metadata(std::string key, variant value) : m_key(std::move(key)), m_value(std::move(value)) {}
-        metadata(int key, variant value) : m_key(std::move(key)), m_value(std::move(value)) {}
-        metadata(metadata&& data) : m_key(std::move(data.m_key)), m_value(std::move(data.m_value)) { data.m_key = variant(); data.m_value = variant(); }
-        metadata& operator=(metadata other) { std::swap(m_key, other.m_key); std::swap(m_value, other.m_value); return *this; }
+        meta_data_handler();
+        virtual ~meta_data_handler();
 
-        variant get_key() const      { return m_key; }
-        variant get_value() const    { return m_value; }
+        void add_meta_data(detail::meta_data data) const;
+        variant get_meta_data(const variant& key) const;
+
+        RTTR_INLINE uint32 get_meta_index() const { return m_index; }
 
     private:
-        variant m_key;
-        variant m_value;
+        uint32 m_index;
 };
 
+} // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_METADATA_H_
+#endif // RTTR_META_DATA_HANDLER_H_

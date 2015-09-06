@@ -48,15 +48,7 @@ namespace detail
  * registration process of reflection information. Use it in the `()` operator of the returned 
  * \ref bind object.
  */
-template<typename Enum_Type>
-static typename std::enable_if<std::is_enum<Enum_Type>::value, detail::meta_data>::type
- meta_data(Enum_Type key, variant value)
-{
-    return detail::meta_data(static_cast<int>(key), std::move(value));
-}
-
-template<std::size_t N>
-static detail::meta_data meta_data(const char (&key)[N], variant value);
+static RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
 
 /*!
  * The \ref value function should be used to add a mapping from enum `name` to `value`
@@ -74,6 +66,8 @@ static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
  *
  * See following example for a typical usage:
  *
+ * Put the \ref RTTR_ENABLE() macro inside the class declaration, when you will inherit from this class, 
+ * otherwise you can omit the macro.
  * \code{.cpp}
  *  #include <rttr/type>
  *  struct Mesh
@@ -90,7 +84,7 @@ static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
  *      };
  *    
  *      void setDirection(const Vector3 &vec, E_TransformSpace ts = TS_LOCAL);
- *    
+ *      RTTR_ENABLE()
  *  private:
  *      Vector3d _pos;
  *  };
@@ -107,7 +101,7 @@ static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
  *  RTTR_REGISTER
  *  {
  *    using namespace rttr;
- *    registration::class_<Mesh>()
+ *    registration::class_<Mesh>("Mesh")
  *      .constructor<>()
  *      .constructor<const string&>()
  *      .enumeration<E_TransformSpace>("E_TransformSpace")
@@ -348,9 +342,11 @@ private:
  * 
  * RTTR_REGISTER
  * {
- *     method_("pow", select_overload<float(float, float)>(&pow));
+ *      registration::method("pow", select_overload<float(float, float)>(&pow));
  * }
  * \endcode
+ *
+ * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
  *
  */
 template<typename Signature>
@@ -369,12 +365,22 @@ Signature* select_overload(Signature* func)
  * #include <rttr/register>
  * #include <cmath>
  * using namespace rttr;
+ *
+ * struct Foo
+ * {
+ *   void func(int);
+ *   void func(int, int);
+ * };
  * 
  * RTTR_REGISTER
  * {
- *     method_("pow", select_overload<float(float, float)>(&pow));
+ *      registration::class_<foo>("foo")
+ *          .method("func", select_overload<void(int)>(&foo::func))
+ *          .method("func", select_overload<void(int, int)>(&foo::func));
  * }
  * \endcode
+ *
+ * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
  *
  */
 template<typename Signature, typename ClassType>
@@ -400,11 +406,13 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  * 
  * RTTR_REGISTER
  * {
- *     class<Foo>()
-            .method("func", select_non_const(&Foo::func))
-            .method("func", select_const(&Foo::func));
+ *      registration::class<Foo>("Foo")
+ *         .method("func", select_non_const(&Foo::func))
+ *         .method("func", select_const(&Foo::func));
  * }
  * \endcode
+ *
+ * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
  *
  */
 template<typename ClassType, typename ReturnType, typename... Args>
@@ -429,11 +437,13 @@ auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func
  * 
  * RTTR_REGISTER
  * {
- *     class<Foo>()
-            .method("func", select_non_const(&Foo::func))
-            .method("func", select_const(&Foo::func));
+ *      registration::class<Foo>("Foo")
+ *          .method("func", select_non_const(&Foo::func))
+ *          .method("func", select_const(&Foo::func));
  * }
  * \endcode
+ *
+ * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
  *
  */
 template<typename ClassType, typename ReturnType, typename... Args>

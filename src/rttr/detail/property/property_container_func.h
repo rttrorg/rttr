@@ -39,10 +39,7 @@ class property_container<function_ptr, Getter, Setter, return_as_copy, set_value
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_container(std::string name, type declaring_type, Getter getter, Setter setter)
-        :   property_container_base(std::move(name), declaring_type),
-            m_getter(getter),
-            m_setter(setter)
+        property_container(Getter get, Setter set) : m_getter(get), m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-function with exactly one argument.");
@@ -84,9 +81,7 @@ class property_container<function_ptr, Getter, void, return_as_copy, read_only> 
     using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_container(std::string name, type declaring_type, Getter func)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(func)
+        property_container(Getter get) : m_accessor(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
         }
@@ -123,10 +118,7 @@ class property_container<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_container(std::string name,  type declaring_type, Getter getter, Setter setter)
-        :   property_container_base(std::move(name), declaring_type),
-            m_getter(getter),
-            m_setter(setter)
+        property_container(Getter get, Setter set) : m_getter(get), m_setter(set)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-function with a reference as return value!");
             static_assert(std::is_reference<arg_type>::value, "Please provide a setter-function with a reference as argument!");
@@ -172,9 +164,7 @@ class property_container<function_ptr, Getter, void, return_as_ptr, read_only> :
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:
-        property_container(std::string name, type declaring_type, Getter func)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(func)
+        property_container(Getter get) : m_accessor(get)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
         }

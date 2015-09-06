@@ -25,55 +25,35 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/metadata/metadata_container.h"
-#include "rttr/variant.h"
+#ifndef RTTR_ENUM_DATA_H_
+#define RTTR_ENUM_DATA_H_
 
-#include <utility>
-
-using namespace std;
+#include "rttr/detail/base/core_prerequisites.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant metadata_container::get_metadata(int key) const
+/*!
+ * This class holds one enum data.
+ * 
+ */
+template<typename Enum_Type>
+class enum_data
 {
-    const auto value = m_int_data.find(key);
-    if (value != m_int_data.end())
-        return value->second;
-    else
-        return variant();
-}
+    public:
+        enum_data(const char* name, Enum_Type value) : m_name(name), m_value(value) { }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+        const char* get_name() const    { return m_name; }
+        Enum_Type get_value() const     { return m_value; }
 
-variant metadata_container::get_metadata(const std::string& key) const
-{
-    const auto value = m_string_data.find(key);
-    if (value != m_string_data.end())
-        return value->second;
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void metadata_container::set_metadata(int key, variant value)
-{
-    m_int_data.emplace(key, value);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void metadata_container::set_metadata(std::string key, variant value)
-{
-    m_string_data.emplace(key, value);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+    private:
+        const char* m_name;
+        Enum_Type   m_value;
+};
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_ENUM_DATA_H_

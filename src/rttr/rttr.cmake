@@ -30,7 +30,6 @@ set(HEADER_FILES access_level.h
                  constructor.h
                  destructor.h
                  enumeration.h
-                 metadata.h
                  method.h
                  policy.h
                  property.h
@@ -63,7 +62,9 @@ set(HEADER_FILES access_level.h
                  detail/destructor/destructor_container_base.h
                  detail/enumeration/enumeration_container.h
                  detail/enumeration/enumeration_container_base.h
-                 detail/metadata/metadata_container.h
+                 detail/enumeration/enum_data.h
+                 detail/meta_data/meta_data.h
+                 detail/meta_data/meta_data_handler.h
                  detail/method/method_accessor.h
                  detail/method/method_container.h
                  detail/method/method_container_base.h
@@ -122,7 +123,7 @@ set(SOURCE_FILES access_level.cpp
                  detail/constructor/constructor_container_base.cpp
                  detail/destructor/destructor_container_base.cpp
                  detail/enumeration/enumeration_container_base.cpp
-                 detail/metadata/metadata_container.cpp
+                 detail/meta_data/meta_data_handler.cpp
                  detail/method/method_container_base.cpp
                  detail/property/property_container_base.cpp
                  detail/registration/registration_executer.cpp

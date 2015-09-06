@@ -29,7 +29,7 @@
 #define RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/metadata/metadata_container.h"
+#include "rttr/detail/meta_data/meta_data_handler.h"
 
 #include <string>
 #include <vector>
@@ -49,7 +49,7 @@ class argument;
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API constructor_container_base : public metadata_container
+class RTTR_API constructor_container_base : public meta_data_handler
 {
     public:
         constructor_container_base();
@@ -57,6 +57,7 @@ class RTTR_API constructor_container_base : public metadata_container
         virtual ~constructor_container_base();
         virtual type get_declaring_type() const = 0;
         std::string get_signature() const;
+
         virtual type get_instanciated_type() const = 0;
         virtual std::vector<type> get_parameter_types() const = 0;
 

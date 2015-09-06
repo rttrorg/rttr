@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/type/type_database_p.h"
 #include "rttr/detail/argument.h"
 
 namespace rttr
@@ -34,10 +35,8 @@ namespace detail
 {
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration_container_base::enumeration_container_base(const type declaring_type)
-:   m_declaring_type(declaring_type)
+enumeration_container_base::enumeration_container_base()
 {
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -48,10 +47,19 @@ enumeration_container_base::~enumeration_container_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void enumeration_container_base::set_declaring_type(type declaring_type) const
+{
+    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type enumeration_container_base::get_declaring_type() const
 {
-    return m_declaring_type;
+    return type_database::instance().get_declaring_item_type(get_meta_index());
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

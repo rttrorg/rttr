@@ -480,6 +480,37 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<type_data<T>>& vec)
+{
+    using vec_value_type = type_data<T>;
+    const auto id = t.get_id();
+    auto itr = std::lower_bound(vec.cbegin(), vec.cend(), id, typename vec_value_type::order_by_id());
+    for (; itr != vec.cend(); ++itr)
+    {
+        auto& item = *itr;
+        if (item.m_id == id)
+            return item.m_data.get(); 
+        else
+            break;
+    }
+
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_ptr<T> new_item, 
+                                                   std::vector<type_data<T>>& vec)
+{
+    using data_type = type_data<T>;
+    vec.push_back({t.get_id(), std::move(new_item)});
+    std::stable_sort(vec.begin(), vec.end(), typename data_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 constructor_container_base* type_database::get_constructor(const type& t) const
 {
     using vec_value_type = type_data<constructor_container_base>;
@@ -638,49 +669,60 @@ void type_database::register_custom_name(const type& t, std::string custom_name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_metadata(const type& t, std::vector<metadata> data)
+void type_database::register_meta_data(const type& t, std::vector<meta_data> data)
 {
     if (!t.is_valid() || data.empty())
         return;
 
-    if (get_metadata(t)) // there is already some metadata registered => avoid double register
-        return;
+    auto meta_vec = get_meta_data_list(t);
 
-    
-    auto container = detail::make_unique<metadata_container>();
-    for (auto& item : data)
+    if (!meta_vec)
     {
-        auto key    = item.get_key();
-        auto value  = item.get_value();
-        
-        if (key.is_type<int>())
-            container->set_metadata(key.get_value<int>(), std::move(value));
-        else if (key.is_type<std::string>())
-            container->set_metadata(std::move(key.get_value<std::string>()), std::move(value));
+        auto new_meta_vec = detail::make_unique<std::vector<meta_data>>(data.cbegin(), data.cend());        
+        meta_vec = new_meta_vec.get();
+        register_item_type(t, std::move(new_meta_vec), m_meta_data_type_list);
     }
-    using vec_value_type = type_data<metadata_container>;
-    m_meta_data_list.push_back({t.get_id(), move(container)});
-    std::sort(m_meta_data_list.begin(), m_meta_data_list.end(), vec_value_type::order_by_id());
+
+    auto meta_vec_ref = *meta_vec;
+
+    // when we insert new items, we want to check first whether a item with same key exist => ignore this data
+    for (auto& new_item : data)
+    {
+        if (get_meta_data(new_item,  meta_vec_ref).is_valid() == false)
+            meta_vec_ref.emplace_back(std::move(new_item));
+    }
+
+    std::sort(meta_vec_ref.begin(), meta_vec_ref.end(), meta_data::order_by_key());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-metadata_container* type_database::get_metadata(const type& t) const
+variant type_database::get_meta_data(const type& t, const variant& key) const
 {
-    const auto id = t.get_id();
-    using vec_value_type = type_data<metadata_container>;
-    auto itr = std::lower_bound(m_meta_data_list.cbegin(), m_meta_data_list.cend(), 
-                                id, vec_value_type::order_by_id());
-    for (; itr != m_meta_data_list.cend(); ++itr)
+    auto meta_vec = get_meta_data_list(t);
+    return (meta_vec ? get_meta_data(key, *meta_vec) : variant());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant type_database::get_meta_data(const variant& key, const std::vector<meta_data>& data) const
+{
+    auto itr = std::lower_bound(data.cbegin(), data.cend(), key, meta_data::order_by_key());
+    if (itr != data.cend())
     {
         auto& item = *itr;
-        if (item.m_id == id)
-            return item.m_data.get();
-        else
-            break;
+        if (item.get_key() == key)
+            return item.get_value();
     }
 
-    return nullptr;
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<meta_data>* type_database::get_meta_data_list(const type& t) const
+{
+    return get_item_by_type(t, m_meta_data_type_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -720,6 +762,62 @@ type_converter_base* type_database::get_converter(const type& source_type, const
     }
 
     return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_database::add_meta_data(meta_data_index index, meta_data data)
+{
+    const auto new_max_size = std::max(m_meta_data_item_list.size(), static_cast<std::size_t>(index + 1));
+    m_meta_data_item_list.resize(new_max_size);
+    auto& meta_data_vec = m_meta_data_item_list[index];
+    if (get_meta_data(data.get_key(), meta_data_vec).is_valid() == false)
+    {
+        meta_data_vec.emplace_back(std::move(data));
+        std::sort(meta_data_vec.begin(), meta_data_vec.end(), meta_data::order_by_key());
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant type_database::get_meta_data(meta_data_index index, const variant& key) const
+{
+    if (index < m_meta_data_item_list.size())
+        return get_meta_data(key, m_meta_data_item_list[index]);
+    else
+        return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_database::set_item_name(meta_data_index index, const char* name)
+{
+    const auto new_max_size = std::max(m_name_item_list.size(), static_cast<std::size_t>(index + 1));
+    m_name_item_list.resize(new_max_size);
+    m_name_item_list[index] = name;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const char* type_database::get_item_name(meta_data_index index)
+{
+    return m_name_item_list[index];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_database::set_declaring_item_type(meta_data_index index, type declaring_type)
+{
+    const auto new_max_size = std::max(m_declaring_type_item_list.size(), static_cast<std::size_t>(index + 1));
+    m_declaring_type_item_list.resize(new_max_size, get_invalid_type());
+    m_declaring_type_item_list[index] = declaring_type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type type_database::get_declaring_item_type(meta_data_index index) const
+{
+    return m_declaring_type_item_list[index];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

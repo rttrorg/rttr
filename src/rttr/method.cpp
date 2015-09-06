@@ -119,20 +119,10 @@ string method::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::get_metadata(int key) const
+variant method::get_metadata(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_metadata(key);
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant method::get_metadata(const std::string& key) const
-{
-    if (is_valid())
-        return m_container->get_metadata(key);
+        return m_container->get_meta_data(key);
     else
         return variant();
 }

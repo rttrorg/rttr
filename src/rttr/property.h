@@ -225,24 +225,14 @@ class RTTR_API property
         variant get_value(detail::instance object) const;
 
         /*!
-         * \brief Returns the metadata for the given key \p key.
+         * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no metadata is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key, 
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_metadata(int key) const;
-
-        /*!
-         * \brief Returns the metadata for the given key \p key.
-         *
-         * \remark When no metadata is registered with the given \p key, 
-         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
-         *
-         * \return A variant object, containing arbitrary data.
-         */
-        variant get_metadata(const std::string& key) const;
+        variant get_metadata(const variant& key) const;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.

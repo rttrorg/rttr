@@ -36,9 +36,7 @@ template<typename C>
 class property_container<object_ptr, C*, void, return_as_copy, set_value> : public property_container_base
 {
     public:
-        property_container(std::string name, const type declaring_type, C* pointer)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(pointer)
+        property_container(C* pointer) : m_accessor(pointer)
         {
         }
 
@@ -76,9 +74,7 @@ template<typename C>
 class property_container<object_ptr, C*, void, return_as_copy, read_only> : public property_container_base
 {
     public:
-        property_container(std::string name, const type declaring_type, C* pointer)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(pointer)
+        property_container(C* pointer) : m_accessor(pointer)
         {
         }
 
@@ -109,9 +105,7 @@ template<typename C>
 class property_container<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public property_container_base
 {
     public:
-        property_container(std::string name, const type declaring_type, C* pointer)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(pointer)
+        property_container(C* pointer) : m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
         }
@@ -150,9 +144,7 @@ template<typename C>
 class property_container<object_ptr, C*, void, return_as_ptr, read_only> : public property_container_base
 {
     public:
-        property_container(std::string name, type declaring_type, C* pointer)
-        :   property_container_base(std::move(name), declaring_type),
-            m_accessor(pointer)
+        property_container(C* pointer) : m_accessor(pointer)
         {
         }
 

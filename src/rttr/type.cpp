@@ -39,7 +39,6 @@
 #include "rttr/detail/method/method_container_base.h"
 #include "rttr/detail/property/property_container.h"
 #include "rttr/rttr_enable.h"
-#include "rttr/metadata.h"
 
 #include "rttr/detail/type/type_database_p.h"
 
@@ -373,22 +372,9 @@ std::vector<type> type::get_types()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_metadata(int key) const
+variant type::get_metadata(const variant& key) const
 {
-    if (const auto container = detail::type_database::instance().get_metadata(*this))
-        return container->get_metadata(key);
-
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant type::get_metadata(const std::string& key) const
-{
-    if (const auto container = detail::type_database::instance().get_metadata(*this))
-        return container->get_metadata(key);
-
-    return variant();
+    return detail::type_database::instance().get_meta_data(*this, key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/type/type_database_p.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 
@@ -41,11 +42,8 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_container_base::method_container_base(std::string name, type declaring_type)
-:   m_name(std::move(name)),
-    m_declaring_type(declaring_type)
+method_container_base::method_container_base()
 {
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -56,16 +54,30 @@ method_container_base::~method_container_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string method_container_base::get_name() const 
+void method_container_base::set_name(const char* name) const
 {
-    return m_name; 
+    type_database::instance().set_item_name(get_meta_index(), name);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const char* method_container_base::get_name() const 
+{
+    return type_database::instance().get_item_name(get_meta_index());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method_container_base::set_declaring_type(type declaring_type) const
+{
+    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type method_container_base::get_declaring_type() const
 {
-    return m_declaring_type;
+    return type_database::instance().get_declaring_item_type(get_meta_index());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +85,7 @@ type method_container_base::get_declaring_type() const
 string method_container_base::get_signature() const
 {
     auto params = get_parameter_types();
-    string result = m_name + "( ";
+    string result = std::string(get_name()) + "( ";
     std::size_t index = 0;
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
@@ -94,6 +106,7 @@ string method_container_base::get_signature() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
 
 } // end namespace detail
 } // end namespace rttr

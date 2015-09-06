@@ -29,12 +29,11 @@
 #define RTTR_TYPE_DATABASE_P_H_
 
 #include "rttr/type.h"
-#include "rttr/detail/metadata/metadata_container.h"
+#include "rttr/detail/meta_data/meta_data.h"
 
 #include <vector>
 #include <string>
 #include <memory>
-#include <mutex>
 #include <functional>
 
 #define RTTR_MAX_TYPE_COUNT 32767
@@ -67,7 +66,7 @@ class RTTR_LOCAL type_database
         void register_destructor(const type& t, std::unique_ptr<destructor_container_base> dtor);
         void register_enumeration(const type& t, std::unique_ptr<enumeration_container_base> enum_data);
         void register_custom_name(const type& t, std::string );
-        void register_metadata( const type& t, std::vector<metadata> metadata);
+        void register_meta_data( const type& t, std::vector<meta_data> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
 
         uint16 register_type(const char* name, 
@@ -130,11 +129,22 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        metadata_container* get_metadata(const type& t) const;
+        variant get_meta_data(const type& t, const variant& key) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
         enumeration_container_base* get_enumeration(const type& t) const;
+
+        /////////////////////////////////////////////////////////////////////////////////////
+
+        void add_meta_data(meta_data_index index, meta_data data);
+        variant get_meta_data(meta_data_index index, const variant& key) const;
+
+        void set_item_name(meta_data_index index, const char* name);
+        const char* get_item_name(meta_data_index index);
+
+        void set_declaring_item_type(meta_data_index index, type declaring_type);
+        type get_declaring_item_type(meta_data_index index) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
         
@@ -146,7 +156,8 @@ class RTTR_LOCAL type_database
         //! Returns true, when the name was already registered
         bool register_name(const char* name, const type& array_raw_type, uint16& id);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
-
+        std::vector<meta_data>* get_meta_data_list(const type& t) const;
+        variant get_meta_data(const variant& key, const std::vector<meta_data>& data) const;
 
         typedef std::size_t hash_type;
         RTTR_INLINE static hash_type generate_hash(const std::string& text) { return generate_hash(text.c_str()); }
@@ -307,6 +318,11 @@ class RTTR_LOCAL type_database
             std::unique_ptr<T>  m_data;
         };
 
+        template<typename T>
+        static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<type_data<T>>& vec);
+        template<typename T>
+        static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<type_data<T>>& vec);
+
         type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
         std::vector<const char*>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
         std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
@@ -346,10 +362,11 @@ class RTTR_LOCAL type_database
         std::vector<type_data<destructor_container_base>>           m_destructor_list;
 
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
-        std::vector<type_data<metadata_container>>                  m_meta_data_list;
         std::vector<type_data<enumeration_container_base>>          m_enumeration_list;
-
-        std::mutex                                                  m_register_type_mutex;
+        std::vector<type_data<std::vector<meta_data>>>              m_meta_data_type_list;
+        std::vector<std::vector<meta_data>>                         m_meta_data_item_list;
+        std::vector<const char*>                                    m_name_item_list;
+        std::vector<type>                                           m_declaring_type_item_list;
 };
 
 } // end namespace detail

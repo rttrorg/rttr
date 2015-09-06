@@ -143,24 +143,14 @@ class RTTR_API enumeration
         type get_declaring_type() const;
 
         /*!
-         * \brief Returns the metadata for the given key \p key.
+         * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no metadata is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key, 
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_metadata(int key) const;
-
-        /*!
-         * \brief Returns the metadata for the given key \p key.
-         *
-         * \remark When no metadata is registered with the given \p key, 
-         *         an invalid \ref variant object is returned (see \ref variant::is_valid).
-         *
-         * \return A variant object, containing arbitrary data.
-         */
-        variant get_metadata(const std::string& key) const;
+        variant get_metadata(const variant& key) const;
 
         /*!
          * \brief Returns all enum keys registered for this enumeration.

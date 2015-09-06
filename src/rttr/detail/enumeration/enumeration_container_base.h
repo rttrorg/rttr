@@ -29,9 +29,9 @@
 #define RTTR_ENUMERATION_CONTAINER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/variant.h"
 #include "rttr/type.h"
-#include "rttr/detail/metadata/metadata_container.h"
 
 #include <string>
 #include <vector>
@@ -50,10 +50,10 @@ class argument;
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API enumeration_container_base : public metadata_container
+class RTTR_API enumeration_container_base : public meta_data_handler
 {
     public:
-        enumeration_container_base(const type declaring_type);
+        enumeration_container_base();
         virtual ~enumeration_container_base();
 
         virtual type get_underlying_type() const = 0;
@@ -68,11 +68,9 @@ class RTTR_API enumeration_container_base : public metadata_container
 
         virtual variant key_to_value(const std::string& key) const = 0;
 
-        // Returns the class that declares this property.
-        type get_declaring_type() const;
+        void set_declaring_type(type declaring_type) const;
 
-    private:
-        const type  m_declaring_type;
+        type get_declaring_type() const;
 };
 
 } // end namespace detail

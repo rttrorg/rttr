@@ -48,10 +48,11 @@
 namespace rttr
 {
 
-template<std::size_t N>
-static detail::meta_data meta_data(const char (&key)[N], variant value)
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static RTTR_INLINE detail::meta_data meta_data(variant key, variant value)
 {
-    return detail::meta_data{key, std::move(value)};
+    return detail::meta_data{std::move(key), std::move(value)}; 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +100,7 @@ template<typename...Args>
 registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(Args&&...args)
 {
     auto data = detail::get_meta_data(std::forward<Args>(args)...);
-    detail::type_register::metadata(type::get<Class_Type>(), detail::convert_metadata(data));
+    detail::type_register::meta_data(type::get<Class_Type>(), std::move(data));
     return *this;
 }
 

@@ -45,9 +45,8 @@ template<typename Enum_Type>
 class enumeration_container : public enumeration_container_base
 {
     public:
-        enumeration_container(const type declaring_type, std::vector< std::pair<std::string, Enum_Type> > data)
-        :   enumeration_container_base(declaring_type),
-            m_key_value_list(move(data))
+        enumeration_container(std::vector< std::pair<std::string, Enum_Type> > data)
+        :   m_key_value_list(move(data))
         {
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }

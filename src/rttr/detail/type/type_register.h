@@ -39,7 +39,6 @@ namespace rttr
 class variant;
 class type;
 
-class metadata;
 template<typename T>
 class class_;
 
@@ -63,6 +62,8 @@ typedef derived_info(*get_derived_func)(void*);
 
 template<typename T, typename Enable>
 struct type_getter;
+
+class meta_data;
 
 /*!
  * This class contains all functions to register properties, methods etc.. for a specific type.
@@ -88,7 +89,7 @@ public:
 
     static void custom_name(const type& t, std::string );
 
-    static void metadata( const type& t, std::vector<metadata> metadata);
+    static void meta_data( const type& t, std::vector<meta_data> data);
 
     static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
 

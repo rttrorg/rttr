@@ -29,9 +29,10 @@
 #define RTTR_METHOD_CONTAINER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
-#include "rttr/detail/metadata/metadata_container.h"
+
 
 #include <string>
 #include <vector>
@@ -51,14 +52,15 @@ class instance;
  * This is the base class for all methods.
  * You can invoke the method via method_container_base::invoke.
  */
-class RTTR_API method_container_base : public metadata_container
+class RTTR_API method_container_base : public meta_data_handler
 {
     public:
-        method_container_base(std::string name, type declaring_type);
-
+        method_container_base();
         virtual ~method_container_base();
 
-        std::string get_name() const;
+        void set_name(const char* name) const;
+        const char* get_name() const;
+        void set_declaring_type(type declaring_type) const;
         type get_declaring_type() const;
         std::string get_signature() const;
 
@@ -80,10 +82,6 @@ class RTTR_API method_container_base : public metadata_container
                                detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const = 0;
 
         virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
-
-    private:
-        const std::string   m_name;
-        const type          m_declaring_type;
 };
 
 } // end namespace detail

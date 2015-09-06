@@ -162,20 +162,10 @@ variant property::get_value(detail::instance object) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant property::get_metadata(int key) const
+variant property::get_metadata(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_metadata(key);
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant property::get_metadata(const std::string& key) const
-{
-    if (is_valid())
-        return m_container->get_metadata(key);
+        return m_container->get_meta_data(key);
     else
         return variant();
 }

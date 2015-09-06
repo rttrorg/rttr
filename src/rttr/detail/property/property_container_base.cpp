@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/detail/property/property_container_base.h"
+#include "rttr/detail/type/type_database_p.h"
 
 namespace rttr
 {
@@ -34,9 +35,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_container_base::property_container_base(std::string name, type decalaring_type)
-:   m_name(std::move(name)),
-    m_declaring_type(decalaring_type)
+property_container_base::property_container_base()
 {
 }
 
@@ -48,16 +47,30 @@ property_container_base::~property_container_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string property_container_base::get_name() const
+void property_container_base::set_name(const char* name) const
 {
-    return m_name;
+    type_database::instance().set_item_name(get_meta_index(), name);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const char* property_container_base::get_name() const
+{
+    return type_database::instance().get_item_name(get_meta_index());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void property_container_base::set_declaring_type(type declaring_type) const
+{
+    type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type property_container_base::get_declaring_type() const
 {
-    return m_declaring_type;
+    return type_database::instance().get_declaring_item_type(get_meta_index());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

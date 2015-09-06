@@ -33,6 +33,8 @@
 #include "rttr/detail/constructor/constructor_container.h"
 #include "rttr/detail/destructor/destructor_container.h"
 #include "rttr/detail/enumeration/enumeration_container.h"
+#include "rttr/detail/enumeration/enum_data.h"
+#include "rttr/detail/meta_data/meta_data.h"
 #include "rttr/detail/method/method_container.h"
 #include "rttr/detail/property/property_container.h"
 #include "rttr/detail/type/accessor_type.h"
@@ -42,6 +44,7 @@
 #include "rttr/policy.h"
 #include "rttr/type.h"
 #include <functional>
+#include <iostream>
 
 #include <string>
 #include <vector>
@@ -50,33 +53,6 @@ namespace rttr
 {
 namespace detail
 {
-
-class RTTR_API meta_data
-{
-    public:
-        meta_data(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
-
-        variant get_key() const      { return m_key; }
-        variant get_value() const    { return m_value; }
-
-    private:
-        variant m_key;
-        variant m_value;
-};
-
-template<typename Enum_Type>
-class enum_data
-{
-    public:
-        enum_data(const char* name, Enum_Type value) : m_name(name), m_value(value) { }
-
-        const char* get_name() const    { return m_name; }
-        Enum_Type get_value() const     { return m_value; }
-
-    private:
-        const char* m_name;
-        Enum_Type   m_value;
-};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -104,37 +80,15 @@ static RTTR_INLINE std::vector< std::pair<std::string, Enum_Type> > get_enum_val
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static void store_metadata(T& obj, std::vector<meta_data> data)
+static RTTR_INLINE void store_meta_data(T& obj, std::vector<meta_data> data)
 {
     for (auto& item : data)
     {
-        auto key    = item.get_key();
-        auto value  = item.get_value();
-        if (key.is_type<int>())
-            obj->set_metadata(key.get_value<int>(), std::move(value));
-        else if (key.is_type<std::string>())
-            obj->set_metadata(std::move(key.get_value<std::string>()), std::move(value));
+        obj->add_meta_data(std::move(item));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-static std::vector<metadata> convert_metadata(const std::vector<meta_data>& data)
-{
-    std::vector<metadata> result;
-    result.reserve(data.size());
-    for (const auto& item : data)
-    {
-        auto key    = item.get_key();
-        auto value  = item.get_value();
-        if (key.is_type<int>())
-            result.emplace_back(metadata(key.get_value<int>(), std::move(value)));
-        else if (key.is_type<std::string>())
-            result.emplace_back(metadata(key.get_value<std::string>(), std::move(value)));
-    }
-
-    return result;
-}
 
 } // end namespace detail
 
@@ -177,7 +131,7 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
             using namespace detail;
             m_ctor = detail::make_unique<detail::constructor_container<Class_Type, class_ctor, default_invoke, Args...>>();
             
-            store_metadata(m_ctor, get_meta_data(std::forward<Params>(arg)...));
+            store_meta_data(m_ctor, get_meta_data(std::forward<Params>(arg)...));
             
             return registration::class_<Class_Type>(m_reg_exec);
         }
@@ -223,7 +177,7 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
             using namespace detail;
             m_ctor = detail::make_unique<constructor_container<Class_Type, return_func, default_invoke, F>>(m_func);
 
-            store_metadata(m_ctor, get_meta_data(std::forward<Args>(arg)...));
+            store_meta_data(m_ctor, get_meta_data(std::forward<Args>(arg)...));
            
             return registration::class_<Class_Type>(m_reg_exec);
         }
@@ -262,9 +216,13 @@ class registration::bind<detail::prop, Class_Type, A> : public registration_deri
             using namespace detail;
             using acc_type = typename property_type<A>::type;
             if (!m_prop.get())
-                m_prop = detail::make_unique<property_container<acc_type, A, void, default_getter_policy, default_setter_policy>>(m_name, rttr::type::get<Class_Type>(), m_acc);
+                m_prop = detail::make_unique<property_container<acc_type, A, void, default_getter_policy, default_setter_policy>>(m_acc);
 
-            
+            m_prop->set_name(m_name);
+            m_prop->set_declaring_type(type::get<Class_Type>());
+            // register the underlying type with the following call:
+            m_prop->get_type();
+
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -291,10 +249,9 @@ class registration::bind<detail::prop, Class_Type, A> : public registration_deri
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A>::type;
 
-            m_prop = detail::make_unique<property_container<acc_type, A, void, getter_policy, setter_policy>>(m_name, rttr::type::get<Class_Type>(), m_acc);
-            // register the underlying type with the following call:
-            m_prop->get_type();
-            store_metadata(m_prop, get_meta_data(std::forward<Args>(arg)...));
+            m_prop = detail::make_unique<property_container<acc_type, A, void, getter_policy, setter_policy>>(m_acc);
+            
+            store_meta_data(m_prop, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
@@ -325,8 +282,12 @@ class registration::bind<detail::prop, Class_Type, A1, A2> : public registration
             using acc_type = typename property_type<A1>::type;
 
             if (!m_prop.get())
-                m_prop = detail::make_unique<property_container<acc_type, A1, A2, default_getter_policy, default_setter_policy>>(m_name, type::get<Class_Type>(), m_getter, m_setter);
+                m_prop = detail::make_unique<property_container<acc_type, A1, A2, default_getter_policy, default_setter_policy>>(m_getter, m_setter);
 
+            m_prop->set_name(m_name);
+            m_prop->set_declaring_type(type::get<Class_Type>());
+            // register the underlying type with the following call:
+            m_prop->get_type();
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -351,10 +312,9 @@ class registration::bind<detail::prop, Class_Type, A1, A2> : public registration
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A1>::type;
-            m_prop = detail::make_unique<property_container<acc_type, A1, A2, getter_policy, setter_policy>>(m_name, type::get<Class_Type>(), m_getter, m_setter);
-            // register the underlying type with the following call:
-            m_prop->get_type();
-            store_metadata(m_prop, get_meta_data(std::forward<Args>(arg)...));
+            m_prop = detail::make_unique<property_container<acc_type, A1, A2, getter_policy, setter_policy>>(m_getter, m_setter);
+
+            store_meta_data(m_prop, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
@@ -386,8 +346,12 @@ class registration::bind<detail::prop_readonly, Class_Type, A> : public registra
             using namespace detail;
             using acc_type = typename property_type<A>::type;
             if (!m_prop.get())
-                m_prop = detail::make_unique<property_container<acc_type, A, void, default_getter_policy, default_setter_policy>>(m_name, rttr::type::get<Class_Type>(), m_acc);
+                m_prop = detail::make_unique<property_container<acc_type, A, void, default_getter_policy, default_setter_policy>>(m_acc);
 
+            m_prop->set_name(m_name);
+            m_prop->set_declaring_type(type::get<Class_Type>());
+            // register the underlying type with the following call:
+            m_prop->get_type();
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -412,10 +376,9 @@ class registration::bind<detail::prop_readonly, Class_Type, A> : public registra
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A>::type;
 
-            m_prop = detail::make_unique<property_container<acc_type, A, void, getter_policy, default_setter_policy>>(m_name, rttr::type::get<Class_Type>(), m_acc);
-            // register the underlying type with the following call:
-            m_prop->get_type();
-            store_metadata(m_prop, get_meta_data(std::forward<Args>(arg)...));
+            m_prop = detail::make_unique<property_container<acc_type, A, void, getter_policy, default_setter_policy>>(m_acc);
+
+            store_meta_data(m_prop, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
@@ -444,7 +407,12 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
             if (!m_meth.get())
                 m_meth = detail::make_unique<method_container<F, default_invoke>>(m_name, type::get<Class_Type>(), m_func);
 
-            
+            m_meth->set_name(m_name);
+            m_meth->set_declaring_type(type::get<Class_Type>());
+            // register the underlying type with the following call:
+            m_meth->get_return_type();
+            m_meth->get_parameter_types();
+
             auto wrapper = detail::make_rref(std::move(m_meth));
             auto reg_func = [wrapper]()
             {
@@ -469,10 +437,8 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
             using method_policy = typename get_method_policy<first_meth_policy>::type;
 
             m_meth = detail::make_unique<method_container<F, method_policy>>(m_name, type::get<Class_Type>(), m_func);
-            // register the underlying type with the following call:
-            m_meth->get_return_type();
-            m_meth->get_parameter_types();
-            store_metadata(m_meth, get_meta_data(std::forward<Args>(arg)...));
+
+            store_meta_data(m_meth, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
@@ -506,9 +472,12 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
         {
             using namespace detail;
             if (!m_enum.get())
-                m_enum = detail::make_unique<enumeration_container<Enum_Type>>(m_declared_type, get_enum_values<Enum_Type>());
+                m_enum = detail::make_unique<enumeration_container<Enum_Type>>(get_enum_values<Enum_Type>());
 
-            
+            m_enum->set_declaring_type(m_declared_type);
+            // register the underlying type with the following call:
+            m_enum->get_type();
+
             auto wrapper = detail::make_rref(std::move(m_enum));
             auto reg_func = [wrapper]()
             {
@@ -521,11 +490,9 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
         registration_derived_t<Class_Type> operator()(Args&&... arg)
         {
             using namespace detail;
-            m_enum = detail::make_unique<enumeration_container<Enum_Type>>(m_declared_type, get_enum_values<Enum_Type>(std::forward<Args>(arg)...));
-            // register the underlying type with the following call:
-            m_enum->get_type();
+            m_enum = detail::make_unique<enumeration_container<Enum_Type>>(get_enum_values<Enum_Type>(std::forward<Args>(arg)...));
 
-            store_metadata(m_enum, get_meta_data(std::forward<Args>(arg)...));
+            store_meta_data(m_enum, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }

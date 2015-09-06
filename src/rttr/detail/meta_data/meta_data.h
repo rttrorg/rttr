@@ -25,14 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_METADATA_CONTAINER_H_
-#define RTTR_METADATA_CONTAINER_H_
+#ifndef RTTR_META_DATA_H_
+#define RTTR_META_DATA_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/variant.h"
-
-#include <string>
-#include <unordered_map>
 
 namespace rttr
 {
@@ -40,37 +37,44 @@ namespace detail
 {
 
 /*!
- * This class gives access to a constructor of a rttr::type.
- * Discovers the attributes of a class constructor and provides access to constructor metadata. 
+ * This class holds meta data.
  * 
- * Calling constructor::invoke will create an instance of the type.
  */
-class RTTR_API metadata_container
+class RTTR_API meta_data
 {
     public:
-        metadata_container()
-        {}
+        meta_data(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
+        meta_data(const meta_data& other) : m_key(other.m_key), m_value(other.m_value) {}
+        meta_data(meta_data&& other) : m_key(std::move(other.m_key)), m_value(std::move(other.m_value)) {}
+        meta_data& operator=(const meta_data& other) { m_key = other.m_key; m_value = other.m_value; return *this; }
 
-        metadata_container(metadata_container&& other)
-        :   m_int_data(std::move(other.m_int_data)),
-            m_string_data(std::move(other.m_string_data))
+        variant get_key() const      { return m_key; }
+        variant get_value() const    { return m_value; }
+
+        struct order_by_key
         {
-        }
-
-        variant get_metadata(int key) const;
-        variant get_metadata(const std::string& key) const;
-
-        void set_metadata(int key, variant value);
-        void set_metadata(std::string key, variant value);
+            RTTR_INLINE bool operator () ( const meta_data& _left, const meta_data& _right )  const
+            {
+                return _left.m_key < _right.m_key;
+            }
+            RTTR_INLINE bool operator () ( const variant& _left, const meta_data& _right ) const
+            {
+                return _left < _right.m_key;
+            }
+            RTTR_INLINE bool operator () ( const meta_data& _left, const variant& _right ) const
+            {
+                return _left.m_key < _right;
+            }
+        };
 
     private:
-        typedef std::unordered_map<int, variant> IntKey2ValueMap;
-        typedef std::unordered_map<std::string, variant> StringKey2ValueMap;
-        IntKey2ValueMap     m_int_data;
-        StringKey2ValueMap  m_string_data;
+        variant m_key;
+        variant m_value;
 };
+
+using meta_data_index = uint32;
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_METADATA_CONTAINER_H_
+#endif // RTTR_META_DATA_H_

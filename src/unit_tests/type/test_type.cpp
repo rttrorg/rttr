@@ -69,7 +69,7 @@ TEST_CASE("Test rttr::type - BasicTests", "[type]")
 
         CHECK(boolTypeInfo != intTypeInfo);
 
-        int ***intPtr = NULL;
+        int ***intPtr = nullptr;
         CHECK(type::get<int***>() == type::get(intPtr));
 
     }
@@ -107,7 +107,7 @@ TEST_CASE("Test rttr::type - BasicTests", "[type]")
 
         const int& intConstRef = intVar;
         CHECK(type::get<int>() == type::get(intConstRef));
-        int*** ptr = NULL;
+        int*** ptr = nullptr;
         CHECK(type::get<int***>() == type::get(ptr));
     }
 }
@@ -149,14 +149,14 @@ TEST_CASE("Test rttr::type - SingleClassInheritance", "[type]")
         ClassSingleBase& baseSingle = instance6A;
 
         // down cast cast
-        CHECK(rttr_cast<ClassSingle6A*>(&baseSingle) != NULL);
-        CHECK(rttr_cast<ClassSingle3A*>(&baseSingle) != NULL);
-        CHECK(rttr_cast<ClassSingle6B*>(&baseSingle) == NULL);
+        CHECK(rttr_cast<ClassSingle6A*>(&baseSingle) != nullptr);
+        CHECK(rttr_cast<ClassSingle3A*>(&baseSingle) != nullptr);
+        CHECK(rttr_cast<ClassSingle6B*>(&baseSingle) == nullptr);
 
         // up cast cast
-        CHECK(rttr_cast<ClassSingleBase*>(&instance6A) != NULL);
-        CHECK(rttr_cast<ClassSingle3A*>(&instance6A) != NULL);
-        CHECK(rttr_cast<ClassSingle1A*>(&instance6A) != NULL);
+        CHECK(rttr_cast<ClassSingleBase*>(&instance6A) != nullptr);
+        CHECK(rttr_cast<ClassSingle3A*>(&instance6A) != nullptr);
+        CHECK(rttr_cast<ClassSingle1A*>(&instance6A) != nullptr);
     }
 
     {
@@ -164,15 +164,15 @@ TEST_CASE("Test rttr::type - SingleClassInheritance", "[type]")
         ClassSingleBase& baseSingle = instance6E;
 
         // down cast cast
-        CHECK(rttr_cast<ClassSingle6A*>(&baseSingle) == NULL);
-        CHECK(rttr_cast<ClassSingle3E*>(&baseSingle) != NULL);
-        CHECK(rttr_cast<ClassSingle6E*>(&baseSingle) != NULL);
+        CHECK(rttr_cast<ClassSingle6A*>(&baseSingle) == nullptr);
+        CHECK(rttr_cast<ClassSingle3E*>(&baseSingle) != nullptr);
+        CHECK(rttr_cast<ClassSingle6E*>(&baseSingle) != nullptr);
 
         // up cast cast
-        CHECK(rttr_cast<ClassSingleBase*>(&instance6E) != NULL);
-        CHECK(rttr_cast<ClassSingle3E*>(&instance6E) != NULL);
-        CHECK(rttr_cast<ClassSingle1E*>(&instance6E) != NULL);
-        CHECK(rttr_cast<ClassSingle6E*>(&instance6E) != NULL);
+        CHECK(rttr_cast<ClassSingleBase*>(&instance6E) != nullptr);
+        CHECK(rttr_cast<ClassSingle3E*>(&instance6E) != nullptr);
+        CHECK(rttr_cast<ClassSingle1E*>(&instance6E) != nullptr);
+        CHECK(rttr_cast<ClassSingle6E*>(&instance6E) != nullptr);
     }
 }
 
@@ -189,25 +189,25 @@ TEST_CASE("Test rttr::type - MultipleClassInheritance", "[type]")
         ClassMultipleBaseE& baseMultiE = final;
 
         // down cast cast
-        CHECK(rttr_cast<FinalClass*>(&baseMultiA) != NULL);
-        CHECK(rttr_cast<FinalClass*>(&baseMultiB) != NULL);
-        CHECK(rttr_cast<FinalClass*>(&baseMultiC) != NULL);
-        CHECK(rttr_cast<FinalClass*>(&baseMultiD) != NULL);
-        CHECK(rttr_cast<FinalClass*>(&baseMultiE) != NULL);
+        CHECK(rttr_cast<FinalClass*>(&baseMultiA) != nullptr);
+        CHECK(rttr_cast<FinalClass*>(&baseMultiB) != nullptr);
+        CHECK(rttr_cast<FinalClass*>(&baseMultiC) != nullptr);
+        CHECK(rttr_cast<FinalClass*>(&baseMultiD) != nullptr);
+        CHECK(rttr_cast<FinalClass*>(&baseMultiE) != nullptr);
 
         // up cast cast
-        CHECK(rttr_cast<ClassMultipleBaseA*>(&final) != NULL);
-        CHECK(rttr_cast<ClassMultipleBaseB*>(&final) != NULL);
-        CHECK(rttr_cast<ClassMultipleBaseC*>(&final) != NULL);
-        CHECK(rttr_cast<ClassMultipleBaseD*>(&final) != NULL);
-        CHECK(rttr_cast<ClassMultipleBaseE*>(&final) != NULL);
+        CHECK(rttr_cast<ClassMultipleBaseA*>(&final) != nullptr);
+        CHECK(rttr_cast<ClassMultipleBaseB*>(&final) != nullptr);
+        CHECK(rttr_cast<ClassMultipleBaseC*>(&final) != nullptr);
+        CHECK(rttr_cast<ClassMultipleBaseD*>(&final) != nullptr);
+        CHECK(rttr_cast<ClassMultipleBaseE*>(&final) != nullptr);
 
         // down cast cast to the middle
-        CHECK(rttr_cast<ClassMultiple3A*>(&baseMultiA) != NULL);
-        CHECK(rttr_cast<ClassMultiple3B*>(&baseMultiB) != NULL);
-        CHECK(rttr_cast<ClassMultiple3C*>(&baseMultiC) != NULL);
-        CHECK(rttr_cast<ClassMultiple3D*>(&baseMultiD) != NULL);
-        CHECK(rttr_cast<ClassMultiple3E*>(&baseMultiE) != NULL);
+        CHECK(rttr_cast<ClassMultiple3A*>(&baseMultiA) != nullptr);
+        CHECK(rttr_cast<ClassMultiple3B*>(&baseMultiB) != nullptr);
+        CHECK(rttr_cast<ClassMultiple3C*>(&baseMultiC) != nullptr);
+        CHECK(rttr_cast<ClassMultiple3D*>(&baseMultiD) != nullptr);
+        CHECK(rttr_cast<ClassMultiple3E*>(&baseMultiE) != nullptr);
     }
 
     {
@@ -217,22 +217,22 @@ TEST_CASE("Test rttr::type - MultipleClassInheritance", "[type]")
         ClassMultiple1E classMulti1E;
 
         // check for invalid casts
-        CHECK(rttr_cast<FinalClass*>(&classMulti6A) == NULL);
+        CHECK(rttr_cast<FinalClass*>(&classMulti6A) == nullptr);
 
-        CHECK(rttr_cast<ClassMultiple4B*>(&classMulti3B) == NULL);
+        CHECK(rttr_cast<ClassMultiple4B*>(&classMulti3B) == nullptr);
 
-        CHECK(rttr_cast<ClassMultiple2E*>(&classMulti1E) == NULL);
-        CHECK(rttr_cast<ClassMultiple6E*>(&classMulti1E) == NULL);
+        CHECK(rttr_cast<ClassMultiple2E*>(&classMulti1E) == nullptr);
+        CHECK(rttr_cast<ClassMultiple6E*>(&classMulti1E) == nullptr);
 
         // check for valid casts
-        CHECK(rttr_cast<ClassMultiple5A*>(&classMulti6A) != NULL);
-        CHECK(rttr_cast<ClassMultipleBaseA*>(&classMulti6A) != NULL);
+        CHECK(rttr_cast<ClassMultiple5A*>(&classMulti6A) != nullptr);
+        CHECK(rttr_cast<ClassMultipleBaseA*>(&classMulti6A) != nullptr);
 
-        CHECK(rttr_cast<ClassMultiple2B*>(&classMulti3B) != NULL);
-        CHECK(rttr_cast<ClassMultiple1B*>(&classMulti3B) != NULL);
+        CHECK(rttr_cast<ClassMultiple2B*>(&classMulti3B) != nullptr);
+        CHECK(rttr_cast<ClassMultiple1B*>(&classMulti3B) != nullptr);
 
-        CHECK(rttr_cast<ClassMultipleBaseE*>(&classMulti1E) != NULL);
-        CHECK(rttr_cast<ClassMultiple1E*>(&classMulti1E) != NULL);
+        CHECK(rttr_cast<ClassMultipleBaseE*>(&classMulti1E) != nullptr);
+        CHECK(rttr_cast<ClassMultiple1E*>(&classMulti1E) != nullptr);
     }
 }
 

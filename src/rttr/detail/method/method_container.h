@@ -51,8 +51,7 @@ class method_container : public method_container_base
 {
     public:
         method_container(std::string name, type declaring_type, F func_acc)
-        :   method_container_base(std::move(name), declaring_type),
-            m_func_acc(func_acc)
+        : m_func_acc(func_acc)
         { }
 
         bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }

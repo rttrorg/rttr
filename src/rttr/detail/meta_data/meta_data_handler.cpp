@@ -25,66 +25,48 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_CONTAINER_BASE_H_
-#define RTTR_PROPERTY_CONTAINER_BASE_H_
-
-#include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
+#include "rttr/detail/type/type_database_p.h"
 
 namespace rttr
 {
 namespace detail
 {
-class instance;
-class argument;
-/*!
- * Abstract class for an instance of a Property.
- * 
- * This is the base class for all properties of the system.
- * It provide the basic mechanism for getting all meta data of a property,
- * but it also define a general interface to set/get properties via string: toString and fromString.
- */
-class RTTR_API property_container_base : public meta_data_handler
+
+static uint32 get_global_index()
 {
-    public:
-        property_container_base();
+    static uint32 item_count;
+    return item_count++;
+}
 
-        virtual ~property_container_base();
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        //! sets the name of this property.
-        void set_name(const char* name) const;
+meta_data_handler::meta_data_handler()
+:   m_index(get_global_index())
+{
+}
 
-        //! returns the name of this property.
-        const char* get_name() const;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        //! Returns true whether this is a constant property, otherwise false.
-        virtual bool is_readonly() const = 0;
+meta_data_handler::~meta_data_handler()
+{
+}
 
-        //! Returns true whether this is a static property, otherwise false.
-        virtual bool is_static() const = 0;
-    
-        //! Returns the type of the underlying property.
-        virtual type get_type() const = 0;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        //! Returns the class that declares this property.
-        type get_declaring_type() const;
+void meta_data_handler::add_meta_data(detail::meta_data data) const 
+{
+    type_database::instance().add_meta_data(m_index, std::move(data));
+}
 
-        //! Sets the declaring type for this property.
-        void set_declaring_type(type declaring_type) const;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        //! Returns true when the underlying property is an array type.
-        virtual bool is_array() const = 0;
+variant meta_data_handler::get_meta_data(const variant& key) const
+{
+    return type_database::instance().get_meta_data(m_index, key);
+}
 
-        //! Sets this property of the given instance \p instance to the value of the argument \p argument.
-        virtual bool set_value(detail::instance& object, detail::argument& arg) const = 0;
-
-        //! Returns the value of this property from the given instance \p instance.
-        virtual variant get_value(detail::instance& object) const = 0;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#endif // RTTR_PROPERTY_CONTAINER_BASE_H_
