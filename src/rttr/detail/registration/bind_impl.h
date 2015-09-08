@@ -65,16 +65,9 @@ static RTTR_INLINE std::vector<meta_data> get_meta_data(Args&&... arg)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum_Type, typename... Args>
-static RTTR_INLINE std::vector< std::pair<std::string, Enum_Type> > get_enum_values(Args&&... arg)
+static RTTR_INLINE std::vector< enum_data<Enum_Type> > get_enum_values(Args&&... arg)
 {
-    auto list_of_enums = forward_to_vector<enum_data<Enum_Type>>(std::forward<Args>(arg)...);
-    std::vector< std::pair<std::string, Enum_Type> > result;
-    result.reserve(list_of_enums.size());
-    for (auto& enum_item : list_of_enums)
-    {
-        result.emplace_back(std::make_pair(std::string(enum_item.get_name()), enum_item.get_value()));
-    }
-    return result;
+    return forward_to_vector<enum_data<Enum_Type>>(std::forward<Args>(arg)...);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

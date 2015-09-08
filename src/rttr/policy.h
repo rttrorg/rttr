@@ -87,15 +87,6 @@ struct discard_return_value_policy
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename... T>
-struct policy_list_impl {};
-
-using policy_list = policy_list_impl<bind_property_as_ptr_policy, 
-                                     return_reference_as_ptr_policy, 
-                                     discard_return_value_policy>;
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<>
 struct get_getter_policy<bind_property_as_ptr_policy>
 {

@@ -466,20 +466,6 @@ uint16_t type_database::get_global_method_count(const type& t) const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_constructor(const type& t, std::unique_ptr<constructor_container_base> ctor)
-{
-    if (!t.is_valid())
-        return;
-
-    // TO DO you cannot create constructor with the same argument type
-
-    using data_type = type_data<constructor_container_base>;
-    m_constructor_list.push_back({t.get_id(), std::move(ctor)});
-    std::stable_sort(m_constructor_list.begin(), m_constructor_list.end(), data_type::order_by_id());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T>
 RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<type_data<T>>& vec)
 {
@@ -504,6 +490,9 @@ template<typename T>
 RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_ptr<T> new_item, 
                                                    std::vector<type_data<T>>& vec)
 {
+    if (!t.is_valid())
+        return;
+
     using data_type = type_data<T>;
     vec.push_back({t.get_id(), std::move(new_item)});
     std::stable_sort(vec.begin(), vec.end(), typename data_type::order_by_id());
@@ -511,22 +500,17 @@ RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_pt
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+void type_database::register_constructor(const type& t, std::unique_ptr<constructor_container_base> ctor)
+{
+    // TO DO you cannot create constructor with the same argument type
+    register_item_type(t, std::move(ctor), m_constructor_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 constructor_container_base* type_database::get_constructor(const type& t) const
 {
-    using vec_value_type = type_data<constructor_container_base>;
-    const auto id = t.get_id();
-    auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(), 
-                                id, vec_value_type::order_by_id());
-    for (; itr != m_constructor_list.cend(); ++itr)
-    {
-        auto& item = *itr;
-        if (item.m_id == id)
-            return item.m_data.get(); 
-        else
-            break;
-    }
-
-    return nullptr;
+    return get_item_by_type(t, m_constructor_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -579,32 +563,14 @@ std::vector<constructor_container_base*> type_database::get_constructors(const t
 
 void type_database::register_destructor(const type& t, std::unique_ptr<destructor_container_base> dtor)
 {
-    if (!t.is_valid())
-        return;
-
-    using data_type = type_data<destructor_container_base>;
-    m_destructor_list.push_back({t.get_id(), std::move(dtor)});
-    std::stable_sort(m_destructor_list.begin(), m_destructor_list.end(), data_type::order_by_id());
+    register_item_type(t, std::move(dtor), m_destructor_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor_container_base* type_database::get_destructor(const type& t) const
 {
-    using vec_value_type = type_data<destructor_container_base>;
-    const auto id = t.get_id();
-    auto itr = std::lower_bound(m_destructor_list.cbegin(), m_destructor_list.cend(), 
-                                id, vec_value_type::order_by_id());
-    for (; itr != m_destructor_list.cend(); ++itr)
-    {
-        auto& item = *itr;
-        if (item.m_id == id)
-            return item.m_data.get(); 
-        else
-            break;
-    }
-
-    return nullptr;
+    return get_item_by_type(t, m_destructor_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -613,32 +579,14 @@ destructor_container_base* type_database::get_destructor(const type& t) const
 
 void type_database::register_enumeration(const type& t, std::unique_ptr<enumeration_container_base> enum_item)
 {
-    if (!t.is_valid())
-        return;
-
-    using data_type = type_data<enumeration_container_base>;
-    m_enumeration_list.push_back({t.get_id(), std::move(enum_item)});
-    std::stable_sort(m_enumeration_list.begin(), m_enumeration_list.end(), data_type::order_by_id());
+    register_item_type(t, std::move(enum_item), m_enumeration_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration_container_base* type_database::get_enumeration(const type& t) const
 {
-    using vec_value_type = type_data<enumeration_container_base>;
-    const auto id = t.get_id();
-    auto itr = std::lower_bound(m_enumeration_list.cbegin(), m_enumeration_list.cend(), 
-                                id, vec_value_type::order_by_id());
-    for (; itr != m_enumeration_list.cend(); ++itr)
-    {
-        auto& item = *itr;
-        if (item.m_id == id)
-            return item.m_data.get(); 
-        else
-            break;
-    }
-    
-    return nullptr;
+    return get_item_by_type(t, m_enumeration_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

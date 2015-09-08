@@ -30,6 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/enumeration/enum_data.h"
 #include "rttr/detail/argument.h"
 #include "rttr/variant.h"
 
@@ -45,8 +46,8 @@ template<typename Enum_Type>
 class enumeration_container : public enumeration_container_base
 {
     public:
-        enumeration_container(std::vector< std::pair<std::string, Enum_Type> > data)
-        :   m_key_value_list(move(data))
+        enumeration_container(std::vector< enum_data<Enum_Type> > data)
+        :   m_enum_data_list(move(data))
         {
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
@@ -57,20 +58,18 @@ class enumeration_container : public enumeration_container_base
         std::vector<std::string> get_keys() const
         {
             std::vector<std::string> result;
-            for (const auto& item : m_key_value_list)
-            {
-                result.push_back(item.first);
-            }
+            for (const auto& item : m_enum_data_list)
+                result.push_back(item.get_name());
+
             return result;
         }
 
         std::vector<variant> get_values() const
         {
             std::vector<variant> result;
-            for (const auto& item : m_key_value_list)
-            {
-                result.push_back(item.second);
-            }
+            for (const auto& item : m_enum_data_list)
+                result.push_back(item.get_value());
+
             return result;
         }
 
@@ -82,11 +81,11 @@ class enumeration_container : public enumeration_container_base
                 return std::string();
             }
 
-            Enum_Type enum_value = value.get_value<Enum_Type>();
-            for (const auto& item : m_key_value_list)
+            const Enum_Type enum_value = value.get_value<Enum_Type>();
+            for (const auto& item : m_enum_data_list)
             {
-                if (item.second == enum_value)
-                    return item.first;
+                if (item.get_value() == enum_value)
+                    return item.get_name();
             }
             return std::string();
         }
@@ -96,16 +95,16 @@ class enumeration_container : public enumeration_container_base
             if (key.empty())
                 return variant();
 
-            for (const auto& item : m_key_value_list)
+            for (const auto& item : m_enum_data_list)
             {
-                if (item.first == key)
-                    return item.second;
+                if (item.get_name() == key)
+                    return item.get_value();
             }
             return variant();
         }
 
     private:
-        std::vector<std::pair<std::string, Enum_Type> > m_key_value_list;
+        std::vector< enum_data<Enum_Type> > m_enum_data_list;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
