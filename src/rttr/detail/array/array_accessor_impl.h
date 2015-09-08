@@ -151,7 +151,7 @@ variant get_value_from_array(const Array_Type& array, std::size_t index, Indices
     using return_type = typename rank_type<Array_Type, sizeof...(Indices) + 1>::type;
     using sub_type = typename array_mapper<Array_Type>::sub_type;
     using go_one_dim_deeper = typename std::integral_constant<bool,  sizeof...(Indices) != 0>::type;
-    return get_value_from_array_impl<return_type, sub_type, go_one_dim_deeper>::get_value(array_mapper<Array_Type>::get_value(array, index), args...);
+    return variant(get_value_from_array_impl<return_type, sub_type, go_one_dim_deeper>::get_value(array_mapper<Array_Type>::get_value(array, index), args...));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
