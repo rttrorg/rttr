@@ -150,7 +150,7 @@ class RTTR_API enumeration
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_metadata(const variant& key) const;
+        variant get_meta_data(const variant& key) const;
 
         /*!
          * \brief Returns all enum keys registered for this enumeration.

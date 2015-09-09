@@ -90,7 +90,7 @@ type enumeration::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::get_metadata(const variant& key) const
+variant enumeration::get_meta_data(const variant& key) const
 {
     if (is_valid())
         return m_container->get_meta_data(key);

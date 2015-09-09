@@ -474,7 +474,7 @@ class RTTR_API type
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_metadata(const variant& key) const;
+        variant get_meta_data(const variant& key) const;
 
         /*!
          * \brief Returns a public constructor whose parameters match the types in the specified list.

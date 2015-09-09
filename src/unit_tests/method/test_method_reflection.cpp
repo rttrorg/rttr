@@ -472,22 +472,22 @@ TEST_CASE("Invoke method via wrapper", "[method]")
 TEST_CASE("Test method metadata", "[method]") 
 {
     method m8 = type::get<method_test_final>().get_method("method_8");
-    variant value = m8.get_metadata(E_MetaData::SCRIPTABLE);
+    variant value = m8.get_meta_data(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
     // string metadata
-    value = m8.get_metadata("TAG");
+    value = m8.get_meta_data("TAG");
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<int>() == 42);
     
     // no metadata
     method m7 = type::get<method_test_final>().get_method("method_7");
     REQUIRE(m7.is_valid() == true);
-    REQUIRE(m7.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == false);
+    REQUIRE(m7.get_meta_data(E_MetaData::SCRIPTABLE).is_valid() == false);
 
     // not scriptable
     method m9 = type::get<method_test_final>().get_method("method_9");
-    value = m9.get_metadata(E_MetaData::SCRIPTABLE);
+    value = m9.get_meta_data(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);
 }

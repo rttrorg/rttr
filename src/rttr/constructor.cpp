@@ -102,7 +102,7 @@ vector<type> constructor::get_parameter_types() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::get_metadata(const variant& key) const
+variant constructor::get_meta_data(const variant& key) const
 {
     if (is_valid())
         return m_container->get_meta_data(key);

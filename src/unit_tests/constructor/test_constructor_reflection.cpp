@@ -219,24 +219,24 @@ TEST_CASE("Test constructor signature", "[constructor]")
 TEST_CASE("Test metadata in constructor", "[constructor]") 
 {
     constructor ctor_string = type::get<constructor_test>().get_constructor({type::get<std::string>()});
-    variant value = ctor_string.get_metadata("SCRIPTABLE");
+    variant value = ctor_string.get_meta_data("SCRIPTABLE");
     REQUIRE(value.is_type<bool>() == true);
     CHECK(value.get_value<bool>() == true);
     // integer metadata
-    value = ctor_string.get_metadata(TOOL_TIP);
+    value = ctor_string.get_meta_data(TOOL_TIP);
     REQUIRE(value.is_type<std::string>() == true);
     CHECK(value.get_value<std::string>() == "This is a ToolTip");
 
     // no metadata
     constructor ctor_int = type::get<constructor_test>().get_constructor({type::get<int>(), type::get<int>()});
     REQUIRE(ctor_int.is_valid() == true);
-    CHECK(ctor_int.get_metadata("SCRIPTABLE").is_valid() == false);
+    CHECK(ctor_int.get_meta_data("SCRIPTABLE").is_valid() == false);
 
-    value = type::get<constructor_test>().get_metadata("CUSTOM_DATA");
+    value = type::get<constructor_test>().get_meta_data("CUSTOM_DATA");
     REQUIRE(value.is_type<int>() == true);
     CHECK(value.get_value<int>() == 42);
 
-    value = type::get<constructor_test>().get_metadata(DESCRIPTION);
+    value = type::get<constructor_test>().get_meta_data(DESCRIPTION);
 
     REQUIRE(value.is_type<std::string>() == true);
     CHECK(std::string(value.get_value<std::string>()) == std::string("some text"));
