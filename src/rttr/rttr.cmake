@@ -53,6 +53,8 @@ set(HEADER_FILES access_level.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
                  detail/array/array_mapper_impl.h
+                 detail/array/array_wrapper.h
+                 detail/array/array_wrapper_base.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
@@ -103,8 +105,6 @@ set(HEADER_FILES access_level.h
                  detail/variant_array_view/variant_array_view_impl.h
                  detail/variant_array_view/variant_array_view_creator.h
                  detail/variant_array_view/variant_array_view_creator_impl.h
-                 detail/variant_array_view/variant_array_view_data.h
-                 detail/variant_array_view/variant_array_view_policy.h
                  detail/variant_array_view/variant_array_view_traits.h
                 )
                 

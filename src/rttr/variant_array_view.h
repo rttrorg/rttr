@@ -30,11 +30,11 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/variant_array_view/variant_array_view_data.h"
 #include "rttr/variant.h"
 
 #include <cstddef>
 #include <vector>
+#include <memory>
 
 namespace rttr
 {
@@ -45,10 +45,7 @@ namespace detail
 {
     class instance;
     class argument;
-    enum class variant_array_policy_operation : uint8_t;
-    struct argument_wrapper;
-
-    typedef bool (*variant_array_policy_func)(variant_array_policy_operation, void* const &, argument_wrapper);
+    class array_wrapper_base;
 }
 
 /*!
@@ -151,6 +148,11 @@ class RTTR_API variant_array_view
          * \brief Constructs a copy of the given variant_array_view \p other.
          */
         variant_array_view(const variant_array_view& other);
+
+        /*!
+         * \brief Constructs a new variant_array_view via move constructor.
+         */
+        variant_array_view(variant_array_view&& other);
 
         /*!
          * \brief Destroys the variant_array_view and the contained data.
@@ -362,7 +364,7 @@ class RTTR_API variant_array_view
         variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const;
 
         /*!
-         * \brief Returns the value of the array relative to to indices given in the list \p index_list.
+         * \brief Returns the value of the array relative to indices given in the list \p index_list.
          *
          * \return The value of the given array at the specified indices.
          */
@@ -440,7 +442,7 @@ class RTTR_API variant_array_view
         friend class variant;
         friend class detail::argument;
 
-        detail::variant_array_view_data          m_data;
+        std::unique_ptr<detail::array_wrapper_base> m_array_wrapper;
 };
 
 } // end namespace rttr

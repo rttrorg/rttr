@@ -176,7 +176,7 @@ type variant::get_type() const
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;
-    m_policy(detail::variant_policy_operation::TO_ARRAY, m_data, result.m_data);
+    m_policy(detail::variant_policy_operation::TO_ARRAY, m_data, result.m_array_wrapper);
     return result;
 }
 

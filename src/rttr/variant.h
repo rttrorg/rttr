@@ -31,7 +31,6 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
-#include "rttr/detail/variant_array_view/variant_array_view_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
 
 #include <type_traits>

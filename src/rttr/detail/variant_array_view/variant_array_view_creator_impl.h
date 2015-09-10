@@ -28,7 +28,7 @@
 #ifndef RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
 #define RTTR_VARIANT_ARRAY_CREATOR_IMPL_H_
 
-#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
+#include "rttr/detail/array/array_wrapper.h"
 
 namespace rttr
 {
@@ -38,19 +38,19 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-typename std::enable_if<can_create_array_container<T>::value, variant_array_view_data>::type 
+typename std::enable_if<can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type 
 create_variant_array_view(T&& value)
 {
-    return variant_array_view_data{as_void_ptr(wrapped_raw_addressof(value)), &variant_array_policy<Tp>::invoke};
+    return detail::make_unique<array_wrapper<Tp>>(wrapped_raw_addressof(value));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-typename std::enable_if<!can_create_array_container<T>::value, variant_array_view_data>::type 
+typename std::enable_if<!can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type 
 create_variant_array_view(T&& value)
 {
-    return variant_array_view_data{nullptr, nullptr};
+    return detail::make_unique<array_wrapper_base>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

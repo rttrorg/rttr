@@ -458,7 +458,7 @@ TEST_CASE("Test property array access", "[property]")
         variant_array_view var_array = var.create_array_view();
         var_array.set_size(10);
         prop.set_value(obj, var);
-        REQUIRE(obj._array.size()                == 10);
+        REQUIRE(obj._array.size() == 10);
     }
 }
 

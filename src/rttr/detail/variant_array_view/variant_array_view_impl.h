@@ -29,11 +29,10 @@
 #define RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
 
 #include "rttr/variant.h"
-#include "rttr/detail/variant_array_view/variant_array_view_policy.h"
-
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 #include "rttr/variant.h"
+#include "rttr/detail/array/array_wrapper_base.h"
 
 namespace rttr
 {
@@ -41,14 +40,22 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array_view::variant_array_view()
-:    m_data({nullptr, &detail::variant_array_view_policy_empty::invoke})
+:    m_array_wrapper(detail::make_unique<detail::array_wrapper_base>())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& other)
-:   m_data(other.m_data)
+:   m_array_wrapper(std::move(other.m_array_wrapper->clone()))
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE variant_array_view::variant_array_view(variant_array_view&& other)
+:   m_array_wrapper(std::move(other.m_array_wrapper))
 {
 
 }
@@ -63,7 +70,7 @@ RTTR_INLINE variant_array_view::~variant_array_view()
 
 RTTR_INLINE void variant_array_view::swap(variant_array_view& other)
 {
-    std::swap(m_data, other.m_data);
+    std::swap(m_array_wrapper, other.m_array_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -233,7 +233,7 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg.get_value<variant_array_view_data&>() = create_variant_array_view(Tp::get_value(src_data));
+                arg.get_value<std::unique_ptr<array_wrapper_base>&>() = create_variant_array_view(const_cast<T&>(Tp::get_value(src_data)));
                 break;
             }
             case variant_policy_operation::CONVERT:
@@ -596,7 +596,6 @@ struct RTTR_API variant_data_policy_empty
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg.get_value<void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::IS_VALID:
@@ -687,7 +686,6 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::TO_ARRAY:
             {
-                arg.get_value<void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::IS_VALID:
