@@ -25,37 +25,91 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_DESTRUCTOR_CONTAINERBASE_H_
-#define RTTR_DESTRUCTOR_CONTAINERBASE_H_
+#ifndef RTTR_ENUMERATION_WRAPPER_H_
+#define RTTR_ENUMERATION_WRAPPER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/type.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
+#include "rttr/detail/enumeration/enum_data.h"
+#include "rttr/detail/argument.h"
 #include "rttr/variant.h"
 
-#include <string>
-#include <initializer_list>
+#include <utility>
+#include <type_traits>
 
 namespace rttr
 {
-
 namespace detail
 {
-/*!
- * Abstract class for a method.
- * 
- * This is the base class for all methods.
- * You can invoke the method.
- */
-class RTTR_API destructor_container_base
+
+template<typename Enum_Type>
+class enumeration_wrapper : public enumeration_wrapper_base
 {
     public:
-        virtual ~destructor_container_base();
+        enumeration_wrapper(std::vector< enum_data<Enum_Type> > data)
+        :   m_enum_data_list(move(data))
+        {
+            static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
+        }
 
-        virtual type get_destructed_type() const = 0;
-        virtual void invoke(variant& obj) const = 0;
+        type get_type() const { return type::get<Enum_Type>(); }
+        type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
+
+        std::vector<std::string> get_keys() const
+        {
+            std::vector<std::string> result;
+            for (const auto& item : m_enum_data_list)
+                result.push_back(item.get_name());
+
+            return result;
+        }
+
+        std::vector<variant> get_values() const
+        {
+            std::vector<variant> result;
+            for (const auto& item : m_enum_data_list)
+                result.push_back(item.get_value());
+
+            return result;
+        }
+
+        std::string value_to_key(detail::argument& value) const
+        {
+            if (!value.is_type<Enum_Type>() &&
+                !value.is_type<typename std::underlying_type<Enum_Type>::type>())
+            {
+                return std::string();
+            }
+
+            const Enum_Type enum_value = value.get_value<Enum_Type>();
+            for (const auto& item : m_enum_data_list)
+            {
+                if (item.get_value() == enum_value)
+                    return item.get_name();
+            }
+            return std::string();
+        }
+
+        variant key_to_value(const std::string& key) const
+        {
+            if (key.empty())
+                return variant();
+
+            for (const auto& item : m_enum_data_list)
+            {
+                if (item.get_name() == key)
+                    return item.get_value();
+            }
+            return variant();
+        }
+
+    private:
+        std::vector< enum_data<Enum_Type> > m_enum_data_list;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_DESTRUCTOR_CONTAINERBASE_H_
+#endif // RTTR_ENUMERATION_WRAPPER_H_

@@ -25,41 +25,36 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/enumeration/enumeration_container_base.h"
-#include "rttr/detail/type/type_database_p.h"
+#ifndef RTTR_PROPERTY_WRAPPER_H_
+#define RTTR_PROPERTY_WRAPPER_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/function_traits.h"
+#include "rttr/detail/property/property_wrapper_base.h"
+#include "rttr/detail/instance.h"
 #include "rttr/detail/argument.h"
+#include "rttr/detail/type/accessor_type.h"
+#include "rttr/policy.h"
+#include "rttr/array_mapper.h"
+#include "rttr/detail/misc/utility.h"
+#include "rttr/detail/property/property_accessor.h"
+
+#include <functional>
 
 namespace rttr
 {
 namespace detail
 {
-/////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration_container_base::enumeration_container_base()
-{
-}
+template<typename Accessor_Type, typename Getter, typename Setter, typename Get_Policy, typename Set_Policy>
+class property_wrapper;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-enumeration_container_base::~enumeration_container_base()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void enumeration_container_base::set_declaring_type(type declaring_type) const
-{
-    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type enumeration_container_base::get_declaring_type() const
-{
-    return type_database::instance().get_declaring_item_type(get_meta_index());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+#include "rttr/detail/property/property_wrapper_member_func.h"
+#include "rttr/detail/property/property_wrapper_func.h"
+#include "rttr/detail/property/property_wrapper_member_object.h"
+#include "rttr/detail/property/property_wrapper_object.h"
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_PROPERTY_WRAPPER_H_

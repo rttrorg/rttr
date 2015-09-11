@@ -25,55 +25,88 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ENUMERATION_CONTAINER_BASE_H_
-#define RTTR_ENUMERATION_CONTAINER_BASE_H_
+#include "rttr/detail/method/method_wrapper_base.h"
+#include "rttr/detail/type/type_database_p.h"
+#include "rttr/detail/argument.h"
+#include "rttr/detail/instance.h"
 
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/variant.h"
-#include "rttr/type.h"
+using namespace std;
 
-#include <string>
-#include <vector>
-#include <initializer_list>
+static const char* is_ref_list[] = {"", " &"};
+static const char* is_const_list[] = {"", " const"};
 
 namespace rttr
 {
-
 namespace detail
 {
-class argument;
 
-/*!
- * Abstract class for a method.
- * 
- * This is the base class for all methods.
- * You can invoke the method.
- */
-class RTTR_API enumeration_container_base : public meta_data_handler
+/////////////////////////////////////////////////////////////////////////////////////////
+
+method_wrapper_base::method_wrapper_base()
 {
-    public:
-        enumeration_container_base();
-        virtual ~enumeration_container_base();
+}
 
-        virtual type get_underlying_type() const = 0;
-        
-        virtual type get_type() const = 0;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        virtual std::vector<std::string> get_keys() const = 0;
+method_wrapper_base::~method_wrapper_base()
+{
+}
 
-        virtual std::vector<variant> get_values() const = 0;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        virtual std::string value_to_key(detail::argument& value) const = 0;
+void method_wrapper_base::set_name(const char* name) const
+{
+    type_database::instance().set_item_name(get_meta_index(), name);
+}
 
-        virtual variant key_to_value(const std::string& key) const = 0;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        void set_declaring_type(type declaring_type) const;
+const char* method_wrapper_base::get_name() const 
+{
+    return type_database::instance().get_item_name(get_meta_index());
+}
 
-        type get_declaring_type() const;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method_wrapper_base::set_declaring_type(type declaring_type) const
+{
+    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type method_wrapper_base::get_declaring_type() const
+{
+    return type_database::instance().get_declaring_item_type(get_meta_index());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+string method_wrapper_base::get_signature() const
+{
+    auto params = get_parameter_types();
+    string result = std::string(get_name()) + "( ";
+    std::size_t index = 0;
+    auto ref_list = get_is_reference();
+    auto const_list = get_is_const();
+    for (const auto& type : params)
+    {
+        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
+        if (index < params.size() - 1)
+            result += ", ";
+
+        ++index;
+    }
+    if (params.empty())
+        result += ")";
+    else
+        result += " )";
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 
 } // end namespace detail
 } // end namespace rttr
-
-#endif // RTTR_ENUMERATION_CONTAINER_BASE_H_

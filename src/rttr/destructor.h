@@ -40,7 +40,7 @@ class type;
 
 namespace detail
 {
-class destructor_container_base;
+class destructor_wrapper_base;
 }
 
 /*!
@@ -117,9 +117,9 @@ class RTTR_API destructor
 
     private:
         friend class type; // to prevent creation of this class
-        destructor(const detail::destructor_container_base* container = nullptr);
+        destructor(const detail::destructor_wrapper_base* container = nullptr);
     private:
-        const detail::destructor_container_base* m_container;
+        const detail::destructor_wrapper_base* m_container;
 };
 
 } // end namespace rttr

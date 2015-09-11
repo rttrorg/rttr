@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
-#define RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
+#ifndef RTTR_CONSTRUCTOR_WRAPPER_BASE_H_
+#define RTTR_CONSTRUCTOR_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/meta_data/meta_data_handler.h"
@@ -49,12 +49,12 @@ class argument;
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API constructor_container_base : public meta_data_handler
+class RTTR_API constructor_wrapper_base : public meta_data_handler
 {
     public:
-        constructor_container_base();
+        constructor_wrapper_base();
 
-        virtual ~constructor_container_base();
+        virtual ~constructor_wrapper_base();
         virtual type get_declaring_type() const = 0;
         std::string get_signature() const;
 
@@ -80,4 +80,4 @@ class RTTR_API constructor_container_base : public meta_data_handler
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_CONSTRUCTOR_CONTAINER_BASE_H_
+#endif // RTTR_CONSTRUCTOR_WRAPPER_BASE_H_

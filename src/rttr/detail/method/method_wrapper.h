@@ -25,11 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_METHOD_CONTAINER_H_
-#define RTTR_METHOD_CONTAINER_H_
+#ifndef RTTR_METHOD_WRAPPER_H_
+#define RTTR_METHOD_WRAPPER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
@@ -47,10 +47,10 @@ namespace detail
 {
 
 template<typename F, typename Policy>
-class method_container : public method_container_base
+class method_wrapper : public method_wrapper_base
 {
     public:
-        method_container(std::string name, type declaring_type, F func_acc)
+        method_wrapper(std::string name, type declaring_type, F func_acc)
         : m_func_acc(func_acc)
         { }
 
@@ -102,4 +102,4 @@ class method_container : public method_container_base
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_METHOD_CONTAINER_H_
+#endif // RTTR_METHOD_WRAPPER_H_

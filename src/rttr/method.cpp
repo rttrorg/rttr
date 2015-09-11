@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/method.h"
-#include "rttr/detail/method/method_container_base.h"
+#include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
 
@@ -37,7 +37,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method::method(const detail::method_container_base* container)
+method::method(const detail::method_wrapper_base* container)
 :   m_container(container)
 {
 

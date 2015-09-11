@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/constructor.h"
-#include "rttr/detail/constructor/constructor_container_base.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/argument.h"
 
 #include <utility>
@@ -39,7 +39,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor::constructor(const detail::constructor_container_base* container)
+constructor::constructor(const detail::constructor_wrapper_base* container)
 :   m_container(container)
 {
 

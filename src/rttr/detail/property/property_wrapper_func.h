@@ -25,39 +25,37 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_CONTAINER_MEMBER_FUNC_H_
-#define RTTR_PROPERTY_CONTAINER_MEMBER_FUNC_H_
+#ifndef RTTR_PROPERTY_WRAPPER_FUNC_H_
+#define RTTR_PROPERTY_WRAPPER_FUNC_H_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// Getter/Setter - pointer to member function
+// global function getter/setter - function pointer
 
 template<typename Getter, typename Setter>
-class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_value> : public property_container_base
+class property_wrapper<function_ptr, Getter, Setter, return_as_copy, set_value> : public property_wrapper_base
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
-    using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(Getter get, Setter set) : m_getter(get), m_setter(set)
+        property_wrapper(Getter get, Setter set) : m_getter(get), m_setter(set)
         {
-            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
-            static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
+            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
+            static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-function with exactly one argument.");
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
         }
 
         bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return false; }
+        bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
         bool set_value(detail::instance& object, detail::argument& arg) const
         {
-            class_type* ptr = object.try_convert<class_type>();
-            if (ptr && arg.is_type<arg_type>() )
+            if (arg.is_type<arg_type>())
             {
-                (ptr->*m_setter)(arg.get_value<arg_type>());
+                m_setter(arg.get_value<arg_type>());
                 return true;
             }
             return false;
@@ -65,35 +63,31 @@ class property_container<member_func_ptr, Getter, Setter, return_as_copy, set_va
 
         variant get_value(detail::instance& object) const
         {
-            if (class_type* ptr = object.try_convert<class_type>())
-                return variant((ptr->*m_getter)());
-            else
-                return variant();
+            return variant(m_getter());
         }
 
     private:
-        Getter  m_getter;
-        Setter  m_setter;
+        Getter m_getter;
+        Setter m_setter;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// Getter - pointer to member function
+// global function getter
 
 template<typename Getter>
-class property_container<member_func_ptr, Getter, void, return_as_copy, read_only> : public property_container_base
+class property_wrapper<function_ptr, Getter, void, return_as_copy, read_only> : public property_wrapper_base
 {
-    using return_type   = typename function_traits<Getter>::return_type;
-    using class_type    = typename function_traits<Getter>::class_type;
+    using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_container(Getter get) : m_getter(get)
+        property_wrapper(Getter get) : m_accessor(get)
         {
-            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
+            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
         }
 
         bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return false; }
+        bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
@@ -104,51 +98,48 @@ class property_container<member_func_ptr, Getter, void, return_as_copy, read_onl
 
         variant get_value(detail::instance& object) const
         {
-            if (class_type* ptr = object.try_convert<class_type>())
-                return variant((ptr->*m_getter)());
-            else
-                return variant();
+            return (variant(m_accessor()));
         }
 
     private:
-        Getter  m_getter;
+        Getter m_accessor;
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Policy return_as_ptr
-/////////////////////////////////////////////////////////////////////////////////////////
 
-// Getter/Setter pointer to member function
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// global function getter/setter
+
 template<typename Getter, typename Setter>
-class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_ptr> : public property_container_base
+class property_wrapper<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr> : public property_wrapper_base
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
-    using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_container(Getter get, Setter set) : m_getter(get), m_setter(set)
+        property_wrapper(Getter get, Setter set) : m_getter(get), m_setter(set)
         {
-            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
-            static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
-            static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
+            static_assert(std::is_reference<return_type>::value, "Please provide a getter-function with a reference as return value!");
+            static_assert(std::is_reference<arg_type>::value, "Please provide a setter-function with a reference as argument!");
 
-            static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
-            static_assert(std::is_reference<arg_type>::value, "Please provide a setter-member-function with a reference as return value!");
+            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
+            static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-function with exactly one argument.");
+
+            static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
         }
 
         bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return false; }
+        bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
         bool set_value(detail::instance& object, detail::argument& arg) const
         {
             using arg_type = typename std::remove_reference<arg_type>::type;
-            class_type* ptr = object.try_convert<class_type>();
-            if (ptr && arg.is_type<arg_type*>())
+            if (arg.is_type<arg_type*>())
             {
-                (ptr->*m_setter)(*arg.get_value<arg_type*>());
+                m_setter(*arg.get_value<arg_type*>());
                 return true;
             }
             return false;
@@ -156,38 +147,31 @@ class property_container<member_func_ptr, Getter, Setter, return_as_ptr, set_as_
 
         variant get_value(detail::instance& object) const
         {
-            if (class_type* ptr = object.try_convert<class_type>())
-                return variant(&(ptr->*m_getter)());
-            else
-                return variant();
+            return variant(&(m_getter()));
         }
 
     private:
         Getter  m_getter;
         Setter  m_setter;
-    
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// Getter - pointer to member function
+// global function getter
 
 template<typename Getter>
-class property_container<member_func_ptr, Getter, void, return_as_ptr, read_only> : public property_container_base
+class property_wrapper<function_ptr, Getter, void, return_as_ptr, read_only> : public property_wrapper_base
 {
-    using return_type   = typename function_traits<Getter>::return_type;
-    using class_type    = typename function_traits<Getter>::class_type;
-
+    using return_type = typename function_traits<Getter>::return_type;
     public:
-        property_container(Getter get) : m_getter(get)
+        property_wrapper(Getter get) : m_accessor(get)
         {
-            static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
-            static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
+            static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
         }
 
         bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
+        bool is_static()    const   { return true; }
+        type get_type()     const   { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
         bool set_value(detail::instance& object, detail::argument& arg) const
@@ -197,14 +181,12 @@ class property_container<member_func_ptr, Getter, void, return_as_ptr, read_only
 
         variant get_value(detail::instance& object) const
         {
-            if (class_type* ptr = object.try_convert<class_type>())
-                return variant(&(ptr->*m_getter)());
-            else
-                return variant();
+            return (variant(const_cast<const typename std::remove_reference<return_type>::type*>(&(m_accessor()))));
         }
 
     private:
-        Getter  m_getter;
+        Getter  m_accessor;
 };
 
-#endif // RTTR_PROPERTY_CONTAINER_MEMBER_FUNC_H_
+
+#endif // RTTR_PROPERTY_WRAPPER_FUNC_H_

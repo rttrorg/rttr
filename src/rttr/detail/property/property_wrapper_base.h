@@ -25,66 +25,66 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_METHOD_CONTAINER_BASE_H_
-#define RTTR_METHOD_CONTAINER_BASE_H_
+#ifndef RTTR_PROPERTY_WRAPPER_BASE_H_
+#define RTTR_PROPERTY_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 
-
-#include <string>
-#include <vector>
-
 namespace rttr
 {
-class type;
-
 namespace detail
 {
-class argument;
 class instance;
-
+class argument;
 /*!
- * Abstract class for a method.
+ * Abstract class for an instance of a Property.
  * 
- * This is the base class for all methods.
- * You can invoke the method via method_container_base::invoke.
+ * This is the base class for all properties of the system.
+ * It provide the basic mechanism for getting all meta data of a property,
+ * but it also define a general interface to set/get properties via string: toString and fromString.
  */
-class RTTR_API method_container_base : public meta_data_handler
+class RTTR_API property_wrapper_base : public meta_data_handler
 {
     public:
-        method_container_base();
-        virtual ~method_container_base();
+        property_wrapper_base();
 
+        virtual ~property_wrapper_base();
+
+        //! sets the name of this property.
         void set_name(const char* name) const;
+
+        //! returns the name of this property.
         const char* get_name() const;
-        void set_declaring_type(type declaring_type) const;
-        type get_declaring_type() const;
-        std::string get_signature() const;
 
-        virtual type get_return_type() const = 0;
+        //! Returns true whether this is a constant property, otherwise false.
+        virtual bool is_readonly() const = 0;
+
+        //! Returns true whether this is a static property, otherwise false.
         virtual bool is_static() const = 0;
-        virtual std::vector<type> get_parameter_types() const = 0;
-        virtual std::vector<bool> get_is_reference() const = 0;
-        virtual std::vector<bool> get_is_const() const = 0;
+    
+        //! Returns the type of the underlying property.
+        virtual type get_type() const = 0;
 
-        virtual variant invoke(detail::instance& object) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4, detail::argument& arg5) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const = 0;
+        //! Returns the class that declares this property.
+        type get_declaring_type() const;
 
-        virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
+        //! Sets the declaring type for this property.
+        void set_declaring_type(type declaring_type) const;
+
+        //! Returns true when the underlying property is an array type.
+        virtual bool is_array() const = 0;
+
+        //! Sets this property of the given instance \p instance to the value of the argument \p argument.
+        virtual bool set_value(detail::instance& object, detail::argument& arg) const = 0;
+
+        //! Returns the value of this property from the given instance \p instance.
+        virtual variant get_value(detail::instance& object) const = 0;
 };
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_METHOD_CONTAINER_BASE_H_
+#endif // RTTR_PROPERTY_WRAPPER_BASE_H_

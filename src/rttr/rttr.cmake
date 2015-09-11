@@ -58,18 +58,18 @@ set(HEADER_FILES access_level.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
-                 detail/constructor/constructor_container.h
-                 detail/constructor/constructor_container_base.h
-                 detail/destructor/destructor_container.h
-                 detail/destructor/destructor_container_base.h
-                 detail/enumeration/enumeration_container.h
-                 detail/enumeration/enumeration_container_base.h
+                 detail/constructor/constructor_wrapper.h
+                 detail/constructor/constructor_wrapper_base.h
+                 detail/destructor/destructor_wrapper.h
+                 detail/destructor/destructor_wrapper_base.h
+                 detail/enumeration/enumeration_wrapper.h
+                 detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
                  detail/meta_data/meta_data.h
                  detail/meta_data/meta_data_handler.h
                  detail/method/method_accessor.h
-                 detail/method/method_container.h
-                 detail/method/method_container_base.h
+                 detail/method/method_wrapper.h
+                 detail/method/method_wrapper_base.h
                  detail/misc/argument_wrapper.h
                  detail/misc/argument_extractor.h
                  detail/misc/compare_equal.h
@@ -80,12 +80,12 @@ set(HEADER_FILES access_level.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/property/property_accessor.h
-                 detail/property/property_container.h
-                 detail/property/property_container_base.h
-                 detail/property/property_container_func.h
-                 detail/property/property_container_member_func.h
-                 detail/property/property_container_member_object.h
-                 detail/property/property_container_object.h
+                 detail/property/property_wrapper.h
+                 detail/property/property_wrapper_base.h
+                 detail/property/property_wrapper_func.h
+                 detail/property/property_wrapper_member_func.h
+                 detail/property/property_wrapper_member_object.h
+                 detail/property/property_wrapper_object.h
                  detail/registration/bind_types.h
                  detail/registration/bind_impl.h
                  detail/registration/registration_impl.h
@@ -120,12 +120,12 @@ set(SOURCE_FILES access_level.cpp
                  variant_array_view.cpp
                  detail/standard_types.cpp
                  detail/std_conversion_functions.cpp
-                 detail/constructor/constructor_container_base.cpp
-                 detail/destructor/destructor_container_base.cpp
-                 detail/enumeration/enumeration_container_base.cpp
+                 detail/constructor/constructor_wrapper_base.cpp
+                 detail/destructor/destructor_wrapper_base.cpp
+                 detail/enumeration/enumeration_wrapper_base.cpp
                  detail/meta_data/meta_data_handler.cpp
-                 detail/method/method_container_base.cpp
-                 detail/property/property_container_base.cpp
+                 detail/method/method_wrapper_base.cpp
+                 detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
                  detail/type/type_database.cpp
                  detail/type/type_register.cpp

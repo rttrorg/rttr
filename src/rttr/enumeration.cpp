@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/enumeration.h"
-#include "rttr/detail/enumeration/enumeration_container_base.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 #include "rttr/detail/argument.h"
 
 #include <utility>
@@ -38,7 +38,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::enumeration(const detail::enumeration_container_base* container)
+enumeration::enumeration(const detail::enumeration_wrapper_base* container)
 :   m_container(container)
 {
 

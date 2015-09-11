@@ -41,7 +41,7 @@ class type;
 
 namespace detail
 {
-class constructor_container_base;
+class constructor_wrapper_base;
 class argument;
 }
 
@@ -254,9 +254,9 @@ class RTTR_API constructor
 
     private:
         friend class type; // to prevent creation of this class
-        constructor(const detail::constructor_container_base* container = nullptr);
+        constructor(const detail::constructor_wrapper_base* container = nullptr);
     private:
-        const detail::constructor_container_base* m_container;
+        const detail::constructor_wrapper_base* m_container;
 };
 
 } // end namespace rttr

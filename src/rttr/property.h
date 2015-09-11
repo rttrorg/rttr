@@ -40,7 +40,7 @@ class enumeration;
 
 namespace detail
 {
-class property_container_base;
+class property_wrapper_base;
 class instance;
 class argument;
 }
@@ -250,10 +250,10 @@ class RTTR_API property
 
     private:
         friend class type; // to prevent creation of this class
-        //! Constructs a property from a property_container_base.
-        property(const detail::property_container_base* container = nullptr);
+        //! Constructs a property from a property_wrapper_base.
+        property(const detail::property_wrapper_base* container = nullptr);
     private:
-        const detail::property_container_base* m_container;
+        const detail::property_wrapper_base* m_container;
 };
 
 } // end namespace rttr

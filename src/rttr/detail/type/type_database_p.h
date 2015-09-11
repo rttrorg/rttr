@@ -60,11 +60,11 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        void register_property(const type& t, std::unique_ptr<property_container_base> prop);
-        void register_method(const type& t, std::unique_ptr<method_container_base> meth);
-        void register_constructor(const type& t, std::unique_ptr<constructor_container_base> ctor);
-        void register_destructor(const type& t, std::unique_ptr<destructor_container_base> dtor);
-        void register_enumeration(const type& t, std::unique_ptr<enumeration_container_base> enum_data);
+        void register_property(const type& t, std::unique_ptr<property_wrapper_base> prop);
+        void register_method(const type& t, std::unique_ptr<method_wrapper_base> meth);
+        void register_constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
+        void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
+        void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
         void register_custom_name(const type& t, std::string );
         void register_meta_data( const type& t, std::vector<meta_data> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
@@ -91,37 +91,37 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        property_container_base* get_class_property(const type& t, const std::string& name) const;
-        std::vector<property_container_base*> get_all_class_properties(const type& t) const;
+        property_wrapper_base* get_class_property(const type& t, const std::string& name) const;
+        std::vector<property_wrapper_base*> get_all_class_properties(const type& t) const;
         uint16_t get_class_property_count(const type& t) const;
     
-        property_container_base* get_global_property(const std::string& name) const;
-        std::vector<property_container_base*> get_all_global_properties() const;
+        property_wrapper_base* get_global_property(const std::string& name) const;
+        std::vector<property_wrapper_base*> get_all_global_properties() const;
         uint16_t get_global_property_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method_container_base* get_class_method(const type& t, const std::string& name) const;
-        method_container_base* get_class_method(const type& t, const std::string& name, 
+        method_wrapper_base* get_class_method(const type& t, const std::string& name) const;
+        method_wrapper_base* get_class_method(const type& t, const std::string& name, 
                                                 const std::vector<type>& param_type_list) const;
 
-        std::vector<method_container_base*> get_all_class_methods(const type& t) const;
+        std::vector<method_wrapper_base*> get_all_class_methods(const type& t) const;
         uint16_t get_class_method_count(const type& t) const;
 
-        method_container_base* get_global_method(const std::string& name) const;
-        method_container_base* get_global_method(const std::string& name, const std::vector<type>& arg_type_list) const;
-        std::vector<method_container_base*> get_all_global_methods() const;
+        method_wrapper_base* get_global_method(const std::string& name) const;
+        method_wrapper_base* get_global_method(const std::string& name, const std::vector<type>& arg_type_list) const;
+        std::vector<method_wrapper_base*> get_all_global_methods() const;
         uint16_t get_global_method_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        constructor_container_base* get_constructor(const type& t) const;
-        constructor_container_base* get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
-        std::vector<constructor_container_base*> get_constructors(const type& t) const;
+        constructor_wrapper_base* get_constructor(const type& t) const;
+        constructor_wrapper_base* get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
+        std::vector<constructor_wrapper_base*> get_constructors(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        destructor_container_base* get_destructor(const type& t) const;
+        destructor_wrapper_base* get_destructor(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,7 +133,7 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        enumeration_container_base* get_enumeration(const type& t) const;
+        enumeration_wrapper_base* get_enumeration(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -352,17 +352,17 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
                                                                     
-        std::vector<global_member<property_container_base>>         m_global_property_list;
-        std::vector<global_member<method_container_base>>           m_global_method_list;
+        std::vector<global_member<property_wrapper_base>>         m_global_property_list;
+        std::vector<global_member<method_wrapper_base>>           m_global_method_list;
 
-        std::vector<class_member<property_container_base>>          m_class_property_list;
-        std::vector<class_member<method_container_base>>            m_class_method_list;
+        std::vector<class_member<property_wrapper_base>>          m_class_property_list;
+        std::vector<class_member<method_wrapper_base>>            m_class_method_list;
 
-        std::vector<type_data<constructor_container_base>>          m_constructor_list;
-        std::vector<type_data<destructor_container_base>>           m_destructor_list;
+        std::vector<type_data<constructor_wrapper_base>>          m_constructor_list;
+        std::vector<type_data<destructor_wrapper_base>>           m_destructor_list;
 
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
-        std::vector<type_data<enumeration_container_base>>          m_enumeration_list;
+        std::vector<type_data<enumeration_wrapper_base>>          m_enumeration_list;
         std::vector<type_data<std::vector<meta_data>>>              m_meta_data_type_list;
         std::vector<std::vector<meta_data>>                         m_meta_data_item_list;
         std::vector<const char*>                                    m_name_item_list;

@@ -25,31 +25,105 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_CONTAINER_OBJECT_H_
-#define RTTR_PROPERTY_CONTAINER_OBJECT_H_
+#ifndef RTTR_PROPERTY_WRAPPER_MEMBER_OBJECT_H_
+#define RTTR_PROPERTY_WRAPPER_MEMBER_OBJECT_H_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// global property read write
+// pointer to member - read write
 
-template<typename C>
-class property_container<object_ptr, C*, void, return_as_copy, set_value> : public property_container_base
+template<typename C, typename A>
+class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_value> : public property_wrapper_base
 {
+    typedef A (C::*accessor);
     public:
-        property_container(C* pointer) : m_accessor(pointer)
-        {
-        }
+        property_wrapper(accessor acc) : m_acc(acc) { }
 
         bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return true; }
-        type get_type()     const   { return type::get<C>(); }
-        bool is_array()     const   { return detail::is_array<C>::value; }
+        bool is_static()    const   { return false; }
+        type get_type()     const   { return type::get<A>(); }
+        bool is_array()     const   { return detail::is_array<A>::value; }
 
         bool set_value(detail::instance& object, detail::argument& arg) const
         {
-            if (arg.is_type<C>())
+            C* ptr = object.try_convert<C>();
+            if (ptr && arg.is_type<A>())
+                return property_accessor<A>::set_value((ptr->*m_acc), arg);
+            else
+                return false;
+        }
+
+        variant get_value(detail::instance& object) const
+        {
+            if (C* ptr = object.try_convert<C>())
+                return variant((ptr->*m_acc));
+            else
+                return variant();
+        }
+
+    private:
+        accessor m_acc;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// pointer to member - read only (because of std::false_type)
+
+template<typename C, typename A>
+class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_only> : public property_wrapper_base
+{
+    typedef A (C::*accessor);
+    public:
+        property_wrapper(accessor acc) : m_acc(acc) { }
+
+        bool is_readonly()  const   { return true; }
+        bool is_static()    const   { return false; }
+        type get_type()     const   { return type::get<A>(); }
+        bool is_array()     const   { return detail::is_array<A>::value; }
+
+        bool set_value(detail::instance& object, detail::argument& arg) const
+        {
+            return false;
+        }
+
+        variant get_value(detail::instance& object) const
+        {
+            if (C* ptr = object.try_convert<C>())
+                return variant((ptr->*m_acc));
+            else
+                return variant();
+        }
+
+    private:
+        accessor m_acc;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// pointer to member - read write
+
+template<typename C, typename A>
+class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_ptr> : public property_wrapper_base
+{
+    typedef A (C::*accessor);
+    public:
+        property_wrapper(accessor acc) : m_acc(acc)
+        {
+            static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
+        }
+
+        bool is_readonly()  const   { return false; }
+        bool is_static()    const   { return false; }
+        type get_type()     const   { return type::get<A*>(); }
+        bool is_array()     const   { return detail::is_array<A>::value; }
+
+        bool set_value(detail::instance& object, detail::argument& arg) const
+        {
+            C* ptr = object.try_convert<C>();
+            if (ptr && arg.is_type<A*>())
             {
-                return property_accessor<C>::set_value(*m_accessor, arg);
+                return property_accessor<A*>::set_value(&(ptr->*m_acc), arg);
             }
             else
             {
@@ -59,99 +133,34 @@ class property_container<object_ptr, C*, void, return_as_copy, set_value> : publ
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(*m_accessor));
-        }
-
-    private:
-        C* m_accessor;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-// global property read_only
-
-template<typename C>
-class property_container<object_ptr, C*, void, return_as_copy, read_only> : public property_container_base
-{
-    public:
-        property_container(C* pointer) : m_accessor(pointer)
-        {
-        }
-
-        bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return true; }
-        type get_type()     const   { return type::get<C>(); }
-        bool is_array()     const   { return detail::is_array<C>::value; }
-
-        bool set_value(detail::instance& object, detail::argument& arg) const
-        {
-            return false;
-        }
-
-        variant get_value(detail::instance& object) const
-        {
-            return (variant(*m_accessor));
-        }
-
-    private:
-        C* m_accessor;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-// global property read write
-
-template<typename C>
-class property_container<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public property_container_base
-{
-    public:
-        property_container(C* pointer) : m_accessor(pointer)
-        {
-            static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
-        }
-
-        bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return true; }
-        type get_type()     const   { return type::get<C*>(); }
-        bool is_array()     const   { return detail::is_array<C>::value; }
-
-        bool set_value(detail::instance& object, detail::argument& arg) const
-        {
-            if (arg.is_type<C*>())
-            {
-                return property_accessor<C*>::set_value(m_accessor, arg);
-            }
+            if (C* ptr = object.try_convert<C>())
+                return variant(&(ptr->*m_acc));
             else
-            {
-                return false;
-            }
-        }
-
-        variant get_value(detail::instance& object) const
-        {
-            return (variant(m_accessor));
+                return variant();
         }
 
     private:
-        C* m_accessor;
+        accessor m_acc;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// global property read_only
+// pointer to member - read only
 
-template<typename C>
-class property_container<object_ptr, C*, void, return_as_ptr, read_only> : public property_container_base
+template<typename C, typename A>
+class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_only> : public property_wrapper_base
 {
+    typedef A (C::*accessor);
     public:
-        property_container(C* pointer) : m_accessor(pointer)
+        property_wrapper(accessor acc) : m_acc(acc)
         {
+            static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
         }
 
         bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return true; }
-        type get_type()     const   { return type::get<typename std::add_const<C>::type*>(); }
-        bool is_array()     const   { return detail::is_array<C>::value; }
+        bool is_static()    const   { return false; }
+        type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }
+        bool is_array()     const   { return detail::is_array<A>::value; }
 
         bool set_value(detail::instance& object, detail::argument& arg) const
         {
@@ -160,11 +169,14 @@ class property_container<object_ptr, C*, void, return_as_ptr, read_only> : publi
 
         variant get_value(detail::instance& object) const
         {
-            return (variant(const_cast<const C*>(m_accessor)));
+            if (C* ptr = object.try_convert<C>())
+                return variant(const_cast<const A*>(&(ptr->*m_acc)));
+            else
+                return variant();
         }
 
     private:
-        C* m_accessor;
+        accessor m_acc;
 };
 
-#endif // RTTR_PROPERTY_CONTAINER_OBJECT_H_
+#endif // RTTR_PROPERTY_WRAPPER_MEMBER_OBJECT_H_

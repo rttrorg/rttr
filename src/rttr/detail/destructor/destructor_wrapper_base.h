@@ -25,55 +25,37 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/property/property_container_base.h"
-#include "rttr/detail/type/type_database_p.h"
+#ifndef RTTR_DESTRUCTOR_WRAPPER_BASE_H_
+#define RTTR_DESTRUCTOR_WRAPPER_BASE_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
+
+#include <string>
+#include <initializer_list>
 
 namespace rttr
 {
+
 namespace detail
 {
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-property_container_base::property_container_base()
+/*!
+ * Abstract class for a method.
+ * 
+ * This is the base class for all methods.
+ * You can invoke the method.
+ */
+class RTTR_API destructor_wrapper_base
 {
-}
+    public:
+        virtual ~destructor_wrapper_base();
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-property_container_base::~property_container_base()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void property_container_base::set_name(const char* name) const
-{
-    type_database::instance().set_item_name(get_meta_index(), name);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-const char* property_container_base::get_name() const
-{
-    return type_database::instance().get_item_name(get_meta_index());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void property_container_base::set_declaring_type(type declaring_type) const
-{
-    type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type property_container_base::get_declaring_type() const
-{
-    return type_database::instance().get_declaring_item_type(get_meta_index());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+        virtual type get_destructed_type() const = 0;
+        virtual void invoke(variant& obj) const = 0;
+};
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_DESTRUCTOR_WRAPPER_BASE_H_

@@ -28,11 +28,11 @@
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/type/type_database_p.h"
 
-#include "rttr/detail/constructor/constructor_container_base.h"
-#include "rttr/detail/destructor/destructor_container_base.h"
-#include "rttr/detail/enumeration/enumeration_container_base.h"
-#include "rttr/detail/method/method_container_base.h"
-#include "rttr/detail/property/property_container.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
+#include "rttr/detail/method/method_wrapper_base.h"
+#include "rttr/detail/property/property_wrapper.h"
 #include "rttr/detail/meta_data/meta_data.h"
 
 using namespace std;
@@ -44,35 +44,35 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::property(const type& t, unique_ptr<property_container_base> prop)
+void type_register::property(const type& t, unique_ptr<property_wrapper_base> prop)
 {
    type_database::instance().register_property(t, move(prop));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::method(const type& t, std::unique_ptr<detail::method_container_base> method)
+void type_register::method(const type& t, std::unique_ptr<detail::method_wrapper_base> method)
 {
     type_database::instance().register_method(t, move(method));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::constructor(const type& t, std::unique_ptr<detail::constructor_container_base> ctor)
+void type_register::constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor)
 {
     type_database::instance().register_constructor(t, move(ctor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::destructor(const type& t, std::unique_ptr<detail::destructor_container_base> dtor)
+void type_register::destructor(const type& t, std::unique_ptr<detail::destructor_wrapper_base> dtor)
 {
     type_database::instance().register_destructor(t, move(dtor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::enumeration(const type& t, std::unique_ptr<detail::enumeration_container_base> enum_item)
+void type_register::enumeration(const type& t, std::unique_ptr<detail::enumeration_wrapper_base> enum_item)
 {
     type_database::instance().register_enumeration(t, move(enum_item));
 }

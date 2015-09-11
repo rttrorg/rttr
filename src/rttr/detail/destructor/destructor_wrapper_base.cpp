@@ -25,66 +25,20 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_CONTAINER_BASE_H_
-#define RTTR_PROPERTY_CONTAINER_BASE_H_
-
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
 
 namespace rttr
 {
 namespace detail
 {
-class instance;
-class argument;
-/*!
- * Abstract class for an instance of a Property.
- * 
- * This is the base class for all properties of the system.
- * It provide the basic mechanism for getting all meta data of a property,
- * but it also define a general interface to set/get properties via string: toString and fromString.
- */
-class RTTR_API property_container_base : public meta_data_handler
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+destructor_wrapper_base::~destructor_wrapper_base()
 {
-    public:
-        property_container_base();
+}
 
-        virtual ~property_container_base();
-
-        //! sets the name of this property.
-        void set_name(const char* name) const;
-
-        //! returns the name of this property.
-        const char* get_name() const;
-
-        //! Returns true whether this is a constant property, otherwise false.
-        virtual bool is_readonly() const = 0;
-
-        //! Returns true whether this is a static property, otherwise false.
-        virtual bool is_static() const = 0;
-    
-        //! Returns the type of the underlying property.
-        virtual type get_type() const = 0;
-
-        //! Returns the class that declares this property.
-        type get_declaring_type() const;
-
-        //! Sets the declaring type for this property.
-        void set_declaring_type(type declaring_type) const;
-
-        //! Returns true when the underlying property is an array type.
-        virtual bool is_array() const = 0;
-
-        //! Sets this property of the given instance \p instance to the value of the argument \p argument.
-        virtual bool set_value(detail::instance& object, detail::argument& arg) const = 0;
-
-        //! Returns the value of this property from the given instance \p instance.
-        virtual variant get_value(detail::instance& object) const = 0;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
-} // end namespace rttr
-
-#endif // RTTR_PROPERTY_CONTAINER_BASE_H_
+} // end namespace RTR

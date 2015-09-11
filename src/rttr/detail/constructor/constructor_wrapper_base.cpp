@@ -25,10 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/method/method_container_base.h"
-#include "rttr/detail/type/type_database_p.h"
-#include "rttr/detail/argument.h"
-#include "rttr/detail/instance.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
 
 using namespace std;
 
@@ -39,53 +36,39 @@ namespace rttr
 {
 namespace detail
 {
+/////////////////////////////////////////////////////////////////////////////////////////
+
+constructor_wrapper_base::constructor_wrapper_base()
+{
+
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_container_base::method_container_base()
+constructor_wrapper_base::~constructor_wrapper_base()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_container_base::~method_container_base()
+std::vector<bool> constructor_wrapper_base::get_is_reference() const
 {
+    return{};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void method_container_base::set_name(const char* name) const
+std::vector<bool> constructor_wrapper_base::get_is_const() const
 {
-    type_database::instance().set_item_name(get_meta_index(), name);
+    return{};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const char* method_container_base::get_name() const 
-{
-    return type_database::instance().get_item_name(get_meta_index());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void method_container_base::set_declaring_type(type declaring_type) const
-{
-    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type method_container_base::get_declaring_type() const
-{
-    return type_database::instance().get_declaring_item_type(get_meta_index());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-string method_container_base::get_signature() const
+string constructor_wrapper_base::get_signature() const
 {
     auto params = get_parameter_types();
-    string result = std::string(get_name()) + "( ";
+    string result = get_instanciated_type().get_raw_type().get_name() + "( ";
     std::size_t index = 0;
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
@@ -107,6 +90,56 @@ string method_container_base::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+variant constructor_wrapper_base::invoke() const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
+                                           detail::argument& arg5) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
+                                           detail::argument& arg5, detail::argument& arg6) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

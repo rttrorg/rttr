@@ -25,20 +25,55 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/destructor/destructor_container_base.h"
+#ifndef RTTR_ENUMERATION_WRAPPER_BASE_H_
+#define RTTR_ENUMERATION_WRAPPER_BASE_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/variant.h"
+#include "rttr/type.h"
+
+#include <string>
+#include <vector>
+#include <initializer_list>
 
 namespace rttr
 {
+
 namespace detail
 {
+class argument;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-destructor_container_base::~destructor_container_base()
+/*!
+ * Abstract class for a method.
+ * 
+ * This is the base class for all methods.
+ * You can invoke the method.
+ */
+class RTTR_API enumeration_wrapper_base : public meta_data_handler
 {
-}
+    public:
+        enumeration_wrapper_base();
+        virtual ~enumeration_wrapper_base();
 
-/////////////////////////////////////////////////////////////////////////////////////////
+        virtual type get_underlying_type() const = 0;
+        
+        virtual type get_type() const = 0;
+
+        virtual std::vector<std::string> get_keys() const = 0;
+
+        virtual std::vector<variant> get_values() const = 0;
+
+        virtual std::string value_to_key(detail::argument& value) const = 0;
+
+        virtual variant key_to_value(const std::string& key) const = 0;
+
+        void set_declaring_type(type declaring_type) const;
+
+        type get_declaring_type() const;
+};
 
 } // end namespace detail
-} // end namespace RTR
+} // end namespace rttr
+
+#endif // RTTR_ENUMERATION_WRAPPER_BASE_H_

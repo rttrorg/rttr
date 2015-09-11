@@ -25,36 +25,66 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_CONTAINER_H_
-#define RTTR_PROPERTY_CONTAINER_H_
+#ifndef RTTR_METHOD_WRAPPER_BASE_H_
+#define RTTR_METHOD_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/function_traits.h"
-#include "rttr/detail/property/property_container_base.h"
-#include "rttr/detail/instance.h"
-#include "rttr/detail/argument.h"
-#include "rttr/detail/type/accessor_type.h"
-#include "rttr/policy.h"
-#include "rttr/array_mapper.h"
-#include "rttr/detail/misc/utility.h"
-#include "rttr/detail/property/property_accessor.h"
+#include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
 
-#include <functional>
+
+#include <string>
+#include <vector>
 
 namespace rttr
 {
+class type;
+
 namespace detail
 {
+class argument;
+class instance;
 
-template<typename Accessor_Type, typename Getter, typename Setter, typename Get_Policy, typename Set_Policy>
-class property_container;
+/*!
+ * Abstract class for a method.
+ * 
+ * This is the base class for all methods.
+ * You can invoke the method via method_wrapper_base::invoke.
+ */
+class RTTR_API method_wrapper_base : public meta_data_handler
+{
+    public:
+        method_wrapper_base();
+        virtual ~method_wrapper_base();
 
-#include "rttr/detail/property/property_container_member_func.h"
-#include "rttr/detail/property/property_container_func.h"
-#include "rttr/detail/property/property_container_member_object.h"
-#include "rttr/detail/property/property_container_object.h"
+        void set_name(const char* name) const;
+        const char* get_name() const;
+        void set_declaring_type(type declaring_type) const;
+        type get_declaring_type() const;
+        std::string get_signature() const;
+
+        virtual type get_return_type() const = 0;
+        virtual bool is_static() const = 0;
+        virtual std::vector<type> get_parameter_types() const = 0;
+        virtual std::vector<bool> get_is_reference() const = 0;
+        virtual std::vector<bool> get_is_const() const = 0;
+
+        virtual variant invoke(detail::instance& object) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4, detail::argument& arg5) const = 0;
+        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
+                               detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const = 0;
+
+        virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
+};
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_PROPERTY_CONTAINER_H_
+#endif // RTTR_METHOD_WRAPPER_BASE_H_

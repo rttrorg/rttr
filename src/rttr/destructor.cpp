@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/destructor.h"
-#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
 
 using namespace std;
 
@@ -35,7 +35,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor::destructor(const detail::destructor_container_base* container)
+destructor::destructor(const detail::destructor_wrapper_base* container)
 :   m_container(container)
 {
 

@@ -25,11 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_CONSTRUCTOR_CONTAINER_H_
-#define RTTR_CONSTRUCTOR_CONTAINER_H_
+#ifndef RTTR_CONSTRUCTOR_WRAPPER_H_
+#define RTTR_CONSTRUCTOR_WRAPPER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/constructor/constructor_container_base.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/misc/utility.h"
@@ -52,13 +52,13 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename Constructor_Type, typename Policy, typename... Args>
-class constructor_container;
+class constructor_wrapper;
 
 template<typename ClassType, typename Policy, typename... Args>
-class constructor_container<ClassType, class_ctor, Policy, Args...> : public constructor_container_base
+class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public constructor_wrapper_base
 {
     public:
-        constructor_container() {}
+        constructor_wrapper() {}
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Args>()...}; }
         std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Args) != 0>()); }
@@ -146,10 +146,10 @@ class constructor_container<ClassType, class_ctor, Policy, Args...> : public con
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename Policy, typename F>
-class constructor_container<ClassType, return_func, Policy, F> : public constructor_container_base
+class constructor_wrapper<ClassType, return_func, Policy, F> : public constructor_wrapper_base
 {
     public:
-        constructor_container(F creator_func) : m_creator_func(creator_func) {}
+        constructor_wrapper(F creator_func) : m_creator_func(creator_func) {}
 
         type get_instanciated_type()            const { return type::get<ClassType>();                              }
         type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
@@ -196,4 +196,4 @@ class constructor_container<ClassType, return_func, Policy, F> : public construc
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_CONSTRUCTOR_CONTAINER_H_
+#endif // RTTR_CONSTRUCTOR_WRAPPER_H_

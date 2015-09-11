@@ -25,11 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_DESTRUCTOR_CONTAINER_H_
-#define RTTR_DESTRUCTOR_CONTAINER_H_
+#ifndef RTTR_DESTRUCTOR_WRAPPER_H_
+#define RTTR_DESTRUCTOR_WRAPPER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/destructor/destructor_container_base.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
 #include "rttr/variant.h"
 
 namespace rttr
@@ -38,7 +38,7 @@ namespace detail
 {
 
 template<typename ClassType>
-class destructor_container : public destructor_container_base
+class destructor_wrapper : public destructor_wrapper_base
 {
     public:
         type get_destructed_type() const { return type::get<ClassType*>(); }
@@ -56,4 +56,4 @@ class destructor_container : public destructor_container_base
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_DESTRUCTOR_CONTAINER_H_
+#endif // RTTR_DESTRUCTOR_WRAPPER_H_

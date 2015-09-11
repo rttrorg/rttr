@@ -25,118 +25,52 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/constructor/constructor_container_base.h"
-
-using namespace std;
-
-static const char* is_ref_list[] = {"", " &"};
-static const char* is_const_list[] = {"", " const"};
+#include "rttr/detail/property/property_wrapper_base.h"
+#include "rttr/detail/type/type_database_p.h"
 
 namespace rttr
 {
 namespace detail
 {
-/////////////////////////////////////////////////////////////////////////////////////////
-
-constructor_container_base::constructor_container_base()
-{
-
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_container_base::~constructor_container_base()
+property_wrapper_base::property_wrapper_base()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> constructor_container_base::get_is_reference() const
+property_wrapper_base::~property_wrapper_base()
 {
-    return{};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> constructor_container_base::get_is_const() const
+void property_wrapper_base::set_name(const char* name) const
 {
-    return{};
+    type_database::instance().set_item_name(get_meta_index(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string constructor_container_base::get_signature() const
+const char* property_wrapper_base::get_name() const
 {
-    auto params = get_parameter_types();
-    string result = get_instanciated_type().get_raw_type().get_name() + "( ";
-    std::size_t index = 0;
-    auto ref_list = get_is_reference();
-    auto const_list = get_is_const();
-    for (const auto& type : params)
-    {
-        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
-        if (index < params.size() - 1)
-            result += ", ";
-
-        ++index;
-    }
-    if (params.empty())
-        result += ")";
-    else
-        result += " )";
-
-    return result;
+    return type_database::instance().get_item_name(get_meta_index());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_container_base::invoke() const
+void property_wrapper_base::set_declaring_type(type declaring_type) const
 {
-    return variant();
+    type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_container_base::invoke(detail::argument& arg1) const
+type property_wrapper_base::get_declaring_type() const
 {
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                                           detail::argument& arg5) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_container_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                                           detail::argument& arg5, detail::argument& arg6) const
-{
-    return variant();
+    return type_database::instance().get_declaring_item_type(get_meta_index());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -45,11 +45,11 @@ class class_;
 namespace detail
 {
 
-class constructor_container_base;
-class destructor_container_base;
-class enumeration_container_base;
-class method_container_base;
-class property_container_base;
+class constructor_wrapper_base;
+class destructor_wrapper_base;
+class enumeration_wrapper_base;
+class method_wrapper_base;
+class property_wrapper_base;
 
 struct type_converter_base;
 struct base_class_info;
@@ -77,15 +77,15 @@ public:
     // no assign
     type_register& operator=(const type_register&) = delete;
 
-    static void property(const type& t, std::unique_ptr<property_container_base> prop);
+    static void property(const type& t, std::unique_ptr<property_wrapper_base> prop);
 
-    static void method(const type& t, std::unique_ptr<method_container_base> meth);
+    static void method(const type& t, std::unique_ptr<method_wrapper_base> meth);
 
-    static void constructor(const type& t, std::unique_ptr<constructor_container_base> ctor);
+    static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
 
-    static void destructor(const type& t, std::unique_ptr<destructor_container_base> dtor);
+    static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
 
-    static void enumeration(const type& t, std::unique_ptr<enumeration_container_base> enum_data);
+    static void enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
 
     static void custom_name(const type& t, std::string );
 

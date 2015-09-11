@@ -27,7 +27,7 @@
 
 #include "rttr/property.h"
 
-#include "rttr/detail/property/property_container_base.h"
+#include "rttr/detail/property/property_wrapper_base.h"
 #include "rttr/variant.h"
 #include "rttr/detail/argument.h"
 #include "rttr/detail/instance.h"
@@ -40,7 +40,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property::property(const detail::property_container_base* container)
+property::property(const detail::property_wrapper_base* container)
 :   m_container(container)
 {
 

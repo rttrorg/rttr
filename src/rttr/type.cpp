@@ -33,11 +33,11 @@
 #include "rttr/enumeration.h"
 #include "rttr/method.h"
 
-#include "rttr/detail/constructor/constructor_container_base.h"
-#include "rttr/detail/destructor/destructor_container_base.h"
-#include "rttr/detail/enumeration/enumeration_container_base.h"
-#include "rttr/detail/method/method_container_base.h"
-#include "rttr/detail/property/property_container.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
+#include "rttr/detail/method/method_wrapper_base.h"
+#include "rttr/detail/property/property_wrapper.h"
 #include "rttr/rttr_enable.h"
 
 #include "rttr/detail/type/type_database_p.h"
@@ -489,7 +489,7 @@ bool type::set_property_value(const std::string& name, detail::argument arg)
 vector<property> type::get_properties() const
 {
     const auto& obj = detail::type_database::instance();
-    vector<detail::property_container_base*> props;
+    vector<detail::property_wrapper_base*> props;
 
     for (const auto& type :get_base_classes())
     {
@@ -549,7 +549,7 @@ method type::get_method(const std::string& name, const std::vector<type>& params
 vector<method> type::get_methods() const
 {
     const auto& obj = detail::type_database::instance();
-    vector<detail::method_container_base*> methods;
+    vector<detail::method_wrapper_base*> methods;
 
     for (const auto& type : get_base_classes())
     {

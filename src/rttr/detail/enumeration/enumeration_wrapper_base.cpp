@@ -25,91 +25,41 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ENUMERATION_CONTAINER_H_
-#define RTTR_ENUMERATION_CONTAINER_H_
-
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/enumeration/enumeration_container_base.h"
-#include "rttr/detail/enumeration/enum_data.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
+#include "rttr/detail/type/type_database_p.h"
 #include "rttr/detail/argument.h"
-#include "rttr/variant.h"
-
-#include <utility>
-#include <type_traits>
 
 namespace rttr
 {
 namespace detail
 {
+/////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Enum_Type>
-class enumeration_container : public enumeration_container_base
+enumeration_wrapper_base::enumeration_wrapper_base()
 {
-    public:
-        enumeration_container(std::vector< enum_data<Enum_Type> > data)
-        :   m_enum_data_list(move(data))
-        {
-            static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
-        }
+}
 
-        type get_type() const { return type::get<Enum_Type>(); }
-        type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        std::vector<std::string> get_keys() const
-        {
-            std::vector<std::string> result;
-            for (const auto& item : m_enum_data_list)
-                result.push_back(item.get_name());
+enumeration_wrapper_base::~enumeration_wrapper_base()
+{
+}
 
-            return result;
-        }
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        std::vector<variant> get_values() const
-        {
-            std::vector<variant> result;
-            for (const auto& item : m_enum_data_list)
-                result.push_back(item.get_value());
+void enumeration_wrapper_base::set_declaring_type(type declaring_type) const
+{
+    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
+}
 
-            return result;
-        }
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        std::string value_to_key(detail::argument& value) const
-        {
-            if (!value.is_type<Enum_Type>() &&
-                !value.is_type<typename std::underlying_type<Enum_Type>::type>())
-            {
-                return std::string();
-            }
-
-            const Enum_Type enum_value = value.get_value<Enum_Type>();
-            for (const auto& item : m_enum_data_list)
-            {
-                if (item.get_value() == enum_value)
-                    return item.get_name();
-            }
-            return std::string();
-        }
-
-        variant key_to_value(const std::string& key) const
-        {
-            if (key.empty())
-                return variant();
-
-            for (const auto& item : m_enum_data_list)
-            {
-                if (item.get_name() == key)
-                    return item.get_value();
-            }
-            return variant();
-        }
-
-    private:
-        std::vector< enum_data<Enum_Type> > m_enum_data_list;
-};
+type enumeration_wrapper_base::get_declaring_type() const
+{
+    return type_database::instance().get_declaring_item_type(get_meta_index());
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#endif // RTTR_CONSTRUCTOR_CONTAINER_H_
