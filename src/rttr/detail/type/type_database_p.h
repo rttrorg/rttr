@@ -91,25 +91,25 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        property_wrapper_base* get_class_property(const type& t, const std::string& name) const;
+        property_wrapper_base* get_class_property(const type& t, const char* name) const;
         std::vector<property_wrapper_base*> get_all_class_properties(const type& t) const;
         uint16_t get_class_property_count(const type& t) const;
     
-        property_wrapper_base* get_global_property(const std::string& name) const;
+        property_wrapper_base* get_global_property(const char* name) const;
         std::vector<property_wrapper_base*> get_all_global_properties() const;
         uint16_t get_global_property_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method_wrapper_base* get_class_method(const type& t, const std::string& name) const;
-        method_wrapper_base* get_class_method(const type& t, const std::string& name, 
-                                                const std::vector<type>& param_type_list) const;
+        method_wrapper_base* get_class_method(const type& t, const char* name) const;
+        method_wrapper_base* get_class_method(const type& t, const char* name, 
+                                              const std::vector<type>& param_type_list) const;
 
         std::vector<method_wrapper_base*> get_all_class_methods(const type& t) const;
         uint16_t get_class_method_count(const type& t) const;
 
-        method_wrapper_base* get_global_method(const std::string& name) const;
-        method_wrapper_base* get_global_method(const std::string& name, const std::vector<type>& arg_type_list) const;
+        method_wrapper_base* get_global_method(const char* name) const;
+        method_wrapper_base* get_global_method(const char* name, const std::vector<type>& arg_type_list) const;
         std::vector<method_wrapper_base*> get_all_global_methods() const;
         uint16_t get_global_method_count(const type& t) const;
 

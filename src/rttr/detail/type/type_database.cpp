@@ -149,7 +149,7 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base* type_database::get_class_property(const type& t, const std::string& name) const
+property_wrapper_base* type_database::get_class_property(const type& t, const char* name) const
 {
     using vec_value_type = class_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -166,7 +166,7 @@ property_wrapper_base* type_database::get_class_property(const type& t, const st
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() == name)
+        if (std::strcmp(item.m_data->get_name(), name) == 0)
             return item.m_data.get();
     }
 
@@ -216,7 +216,7 @@ uint16_t type_database::get_class_property_count(const type& t) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base* type_database::get_global_property(const std::string& name) const
+property_wrapper_base* type_database::get_global_property(const char* name) const
 {
     using vec_value_type = global_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -228,7 +228,7 @@ property_wrapper_base* type_database::get_global_property(const std::string& nam
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() == name)
+        if (std::strcmp(item.m_data->get_name(), name) == 0)
             return item.m_data.get();
     }
 
@@ -291,7 +291,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_class_method(const type& t, const std::string& name) const
+method_wrapper_base* type_database::get_class_method(const type& t, const char* name) const
 {
     using vec_value_type = class_member<method_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -308,7 +308,7 @@ method_wrapper_base* type_database::get_class_method(const type& t, const std::s
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() == name)
+        if (std::strcmp(item.m_data->get_name(), name) == 0)
             return item.m_data.get();
     }
 
@@ -324,8 +324,8 @@ static bool does_signature_match_arguments(const vector<type>& param_list, const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_class_method(const type& t, const std::string& name, 
-                                                       const std::vector<type>& param_type_list) const
+method_wrapper_base* type_database::get_class_method(const type& t, const char* name, 
+                                                     const std::vector<type>& param_type_list) const
 {
     // TO DO: return method with const qualifier
     using vec_value_type = class_member<method_wrapper_base>;
@@ -343,7 +343,7 @@ method_wrapper_base* type_database::get_class_method(const type& t, const std::s
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() != name)
+        if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
         if (does_signature_match_arguments(item.m_data->get_parameter_types(), param_type_list))
@@ -395,7 +395,7 @@ uint16_t type_database::get_class_method_count(const type& t) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_global_method(const std::string& name) const
+method_wrapper_base* type_database::get_global_method(const char* name) const
 {
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
@@ -408,7 +408,7 @@ method_wrapper_base* type_database::get_global_method(const std::string& name) c
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() == name)
+        if (std::strcmp(item.m_data->get_name(), name) == 0)
             return item.m_data.get();
     }
 
@@ -417,8 +417,8 @@ method_wrapper_base* type_database::get_global_method(const std::string& name) c
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_global_method(const std::string& name, 
-                                                        const std::vector<type>& param_type_list) const
+method_wrapper_base* type_database::get_global_method(const char* name, 
+                                                      const std::vector<type>& param_type_list) const
 {
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
@@ -431,7 +431,7 @@ method_wrapper_base* type_database::get_global_method(const std::string& name,
         if (item.m_name_hash != name_hash)
             break;
 
-        if (item.m_data->get_name() != name)
+        if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
         if (does_signature_match_arguments(item.m_data->get_parameter_types(), param_type_list))

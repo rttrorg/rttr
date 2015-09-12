@@ -528,7 +528,7 @@ class RTTR_API type
          *
          * \return A property with name \p name.
          */
-        property get_property(const std::string& name) const;
+        property get_property(const char* name) const;
 
         /*!
          * \brief Returns a list of all registered properties for this type and
@@ -547,7 +547,7 @@ class RTTR_API type
          *
          * \return A property with name \p name.
          */
-        static property get_global_property(const std::string& name);
+        static property get_global_property(const char* name);
 
         /*!
          * \brief Returns a list of all registered global properties.
@@ -568,14 +568,14 @@ class RTTR_API type
          *
          * \return A variant containing the value of the property.
          */
-        variant get_property_value(const std::string& name, detail::instance obj) const;
+        variant get_property_value(const char* name, detail::instance obj) const;
 
         /*!
          * \brief Returns the property value of property named \p name.
          *
          * \return A variant containing the value of the property.
          */
-        static variant get_property_value(const std::string& name);
+        static variant get_property_value(const char* name);
 
         /*!
          * \brief This function will set the given value \p arg to a property named \p name to the instance \p obj.
@@ -584,14 +584,14 @@ class RTTR_API type
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        bool set_property_value(const std::string& name, detail::instance obj, detail::argument arg) const;
+        bool set_property_value(const char* name, detail::instance obj, detail::argument arg) const;
 
         /*!
          * \brief This function will set the given value \p arg to a property named \p name.
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        static bool set_property_value(const std::string& name, detail::argument arg);
+        static bool set_property_value(const char* name, detail::argument arg);
 
 
         /*!
@@ -601,7 +601,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        method get_method(const std::string& name) const;
+        method get_method(const char* name) const;
 
         /*!
          * \brief Returns a method with the name \p name which match the given parameter list \p params.
@@ -611,7 +611,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        method get_method(const std::string& name, const std::vector<type>& params) const;
+        method get_method(const char* name, const std::vector<type>& params) const;
         
         /*!
          * \brief Returns a list of all registered methods for this type and
@@ -630,7 +630,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        static method get_global_method(const std::string& name);
+        static method get_global_method(const char* name);
 
         /*!
          * \brief Returns a global method with the name \p name which match the given parameter list \p params.
@@ -640,7 +640,7 @@ class RTTR_API type
          *
          * \return A method with name \p name and parameter signature \p params.
          */
-        static method get_global_method(const std::string& name, const std::vector<type>& params);
+        static method get_global_method(const char* name, const std::vector<type>& params);
 
         /*!
          * \brief Returns a list of all registered global methods.
@@ -662,7 +662,7 @@ class RTTR_API type
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
-        variant invoke(const std::string& name, detail::instance obj, std::vector<detail::argument> args) const;
+        variant invoke(const char* name, detail::instance obj, std::vector<detail::argument> args) const;
 
         /*!
          * \brief Invokes a global method named \p name with the specified argument \p args.
@@ -670,7 +670,7 @@ class RTTR_API type
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
-        static variant invoke(const std::string& name, std::vector<detail::argument> args);
+        static variant invoke(const char* name, std::vector<detail::argument> args);
 
         /*!
          * \brief Register a converter func `F`, which will be used internally by the 

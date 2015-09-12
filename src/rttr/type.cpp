@@ -436,7 +436,7 @@ void type::destroy(variant& obj) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_property(const std::string& name) const
+property type::get_property(const char* name) const
 {
     const auto& obj = detail::type_database::instance();
 
@@ -454,7 +454,7 @@ property type::get_property(const std::string& name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_property_value(const std::string& name, detail::instance obj) const
+variant type::get_property_value(const char* name, detail::instance obj) const
 {
     const auto prop = get_property(name);
     return prop.get_value(obj);
@@ -462,7 +462,7 @@ variant type::get_property_value(const std::string& name, detail::instance obj) 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_property_value(const std::string& name)
+variant type::get_property_value(const char* name)
 {
     const auto prop = get_global_property(name);
     return prop.get_value(empty_instance());
@@ -470,7 +470,7 @@ variant type::get_property_value(const std::string& name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const std::string& name, detail::instance obj, detail::argument arg) const
+bool type::set_property_value(const char* name, detail::instance obj, detail::argument arg) const
 {
     const auto prop = get_property(name);
     return prop.set_value(obj, arg);
@@ -478,7 +478,7 @@ bool type::set_property_value(const std::string& name, detail::instance obj, det
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const std::string& name, detail::argument arg)
+bool type::set_property_value(const char* name, detail::argument arg)
 {
     const auto prop = get_global_property(name);
     return prop.set_value(empty_instance(), arg);
@@ -510,7 +510,7 @@ vector<property> type::get_properties() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(const string& name) const
+method type::get_method(const char* name) const
 {
     const auto& obj = detail::type_database::instance();
 
@@ -528,7 +528,7 @@ method type::get_method(const string& name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(const std::string& name, const std::vector<type>& params) const
+method type::get_method(const char* name, const std::vector<type>& params) const
 {
     const auto& obj = detail::type_database::instance();
 
@@ -570,14 +570,14 @@ vector<method> type::get_methods() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_global_property(const std::string& name)
+property type::get_global_property(const char* name)
 {
     return property(detail::type_database::instance().get_global_property(name));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(const std::string& name)
+method type::get_global_method(const char* name)
 {
     const auto& db = detail::type_database::instance();
     if (const auto meth = db.get_global_method(name))
@@ -588,7 +588,7 @@ method type::get_global_method(const std::string& name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(const std::string& name, const std::vector<type>& params)
+method type::get_global_method(const char* name, const std::vector<type>& params)
 {
     const auto& db = detail::type_database::instance();
     if (const auto meth = db.get_global_method(name, params))
@@ -635,7 +635,7 @@ enumeration type::get_enumeration() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const std::string& name, detail::instance obj, std::vector<detail::argument> args) const
+variant type::invoke(const char* name, detail::instance obj, std::vector<detail::argument> args) const
 {
     const auto meth = get_method(name, extract_types(args));
     return meth.invoke_variadic(obj, std::move(args));
@@ -643,7 +643,7 @@ variant type::invoke(const std::string& name, detail::instance obj, std::vector<
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const std::string& name, std::vector<detail::argument> args)
+variant type::invoke(const char* name, std::vector<detail::argument> args)
 {
     const auto meth = get_global_method(name, extract_types(args));
     return meth.invoke_variadic(empty_instance(), std::move(args));
