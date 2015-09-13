@@ -25,55 +25,74 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ENUMERATION_WRAPPER_BASE_H_
-#define RTTR_ENUMERATION_WRAPPER_BASE_H_
+#ifndef RTTR_PROP_POLICIES_H_
+#define RTTR_PROP_POLICIES_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/variant.h"
-#include "rttr/type.h"
-
-#include <string>
-#include <vector>
-#include <initializer_list>
+#include "rttr/detail/misc/misc_type_traits.h"
 
 namespace rttr
 {
-
 namespace detail
 {
-class argument;
 
-/*!
- * Abstract class for a method.
- * 
- * This is the base class for all methods.
- * You can invoke the method.
- */
-class RTTR_API enumeration_wrapper_base : public meta_data_handler
+struct return_as_ptr
+{};
+
+struct set_as_ptr
+{};
+
+struct return_as_copy
+{};
+
+struct read_only
+{};
+
+struct set_value
+{};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// default getter policy
+template<typename T>
+struct get_getter_policy
 {
-    public:
-        enumeration_wrapper_base();
-        virtual ~enumeration_wrapper_base();
-
-        virtual type get_underlying_type() const = 0;
-        
-        virtual type get_type() const = 0;
-
-        virtual std::vector<std::string> get_names() const = 0;
-
-        virtual std::vector<variant> get_values() const = 0;
-
-        virtual std::string value_to_name(detail::argument& value) const = 0;
-
-        virtual variant name_to_value(const std::string& name) const = 0;
-
-        void set_declaring_type(type declaring_type) const;
-
-        type get_declaring_type() const;
+    typedef return_as_copy type; 
 };
 
-} // end namespace detail
+// default setter policy
+template<typename T>
+struct get_setter_policy
+{
+    typedef set_value type; 
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+struct bind_as_ptr
+{};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+struct get_getter_policy<bind_as_ptr>
+{
+    typedef return_as_ptr type;
+};
+
+template<>
+struct get_setter_policy<bind_as_ptr>
+{
+    typedef set_as_ptr type;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+using property_policy_list  = type_list<bind_as_ptr, read_only>;
+
+} // end namespace detail;
+
 } // end namespace rttr
 
-#endif // RTTR_ENUMERATION_WRAPPER_BASE_H_
+#endif // RTTR_PROP_POLICIES_H_

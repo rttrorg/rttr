@@ -44,8 +44,10 @@ namespace detail
 
 /*!
  * The \ref access_level class contains three static members, which can be used to specify
- * the access control for \ref method "methods" or \ref property "properties"
+ * the access control for \ref method "methods", \ref property "properties" or \ref constructor "constructors"
+ * during the registration process of the reflection information.
  *
+ * See following example code:
  * \code{.cpp}
  *
  *  registration::class<foo>("foo")

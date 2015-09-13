@@ -111,15 +111,15 @@ TEST_CASE("Test Enumeration", "[enumeration]")
     // create instance from enum value
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
-        variant var1 = enum_info_align.key_to_value("AlignHCenter");
-        variant var2 = enum_info_orient.key_to_value("Vertical");
+        variant var1 = enum_info_align.name_to_value("AlignHCenter");
+        variant var2 = enum_info_orient.name_to_value("Vertical");
         std::vector<detail::argument> args = {var1, var2};
         variant enum_inst = enum_type.create(args);
 #   else
 #       error "Check new MSVC Compiler!"
 #   endif
 #else
-    variant enum_inst = enum_type.create({enum_info_align.key_to_value("AlignHCenter"), enum_info_orient.key_to_value("Vertical")});
+    variant enum_inst = enum_type.create({enum_info_align.name_to_value("AlignHCenter"), enum_info_orient.name_to_value("Vertical")});
 #endif
     REQUIRE(enum_inst.is_valid() == true);
 
@@ -143,23 +143,23 @@ TEST_CASE("Test Enumeration", "[enumeration]")
     REQUIRE(align_value.get_value<enum_test::E_Alignment>() == enum_test::AlignHCenter);
     REQUIRE(orient_value.get_value<enum_test::E_Orientation>() == enum_test::E_Orientation::Vertical);
 
-    variant bad_value = enum_info_align.key_to_value("WrongEnum");
-    std::string bad_key = enum_info_align.value_to_key(5000);
+    variant bad_value = enum_info_align.name_to_value("WrongEnum");
+    std::string bad_key = enum_info_align.value_to_name(5000);
     REQUIRE(bad_value.is_valid() == false);
     REQUIRE(bad_key == string());
     
-    std::vector<std::string> enum_keys = enum_info_align.get_keys();
+    std::vector<std::string> enum_keys = enum_info_align.get_names();
     REQUIRE(enum_keys.size() == 4);
 
     std::vector<variant> enum_values = enum_info_align.get_values();
     REQUIRE(enum_values.size() == 4);
 
     const auto underlying_value = static_cast<std::underlying_type<enum_test::E_Alignment>::type>(2);
-    std::string ret = enum_info_align.value_to_key(underlying_value);
+    std::string ret = enum_info_align.value_to_name(underlying_value);
     REQUIRE(ret == "AlignRight");
 
     const auto bad_underlying_value = static_cast<std::underlying_type<enum_test::E_Alignment>::type>(5);
-    ret = enum_info_align.value_to_key(bad_underlying_value); // test bad value
+    ret = enum_info_align.value_to_name(bad_underlying_value); // test bad value
     REQUIRE(ret == "");
 
     enum_type.destroy(enum_inst);

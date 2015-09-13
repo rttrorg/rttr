@@ -10,7 +10,7 @@ using namespace rttr;
 
 RTTR_REGISTER
 {
-    method_("f", &f);
+    registration::method("f", &f);
 }
   
 int main()

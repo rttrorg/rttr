@@ -79,6 +79,9 @@ set(HEADER_FILES access_level.h
                  detail/misc/number_conversion.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
+                 detail/policies/prop_policies.h
+                 detail/policies/meth_policies.h
+                 detail/policies/ctor_policies.h
                  detail/property/property_accessor.h
                  detail/property/property_wrapper.h
                  detail/property/property_wrapper_base.h

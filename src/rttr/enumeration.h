@@ -48,18 +48,20 @@ class argument;
 /*!
  * The \ref enumeration class provides several meta information about an enum.
  * 
- * A instance of an enumeration class can only be obtained from the \ref type class.
- * See \ref type::get_enum() and \ref type::get_enumerations().
+ * A instance of an enumeration class can only be obtained from the \ref type class or the \ref property class.
+ * See \ref type::get_enumeration() and \ref property::get_enumeration().
  *
- * For registration an enum, nested inside a class, see \ref class_::enumeration() and for global enums see \ref enumeration_.
+ * For registration an enum, nested inside a class, see \ref registration::class_<T>::enumeration()
+ * and for global enums see \ref registration::enumeration().
  *
  * Meta Information
  * ----------------
- * An \ref enumeration is described by it's name (\ref get_name()), it's keys (\ref get_keys()) and it's corresponding values (\ref get_values()).
- * The key is represented as std::string and the values are stored as the underlying enum value.
+ * An \ref enumeration is described by it's declared name (\ref get_name()), it's enumerator names (\ref get_names()) 
+ * and it's corresponding constant values (\ref get_values()).
+ * The name is represented as std::string and the values are stored as the underlying enum value.
  * When the \ref enumeration was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
- * The conversion functions \ref key_to_value(), \ref value_to_key() allow conversion between the value representation of an enumeration and its literal representation.
+ * The conversion functions \ref name_to_value(), \ref value_to_name() allow conversion between the value representation of an enumeration and its literal representation.
  *
  * Copying and Assignment
  * ----------------------
@@ -80,14 +82,14 @@ class argument;
         AlignJustify    = 0x0008
      };
   };
-  enumeration enum_align = type::get("MyStruct").get_enumeration("E_Alignment");
+  enumeration enum_align = type::get_by_name("MyStruct").get_enumeration("E_Alignment");
   if (enum_align)
   {
      MyStruct::E_Alignment enum_value = MyStruct::AlignLeft;
-     std::string key = enum_align.value_to_key(enum_value);
-     std::cout << key; // prints "AlignLeft"
+     std::string name = enum_align.value_to_name(enum_value);
+     std::cout << name; // prints "AlignLeft"
     
-     variant var = enum_align.key_to_value("AlignJustify");
+     variant var = enum_align.name_to_value("AlignJustify");
      std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "8";
   }
 \endcode
@@ -112,7 +114,7 @@ class RTTR_API enumeration
         explicit operator bool() const;
 
         /*!
-         * \brief Returns the name of this \ref enumeration.
+         * \brief Returns the declared name of this \ref enumeration.
          *
          * \return Name of the \ref enumeration.
          */
@@ -153,13 +155,13 @@ class RTTR_API enumeration
         variant get_meta_data(const variant& key) const;
 
         /*!
-         * \brief Returns all enum keys registered for this enumeration.
+         * \brief Returns all enum names registered for this enumeration.
          *
          * \remark When the enumeration is invalid then an empty vector is returned.
          *
-         * \return A vector of enumeration keys.
+         * \return A vector of enumeration names.
          */
-        std::vector<std::string> get_keys() const;
+        std::vector<std::string> get_names() const;
 
 
          /*!
@@ -175,16 +177,16 @@ class RTTR_API enumeration
          * \brief Returns the string that is used as the name of the given enumeration \p value,
          *        or an empty string if the \p value is not defined.
          *
-         * \return A std::string object, containing the key for the given value.
+         * \return A std::string object, containing the name for the given value.
          */
-        std::string value_to_key(detail::argument value) const;
+        std::string value_to_name(detail::argument value) const;
         
         /*!
-         * \brief Returns the value of the given enumeration key, or an empty variant if the key is not defined.
+         * \brief Returns the value of the given enumeration name, or an empty variant if the name is not defined.
          *
-         * \return A variant object, containing the value for the given key.
+         * \return A variant object, containing the value for the given name.
          */
-        variant key_to_value(const std::string& key) const;
+        variant name_to_value(const std::string& name) const;
 
         /*!
          * \brief Returns true if this enumeration is the same like the \p other.

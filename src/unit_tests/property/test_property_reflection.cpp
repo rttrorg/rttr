@@ -109,19 +109,19 @@ RTTR_REGISTER
         .property("array_copy", &property_test::_array)
         .property("array", &property_test::_array)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property("raw_array", &property_test::_other_array)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property_readonly("p7_as_ptr_read_only", &property_test::get_p7)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property("p7_as_ptr", &property_test::get_p7, &property_test::set_p7)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         ;
 
@@ -156,19 +156,19 @@ RTTR_REGISTER
         // test policies
         .property("p1_as_ptr", &global_array)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property_readonly("p2_as_ptr", &get_global_text)
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property_readonly("p3_as_ptr", std::function<const string&(void)>(&my_p11_getter))
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         )
         .property("p4_as_ptr", std::function<const string&(void)>(&my_p11_getter), std::function<void(const std::string&)>(&my_p11_setter))
         (
-            policy::bind_property_as_ptr
+            policy::prop::bind_as_ptr
         );
 }
 

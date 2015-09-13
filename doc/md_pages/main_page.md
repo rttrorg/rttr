@@ -56,5 +56,5 @@ Acknowledgements
 The following persons has been very helpful:
 
 - Ville Voutilainen, for reviewing and improving the code base
-- Paul Mensonides, for given me an introduction in preprocessor metaprogramming
+- Paul Mensonides, for given me an introduction in template and preprocessor metaprogramming
 

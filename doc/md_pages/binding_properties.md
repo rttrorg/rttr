@@ -2,35 +2,35 @@ Properties {#binding_properties_page}
 ==========
 
 For binding a property to RTTR you can use following functions: 
-@ref rttr::property_() "property_()" and @ref rttr::property_readonly_() "property_readonly_()".
+@ref rttr::registration::property "registration::property()" and 
+@ref rttr::registration::property_readonly() "registration::property_readonly()".
 
 They have following synopsis:
 ~~~~{.cpp}
   template<typename A>
-  void rttr::property_( const std::string & name, A accessor, std::vector< rttr::metadata > data );
+  registration rttr::registration::property( const char* name, A accessor );
   
   template<typename A>
-  void rttr::property_readonly_( const std::string & name, A accessor, std::vector< rttr::metadata > data );
+  registration rttr::registration::property_readonly( const char* name, A accessor);
 ~~~~
 - `name` is the name of the property
 - `A` is the pointer to the property
-- `data` contains metadata for this property; this is an optional parameter
 
 It is also possible to use function pointers for the property as getter and setter functions.
-Therefore the @ref rttr::property_( const std::string &, A1, A2 , std::vector< rttr::metadata >) "property_()" function is overloaded.
+Therefore the @ref rttr::registration::property(const char*, A1, A2) "property()" function is overloaded.
 
 It has following synopsis:
 ~~~~{.cpp}
   template<typename A1, typename A2>
-  void rttr::property_( const std::string & name, A1 getter, A2 setter, std::vector< rttr::metadata > data );
+  registration rttr::registration::property( const char* name, A1 getter, A2 setter );
 ~~~~
 - `name` is the name of the property
 - `A1` is the function pointer to the getter and A2 is the function pointer to the setter of the property
-- `data` contains metadata for this property; this is an optional parameter
 
 The following example shows how to use these register functions:
 ~~~~{.cpp}
 #include <rttr/register>
+using namespace rttr;
 
 static const double pi = 3.14259;
 static std::string global_text;
@@ -39,8 +39,8 @@ const std::string& get_text() { return global_text; }
 
 RTTR_REGISTER
 {
-  property_readonly_("PI", &pi);
-  property_("global_text", &get_text, &set_text);
+  registration::property_readonly("PI", &pi);
+  registration::property("global_text", &get_text, &set_text);
 }
 ~~~~
 
@@ -49,10 +49,11 @@ There can be not two global properties with the same name. The later registered 
 Invoke properties
 -----------------
 For setting and getting a property you have two options like with methods:
-- calling @ref rttr::type::set_property_value(const std::string&, detail::argument) "type::set_property_value()" and @ref rttr::type::get_property_value(const std::string&) "type::get_property_value()" from the @ref rttr::type "type" class or
-- retrieving a @ref rttr::property "property" object from @ref rttr::type::get_global_property(const std::string &) "type::get_global_property()" and then calling @ref rttr::property::set_value() "property::set_value()" and @ref rttr::property::get_value() "property::get_value()"
+- calling @ref rttr::type::set_property_value(const char*, detail::argument) "type::set_property_value()" and @ref rttr::type::get_property_value(const char*) "type::get_property_value()" from the @ref rttr::type "type" class or
+- retrieving a @ref rttr::property "property" object from @ref rttr::type::get_global_property(const char*) "type::get_global_property()" and then calling @ref rttr::property::set_value() "property::set_value()" and @ref rttr::property::get_value() "property::get_value()"
 
 ~~~~{.cpp}
+using namespace rttr;
 int main()
 {
   // option 1, via type
@@ -71,15 +72,15 @@ int main()
 }
 ~~~~
 
-The static @ref rttr::type::set_property_value(const std::string&, detail::argument) "type::set_property_value()" function
+The static @ref rttr::type::set_property_value(const char*, detail::argument) "type::set_property_value()" function
 calls directly a global property with the given name. This function has a bool value as return value, indicating whether the 
 property was invoked or not. For retrieving a property value use the static function 
-@ref rttr::type::get_property_value(const std::string&) "type::get_property_value()". 
+@ref rttr::type::get_property_value(const char*) "type::get_property_value()". 
 The returned @ref rttr::variant "variant" object contains the property value and also indicates whether the 
 call to retrieve the property was successful or not. When the variant is @ref rttr::variant::is_valid() "not valid" 
 then the call could not be done.
 
-Another option is to retrieve a handle to the property via @ref rttr::type::get_global_property(const std::string &) "type::get_global_property()".
+Another option is to retrieve a handle to the property via @ref rttr::type::get_global_property(const char*) "type::get_global_property()".
 This is the preferred option, because then you directly set/get the value without searching every time for the property.
 The property object is very lightweight and can be simply copied around different locations. The object stays valid till end of the `main()` function.
 

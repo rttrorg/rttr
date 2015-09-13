@@ -52,7 +52,8 @@ class argument;
  * A instance of a method class can only be obtained from the \ref type class.
  * See \ref type::get_method() and \ref type::get_methods().
  *
- * For registration a method, nested inside a class, see \ref class_::method() and for global methods see \ref register_global::method.
+ * For registration a method, nested inside a class, see \ref registration::class_<T>::method()
+ * and for global methods see \ref registration::method().
  *
  * Meta Information
  * ----------------
@@ -77,7 +78,7 @@ class argument;
  * While the \ref invoke() function can directly forward up to six arguments, it is sometime necessary to forward even more arguments.
  * Therefore the function \ref invoke_variadic() should be used; it allows to pack an unlimited amount of arguments into a std::vector and forward them to the function.
  *
- * Another way to invoke a method is to use the \ref type class through \ref invoke_method().
+ * Another way to invoke a method is to use the \ref type class through \ref type::invoke().
  *
  * Copying and Assignment
  * ----------------------
@@ -86,26 +87,26 @@ class argument;
  * Typical Usage
  * ----------------------
  * 
-\code{.cpp}
-  using namespace rttr;
-  struct MyStruct { int my_method(int param) { return param; } };
-  //...
-  variant obj = type::get("MyStruct").create();
-  method func = obj.get_type().get_method("my_method");
-  if (func)
-  {
-     variant val = func.invoke(obj, 23);
-     std::cout << val.get_value<int>(); // prints 23
-     // you can also invoke the method with an object on the stack
-     MyStruct inst;
-     val = func.invoke(inst, 42);
-     std::cout << val.get_value<int>(); // prints 42
-     // or as pointer
-     MyStruct* ptr = &inst;
-     val = func.invoke(ptr, 7);
-     std::cout << val.get_value<int>(); // prints 7
-  }
-\endcode
+ * \code{.cpp}
+ *  using namespace rttr;
+ *  struct MyStruct { int my_method(int param) { return param; } };
+ *  //...
+ *  variant obj = type::get_by_name("MyStruct").create({});
+ *  method func = obj.get_type().get_method("my_method");
+ *  if (func)
+ *  {
+ *     variant val = func.invoke(obj, 23);
+ *     std::cout << val.get_value<int>(); // prints 23
+ *     // you can also invoke the method with an object on the stack
+ *     MyStruct inst;
+ *     val = func.invoke(inst, 42);
+ *     std::cout << val.get_value<int>(); // prints 42
+ *     // or as pointer
+ *     MyStruct* ptr = &inst;
+ *     val = func.invoke(ptr, 7);
+ *     std::cout << val.get_value<int>(); // prints 7
+ *  }
+ * \endcode
  *
  * \see property, enumeration, constructor and type
  */

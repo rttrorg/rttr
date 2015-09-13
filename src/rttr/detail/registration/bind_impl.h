@@ -427,9 +427,8 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
                                                policy_types_found>;
             // at the moment we only supported one policy
             using first_meth_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
-            using method_policy = typename get_method_policy<first_meth_policy>::type;
 
-            m_meth = detail::make_unique<method_wrapper<F, method_policy>>(m_name, type::get<Class_Type>(), m_func);
+            m_meth = detail::make_unique<method_wrapper<F, first_meth_policy>>(m_name, type::get<Class_Type>(), m_func);
 
             store_meta_data(m_meth, get_meta_data(std::forward<Args>(arg)...));
 

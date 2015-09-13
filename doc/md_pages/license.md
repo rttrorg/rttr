@@ -35,6 +35,8 @@ However, following software was used to develop RTTR:
 - <a target="_blank" href="https://github.com/philsquared/Catch">Catch</a> - for unit tests, License: <a target="_blank" href="https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt">Boost Software License</a>.
 - <a target="_blank" href="http://www.doxygen.org/">Doxygen</a> - for generating the documentation, License: <a target="_blank" href="https://github.com/doxygen/doxygen/blob/master/LICENSE">GPL License</a>.
 - <a target="_blank" href="http://getbootstrap.com/">Bootstrap</a> - for changing the visual appearance of the documentation, License: <a target="_blank" href="https://github.com/twbs/bootstrap/blob/master/LICENSE">MIT License</a>.
+- <a target="_blank" href="http://flamingdangerzone.com/nonius/">Nonius</a> - for internal benchmarks, License: <a target="_blank" href="https://github.com/rmartinho/nonius/blob/stable/COPYING.txt">Creative Commons 1.0</a>.
+- <a target="_blank" href="http://www.highcharts.com/">Highcharts</a> - for the visual result of the benchmarks, License: <a target="_blank" href="http://shop.highsoft.com/highcharts.html"> Creative Commons Attribution-NonCommercial 3.0 License</a>.
 
 Author
 ------

@@ -100,10 +100,10 @@ variant enumeration::get_meta_data(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<string> enumeration::get_keys() const
+vector<string> enumeration::get_names() const
 {
     if (is_valid())
-        return m_container->get_keys();
+        return m_container->get_names();
     else
         return vector<string>();
 }
@@ -120,20 +120,20 @@ vector<variant> enumeration::get_values() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string enumeration::value_to_key(detail::argument value) const
+string enumeration::value_to_name(detail::argument value) const
 {
     if (is_valid())
-        return m_container->value_to_key(value);
+        return m_container->value_to_name(value);
     else
         return string();
 }
         
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::key_to_value(const std::string& key) const
+variant enumeration::name_to_value(const std::string& name) const
 {
     if (is_valid())
-        return m_container->key_to_value(key);
+        return m_container->name_to_value(name);
     else
         return variant();
 }

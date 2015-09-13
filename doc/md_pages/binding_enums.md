@@ -1,20 +1,20 @@
 Enums {#binding_enums_page}
 =====
 
-RTTR allows also to bind enumerated constants (enums). Therefore use the function @ref rttr::enumeration_() "enumeration_()".
+RTTR allows also to bind enumerated constants (enums). Therefore use the function @ref rttr::registration::enumeration() "registration::enumeration()".
 
 It has following synopsis:
 
 ~~~~{.cpp}
-  template<typename EnumType>
-  void rttr::enumeration_( std::vector< std::pair< std::string, EnumType > > enum_data, std::vector< rttr::metadata > data );
+  template<typename Enum_Type>
+  registration rttr::registration::enumeration( const char* name );
 ~~~~
 
-- `enum_data` contains a list of *key* to *value* pairs
-- `data` contains metadata for this property; this is an optional parameter
+- `name` the declared name of this enum
 
 ~~~~{.cpp}
 #include <rttr/register>
+using namespace rttr;
 
 enum E_Alignment
 {
@@ -26,15 +26,17 @@ enum E_Alignment
 
 RTTR_REGISTER
 {
-  enumeration_<E_Alignment>({ {"AlignLeft",    E_Alignment::AlignLeft},
-                              {"AlignRight",   E_Alignment::AlignRight},
-                              {"AlignHCenter", E_Alignment::AlignHCenter},
-                              {"AlignJustify", E_Alignment::AlignJustify}
-                            });
+  registration::enumeration<E_Alignment>("E_Alignment")
+  (
+      value("AlignLeft",    enum_test::E_Alignment::AlignLeft),
+      value("AlignRight",   enum_test::E_Alignment::AlignRight),
+      value("AlignHCenter", enum_test::E_Alignment::AlignHCenter),
+      value("AlignJustify", enum_test::E_Alignment::AlignJustify)
+  )
 }
 ~~~~
 
-The *key* is a std::string and the *value* is the enum value.
+The *name* is a `const char*` and the *value* is the enum value.
 The class @ref rttr::enumeration "enumeration" contains several meta information about an enum with conversion 
 functions between the value representation and its literal representation.
 

@@ -25,55 +25,31 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ENUMERATION_WRAPPER_BASE_H_
-#define RTTR_ENUMERATION_WRAPPER_BASE_H_
+#ifndef RTTR_METH_POLICIES_H_
+#define RTTR_METH_POLICIES_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/variant.h"
-#include "rttr/type.h"
-
-#include <string>
-#include <vector>
-#include <initializer_list>
+#include "rttr/detail/misc/misc_type_traits.h"
 
 namespace rttr
 {
-
 namespace detail
 {
-class argument;
 
-/*!
- * Abstract class for a method.
- * 
- * This is the base class for all methods.
- * You can invoke the method.
- */
-class RTTR_API enumeration_wrapper_base : public meta_data_handler
-{
-    public:
-        enumeration_wrapper_base();
-        virtual ~enumeration_wrapper_base();
+struct return_as_ptr;
 
-        virtual type get_underlying_type() const = 0;
-        
-        virtual type get_type() const = 0;
+struct discard_return
+{};
 
-        virtual std::vector<std::string> get_names() const = 0;
+struct default_invoke
+{};
 
-        virtual std::vector<variant> get_values() const = 0;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        virtual std::string value_to_name(detail::argument& value) const = 0;
+using method_policy_list    = type_list<discard_return, return_as_ptr>;
 
-        virtual variant name_to_value(const std::string& name) const = 0;
+} // end namespace detail;
 
-        void set_declaring_type(type declaring_type) const;
-
-        type get_declaring_type() const;
-};
-
-} // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_ENUMERATION_WRAPPER_BASE_H_
+#endif // RTTR_METH_POLICIES_H_

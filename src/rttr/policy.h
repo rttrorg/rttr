@@ -30,137 +30,145 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/policies/ctor_policies.h"
+#include "rttr/detail/policies/meth_policies.h"
+#include "rttr/detail/policies/prop_policies.h"
 
 namespace rttr
 {
 
-namespace detail
-{
-
-struct return_as_ptr
-{};
-
-struct set_as_ptr
-{};
-
-struct return_as_copy
-{};
-
-struct read_only
-{};
-
-struct set_value
-{};
-
-struct discard_return
-{};
-
-struct default_invoke
-{};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-// default getter policy
-template<typename T>
-struct get_getter_policy
-{
-    typedef return_as_copy type; 
-};
-
-// default setter policy
-template<typename T>
-struct get_setter_policy
-{
-    typedef set_value type; 
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct bind_property_as_ptr_policy
-{};
-
-struct return_reference_as_ptr_policy
-{};
-
-struct discard_return_value_policy
-{};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<>
-struct get_getter_policy<bind_property_as_ptr_policy>
-{
-    typedef return_as_ptr type;
-};
-
-template<>
-struct get_setter_policy<bind_property_as_ptr_policy>
-{
-    typedef set_as_ptr type;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-// default method policy
-template<typename T>
-struct get_method_policy
-{
-    typedef default_invoke type; 
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-
-template<>
-struct get_method_policy<return_reference_as_ptr_policy>
-{
-    typedef return_as_ptr type;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<>
-struct get_method_policy<discard_return_value_policy>
-{
-    typedef discard_return type;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-using method_policy_list    = type_list<discard_return_value_policy, return_reference_as_ptr_policy>;
-using property_policy_list  = type_list<return_reference_as_ptr_policy, bind_property_as_ptr_policy, read_only>;
-using ctor_policy_list      = type_list<>;
-
-} // end namespace detail;
-
 /*!
  * The \ref policy class contains all policies that can be used during the registration of reflection information.
  *
- * \code{.cpp}
+ * For easier usage, the policies are subdivided into following groups:
+ * - for methods: \ref policy::meth
+ * - for properties: \ref policy::prop
+ * - for constructors: \ref policy::ctor
  *
- *  registration::method("test", &func_1)
- *  (
- *       policy::discard_return_value
- *  );
- *
- * \endcode
  */
 struct RTTR_API policy
 {
     /*!
-     * Add documentation here
+     * The \ref meth class groups all policies that can be used during registration of methods.
+     *
+     * \endcode
      */
-    static const detail::bind_property_as_ptr_policy        bind_property_as_ptr;
+    struct RTTR_API meth
+    {
+        /*!
+         * This policy can be used when a method return a reference to an object
+         * and the caller should be able to access this object via the returned variant.
+         * Reference cannot be copied directly in a variant, therefore it is possible transform the reference
+         * to a pointer.
+         *
+         * See following example code:
+         * \code{.cpp}
+         *
+         * std::string& get_text() { static std:string text("hello world"); return text; }
+         *
+         * RTTR_REGISTER
+         * {
+         *   registration::method("get_text", &get_text)
+         *   (
+         *      policy::meth::return_ref_as_ptr
+         *   );
+         * }
+         * int main()
+         * {
+         *   method meth = type::get_global_method("get_text");
+         *   std::cout << meth.get_return_type().get_name();    // prints "std::string*"
+         *   variant var = meth.invoke(empty_instance());
+         *   std::cout << var.is_type<std::string*>();          // prints "true"
+         *   return 0;  
+         * }
+         * \endcode
+         */
+        static const detail::return_as_ptr      return_ref_as_ptr;
+
+       /*!
+         * This policy should be used when the return value of a method should not be forwarded to the caller.
+         * For the caller it looks like the method has no return value, the return type will be *void*.
+         *
+         * See following example code:
+         * \code{.cpp}
+         *
+         * using namespace rttr;
+         * int my_func() { return 42; }
+         *
+         * RTTR_REGISTER
+         * {
+         *   registration::method("my_func", &my_func)
+         *   (
+         *      policy::meth::discard_return
+         *   );
+         * }
+         *
+         * int main()
+         * {
+         *   method meth = type::get_global_method("my_func");
+         *   std::cout << meth.get_return_type().get_name();    // prints "void"
+         *   variant var = meth.invoke(empty_instance());
+         *   std::cout << var.is_type<void>();                  // prints "true"
+         *   return 0;  
+         * }
+         * \endcode
+         */
+        static const detail::discard_return     discard_return;
+    };
 
     /*!
-     * Add documentation here
+     * The \ref prop class groups all policies that can be used during registration of properties.
+     *
      */
-    static const detail::return_reference_as_ptr_policy     return_reference_as_ptr;
+    struct RTTR_API prop
+    {
+        /*!
+         * The \ref bind_as_ptr policy will bind a member object as *pointer* type.
+         *
+         * This can be useful when binding big data types, like arrays, to avoid copies during get/set of the property.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * using namespace rttr;
+         * struct Foo
+         * {
+         *   std::vector<int> vec;
+         * };
+         *
+         * RTTR_REGISTER
+         * {
+         *     registration::class_<Foo>()
+         *         .property("vec", &Foo::vec)
+         *          (
+         *              policy::prop::bind_as_ptr
+         *          );
+         * }
+         *
+         * int main()
+         * {
+         *   Foo obj;
+         *   property vec_prop = type::get<Foo>().get_property("vec");
+         *   variant vec_value = prop.get_value(obj);
+         *   std::cout << value.is_type<std::vector<int>*>();       // prints "true"
+         *   prop.set_value(obj, vec_value);                        // not really necessary, but remark that now a std::vector<int>* is expected
+         *   return 0;
+         * }
+         * \endcode
+         */
+        static const detail::bind_as_ptr        bind_as_ptr;
+    };
 
     /*!
-     * Add documentation here
+     * The \ref ctor class groups all policies that can be used during registration of constructors.
+     *
      */
-    static const detail::discard_return_value_policy        discard_return_value;
+    struct RTTR_API ctor
+    {
+        /*!
+         * Add documentation here
+         */
+        
+    };
 };
 
 } // end namespace rttr

@@ -102,11 +102,11 @@ RTTR_REGISTER
         .method("method_default",   &method_test::method_default_arg)
         .method("method_6_ret_ptr", &method_test::method_6)
         (
-            policy::return_reference_as_ptr
+            policy::meth::return_ref_as_ptr
         )
         .method("method_6_void",     &method_test::method_6)
         (
-            policy::discard_return_value
+            policy::meth::discard_return
         )
         .method("method_fun_ptr_arg", &method_test::method_fun_ptr_arg)
         ;
@@ -126,11 +126,11 @@ RTTR_REGISTER
         .method("free_function", static_cast<void(*)(int&)>(&free_function))
         .method("get_global_string_ptr", &get_global_string)
         (
-            policy::return_reference_as_ptr
+            policy::meth::return_ref_as_ptr
         )
         .method("get_global_string_void", &get_global_string)
         (
-            policy::discard_return_value
+            policy::meth::discard_return
         );
 }
 

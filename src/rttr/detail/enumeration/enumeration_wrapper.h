@@ -55,7 +55,7 @@ class enumeration_wrapper : public enumeration_wrapper_base
         type get_type() const { return type::get<Enum_Type>(); }
         type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
-        std::vector<std::string> get_keys() const
+        std::vector<std::string> get_names() const
         {
             std::vector<std::string> result;
             for (const auto& item : m_enum_data_list)
@@ -73,7 +73,7 @@ class enumeration_wrapper : public enumeration_wrapper_base
             return result;
         }
 
-        std::string value_to_key(detail::argument& value) const
+        std::string value_to_name(detail::argument& value) const
         {
             if (!value.is_type<Enum_Type>() &&
                 !value.is_type<typename std::underlying_type<Enum_Type>::type>())
@@ -90,14 +90,14 @@ class enumeration_wrapper : public enumeration_wrapper_base
             return std::string();
         }
 
-        variant key_to_value(const std::string& key) const
+        variant name_to_value(const std::string& name) const
         {
-            if (key.empty())
+            if (name.empty())
                 return variant();
 
             for (const auto& item : m_enum_data_list)
             {
-                if (item.get_name() == key)
+                if (item.get_name() == name)
                     return item.get_value();
             }
             return variant();

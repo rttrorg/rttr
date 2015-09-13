@@ -51,7 +51,7 @@ class argument;
  * A instance of a constructor class can only be obtained from the \ref type class.
  * See \ref type::get_constructor() and \ref type::get_constructors().
  *
- * For registration a constructor, nested inside a class, see \ref class_::constructor() and for global constructors see \ref constructor_.
+ * For registration a constructor of a class, see \ref registration::class_<T>::constructor().
  *
  * Meta Information
  * ----------------
@@ -59,11 +59,9 @@ class argument;
  * With \ref get_parameter_types() you retrieve all type objects of the parameters for this constructor.
  * When the \ref constructor was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
- * The method can be invoked with \ref invoke(); When its not a \ref is_static "static method" you have to provide a class instance to invoke the method.
- * This instance can be the raw type on the stack; the current hierarchy level doesn't matter. It can be also a raw pointer to the object or
- * a \ref variant which contains the instance, again as pointer or stack object.
- *
- * Another way to invoke a method is to use the \ref type class through \ref type::create().
+ * The constructor can be invoked with \ref invoke() or via the \ref type class through \ref type::create(). 
+ * The created object will be copied into a variant and returned. Depending on the used policy during the registration process,
+ * it can be an object with automatic or dynamic storage.
  *
  * Copying and Assignment
  * ----------------------
@@ -73,9 +71,9 @@ class argument;
  * ----------------------
  * 
 \code{.cpp}
-    constructor string_ctor == type::get("std::string").get_constructor({type::get("const char*")});
+    constructor string_ctor == type::get("std::string").get_constructor({type::get<const char*>()});
     
-    variant my_string = string_ctor.invoke({"Hello World"}); // returns an ptr to the object on the heap
+    variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
     
     std::cout << my_string.get_value<std::string*>()->c_str() << std::endl; // prints 'Hello World'
     
