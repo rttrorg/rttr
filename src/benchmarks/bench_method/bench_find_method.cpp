@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/type>
-#include <rttr/register>
+#include <rttr/registration>
 
 #include "benchmarks/bench_method/test_methods.h"
 

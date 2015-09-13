@@ -5,7 +5,7 @@ As already mentioned to bind global methods to RTTR use the function \ref rttr::
 It has following synopsis:
 ~~~~{.cpp}
     template<typename F>
-    registration rttr::registration::method( const char* name, F function);
+    rttr::registration::bind rttr::registration::method( const char* name, F function);
 ~~~~
 - `name` is the name of the function
 - `F` is the function pointer or std::function your want to register
@@ -14,8 +14,9 @@ For example when you want to register the byte string to integer conversion func
 
 Do it in the following way:
 ~~~~{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
+    using namespace rttr;
     registration::method("atoi", &atoi);
 }
 ~~~~
@@ -29,15 +30,18 @@ This will avoid the hassle with the function pointer signature.
 For example the two functions: `float sin (float x);` and `double sin (double x);` can be registered like following:
 
 ~~~~{.cpp}
-#include <rttr/register>
+#include <rttr/registration>
 #include <cmath.h>
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
+    using namespace rttr;
     registration::method("sin", select_overload<float(float)>(&sin));
-    registration::method("sin", select_overload<double(double)>(&sin));
+                 .method("sin", select_overload<double(double)>(&sin));
 }
 ~~~~
+It is possible the chain multiple registration calls, because of the temporary returned @ref rttr::registration::bind "bind" object.
+
 \remark The select_overload function cannot be used with MSVC x86 compiler, because of the different calling convention for global- and member-functions. 
 
 Invoke of methods

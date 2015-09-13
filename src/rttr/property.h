@@ -51,7 +51,8 @@ class argument;
  * A instance of a property class can only be obtained from the \ref type class.
  * See \ref type::get_property() and \ref type::get_properties().
  *
- * For registration a property, nested inside a class, see \ref class_::property_() and for global properties see \ref property_.
+ * For registration a property, nested inside a class, see \ref registration::class_<T>::property() 
+ * and for global properties see \ref registration::property().
  *
  * Meta Information
  * ----------------
@@ -85,8 +86,8 @@ class argument;
   using namespace rttr;
   struct MyStruct { int value = 23; };
   //...
-  variant obj = type::get("MyStruct").create({});
-  property prop = type::get("MyStruct").get_property("value");
+  variant obj = type::get_by_name("MyStruct").create({});
+  property prop = type::get_by_name("MyStruct").get_property("value");
   if (prop)
   {
      variant val = prop.get_value(obj);

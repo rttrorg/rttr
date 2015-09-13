@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/type>
-#include <rttr/register>
+#include <rttr/registration>
 
 #include <nonius/nonius.h++>
 #include <nonius/html_group_reporter.h>

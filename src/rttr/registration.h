@@ -44,25 +44,8 @@ namespace detail
 }
 
 /*!
- * The \ref meta_data function can be used to add additional meta data information during the 
- * registration process of reflection information. Use it in the `()` operator of the returned 
- * \ref bind object.
- */
-static RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
-
-/*!
- * The \ref value function should be used to add a mapping from enum `name` to `value`
- * during the registration process of reflection information. Use it in the `()` operator of the returned 
- * \ref bind object.
- *
- * \see \ref registration::enumeration
- */
-template<typename Enum_Type>
-static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
-
-/*!
  * The \ref registration class is the entry point for the manual registration of reflection information
- * to the type system. It is possible to register constructors, properties, methods and enumerations.
+ * to the type system. It is possible to register *constructors*, *properties*, *methods* and *enumerations*.
  *
  * See following example for a typical usage:
  *
@@ -94,11 +77,11 @@ static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
  *
  * \code{.cpp}
  *  #include "Mesh.cpp"
- *  #include <rttr/register>
+ *  #include <rttr/registration>
  *  using namespace rttr;
  *  
  *  // register the class Mesh before main is called
- *  RTTR_REGISTER
+ *  RTTR_REGISTRATION
  *  {
  *    using namespace rttr;
  *    registration::class_<Mesh>("Mesh")
@@ -230,7 +213,7 @@ public:
             bind<detail::meth, Class_Type, F> method(const char* name, F f, acc_level level = acc_level());
 
             /*!
-             * \brief Register a nested enumeration of type \p EnumType
+             * \brief Register a nested enumeration of type \p Enum_Type
              *
              * \param name      The name of the enumeration.
              *
@@ -303,7 +286,7 @@ public:
     static bind<detail::meth, void, F> method(const char* name, F f, acc_level level = acc_level());
 
     /*!
-     * \brief Register a global enumeration of type \p EnumType
+     * \brief Register a global enumeration of type \p Enum_Type
      *
      * \param name The name of the enumeration.
      *
@@ -336,11 +319,11 @@ private:
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/register>
+ * #include <rttr/registration>
  * #include <cmath>
  * using namespace rttr;
  * 
- * RTTR_REGISTER
+ * RTTR_REGISTRATION
  * {
  *      registration::method("pow", select_overload<float(float, float)>(&pow));
  * }
@@ -362,7 +345,7 @@ Signature* select_overload(Signature* func)
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/register>
+ * #include <rttr/registration>
  * #include <cmath>
  * using namespace rttr;
  *
@@ -372,7 +355,7 @@ Signature* select_overload(Signature* func)
  *   void func(int, int);
  * };
  * 
- * RTTR_REGISTER
+ * RTTR_REGISTRATION
  * {
  *      registration::class_<foo>("foo")
  *          .method("func", select_overload<void(int)>(&foo::func))
@@ -396,7 +379,7 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/register>
+ * #include <rttr/registration>
  * using namespace rttr;
  * struct Foo
  * {
@@ -404,7 +387,7 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  *   void func() const;
  * };
  * 
- * RTTR_REGISTER
+ * RTTR_REGISTRATION
  * {
  *      registration::class<Foo>("Foo")
  *         .method("func", select_non_const(&Foo::func))
@@ -427,7 +410,7 @@ auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func
  * Use it like following:
  * \code{.cpp}
  *
- * #include <rttr/register>
+ * #include <rttr/registration>
  * using namespace rttr;
  * struct Foo
  * {
@@ -435,7 +418,7 @@ auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func
  *   void func() const;
  * };
  * 
- * RTTR_REGISTER
+ * RTTR_REGISTRATION
  * {
  *      registration::class<Foo>("Foo")
  *          .method("func", select_non_const(&Foo::func))
@@ -452,6 +435,23 @@ auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
     return func;
 }
 
+/*!
+ * The \ref meta_data function can be used to add additional meta data information during the 
+ * registration process of reflection information. Use it in the `()` operator of the returned 
+ * \ref bind object.
+ */
+static RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
+
+/*!
+ * The \ref value function should be used to add a mapping from enum `name` to `value`
+ * during the registration process of reflection information. Use it in the `()` operator of the returned 
+ * \ref bind object.
+ *
+ * \see \ref registration::enumeration
+ */
+template<typename Enum_Type>
+static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
+
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -463,9 +463,9 @@ auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
  *
  * Use it in following way:
  * \code{.cpp}
- * RTTR_REGISTER
+ * RTTR_REGISTRATION
  * {
- *   rttr::method_("foo", &foo);
+ *      rttr::registration::method("foo", &foo);
  * }
  * \endcode
  *
@@ -474,7 +474,7 @@ auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
  * \remark It is not possible to place the macro multiple times in one cpp file.
  *
  */
-#define RTTR_REGISTER
+#define RTTR_REGISTRATION
 
 /*!
  * \brief Place this macro inside a class, when you need to reflect properties or methods 
@@ -486,19 +486,19 @@ class Foo
     private:
         int m_value;
 
-    RTTR_REGISTER_FRIEND
+    RTTR_REGISTRATION_FRIEND
 };
 \endcode
 
 \code{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-  class_<Foo>()
-    .property("value", &Foo::m_value);
+    rttr::registration::class_<Foo>()
+        .property("value", &Foo::m_value);
 }
 \endcode
  */
-#define RTTR_REGISTER_FRIEND
+#define RTTR_REGISTRATION_FRIEND
 
 /*!
  * The \ref bind class is used during the registration process of reflection information.
@@ -508,14 +508,14 @@ RTTR_REGISTER
  * \remark Do not instantiate this class directly.
 */
 template<typename...T>
-class registration::bind : public return_type
+class registration::bind : public base_class
 {
     public:
         /*!
          * \brief The bracket operator can be used to add additional meta data or policies.
          */
         template<typename... Args>
-        return_type operator()(Args&&... arg);
+        base_class operator()(Args&&... arg);
 };
 
 #endif

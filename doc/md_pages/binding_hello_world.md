@@ -3,13 +3,14 @@ Binding Types - Hello World  {#binding_hello_world_page}
 Let's start with the traditional hello world example.
 
 ~~~~{.cpp}
-#include <rttr/register>
+#include <rttr/registration>
 
 static void f() { std::cout << "Hello World" << std::endl; }
 using namespace rttr;
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
+    using namespace rttr;
     registration::method("f", &f);
 }
   
@@ -20,10 +21,10 @@ int main()
 // outputs: "Hello World"
 ~~~~
 
-When you need to reflect a property, or like in this case a free function, you need to include first `#include <rttr/register>`. 
+When you need to reflect a property, or like in this case a free function, you need to include first `#include <rttr/registration>`. 
 This will include everything necessary for creating the reflection information. 
 
-The macro @ref RTTR_REGISTER must be placed outside of any function or class, just place directly into in your cpp file.
+The macro @ref RTTR_REGISTRATION must be placed outside of any function or class, just place directly into in your cpp file.
 This macro executes the register process before `main` is called, 
 that has the advantage that this reflection information is directly available when `main` is called.
 When on the other hand the register calls are invoked manually, then these calls must be synchronized with the calls retrieving the type information.

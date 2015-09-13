@@ -6,12 +6,15 @@ At the moment only return value policies are implemented.
 The default binding behaviour of RTTR is to return all values by copying the content in a variant.
 
 Currently implemented policies:
-- @ref rttr::bind_property_as_ptr "bind_property_as_ptr"
-- @ref rttr::return_reference_as_ptr "return_reference_as_ptr"
-- @ref rttr::discard_return_value "discard_return_value"
+- @ref rttr::policy::prop::bind_as_ptr "policy::prop::bind_as_ptr"
+- @ref rttr::policy::meth::return_ref_as_ptr "policy::meth::return_ref_as_ptr"
+- @ref rttr::policy::meth::discard_return "policy::meth::discard_return"
 
-bind_property_as_ptr
---------------------
+For easier usage, the policies are grouped to its corresponding items; e.g. all policies for methods
+can be found under `policy::meth`; all policies for properties under `policy::prop` etc.
+
+bind_as_ptr
+-----------
 The motivation for this policy is to avoid expensive copies when returning a property.
 When you have primitive data types like integer or doubles you are good to go with the standard binding behaviour.
 But when you have big arrays, it would be a waste to always copy the content when retrieving or setting the value, therefore this policy was introduced.
@@ -23,10 +26,15 @@ struct Foo
   std::vector<int> vec;
 };
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
-        .property("vec", &Foo::vec, bind_property_as_ptr);
+    using namespace rttr;
+    
+    registration::class_<Foo>()
+        .property("vec", &Foo::vec)
+        (
+            policy::prop::bind_as_ptr
+        );
 }
 
 int main()
@@ -41,8 +49,8 @@ int main()
 }
 ~~~~
 
-return_reference_as_ptr
------------------------
+return_ref_as_ptr
+-----------------
 The motivation for this policy is the same like the @ref rttr::bind_property_as_ptr "bind_property_as_ptr" policy.
 When you really need to get a reference to the return value of a method call you have to use this policy,
 otherwise the returned reference will be copied into the variant.
@@ -55,10 +63,15 @@ struct Foo
     std::string& get_text() { static text; return text; }
 };
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
-        .method("get_text", &Foo::get_text, return_reference_as_ptr);
+    using namespace rttr;
+
+    registration::class_<Foo>()
+        .method("get_text", &Foo::get_text)
+        (
+            policy::meth::return_ref_as_ptr
+        );
 }
 
 int main()
@@ -70,8 +83,8 @@ int main()
 }
 ~~~~
 
-discard_return_value
---------------------
+discard_return
+--------------
 Sometimes it is necessary that the client caller should ignore the return value of a method call.
 Therefore this policies was introduced.
 
@@ -82,10 +95,15 @@ struct Foo
     int calculate_func() { return 42; }
 };
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
-        .method("get_value", &Foo::calculate_func, discard_return_value);
+    using namespace rttr;
+
+    registration::class_<Foo>()
+        .method("get_value", &Foo::calculate_func)
+        (
+            policy::meth::discard_return
+        );
 }
 
 int main()

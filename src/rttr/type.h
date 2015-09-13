@@ -69,7 +69,8 @@ static type get_invalid_type();
  * 
  * Every class or primitive data type can have an unique type object.
  * With the help of this object you can compare unknown types for equality at runtime or introspect the type
- * for its properties, methods, enumerations, constructors and destructor.
+ * for its \ref property "properties", \ref method "methods", \ref enumeration "enumerations", 
+ * \ref constructor "constructors" and \ref destructor "destructor".
  * 
  * Retrieve %type
  * ------------------
@@ -84,16 +85,17 @@ static type get_invalid_type();
  *   type::get<int>() == type::get<bool>(); // yields to false
  * \endcode
  *
- * type::get(const char*)
+ * type::get_by_name(const char*)
  *
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
- * The name of the type is the same like you have registered with \ref RTTR_DECLARE_TYPE but as string literal. When you have used a typedef then you need to provide this typedef also as string literal.
  *
  * \code{.cpp}
- *   type::get("int") == type::get("int");   // yields to true
- *   type::get("bool") == type::get("int");  // yields to false
- *   type::get("MyNameSpace::MyStruct") == type::get("MyNameSpace::MyStruct");  // yields to true
+ *   type::get_by_name("int") == type::get<int>();   // yields to true
+ *   type::get_by_name("bool") == type::get<int>();  // yields to false
+ *   type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
  * \endcode
+ *
+ * \remark Before using the function \ref type::get_by_name(), you have to use one time the function via \ref type::get<T>(), otherwise the type is not registered in the type system.
  *
  * type::get<T>(T&& obj)
  *
@@ -297,7 +299,7 @@ class RTTR_API type
          * \brief Returns the type object with the given name \p name.
          *
          * \remark The search for the type is case sensitive. White spaces will be ignored.
-         *         The name of the type corresponds to the name which was used during \ref RTTR_REGISTER.
+         *         The name of the type corresponds to the name which was used during \ref RTTR_REGISTRATION.
          *         Only after the registration process was executed, then the type can be retrieved with this function.
          *         Otherwise and invalid type will be returned.
          *

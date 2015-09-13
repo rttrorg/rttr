@@ -66,7 +66,7 @@ struct RTTR_API policy
          *
          * std::string& get_text() { static std:string text("hello world"); return text; }
          *
-         * RTTR_REGISTER
+         * RTTR_REGISTRATION
          * {
          *   registration::method("get_text", &get_text)
          *   (
@@ -95,7 +95,7 @@ struct RTTR_API policy
          * using namespace rttr;
          * int my_func() { return 42; }
          *
-         * RTTR_REGISTER
+         * RTTR_REGISTRATION
          * {
          *   registration::method("my_func", &my_func)
          *   (
@@ -135,7 +135,7 @@ struct RTTR_API policy
          *   std::vector<int> vec;
          * };
          *
-         * RTTR_REGISTER
+         * RTTR_REGISTRATION
          * {
          *     registration::class_<Foo>()
          *         .property("vec", &Foo::vec)

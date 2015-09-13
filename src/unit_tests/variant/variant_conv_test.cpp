@@ -27,7 +27,7 @@
 
 #include <catch/catch.hpp>
 
-#include <rttr/register>
+#include <rttr/registration>
 
 using namespace rttr;
 
@@ -93,7 +93,7 @@ struct other_derived : virtual base
 
 } // end anonymous namespace
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
     type::register_converter_func(convert_to_string);
     type::register_converter_func(convert_to_vector);

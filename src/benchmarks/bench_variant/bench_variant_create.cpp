@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/type>
-#include <rttr/register>
+#include <rttr/registration>
 #include <rttr/variant.h>
 
 #include <nonius/nonius.h++>

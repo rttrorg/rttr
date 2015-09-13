@@ -5,24 +5,40 @@ Adding additional meta information to properties or methods can be very useful.
 So for instance, it allows to add ToolTips or the information what kind of editor should be created in the GUI.
 You can also tag certain properties to make only those available in a scripting engine which has a certain key set.
 
-The metadata consists of a `key`, which can be a std::string or an integer and a `value` which is a \ref variant.
+The metadata consists of a `key` and a `value`, both objects are forwarded to @ref rttr::variant "variants".
+So the only requirement for metadata is that it has to be copyable.
 
 Please take a look at following example:
 
 \code{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    property_("value", value, { metadata(SCRIPTABLE, false), 
-                                metadata("Description", "This is a value.") });
+    using namespace rttr;
+    
+    registration::property("value", value)
+    (    
+        meta_data(SCRIPTABLE, false), 
+        meta_data("Description", "This is a value.")
+    );
 }
 \endcode
+In order to add metadata to a registered item you have to use the `()` operator of the returned @ref rttr::registration::bind "bind" object.
+Then you call for every metadata item you want to add, the function @ref rttr::meta_data(variant, variant) "meta_data()".
+
+It has following synopsis:
+~~~~{.cpp}
+  rttr::detail::meta_data rttr::meta_data( variant key, variant value );
+~~~~
+
 This will register a global property named `"value"` with two metadata informations.
-Both keys use the integer as data role, because the enum value will be implicit converted to an integer.
+The first use an enum type as key, the second a string.
 
 And the following snippet shows, how to retrieve this information:
 \code{.cpp}
 int main()
 {
+    using namespace rttr;
+
     property prop = type::get_global_property("value");
     variant value = prop.get_metadata(SCRIPTABLE);
     std::cout << value.get_value<bool>(); // prints "false"

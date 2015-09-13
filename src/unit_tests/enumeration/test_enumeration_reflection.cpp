@@ -27,7 +27,7 @@
 
 #include "unit_tests/enumeration/test_enumeration_reflection.h"
 
-#include <rttr/register>
+#include <rttr/registration>
 
 using namespace rttr;
 using namespace std;
@@ -47,7 +47,7 @@ enum E_MetaData
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
     registration::class_<enum_test>("enum_test")
         .constructor<>()

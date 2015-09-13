@@ -27,7 +27,7 @@
 
 #include "unit_tests/method/test_method_reflection.h"
 
-#include <rttr/register>
+#include <rttr/registration>
 
 using namespace rttr;
 using namespace std;
@@ -69,7 +69,7 @@ std::string& get_global_string()
 
 bool method_test::method_7_called = false;
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
     registration::class_<method_test>("method_test")
         .constructor<>()

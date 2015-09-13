@@ -27,10 +27,10 @@
 
 #include "benchmarks/bench_method/test_methods.h"
 
-#include <rttr/register>
+#include <rttr/registration>
 
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
     using namespace rttr;
 

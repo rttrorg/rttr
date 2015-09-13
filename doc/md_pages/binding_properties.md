@@ -29,7 +29,7 @@ It has following synopsis:
 
 The following example shows how to use these register functions:
 ~~~~{.cpp}
-#include <rttr/register>
+#include <rttr/registration>
 using namespace rttr;
 
 static const double pi = 3.14259;
@@ -37,10 +37,11 @@ static std::string global_text;
 void set_text(const std::string& text) { global_text = text; }
 const std::string& get_text() { return global_text; }
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-  registration::property_readonly("PI", &pi);
-  registration::property("global_text", &get_text, &set_text);
+    using namespace rttr;
+    registration::property_readonly("PI", &pi);
+    registration::property("global_text", &get_text, &set_text);
 }
 ~~~~
 

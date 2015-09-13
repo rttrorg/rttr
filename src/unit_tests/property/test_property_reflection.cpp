@@ -27,7 +27,7 @@
 
 #include "unit_tests/property/test_property_reflection.h"
 
-#include <rttr/register>
+#include <rttr/registration>
 
 using namespace rttr;
 using namespace std;
@@ -78,7 +78,7 @@ static std::vector<int> global_array(1000, 42);
 const int* ptr_type;
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
     using namespace rttr;
 

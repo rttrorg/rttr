@@ -224,7 +224,7 @@ registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(con
 
 } // end namespace rttr
 
-#define RTTR_REGISTER                                                   \
+#define RTTR_REGISTRATION                                               \
 static void rttr__auto_register_reflection_function__();                \
 namespace                                                               \
 {                                                                       \

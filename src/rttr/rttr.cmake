@@ -33,7 +33,7 @@ set(HEADER_FILES access_level.h
                  method.h
                  policy.h
                  property.h
-                 register
+                 registration
                  registration.h
                  rttr_cast.h
                  rttr_enable.h

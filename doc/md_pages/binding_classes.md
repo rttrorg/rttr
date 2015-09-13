@@ -1,12 +1,12 @@
 Classes {#binding_classes_page}
 =======
 
-For registering classes in RTTR you use a class called @ref rttr::class_ "class_". 
+For registering classes in RTTR you use a class called @ref rttr::registration::class_<T> "registration::class_<T>". 
 Its name is supposed to resemble the C++ keyword, to make it look more intuitive. 
-It has member functions for register @ref rttr::class_::constructor() "constructors", @ref rttr::class_::property() "properties",
-@ref rttr::class_::method() "methods" and @ref rttr::class_::enumeration() "enums".
+It has member functions for register @ref rttr::registration::class_<T>::constructor() "constructors", @ref rttr::registration::class_<T>::property() "properties",
+@ref rttr::registration::class_<T>::method() "methods" and @ref rttr::registration::class_<T>::enumeration() "enums".
 These functions have the same interface and work in the same way like register the global symbols.
-Every call to these member functions, will return a reference to *this*, in order to chain more registration calls.
+Every call to these member functions, will return @ref rttr::registration::bind "bind" object, in order to chain more registration calls.
 
 Let's start with a simple example. Consider the following C++ class:
 
@@ -30,13 +30,13 @@ The registration process is now done at global scope in the cpp file.
 
 ~~~~{.cpp}
 // test_class.cpp
-#include <rttr/register>
+#include <rttr/registration>
 
-using namespace rttr;
-
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<test_class>()
+    using namespace rttr;
+        
+    registration::class_<test_class>()
         .constructor<int>()
         .method("print_value", &test_class::print_value);
         .property("value", &test_class::m_value);
@@ -52,8 +52,8 @@ However when there exist a method with the same name and signature, then this fu
 
 Overloaded member functions
 ---------------------------
-When binding a overloaded member function, you have to disambiguate the member function pointer you pass to @ref rttr::class_::method() "method".
-Therefore a helper function can be used: @ref rttr::select_overload(Signature (ClassType::*func)) "select_overload<T>(T (ClassType::*func))"
+When binding a overloaded member function, you have to disambiguate the member function pointer you pass to @ref rttr::registration::class_<T>::method() "method".
+Therefore a helper function can be used: @ref rttr::select_overload() "select_overload<T>(T (ClassType::*func))"
 
 Here's an example illustrating this:
 
@@ -65,9 +65,11 @@ struct Foo
     void f(int) const;
 };
 
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
+    using namespace rttr;
+    
+    registration::class_<Foo>()
         .method("f", select_overload<void(void)>(&Foo::f))
         .method("f", select_overload<void(int)>(&Foo::f))
         .method("f", select_const(&Foo::f));                // register a overloaded const method
@@ -95,12 +97,14 @@ struct Foo
 ~~~~
 
 For registering these constructors you now have to specify every parameter as template parameter 
-in the member function @ref rttr::class_::constructor() "constructor()".
+in the member function @ref rttr::registration::class_<T>::constructor() "constructor()".
 
 ~~~~{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
+    using namespace rttr;
+    
+    registration::class_<Foo>()
         .constructor<>()
         .constructor<int,double>()
         .constructor<const std::string&>();
@@ -123,26 +127,30 @@ struct Foo
 This class is registered like this:
 
 ~~~~{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
+    using namespace rttr;
+
+    registration::class_<Foo>()
         .property("value", &Foo::value);
 }
 ~~~~
 
-With the @ref rttr::class_::property() "property()" member function you will bind the member variable `Foo::value` 
+With the @ref rttr::registration::class_<T>::property() "property()" member function you will bind the member variable `Foo::value` 
 with read and write access. When you want a bind a property with `read-only` access, 
-then this is also possible with @ref rttr::class_::property_readonly "property_readonly()" member function.
+then this is also possible with @ref rttr::registration::class_<T>::property_readonly "property_readonly()" member function.
 
 ~~~~{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
+    using namespace rttr;
+    
+    registration::class_<Foo>()
         .property_readonly("value", &Foo::value);
 }
 ~~~~
 
-When you have a class and the property is declared in private scope, then you can still register this property when you insert the macro: \ref RTTR_REGISTER_FRIEND
+When you have a class and the property is declared in private scope, then you can still register this property when you insert the macro: \ref RTTR_REGISTRATION_FRIEND
 inside the class.
 ~~~~{.cpp}
 class Foo
@@ -150,7 +158,7 @@ class Foo
 private:
     int value;
 
-    RTTR_REGISTER_FRIEND
+    RTTR_REGISTRATION_FRIEND
 };
 ~~~~
 
@@ -172,9 +180,11 @@ private:
 This is the registration code:
 
 ~~~~{.cpp}
-RTTR_REGISTER
+RTTR_REGISTRATION
 {
-    class_<Foo>()
+    using namespace rttr;
+    
+    registration::class_<Foo>()
         .property("value", &Foo::get_value, &Foo::set_value);
 }
 ~~~~
@@ -192,8 +202,10 @@ There are two options for creating/destroying a class.
 ~~~~{.cpp}
 int main()
 {
+    using namespace rttr;
+    
     // option 1
-    type class_type = type::get("test_class");
+    type class_type = type::get_by_name("test_class");
     if (class_type)
     {
         variant obj = class_type.create({23});
@@ -219,8 +231,10 @@ the instance of the class.
 ~~~~{.cpp}
 int main()
 {
+    using namespace rttr;
+    
     test_class obj(42);
-    type class_type = type::get("test_class");
+    type class_type = type::get_by_name("test_class");
     // option 1
     class_type.invoke("print_value", obj, {}); // print 42
     
@@ -235,8 +249,10 @@ The invoke function also except to use variants. So when you create the object v
 ~~~~{.cpp}
 int main()
 {
-    variant obj_var = type::get("test_class").create({42});
-    type::get("test_class").invoke("print_value", obj_var, {}); // print 42
+    using namespace rttr;
+    
+    variant obj_var = type::get_by_name("test_class").create({42});
+    type::get_by_name("test_class").invoke("print_value", obj_var, {}); // print 42
 }
 ~~~~
 
@@ -247,8 +263,10 @@ Properties can be also set an get in two ways.
 ~~~~{.cpp}
 int main()
 {
+    using namespace rttr;
+    
     test_class obj(0);
-    type class_type = type::get("test_class");
+    type class_type = type::get_by_name("test_class");
     // option 1
     bool success = class_type.set_property_value("value", obj, 50);
     std::cout << obj.m_value; // prints "50"

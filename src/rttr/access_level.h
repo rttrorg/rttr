@@ -43,15 +43,17 @@ namespace detail
 }
 
 /*!
- * The \ref access_level class contains three static members, which can be used to specify
- * the access control for \ref method "methods", \ref property "properties" or \ref constructor "constructors"
- * during the registration process of the reflection information.
+ * The \ref access_level class contains three static members, which can be used to specify 
+ * access control during registration process.
+ *
+ * The access control can be specified for class \ref method "methods", \ref property "properties" or \ref constructor "constructors".
+ * When nothing is specified during the registration, the default value will be **public_access**.
  *
  * See following example code:
  * \code{.cpp}
  *
  *  registration::class<foo>("foo")
- *      .method("test", &foo::func_1, access_level::public_access);
+ *      .method("test", &foo::func_1, access_level::protected_access);
  *
  * \endcode
  */

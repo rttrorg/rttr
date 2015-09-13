@@ -138,7 +138,7 @@ RTTR_INLINE type::operator bool() const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(begin_skip, end_skip)          \
+#define RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(begin_skip, end_skip)      \
 namespace detail                                                            \
 {                                                                           \
     RTTR_STATIC_CONSTEXPR std::size_t skip_size_at_begin = begin_skip;      \
@@ -147,10 +147,10 @@ namespace detail                                                            \
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
     // sizeof("const char *__cdecl rttr::detail::f<"), sizeof(">(void)")
-    RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(36, 7)
+    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(36, 7)
 #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
     // sizeof("const char* rttr::detail::f() [with T = "), sizeof("]")
-    RTTR_REGISTER_FUNC_EXTRACT_VARIABLES(40, 1)
+    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(40, 1)
 #else
 #   error "This compiler does not supported extracting a function signature via preprocessor!"
 #endif
@@ -446,10 +446,10 @@ namespace std
 #define RTTR_CAT(a,b) RTTR_CAT_IMPL(a,b)
 
 static void _rttr_auto_register_reflection_function();
-#define RTTR_REGISTER_FRIEND friend void _rttr_auto_register_reflection_function();
+#define RTTR_REGISTRATION_FRIEND friend void _rttr_auto_register_reflection_function();
 
 
-#define RTTR_REGISTER_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();   \
-                                                rttr::type::get<T*>();  \
+#define RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();   \
+                                                rttr::type::get<T*>();      \
                                                 rttr::type::get<const T*>();  
 #endif // RTTR_TYPE_IMPL_H_

@@ -55,7 +55,7 @@ struct property_test
     std::vector<int>    _array;
     int                 _other_array[100];
 
-    RTTR_REGISTER_FRIEND;
+    RTTR_REGISTRATION_FRIEND;
 };
 
 
