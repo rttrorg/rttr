@@ -130,30 +130,40 @@ public:
             class_(const char* name);
             ~class_();
 
+
+            /*!
+             * \brief The bracket operator can be used to add additional meta data to the class type.
+             *
+             */
             template<typename...Args>
             class_<Class_Type>& operator()(Args&&...args);
 
-
-
+            
             /*!
              * \brief Register a constructor for this class type with or without arguments.
              *
-             * \see rttr::type::get_constructor, rttr::type::create
+             * \param level  The access level of the constructor.
+             *
+             * \see rttr::type::get_constructor, rttr::type::create, access_level
              *
              * \return A \ref bind object, in order to chain more calls.
              */
-            template<typename... Args>
-            bind<detail::ctor, Class_Type, Args...> constructor();
-
+            template<typename... Args, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_level_list>::value>::type>
+            bind<detail::ctor, Class_Type, Args...> constructor(acc_level level = acc_level());
+            
             /*!
              * \brief Register a constructor for this class type which uses a function \p F.
              *
+             * \param func   A function which creates an instance of \p Class_Type;
+             *               This can be a pointer to a function or a std::function.
+             * \param level  The access level of the constructor.
+             *
              * \see rttr::type::get_constructor, rttr::type::create
              *
              * \return A \ref bind object, in order to chain more calls.
              */
-            template<typename F>
-            bind<detail::ctor_func, Class_Type, F> constructor(F func);
+            template<typename F, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<!detail::contains<F, detail::access_level_list>::value>::type>
+            bind<detail::ctor_func, Class_Type, F> constructor(F func, acc_level level = acc_level());
 
 
             /*!
@@ -161,6 +171,7 @@ public:
              *
              * \param name  The name of the property.
              * \param acc   The accessor to the property; this can be a pointer to a member or a pointer to a variable.
+             * \param level  The access level of the property.
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
              *
@@ -175,6 +186,7 @@ public:
              * \param name  The name of the property.
              * \param acc   The accessor to the property; this can be a pointer to a member, a pointer to a variable,
              *              a pointer to a member function, a pointer to a function or a std::function.
+             * \param level  The access level of the read only property.
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
              *
@@ -191,6 +203,7 @@ public:
              *               a pointer to a function or a std::function.
              * \param setter The setter accessor to the property; this can be a pointer to a member function,
              *               a pointer to a function or a std::function.
+             * \param level  The access level of the property.
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
              *
@@ -199,11 +212,13 @@ public:
             template<typename A1, typename A2, typename Tp = typename std::enable_if<!detail::contains<A2, detail::access_level_list>::value>::type, typename acc_level = detail::public_access>
             bind<detail::prop, Class_Type, A1, A2> property(const char* name, A1 getter, A2 setter, acc_level level = acc_level());
 
+            
             /*!
              * \brief Register a method to this class.
              *
              * \param name      The name of the method.
              * \param function  The function accessor to this method; this can be a member function, a function or an std::function.
+             * \param level     The access level of the method.
              *
              * \remark The method name does not have to be unique for this class.
              *
@@ -212,6 +227,7 @@ public:
             template<typename F, typename acc_level = detail::public_access>
             bind<detail::meth, Class_Type, F> method(const char* name, F f, acc_level level = acc_level());
 
+            
             /*!
              * \brief Register a nested enumeration of type \p Enum_Type
              *
@@ -241,8 +257,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_level_list>::value>::type>
-    static bind<detail::prop, void, A> property(const char* name, A acc, acc_level level = acc_level());
+    template<typename A>
+    static bind<detail::prop, void, A> property(const char* name, A acc);
 
     /*!
      * \brief Register a global read only property.
@@ -255,8 +271,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_level_list>::value>::type>
-    static bind<detail::prop_readonly, void, A> property_readonly(const char* name, A acc, acc_level level = acc_level());
+    template<typename A>
+    static bind<detail::prop_readonly, void, A> property_readonly(const char* name, A acc);
 
     /*!
      * \brief Register a property to this class.
@@ -269,8 +285,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A1, typename A2, typename Tp = typename std::enable_if<!detail::contains<A2, detail::access_level_list>::value>::type, typename acc_level = detail::public_access>
-    static bind<detail::prop, void, A1, A2> property(const char* name, A1 getter, A2 setter, acc_level level = acc_level());
+    template<typename A1, typename A2>
+    static bind<detail::prop, void, A1, A2> property(const char* name, A1 getter, A2 setter);
 
     /*!
      * \brief Register a method to this class.
@@ -282,8 +298,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename F, typename acc_level = detail::public_access>
-    static bind<detail::meth, void, F> method(const char* name, F f, acc_level level = acc_level());
+    template<typename F>
+    static bind<detail::meth, void, F> method(const char* name, F f);
 
     /*!
      * \brief Register a global enumeration of type \p Enum_Type
@@ -501,9 +517,13 @@ RTTR_REGISTRATION
 #define RTTR_REGISTRATION_FRIEND
 
 /*!
- * The \ref bind class is used during the registration process of reflection information.
- * register constructors, properties, methods or enumerations.
- * For adding additional meta data or policies use the bracket operator `()`.
+ * The \ref bind class is used to chain registration calls.
+ *
+ * The class should not be instantiate directly, because it will be created automatically,
+ * when a *constructor*, *property*, *method* or *enumeration* is registered.
+ * 
+ * Additionally, the class has implemented the bracket operator `()` as variadic function tenplate.
+ * Use it to forward meta_data or policies to the previous registered item.
  *
  * \remark Do not instantiate this class directly.
 */

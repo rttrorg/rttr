@@ -107,8 +107,8 @@ registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(A
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type>
-template<typename... Args>
-registration::bind<detail::ctor, Class_Type, Args...> registration::class_<Class_Type>::constructor()
+template<typename... Args, typename acc_level, typename Tp>
+registration::bind<detail::ctor, Class_Type, Args...> registration::class_<Class_Type>::constructor(acc_level level)
 {
     return {create_if_empty(m_reg_exec)};
 }
@@ -116,8 +116,8 @@ registration::bind<detail::ctor, Class_Type, Args...> registration::class_<Class
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type>
-template<typename F>
-registration::bind<detail::ctor_func, Class_Type, F> registration::class_<Class_Type>::constructor(F func)
+template<typename F, typename acc_level, typename Tp>
+registration::bind<detail::ctor_func, Class_Type, F> registration::class_<Class_Type>::constructor(F func, acc_level level)
 {
     static_assert(std::is_same<detail::return_func, typename detail::method_type<F>::type>::value, "For creating this 'class type', please provide a function pointer or std::function with a return value.");
     return {create_if_empty(m_reg_exec), func};
@@ -177,37 +177,33 @@ registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Cl
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop, void, A> registration::property(const char* name, A acc, acc_level level)
+template<typename A>
+registration::bind<detail::prop, void, A> registration::property(const char* name, A acc)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
     return {std::make_shared<detail::registration_executer>(), name, acc};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop_readonly, void, A> registration::property_readonly(const char* name, A acc, acc_level level)
+template<typename A>
+registration::bind<detail::prop_readonly, void, A> registration::property_readonly(const char* name, A acc)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
     return {std::make_shared<detail::registration_executer>(), name, acc};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename A1, typename A2, typename Tp, typename acc_level>
-registration::bind<detail::prop, void, A1, A2> registration::property(const char* name, A1 getter, A2 setter, acc_level level)
+template<typename A1, typename A2>
+registration::bind<detail::prop, void, A1, A2> registration::property(const char* name, A1 getter, A2 setter)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
     return {std::make_shared<detail::registration_executer>(), name, getter, setter};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename acc_level>
-registration::bind<detail::meth, void, F> registration::method(const char* name, F f, acc_level level)
+template<typename F>
+registration::bind<detail::meth, void, F> registration::method(const char* name, F f)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
     return {std::make_shared<detail::registration_executer>(), name, f};
 }
 
