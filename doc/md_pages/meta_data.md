@@ -40,10 +40,10 @@ int main()
     using namespace rttr;
 
     property prop = type::get_global_property("value");
-    variant value = prop.get_metadata(SCRIPTABLE);
+    variant value = prop.get_meta_data(SCRIPTABLE);
     std::cout << value.get_value<bool>(); // prints "false"
     
-    value = prop.get_metadata("Description");
+    value = prop.get_meta_data("Description");
     std::cout << value.get_value<int>(); // prints "This is a value."
 }
 \endcode

@@ -721,7 +721,7 @@ TEST_CASE("Test get_base_classes", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test property metadata", "[property]") 
+TEST_CASE("Test property meta data", "[property]") 
 {
     property p5 = type::get<property_test>().get_property("p5");
     variant value = p5.get_meta_data(E_MetaData::SCRIPTABLE);
@@ -732,7 +732,7 @@ TEST_CASE("Test property metadata", "[property]")
     REQUIRE(value.is_type<std::string>() == true);
     REQUIRE(value.get_value<std::string>() == "This is property 5.");
 
-    // no metadata
+    // no meta data
     property p4 = type::get<property_test>().get_property("p4");
     REQUIRE(p4.is_valid() == true);
     REQUIRE(p4.get_meta_data(E_MetaData::SCRIPTABLE).is_valid() == false);

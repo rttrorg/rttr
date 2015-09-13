@@ -216,18 +216,18 @@ TEST_CASE("Test constructor signature", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test metadata in constructor", "[constructor]") 
+TEST_CASE("Test meta data in constructor", "[constructor]") 
 {
     constructor ctor_string = type::get<constructor_test>().get_constructor({type::get<std::string>()});
     variant value = ctor_string.get_meta_data("SCRIPTABLE");
     REQUIRE(value.is_type<bool>() == true);
     CHECK(value.get_value<bool>() == true);
-    // integer metadata
+    // integer meta data
     value = ctor_string.get_meta_data(TOOL_TIP);
     REQUIRE(value.is_type<std::string>() == true);
     CHECK(value.get_value<std::string>() == "This is a ToolTip");
 
-    // no metadata
+    // no meta data
     constructor ctor_int = type::get<constructor_test>().get_constructor({type::get<int>(), type::get<int>()});
     REQUIRE(ctor_int.is_valid() == true);
     CHECK(ctor_int.get_meta_data("SCRIPTABLE").is_valid() == false);

@@ -180,7 +180,7 @@ TEST_CASE("Test global enum", "[enumeration]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test enumeration metadata", "[enumeration]") 
+TEST_CASE("Test enumeration meta data", "[enumeration]") 
 {
     enumeration enum_align = type::get<enum_test::E_Alignment>().get_enumeration();
 
@@ -194,7 +194,7 @@ TEST_CASE("Test enumeration metadata", "[enumeration]")
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);
 
-    // integer metadata
+    // integer meta data
     enumeration enum_day = type::get<E_DayOfWeek>().get_enumeration();
     value = enum_day.get_meta_data("Global_Tag");
     REQUIRE(value.is_type<bool>() == true);
