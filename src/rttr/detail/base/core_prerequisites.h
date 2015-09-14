@@ -132,14 +132,10 @@ namespace rttr
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   if RTTR_COMP_VER <= 1800
 #       define RTTR_NO_CXX11_CONSTEXPR
-#   else
-#       error "Please check for working constexpr support in new compiler version."
 #   endif
 #
 #   if RTTR_COMP_VER <= 1800
 #       define BOOST_NO_CXX11_NOEXCEPT
-#   else
-#       error "Please check for working constexpr support in new compiler version."
 #   endif
 #endif
 

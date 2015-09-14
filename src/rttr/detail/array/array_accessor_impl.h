@@ -202,14 +202,10 @@ struct set_value_to_array_impl<T[N], std::false_type>
 {
     static void set_value(T (& arr)[N], const T (& value)[N])
     {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
         // MSVC is to dumb to let use use the above code, so we have to develop a workaround
         // https://connect.microsoft.com/VisualStudio/feedback/details/884930/strange-ambiguous-compile-error-when-forwarding-multi-dimensional-arrays
         copy_array(const_cast< T (&)[N]>(value), arr);
-#   else
-#       error "Check new MSVC Compiler!"
-#   endif
 #else
         copy_array(value, arr);
 #endif

@@ -37,8 +37,7 @@ namespace rttr
 
 namespace detail
 {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
 // workaround because msvc can't handle
 // T (*const)(U)
 //
@@ -79,9 +78,6 @@ struct remove_pointer
 { 
     typedef typename remove_pointer_imp2<T>::type type;
 };
-#   else
-#   error "Check new MSVC Compiler!"
-#   endif
 #else
 
 template<typename T>
@@ -93,8 +89,7 @@ using remove_pointer = std::remove_pointer<T>;
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
- #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800  
+ #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
 
 template <typename T, size_t... Bounds> 
 struct recombobulator;
@@ -144,9 +139,6 @@ struct remove_const<T[]>
     using type = U[];
 };
 
-#   else
-#   error "Check new MSVC Compiler!"
-#   endif
 #else
 
 template<typename T>
@@ -158,8 +150,7 @@ using remove_const = std::remove_const<T>;
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800  
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
 
 template <typename T> 
 struct remove_volatile_impl
@@ -195,9 +186,6 @@ struct remove_volatile<T[]>
     using type = U[];
 };
 
-#   else
-#   error "Check new MSVC Compiler!"
-#   endif
 #else
 
 template<typename T>
@@ -209,8 +197,7 @@ using remove_volatile = std::remove_volatile<T>;
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800  
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
 
 template<class T>
 struct remove_cv
@@ -218,9 +205,6 @@ struct remove_cv
     typedef typename remove_const<typename remove_volatile<T>::type>::type type;
 };
 
-#   else
-#   error "Check new MSVC Compiler!"
-#   endif
 #else
 
 template<typename T>

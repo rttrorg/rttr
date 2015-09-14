@@ -130,25 +130,17 @@ typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data
 /////////////////////////////////////////////////////////////////////////////////////////
 // some ugly workaround for MSVC < v. 1800
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC                                                
-#   if RTTR_COMP_VER <= 1800
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
     #define COMPARE_EQUAL_PRE_PROC(lhs, rhs) \
         compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
-#   else                                                                               
-        #error "Check new MSVC Compiler!"                                              
-#   endif                                                                              
 #else                                                                             
     #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
         compare_equal(Tp::get_value(src_data), rhs.get_value<T>());                        
 #endif
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC                                                
-#   if RTTR_COMP_VER <= 1800
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
     #define COMPARE_LESS_PRE_PROC(lhs, rhs) \
         compare_less(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
-#   else                                                                               
-        #error "Check new MSVC Compiler!"                                              
-#   endif                                                                              
 #else                                                                             
     #define COMPARE_LESS_PRE_PROC(lhs, rhs)                                            \
         compare_less(Tp::get_value(src_data), rhs.get_value<T>());                        
@@ -388,13 +380,9 @@ struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
     #define COPY_ARRAY_PRE_PROC(value, dest) \
                 copy_array(const_cast<typename remove_const<T>::type&>(value), const_cast<typename remove_const<T>::type&>(get_value(dest)))
-#   else
-        #error "Check new MSVC Compiler!"
-#   endif
 #else
     #define COPY_ARRAY_PRE_PROC(value, dest) \
                 copy_array(value, const_cast<typename remove_const<T>::type&>(get_value(dest)));
