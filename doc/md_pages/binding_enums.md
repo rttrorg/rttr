@@ -1,7 +1,7 @@
 Enums {#binding_enums_page}
 =====
 
-RTTR allows also to bind enumerated constants (enums). Therefore use the function @ref rttr::registration::enumeration() "registration::enumeration()".
+RTTR allows also to register enumerated constants (enums). Therefore use the function @ref rttr::registration::enumeration() "registration::enumeration()".
 
 It has following synopsis:
 

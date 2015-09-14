@@ -1,7 +1,7 @@
 Properties {#binding_properties_page}
 ==========
 
-For binding a property to RTTR you can use following functions: 
+For registration of a property to RTTR you can use following functions: 
 @ref rttr::registration::property "registration::property()" and 
 @ref rttr::registration::property_readonly() "registration::property_readonly()".
 

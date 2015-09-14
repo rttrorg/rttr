@@ -1,7 +1,7 @@
 Tutorial   {#tutorial_page}
 ========
 This tutorial will guide you through the basic usage of RTTR. 
-It is separated in two parts, using the @ref rttr::type "type" class and binding types.
+It is separated in two parts, using the @ref rttr::type "type" class and register types.
 
 Working with rttr::type
 -----------------------
@@ -10,7 +10,7 @@ Working with rttr::type
 -# [Register Class Hierarchy](@ref using_rttr_enable_page)
 -# [rttr_cast vs. dynamic_cast](@ref using_rttr_cast_page)
 
-Binding Types
+Registration of Types
 -------------
 -# [Hello World](@ref binding_hello_world_page)
 -# [Methods](@ref binding_methods_page)

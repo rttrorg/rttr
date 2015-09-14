@@ -1,7 +1,7 @@
-Binding Methods {#binding_methods_page}
-===============
+Methods {#binding_methods_page}
+========
 
-As already mentioned to bind global methods to RTTR use the function \ref rttr::registration::method() "registration::method()".
+As already mentioned to register global methods to RTTR use the function \ref rttr::registration::method() "registration::method()".
 It has following synopsis:
 ~~~~{.cpp}
     template<typename F>

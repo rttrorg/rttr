@@ -33,7 +33,7 @@ RTTR supports:
 - no header pollution; the reflection information is created in the cpp file to minimize compile time when modifying the data
 - working with custom types without the need of having the declaration of the type available at compile time (useful for plugins)
 - possibility to add additional metadata to all reflection objects
-- adjust binding behaviour through return value policies
+- adjust registration behaviour through policies
 - minimal macro usage
 - no exceptions (this feature come with <a target="_blank" href=http://preshing.com/20110807/the-cost-of-enabling-exception-handling/>cost</a> and is also regularly disabled on consoles)
 - no external compiler or tool needed, only standard ISO C++11

@@ -52,7 +52,7 @@ However when there exist a method with the same name and signature, then this fu
 
 Overloaded member functions
 ---------------------------
-When binding a overloaded member function, you have to disambiguate the member function pointer you pass to @ref rttr::registration::class_<T>::method() "method".
+In order to register a overloaded member function, you have to disambiguate the member function pointer you pass to @ref rttr::registration::class_<T>::method() "method".
 Therefore a helper function can be used: @ref rttr::select_overload() "select_overload<T>(T (ClassType::*func))"
 
 Here's an example illustrating this:
@@ -136,8 +136,8 @@ RTTR_REGISTRATION
 }
 ~~~~
 
-With the @ref rttr::registration::class_<T>::property() "property()" member function you will bind the member variable `Foo::value` 
-with read and write access. When you want a bind a property with `read-only` access, 
+With the @ref rttr::registration::class_<T>::property() "property()" member function you will register the member variable `Foo::value` 
+with read and write access. When you want a register a property with `read-only` access, 
 then this is also possible with @ref rttr::registration::class_<T>::property_readonly "property_readonly()" member function.
 
 ~~~~{.cpp}
