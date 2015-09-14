@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/std_conversion_functions.h"
+#include "rttr/detail/conversion/std_conversion_functions.h"
 
 #include <sstream>
 #include <locale>

@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/data_address_container.h"
+#include "rttr/detail/misc/data_address_container.h"
 
 namespace rttr
 {
@@ -80,7 +80,7 @@ private:
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/instance_impl.h"
+#include "rttr/detail/instance/instance_impl.h"
 
 namespace rttr
 {

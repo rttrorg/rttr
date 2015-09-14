@@ -42,14 +42,15 @@ set(HEADER_FILES access_level.h
                  variant.h
                  variant_array_view.h
                  wrapper_mapper.h
-                 detail/argument.h
-                 detail/argument_impl.h
-                 detail/data_address_container.h
-                 detail/instance.h
-                 detail/instance_impl.h
-                 detail/std_conversion_functions.h
-                 detail/rttr_cast_impl.h
-                 detail/wrapper_mapper_impl.h
+                 detail/argument/argument.h
+                 detail/argument/argument_impl.h
+                 detail/misc/data_address_container.h
+                 detail/instance/instance.h
+                 detail/instance/instance_impl.h
+                 detail/conversion/std_conversion_functions.h
+                 detail/conversion/number_conversion.h
+                 detail/impl/rttr_cast_impl.h
+                 detail/impl/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
                  detail/array/array_mapper_impl.h
@@ -76,7 +77,6 @@ set(HEADER_FILES access_level.h
                  detail/misc/compare_less.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
-                 detail/misc/number_conversion.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/policies/prop_policies.h
@@ -121,8 +121,8 @@ set(SOURCE_FILES access_level.cpp
                  type.cpp
                  variant.cpp
                  variant_array_view.cpp
-                 detail/standard_types.cpp
-                 detail/std_conversion_functions.cpp
+                 detail/misc/standard_types.cpp
+                 detail/conversion/std_conversion_functions.cpp
                  detail/constructor/constructor_wrapper_base.cpp
                  detail/destructor/destructor_wrapper_base.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp

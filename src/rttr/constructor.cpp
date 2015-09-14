@@ -27,7 +27,7 @@
 
 #include "rttr/constructor.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
-#include "rttr/detail/argument.h"
+#include "rttr/detail/argument/argument.h"
 
 #include <utility>
 

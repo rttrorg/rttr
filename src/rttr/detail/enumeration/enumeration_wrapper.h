@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 #include "rttr/detail/enumeration/enum_data.h"
-#include "rttr/detail/argument.h"
+#include "rttr/detail/argument/argument.h"
 #include "rttr/variant.h"
 
 #include <utility>

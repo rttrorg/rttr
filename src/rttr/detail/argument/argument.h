@@ -84,6 +84,6 @@ private:
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument_impl.h"
+#include "rttr/detail/argument/argument_impl.h"
 
 #endif // RTTR_ARGUMENT_H_

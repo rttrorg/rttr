@@ -29,8 +29,8 @@
 
 #include "rttr/detail/property/property_wrapper_base.h"
 #include "rttr/variant.h"
-#include "rttr/detail/argument.h"
-#include "rttr/detail/instance.h"
+#include "rttr/detail/argument/argument.h"
+#include "rttr/detail/instance/instance.h"
 #include "rttr/enumeration.h"
 
 using namespace std;

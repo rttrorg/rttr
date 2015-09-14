@@ -28,8 +28,8 @@
 #ifndef RTTR_VARIANT_DATA_CONVERTER_H_
 #define RTTR_VARIANT_DATA_CONVERTER_H_
 
-#include "rttr/detail/std_conversion_functions.h"
-#include "rttr/detail/misc/number_conversion.h"
+#include "rttr/detail/conversion/std_conversion_functions.h"
+#include "rttr/detail/conversion/number_conversion.h"
 
 namespace rttr
 {

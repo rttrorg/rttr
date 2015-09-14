@@ -29,8 +29,8 @@
 #define RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
 
 #include "rttr/variant.h"
-#include "rttr/detail/argument.h"
-#include "rttr/detail/instance.h"
+#include "rttr/detail/argument/argument.h"
+#include "rttr/detail/instance/instance.h"
 #include "rttr/variant.h"
 #include "rttr/detail/array/array_wrapper_base.h"
 

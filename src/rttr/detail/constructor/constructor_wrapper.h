@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/type/accessor_type.h"
-#include "rttr/detail/argument.h"
+#include "rttr/detail/argument/argument.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/variant.h"

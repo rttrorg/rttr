@@ -27,7 +27,7 @@
 
 #include "rttr/enumeration.h"
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"
-#include "rttr/detail/argument.h"
+#include "rttr/detail/argument/argument.h"
 
 #include <utility>
 

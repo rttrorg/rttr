@@ -129,6 +129,6 @@ struct wrapper_mapper
 
 } // end namespace rttr
 
-#include "rttr/detail/wrapper_mapper_impl.h"
+#include "rttr/detail/impl/wrapper_mapper_impl.h"
 
 #endif // RTTR_WRAPPER_MAPPER_H_

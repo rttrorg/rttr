@@ -27,8 +27,8 @@
 
 #include "rttr/variant_array_view.h"
 
-#include "rttr/detail/argument.h"
-#include "rttr/detail/instance.h"
+#include "rttr/detail/argument/argument.h"
+#include "rttr/detail/instance/instance.h"
 
 using namespace std;
 
