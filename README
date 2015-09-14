@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-Build instruction for RTTR with Windows and Visual Studio 2012 and above:
-================================================================
+Build instruction for RTTR with Windows and Visual Studio 2013 and above:
+=========================================================================
 1. Set environment variables in command shell:
 set CMAKE_ROOT = <Your path to cmake directory> - REQUIRED
 
@@ -34,7 +34,7 @@ set DOXYGEN_ROOT = <Your path to cmake directory> - OPTIONAL otherwise no docume
 
 Start CMake:
 e.g.
-cmake -G "Visual Studio 11" <Absolute Path to RTTR source code directory>
+cmake -G "Visual Studio 12 2013" <Absolute Path to RTTR source code directory>
 or with make files:
 cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" <Absolute Path to RTTR source code directory>
 // compile with
@@ -43,7 +43,7 @@ nmake install
 
 
 Build instruction for RTTR with Linux and g++:
-================================================================
+==============================================
 1. Set environment variables in your shell:
 CMAKE_ROOT => <Your path to cmake directory> - REQUIRED
 
