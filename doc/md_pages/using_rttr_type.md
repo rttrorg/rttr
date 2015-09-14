@@ -9,7 +9,7 @@ That means it is possible to disable RTTI completly in your target application a
 The entry point for all type related operation is the class [type](@ref rttr::type). 
 It is the central class for retrieving type objects or also querying all kind information about types.
 
-A [type](@ref rttr::type) object cannot be created directly. It is only possible to retrieve it with one of the two static getter member functions of the [type](@ref rttr::type) class.
+A [type](@ref rttr::type) object cannot be created directly. It is only possible to retrieve it with one of the three static getter member functions of the [type](@ref rttr::type) class.
 
 ~~~~{.cpp}
     #include <rttr/type> // when working with type objects, this is the only header you have to include
@@ -83,6 +83,19 @@ type::get<D>() == type::get<const D*>(); // yields false
 ~~~~
 
 Any `top level` cv-qualifier of the given type `T` will be removed.
+
+rttr::type::get_by_name(const char*)
+------------------------------------
+
+This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
+
+~~~~{.cpp}
+type::get_by_name("int")  == type::get<int>();   // yields to true
+type::get_by_name("bool") == type::get<int>();  // yields to false
+type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
+~~~~
+
+\remark Before using the function \ref type::get_by_name(), you have to use one time the function via \ref type::get<T>(), otherwise the type is not registered in the type system.
 
 Container Support
 -----------------

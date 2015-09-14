@@ -90,7 +90,7 @@ static type get_invalid_type();
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  *
  * \code{.cpp}
- *   type::get_by_name("int") == type::get<int>();   // yields to true
+ *   type::get_by_name("int")  == type::get<int>();   // yields to true
  *   type::get_by_name("bool") == type::get<int>();  // yields to false
  *   type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
  * \endcode
