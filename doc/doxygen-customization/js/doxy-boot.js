@@ -14,9 +14,18 @@ $( document ).ready(function() {
     }
 
     $('li > a[href="index.html"] > span').before("<i class='fa fa-cog'></i> ");
-    $('li > a[href="index.html"] > span').text("RTTR");
-    $('li > a[href="pages.html"] > span').text("Tutorial");
-    $('li > a[href="pages.html"]').attr("href", "tutorial_page.html");
+    var tutorial_link = $('li > a[href="pages.html"]');
+    tutorial_link.attr("href", "tutorial_page.html");
+    
+    var install_link = $('li > a > span:contains("Installation")').parent();
+    install_link.attr("href", "building_install_page.html");
+    
+    if (title.text() == "rttr: Building & Installation")
+    {
+        console.log("REMOVE CLASS");
+        tutorial_link.parent().removeClass("current active");
+        install_link.parent().addClass("current active");
+    }
     
     $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");
     $('li > a[href="namespaces.html"] > span').before("<i class='fa fa-bars'></i> ");

@@ -34,7 +34,8 @@ set(DOXYGEN_INPUT_DIRECTORY   "${CMAKE_SOURCE_DIR}/src/rttr \\
                                ${CMAKE_CURRENT_SOURCE_DIR}" )
 set(DOXYGEN_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/doc")
 set(DOXYGEN_DOC_INSTALL_DIR   "doc")
-set(DOXYGEN_CONFIG_FILE       "DoxyFile.cfg")
+set(DOXYGEN_CONFIG_FILE_IN    "DoxyFile.cfg.in")
+set(DOXYGEN_LAYOUT_FILE_IN    "doxygen-customization/layout/DoxygenLayout.xml.in")
 set(DOXYGEN_EXCLUDE           "")
 set(DOXYGEN_STRIP_FROM_PATH   "${CMAKE_SOURCE_DIR}/src/rttr")
 set(DOXYGEN_PREDEFINED        "DOXYGEN \\
@@ -59,6 +60,13 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
                               */src/rttr/detail/* \\
                               */src/test/* \\
                               */src/benchmark/*")
+                              
+#### LAYOUT VARIABLES
+set(DOXY_LAYOUT_MAIN_PAGE_TITLE "RTTR")
+set(DOXY_LAYOUT_PAGES_TITLE "Tutorial")
+set(DOXY_LAYOUT_PAGES_TITLE2 "Installation")
+
+
 if (${CUSTOM_DOXYGEN_STYLE})
   set(DOXYGEN_CUSTOM_HTML_FOOTER     "${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/html/footer.html")
   set(DOXYGEN_CUSTOM_HTML_HEADER     "${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/html/header.html")
@@ -69,14 +77,19 @@ if(NOT DOXYGEN_FOUND)
   message(WARNING "Doxygen not found - Documentation will not be generated!")
   return()
 endif()
+
+string ( REGEX REPLACE ".cfg.in$" ".cfg" DOXYGEN_CONFIG_FILE ${DOXYGEN_CONFIG_FILE_IN} )
+string ( REGEX REPLACE ".xml.in$" ".xml" DOXYGEN_LAYOUT_FILE ${DOXYGEN_LAYOUT_FILE_IN} )
+string(REGEX REPLACE "[^\\/]*/(.*)" "\\1" DOXYGEN_LAYOUT_FILE "${DOXYGEN_LAYOUT_FILE}")
   
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE})
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN})
   message(WARNING "Doxygen configuration file not found - Documentation will not be generated!")
   return()
 endif()
 
 # modify the doxygen file, i.e. substitute the variables with values
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_LAYOUT_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_LAYOUT_FILE})
 # copy our shortcut html file (this 'index.html' will call itself the 'index.html' from doxygen, but this file is hard to locat in the big doxygen output directory)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/index.html DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY})
 
