@@ -20,11 +20,18 @@ $( document ).ready(function() {
     var install_link = $('li > a > span:contains("Installation")').parent();
     install_link.attr("href", "building_install_page.html");
     
+    var license_link = $('li > a > span:contains("License")').parent();
+    license_link.attr("href", "license_page.html");
+    
     if (title.text() == "rttr: Building & Installation")
     {
-        console.log("REMOVE CLASS");
         tutorial_link.parent().removeClass("current active");
         install_link.parent().addClass("current active");
+    }
+    else if (title.text() == "rttr: License")
+    {
+        tutorial_link.parent().removeClass("current active");
+        license_link.parent().addClass("current active");
     }
     
     $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");

@@ -5,6 +5,7 @@
     <tab type="mainpage" visible="yes" title="@DOXY_LAYOUT_MAIN_PAGE_TITLE@"/>
     <tab type="pages" visible="yes" title="@DOXY_LAYOUT_PAGES_TITLE@" intro=""/>
     <tab type="pages" visible="yes" title="@DOXY_LAYOUT_PAGES_TITLE2@" intro=""/>
+    <tab type="pages" visible="yes" title="@DOXY_LAYOUT_PAGES_TITLE3@" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
     <tab type="namespaces" visible="yes" title="">
       <tab type="namespacelist" visible="yes" title="" intro=""/>

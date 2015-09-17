@@ -63,8 +63,9 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
                               
 #### LAYOUT VARIABLES
 set(DOXY_LAYOUT_MAIN_PAGE_TITLE "RTTR")
-set(DOXY_LAYOUT_PAGES_TITLE "Tutorial")
-set(DOXY_LAYOUT_PAGES_TITLE2 "Installation")
+set(DOXY_LAYOUT_PAGES_TITLE     "Tutorial")
+set(DOXY_LAYOUT_PAGES_TITLE2    "Installation")
+set(DOXY_LAYOUT_PAGES_TITLE3    "License")
 
 
 if (${CUSTOM_DOXYGEN_STYLE})
