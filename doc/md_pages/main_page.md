@@ -47,6 +47,7 @@ RTTR is compiled and tested on following platforms:
 Content
 -------
 - [Tutorial](@ref tutorial_page)
+- [Building & Installation](@ref building_install_page)
 - [License](@ref license_page)
 
 <hr>
