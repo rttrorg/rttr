@@ -37,6 +37,7 @@
 #include "rttr/variant.h"
 #include "rttr/policy.h"
 #include "rttr/detail/method/method_accessor.h"
+#include "rttr/detail/constructor/object_creator.h"
 
 #include <vector>
 #include <utility>
@@ -48,11 +49,11 @@ namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename Constructor_Type, typename Policy, typename... Args>
 class constructor_wrapper;
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename Policy, typename... Args>
 class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public constructor_wrapper_base
@@ -79,7 +80,7 @@ class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public const
         RTTR_INLINE variant invoke_variadic_extracted(TArgs&... args) const
         {
             if (check_all_true(args. template is_type<Args>()...))
-                return (new ClassType(args. template get_value<Args>()...));
+                return variant(object_creator<ClassType, Policy>::create(args. template get_value<Args>()...) );
             else
                 return variant();
         }

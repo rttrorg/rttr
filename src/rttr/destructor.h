@@ -55,17 +55,16 @@ class destructor_wrapper_base;
  *
  * Typical Usage
  * ----------------------
- *
  * 
-\code{.cpp}
-    constructor string_ctor == type::get("std::string").get_constructor({type::get<const char*>()});
-
-    variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
-
-    type::get("std::string").get_destructor().invoke(my_string);
-
-    my_string.is_valid(); // yield to false
-\endcode
+ * \code{.cpp}
+ *     constructor string_ctor == type::get_by_name("std::string").get_constructor({type::get<const char*>()});
+ * 
+ *     variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
+ * 
+ *     type::get("std::string").get_destructor().invoke(my_string);
+ * 
+ *     my_string.is_valid(); // yield to false
+ * \endcode
  *
  * \see method, property, enumeration, constructor and type
  */

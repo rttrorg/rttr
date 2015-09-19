@@ -25,27 +25,63 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/policy.h"
+#ifndef RTTR_OBJECT_CREATOR_H_
+#define RTTR_OBJECT_CREATOR_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/policies/ctor_policies.h"
+
+#include <memory>
 
 namespace rttr
+{
+namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const detail::bind_as_ptr policy::prop::bind_as_ptr = {};
-
-const detail::return_as_ptr policy::meth::return_ref_as_ptr = {};
-
-const detail::discard_return policy::meth::discard_return = {};
+template<typename Class_Type, typename Policy>
+struct object_creator;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const detail::as_raw_pointer policy::ctor::as_raw_ptr = {};
-
-const detail::as_std_shared_ptr policy::ctor::as_std_shared_ptr = {};
-
-const detail::as_object policy::ctor::as_object = {};
+template<typename Class_Type>
+struct object_creator<Class_Type, as_raw_pointer>
+{
+    template<typename... Args>
+    static RTTR_INLINE Class_Type* create(Args&&... args)
+    {
+        return (new Class_Type(std::forward<Args>(args)...));
+    }
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename Class_Type>
+struct object_creator<Class_Type, as_object>
+{
+    template<typename... Args>
+    static RTTR_INLINE Class_Type create(Args&&... args)
+    {
+        return Class_Type(std::forward<Args>(args)...);
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Class_Type>
+struct object_creator<Class_Type, as_std_shared_ptr>
+{
+    template<typename... Args>
+    static RTTR_INLINE std::shared_ptr<Class_Type> create(Args&&... args)
+    {
+        return (std::make_shared<Class_Type>(std::forward<Args>(args)...));
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_OBJECT_CREATOR_H_

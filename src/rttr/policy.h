@@ -165,9 +165,110 @@ struct RTTR_API policy
     struct RTTR_API ctor
     {
         /*!
-         * Add documentation here
+         * The \ref as_raw_ptr policy will create an instance of a class as raw pointer.
+         *
+         * That means the object is created with a *new*-expression and its lifetime lasts 
+         * until it is destroyed using a *delete*-expression. 
+         * In order to invoke the delete expression use the corresponding \ref destructor.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * using namespace rttr;
+         * struct Foo
+         * {
+         * };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     registration::class_<Foo>()
+         *         .constructor<>()
+         *          (
+         *              policy::ctor::as_raw_ptr
+         *          );
+         * }
+         *
+         * int main()
+         * {
+         *   variant var = type::get<Foo>().create({});
+         *   std::cout << var.is_type<Foo*>();          // prints "true"
+         *   var.get_type().destroy(var);               // free's the memory with 'delete'
+         *   std::cout << var.is_valid();               // prints "false"
+         *   return 0;
+         * }
+         * \endcode
          */
-        
+        static const detail::as_raw_pointer         as_raw_ptr;
+
+         /*!
+         * The \ref as_std_shared_ptr policy will create an instance of a class through *std::make_shared<T>*.
+         *
+         * That means the object is \ref type::is_wrapper() "wrapped" into a *std::shared_ptr<T>*.
+         * The wrapped object is destroyed and its memory deallocated when either of the following happens: 
+         * - the last remaining variant object (which contains the *shared_ptr* owning the object is destroyed.
+         * - the last remaining variant owning the *shared_ptr* is assigned another object.
+         *
+         * The object is destroyed using the default deleter of *std::shared_ptr*.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * using namespace rttr;
+         * struct Foo
+         * {
+         * };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     registration::class_<Foo>()
+         *         .constructor<>()
+         *          (
+         *              policy::ctor::as_std_shared_ptr
+         *          );
+         * }
+         *
+         * int main()
+         * {
+         *   variant var = type::get<Foo>().create({});
+         *   std::cout << var.is_type<std::shared_ptr<Foo>>();  // prints "true"
+         *   return 0;                                          // the memory for contained 'Foo' instance is freed automatically,
+         * }                                                    // because the var object is gone out of scope
+         * \endcode
+         */
+        static const detail::as_std_shared_ptr      as_std_shared_ptr;
+
+         /*!
+         * The \ref as_object policy will create an instance of a class with automatic storage.
+         *
+         * Objects with automatic storage duration are automatically destroyed when the block in which they are created exits.
+         * Which is in our case the \ref variant.
+         * However, that means also you don't have to deal with pointers or wrappers. In order to use this creation policy,
+         * the object must be *copy constructible*.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * using namespace rttr;
+         * struct Foo
+         * {
+         * };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     registration::class_<Foo>()
+         *         .constructor<>()
+         *          (
+         *              policy::ctor::as_object
+         *          );
+         * }
+         *
+         * int main()
+         * {
+         *   variant var = type::get<Foo>().create({}); // creates a new instance of 'Foo' and moves the content into variant 'var'
+         *   std::cout << var.is_type<Foo>();           // prints "true"
+         *   variant var2 = var;                        // creates a new instance of 'Foo', through copy construction
+         *   return 0;                                  // the memory of the two 'Foo' instances is freed automatically
+         * }
+         * \endcode
+         */
+        static const detail::as_object              as_object;
     };
 };
 

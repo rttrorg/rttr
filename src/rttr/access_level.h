@@ -51,9 +51,17 @@ namespace detail
  *
  * See following example code:
  * \code{.cpp}
+ *  using namespace rttr;
+ *  struct Foo
+ *  {
+ *      void func() {}
+ *  };
  *
- *  registration::class<foo>("foo")
- *      .method("test", &foo::func_1, access_level::protected_access);
+ *  RTTR_REGISTRATION
+ *  {
+ *      registration::class_<Foo>("Foo")
+ *          .method("func", &Foo::func, access_level::protected_access);
+ *  }
  *
  * \endcode
  */

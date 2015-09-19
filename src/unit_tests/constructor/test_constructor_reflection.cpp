@@ -62,7 +62,8 @@ RTTR_REGISTRATION
             meta_data("SCRIPTABLE", true),
             meta_data(TOOL_TIP, "This is a ToolTip")
         )
-        .constructor<int, int, int, int, int, int, const int* const>();
+        .constructor<int, int, int, int, int, int, const int* const>()
+        ;
 
     registration::class_<factory_test>("factory_test")
         .constructor(&factory_test::create);

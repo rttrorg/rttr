@@ -12,6 +12,11 @@ $( document ).ready(function() {
       if (header_title.text() == "rttr Documentation")
         header_title.text("RTTR - Run Time Type Reflection");
     }
+    else 
+    {
+        var new_title = title.text().replace("rttr:", "RTTR:");
+        title.text(new_title);
+    }
 
     $('li > a[href="index.html"] > span').before("<i class='fa fa-cog'></i> ");
     var tutorial_link = $('li > a[href="pages.html"]');
@@ -23,12 +28,12 @@ $( document ).ready(function() {
     var license_link = $('li > a > span:contains("License")').parent();
     license_link.attr("href", "license_page.html");
     
-    if (title.text() == "rttr: Building & Installation")
+    if (title.text().search("Building & Installation") > - 1)
     {
         tutorial_link.parent().removeClass("current active");
         install_link.parent().addClass("current active");
     }
-    else if (title.text() == "rttr: License")
+    else if (title.text().search("License") > -1)
     {
         tutorial_link.parent().removeClass("current active");
         license_link.parent().addClass("current active");

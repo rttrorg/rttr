@@ -90,8 +90,7 @@ static RTTR_INLINE void store_meta_data(T& obj, std::vector<meta_data> data)
 template<typename Class_Type, typename...Args>
 class registration::bind<detail::ctor, Class_Type, Args...> : public registration::class_<Class_Type>
 {
-    using default_getter_policy = detail::return_as_copy;
-    using default_setter_policy = detail::set_value;
+    using default_create_policy = detail::as_raw_pointer;
 
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec)
@@ -103,7 +102,7 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
         {
             using namespace detail;
             if (!m_ctor.get())
-                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_invoke, Args...>>();
+                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy, Args...>>();
 
             // register the type with the following call:
             m_ctor->get_instanciated_type();
@@ -122,7 +121,20 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
         registration::class_<Class_Type> operator()(Params&&... arg)
         {
             using namespace detail;
-            m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_invoke, Args...>>();
+
+            using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
+            static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
+
+            // when no policy was added, we need a default policy
+            using policy_list = conditional_t< type_list_size<policy_types_found>::value == 0,
+                                               default_create_policy,
+                                               policy_types_found>;
+
+
+            // at the moment we only supported one policy
+            using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
+
+            m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, first_prop_policy, Args...>>();
             
             store_meta_data(m_ctor, get_meta_data(std::forward<Params>(arg)...));
             

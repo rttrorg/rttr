@@ -61,6 +61,7 @@ set(HEADER_FILES access_level.h
                  detail/base/version.rc.in
                  detail/constructor/constructor_wrapper.h
                  detail/constructor/constructor_wrapper_base.h
+                 detail/constructor/object_creator.h
                  detail/destructor/destructor_wrapper.h
                  detail/destructor/destructor_wrapper_base.h
                  detail/enumeration/enumeration_wrapper.h
