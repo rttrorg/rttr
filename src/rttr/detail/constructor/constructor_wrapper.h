@@ -58,13 +58,14 @@ class constructor_wrapper;
 template<typename ClassType, typename Policy, typename... Args>
 class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public constructor_wrapper_base
 {
+    using instanciated_type = decltype(object_creator<ClassType, Policy>::create());
     public:
         constructor_wrapper() {}
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Args>()...}; }
         std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Args) != 0>()); }
        
-        type get_instanciated_type()    const { return type::get<ClassType*>(); }
+        type get_instanciated_type()    const { return type::get<instanciated_type>(); }
         type get_declaring_type()       const { return type::get<typename raw_type<ClassType>::type>(); }
         
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type) const { return {std::is_reference<Args>::value...}; }
@@ -149,10 +150,12 @@ class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public const
 template<typename ClassType, typename Policy, typename F>
 class constructor_wrapper<ClassType, return_func, Policy, F> : public constructor_wrapper_base
 {
+    using instanciated_type = typename function_traits<F>::return_type;
+
     public:
         constructor_wrapper(F creator_func) : m_creator_func(creator_func) {}
 
-        type get_instanciated_type()            const { return type::get<ClassType>();                              }
+        type get_instanciated_type()            const { return type::get<instanciated_type>();                              }
         type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()    const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()        const { return method_accessor<F, Policy>::get_is_const();          }

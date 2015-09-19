@@ -122,7 +122,7 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
         {
             using namespace detail;
 
-            using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
+            using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Params>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
             // when no policy was added, we need a default policy

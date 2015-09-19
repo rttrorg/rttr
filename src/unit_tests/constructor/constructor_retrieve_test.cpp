@@ -25,38 +25,69 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef TEST_CONSTRUCTOR_REFLECTION_H_
-#define TEST_CONSTRUCTOR_REFLECTION_H_
+#include <rttr/registration>
+#include <catch/catch.hpp>
 
-#include <rttr/type>
+using namespace rttr;
 
-struct constructor_test
+struct ctor_test
 {
-    constructor_test() : _x(0), _y(0), _p1(0.0) {}
-    constructor_test(const constructor_test& other) : _x(other._x), _y(other._y), _p1(other._p1), _text(other._text) {}
-    constructor_test(constructor_test&& other) : _x(std::move(other._x)), _y(std::move(other._y)), _p1(std::move(other._p1)), _text(std::move(other._text)) {}
+    ctor_test(){}
+    ctor_test(const ctor_test& other) {}
+    ctor_test(int, double) {}
 
-    constructor_test(int x, int y) : _x(x), _y(y), _p1(0.0) {}
-    constructor_test(const std::string& text) : _x(0), _y(0), _p1(0.0), _text(text) {}
-    constructor_test(int p1, int p2, int p3, int p4, int p5, int p6, const int* p7) : _x(p1), _y(p2), _p1(0.0) {}
-
-    int _x;
-    int _y;
-    double _p1;
-    std::string _text;
+    static ctor_test create_object() { return ctor_test(); }
 };
 
-class factory_test
+static ctor_test global_create_object() { return ctor_test(); }
+
+RTTR_REGISTRATION
 {
+    registration::class_<ctor_test>("ctor_test")
+        .constructor<>()
+        .constructor<const ctor_test&>()
+        .constructor<int, double>()
+        .constructor(&ctor_test::create_object)
+        .constructor(&global_create_object);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("retrieve ctor", "[constructor]") 
+{
+    type t = type::get<ctor_test>();
+    REQUIRE(t.is_valid() == true);
     
-    public:
-        static factory_test create() { factory_test obj; return obj; };
-        static factory_test* create_as_ptr() { auto obj = new factory_test; return obj; };
+    SECTION("retrieve default ctor")
+    {
+        constructor ctor = t.get_constructor();
+        CHECK(ctor.is_valid() == true);
+    }
 
-        void my_func() { }
-        int my_func_2(){ return 42; }
-    private:
-        factory_test() {}
-};
+    SECTION("retrieve copy-ctor")
+    {
+        constructor ctor = t.get_constructor({type::get<ctor_test>()});
+        CHECK(ctor.is_valid() == true);
+    }
 
-#endif // TEST_CONSTRUCTOR_REFLECTION_H_
+    SECTION("retrieve custom ctor")
+    {
+        constructor ctor = t.get_constructor({type::get<int>(), type::get<double>()});
+        CHECK(ctor.is_valid() == true);
+    }
+
+    SECTION("retrieve all ctors")
+    {
+        std::vector<constructor> ctor_list = t.get_constructors();
+        CHECK(ctor_list.size() == 5);
+        auto ctor_name = t.get_name();
+        // check order
+        CHECK(ctor_list[0].get_signature() == ctor_name + "( )");
+        CHECK(ctor_list[1].get_signature() == ctor_name + "( ctor_test const & )");
+        CHECK(ctor_list[2].get_signature() == ctor_name + "( int, double )");
+        CHECK(ctor_list[3].get_signature() == ctor_name + "( )");
+        CHECK(ctor_list[4].get_signature() == ctor_name + "( )");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

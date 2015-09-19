@@ -26,7 +26,6 @@
 ####################################################################################
 
 set(HEADER_FILES test_classes.h
-                 constructor/test_constructor_reflection.h
                  enumeration/test_enumeration_reflection.h
                  method/test_method_reflection.h
                  property/test_property_reflection.h
@@ -38,7 +37,9 @@ set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
                  property/test_property_reflection.cpp
                  type/test_type.cpp
-                 constructor/test_constructor_reflection.cpp
+                 constructor/constructor_retrieve_test.cpp
+                 constructor/constructor_invoke_test.cpp
+                 constructor/constructor_misc_test.cpp
                  enumeration/test_enumeration_reflection.cpp
                  method/test_method_reflection.cpp
                  variant/variant_assign_test.cpp
