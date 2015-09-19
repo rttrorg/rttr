@@ -53,7 +53,7 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("retrieve ctor", "[constructor]") 
+TEST_CASE("constructor - retrieve", "[constructor]") 
 {
     type t = type::get<ctor_test>();
     REQUIRE(t.is_valid() == true);

@@ -77,7 +77,7 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ctor - get_instanciated_type", "[constructor]") 
+TEST_CASE("constructor - get_instanciated_type", "[constructor]") 
 {
     auto ctor_list = type::get<ctor_misc_test>().get_constructors();
     CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
@@ -88,7 +88,7 @@ TEST_CASE("ctor - get_instanciated_type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ctor - get_signature", "[constructor]") 
+TEST_CASE("constructor - get_signature", "[constructor]") 
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_signature() == "ctor_misc_test( )");
@@ -99,7 +99,7 @@ TEST_CASE("ctor - get_signature", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ctor - get_parameter_types", "[constructor]") 
+TEST_CASE("constructor - get_parameter_types", "[constructor]") 
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_parameter_types() == std::vector<type>());
@@ -121,7 +121,7 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ctor - get_meta_data", "[constructor]") 
+TEST_CASE("constructor - get_meta_data", "[constructor]") 
 {
     SECTION("default ctor")
     {
