@@ -35,9 +35,7 @@ cmake_minimum_required (VERSION 2.8.12)
 
 project ("rttr")
 
-set(CMAKE_MODULE_PATH 
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
-    )
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
     
 if (CMAKE_BUILD_TYPE STREQUAL "")
   # CMake defaults to leaving CMAKE_BUILD_TYPE empty. This screws up
@@ -52,7 +50,6 @@ include(utility)
 option(BUILD_STATIC "Build RTTR as static library" FALSE)
 option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" FALSE)
 option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
-option(CREATE_UNITY_BUILD "Creates a unity build" FALSE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" TRUE)
 
@@ -77,5 +74,4 @@ add_subdirectory(src)
 add_subdirectory(doc) 
 
 # here we specify the installation directory
-set(CMAKE_INSTALL_PREFIX
-    ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
+set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)

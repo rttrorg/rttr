@@ -35,7 +35,7 @@ The build of RTTR can be configured at CMake configuration time with following v
 - `USE_PCH`: Use precompiled header files for compilation; Default: `TRUE`*
 - `CUSTOM_DOXYGEN_STYLE`: Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used; Default: `TRUE`
 
-\*Precompiled headers are only supported with Visual Studio
+\*Precompiled headers are only supported with MSVC based build
 
 After running CMake, you can start the compilation, depending on the generator: MSVC: `nmake` or `jom`, Unix based: `make`, MinGW: `mingw32-make`.
 

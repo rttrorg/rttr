@@ -53,38 +53,6 @@ function (createSrcGroups FILE_LIST )
   endforeach()
 endfunction()
  
- ####################################################################################
- # HEADER_FILES <= the possible header files which contain a Q_OBJECT (input)
- # MOC_SOURCES => the generated moc source files (output)
- ####################################################################################
- macro (GenerateMocFiles HEADER_FILES MOC_SOURCES)
-    set (MOC_HEADERS)
-    foreach(CAND ${HEADER_FILES})
-      file(STRINGS ${CAND} var REGEX "Q_OBJECT")
-      if(var)
-         list(APPEND MOC_HEADERS ${CAND})
-      endif()
-    endforeach()
-    # MOC_SOURCES => outputfiles
-    # MOC_HEADERS => inputfiless
-   qt5_wrap_cpp(${MOC_SOURCES} ${MOC_HEADERS})
-   source_group("Generated Files" FILES ${${MOC_SOURCES}})
-endmacro ()
-
-####################################################################################
-
- macro (GenerateUIFiles HEADER_FILES UI_HEADERS)
-    QT4_WRAP_UI(${UI_HEADERS} ${HEADER_FILES})
-    source_group("Generated Files" FILES ${${UI_HEADERS}})
-endmacro()
-
-####################################################################################
-
-macro (GenerateRCFiles RESSOURCE_FILES RC_FILES)
-  QT4_ADD_RESOURCES(RC_FILES ${RESSOURCE_FILES})
-  source_group("Ressource Files" FILES ${${RC_FILES}})
-endmacro()
-
 ####################################################################################
 # Create a UnityFile. This is a file which inlcudes all other source files.
 # This is usefull, when you want a fast rebuild.
@@ -152,7 +120,9 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
   include(${FULL_PATH})
   get_filename_component(ABS_PATH_TO_FILES ${FULL_PATH} PATH)
   set(shouldInstall ${ARGV3})
-  set(MOC_HEADERS)
+  set(QT_MOC_HEADERS)
+  set(QT_UI_FILES)
+  set(QT_QRC_FILES)
   
   foreach(headerFile ${HEADER_FILES} )
     if (${headerFile} MATCHES ".*.h.in$")
@@ -171,11 +141,19 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
       configure_file(${headerFile} ${CMAKE_CURRENT_BINARY_DIR}/${out_path} @ONLY)
       source_group("Generated Files" FILES ${CMAKE_CURRENT_BINARY_DIR}/${out_path})
       list(APPEND ALL_HPP_FILES ${CMAKE_CURRENT_BINARY_DIR}/${out_path})
+    elseif (${headerFile} MATCHES ".*.ui$")
+        set(FULL_HEADER_PATH ${ABS_PATH_TO_FILES}/${headerFile})
+        list(APPEND QT_UI_FILES ${FULL_HEADER_PATH})
+        list(APPEND ALL_HPP_FILES ${FULL_HEADER_PATH})
+    elseif (${headerFile} MATCHES ".*.qrc$")
+        set(FULL_HEADER_PATH ${ABS_PATH_TO_FILES}/${headerFile})
+        list(APPEND QT_QRC_FILES ${FULL_HEADER_PATH})
+        list(APPEND ALL_HPP_FILES ${FULL_HEADER_PATH})
     else()
       set(FULL_HEADER_PATH ${ABS_PATH_TO_FILES}/${headerFile})
       file(STRINGS ${FULL_HEADER_PATH} var REGEX "Q_OBJECT")
       if(var)
-         list(APPEND MOC_HEADERS ${FULL_HEADER_PATH})
+         list(APPEND QT_MOC_HEADERS ${FULL_HEADER_PATH})
       endif()
       
       # returns the relative path, from the current source dir
@@ -200,13 +178,19 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
        string(REGEX REPLACE "[\\/]" "_" qrc_resource_file ${srcFile} )
        string(REGEX REPLACE ".qml$" ".qrc" qrc_resource_file ${qrc_resource_file} )
        set(qrc_resource_file ${CMAKE_CURRENT_BINARY_DIR}/${qrc_resource_file})
-       message(STATUS "FOO" ${qrc_resource_file})
        file(WRITE ${qrc_resource_file} "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource prefix=\"/\"><file alias=\"${srcFile}\">${ABS_PATH_TO_FILES}/${srcFile}</file></qresource></RCC>")
        qt5_add_resources(compiled_resource_file ${qrc_resource_file})
        source_group("Generated Files" FILES ${compiled_resource_file})
        source_group("Generated Files" FILES ${qrc_resource_file})
-       message(STATUS "QRC FILE: " ${compiled_resource_file})
        list(APPEND QML_SOURCES ${compiled_resource_file})
+     elseif (${srcFile} MATCHES ".*.ui$")
+        set(FULL_SRC_PATH ${ABS_PATH_TO_FILES}/${srcFile})
+        list(APPEND QT_UI_FILES ${FULL_SRC_PATH})
+        list(APPEND SOURCE_LIST_OF_CUR_DIR ${FULL_SRC_PATH})
+    elseif (${srcFile} MATCHES ".*.qrc$")
+        set(FULL_SRC_PATH ${ABS_PATH_TO_FILES}/${srcFile})
+        list(APPEND QT_QRC_FILES ${FULL_SRC_PATH})
+        list(APPEND SOURCE_LIST_OF_CUR_DIR ${FULL_SRC_PATH})
      else()
        list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
      endif()
@@ -214,15 +198,27 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
     list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
   endforeach()
  
-  list(APPEND MOC_SOURCES)
+  list(APPEND QT_MOC_SOURCES)
  
-  if (MOC_HEADERS)
-    qt5_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
-    source_group("Generated Files" FILES ${MOC_SOURCES})
+  if (QT_MOC_HEADERS)
+    qt5_wrap_cpp(QT_MOC_SOURCES ${QT_MOC_HEADERS})
+    source_group("Generated Files" FILES ${QT_MOC_SOURCES})
+  endif()
+  
+  list(APPEND QT_UI_SOURCES)
+  if (QT_UI_FILES)
+    qt5_wrap_ui(QT_UI_SOURCES ${QT_UI_FILES})
+    source_group("Generated Files" FILES ${QT_UI_SOURCES})
+  endif()
+  
+  list(APPEND QT_QRC_SOURCES)
+  if (QT_QRC_FILES)
+    qt5_add_resources(QT_QRC_SOURCES ${QT_QRC_FILES})
+    source_group("Generated Files" FILES ${QT_QRC_SOURCES})
   endif()
   
   list(APPEND ALL_HPP_FILES ${${_HEADER_FILES}} ${HEADER_LIST_OF_CUR_DIR})
-  list(APPEND ALL_CPP_FILES ${${_SOURCE_FILES}} ${SOURCE_LIST_OF_CUR_DIR} ${MOC_SOURCES} ${QML_SOURCES})
+  list(APPEND ALL_CPP_FILES ${${_SOURCE_FILES}} ${SOURCE_LIST_OF_CUR_DIR} ${QT_MOC_SOURCES} ${QT_UI_SOURCES} ${QT_QRC_SOURCES} ${QML_SOURCES})
   set(${_HEADER_FILES} ${ALL_HPP_FILES} PARENT_SCOPE)
   set(${_SOURCE_FILES} ${ALL_CPP_FILES} PARENT_SCOPE)
 
@@ -284,7 +280,7 @@ function(copy_dependency_release _INPUT _OUTPUT)
   
   if (IS_DIRECTORY ${_INPUT})
     install(DIRECTORY
-            ${_PATH}
+            ${FILE_PATH}
             DESTINATION ${_OUTPUT}/${REL_PATH}
             CONFIGURATIONS Release)
   else()
@@ -334,7 +330,7 @@ function(copy_dependency_debug _INPUT _OUTPUT)
   
  if (IS_DIRECTORY ${_INPUT})
    install(DIRECTORY
-           ${_PATH}
+           ${FILE_PATH}
            DESTINATION ${_OUTPUT}/${REL_PATH}
            CONFIGURATIONS Debug)
  else()

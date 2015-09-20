@@ -83,6 +83,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
+set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
 if(MSVC)
