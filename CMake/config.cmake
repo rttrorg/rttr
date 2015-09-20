@@ -81,9 +81,15 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
   endif()
+  
+  if(MINGW)
+    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+  else()
+    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+  endif()
 endif()
 
-set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
