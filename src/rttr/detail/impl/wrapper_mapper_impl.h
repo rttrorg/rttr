@@ -45,8 +45,8 @@ class type;
 template<typename T>
 struct wrapper_mapper<std::shared_ptr<T>>
 {
-    typedef decltype(std::shared_ptr<T>().get()) wrapped_type;
-    typedef std::shared_ptr<T> type;
+    using wrapped_type = decltype(std::shared_ptr<T>().get());
+    using type = std::shared_ptr<T>;
 
     static RTTR_INLINE wrapped_type get(const type& obj)
     {
@@ -64,8 +64,8 @@ struct wrapper_mapper<std::shared_ptr<T>>
 template<typename T>
 struct wrapper_mapper<std::reference_wrapper<T>>
 {
-    typedef decltype(std::declval<std::reference_wrapper<T>>().get()) wrapped_type;
-    typedef std::reference_wrapper<T> type;
+    using wrapped_type  = decltype(std::declval<std::reference_wrapper<T>>().get());
+    using type          = std::reference_wrapper<T>;
 
     static RTTR_INLINE wrapped_type get(const type& obj)
     {
@@ -83,8 +83,8 @@ struct wrapper_mapper<std::reference_wrapper<T>>
 template<typename T>
 struct wrapper_mapper<std::unique_ptr<T>>
 {
-    typedef decltype(std::declval<std::unique_ptr<T>>().get()) wrapped_type;
-    typedef std::unique_ptr<T> type;
+    using wrapped_type  = decltype(std::declval<std::unique_ptr<T>>().get());
+    using type          = std::unique_ptr<T>;
 
     static RTTR_INLINE wrapped_type get(const type& obj)
     {
@@ -102,8 +102,8 @@ struct wrapper_mapper<std::unique_ptr<T>>
 template<typename T>
 struct wrapper_mapper<std::weak_ptr<T>>
 {
-    typedef decltype(std::declval<std::weak_ptr<T>>().lock().get()) wrapped_type;
-    typedef std::weak_ptr<T> type;
+    using wrapped_type  = decltype(std::declval<std::weak_ptr<T>>().lock().get());
+    using type          = std::weak_ptr<T>;
 
     static RTTR_INLINE wrapped_type get(const type& obj)
     {
@@ -142,7 +142,7 @@ using wrapper_address_return_type_t = conditional_t<is_wrapper<T>::value,
 template<typename T>
 typename std::enable_if<is_wrapper<T>::value, raw_addressof_return_type_t< wrapper_mapper_t<T>> >::type wrapped_raw_addressof(T& obj)
 {
-    using raw_wrapper_type = typename remove_cv<typename std::remove_reference<T>::type>::type;
+    using raw_wrapper_type = remove_cv_t<remove_reference_t<T>>;
     wrapper_mapper_t<T> value = wrapper_mapper<raw_wrapper_type>::get(obj);
     return raw_addressof(value);
 }

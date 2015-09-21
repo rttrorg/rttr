@@ -86,8 +86,8 @@ struct method_accessor_invoker<F, default_invoke, void_member_func, index_sequen
     template<typename... TArgs>
     RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
-        typedef typename function_traits<F>::class_type C;
-        C* ptr = obj.try_convert<C>();
+        using class_t = typename function_traits<F>::class_type;
+        class_t* ptr = obj.try_convert<class_t>();
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             (ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);
@@ -120,8 +120,8 @@ struct method_accessor_invoker<F, default_invoke, return_member_func, index_sequ
     template<typename... TArgs>
     RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
-        typedef typename function_traits<F>::class_type C;
-        C* ptr = obj.try_convert<C>();
+        using class_t = typename function_traits<F>::class_type;
+        class_t* ptr = obj.try_convert<class_t>();
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
             return (ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);
         else
@@ -148,8 +148,8 @@ struct method_accessor_invoker<F, discard_return, return_member_func, index_sequ
     template<typename... TArgs>
     RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
-        typedef typename function_traits<F>::class_type C;
-        C* ptr = obj.try_convert<C>();
+        using class_t = typename function_traits<F>::class_type;
+        class_t* ptr = obj.try_convert<class_t>();
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             (ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);
@@ -182,8 +182,8 @@ struct method_accessor_invoker<F, return_as_ptr, return_member_func, index_seque
     template<typename... TArgs>
     RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
-        typedef typename function_traits<F>::class_type C;
-        C* ptr = obj.try_convert<C>();
+        using class_t = typename function_traits<F>::class_type;
+        class_t* ptr = obj.try_convert<class_t>();
         if (ptr && check_all_true(args.template is_type<typename param_types<F, ArgCount>::type>()...))
         {
             return &(ptr->*func_ptr)(args.template get_value<typename param_types<F, ArgCount>::type>()...);

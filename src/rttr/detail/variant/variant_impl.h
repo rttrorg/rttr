@@ -102,7 +102,7 @@ RTTR_INLINE const T& variant::get_value() const
 {
     const void* value;
     m_policy(detail::variant_policy_operation::GET_VALUE, m_data, value);
-    typedef typename detail::remove_cv<T>::type nonRef;
+    using nonRef = detail::remove_cv_t<T>;
     return *reinterpret_cast<const nonRef*>(value);
 }
 

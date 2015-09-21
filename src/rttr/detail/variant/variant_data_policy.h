@@ -125,7 +125,7 @@ enum class variant_policy_operation : uint8_t
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, argument_wrapper);
+using variant_policy_func = bool (*)(variant_policy_operation, const variant_data&, argument_wrapper);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // some ugly workaround for MSVC < v. 1800

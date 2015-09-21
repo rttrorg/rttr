@@ -57,8 +57,8 @@ public:
     void add_registration_func(const void* key, std::function<void(void)> func = std::function<void(void)>());
 
 private:
-    typedef std::pair<const void*, std::function<void(void)>> item_type;
-    typedef std::vector<item_type> register_list;
+    using item_type     = std::pair<const void*, std::function<void(void)>>;
+    using register_list = std::vector<item_type>;
     register_list m_list;
 };
 

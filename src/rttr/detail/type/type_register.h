@@ -57,8 +57,8 @@ struct derived_info;
 
 class argument;
 
-typedef variant(*variant_create_func)(const argument&);
-typedef derived_info(*get_derived_func)(void*);
+using variant_create_func   = variant(*)(const argument&);
+using get_derived_func      = derived_info(*)(void*);
 
 template<typename T, typename Enable>
 struct type_getter;

@@ -47,8 +47,8 @@ using variant_basic_types = type_list<bool,
 /*!
  * This is the data storage for the \ref variant class.
  */
-typedef std::aligned_storage<max_sizeof_list<variant_basic_types>::value,
-                             max_alignof_list<variant_basic_types>::value>::type variant_data;
+using variant_data = std::aligned_storage<max_sizeof_list<variant_basic_types>::value,
+                                          max_alignof_list<variant_basic_types>::value>::type;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

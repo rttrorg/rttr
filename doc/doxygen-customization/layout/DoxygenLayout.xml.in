@@ -14,15 +14,13 @@
     <tab type="classes" visible="yes" title="">
       <tab type="classlist" visible="yes" title="" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/> 
-     <!-- <tab type="hierarchy" visible="false" title="" intro=""/> -->
+      <tab type="hierarchy" visible="no" title="" intro=""/>
       <tab type="classmembers" visible="yes" title="" intro=""/>
     </tab>
-    <!--
-    <tab type="files" visible="yes" title="@DOXY_LAYOUT_PAGES2_TITLE@">
+    <tab type="files" visible="yes" title="">
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
-    -->
     <tab type="examples" visible="yes" title="" intro=""/>  
   </navindex>
 

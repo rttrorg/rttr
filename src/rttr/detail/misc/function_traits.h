@@ -46,31 +46,31 @@ namespace detail
     template<typename T>
     struct is_std_function : std::false_type
     {
-        typedef T signature;
+        using signature = T;
     };
 
     template<typename T>
     struct is_std_function<std::function<T>> : std::true_type
     {
-        typedef T signature;
+        using signature = T;
     };
 
     template<typename T>
     struct get_std_function_signature
     {
-        typedef T type;
+        using type = T;
     };
 
     template<typename T>
     struct get_std_function_signature<std::function<T>>
     {
-        typedef T type;
+        using type = T;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
     template<typename T>
     struct is_function_ptr : std::integral_constant<bool, std::is_pointer<T>::value && 
-                                                          std::is_function<typename ::rttr::detail::remove_pointer<T>::type>::value>
+                                                          std::is_function<::rttr::detail::remove_pointer_t<T>>::value>
     {
     };
 
@@ -82,7 +82,7 @@ namespace detail
     template<typename... Args>
     struct function_args
     {
-        typedef std::tuple<Args...> arg_types;
+        using arg_types = std::tuple<Args...>;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace detail
     struct function_traits_func_ptr<R (*)(Args...)> : function_args<Args...>
     {
         static const size_t arg_count = sizeof...(Args);
-        typedef R   return_type;
+        using return_type = R;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -106,24 +106,24 @@ namespace detail
     struct function_traits_mem_ptr<R (C::*)(Args...)> : function_args<Args...>
     {
         static const size_t arg_count = sizeof...(Args);
-        typedef R   return_type;
-        typedef C   class_type;
+        using return_type   = R;
+        using class_type    = C;
     };
     
     template<typename R, typename C, typename... Args>
     struct function_traits_mem_ptr<R (C::*)(Args...) const> : function_args<Args...>
     {
         static const size_t arg_count = sizeof...(Args);
-        typedef R   return_type;
-        typedef C   class_type;
+        using return_type   = R;
+        using class_type    = C;
     };
 
     template<typename R, typename C, typename... Args>
     struct function_traits_mem_ptr<R (C::*)(Args...) const volatile> : function_args<Args...>
     {
         static const size_t arg_count = sizeof...(Args);
-        typedef R   return_type;
-        typedef C   class_type;
+        using return_type   = R;
+        using class_type    = C;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -131,16 +131,16 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T> 
-    struct function_traits : std::conditional<std::is_member_function_pointer<T>::value, 
-                                             function_traits_mem_ptr<T>,
-                                             typename std::conditional<std::is_function<T>::value,
-                                                                       function_traits_func_ptr<typename std::add_pointer<T>::type>,
-                                                                       typename std::conditional<is_std_function<T>::value,
-                                                                                                 function_traits_func_ptr<typename std::add_pointer<typename get_std_function_signature<T>::type>::type>,
-                                                                                                 function_traits_func_ptr<T>
-                                                                                                >::type
-                                                                      >::type 
-                                             >::type
+    struct function_traits : conditional_t< std::is_member_function_pointer< T >::value, 
+                                            function_traits_mem_ptr< T >,
+                                            conditional_t< std::is_function< T >::value,
+                                                           function_traits_func_ptr< add_pointer_t< T > >,
+                                                           conditional_t< is_std_function< T >::value,
+                                                                          function_traits_func_ptr< add_pointer_t< typename get_std_function_signature< T >::type > >,
+                                                                          function_traits_func_ptr< T >
+                                                                        >
+                                                         >
+                                          >
     {
     };
 
@@ -149,7 +149,7 @@ namespace detail
     template<typename T, size_t Index>
     struct param_types
     {
-        typedef typename std::tuple_element<Index, typename function_traits<T>::arg_types>::type type;
+        using type = typename std::tuple_element<Index, typename function_traits<T>::arg_types>::type;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -157,11 +157,12 @@ namespace detail
     // param_types<F, 0>::type
 
     template<typename T>
-    struct is_void_func : std::conditional<std::is_same<typename function_traits<T>::return_type, void>::value,
-                                           std::true_type,
-                                           std::false_type
-                                          >::type
-    {};
+    struct is_void_func : conditional_t< std::is_same<typename function_traits<T>::return_type, void>::value,
+                                         std::true_type,
+                                         std::false_type
+                                       >
+    {
+    };
 } // end namespace detail
 } // end namespace rttr
 

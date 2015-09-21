@@ -50,17 +50,17 @@ namespace detail
     template<typename T, typename Enable = void>
     struct raw_type
     {
-        typedef typename detail::remove_cv<T>::type type; 
+        using type = detail::remove_cv_t<T>;
     };
 
-    template<typename T> struct raw_type<T, typename std::enable_if<std::is_pointer<T>::value && !detail::is_function_ptr<T>::value>::type> 
+    template<typename T> struct raw_type<T, enable_if_t<std::is_pointer<T>::value && !detail::is_function_ptr<T>::value>> 
     {
-        typedef typename raw_type<typename detail::remove_pointer<T>::type>::type type; 
+        using type = typename raw_type< detail::remove_pointer_t<T>>::type; 
     };
 
-    template<typename T> struct raw_type<T, typename std::enable_if<std::is_reference<T>::value>::type> 
+    template<typename T> struct raw_type<T, enable_if_t<std::is_reference<T>::value> > 
     {
-        typedef typename raw_type<typename std::remove_reference<T>::type>::type type; 
+        using type = typename raw_type< remove_reference_t<T> >::type; 
     };
 
     template<typename T>
@@ -70,43 +70,49 @@ namespace detail
     // this trait removes all pointers
 
     template<typename T, typename Enable = void>
-    struct remove_pointers { typedef T type; };
+    struct remove_pointers { using type = T; };
     template<typename T>
-    struct remove_pointers<T, typename std::enable_if<std::is_pointer<T>::value>::type>
+    struct remove_pointers<T, enable_if_t<std::is_pointer<T>::value>>
     {
-        typedef typename remove_pointers<typename remove_pointer<T>::type>::type type; 
+        using type = typename remove_pointers<remove_pointer_t<T> >::type; 
     };
+
+    template<typename T>
+    using remove_pointers_t = typename remove_pointers<T>::type;
     
     /////////////////////////////////////////////////////////////////////////////////////////
     // this trait removes all pointers except one
 
     template<typename T, typename Enable = void>
-    struct remove_pointers_except_one { typedef T type; };
+    struct remove_pointers_except_one { using type = T; };
     template<typename T>
-    struct remove_pointers_except_one<T, typename std::enable_if<std::is_pointer<T>::value>::type>
+    struct remove_pointers_except_one<T, enable_if_t<std::is_pointer<T>::value>>
     {
-        typedef typename std::conditional<std::is_pointer<typename remove_pointer<T>::type>::value,
-                                          typename remove_pointers_except_one<typename remove_pointer<T>::type>::type,
-                                          T>::type type;
+        using type = conditional_t< std::is_pointer< remove_pointer_t<T> >::value,
+                                    typename remove_pointers_except_one<remove_pointer_t<T>>::type,
+                                    T
+                                  >;
     };
 
-
+    template<typename T>
+    using remove_pointers_except_one_t = typename remove_pointers_except_one<T>::type;
+    
     /////////////////////////////////////////////////////////////////////////////////////////
     // this trait will remove the cv-qualifier, pointer types, reference type and also the array dimension
 
     template<typename T, typename Enable = void>
-    struct raw_array_type  { typedef typename raw_type<T>::type type; };
+    struct raw_array_type  { using type = raw_type_t<T>; };
 
     template<typename T>
     struct raw_array_type_impl;
 
     template<typename T, std::size_t N>
-    struct raw_array_type_impl<T[N]> { typedef typename raw_array_type<T>::type type; };
+    struct raw_array_type_impl<T[N]> { using type = typename raw_array_type<T>::type; };
 
     template<typename T>
     struct raw_array_type<T, typename std::enable_if<std::is_array<T>::value>::type> 
     {
-        typedef typename raw_array_type_impl<typename remove_cv<T>::type>::type type; 
+         using type = typename raw_array_type_impl< remove_cv_t<T> >::type; 
     };
 
     template<typename T>
@@ -173,7 +179,7 @@ namespace detail
     {};
 
     template<class T>
-    struct has_get_type_func<T, typename std::enable_if<has_get_type_func_impl<T>::value>::type > : std::true_type
+    struct has_get_type_func<T, enable_if_t<has_get_type_func_impl<T>::value> > : std::true_type
     {};
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +215,7 @@ namespace detail
     {};
 
     template<class T>
-    struct has_get_ptr_func<T, typename std::enable_if<has_get_ptr_func_impl<T>::value>::type > : std::true_type
+    struct has_get_ptr_func<T, enable_if_t<has_get_ptr_func_impl<T>::value> > : std::true_type
     {};
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +251,7 @@ namespace detail
     {};
 
     template<class T>
-    struct has_get_derived_info_func<T, typename std::enable_if<has_get_derived_info_func_impl<T>::value>::type > : std::true_type
+    struct has_get_derived_info_func<T, enable_if_t<has_get_derived_info_func_impl<T>::value> > : std::true_type
     {};
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -400,9 +406,9 @@ namespace detail
     };
 
     template<typename T>
-    struct is_array : std::conditional<is_array_impl<typename remove_cv<typename std::remove_reference<T>::type>::type>::value,
-                                       std::true_type,
-                                       std::false_type>::type
+    struct is_array : conditional_t< is_array_impl<remove_cv_t< remove_reference_t<T> > >::value,
+                                     std::true_type,
+                                     std::false_type>
     {};
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -427,14 +433,14 @@ namespace detail
     struct concat_array_types<List<Types...>, T, std::false_type>
     {
         using sub_type = typename array_mapper<T>::sub_type;
-        using type = typename concat_array_types< List<Types..., T>, sub_type, typename std::is_same<T, sub_type>::type>::type;
+        using type = typename concat_array_types< List<Types..., T>, sub_type, typename std::is_same<T, sub_type>::type >::type;
     };
  
     template<typename T>
     struct array_rank_type_list
     {
         using sub_type = typename array_mapper<T>::sub_type;
-        using types = typename concat_array_types< std::tuple<>, T, typename std::is_same<T, sub_type>::type>::type;
+        using types = typename concat_array_types< std::tuple<>, T, typename std::is_same<T, sub_type>::type >::type;
     };
 
     template<typename T, size_t N>
@@ -475,11 +481,11 @@ namespace detail
     };
 
     template<typename T>
-    struct pointer_count_impl<T, typename std::enable_if<std::is_pointer<T>::value &&
-                                                         !is_function_ptr<T>::value &&
-                                                         !std::is_member_pointer<T>::value>::type>
+    struct pointer_count_impl<T, enable_if_t<std::is_pointer<T>::value &&
+                                             !is_function_ptr<T>::value &&
+                                             !std::is_member_pointer<T>::value>>
     {
-        static const std::size_t size = pointer_count_impl<typename remove_pointer<T>::type>::size + 1;
+        static const std::size_t size = pointer_count_impl<remove_pointer_t<T> >::size + 1;
     };
 
     template<typename T>
@@ -509,10 +515,10 @@ namespace detail
     template<typename T1, typename T2, typename... U> 
     struct max_sizeof_list_impl<T1, T2, U...> 
     {
-        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl<
-                                                          typename std::conditional<sizeof(T1) >= sizeof(T2), 
-                                                                                    T1, T2>::type,
-                                                                                    U...>::value;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl< conditional_t< sizeof(T1) >= sizeof(T2), 
+                                                                                              T1,
+                                                                                              T2>,
+                                                                                 U...>::value;
     };
 
     template<template<class...> class List, class... Ts>
@@ -545,9 +551,9 @@ namespace detail
     struct max_alignof_list_impl<T1, T2, U...> 
     {
         static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_alignof_list_impl<
-                                                          typename std::conditional<std::alignment_of<T1>::value >= std::alignment_of<T2>::value,
-                                                                                    T1, T2>::type,
-                                                                                    U...>::value;
+                                                                conditional_t<std::alignment_of<T1>::value >= std::alignment_of<T2>::value,
+                                                                              T1, T2>,
+                                                                U...>::value;
     };
 
     template<template<class...> class List, typename... Ts>
@@ -578,11 +584,11 @@ namespace detail
     template<typename T>
     struct decay 
     {
-        typedef typename std::remove_reference<T>::type Tp;
-        typedef typename std::conditional<std::is_function<Tp>::value,
-                                          typename std::add_pointer<Tp>::type,
-                                          typename remove_cv<Tp>::type
-                                         >::type type;
+        using Tp    = remove_reference_t<T>;
+        using type  = conditional_t< std::is_function<Tp>::value,
+                                     add_pointer_t<Tp>,
+                                     remove_cv_t<Tp>
+                                   >;
     };
 
     template<typename T>

@@ -31,19 +31,19 @@
 namespace rttr
 {
 /*!
- * \brief Casts the given \p object of type \p SourceType to an object of type \p TargetType.
+ * \brief Casts the given \p object of type \p Source_Type to an object of type \p Target_Type.
  *
- * When the given the given \p object is an instance of type \p TargetType, then this function will cast the pointer to the \p TargetType;
- * otherwise it will return a nullptr. If \p object is already a nullptr then it will also return a nullptr.
+ * When the given the given \p object is an instance of type \p Target_Type, then this function will cast the pointer to the \p TargetType;
+ * otherwise it will return a `nullptr`. If \p object is already a `nullptr` then it will also return a `nullptr`.
  *
  * \remark Both class types must contain the macro \ref RTTR_ENABLE in the class declaration.
- *        \p SourceType and \p TargetType must be both pointer types.
+ *        \p Source_Type and \p Target_Type must be both pointer types.
  *         
  *
- * \return A pointer of type \p TargetType
+ * \return A pointer of type \p Target_Type
  */
-template<typename TargetType, typename SourceType>
-TargetType rttr_cast(SourceType object);
+template<typename Target_Type, typename Source_Type>
+Target_Type rttr_cast(Source_Type object);
 
 }
 

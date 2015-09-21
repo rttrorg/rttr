@@ -46,37 +46,37 @@ namespace detail
 template <class T> 
 struct remove_pointer_imp
 {
-   typedef T type;
+   using type = T;
 };
 
 template <class T> 
 struct remove_pointer_imp<T*>
 {
-   typedef T type;
+   using type = T;
 };
 
 template <class T, bool b> 
 struct remove_pointer_imp3
 {
-   typedef typename remove_pointer_imp<typename std::remove_cv<T>::type>::type type;
+   using type = typename remove_pointer_imp<typename std::remove_cv<T>::type>::type;
 };
 
 template <class T> 
 struct remove_pointer_imp3<T, false>
 {
-   typedef T type;
+   using type = T;
 };
 
 template <class T> 
 struct remove_pointer_imp2
 {
-   typedef typename remove_pointer_imp3<T, std::is_pointer<T>::value>::type type;
+   using type = typename remove_pointer_imp3<T, std::is_pointer<T>::value>::type;
 };
 
 template< typename T > 
 struct remove_pointer
 { 
-    typedef typename remove_pointer_imp2<T>::type type;
+    using type = typename remove_pointer_imp2<T>::type;
 };
 #else
 
@@ -202,7 +202,7 @@ using remove_volatile = std::remove_volatile<T>;
 template<class T>
 struct remove_cv
 {
-    typedef typename remove_const<typename remove_volatile<T>::type>::type type;
+    using type = typename remove_const<typename remove_volatile<T>::type>::type;
 };
 
 #else
@@ -215,11 +215,35 @@ using remove_cv = std::remove_cv<T>;
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-// shortcut for std::conditional (remark std::conditional_t is only valid for C++14
+// shortcuts to avoid writing typename my_traits<T>::type over and over again
+// C++14 has support for this, but we support at the moment C++11
 
 template< bool B, class T, class F >
 using conditional_t = typename std::conditional<B,T,F>::type;
-   
+
+template<typename T>
+using remove_cv_t = typename remove_cv<T>::type;
+
+template<typename T>
+using remove_volatile_t = typename remove_volatile<T>::type;
+
+template<typename T>
+using remove_const_t = typename remove_const<T>::type;
+
+template<typename T>
+using remove_pointer_t = typename remove_pointer<T>::type;
+
+template<typename T>
+using remove_reference_t = typename std::remove_reference<T>::type;
+
+template<typename T>
+using add_pointer_t = typename std::add_pointer<T>::type;
+
+template< bool B, class T = void >
+using enable_if_t = typename std::enable_if<B,T>::type;
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

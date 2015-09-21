@@ -64,12 +64,12 @@ public:
 };
 
 /*!
- * If T has a typedef called \a 'base_class_list' then inherits from true_type, otherwise inherits from false_type. 
+ * If T has a type alias called \a 'base_class_list' then inherits from true_type, otherwise inherits from false_type. 
  */
 template<typename T>
 using has_base_class_list = std::integral_constant<bool, has_base_class_list_impl<T>::value>;
 
-typedef std::vector<detail::base_class_info> info_container;
+using info_container = std::vector<detail::base_class_info>;
 
 /*!
  * This class fills from a given type_list the corresponding type objects into a std::vector.

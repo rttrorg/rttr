@@ -35,7 +35,7 @@
 template<typename C, typename A>
 class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_value> : public property_wrapper_base
 {
-    typedef A (C::*accessor);
+    using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc) { }
 
@@ -73,7 +73,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_val
 template<typename C, typename A>
 class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_only> : public property_wrapper_base
 {
-    typedef A (C::*accessor);
+    using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc) { }
 
@@ -106,7 +106,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_on
 template<typename C, typename A>
 class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_ptr> : public property_wrapper_base
 {
-    typedef A (C::*accessor);
+    using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc)
         {
@@ -150,7 +150,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
 template<typename C, typename A>
 class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_only> : public property_wrapper_base
 {
-    typedef A (C::*accessor);
+    using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc)
         {

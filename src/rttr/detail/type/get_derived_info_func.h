@@ -56,7 +56,7 @@ static derived_info get_most_derived_info_impl_none(void* ptr)
     return {ptr, type::get<T>()};
 }
 
-typedef derived_info(*derived_func)(void*);
+using derived_func = derived_info(*)(void*);
 
 /*!
  * This is the case where the type T has put necessary macro `RTTR_ENABLE` inside the class.

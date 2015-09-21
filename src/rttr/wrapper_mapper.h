@@ -50,9 +50,9 @@ namespace detail { struct invalid_wrapper_type { }; }
  * Custom wrapper types
  * --------------------
  * In order to work with custom wrapper types, its required to specialize the class 
- * \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>". Therefore you have to provide two nested typedefs:
- * 1. `typedef T::encapsulated_type wrapped_type;`
- * 2. `typedef T type`
+ * \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>". Therefore you have to provide two nested type aliases:
+ * 1. `using wrapped_type = typename T::encapsulated_type;`
+ * 2. `using type = T`
  *
  * And two functions:
  * 1. `static wrapped_type get(const T& obj);`
@@ -80,8 +80,8 @@ namespace detail { struct invalid_wrapper_type { }; }
  *  template<typename T>
  *  struct wrapper_mapper<custom_type<T>>
  *  {
- *      typedef decltype(std::declval<custom_type<T>>().get_data()) wrapped_type;
- *      typedef custom_type<T> type;
+ *      using wrapped_type  = decltype(std::declval<custom_type<T>>().get_data());
+ *      using type          = custom_type<T>;
  *
  *      inline static wrapped_type get(const type& obj)
  *      {
@@ -98,7 +98,7 @@ namespace detail { struct invalid_wrapper_type { }; }
  * \endcode
  *
  * \remark
- * It is very important that the typedef for `wrapped_type` is the actual return type of the getter function.
+ * It is very important that the type alias for `wrapped_type` is the actual return type of the getter function.
  * Make also sure you put your specialization inside the namespace `rttr`. 
  * The best place for this code, is below the declaration of your wrapper type.
  * When this is not possible, include your specialization code before registering your types to RTTR.
@@ -107,11 +107,11 @@ template<typename T>
 struct wrapper_mapper
 {
 #ifndef DOXYGEN
-    typedef detail::invalid_wrapper_type wrapped_type;
-    typedef T type;
+    using wrapped_type  = detail::invalid_wrapper_type;
+    using type          = T;
 #else
-    typedef wrapper_type::encapsulated_type wrapped_type;
-    typedef T type;
+    using wrapped_type  = typename wrapper_type::encapsulated_type;
+    using type          = T;
 
     inline static wrapped_type get(const type& obj)
     {

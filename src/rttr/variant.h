@@ -59,10 +59,10 @@ namespace detail
     enum class variant_policy_operation : uint8_t;
 
     template<typename T, typename Decayed = decay_t<T>>
-    using decay_variant_t = typename std::enable_if<!std::is_same<Decayed, variant>::value &&
-                                                    !std::is_same<Decayed, variant_array_view>::value, Decayed>::type;
+    using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value &&
+                                        !std::is_same<Decayed, variant_array_view>::value, Decayed>;
 
-    typedef bool (*variant_policy_func)(variant_policy_operation, const variant_data&, argument_wrapper);
+    using variant_policy_func = bool (*)(variant_policy_operation, const variant_data&, argument_wrapper);
 }
 
 /*!

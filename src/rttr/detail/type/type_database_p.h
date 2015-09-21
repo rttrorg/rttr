@@ -159,7 +159,7 @@ class RTTR_LOCAL type_database
         std::vector<meta_data>* get_meta_data_list(const type& t) const;
         variant get_meta_data(const variant& key, const std::vector<meta_data>& data) const;
 
-        typedef std::size_t hash_type;
+        using hash_type = std::size_t;
         RTTR_INLINE static hash_type generate_hash(const std::string& text) { return generate_hash(text.c_str()); }
         RTTR_INLINE static hash_type generate_hash(const char* text)
         {
@@ -172,8 +172,8 @@ class RTTR_LOCAL type_database
             return hash;
         }
 
-        typedef void*(*rttr_cast_func)(void*);
-        typedef derived_info(*get_derived_info_func)(void*);
+        using rttr_cast_func        = void*(*)(void*);
+        using get_derived_info_func = derived_info(*)(void*);
 
     public:
 

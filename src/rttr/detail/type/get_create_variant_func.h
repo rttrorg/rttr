@@ -40,7 +40,7 @@ namespace rttr
 namespace detail
 {
 
-typedef variant(*variant_create_func)(const argument&);
+using variant_create_func = variant(*)(const argument&);
 
 /*!
  * \brief The following code is used for the function bool variant::convert(const type& target_type).

@@ -71,13 +71,13 @@ namespace detail
     template <class T, T N>
     struct make_integer_sequence_impl
     {
-        typedef typename sequence_generator<T, N, N>::type type;
+        using type = typename sequence_generator<T, N, N>::type;
     };
 
     template <class T, T N>
     struct make_index_sequence_impl
     {
-        typedef typename make_integer_sequence_impl<T, N>::type type;
+        using type = typename make_integer_sequence_impl<T, N>::type;
     };
 
     template <class T, T N>
@@ -274,17 +274,17 @@ bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs
 
 template<class T> struct _Unique_if 
 {
-    typedef std::unique_ptr<T> _Single_object;
+    using _Single_object = std::unique_ptr<T>;
 };
 
 template<class T> struct _Unique_if<T[]> 
 {
-    typedef std::unique_ptr<T[]> _Unknown_bound;
+    using _Unknown_bound = std::unique_ptr<T[]>;
 };
 
 template<class T, size_t N> struct _Unique_if<T[N]> 
 {
-    typedef void _Known_bound;
+    using _Known_bound = void;
 };
 
 template<class T, class... Args>
@@ -298,7 +298,7 @@ template<class T>
 typename _Unique_if<T>::_Unknown_bound
 make_unique(size_t n) 
 {
-    typedef typename std::remove_extent<T>::type U;
+    using U = typename std::remove_extent<T>::type;
     return std::unique_ptr<T>(new U[n]());
 }
 
@@ -411,12 +411,14 @@ const reverse_wrapper<const T> reverse(const T& container)
 /////////////////////////////////////////////////////////////////////////////////////////
         
 template<typename T>
-using return_type_normal = typename std::add_pointer<typename remove_pointers<T>::type>::type;
+using return_type_normal = add_pointer_t< remove_pointers_t<T> >;
 
 template<typename T>
-using raw_addressof_return_type = std::conditional<is_function_ptr<typename remove_pointers_except_one<T>::type>::value,
-                                                   typename std::add_pointer<typename remove_pointers_except_one<T>::type>::type,
-                                                   return_type_normal<T> >;
+using raw_addressof_return_type = std::conditional< is_function_ptr< remove_pointers_except_one_t<T> >::value,
+                                                    add_pointer_t< remove_pointers_except_one_t<T> >,
+                                                    return_type_normal<T> >;
+
+
 template<typename T>
 using raw_addressof_return_type_t = typename raw_addressof_return_type<T>::type;
 
@@ -430,24 +432,24 @@ struct raw_addressof_impl
 };
 
 template<typename T>
-using is_raw_void_pointer = std::is_same<void*, typename std::add_pointer<typename raw_type<T>::type>::type>;
+using is_raw_void_pointer = std::is_same<void*, add_pointer_t< raw_type_t<T> > >;
 
 template<typename T>
 using is_void_pointer = std::integral_constant<bool, std::is_pointer<T>::value && is_raw_void_pointer<T>::value && pointer_count<T>::value == 1>;
 
 template<typename T>
-struct raw_addressof_impl<T, typename std::enable_if<(std::is_pointer<T>::value && pointer_count<T>::value >= 1 && !is_void_pointer<T>::value) ||
-                                                      (pointer_count<T>::value == 1 && std::is_member_pointer<typename remove_pointer<T>::type>::value)
-                                                     >::type >
+struct raw_addressof_impl<T, enable_if_t<(std::is_pointer<T>::value && pointer_count<T>::value >= 1 && !is_void_pointer<T>::value) ||
+                                         (pointer_count<T>::value == 1 && std::is_member_pointer<remove_pointer_t<T> >::value)
+                                         > >
 {
     static RTTR_INLINE raw_addressof_return_type_t<T> get(T& data)
     {
-        return raw_addressof_impl<typename remove_pointer<T>::type>::get(*data);
+        return raw_addressof_impl< remove_pointer_t<T> >::get(*data);
     }
 };
 
 template<typename T>
-struct raw_addressof_impl<T, typename std::enable_if<is_void_pointer<T>::value>::type >
+struct raw_addressof_impl<T, enable_if_t<is_void_pointer<T>::value> >
 {
     static RTTR_INLINE raw_addressof_return_type_t<T> get(T& data)
     {

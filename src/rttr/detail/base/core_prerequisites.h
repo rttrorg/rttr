@@ -162,17 +162,17 @@ namespace rttr
 // Integer formats of fixed bit width
 /////////////////////////////////////////////////////////////////////////////////////////
 
-typedef signed char         int8;
-typedef short               int16;
-typedef int                 int32;
-typedef long long           int64;
+using int8  = signed char;
+using int16 = short;
+using int32 = int;
+using int64 = long long;
 
-typedef unsigned char       uint8;
-typedef unsigned short      uint16;
-typedef unsigned int        uint32;
-typedef unsigned long long  uint64;
+using uint8  = unsigned char;
+using uint16 = unsigned short;
+using uint32 = unsigned int;
+using uint64 = unsigned long long;
 
-typedef long double         longdouble;
+using longdouble = long double;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Disable some MSVC compile warnings

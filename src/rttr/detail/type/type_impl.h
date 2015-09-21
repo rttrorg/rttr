@@ -242,7 +242,7 @@ struct type_getter
     {
         // when you get an error here, then the type was not completely defined 
         // (a forward declaration is not enough because base_classes will not be found)
-        typedef char type_must_be_complete[ sizeof(T) ? 1: -1 ];
+        using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
         static const type val = type_register::type_reg(f<T>(),
                                                         raw_type_info<T>::get_type(),

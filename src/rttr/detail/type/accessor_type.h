@@ -42,38 +42,38 @@ namespace detail
 
     struct member_func_ptr
     {
-        typedef member_func_ptr type;
+        using type = member_func_ptr;
     };
 
     struct function_ptr
     {
-        typedef function_ptr type;
+        using type = function_ptr;
     };
 
     struct member_object_ptr
     {
-        typedef member_object_ptr type;
+        using type = member_object_ptr;
     };
 
     struct object_ptr
     {
-        typedef object_ptr type;
+        using type = object_ptr;
     };
 
     template<typename T>
-    struct property_type : std::conditional<std::is_member_function_pointer<T>::value,
-                                            member_func_ptr,
-                                            typename std::conditional<std::is_member_object_pointer<T>::value,
-                                                                     member_object_ptr,
-                                                                     typename std::conditional<is_function_ptr<T>::value || is_std_function<T>::value,
-                                                                                               function_ptr, 
-                                                                                               typename std::conditional<std::is_pointer<T>::value,
-                                                                                                                         object_ptr,
-                                                                                                                         void
-                                                                                                                        >::type                        
-                                                                                                >::type
-                                                                    >::type
-                                            >::type
+    struct property_type : conditional_t< std::is_member_function_pointer<T>::value,
+                                          member_func_ptr,
+                                          conditional_t< std::is_member_object_pointer<T>::value,
+                                                         member_object_ptr,
+                                                         conditional_t< is_function_ptr<T>::value || is_std_function<T>::value,
+                                                                        function_ptr, 
+                                                                        conditional_t< std::is_pointer<T>::value,
+                                                                                       object_ptr,
+                                                                                       void
+                                                                                     >
+                                                                      >
+                                                       >
+                                        >
     {
     };
 
@@ -83,38 +83,38 @@ namespace detail
     
     struct void_member_func
     {
-        typedef void_member_func type;
+        using type = void_member_func;
     };
 
     struct return_member_func
     {
-        typedef return_member_func type;
+        using type = return_member_func;
     };
 
     struct void_func
     {
-        typedef void_func type;
+        using type = void_func;
     };
 
     struct return_func
     {
-        typedef return_func type;
+        using type = return_func;
     };
  
     template<typename T>
-    struct method_type : std::conditional<std::is_member_function_pointer<T>::value,
-                                          typename std::conditional<is_void_func<T>::value,
-                                                                    void_member_func,
-                                                                    return_member_func
-                                                                   >::type,
-                                          typename std::conditional<is_function_ptr<T>::value || is_std_function<T>::value,
-                                                                    typename std::conditional<is_void_func<T>::value,
-                                                                                              void_func,
-                                                                                              return_func
-                                                                                              >::type,
-                                                                    void
-                                                                   >::type
-                                         >::type
+    struct method_type : conditional_t<std::is_member_function_pointer<T>::value,
+                                       conditional_t< is_void_func<T>::value,
+                                                      void_member_func,
+                                                      return_member_func
+                                                     >,
+                                       conditional_t< is_function_ptr<T>::value || is_std_function<T>::value,
+                                                      conditional_t< is_void_func<T>::value,
+                                                                     void_func,
+                                                                     return_func
+                                                                   >,
+                                                      void
+                                                                   >
+                                         >
     {
     };
 
