@@ -39,12 +39,17 @@ class type;
 class argument;
 
 /*!
- * This class is used for forwarding the instance of an object to the function calls.
+ * The \ref instance class is used for forwarding the instance of an object to invoke a \ref property or \ref method.
  *
- * \remark You should never explicit instantiate this class by yourself.
+ * \remark This class should never be explicitly instantiated.
  */
 class RTTR_API instance
 {
+    template<typename T>
+    using decay_instance_t = detail::enable_if_t<!std::is_same<instance, T>::value && 
+                                                 !std::is_same<variant, T>::value &&
+                                                 !std::is_same<variant_array_view, T>::value, T>;
+
 public:
     RTTR_INLINE instance();
 
@@ -54,14 +59,14 @@ public:
 
     RTTR_INLINE instance(instance&& other);
 
-    template<typename T> // TO DO DISALLOW VARIANT ACCESS!!
-    RTTR_INLINE instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
+    template<typename T, typename Tp = decay_instance_t<T>>
+    RTTR_INLINE instance(const T& data);
 
-    template<typename T>
-    RTTR_INLINE instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
+    template<typename T, typename Tp = decay_instance_t<T>>
+    RTTR_INLINE instance(T& data);
 
-    template<typename TargetType>
-    RTTR_INLINE TargetType* try_convert() const;
+    template<typename Target_Type>
+    RTTR_INLINE Target_Type* try_convert() const;
 
     RTTR_INLINE bool is_valid() const;
     explicit operator bool() const;

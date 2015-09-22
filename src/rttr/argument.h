@@ -30,6 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/std_type_traits.h"
 
 #include <type_traits>
 #include <utility>
@@ -43,36 +44,45 @@ class instance;
 
 
 /*!
- * This class is used for forwarding the arguments to the function calls.
+ * The \ref argument class is used for forwarding arguments to \ref property "properties" or \ref method "methods".
  *
- * \remark You should never explicit instantiate this class by yourself.
+ * \remark This class should never be explicitly instantiated.
  */
 class RTTR_API argument
 {
-public:
-    RTTR_INLINE argument();
+    template<typename T>
+    using decay_arg_t = detail::enable_if_t<!std::is_same<argument, T>::value && 
+                                            !std::is_same<variant_array_view, T>::value, T>;
 
+    template<typename T>
+    using arg_value_t = detail::enable_if_t<!std::is_rvalue_reference<T>::value, T>;
+
+    template<typename T>
+    using arg_rvalue_t = detail::enable_if_t<std::is_rvalue_reference<T>::value, detail::remove_reference_t<T> >;
+
+public:
+
+    RTTR_INLINE argument();
     RTTR_INLINE argument(argument&& arg);
     RTTR_INLINE argument(const argument& other);
     RTTR_INLINE argument(variant& var);
     RTTR_INLINE argument(const variant& var);
 
-    template<typename T>
-    RTTR_INLINE argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type* = nullptr);
-    template<typename T>
-    RTTR_INLINE argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type* = nullptr);
+    template<typename T, typename Tp = decay_arg_t<T>>
+    RTTR_INLINE argument(const T& data);
+    template<typename T, typename Tp = decay_arg_t<T>>
+    RTTR_INLINE argument(T& data);
 
     RTTR_INLINE argument& operator=(const argument& other);
 
     template<typename T>
     bool is_type() const;
     RTTR_INLINE type get_type() const;
-    RTTR_INLINE void* get_ptr() const;
 
     template<typename T>
-    RTTR_INLINE typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& get_value() const;
+    RTTR_INLINE arg_value_t<T>& get_value() const;
     template<typename T>
-    RTTR_INLINE typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& get_value() const;
+    RTTR_INLINE arg_rvalue_t<T> && get_value() const;
 
 private:
     const void*         m_data;

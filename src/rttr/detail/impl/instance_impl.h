@@ -67,8 +67,8 @@ RTTR_INLINE instance::instance(instance&& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
+template<typename T, typename Tp>
+RTTR_INLINE instance::instance(const T& data)
 :   m_data_container(detail::data_address_container{
                      rttr::type::get< detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
@@ -78,8 +78,8 @@ RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_s
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
+template<typename T, typename Tp>
+RTTR_INLINE instance::instance(T& data)
 :   m_data_container(detail::data_address_container{
                      rttr::type::get<detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
@@ -89,13 +89,13 @@ RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<in
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename TargetType>
-RTTR_INLINE TargetType* instance::try_convert() const
+template<typename Target_Type>
+RTTR_INLINE Target_Type* instance::try_convert() const
 {
-    TargetType* target = static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type, type::get<TargetType>()));
+    Target_Type* target = static_cast<Target_Type*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type, type::get<Target_Type>()));
     
     if (!target)
-        return (static_cast<TargetType*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address_wrapped_type, m_data_container.m_wrapped_type, type::get<TargetType>())));
+        return (static_cast<Target_Type*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address_wrapped_type, m_data_container.m_wrapped_type, type::get<Target_Type>())));
     
     return target;
 }

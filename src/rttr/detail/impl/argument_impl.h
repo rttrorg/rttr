@@ -56,8 +56,8 @@ RTTR_INLINE argument::argument(const variant& var) : m_data(var.get_ptr()), m_ty
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-argument::argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type*) 
+template<typename T, typename Tp>
+argument::argument(const T& data) 
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {
@@ -66,8 +66,8 @@ argument::argument(const T& data, typename std::enable_if<!std::is_same<argument
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-argument::argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type*) 
+template<typename T, typename Tp>
+argument::argument(T& data) 
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {
@@ -85,12 +85,8 @@ RTTR_INLINE type argument::get_type() const { return m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE void* argument::get_ptr() const { return const_cast<void *>(m_data); }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T>
-typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& argument::get_value() const
+argument::arg_value_t<T>& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
     return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
@@ -99,7 +95,7 @@ typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& argument:
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& argument::get_value() const
+argument::arg_rvalue_t<T>&& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
     return std::move(*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
