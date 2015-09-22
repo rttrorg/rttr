@@ -27,8 +27,8 @@
 
 #include "rttr/variant_array_view.h"
 
-#include "rttr/detail/argument/argument.h"
-#include "rttr/detail/instance/instance.h"
+#include "rttr/argument.h"
+#include "rttr/instance.h"
 
 using namespace std;
 
@@ -135,35 +135,35 @@ bool variant_array_view::set_size_variadic(std::size_t new_size, const std::vect
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::set_value(detail::argument arg)
+bool variant_array_view::set_value(argument arg)
 {
     return m_array_wrapper->set_value(arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::set_value(std::size_t index_1, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, argument arg)
 {
     return m_array_wrapper->set_value(index_1, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, argument arg)
 {
     return m_array_wrapper->set_value(index_1, index_2, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
+bool variant_array_view::set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument arg)
 {
     return m_array_wrapper->set_value(index_1, index_2, index_3, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
+bool variant_array_view::set_value_variadic(const std::vector<std::size_t>& index_list, argument arg)
 {
     return m_array_wrapper->set_value_variadic(index_list, arg);
 }
@@ -198,28 +198,28 @@ variant variant_array_view::get_value_variadic(const std::vector<std::size_t>& i
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::insert_value(std::size_t index_1, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, argument arg)
 {
     return m_array_wrapper->insert_value(index_1, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, argument arg)
 {
     return m_array_wrapper->insert_value(index_1, index_2, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg)
+bool variant_array_view::insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument arg)
 {
     return m_array_wrapper->insert_value(index_1, index_2, index_3, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg)
+bool variant_array_view::insert_value_variadic(const std::vector<std::size_t>& index_list, argument arg)
 {
     return m_array_wrapper->insert_value_variadic(index_list, arg);
 }

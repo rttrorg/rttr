@@ -37,12 +37,12 @@ namespace rttr
 class variant;
 class type;
 class enumeration;
+class instance;
+class argument;
 
 namespace detail
 {
-class property_wrapper_base;
-class instance;
-class argument;
+    class property_wrapper_base;
 }
   
 /*!
@@ -212,7 +212,7 @@ class RTTR_API property
          *
          * \return The return value indicates whether the operation was successful or not.
          */
-        bool set_value(detail::instance object, detail::argument arg) const;
+        bool set_value(instance object, argument arg) const;
         
         /*!
          * \brief Returns the current property value of the given instance \p object.
@@ -223,7 +223,7 @@ class RTTR_API property
          *
          * \return The property value of the given instance \p object.
          */
-        variant get_value(detail::instance object) const;
+        variant get_value(instance object) const;
 
         /*!
          * \brief Returns the meta data for the given key \p key.

@@ -27,7 +27,7 @@
 
 #include "rttr/constructor.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 
 #include <utility>
 
@@ -122,7 +122,7 @@ variant constructor::invoke() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1) const
+variant constructor::invoke(argument arg1) const
 {
     if (is_valid())
         return m_container->invoke(arg1);
@@ -132,7 +132,7 @@ variant constructor::invoke(detail::argument arg1) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1, detail::argument arg2) const
+variant constructor::invoke(argument arg1, argument arg2) const
 {
     if (is_valid())
         return m_container->invoke(arg1, arg2);
@@ -142,7 +142,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3) const
+variant constructor::invoke(argument arg1, argument arg2, argument arg3) const
 {
     if (is_valid())
         return m_container->invoke(arg1, arg2, arg3);
@@ -152,7 +152,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const
+variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4) const
 {
     if (is_valid())
         return m_container->invoke(arg1, arg2, arg3, arg4);
@@ -162,8 +162,8 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4,
-                            detail::argument arg5) const
+variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4,
+                            argument arg5) const
 {
     if (is_valid())
         return m_container->invoke(arg1, arg2, arg3, arg4, arg5);
@@ -173,8 +173,8 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4,
-                            detail::argument arg5, detail::argument arg6) const
+variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4,
+                            argument arg5, argument arg6) const
 {
     if (is_valid())
         return m_container->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
@@ -184,7 +184,7 @@ variant constructor::invoke(detail::argument arg1, detail::argument arg2, detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor::invoke_variadic(std::vector<detail::argument> args) const
+variant constructor::invoke_variadic(std::vector<argument> args) const
 {
     if (is_valid())
         return m_container->invoke_variadic(args);

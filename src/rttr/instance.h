@@ -36,10 +36,8 @@ namespace rttr
 {
 class variant;
 class type;
-
-namespace detail
-{
 class argument;
+
 /*!
  * This class is used for forwarding the instance of an object to the function calls.
  *
@@ -48,42 +46,33 @@ class argument;
 class RTTR_API instance
 {
 public:
-    instance();
+    RTTR_INLINE instance();
 
-    instance(variant& var);
+    RTTR_INLINE instance(variant& var);
 
-    instance(const instance& other);
+    RTTR_INLINE instance(const instance& other);
 
-    instance(instance&& other);
+    RTTR_INLINE instance(instance&& other);
 
     template<typename T> // TO DO DISALLOW VARIANT ACCESS!!
-    instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
+    RTTR_INLINE instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
 
     template<typename T>
-    instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
+    RTTR_INLINE instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type* = 0);
 
     template<typename TargetType>
-    TargetType* try_convert() const;
+    RTTR_INLINE TargetType* try_convert() const;
 
-    bool is_valid() const;
+    RTTR_INLINE bool is_valid() const;
     explicit operator bool() const;
 
-    type get_type() const;
+    RTTR_INLINE type get_type() const;
 
 private:
     instance& operator=(const instance& other);
 
-private:
-    data_address_container m_data_container;
+    detail::data_address_container m_data_container;
 };
-
-} // end namespace detail
-} // end namespace rttr
-
-#include "rttr/detail/instance/instance_impl.h"
-
-namespace rttr
-{
 
 /*!
  * \brief Returns a dummy instance object.
@@ -91,7 +80,10 @@ namespace rttr
  *
  * \return An instance object.
  */
-RTTR_INLINE static detail::instance empty_instance() { return detail::instance(); }
+RTTR_INLINE static instance empty_instance() { return instance(); }
+
 } // end namespace rttr
+
+#include "rttr/detail/impl/instance_impl.h"
 
 #endif // RTTR_INSTANCE_H_

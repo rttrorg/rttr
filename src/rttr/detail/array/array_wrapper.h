@@ -41,10 +41,10 @@
 
 namespace rttr
 {
+class argument;
 
 namespace detail
 {
-class argument;
 
 template<typename T, typename Array_Address = wrapper_address_return_type_t<T>>
 class array_wrapper;
@@ -117,21 +117,21 @@ class array_wrapper : public array_wrapper_base
             return array_accessor<Array_Type>::set_value(*m_address_data, arg);
         }
 
-        bool set_value(std::size_t index_1, detail::argument& arg)
+        bool set_value(std::size_t index_1, argument& arg)
         {
             return array_accessor<Array_Type>::set_value(*m_address_data, arg, index_1);
         }
-        bool set_value(std::size_t index_1, std::size_t index_2, detail::argument& arg)
+        bool set_value(std::size_t index_1, std::size_t index_2, argument& arg)
         {
             return array_accessor<Array_Type>::set_value(*m_address_data, arg, index_1, index_2);
         }
 
-        bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument& arg)
+        bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument& arg)
         {
             return array_accessor<Array_Type>::set_value(*m_address_data, arg, index_1, index_2, index_3);
         }
 
-        bool set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument& arg)
+        bool set_value_variadic(const std::vector<std::size_t>& index_list, argument& arg)
         {
             return array_accessor<Array_Type>::set_value(*m_address_data, arg, index_list);
         }
@@ -160,22 +160,22 @@ class array_wrapper : public array_wrapper_base
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        bool insert_value(std::size_t index_1, detail::argument& arg)
+        bool insert_value(std::size_t index_1, argument& arg)
         {
             return array_accessor<Array_Type>::insert_value(*m_address_data, arg, index_1);
         }
 
-        bool insert_value(std::size_t index_1, std::size_t index_2, detail::argument& arg)
+        bool insert_value(std::size_t index_1, std::size_t index_2, argument& arg)
         {
             return array_accessor<Array_Type>::insert_value(*m_address_data, arg, index_1, index_2);
         }
         
-        bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument& arg)
+        bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument& arg)
         {
             return array_accessor<Array_Type>::insert_value(*m_address_data, arg, index_1, index_2, index_3);
         }
 
-        bool insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument& arg)
+        bool insert_value_variadic(const std::vector<std::size_t>& index_list, argument& arg)
         {
             return array_accessor<Array_Type>::insert_value(*m_address_data, arg, index_list);
         }

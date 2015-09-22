@@ -37,12 +37,11 @@ namespace rttr
 {
 class type;
 class variant;
+class instance;
+class argument;
 
 namespace detail
 {
-
-class instance;
-class argument;
 
 class RTTR_API array_wrapper_base
 {
@@ -67,20 +66,20 @@ class RTTR_API array_wrapper_base
         virtual bool set_size_variadic(std::size_t new_size, const std::vector<std::size_t>& index_list) { return false; }
         
         virtual bool set_value(argument& arg) { return false; }
-        virtual bool set_value(std::size_t index_1, detail::argument& arg) { return false; }
-        virtual bool set_value(std::size_t index_1, std::size_t index_2, detail::argument& arg) { return false; }
-        virtual bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument& arg) { return false; }
-        virtual bool set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument& arg) { return false; }
+        virtual bool set_value(std::size_t index_1, argument& arg) { return false; }
+        virtual bool set_value(std::size_t index_1, std::size_t index_2, argument& arg) { return false; }
+        virtual bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument& arg) { return false; }
+        virtual bool set_value_variadic(const std::vector<std::size_t>& index_list, argument& arg) { return false; }
 
         virtual variant get_value(std::size_t index_1) const { return variant(); }
         virtual variant get_value(std::size_t index_1, std::size_t index_2) const { return variant(); }
         virtual variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const { return variant(); }
         virtual variant get_value_variadic(const std::vector<std::size_t>& index_list) const { return variant(); }
 
-        virtual bool insert_value(std::size_t index_1, detail::argument& arg) { return false; }
-        virtual bool insert_value(std::size_t index_1, std::size_t index_2, detail::argument& arg) { return false; }
-        virtual bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument& arg) { return false; }
-        virtual bool insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument& arg) { return false; }
+        virtual bool insert_value(std::size_t index_1, argument& arg) { return false; }
+        virtual bool insert_value(std::size_t index_1, std::size_t index_2, argument& arg) { return false; }
+        virtual bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument& arg) { return false; }
+        virtual bool insert_value_variadic(const std::vector<std::size_t>& index_list, argument& arg) { return false; }
 
         virtual bool remove_value(std::size_t index_1) { return false; }
         virtual bool remove_value(std::size_t index_1, std::size_t index_2) { return false; }

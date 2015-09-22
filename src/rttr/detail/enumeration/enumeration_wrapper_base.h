@@ -39,10 +39,10 @@
 
 namespace rttr
 {
+class argument;
 
 namespace detail
 {
-class argument;
 
 /*!
  * Abstract class for a method.
@@ -64,7 +64,7 @@ class RTTR_API enumeration_wrapper_base : public meta_data_handler
 
         virtual std::vector<variant> get_values() const = 0;
 
-        virtual std::string value_to_name(detail::argument& value) const = 0;
+        virtual std::string value_to_name(argument& value) const = 0;
 
         virtual variant name_to_value(const std::string& name) const = 0;
 

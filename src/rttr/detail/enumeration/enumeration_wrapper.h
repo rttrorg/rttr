@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 #include "rttr/detail/enumeration/enum_data.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 #include "rttr/variant.h"
 
 #include <utility>
@@ -73,7 +73,7 @@ class enumeration_wrapper : public enumeration_wrapper_base
             return result;
         }
 
-        std::string value_to_name(detail::argument& value) const
+        std::string value_to_name(argument& value) const
         {
             if (!value.is_type<Enum_Type>() &&
                 !value.is_type<typename std::underlying_type<Enum_Type>::type>())

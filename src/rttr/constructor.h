@@ -38,11 +38,11 @@ namespace rttr
 
 class variant;
 class type;
+class argument;
 
 namespace detail
 {
 class constructor_wrapper_base;
-class argument;
 }
 
 /*!
@@ -164,7 +164,7 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1) const;
+        variant invoke(argument arg1) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -175,7 +175,7 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1, detail::argument arg2) const;
+        variant invoke(argument arg1, argument arg2) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -186,7 +186,7 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3) const;
+        variant invoke(argument arg1, argument arg2, argument arg3) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -197,7 +197,7 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const;
+        variant invoke(argument arg1, argument arg2, argument arg3, argument arg4) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -208,8 +208,8 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4,
-                       detail::argument arg5) const;
+        variant invoke(argument arg1, argument arg2, argument arg3, argument arg4,
+                       argument arg5) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -220,8 +220,8 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke(detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4,
-                       detail::argument arg5, detail::argument arg6) const;
+        variant invoke(argument arg1, argument arg2, argument arg3, argument arg4,
+                       argument arg5, argument arg6) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
@@ -234,7 +234,7 @@ class RTTR_API constructor
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
-        variant invoke_variadic(std::vector<detail::argument> args) const;
+        variant invoke_variadic(std::vector<argument> args) const;
 
         /*!
          * \brief Returns true if this constructor is the same like the \p other.

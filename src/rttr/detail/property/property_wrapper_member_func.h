@@ -52,7 +52,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, return_as_copy, set_valu
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             class_type* ptr = object.try_convert<class_type>();
             if (ptr && arg.is_type<arg_type>() )
@@ -63,7 +63,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, return_as_copy, set_valu
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
                 return variant((ptr->*m_getter)());
@@ -97,12 +97,12 @@ class property_wrapper<member_func_ptr, Getter, void, return_as_copy, read_only>
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
                 return variant((ptr->*m_getter)());
@@ -142,7 +142,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, return_as_ptr, set_as_pt
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             using arg_type = typename std::remove_reference<arg_type>::type;
             class_type* ptr = object.try_convert<class_type>();
@@ -154,7 +154,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, return_as_ptr, set_as_pt
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
                 return variant(&(ptr->*m_getter)());
@@ -190,12 +190,12 @@ class property_wrapper<member_func_ptr, Getter, void, return_as_ptr, read_only> 
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
                 return variant(&(ptr->*m_getter)());

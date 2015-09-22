@@ -27,8 +27,8 @@
 
 #include "rttr/method.h"
 #include "rttr/detail/method/method_wrapper_base.h"
-#include "rttr/detail/argument/argument.h"
-#include "rttr/detail/instance/instance.h"
+#include "rttr/argument.h"
+#include "rttr/instance.h"
 
 using namespace std;
 
@@ -129,7 +129,7 @@ variant method::get_meta_data(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object) const
+variant method::invoke(instance object) const
 {
     if (is_valid())
         return m_container->invoke(object);
@@ -139,7 +139,7 @@ variant method::invoke(detail::instance object) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1) const
+variant method::invoke(instance object, argument arg1) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1);
@@ -149,7 +149,7 @@ variant method::invoke(detail::instance object, detail::argument arg1) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2) const
+variant method::invoke(instance object, argument arg1, argument arg2) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1, arg2);
@@ -159,7 +159,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3) const
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1, arg2, arg3);
@@ -169,7 +169,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1, arg2, arg3, arg4);
@@ -179,8 +179,8 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
-                       detail::argument arg5) const
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+                       argument arg5) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1, arg2, arg3, arg4, arg5);
@@ -190,8 +190,8 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
-                       detail::argument arg5, detail::argument arg6) const
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+                       argument arg5, argument arg6) const
 {
     if (is_valid())
         return m_container->invoke(object, arg1, arg2, arg3, arg4, arg5, arg6);
@@ -201,7 +201,7 @@ variant method::invoke(detail::instance object, detail::argument arg1, detail::a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke_variadic(detail::instance object, std::vector<detail::argument> args) const
+variant method::invoke_variadic(instance object, std::vector<argument> args) const
 {
     if (is_valid())
         return m_container->invoke_variadic(object, args);

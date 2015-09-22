@@ -31,8 +31,8 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/detail/misc/function_traits.h"
-#include "rttr/detail/argument/argument.h"
-#include "rttr/detail/instance/instance.h"
+#include "rttr/argument.h"
+#include "rttr/instance.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/method/method_accessor.h"
 #include "rttr/variant.h"
@@ -60,37 +60,37 @@ class method_wrapper : public method_wrapper_base
         std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
         std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
 
-        variant invoke(detail::instance& object) const
+        variant invoke(instance& object) const
         {
            return method_accessor<F, Policy>::invoke(m_func_acc, object);
         }
 
-        variant invoke(detail::instance& object, detail::argument& arg1) const
+        variant invoke(instance& object, argument& arg1) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1);
         }
-        variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const
+        variant invoke(instance& object, argument& arg1, argument& arg2) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2);
         }
-        variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3);
         }
-        variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4);
         }
-        variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5) const
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4, arg5);
         }
-        variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
-        variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const
+        variant invoke_variadic(instance& object, std::vector<argument>& args) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, args);
         }

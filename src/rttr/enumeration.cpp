@@ -27,7 +27,7 @@
 
 #include "rttr/enumeration.h"
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 
 #include <utility>
 
@@ -120,7 +120,7 @@ vector<variant> enumeration::get_values() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string enumeration::value_to_name(detail::argument value) const
+string enumeration::value_to_name(argument value) const
 {
     if (is_valid())
         return m_container->value_to_name(value);

@@ -35,10 +35,14 @@
 
 namespace rttr
 {
-namespace detail
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE instance::instance() 
+:   m_data_container(detail::data_address_container{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr})
 {
 
-RTTR_INLINE instance::instance() : m_data_container(data_address_container{get_invalid_type(), get_invalid_type(), nullptr, nullptr}) {}
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,8 +69,8 @@ RTTR_INLINE instance::instance(instance&& other)
 
 template<typename T>
 RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   m_data_container(data_address_container{
-                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
+:   m_data_container(detail::data_address_container{
+                     rttr::type::get< detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
@@ -76,8 +80,8 @@ RTTR_INLINE instance::instance(const T& data, typename std::enable_if<!std::is_s
 
 template<typename T>
 RTTR_INLINE instance::instance(T& data, typename std::enable_if<!std::is_same<instance, T>::value >::type*) 
-:   m_data_container(data_address_container{
-                     rttr::type::get<typename raw_type<T>::type>(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
+:   m_data_container(detail::data_address_container{
+                     rttr::type::get<detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
@@ -110,7 +114,6 @@ RTTR_INLINE type instance::get_type() const { return m_data_container.m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-} // end namespace detail
 } // end namespace rttr
 
 #endif // RTTR_INSTANCE_IMPL_H_

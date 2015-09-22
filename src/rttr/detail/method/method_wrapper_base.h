@@ -40,11 +40,11 @@
 namespace rttr
 {
 class type;
+class argument;
+class instance;
 
 namespace detail
 {
-class argument;
-class instance;
 
 /*!
  * Abstract class for a method.
@@ -70,18 +70,18 @@ class RTTR_API method_wrapper_base : public meta_data_handler
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
 
-        virtual variant invoke(detail::instance& object) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4, detail::argument& arg5) const = 0;
-        virtual variant invoke(detail::instance& object, detail::argument& arg1, detail::argument& arg2, detail::argument& arg3,
-                               detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const = 0;
+        virtual variant invoke(instance& object) const = 0;
+        virtual variant invoke(instance& object, argument& arg1) const = 0;
+        virtual variant invoke(instance& object, argument& arg1, argument& arg2) const = 0;
+        virtual variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3) const = 0;
+        virtual variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3,
+                               argument& arg4) const = 0;
+        virtual variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3,
+                               argument& arg4, argument& arg5) const = 0;
+        virtual variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3,
+                               argument& arg4, argument& arg5, argument& arg6) const = 0;
 
-        virtual variant invoke_variadic(detail::instance& object, std::vector<detail::argument>& args) const = 0;
+        virtual variant invoke_variadic(instance& object, std::vector<argument>& args) const = 0;
 };
 
 } // end namespace detail

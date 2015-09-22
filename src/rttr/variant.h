@@ -44,11 +44,11 @@ namespace rttr
 class variant_array_view;
 class type;
 class variant;
+class argument;
+class instance;
 
 namespace detail
 {
-    class argument;
-    class instance;
     struct data_address_container;
     template<typename T>
     struct empty_type_converter;
@@ -813,8 +813,8 @@ class RTTR_API variant
         bool compare_less(const variant& other) const;
 
     private:
-        friend class detail::argument;
-        friend class detail::instance;
+        friend class argument;
+        friend class instance;
 
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;

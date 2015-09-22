@@ -38,12 +38,12 @@ namespace rttr
 
 class variant;
 class type;
+class instance;
+class argument;
 
 namespace detail
 {
-class method_wrapper_base;
-class instance;
-class argument;
+    class method_wrapper_base;
 }
 
 /*!
@@ -192,7 +192,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object) const;
+        variant invoke(instance object) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -201,7 +201,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1) const;
+        variant invoke(instance object, argument arg1) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -210,7 +210,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2) const;
+        variant invoke(instance object, argument arg1, argument arg2) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -219,7 +219,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3) const;
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -228,7 +228,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4) const;
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -237,8 +237,8 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
-                       detail::argument arg5) const;
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+                       argument arg5) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -247,8 +247,8 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(detail::instance object, detail::argument arg1, detail::argument arg2, detail::argument arg3, detail::argument arg4, 
-                       detail::argument arg5, detail::argument arg6) const;
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+                       argument arg5, argument arg6) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
@@ -259,7 +259,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke_variadic(detail::instance object, std::vector<detail::argument> args) const;
+        variant invoke_variadic(instance object, std::vector<argument> args) const;
 
         /*!
          * \brief Returns true if this method is the same like the \p other.

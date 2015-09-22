@@ -44,7 +44,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_val
         type get_type()     const   { return type::get<A>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A>())
@@ -53,7 +53,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_val
                 return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
                 return variant((ptr->*m_acc));
@@ -82,12 +82,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_on
         type get_type()     const   { return type::get<A>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
                 return variant((ptr->*m_acc));
@@ -118,7 +118,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
         type get_type()     const   { return type::get<A*>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A*>())
@@ -131,7 +131,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
             }
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
                 return variant(&(ptr->*m_acc));
@@ -162,12 +162,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_onl
         type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             if (C* ptr = object.try_convert<C>())
                 return variant(const_cast<const A*>(&(ptr->*m_acc)));

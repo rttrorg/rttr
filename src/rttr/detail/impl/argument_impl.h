@@ -33,10 +33,10 @@
 
 namespace rttr
 {
-namespace detail
-{
 
-RTTR_INLINE argument::argument() : m_data(nullptr), m_type(get_invalid_type()) {}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE argument::argument() : m_data(nullptr), m_type(detail::get_invalid_type()) {}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,7 +116,6 @@ RTTR_INLINE argument& argument::operator=(const argument& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-} // end namespace detail
 } // end namespace rttr
 
 #endif // RTTR_ARGUMENT_IMPL_H_

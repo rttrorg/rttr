@@ -26,10 +26,12 @@
 ####################################################################################
 
 set(HEADER_FILES access_level.h
+                 argument.h
                  array_mapper.h
                  constructor.h
                  destructor.h
                  enumeration.h
+                 instance.h
                  method.h
                  policy.h
                  property.h
@@ -42,13 +44,11 @@ set(HEADER_FILES access_level.h
                  variant.h
                  variant_array_view.h
                  wrapper_mapper.h
-                 detail/argument/argument.h
-                 detail/argument/argument_impl.h
                  detail/misc/data_address_container.h
-                 detail/instance/instance.h
-                 detail/instance/instance_impl.h
                  detail/conversion/std_conversion_functions.h
                  detail/conversion/number_conversion.h
+                 detail/impl/argument_impl.h
+                 detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
                  detail/impl/wrapper_mapper_impl.h
                  detail/array/array_accessor.h

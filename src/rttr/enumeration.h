@@ -38,11 +38,11 @@ namespace rttr
 {
 class type;
 class variant;
+class argument;
 
 namespace detail
 {
-class enumeration_wrapper_base;
-class argument;
+    class enumeration_wrapper_base;
 }
 
 /*!
@@ -179,7 +179,7 @@ class RTTR_API enumeration
          *
          * \return A std::string object, containing the name for the given value.
          */
-        std::string value_to_name(detail::argument value) const;
+        std::string value_to_name(argument value) const;
         
         /*!
          * \brief Returns the value of the given enumeration name, or an empty variant if the name is not defined.

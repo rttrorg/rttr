@@ -38,10 +38,10 @@ namespace rttr
 {
 class type;
 class variant;
+class argument;
 
 namespace detail
 {
-class argument;
 
 /*!
  * Abstract class for a method.
@@ -65,16 +65,16 @@ class RTTR_API constructor_wrapper_base : public meta_data_handler
         virtual std::vector<bool> get_is_const() const;
         
         virtual variant invoke() const;
-        virtual variant invoke(detail::argument& arg1) const;
-        virtual variant invoke(detail::argument& arg1, detail::argument& arg2) const;
-        virtual variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const;
-        virtual variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const;
-        virtual variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                               detail::argument& arg5) const;
-        virtual variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                               detail::argument& arg5, detail::argument& arg6) const;
+        virtual variant invoke(argument& arg1) const;
+        virtual variant invoke(argument& arg1, argument& arg2) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                               argument& arg5) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                               argument& arg5, argument& arg6) const;
         
-        virtual variant invoke_variadic(std::vector<detail::argument>& args) const = 0;
+        virtual variant invoke_variadic(std::vector<argument>& args) const = 0;
 };
 
 } // end namespace detail

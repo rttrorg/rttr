@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/utility.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 #include "rttr/array_mapper.h"
 #include "rttr/variant.h"
 #include "rttr/type.h"

@@ -40,11 +40,11 @@ namespace rttr
 {
     class type;
     class variant_array_view;
+    class instance;
+    class argument;
 
 namespace detail
 {
-    class instance;
-    class argument;
     class array_wrapper_base;
 }
 
@@ -303,7 +303,7 @@ class RTTR_API variant_array_view
          *
          * \return True if the value could be set, otherwise false.
          */
-        bool set_value(detail::argument arg);
+        bool set_value(argument arg);
         
         /*!
          * \brief Set the content of the the argument \p arg into the in the first dimension 
@@ -311,7 +311,7 @@ class RTTR_API variant_array_view
          *
          * \return True if the value could be set, otherwise false.
          */
-        bool set_value(std::size_t index_1, detail::argument arg);
+        bool set_value(std::size_t index_1, argument arg);
 
         /*!
          * \brief Set the content of the the argument \p arg into the in the second dimension at \p index_2
@@ -319,7 +319,7 @@ class RTTR_API variant_array_view
          *
          * \return True if the value could be set, otherwise false.
          */
-        bool set_value(std::size_t index_1, std::size_t index_2, detail::argument arg);
+        bool set_value(std::size_t index_1, std::size_t index_2, argument arg);
 
         /*!
          * \brief Set the content of the the argument \p arg into the in the third dimension at \p index_3
@@ -327,7 +327,7 @@ class RTTR_API variant_array_view
          *
          * \return True if the value could be set, otherwise false.
          */
-        bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg);
+        bool set_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument arg);
 
         /*!
          * \brief Set the content of the the argument \p arg into the array in the n-th dimension given in the list \p index_list.
@@ -337,7 +337,7 @@ class RTTR_API variant_array_view
          *
          * \return True if the value could be set, otherwise false.
          */
-        bool set_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg);
+        bool set_value_variadic(const std::vector<std::size_t>& index_list, argument arg);
 
 
         /*!
@@ -377,7 +377,7 @@ class RTTR_API variant_array_view
          *
          * \return True if \p arg could be inserted, otherwise false.
          */
-        bool insert_value(std::size_t index_1, detail::argument arg);
+        bool insert_value(std::size_t index_1, argument arg);
 
         /*!
          * \brief Inserts the given argument \p arg into the array, in the second dimension at index \p index_2,
@@ -387,7 +387,7 @@ class RTTR_API variant_array_view
          *
          * \return True if \p arg could be inserted, otherwise false.
          */
-        bool insert_value(std::size_t index_1, std::size_t index_2, detail::argument arg);
+        bool insert_value(std::size_t index_1, std::size_t index_2, argument arg);
 
         /*!
          * \brief Inserts the given argument \p arg into the array, in the third dimension at index \p index_3,
@@ -397,7 +397,7 @@ class RTTR_API variant_array_view
          *
          * \return True if \p arg could be inserted, otherwise false.
          */
-        bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, detail::argument arg);
+        bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument arg);
 
         /*!
          * \brief Inserts the given argument \p arg into the array, relative to to indices given in the list \p index_list.
@@ -406,7 +406,7 @@ class RTTR_API variant_array_view
          *
          * \return True if \p arg could be inserted, otherwise false.
          */
-        bool insert_value_variadic(const std::vector<std::size_t>& index_list, detail::argument arg);
+        bool insert_value_variadic(const std::vector<std::size_t>& index_list, argument arg);
 
         /*!
          * \brief Removes the value at index \p index_1 in the first dimension of the array.
@@ -440,7 +440,7 @@ class RTTR_API variant_array_view
 
     private:
         friend class variant;
-        friend class detail::argument;
+        friend class argument;
 
         std::unique_ptr<detail::array_wrapper_base> m_array_wrapper;
 };

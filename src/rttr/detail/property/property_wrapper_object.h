@@ -45,7 +45,7 @@ class property_wrapper<object_ptr, C*, void, return_as_copy, set_value> : public
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             if (arg.is_type<C>())
             {
@@ -57,7 +57,7 @@ class property_wrapper<object_ptr, C*, void, return_as_copy, set_value> : public
             }
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             return (variant(*m_accessor));
         }
@@ -83,12 +83,12 @@ class property_wrapper<object_ptr, C*, void, return_as_copy, read_only> : public
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             return (variant(*m_accessor));
         }
@@ -115,7 +115,7 @@ class property_wrapper<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public
         type get_type()     const   { return type::get<C*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             if (arg.is_type<C*>())
             {
@@ -127,7 +127,7 @@ class property_wrapper<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public
             }
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             return (variant(m_accessor));
         }
@@ -153,12 +153,12 @@ class property_wrapper<object_ptr, C*, void, return_as_ptr, read_only> : public 
         type get_type()     const   { return type::get<typename std::add_const<C>::type*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
 
-        bool set_value(detail::instance& object, detail::argument& arg) const
+        bool set_value(instance& object, argument& arg) const
         {
             return false;
         }
 
-        variant get_value(detail::instance& object) const
+        variant get_value(instance& object) const
         {
             return (variant(const_cast<const C*>(m_accessor)));
         }

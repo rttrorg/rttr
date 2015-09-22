@@ -97,44 +97,44 @@ variant constructor_wrapper_base::invoke() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1) const
+variant constructor_wrapper_base::invoke(argument& arg1) const
 {
     return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2) const
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2) const
 {
     return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3) const
 {
     return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
 {
     return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                                           detail::argument& arg5) const
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                                           argument& arg5) const
 {
     return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant constructor_wrapper_base::invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4,
-                                           detail::argument& arg5, detail::argument& arg6) const
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                                           argument& arg5, argument& arg6) const
 {
     return variant();
 }

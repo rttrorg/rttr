@@ -256,7 +256,7 @@ nonius::benchmark bench_rttr_invoke_method_arg_8()
     {
         ns_foo::method_class obj;
         rttr::method m = rttr::type::get(obj).get_method("void_method_arg_8");
-        std::vector<rttr::detail::argument> args = {1, 2, 3, 4, 5, 6, 7, 8};
+        std::vector<rttr::argument> args = {1, 2, 3, 4, 5, 6, 7, 8};
         meter.measure([&]()
         {
             return m.invoke_variadic(obj, args);

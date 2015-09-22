@@ -29,7 +29,7 @@
 
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/variant_array_view.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 
 #include <algorithm>
 #include <limits>

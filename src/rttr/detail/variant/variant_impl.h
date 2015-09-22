@@ -165,7 +165,7 @@ RTTR_INLINE bool variant::can_convert() const
 template<typename T>
 RTTR_INLINE bool variant::try_basic_type_conversion(T& to) const
 {
-    return m_policy(detail::variant_policy_operation::CONVERT, m_data, detail::argument(to));
+    return m_policy(detail::variant_policy_operation::CONVERT, m_data, argument(to));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

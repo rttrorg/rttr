@@ -39,10 +39,8 @@ namespace rttr
 class type;
 class variant;
 class variant_array;
-
-namespace detail
-{
 class instance;
+
 
 /*!
  * This class is used for forwarding the arguments to the function calls.
@@ -52,38 +50,37 @@ class instance;
 class RTTR_API argument
 {
 public:
-    argument();
+    RTTR_INLINE argument();
 
-    argument(argument&& arg);
-    argument(const argument& other);
-    argument(variant& var);
-    argument(const variant& var);
+    RTTR_INLINE argument(argument&& arg);
+    RTTR_INLINE argument(const argument& other);
+    RTTR_INLINE argument(variant& var);
+    RTTR_INLINE argument(const variant& var);
 
     template<typename T>
-    argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type* = nullptr);
+    RTTR_INLINE argument(const T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value >::type* = nullptr);
     template<typename T>
-    argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type* = nullptr);
+    RTTR_INLINE argument(T& data, typename std::enable_if<!std::is_same<argument, T>::value && !std::is_same<variant_array_view, T>::value>::type* = nullptr);
 
-    argument& operator=(const argument& other);
+    RTTR_INLINE argument& operator=(const argument& other);
 
     template<typename T>
     bool is_type() const;
-    type get_type() const;
-    void* get_ptr() const;
+    RTTR_INLINE type get_type() const;
+    RTTR_INLINE void* get_ptr() const;
 
     template<typename T>
-    typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& get_value() const;
+    RTTR_INLINE typename std::enable_if<!std::is_rvalue_reference<T>::value, T>::type& get_value() const;
     template<typename T>
-    typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& get_value() const;
+    RTTR_INLINE typename std::enable_if<std::is_rvalue_reference<T>::value, typename std::remove_reference<T>::type>::type&& get_value() const;
 
 private:
     const void*         m_data;
     const rttr::type    m_type;
 };
 
-} // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/argument/argument_impl.h"
+#include "rttr/detail/impl/argument_impl.h"
 
 #endif // RTTR_ARGUMENT_H_

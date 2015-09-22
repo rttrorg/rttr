@@ -29,8 +29,8 @@
 
 #include "rttr/detail/property/property_wrapper_base.h"
 #include "rttr/variant.h"
-#include "rttr/detail/argument/argument.h"
-#include "rttr/detail/instance/instance.h"
+#include "rttr/argument.h"
+#include "rttr/instance.h"
 #include "rttr/enumeration.h"
 
 using namespace std;
@@ -142,7 +142,7 @@ type property::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::set_value(detail::instance object, detail::argument arg) const
+bool property::set_value(instance object, argument arg) const
 {
     if (is_valid())
         return m_container->set_value(object, arg);
@@ -152,7 +152,7 @@ bool property::set_value(detail::instance object, detail::argument arg) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant property::get_value(detail::instance object) const
+variant property::get_value(instance object) const
 {
     if (is_valid())
         return m_container->get_value(object);

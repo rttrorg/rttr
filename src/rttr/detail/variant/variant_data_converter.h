@@ -33,10 +33,10 @@
 
 namespace rttr
 {
+class argument;
+
 namespace detail
 {
-
-class argument;
 
 template<typename T>
 struct convert_from;

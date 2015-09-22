@@ -112,7 +112,7 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
      variant var1 = enum_info_align.name_to_value("AlignHCenter");
      variant var2 = enum_info_orient.name_to_value("Vertical");
-     std::vector<detail::argument> args = {var1, var2};
+     std::vector<argument> args = {var1, var2};
      variant enum_inst = enum_type.create(args);
 #else
     variant enum_inst = enum_type.create({enum_info_align.name_to_value("AlignHCenter"), enum_info_orient.name_to_value("Vertical")});

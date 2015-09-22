@@ -38,6 +38,7 @@ namespace rttr
 {
 class variant;
 class type;
+class argument;
 
 template<typename T>
 class class_;
@@ -54,8 +55,6 @@ class property_wrapper_base;
 struct type_converter_base;
 struct base_class_info;
 struct derived_info;
-
-class argument;
 
 using variant_create_func   = variant(*)(const argument&);
 using get_derived_func      = derived_info(*)(void*);

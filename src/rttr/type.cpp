@@ -228,7 +228,7 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::create_variant(const detail::argument& data) const
+variant type::create_variant(const argument& data) const
 {
     return (*g_variant_create_func_list)[m_id](data);
 }
@@ -379,7 +379,7 @@ variant type::get_meta_data(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::vector<type> extract_types(const vector<detail::argument>& args)
+static std::vector<type> extract_types(const vector<argument>& args)
 {
     std::vector<type> result;
     result.reserve(args.size());
@@ -411,7 +411,7 @@ vector<constructor> type::get_constructors() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::create(vector<detail::argument> args) const
+variant type::create(vector<argument> args) const
 {
     if (auto ctor = detail::type_database::instance().get_constructor(*this, extract_types(args)))
         return ctor->invoke_variadic(args);
@@ -454,7 +454,7 @@ property type::get_property(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_property_value(const char* name, detail::instance obj) const
+variant type::get_property_value(const char* name, instance obj) const
 {
     const auto prop = get_property(name);
     return prop.get_value(obj);
@@ -470,7 +470,7 @@ variant type::get_property_value(const char* name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const char* name, detail::instance obj, detail::argument arg) const
+bool type::set_property_value(const char* name, instance obj, argument arg) const
 {
     const auto prop = get_property(name);
     return prop.set_value(obj, arg);
@@ -478,7 +478,7 @@ bool type::set_property_value(const char* name, detail::instance obj, detail::ar
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const char* name, detail::argument arg)
+bool type::set_property_value(const char* name, argument arg)
 {
     const auto prop = get_global_property(name);
     return prop.set_value(empty_instance(), arg);
@@ -635,7 +635,7 @@ enumeration type::get_enumeration() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const char* name, detail::instance obj, std::vector<detail::argument> args) const
+variant type::invoke(const char* name, instance obj, std::vector<argument> args) const
 {
     const auto meth = get_method(name, extract_types(args));
     return meth.invoke_variadic(obj, std::move(args));
@@ -643,7 +643,7 @@ variant type::invoke(const char* name, detail::instance obj, std::vector<detail:
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const char* name, std::vector<detail::argument> args)
+variant type::invoke(const char* name, std::vector<argument> args)
 {
     const auto meth = get_global_method(name, extract_types(args));
     return meth.invoke_variadic(empty_instance(), std::move(args));

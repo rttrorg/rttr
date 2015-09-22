@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/type/accessor_type.h"
-#include "rttr/detail/argument/argument.h"
+#include "rttr/argument.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/variant.h"
@@ -103,33 +103,33 @@ class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public const
             return invoke_impl(std::integral_constant<bool, 0 == sizeof...(Args)>());
         }
 
-        variant invoke(detail::argument& arg1) const
+        variant invoke(argument& arg1) const
         {
             return invoke_impl(std::integral_constant<bool, 1 == sizeof...(Args)>(), arg1);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2) const
+        variant invoke(argument& arg1, argument& arg2) const
         {
             return invoke_impl(std::integral_constant<bool, 2 == sizeof...(Args)>(), arg1, arg2);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3) const
         {
             return invoke_impl(std::integral_constant<bool, 3 == sizeof...(Args)>(), arg1, arg2, arg3);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
             return invoke_impl(std::integral_constant<bool, 4 == sizeof...(Args)>(), arg1, arg2, arg3, arg4);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
             return invoke_impl(std::integral_constant<bool, 5 == sizeof...(Args)>(), arg1, arg2, arg3, arg4, arg5);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
             return invoke_impl(std::integral_constant<bool, 6 == sizeof...(Args)>(), arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
         template<std::size_t ...I>
-        RTTR_INLINE variant invoke_variadic_impl(std::vector<detail::argument>& args, index_sequence<I...>) const
+        RTTR_INLINE variant invoke_variadic_impl(std::vector<argument>& args, index_sequence<I...>) const
         {
             if (args.size() == sizeof...(I))
                 return invoke_variadic_extracted(args[I]...);
@@ -137,7 +137,7 @@ class constructor_wrapper<ClassType, class_ctor, Policy, Args...> : public const
                 return variant();
         }
 
-        variant invoke_variadic(std::vector<detail::argument>& args) const
+        variant invoke_variadic(std::vector<argument>& args) const
         {
             return invoke_variadic_impl(args, make_index_sequence<sizeof...(Args)>());
         }
@@ -165,31 +165,31 @@ class constructor_wrapper<ClassType, return_func, Policy, F> : public constructo
         {
            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance());
         }
-        variant invoke(detail::argument& arg1) const
+        variant invoke(argument& arg1) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2) const
+        variant invoke(argument& arg1, argument& arg2) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5);
         }
-        variant invoke(detail::argument& arg1, detail::argument& arg2, detail::argument& arg3, detail::argument& arg4, detail::argument& arg5, detail::argument& arg6) const
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5, arg6);
         }
-        variant invoke_variadic(std::vector<detail::argument>& args) const
+        variant invoke_variadic(std::vector<argument>& args) const
         {
             return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), args);
         }

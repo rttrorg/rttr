@@ -44,14 +44,14 @@ class method;
 class property;
 class enumeration;
 class type;
+class instance;
+class argument;
 
 template<typename TargetType, typename SourceType>
 TargetType rttr_cast(SourceType object);
 
 namespace detail
 {
-class instance;
-class argument;
 struct derived_info;
 struct base_class_info;
 struct type_converter_base;
@@ -502,7 +502,7 @@ class RTTR_API type
          * 
          * \return Returns an instance of the given type.
          */
-        variant create(std::vector<detail::argument> args) const;
+        variant create(std::vector<argument> args) const;
 
         /*!
          * \brief Returns the corresponding destructor for this type.
@@ -570,7 +570,7 @@ class RTTR_API type
          *
          * \return A variant containing the value of the property.
          */
-        variant get_property_value(const char* name, detail::instance obj) const;
+        variant get_property_value(const char* name, instance obj) const;
 
         /*!
          * \brief Returns the property value of property named \p name.
@@ -586,14 +586,14 @@ class RTTR_API type
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        bool set_property_value(const char* name, detail::instance obj, detail::argument arg) const;
+        bool set_property_value(const char* name, instance obj, argument arg) const;
 
         /*!
          * \brief This function will set the given value \p arg to a property named \p name.
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        static bool set_property_value(const char* name, detail::argument arg);
+        static bool set_property_value(const char* name, argument arg);
 
 
         /*!
@@ -664,7 +664,7 @@ class RTTR_API type
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
-        variant invoke(const char* name, detail::instance obj, std::vector<detail::argument> args) const;
+        variant invoke(const char* name, instance obj, std::vector<argument> args) const;
 
         /*!
          * \brief Invokes a global method named \p name with the specified argument \p args.
@@ -672,7 +672,7 @@ class RTTR_API type
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
          */
-        static variant invoke(const char* name, std::vector<detail::argument> args);
+        static variant invoke(const char* name, std::vector<argument> args);
 
         /*!
          * \brief Register a converter func `F`, which will be used internally by the 
@@ -773,7 +773,7 @@ class RTTR_API type
         /////////////////////////////////////////////////////////////////////////////////
 
         //! Creates a variant from the given argument data.
-        variant create_variant(const detail::argument& data) const;
+        variant create_variant(const argument& data) const;
 
         friend class variant;
         template<typename TargetType, typename SourceType>
@@ -781,7 +781,7 @@ class RTTR_API type
 
         template<typename T, typename Enable>
         friend struct detail::type_getter;
-        friend class detail::instance;
+        friend class instance;
         friend class detail::type_register;
         friend type detail::get_invalid_type();
         friend class detail::type_database;

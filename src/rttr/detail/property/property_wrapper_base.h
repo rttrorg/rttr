@@ -35,10 +35,12 @@
 
 namespace rttr
 {
-namespace detail
-{
+
 class instance;
 class argument;
+
+namespace detail
+{
 /*!
  * Abstract class for an instance of a Property.
  * 
@@ -78,10 +80,10 @@ class RTTR_API property_wrapper_base : public meta_data_handler
         virtual bool is_array() const = 0;
 
         //! Sets this property of the given instance \p instance to the value of the argument \p argument.
-        virtual bool set_value(detail::instance& object, detail::argument& arg) const = 0;
+        virtual bool set_value(instance& object, argument& arg) const = 0;
 
         //! Returns the value of this property from the given instance \p instance.
-        virtual variant get_value(detail::instance& object) const = 0;
+        virtual variant get_value(instance& object) const = 0;
 };
 
 } // end namespace detail
