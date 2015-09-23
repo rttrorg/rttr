@@ -48,9 +48,11 @@
 namespace rttr
 {
 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static RTTR_INLINE detail::meta_data meta_data(variant key, variant value)
+RTTR_INLINE detail::meta_data meta_data(variant key, variant value)
 {
     return detail::meta_data{std::move(key), std::move(value)}; 
 }
@@ -58,7 +60,7 @@ static RTTR_INLINE detail::meta_data meta_data(variant key, variant value)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum_Type>
-static RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value)
+RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value)
 {
     return detail::enum_data<Enum_Type>(name, value);
 }

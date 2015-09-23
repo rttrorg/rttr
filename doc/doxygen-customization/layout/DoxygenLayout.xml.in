@@ -17,10 +17,12 @@
       <tab type="hierarchy" visible="no" title="" intro=""/>
       <tab type="classmembers" visible="yes" title="" intro=""/>
     </tab>
+    <!--
     <tab type="files" visible="yes" title="">
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
+    -->
     <tab type="examples" visible="yes" title="" intro=""/>  
   </navindex>
 

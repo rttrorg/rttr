@@ -47,8 +47,8 @@ class type;
 class instance;
 class argument;
 
-template<typename TargetType, typename SourceType>
-TargetType rttr_cast(SourceType object);
+template<typename Target_Type, typename Source_Type>
+Target_Type rttr_cast(Source_Type object);
 
 namespace detail
 {
@@ -776,8 +776,8 @@ class RTTR_API type
         variant create_variant(const argument& data) const;
 
         friend class variant;
-        template<typename TargetType, typename SourceType>
-        friend TargetType rttr_cast(SourceType object);
+        template<typename Target_Type, typename Source_Type>
+        friend Target_Type rttr_cast(Source_Type object);
 
         template<typename T, typename Enable>
         friend struct detail::type_getter;

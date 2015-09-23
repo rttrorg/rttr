@@ -47,7 +47,7 @@ It is possible the chain multiple registration calls, because of the temporary r
 Invoke of methods
 -----------------
 Invoking a method with RTTR can be done in two ways:
-- calling @ref rttr::type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()" from the [type](@ref rttr::type) class.
+- calling @ref rttr::type::invoke(const std::string&, std::vector< argument >) "type::invoke()" from the [type](@ref rttr::type) class.
 - retrieving first a @ref rttr::method "method" object from @ref rttr::type::get_global_method(const std::string &, const std::vector< type >&) "type::get_global_method()" and then calling invoke
 
 The first option needs less typing, but it is slower when you need to invoke the function several times.
@@ -76,15 +76,15 @@ int main()
 }
 ~~~~
 
-The @ref rttr::type::invoke(const char*, std::vector< detail::argument >) "type::invoke()" function will internally try 
+The @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" function will internally try 
 to find a function based on the given name and the given types of the arguments. 
 So finding the correct function when overloaded function are registered is automatically done.
 Notice that you have to provide the arguments as a vector pack. Therefore an initializer list is quite handy to reduce typing.
 The argument must match 100%, there is at the moment no conversion done. That means, when an integer argument is needed and you forward a double
 value the function will **not** be called. The arguments will not be copied, instead they will be wrapped in an internal class and forwarded to the 
-underlying function pointer. This class is called `detail::argument` do **not** create this class on your own. The class will implicit wrap your argument value.
+underlying function pointer. This class is called `argument` do **not** create this class on your own. The class will implicit wrap your argument value.
 
-The return value of @ref rttr::type::invoke(const char*, std::vector< detail::argument >) "type::invoke()" is a @ref rttr::variant "variant" object.
+The return value of @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" is a @ref rttr::variant "variant" object.
 It indicates whether the function was called or not. RTTR does **not** use the exception mechanism of C++, therefore you have to check the return values when you are interested
 in a successful call. The @ref rttr::variant object @ref rttr::variant::is_valid "is valid" when it was successfully called. 
 When the function has a return value, then this value is also contained in the variant object.

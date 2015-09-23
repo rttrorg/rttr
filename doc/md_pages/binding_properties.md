@@ -50,7 +50,7 @@ There can be not two global properties with the same name. The later registered 
 Invoke properties
 -----------------
 For setting and getting a property you have two options like with methods:
-- calling @ref rttr::type::set_property_value(const char*, detail::argument) "type::set_property_value()" and @ref rttr::type::get_property_value(const char*) "type::get_property_value()" from the @ref rttr::type "type" class or
+- calling @ref rttr::type::set_property_value(const char*, argument) "type::set_property_value()" and @ref rttr::type::get_property_value(const char*) "type::get_property_value()" from the @ref rttr::type "type" class or
 - retrieving a @ref rttr::property "property" object from @ref rttr::type::get_global_property(const char*) "type::get_global_property()" and then calling @ref rttr::property::set_value() "property::set_value()" and @ref rttr::property::get_value() "property::get_value()"
 
 ~~~~{.cpp}
@@ -73,7 +73,7 @@ int main()
 }
 ~~~~
 
-The static @ref rttr::type::set_property_value(const char*, detail::argument) "type::set_property_value()" function
+The static @ref rttr::type::set_property_value(const char*, argument) "type::set_property_value()" function
 calls directly a global property with the given name. This function has a bool value as return value, indicating whether the 
 property was invoked or not. For retrieving a property value use the static function 
 @ref rttr::type::get_property_value(const char*) "type::get_property_value()". 

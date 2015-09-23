@@ -30,6 +30,7 @@
 
 namespace rttr
 {
+
 /*!
  * \brief Casts the given \p object of type \p Source_Type to an object of type \p Target_Type.
  *

@@ -43,6 +43,7 @@ namespace detail
     class enum_data;
 }
 
+
 /*!
  * The \ref registration class is the entry point for the manual registration of reflection information
  * to the type system. It is possible to register *constructors*, *properties*, *methods* and *enumerations*.
@@ -456,7 +457,8 @@ auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
  * registration process of reflection information. Use it in the `()` operator of the returned 
  * \ref bind object.
  */
-static RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
+RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
+
 
 /*!
  * The \ref value function should be used to add a mapping from enum `name` to `value`
@@ -466,13 +468,14 @@ static RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
  * \see \ref registration::enumeration
  */
 template<typename Enum_Type>
-static detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
+RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef DOXYGEN
+
 
 /*!
  * \brief Use this macro to automatically register your reflection information to RTTR before `main` is called.

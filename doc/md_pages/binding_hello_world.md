@@ -30,7 +30,7 @@ that has the advantage that this reflection information is directly available wh
 When on the other hand the register calls are invoked manually, then these calls must be synchronized with the calls retrieving the type information.
 Otherwise invalid data will be returned. Remark that this macro can only be placed one-time in a source file, otherwise you will get an compile error.
 
-The shortest way to invoke the function `f()` is to call @ref rttr::type::invoke(const std::string&, std::vector< detail::argument >) "type::invoke()".
+The shortest way to invoke the function `f()` is to call @ref rttr::type::invoke(const std::string&, std::vector< argument >) "type::invoke()".
 It requires the exact name of the free function and a vector of arguments. 
 You can check whether the call was successful with checking the return value. 
 When the returned @ref rttr::variant "variant" is @ref rttr::variant::is_valid() "valid" the call was successful, otherwise not.
