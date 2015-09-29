@@ -45,6 +45,7 @@ set(SOURCE_FILES main.cpp
                  method/method_default_arg_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
+                 variant/variant_conv_to_bool_test.cpp
                  variant/variant_ctor_test.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_cmp_less_test.cpp

@@ -761,6 +761,13 @@ class RTTR_API variant
          */
         RTTR_INLINE void* get_raw_ptr() const;
 
+        //! Helper function to initialize all arithmetic types
+        template<typename T>
+        detail::enable_if_t<std::is_arithmetic<T>::value, T> convert_impl(bool* ok = nullptr) const;
+
+        template<typename T>
+        detail::enable_if_t<!std::is_arithmetic<T>::value, T> convert_impl(bool* ok = nullptr) const;
+
         /*!
          * \brief Returns a pointer to the underlying object pointer wrapped in a smart_ptr.
          *
@@ -823,6 +830,8 @@ class RTTR_API variant
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace rttr
 

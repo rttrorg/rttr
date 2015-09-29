@@ -228,16 +228,37 @@ RTTR_INLINE bool variant::convert(T& value) const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE T variant::convert(bool* ok) const
+RTTR_INLINE detail::enable_if_t<std::is_arithmetic<T>::value, T> variant::convert_impl(bool* ok) const
+{
+    T result = 0;
+    const bool could_convert = convert<T>(result);
+    if (ok)
+        *ok = could_convert;
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE detail::enable_if_t<!std::is_arithmetic<T>::value, T> variant::convert_impl(bool* ok) const
 {
     static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
                                                            "You can only convert to a type, with a default constructor.");
     T result;
-    const bool coud_convert = convert<T>(result);
+    const bool could_convert = convert<T>(result);
     if (ok)
-        *ok = coud_convert;
+        *ok = could_convert;
 
     return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE T variant::convert(bool* ok) const
+{
+    return convert_impl<T>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
