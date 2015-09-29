@@ -30,6 +30,8 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 
+#include "rttr/detail/misc/std_type_traits.h"
+
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -100,6 +102,30 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
+// will remove all numbers of the given index sequence till the given \p Index.
+// typename erase_sequence_till<index_sequence<0, 1, 2, 3, 4>, 3>::type =>   index_sequence<3, 4>
+
+template<typename Index_Sequence, std::size_t Index>
+struct erase_sequence_till;
+
+template<std::size_t Index, std::size_t Idx, std::size_t... I>
+struct erase_sequence_till<index_sequence<Idx, I...>, Index>
+{
+    using type = conditional_t< Idx == Index,
+                                index_sequence<Idx, I...>,
+                                typename erase_sequence_till<index_sequence<I...>, Index>::type>;
+};
+
+template<std::size_t Index>
+struct erase_sequence_till<index_sequence<>, Index>
+{
+    using type = index_sequence<>;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 struct remove_first_index_impl
@@ -128,6 +154,8 @@ struct concat_index_sequence<index_sequence<Ts...>, index_sequence<Us...>>
     using type = index_sequence<Ts..., Us...>;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template <class T>
 struct remove_last_index_impl;
 
@@ -141,9 +169,9 @@ template<std::size_t First, std::size_t... I>
 struct remove_last_index_impl<index_sequence<First, I...>>
 {
     using type = typename concat_index_sequence<
-                index_sequence<First>,
-                typename remove_last_index_impl<index_sequence<I...>>::type
-                >::type;
+                                                 index_sequence<First>,
+                                                 typename remove_last_index_impl<index_sequence<I...>>::type
+                                                >::type;
 };
 
 template<typename T>

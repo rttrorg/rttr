@@ -42,6 +42,7 @@ set(SOURCE_FILES main.cpp
                  constructor/constructor_misc_test.cpp
                  enumeration/test_enumeration_reflection.cpp
                  method/test_method_reflection.cpp
+                 method/method_default_arg_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
                  variant/variant_ctor_test.cpp

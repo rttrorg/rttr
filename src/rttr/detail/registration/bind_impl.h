@@ -41,6 +41,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_register.h"
+#include "rttr/detail/default_arguments/default_arguments.h"
 #include "rttr/policy.h"
 #include "rttr/type.h"
 #include <functional>
@@ -64,14 +65,6 @@ static RTTR_INLINE std::vector<meta_data> get_meta_data(Args&&... arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Enum_Type, typename... Args>
-static RTTR_INLINE std::vector< enum_data<Enum_Type> > get_enum_values(Args&&... arg)
-{
-    return forward_to_vector<enum_data<Enum_Type>>(std::forward<Args>(arg)...);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T>
 static RTTR_INLINE void store_meta_data(T& obj, std::vector<meta_data> data)
 {
@@ -79,6 +72,14 @@ static RTTR_INLINE void store_meta_data(T& obj, std::vector<meta_data> data)
     {
         obj->add_meta_data(std::move(item));
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Enum_Type, typename... Args>
+static RTTR_INLINE std::vector< enum_data<Enum_Type> > get_enum_values(Args&&... arg)
+{
+    return forward_to_vector<enum_data<Enum_Type>>(std::forward<Args>(arg)...);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -410,7 +411,7 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
         {
             using namespace detail;
             if (!m_meth.get())
-                m_meth = detail::make_unique<method_wrapper<F, default_invoke>>(m_name, type::get<Class_Type>(), m_func);
+                m_meth = detail::make_unique<method_wrapper<F, default_invoke, default_args<>>>(m_func);
 
             m_meth->set_name(m_name);
             m_meth->set_declaring_type(type::get<Class_Type>());
@@ -426,6 +427,22 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
             m_reg_exec->add_registration_func(this, std::move(reg_func));
         }
 
+private:
+        template<typename Policy, typename...TArgs>
+        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
+        create_method_wrapper(F func, detail::default_args<TArgs...> def_args)
+        {
+            return detail::make_unique<detail::method_wrapper<F, Policy, detail::default_args<TArgs...>>>(func, std::move(def_args));
+        }
+
+        template<typename Policy>
+        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
+        create_method_wrapper(F func, detail::default_args<> def_args)
+        {
+            return detail::make_unique<detail::method_wrapper<F, Policy, detail::default_args<>>>(func);
+        }
+
+public:
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... arg)
         {
@@ -433,19 +450,30 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
 
             using policy_types_found = typename find_types<method_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
+
+            using has_default_args = conditional_t<std::is_same<get_default_args_t<Args...>, default_args<>>::value, std::false_type, std::true_type>;
+            using has_default_types = conditional_t<std::is_same<find_default_args_t<F, get_default_args_t<Args...>>, default_args<>>::value, std::false_type, std::true_type>;
+
+            static_assert( (has_default_args::value && has_default_types::value) ||  !has_default_args::value, 
+                            "The provided default arguments, cannot be used with the given method accessor.");
+            static_assert((count_default_args<Args...>::value <= 1), 
+                          "Too many default arguments provided, only one set of default arguments can be provided!");
+            
             // when no policy was added, we need a default policy
             using policy_list = conditional_t< type_list_size<policy_types_found>::value == 0,
                                                default_invoke,
                                                policy_types_found>;
-            // at the moment we only supported one policy
-            using first_meth_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
+            using policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
 
-            m_meth = detail::make_unique<method_wrapper<F, first_meth_policy>>(m_name, type::get<Class_Type>(), m_func);
+            m_meth = create_method_wrapper<policy>(m_func, std::move(get_default_args<F>(std::forward<Args>(arg)...)) );
 
             store_meta_data(m_meth, get_meta_data(std::forward<Args>(arg)...));
 
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
+
+   
+
     private:
         std::shared_ptr<detail::registration_executer> m_reg_exec;
         const char* m_name;

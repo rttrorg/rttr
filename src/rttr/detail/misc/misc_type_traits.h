@@ -34,6 +34,7 @@
 #include "rttr/array_mapper.h"
 #include "rttr/detail/misc/std_type_traits.h"
 
+
 #include <type_traits>
 #include <memory>
 
@@ -694,6 +695,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     // returns true when in the given list is a double item
     // has_double_types<std::tuple<int, bool, int>>::value => true
+    // has_double_types<std::tuple<int, bool, double>>::value => false
 
     template<typename O, typename T>
     struct has_double_types_impl;
@@ -714,6 +716,10 @@ namespace detail
 
     template <typename... T> 
     using has_double_types = typename has_double_types_impl<as_type_list_t<T...>, as_type_list_t<T...>>::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

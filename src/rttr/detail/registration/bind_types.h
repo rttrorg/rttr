@@ -45,7 +45,6 @@ namespace detail
     struct meth { };
 
     struct enum_{};
-
 } // end namespace detail
 } // end namespace rttr
 

@@ -145,19 +145,22 @@ namespace detail
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T, size_t Index>
-    struct param_types
-    {
-        using type = typename std::tuple_element<Index, typename function_traits<T>::arg_types>::type;
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////
     // use it like e.g:
     // param_types<F, 0>::type
 
-    template<typename T>
-    struct is_void_func : conditional_t< std::is_same<typename function_traits<T>::return_type, void>::value,
+    template<typename F, size_t Index>
+    struct param_types
+    {
+        using type = typename std::tuple_element<Index, typename function_traits<F>::arg_types>::type;
+    };
+
+    template<typename F, size_t Index>
+    using param_types_t = typename param_types<F, Index>::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    
+    template<typename F>
+    struct is_void_func : conditional_t< std::is_same<typename function_traits<F>::return_type, void>::value,
                                          std::true_type,
                                          std::false_type
                                        >

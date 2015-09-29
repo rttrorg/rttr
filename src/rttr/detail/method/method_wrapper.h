@@ -36,6 +36,7 @@
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/method/method_accessor.h"
 #include "rttr/variant.h"
+#include "rttr/detail/default_arguments/default_arguments.h"
 
 
 #include <functional>
@@ -46,11 +47,14 @@ namespace rttr
 namespace detail
 {
 
+template<typename F, typename Policy, typename Default_Args>
+class method_wrapper;
+
 template<typename F, typename Policy>
-class method_wrapper : public method_wrapper_base
+class method_wrapper<F, Policy, default_args<>> : public method_wrapper_base
 {
     public:
-        method_wrapper(std::string name, type declaring_type, F func_acc)
+        method_wrapper(F func_acc)
         : m_func_acc(func_acc)
         { }
 
@@ -64,7 +68,6 @@ class method_wrapper : public method_wrapper_base
         {
            return method_accessor<F, Policy>::invoke(m_func_acc, object);
         }
-
         variant invoke(instance& object, argument& arg1) const
         {
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1);
@@ -92,11 +95,66 @@ class method_wrapper : public method_wrapper_base
 
         variant invoke_variadic(instance& object, std::vector<argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke(m_func_acc, object, args);
+            return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, args);
         }
 
     private:
         F  m_func_acc;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename F, typename Policy, typename...TArgs>
+class method_wrapper<F, Policy, default_args<TArgs...> > : public method_wrapper_base
+{
+    public:
+        method_wrapper(F func_acc, default_args<TArgs...> default_args)
+        : m_func_acc(func_acc), m_def_args(std::move(default_args))
+        { }
+
+        bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
+        type get_return_type()                  const   { return method_accessor<F, Policy>::get_return_type();     }
+        std::vector<bool> get_is_reference()    const   { return method_accessor<F, Policy>::get_is_reference();    }
+        std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
+        std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
+
+        variant invoke(instance& object) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args);
+        }
+        variant invoke(instance& object, argument& arg1) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1);
+        }
+        variant invoke(instance& object, argument& arg1, argument& arg2) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2);
+        }
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3);
+        }
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4);
+        }
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
+        }
+        variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
+        {
+            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
+        }
+
+        variant invoke_variadic(instance& object, std::vector<argument>& args) const
+        {
+            return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, m_def_args.m_args, args);
+        }
+
+    private:
+        F  m_func_acc;
+        default_args<TArgs...> m_def_args;
 };
 
 } // end namespace detail

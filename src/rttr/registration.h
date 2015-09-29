@@ -33,6 +33,7 @@
 #include "rttr/access_level.h"
 #include "rttr/detail/registration/bind_types.h"
 #include "rttr/detail/registration/registration_executer.h"
+#include "rttr/detail/default_arguments/default_arguments.h"
 
 namespace rttr
 {
@@ -42,7 +43,6 @@ namespace detail
     template<typename Enum_Type>
     class enum_data;
 }
-
 
 /*!
  * The \ref registration class is the entry point for the manual registration of reflection information
@@ -469,6 +469,44 @@ RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
  */
 template<typename Enum_Type>
 RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
+
+/*!
+ * The \ref default_arguments function should be used add default arguments, 
+ * for \ref constructor "constructors" or a \ref method "methods" during the registration process of reflection information. 
+ * Use it in the `()` operator of the returned \ref bind object.
+ *
+ * The given arguments must match the signature from the starting position to the right most argument.
+ *
+ * See following example code:
+ * \code{.cpp}
+ *
+ * void my_function(int a, bool b, const std::string& text);
+ * 
+ * RTTR_REGISTRATION
+ * {
+ *     using namespace rttr;
+ *     
+ *     registration::method("my_function", &my_function)
+ *     (    
+ *         default_arguments(true, std::string("default text"))
+ *     );
+ *
+ *     // however setting default arguments like this, will raise a compile time error 
+ *     registration::method("my_function2", &my_function)
+ *     (    
+ *          default_arguments(true) // does not work!!!; default value for the last argument is missing...
+ *     );
+ * }
+ *
+ * \endcode
+ *
+ */
+template<typename...TArgs>
+RTTR_INLINE detail::default_args<TArgs...> default_arguments(TArgs&&...args)
+{
+    std::tuple<TArgs...> data{std::forward<TArgs>(args)...};
+    return { std::move(data) };
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

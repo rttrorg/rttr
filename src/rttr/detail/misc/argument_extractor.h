@@ -73,33 +73,33 @@ private:
 
     template<typename container_type, typename U, typename... Args>
     static
-    typename std::enable_if< !std::is_same<T, raw_type_t<U>>::value, void >::type
-    extract_types_recursively(container_type& container, U&& value, Args &&... _tail)
+    enable_if_t< !std::is_same<T, raw_type_t<U>>::value, void >
+    extract_types_recursively(container_type& container, U&& value, Args &&... tail)
     {
-        extract_types_recursively(container, std::forward< Args >(_tail)...);
+        extract_types_recursively(container, std::forward< Args >(tail)...);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename container_type, typename U, typename... Args>
     static
-    typename std::enable_if< std::is_same<T, raw_type_t<U>>::value, void >::type
-    extract_types_recursively(container_type& container, U&& value, Args &&... _tail)
+    enable_if_t< std::is_same<T, raw_type_t<U>>::value, void >
+    extract_types_recursively(container_type& container, U&& value, Args &&... tail)
     {
         RTTR_STATIC_CONSTEXPR auto index = count_type<T, as_type_list_t<OrigArgs...>>::value - count_type<T, as_type_list_t<Args...>>::value - 1;
         container[index] = std::forward<U>(value);
-        extract_types_recursively(container, std::forward< Args >(_tail)...);
+        extract_types_recursively(container, std::forward< Args >(tail)...);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename U, typename... Args>
     static
-    typename std::enable_if< std::is_same<T, raw_type_t<U>>::value, void >::type
-    extract_types_recursively(std::vector<T>& container, U&& value, Args &&... _tail)
+    enable_if_t< std::is_same<T, raw_type_t<U>>::value, void >
+    extract_types_recursively(std::vector<T>& container, U&& value, Args &&... tail)
     {
         container.emplace_back(std::forward<U>(value));
-        extract_types_recursively(container, std::forward< Args >(_tail)...);
+        extract_types_recursively(container, std::forward< Args >(tail)...);
     }
 
 };

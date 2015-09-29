@@ -191,7 +191,7 @@ class constructor_wrapper<ClassType, return_func, Policy, F> : public constructo
         }
         variant invoke_variadic(std::vector<argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), args);
+            return method_accessor<F, Policy>::invoke_variadic(m_creator_func, empty_instance(), args);
         }
     private:
          F  m_creator_func;
