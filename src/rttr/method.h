@@ -64,7 +64,8 @@ namespace detail
  * The method can be invoked with \ref invoke(); When its not a \ref is_static "static method" you have to provide a valid class instance to invoke the method.
  * This instance can be the raw type on the stack; the current class hierarchy level doesn't matter. It can be also a raw pointer to the object or
  * a \ref variant which contains the instance, again as pointer or stack object. 
- * When the method is declared as static you you still have to provide a dummy instance object, therefore the function `rttr::empty_instance()` should be used.
+ * When the method is declared as static you you still have to provide an empty instance object,
+ * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
  * A method will be successfully invoked when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
  * When the method has \ref get_parameter_types "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
@@ -188,7 +189,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -197,7 +198,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -206,7 +207,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -215,7 +216,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -224,7 +225,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -233,7 +234,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -243,7 +244,7 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */
@@ -255,7 +256,7 @@ class RTTR_API method
          *        Use this method when the argument count is higher then six.
          *
          * \remark Using this invoke function is slower, then specifying the arguments directly.
-         *         When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         *         When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
          * \return The type of the return type.
          */

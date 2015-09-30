@@ -77,7 +77,7 @@ struct RTTR_API policy
          * {
          *   method meth = type::get_global_method("get_text");
          *   std::cout << meth.get_return_type().get_name();    // prints "std::string*"
-         *   variant var = meth.invoke(empty_instance());
+         *   variant var = meth.invoke(instance());
          *   std::cout << var.is_type<std::string*>();          // prints "true"
          *   return 0;  
          * }
@@ -107,7 +107,7 @@ struct RTTR_API policy
          * {
          *   method meth = type::get_global_method("my_func");
          *   std::cout << meth.get_return_type().get_name();    // prints "void"
-         *   variant var = meth.invoke(empty_instance());
+         *   variant var = meth.invoke(instance());
          *   std::cout << var.is_type<void>();                  // prints "true"
          *   return 0;  
          * }

@@ -79,14 +79,6 @@ private:
     detail::data_address_container m_data_container;
 };
 
-/*!
- * \brief Returns a dummy instance object.
- *         Use this function when you have a static \ref method or \ref property which you need to invoke.
- *
- * \return An instance object.
- */
-RTTR_INLINE static instance empty_instance() { return instance(); }
-
 } // end namespace rttr
 
 #include "rttr/detail/impl/instance_impl.h"

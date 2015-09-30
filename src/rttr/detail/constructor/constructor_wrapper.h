@@ -155,7 +155,7 @@ class constructor_wrapper<ClassType, return_func, Policy, F> : public constructo
     public:
         constructor_wrapper(F creator_func) : m_creator_func(creator_func) {}
 
-        type get_instanciated_type()            const { return type::get<instanciated_type>();                              }
+        type get_instanciated_type()            const { return type::get<instanciated_type>();                      }
         type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()    const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()        const { return method_accessor<F, Policy>::get_is_const();          }
@@ -163,35 +163,35 @@ class constructor_wrapper<ClassType, return_func, Policy, F> : public constructo
 
         variant invoke() const
         {
-           return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance());
+           return method_accessor<F, Policy>::invoke(m_creator_func, instance());
         }
         variant invoke(argument& arg1) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1);
         }
         variant invoke(argument& arg1, argument& arg2) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4, arg5);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, empty_instance(), arg1, arg2, arg3, arg4, arg5, arg6);
+            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4, arg5, arg6);
         }
         variant invoke_variadic(std::vector<argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke_variadic(m_creator_func, empty_instance(), args);
+            return method_accessor<F, Policy>::invoke_variadic(m_creator_func, instance(), args);
         }
     private:
          F  m_creator_func;

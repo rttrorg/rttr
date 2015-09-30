@@ -659,7 +659,9 @@ class RTTR_API type
         /*!
          * \brief Invokes the method represented by the current instance \p object.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the function `empty_instance()`.
+         * \remark When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()",
+         *         or as shortcut use simply `{}`.
          *
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.

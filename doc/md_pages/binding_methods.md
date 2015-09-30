@@ -68,7 +68,7 @@ int main()
     method meth = type::get_global_method("pow");
     if (meth) // check if the function was found
     {
-        return_value = meth.invoke(empty_instance(), 9.0, 3.0);
+        return_value = meth.invoke({}, 9.0, 3.0); // invoke with empty instance
         if (return_value.is_valid() && return_value.is_type<double>())
             std::cout << return_value.get_value<double>() << std::endl; // 729
         

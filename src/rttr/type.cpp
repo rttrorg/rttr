@@ -465,7 +465,7 @@ variant type::get_property_value(const char* name, instance obj) const
 variant type::get_property_value(const char* name)
 {
     const auto prop = get_global_property(name);
-    return prop.get_value(empty_instance());
+    return prop.get_value(instance());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -481,7 +481,7 @@ bool type::set_property_value(const char* name, instance obj, argument arg) cons
 bool type::set_property_value(const char* name, argument arg)
 {
     const auto prop = get_global_property(name);
-    return prop.set_value(empty_instance(), arg);
+    return prop.set_value(instance(), arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -646,7 +646,7 @@ variant type::invoke(const char* name, instance obj, std::vector<argument> args)
 variant type::invoke(const char* name, std::vector<argument> args)
 {
     const auto meth = get_global_method(name, extract_types(args));
-    return meth.invoke_variadic(empty_instance(), std::move(args));
+    return meth.invoke_variadic(instance(), std::move(args));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

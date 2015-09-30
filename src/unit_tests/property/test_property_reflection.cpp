@@ -473,10 +473,10 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p1.is_readonly() == false);
         REQUIRE(p1.is_array() == true);
 
-        variant ret = p1.get_value(empty_instance());
+        variant ret = p1.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<std::vector<int>*>() == true);
-        bool could_set_value = p1.set_value(empty_instance(), ret);
+        bool could_set_value = p1.set_value(instance(), ret);
         REQUIRE(could_set_value == true);
 
         std::vector<int>* vec = ret.get_value<std::vector<int>*>();
@@ -489,10 +489,10 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p2.get_type() == type::get<const std::string*>());
         REQUIRE(p2.is_readonly() == true);
 
-        variant ret = p2.get_value(empty_instance());
+        variant ret = p2.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
-        p2.set_value(empty_instance(), ret);
+        p2.set_value(instance(), ret);
     }
 
     SECTION("global property - read only std::function - return value converted to pointer")
@@ -501,7 +501,7 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p3.get_type() == type::get<const std::string*>());
         REQUIRE(p3.is_readonly() == true);
         
-        variant ret = p3.get_value(empty_instance());
+        variant ret = p3.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
     }
@@ -513,7 +513,7 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p3.get_type() == type::get<const std::string*>());
         REQUIRE(p3.is_readonly() == true);
         
-        variant ret = p3.get_value(empty_instance());
+        variant ret = p3.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
     }
@@ -525,11 +525,11 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p4.get_type() == type::get<const std::string*>());
         REQUIRE(p4.is_readonly() == false);
         
-        variant ret = p4.get_value(empty_instance());
+        variant ret = p4.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
 
-        bool could_set_value = p4.set_value(empty_instance(), ret);
+        bool could_set_value = p4.set_value(instance(), ret);
         REQUIRE(could_set_value == true);
     }
 
@@ -646,12 +646,12 @@ TEST_CASE("Test get/set global property", "[property]")
 {
     property pi_prop = type::get_global_property("PI");
     REQUIRE(bool(pi_prop) == true);
-    CHECK(pi_prop.set_value(empty_instance(), 3.2) == false);
+    CHECK(pi_prop.set_value(instance(), 3.2) == false);
 
     property global_text = type::get_global_property("Global_Text");
     REQUIRE(bool(global_text) == true);
-    CHECK(global_text.set_value(empty_instance(), std::string("Hello World")) == true);
-    CHECK(global_text.get_value(empty_instance()).get_value<std::string>() == "Hello World");
+    CHECK(global_text.set_value(instance(), std::string("Hello World")) == true);
+    CHECK(global_text.get_value(instance()).get_value<std::string>() == "Hello World");
 
     auto list = type::get_global_properties();
     CHECK(list.size() >= 2);

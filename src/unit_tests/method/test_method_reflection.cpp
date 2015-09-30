@@ -226,7 +226,7 @@ TEST_CASE("Test method", "[method]")
 
     ////////////////////////////////////////
     REQUIRE(t_meth.get_method("method_7").is_static() == true);
-    ret = t_meth.get_method("method_7").invoke(empty_instance(), 34.0);
+    ret = t_meth.get_method("method_7").invoke(instance(), 34.0);
     REQUIRE(obj.method_7_called == true);
     REQUIRE(ret.is_type<int>() == true);
     REQUIRE(ret.get_value<int>() == 23);
@@ -300,18 +300,18 @@ TEST_CASE("global methods", "[method]")
     method global_meth_1 = type::get_global_method("free_function", {type::get<bool>()});
     REQUIRE(bool(global_meth_1) == true);
     REQUIRE(global_meth_1.get_parameter_types()[0] == type::get<bool>());
-    variant success = global_meth_1.invoke(empty_instance());
+    variant success = global_meth_1.invoke(instance());
     REQUIRE(success.is_valid() == false);
     REQUIRE(free_function_called == false);
 
-    success = global_meth_1.invoke(empty_instance(), true);
+    success = global_meth_1.invoke(instance(), true);
     REQUIRE(success.is_valid() == true);
     REQUIRE(free_function_called == true);
 
     method global_meth_2 = type::get_global_method("free_function", {type::get<int>()});
     REQUIRE(bool(global_meth_2) == true);
     int arg = 0;
-    global_meth_2.invoke(empty_instance(), arg);
+    global_meth_2.invoke(instance(), arg);
     REQUIRE(arg == 42);
 
     REQUIRE(global_meth_1 != global_meth_2);
@@ -397,13 +397,13 @@ TEST_CASE("method policies", "[method]")
     // global functions
     method meth_g_ptr   = type::get_global_method("get_global_string_ptr");
     REQUIRE(meth_g_ptr.get_return_type() == type::get<std::string*>());
-    ret = meth_g_ptr.invoke(empty_instance());
+    ret = meth_g_ptr.invoke(instance());
     REQUIRE(ret.is_valid() == true);
     REQUIRE(ret.is_type<std::string*>() == true);
 
     method meth_g_void  = type::get_global_method("get_global_string_void");
     REQUIRE(meth_g_void.get_return_type() == type::get<void>());
-    ret = meth_g_void.invoke(empty_instance());
+    ret = meth_g_void.invoke(instance());
     REQUIRE(ret.is_valid() == true);
     REQUIRE(ret.is_type<void>() == true);
 }

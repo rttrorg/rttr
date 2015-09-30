@@ -64,7 +64,8 @@ namespace detail
  * When its not a \ref is_static "static property" you have to provide a class instance to set/get the property value.
  * This instance can be the raw type on the stack; the current hierarchy level doesn't matter. It can be also a raw pointer to the object or
  * a \ref variant which contains the instance, again as pointer or stack object.
- * When the property is declared as \ref is_static "static" you you still have to provide a dummy instance object, therefore the function `rttr::empty_instance()` should be used.
+ * When the property is declared as \ref is_static "static" you you still have to provide an empty instance object, 
+ * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
  * A property will be successfully \ref set_value "set" when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
  * The new forwarded property value must 100% match the type of the registered property. An automatically type conversion is **not** performed.
