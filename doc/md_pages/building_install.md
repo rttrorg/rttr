@@ -17,12 +17,14 @@ or gcc:
 
     cmake -DCMAKE_BUILD_TYPE=Release <Path to RTTR src code>
 
-However, in order to build a complete installation, <a target="_blank" href="http://www.boost.org/">Boost</a> and <a target="_blank" href="http://www.doxygen.org/">Doxygen</a> are necessary.
+However, in order to build a complete installation, <a target="_blank" href="http://www.boost.org/">Boost</a> and <a target="_blank" href="http://www.doxygen.org/">Doxygen</a>
+are as external dependency necessary.
 
 - `Documentation` : <a target="_blank" href="http://www.doxygen.org/">Doxygen</a> is used for generating the documentation (the target is called: `doc`); the config file was generated from v. 2.8.10<br>
-On windows and linux you may have to put the path to the doxygen binary in the system path environment variable (`PATH`), so that CMake can find it.
+On windows and linux you may have to put the path to the doxygen binary in the system path environment variable (`PATH`),
+or set it to the environment variable `DOXYGEN_EXECUTABLE` so that CMake can find it.
 - `Benchmarks`: RTTR uses <a target="_blank" href="http://flamingdangerzone.com/nonius/">Nonius</a> (which is bundled with RTTR) for benchmarking and this library depends 
-on <a target="_blank" href="http://www.boost.org/">Boost</a>.<br>
+on <a target="_blank" href="http://flamingdangerzone.com/nonius/#main_content">Boost</a>.<br>
 You may have to set the `BOOST_ROOT` environment variable to the Boost installation directory.
 
 
@@ -55,7 +57,7 @@ Execute following command in the build directory of RTTR:
 
     cpack
     
-and in the root directory of the build dir will be an install package placed (e.g. rttr-1.0.0-win64-vs2013.7z)
+and in the root directory of the build dir will be an install package placed (e.g. `rttr-1.0.0-win64-vs2013.7z`)
 
 Using Installation of RTTR
 --------------------------
