@@ -44,14 +44,6 @@ set(HEADER_FILES access_level.h
                  variant.h
                  variant_array_view.h
                  wrapper_mapper.h
-                 detail/misc/data_address_container.h
-                 detail/conversion/std_conversion_functions.h
-                 detail/conversion/number_conversion.h
-                 detail/default_arguments/default_arguments.h
-                 detail/impl/argument_impl.h
-                 detail/impl/instance_impl.h
-                 detail/impl/rttr_cast_impl.h
-                 detail/impl/wrapper_mapper_impl.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
                  detail/array/array_mapper_impl.h
@@ -60,14 +52,23 @@ set(HEADER_FILES access_level.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
+                 detail/constructor/constructor_invoker.h
                  detail/constructor/constructor_wrapper.h
+                 detail/constructor/constructor_wrapper_defaults.h
                  detail/constructor/constructor_wrapper_base.h
-                 detail/constructor/object_creator.h
+                 detail/conversion/std_conversion_functions.h
+                 detail/conversion/number_conversion.h
+                 detail/default_arguments/default_arguments.h
+                 detail/default_arguments/invoke_with_defaults.h
                  detail/destructor/destructor_wrapper.h
                  detail/destructor/destructor_wrapper_base.h
                  detail/enumeration/enumeration_wrapper.h
                  detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
+                 detail/impl/argument_impl.h
+                 detail/impl/instance_impl.h
+                 detail/impl/rttr_cast_impl.h
+                 detail/impl/wrapper_mapper_impl.h
                  detail/meta_data/meta_data.h
                  detail/meta_data/meta_data_handler.h
                  detail/method/method_accessor.h
@@ -78,6 +79,7 @@ set(HEADER_FILES access_level.h
                  detail/misc/argument_extractor.h
                  detail/misc/compare_equal.h
                  detail/misc/compare_less.h
+                 detail/misc/data_address_container.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
                  detail/misc/std_type_traits.h

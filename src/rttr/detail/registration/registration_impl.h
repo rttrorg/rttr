@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/argument_extractor.h"
 #include "rttr/detail/constructor/constructor_wrapper.h"
+#include "rttr/detail/constructor/constructor_wrapper_defaults.h"
 #include "rttr/detail/destructor/destructor_wrapper.h"
 #include "rttr/detail/enumeration/enumeration_wrapper.h"
 #include "rttr/detail/method/method_wrapper.h"

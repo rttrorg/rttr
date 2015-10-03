@@ -88,8 +88,8 @@ static RTTR_INLINE std::vector< enum_data<Enum_Type> > get_enum_values(Args&&...
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename...Args>
-class registration::bind<detail::ctor, Class_Type, Args...> : public registration::class_<Class_Type>
+template<typename Class_Type, typename...Ctor_Args>
+class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public registration::class_<Class_Type>
 {
     using default_create_policy = detail::as_raw_pointer;
 
@@ -103,7 +103,7 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
         {
             using namespace detail;
             if (!m_ctor.get())
-                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy, Args...>>();
+                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy, detail::default_args<>, Ctor_Args...>>();
 
             // register the type with the following call:
             m_ctor->get_instanciated_type();
@@ -117,27 +117,49 @@ class registration::bind<detail::ctor, Class_Type, Args...> : public registratio
             };
             m_reg_exec->add_registration_func(this, std::move(reg_func));
         }
-    
-        template<typename... Params>
-        registration::class_<Class_Type> operator()(Params&&... arg)
+
+    private:
+        template<typename Policy, typename...TArgs>
+        static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
+        create_constructor_wrapper(detail::default_args<TArgs...> def_args)
+        {
+            using namespace detail;
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, default_args<TArgs...>, Ctor_Args...>>(std::move(def_args));
+        }
+
+        template<typename Policy>
+        static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
+        create_constructor_wrapper(detail::default_args<> def_args)
+        {
+            using namespace detail;
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_Args...>>();
+        }
+
+    public:
+        template<typename... Args>
+        registration::class_<Class_Type> operator()(Args&&... arg)
         {
             using namespace detail;
 
-            using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Params>...>>::type;
+            using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
+
+            using has_default_types = has_default_types<type_list<Ctor_Args...>, type_list<Args...>>;
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
+                           "The provided default arguments, cannot be used with the given constructor.");
+            static_assert( (count_default_args<Args...>::value <= 1), 
+                           "Too many default arguments provided, only one set of default arguments can be provided!");
 
             // when no policy was added, we need a default policy
             using policy_list = conditional_t< type_list_size<policy_types_found>::value == 0,
                                                default_create_policy,
                                                policy_types_found>;
 
-
             // at the moment we only supported one policy
             using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
-
-            m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, first_prop_policy, Args...>>();
+            m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<Ctor_Args...>(std::forward<Args>(arg)...)) );
             
-            store_meta_data(m_ctor, get_meta_data(std::forward<Params>(arg)...));
+            store_meta_data(m_ctor, get_meta_data(std::forward<Args>(arg)...));
             
             return registration::class_<Class_Type>(m_reg_exec);
         }
@@ -163,7 +185,7 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
         {
             using namespace detail;
             if (!m_ctor.get())
-                m_ctor = detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, F>>(m_func);
+                m_ctor = detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, detail::default_args<>, F>>(m_func);
 
             m_ctor->get_instanciated_type();
             m_ctor->get_parameter_types();
@@ -176,12 +198,34 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
 
             m_reg_exec->add_registration_func(this, reg_func);
         }
-    
+    private:
+        template<typename...TArgs>
+        static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
+        create_constructor_wrapper(F func, detail::default_args<TArgs...> def_args)
+        {
+            using namespace detail;
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, default_args<TArgs...>, F>>(func, std::move(def_args));
+        }
+
+        static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
+        create_constructor_wrapper(F func, detail::default_args<> def_args)
+        {
+            using namespace detail;
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, default_args<>, F>>(func);
+        }
+    public:
         template<typename... Args>
         registration::class_<Class_Type> operator()(Args&&... arg)
         {
             using namespace detail;
-            m_ctor = detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, F>>(m_func);
+            
+            using has_default_types = has_default_types<type_list<F>, type_list<Args...>>;
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
+                           "The provided default arguments, cannot be used with the given method accessor.");
+            static_assert( (count_default_args<Args...>::value <= 1), 
+                           "Too many default arguments provided, only one set of default arguments can be provided!");
+
+            m_ctor = create_constructor_wrapper(m_func, std::move(get_default_args<F>(std::forward<Args>(arg)...)) );
 
             store_meta_data(m_ctor, get_meta_data(std::forward<Args>(arg)...));
            
@@ -451,10 +495,8 @@ public:
             using policy_types_found = typename find_types<method_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
-            using has_default_args = conditional_t<std::is_same<get_default_args_t<Args...>, default_args<>>::value, std::false_type, std::true_type>;
-            using has_default_types = conditional_t<std::is_same<find_default_args_t<F, get_default_args_t<Args...>>, default_args<>>::value, std::false_type, std::true_type>;
-
-            static_assert( (has_default_args::value && has_default_types::value) ||  !has_default_args::value, 
+            using has_default_types = has_default_types<type_list<F>, type_list<Args...>>;
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
                             "The provided default arguments, cannot be used with the given method accessor.");
             static_assert((count_default_args<Args...>::value <= 1), 
                           "Too many default arguments provided, only one set of default arguments can be provided!");

@@ -37,6 +37,7 @@ set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
                  property/test_property_reflection.cpp
                  type/test_type.cpp
+                 constructor/constructor_default_arg_test.cpp
                  constructor/constructor_retrieve_test.cpp
                  constructor/constructor_invoke_test.cpp
                  constructor/constructor_misc_test.cpp

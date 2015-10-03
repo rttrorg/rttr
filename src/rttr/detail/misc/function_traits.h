@@ -166,6 +166,18 @@ namespace detail
                                        >
     {
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // returns an std::true_type, when the given type F is a function type; otherwise an std::false_type.
+    template<typename F>
+    using is_function = std::integral_constant<bool, std::is_member_function_pointer<F>::value ||
+                                                     std::is_function<F>::value ||
+                                                     is_std_function<F>::value ||
+                                                     is_function_ptr<F>::value
+                                              >;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

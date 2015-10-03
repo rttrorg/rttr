@@ -31,9 +31,9 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/argument_extractor.h"
+#include "rttr/detail/misc/function_traits.h"
 
-#include <memory>
-#include <type_traits>
+#include <tuple>
 
 namespace rttr
 {
@@ -51,50 +51,89 @@ struct default_args
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Default_Arg_List, typename Index_Sequence> 
-struct find_default_args_impl;
-
-// This type trait will check whether the function signature match the Default_Arg_List types.
+// This type trait will check whether a signature (given via \p Arg_list) match the \o Default_Arg_List types.
 // It will check the signature recursively, beginning with the complete signature,
 // then removing the first argument and check against Default_Arg_List, then removing the second...
-template<typename F, typename Default_Arg_List, std::size_t Index, std::size_t... Arg_Count> 
-struct find_default_args_impl<F, Default_Arg_List, index_sequence<Index, Arg_Count...>>
-{
-    template<typename T>
-    using decay_type = remove_cv_t<remove_reference_t<T>>;
+template<typename Arg_list, typename Default_Arg_List> 
+struct find_default_args_impl;
 
-    using func_args = default_args< decay_type< param_types_t<F, Index >>, 
-                                    decay_type< param_types_t<F, Arg_Count>>...
+template<typename Default_Arg_List, typename T, typename...TArgs> 
+struct find_default_args_impl<type_list<T, TArgs...>, Default_Arg_List>
+{
+    template<typename Tx>
+    using decay_type = remove_cv_t<remove_reference_t< Tx >>;
+
+    using func_args = default_args< decay_type< T>, 
+                                    decay_type< TArgs>...
                                   >;
 
     using type = conditional_t< std::is_same<func_args, Default_Arg_List>::value,
                                 Default_Arg_List,
-                                typename find_default_args_impl<F, Default_Arg_List, index_sequence<Arg_Count...> >::type
+                                typename find_default_args_impl<type_list<TArgs...>, Default_Arg_List >::type
                                >;
 };
 
-
-template<typename F, typename Default_Arg_List>
-struct find_default_args_impl<F, Default_Arg_List, index_sequence<>>
+template<typename Default_Arg_List>
+struct find_default_args_impl<type_list<>, Default_Arg_List>
 {
     using type = default_args<>;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+//! Workaround because msvc2013 cannot handle '<sizeof...(T)' with std::enable_if<T>.
+template<typename...TArgs>
+struct is_not_one_argument : std::integral_constant<bool, (sizeof...(TArgs) != 1)> {};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 /*!
- * This type traits returns for a given function \p F
- * the given default type list of arguments \p Default_Arg_List,
- * when it is possible to call the function \p F with the given list \p Default_Arg_List.
+ * This helper struct is needed to call `find_default_args_t` with a function signature,
+ * or a constructor signature (a list of arguments), i.e. I have only one interface to invoke.
+ *
+ * This avoid code distinction in `has_default_types`or `get_default_args`.
+ */
+template<typename Default_Arg_List, typename T, typename Enable = void>
+struct find_default_args_helper;
+
+// is function
+template<typename Default_Arg_List, typename T>
+struct find_default_args_helper<Default_Arg_List, type_list<T>, enable_if_t<is_function<T>::value>>
+:   find_default_args_impl< as_type_list_t< typename function_traits<T>::arg_types >, Default_Arg_List>
+{
+};
+
+// is ctor with one argument
+template<typename Default_Arg_List, typename T>
+struct find_default_args_helper<Default_Arg_List, type_list<T>, enable_if_t<!is_function<T>::value>>
+:   find_default_args_impl<type_list<T>, Default_Arg_List>
+{
+};
+
+// is ctor with zero or more then one argument
+template<typename Default_Arg_List, typename...TArgs>
+struct find_default_args_helper<Default_Arg_List, type_list<TArgs...>, enable_if_t< is_not_one_argument<TArgs...>::value >>
+:   find_default_args_impl<type_list<TArgs...>, Default_Arg_List>
+{
+};
+
+
+/*!
+ * This type traits will check whether it is possible to call
+ * a function type or a list of argument types (e.g. constructor arguments)
+ * depending on a list of default argument types, \p Default_Arg_List.
+ * When it is possible \p Default_Arg_List will be returned as type;
+ * Otherwise an empty 'default_args<>' will be returned
  *
  * e.g.:
- * F => foo(int, double); Default_Arg_List => "type_list<int, double>" will return "type_list<int, double>"
- * F => foo(int, double); Default_Arg_List => "type_list<int>" will return "type_list<>" (cannot be called)
- * F => foo(int, double); Default_Arg_List => "type_list<double>" will return "type_list<double>"
+ * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<bool, int, double> will return:    default_args<bool, int, double>
+ * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<int, double>       will return:    default_args<int, double>
+ * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<double>            will return:    default_args<double>
+ * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<int>               will return:    default_args<> (cannot be called; right most argument is missing)
  */
-template<typename F, typename Default_Arg_List>
-using find_default_args_t = typename find_default_args_impl<F, Default_Arg_List, 
-                                                            make_index_sequence< function_traits<F>::arg_count> >::type;
+template<typename Default_Arg_List, typename... TArgs>
+using find_default_args_t = typename find_default_args_helper<Default_Arg_List, type_list<TArgs...>>::type;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +171,33 @@ using get_default_args_t = typename get_default_args_impl< type_list< TArgs... >
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * Evaluates to 'std::true_type' when the given arguments contains one 'def_args<T...>' argument;
+ * Otherwise to 'std::false_type'
+ */
+template<typename...Args>
+using has_default_args = conditional_t<std::is_same<get_default_args_t<Args...>, default_args<>>::value, std::false_type, std::true_type>;
+
+template<typename T1, typename T2>
+struct has_default_types;
+
+
+/*!
+ * Evaluates to 'std::true_type' when the given arguments contains one valid 'def_args<T...>' argument,
+ * that can be used to invoke the signature \p Acc_Args;
+ * Otherwise to 'std::false_type'
+ */
+template<typename... Acc_Args, typename... TArgs>
+struct has_default_types<type_list<Acc_Args...>, type_list<TArgs...>> 
+:   conditional_t<std::is_same<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args...>, default_args<>>::value,
+                  std::false_type, std::true_type>
+{
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T, typename Enable = void>
 struct count_default_args_impl;
 
@@ -155,7 +221,6 @@ struct count_default_args_impl<type_list<T, TArgs...>, enable_if_t<!is_def_type<
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // returns the number of types 'default_args<T...>' provided in the given list of arguments TArgs...
-
 template<typename...TArgs>
 using count_default_args = count_default_args_impl< type_list< raw_type_t<TArgs>... > >;
 
@@ -163,7 +228,7 @@ using count_default_args = count_default_args_impl< type_list< raw_type_t<TArgs>
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename... Args, typename Default_Type = find_default_args_t<F, get_default_args_t<Args...>> >
+template<typename... TArgs, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, TArgs...> >
 static RTTR_INLINE 
 enable_if_t< std::is_same<Default_Type, default_args<>>::value, Default_Type>
 get_default_args(Args&&... arg)
@@ -173,7 +238,7 @@ get_default_args(Args&&... arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename... Args, typename Default_Type = find_default_args_t<F, get_default_args_t<Args...>> >
+template<typename...TArgs, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, TArgs...> >
 static RTTR_INLINE 
 enable_if_t< !std::is_same<Default_Type, default_args<>>::value, Default_Type> 
 get_default_args(Args&&... arg)

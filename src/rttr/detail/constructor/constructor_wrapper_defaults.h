@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_CONSTRUCTOR_WRAPPER_H_
-#define RTTR_CONSTRUCTOR_WRAPPER_H_
+#ifndef RTTR_CONSTRUCTOR_WRAPPER_DEFAULTS_H_
+#define RTTR_CONSTRUCTOR_WRAPPER_DEFAULTS_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
@@ -39,6 +39,7 @@
 #include "rttr/detail/method/method_accessor.h"
 #include "rttr/detail/constructor/constructor_invoker.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
+#include "rttr/detail/default_arguments/invoke_with_defaults.h"
 
 #include <vector>
 #include <utility>
@@ -49,31 +50,20 @@ namespace rttr
 namespace detail
 {
 
-// we have to use this helper traits because MSVC2013 cannot handle 'sizeof...(T)' in std::enable_if statement
-template<typename Ctor_Args, typename Args>
-struct are_args_in_valid_range;
-
-template<typename... Ctor_Args, typename... Args>
-struct are_args_in_valid_range<type_list<Ctor_Args...>, type_list<Args...>>
-:   std::integral_constant<bool, (sizeof...(Ctor_Args) == sizeof...(Args))>
-{
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename ClassType, typename Constructor_Type, typename Policy, typename Default_Args, typename... Args>
 class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename Policy, typename... Ctor_Args>
-class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_Args...> : public constructor_wrapper_base
+template<typename Class_Type, typename Policy, typename... Def_Args, typename... Ctor_Args>
+class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<Def_Args...>, Ctor_Args...> : public constructor_wrapper_base
 {
-    using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
-    using instanciated_type = typename invoker_class::return_type;
+        using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
+        using instanciated_type = typename invoker_class::return_type;
+        using invoke_with_defaults = invoke_defaults_helper<invoker_class, type_list<Ctor_Args...>>;
 
     public:
-        constructor_wrapper() {}
+        constructor_wrapper(default_args<Def_Args...> default_args) : m_def_args(std::move(default_args)) { }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Ctor_Args>()...}; }
         std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
@@ -90,79 +80,63 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_A
         std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        template<typename... TArgs>
-        static RTTR_FORCE_INLINE
-        enable_if_t< are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
-        invoke_impl(const TArgs&...args)
-        {
-            return invoker_class::invoke(args...);
-        }
-
-        template<typename... TArgs>
-        static RTTR_FORCE_INLINE
-        enable_if_t< !are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
-        invoke_impl(const TArgs&...args)
-        {
-            return variant();
-        }
-
         variant invoke() const
         {
-            return invoke_impl();
+            return invoke_with_defaults::invoke(m_def_args.m_args);
         }
 
         variant invoke(argument& arg1) const
         {
-            return invoke_impl(arg1);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1);
         }
         variant invoke(argument& arg1, argument& arg2) const
         {
-            return invoke_impl(arg1, arg2);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3) const
         {
-            return invoke_impl(arg1, arg2, arg3);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
-            return invoke_impl(arg1, arg2, arg3, arg4);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
-            return invoke_impl(arg1, arg2, arg3, arg4, arg5);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
-            return invoke_impl(arg1, arg2, arg3, arg4, arg5, arg6);
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
-        template<std::size_t ...I>
-        static RTTR_INLINE variant invoke_variadic_impl(const std::vector<argument>& arg_list, index_sequence<I...>)
+        variant invoke_variadic(std::vector<argument>& args) const
         {
-            if (arg_list.size() == sizeof...(I))
-                return invoker_class::invoke(arg_list[I]...);
+            if (args.size() <= sizeof...(Ctor_Args))
+                return invoke_variadic_helper<invoke_with_defaults, index_sequence_for<Ctor_Args...>>::invoke(args, m_def_args.m_args);
             else
                 return variant();
         }
-
-        variant invoke_variadic(std::vector<argument>& arg_list) const
-        {
-            return invoke_variadic_impl(arg_list, make_index_sequence<sizeof...(Ctor_Args)>());
-        }
+    private:
+        default_args<Def_Args...> m_def_args;
 };
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename Policy, typename F>
-class constructor_wrapper<ClassType, return_func, Policy, default_args<>, F> : public constructor_wrapper_base
+template<typename ClassType, typename Policy, typename... Def_Args, typename F>
+class constructor_wrapper<ClassType, return_func, Policy, default_args<Def_Args...>, F> : public constructor_wrapper_base
 {
     using instanciated_type = typename function_traits<F>::return_type;
+    using method_type = typename detail::method_type<F>::type;
+    using arg_index_sequence = make_index_sequence< function_traits<F>::arg_count >;
+    using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;
+    using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
 
     public:
-        constructor_wrapper(F creator_func) : m_creator_func(creator_func) {}
+        constructor_wrapper(F creator_func, default_args<Def_Args...> default_args)
+        :   m_creator_func(creator_func),  m_def_args(std::move(default_args)) 
+        { 
+        }
 
         type get_instanciated_type()            const { return type::get<instanciated_type>();                      }
         type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
@@ -172,38 +146,42 @@ class constructor_wrapper<ClassType, return_func, Policy, default_args<>, F> : p
 
         variant invoke() const
         {
-           return method_accessor<F, Policy>::invoke(m_creator_func, instance());
+           return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args);
         }
         variant invoke(argument& arg1) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1);
         }
         variant invoke(argument& arg1, argument& arg2) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4, arg5);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
         }
         variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
-            return method_accessor<F, Policy>::invoke(m_creator_func, instance(), arg1, arg2, arg3, arg4, arg5, arg6);
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
         }
         variant invoke_variadic(std::vector<argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke_variadic(m_creator_func, instance(), args);
+            if (args.size() <= function_traits<F>::arg_count)
+                return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_creator_func, instance(), m_def_args.m_args);
+            else
+                return variant();
         }
     private:
          F  m_creator_func;
+         default_args<Def_Args...> m_def_args;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -211,4 +189,4 @@ class constructor_wrapper<ClassType, return_func, Policy, default_args<>, F> : p
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_CONSTRUCTOR_WRAPPER_H_
+#endif // RTTR_CONSTRUCTOR_WRAPPER_DEFAULTS_H_

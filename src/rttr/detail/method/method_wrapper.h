@@ -37,6 +37,7 @@
 #include "rttr/detail/method/method_accessor.h"
 #include "rttr/variant.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
+#include "rttr/detail/default_arguments/invoke_with_defaults.h"
 
 
 #include <functional>
@@ -107,6 +108,11 @@ class method_wrapper<F, Policy, default_args<>> : public method_wrapper_base
 template<typename F, typename Policy, typename...TArgs>
 class method_wrapper<F, Policy, default_args<TArgs...> > : public method_wrapper_base
 {
+    using method_type = typename detail::method_type<F>::type;
+    using arg_index_sequence = make_index_sequence< function_traits<F>::arg_count >;
+    using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;
+    using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
+
     public:
         method_wrapper(F func_acc, default_args<TArgs...> default_args)
         : m_func_acc(func_acc), m_def_args(std::move(default_args))
@@ -120,36 +126,39 @@ class method_wrapper<F, Policy, default_args<TArgs...> > : public method_wrapper
 
         variant invoke(instance& object) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args);
         }
         variant invoke(instance& object, argument& arg1) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1);
         }
         variant invoke(instance& object, argument& arg1, argument& arg2) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2);
         }
         variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3);
         }
         variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4);
         }
         variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
         }
         variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
         {
-            return method_accessor<F, Policy>::invoke_with_defaults(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
+            return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
         variant invoke_variadic(instance& object, std::vector<argument>& args) const
         {
-            return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, m_def_args.m_args, args);
+            if (args.size() <= function_traits<F>::arg_count)
+                return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_func_acc, object, m_def_args.m_args);
+            else
+                return variant();
         }
 
     private:
