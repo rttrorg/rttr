@@ -145,7 +145,7 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
             using has_default_types = has_default_types<type_list<Ctor_Args...>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) || !has_default_args<Args...>::value, 
                            "The provided default arguments, cannot be used with the given constructor.");
             static_assert( (count_default_args<Args...>::value <= 1), 
                            "Too many default arguments provided, only one set of default arguments can be provided!");
@@ -220,7 +220,7 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
             using namespace detail;
             
             using has_default_types = has_default_types<type_list<F>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) || !has_default_args<Args...>::value, 
                            "The provided default arguments, cannot be used with the given method accessor.");
             static_assert( (count_default_args<Args...>::value <= 1), 
                            "Too many default arguments provided, only one set of default arguments can be provided!");
