@@ -155,7 +155,7 @@ template<typename Invoker_Class, std::size_t... Arg_Idx>
 struct invoke_variadic_helper<Invoker_Class, index_sequence<Arg_Idx...>>
 {
     template<typename... Args>
-    static RTTR_FORCE_INLINE variant invoke(const std::vector<argument>& arg_list, Args&&...args)
+    static RTTR_FORCE_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
     {
         static const std::size_t Arg_Count = sizeof...(Arg_Idx);
         if (arg_list.size() == Arg_Count)
@@ -169,7 +169,7 @@ template<typename Invoker_Class>
 struct invoke_variadic_helper<Invoker_Class, index_sequence<>>
 {
     template<typename...Args>
-    static RTTR_FORCE_INLINE variant invoke(const std::vector<argument>& arg_list, Args&&...args)
+    static RTTR_FORCE_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
     {
         return Invoker_Class::invoke(args...);
     }
