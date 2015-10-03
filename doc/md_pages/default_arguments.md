@@ -1,0 +1,57 @@
+Default Arguments {#default_arguments_page}
+=================
+
+When you want to register a @ref rttr::method "methods" or a @ref rttr::constructor "constructors" which contains default arguments,
+you have to provide them RTTR explicitly. The reason for this is, 
+default arguments are not part of the function signature.
+Nevertheless, RTTR provides a mechanism to register functions with default arguments.
+
+Please take a look at following example:
+
+\code{.cpp}
+using namespace rttr;
+
+void my_function(int a, bool b, const std::string& text);
+
+RTTR_REGISTRATION
+{
+    registration::method("my_function", &my_function)   
+    (
+        default_arguments(true, std::string("default text"))
+    );
+}
+\endcode
+
+The default arguments has to be provided via the function: @ref rttr::default_arguments() "default_arguments()".
+Place the call in the `()` operator of the returned @ref rttr::registration::bind "bind" object.
+
+The function has following synopsis:
+~~~~{.cpp}
+    template<typename...TArgs>
+    detail::default_args<TArgs...> default_arguments(TArgs&&...args)
+~~~~
+The values will be copied internally and will be provided during invoke of the method or constructor,
+when the corresponding argument is missing.
+
+\remark The given arguments must match the signature from the starting position to the right most argument.
+
+The following snippet will **not** compile and will raise a *static_assert*:
+\code{.cpp}
+using namespace rttr;
+
+void my_function(int a, bool b, const std::string& text);
+
+RTTR_REGISTRATION
+{
+    registration::method("my_function", &my_function)   
+    (
+        default_arguments(true) // default value for "text" not given
+    );
+}
+\endcode
+
+Every \ref method and \ref constructor can have default arguments.
+
+<hr>
+
+<div type="button" class="btn btn-default">[previous](@ref binding_metadata_page "Binding Metadata")</div><div class="btn btn-default">[next](@ref binding_policies_page "Binding Policies")</div>

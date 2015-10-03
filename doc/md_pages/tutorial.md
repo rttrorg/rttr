@@ -19,4 +19,5 @@ Registration of Types
 -# [Variant](@ref binding_variant_page)
 -# [Classes](@ref binding_classes_page)
 -# [Metadata](@ref binding_metadata_page)
+-# [Default Arguments](@ref default_arguments_page)
 -# [Policies](@ref binding_policies_page)

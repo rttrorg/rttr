@@ -120,4 +120,4 @@ then bind the wrapper instead of the original accessor.
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref binding_metadata_page "Binding Metadata")</div><div class="btn btn-default">[Finished](@ref tutorial_page "Tutorial")</div>
+<div type="button" class="btn btn-default">[previous](@ref default_arguments_page "Default Arguments")</div><div class="btn btn-default">[Finished](@ref tutorial_page "Tutorial")</div>
