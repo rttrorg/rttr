@@ -3,6 +3,9 @@ Tutorial   {#tutorial_page}
 This tutorial will guide you through the basic usage of RTTR. 
 It is separated in two parts, using the @ref rttr::type "type" class and register types.
 
+For the inpatient:
+[5 Minute Tutorial](@ref five_minute_tutorial_page)
+
 Working with rttr::type
 -----------------------
 -# [Retrieve rttr::type objects](@ref retrieve_rttr_type_page)
