@@ -110,7 +110,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
     public:
         property_wrapper(accessor acc) : m_acc(acc)
         {
-            static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
+            static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
         }
 
         bool is_readonly()  const   { return false; }
@@ -154,7 +154,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_onl
     public:
         property_wrapper(accessor acc) : m_acc(acc)
         {
-            static_assert(!std::is_pointer<A>::value, "The given type is already a pointer type!");
+            static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
         }
 
         bool is_readonly()  const   { return true; }

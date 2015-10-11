@@ -102,8 +102,9 @@ template<typename Class_Type>
 template<typename...Args>
 registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(Args&&...args)
 {
-    auto data = detail::get_meta_data(std::forward<Args>(args)...);
-    detail::type_register::meta_data(type::get<Class_Type>(), std::move(data));
+    using namespace detail;
+    auto data = get_meta_data(std::forward<Args>(args)...);
+    type_register::meta_data(type::get<Class_Type>(), std::move(data));
     return *this;
 }
 
@@ -122,7 +123,13 @@ template<typename Class_Type>
 template<typename F, typename acc_level, typename Tp>
 registration::bind<detail::ctor_func, Class_Type, F> registration::class_<Class_Type>::constructor(F func, acc_level level)
 {
-    static_assert(std::is_same<detail::return_func, typename detail::method_type<F>::type>::value, "For creating this 'class type', please provide a function pointer or std::function with a return value.");
+    using namespace detail;
+    static_assert(is_function_ptr<F>::value || is_std_function<F>::value,
+                  "No valid accessor for invoking the constructor provided!");
+
+    static_assert(std::is_same<return_func, typename method_type<F>::type>::value, 
+                  "For creating this 'class type', please provide a function pointer or std::function with a return value.");
+    
     return {create_if_empty(m_reg_exec), func};
 }
 
@@ -132,7 +139,11 @@ template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
 registration::bind<detail::prop, Class_Type, A> registration::class_<Class_Type>::property(const char* name, A acc, acc_level level)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    using namespace detail;
+    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(std::is_member_object_pointer<A>::value || std::is_pointer<A>::value,
+                  "No valid property accessor provided!");
+
     return {create_if_empty(m_reg_exec), name, acc};
 }
 
@@ -142,7 +153,13 @@ template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
 registration::bind<detail::prop_readonly, Class_Type, A> registration::class_<Class_Type>::property_readonly(const char* name, A acc, acc_level level)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    using namespace detail;
+    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(std::is_pointer<A>::value ||
+                  std::is_member_object_pointer<A>::value || std::is_member_function_pointer<A>::value || 
+                  is_function_ptr<A>::value || is_std_function<A>::value,
+                  "No valid property accessor provided!");
+
     return {create_if_empty(m_reg_exec), name, acc};
 }
 
@@ -152,7 +169,19 @@ template<typename Class_Type>
 template<typename A1, typename A2,  typename Tp, typename acc_level>
 registration::bind<detail::prop, Class_Type, A1, A2> registration::class_<Class_Type>::property(const char* name, A1 getter, A2 setter, acc_level level)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    using namespace detail;
+    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(std::is_member_function_pointer<A1>::value || std::is_member_function_pointer<A2>::value ||
+                  is_function_ptr<A1>::value || is_function_ptr<A2>::value ||
+                  is_std_function<A1>::value || is_std_function<A2>::value, 
+                  "No valid property accessor provided!");
+
+    static_assert(function_traits<A1>::arg_count == 0, "Invalid number of arguments, please provide as first accessor a getter-member-function without arguments.");
+    static_assert(function_traits<A2>::arg_count == 1, "Invalid number of arguments, please provide as second argument a setter-member-function with exactly one argument.");
+    using return_type   = typename function_traits<A1>::return_type;
+    using arg_type      = typename param_types<A2, 0>::type;
+    static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature (data type) for getter and setter!");
+
     return {create_if_empty(m_reg_exec), name, getter, setter};
 }
 
@@ -162,7 +191,13 @@ template<typename Class_Type>
 template<typename F, typename acc_level>
 registration::bind<detail::meth, Class_Type, F> registration::class_<Class_Type>::method(const char* name, F f, acc_level level)
 {
-    static_assert(detail::contains<acc_level, detail::access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    using namespace detail;
+    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(std::is_member_function_pointer<F>::value || std::is_member_function_pointer<F>::value ||
+                  is_function_ptr<F>::value || is_function_ptr<F>::value ||
+                  is_std_function<F>::value || is_std_function<F>::value, 
+                  "No valid method accessor provided!");
+
     return {create_if_empty(m_reg_exec), name , f};
 }
 
@@ -172,7 +207,9 @@ template<typename Class_Type>
 template<typename Enum_Type>
 registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Class_Type>::enumeration(const char* name)
 {
+    using namespace detail;
     static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please call this method with an enum type!");
+
     return {create_if_empty(m_reg_exec), name};
 }
 
@@ -183,7 +220,9 @@ registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Cl
 template<typename A>
 registration::bind<detail::prop, void, A> registration::property(const char* name, A acc)
 {
-    return {std::make_shared<detail::registration_executer>(), name, acc};
+    using namespace detail;
+    static_assert(std::is_pointer<A>::value, "No valid property accessor provided!");
+    return {std::make_shared<registration_executer>(), name, acc};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +230,11 @@ registration::bind<detail::prop, void, A> registration::property(const char* nam
 template<typename A>
 registration::bind<detail::prop_readonly, void, A> registration::property_readonly(const char* name, A acc)
 {
-    return {std::make_shared<detail::registration_executer>(), name, acc};
+    using namespace detail;
+    static_assert(std::is_pointer<A>::value || is_function_ptr<A>::value || is_std_function<A>::value,
+                  "No valid property accessor provided!");
+
+    return {std::make_shared<registration_executer>(), name, acc};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +242,12 @@ registration::bind<detail::prop_readonly, void, A> registration::property_readon
 template<typename A1, typename A2>
 registration::bind<detail::prop, void, A1, A2> registration::property(const char* name, A1 getter, A2 setter)
 {
-    return {std::make_shared<detail::registration_executer>(), name, getter, setter};
+    using namespace detail;
+    static_assert(is_function_ptr<A1>::value || is_function_ptr<A2>::value ||
+                  is_std_function<A1>::value || is_std_function<A2>::value, 
+                  "No valid property accessor provided!");
+
+    return {std::make_shared<registration_executer>(), name, getter, setter};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -207,7 +255,10 @@ registration::bind<detail::prop, void, A1, A2> registration::property(const char
 template<typename F>
 registration::bind<detail::meth, void, F> registration::method(const char* name, F f)
 {
-    return {std::make_shared<detail::registration_executer>(), name, f};
+    using namespace detail;
+    static_assert(is_function_ptr<F>::value || is_std_function<F>::value, 
+                  "No valid property accessor provided!");
+    return {std::make_shared<registration_executer>(), name, f};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -215,8 +266,9 @@ registration::bind<detail::meth, void, F> registration::method(const char* name,
 template<typename Enum_Type>
 registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(const char* name)
 {
+    using namespace detail;
     static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please call this method with an enum type!");
-    return {std::make_shared<detail::registration_executer>(), name};
+    return {std::make_shared<registration_executer>(), name};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
