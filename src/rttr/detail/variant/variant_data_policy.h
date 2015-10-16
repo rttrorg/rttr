@@ -131,19 +131,19 @@ using variant_policy_func = bool (*)(variant_policy_operation, const variant_dat
 // some ugly workaround for MSVC < v. 1800
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
-    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs) \
+    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
         compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
 #else                                                                             
     #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
-        compare_equal(Tp::get_value(src_data), rhs.get_value<T>());                        
+        compare_equal(Tp::get_value(src_data), rhs.get_value<T>())                 
 #endif
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs) \
-        compare_less(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
+        compare_less_than(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), result)
 #else                                                                             
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs)                                            \
-        compare_less(Tp::get_value(src_data), rhs.get_value<T>());                        
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
+        compare_less_than(Tp::get_value(src_data), rhs.get_value<T>(), result)                      
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -259,14 +259,16 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::COMPARE_LESS:
             {
-                const auto& param = arg.get_value<std::tuple<const variant&, const variant&>>();
-                const variant& lhs = std::get<0>(param);
-                const variant& rhs = std::get<1>(param);
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
+                int result = 0;
                 if (lhs_type == rhs_type)
                 {
-                    return COMPARE_LESS_PRE_PROC(src_data, rhs);
+                    if (COMPARE_LESS_PRE_PROC(src_data, rhs, result))
+                        return (result == -1 ? true : false);
                 }
                 else if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
                 {
@@ -283,7 +285,10 @@ struct variant_data_base_policy
                 {
                     variant rhs_tmp;
                     if (rhs.convert(lhs_type, rhs_tmp))
-                        return COMPARE_LESS_PRE_PROC(src_data, rhs_tmp);
+                    {
+                        if (COMPARE_LESS_PRE_PROC(src_data, rhs_tmp, result))
+                            return (result == -1 ? true : false);
+                    }
 
                     variant lhs_tmp;
                     if (lhs.convert(rhs_type, lhs_tmp))
@@ -292,7 +297,8 @@ struct variant_data_base_policy
                         return (lhs_type < rhs_type);
                 }
 
-                return false;
+                // as last try, do a string conversion
+                return (lhs.to_string() < rhs.to_string());
                 break;
             }
         }

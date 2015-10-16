@@ -700,6 +700,31 @@ class RTTR_API type
         template<typename F>
         static void register_converter_func(F func);
 
+        /*!
+         * \brief Register comparison operators for template type \p T.
+         *        This requires a valid `operator==` and `operator<` for type \p T.
+         *
+         * The registered comparison operators will be used in the \ref variant class.
+         *
+         * See following example code:
+         *  \code{.cpp}
+         *  // two variants, same content
+         *   variant a = std::make_tuple<int, std::string>(12, std::string("some text"));
+         *   variant b = std::make_tuple<int, std::string>(12, std::string("some text"));
+         *
+         *   a == b;                // yields to false
+         *
+         *   // register comparators for template type '<std::tuple<std::string, int>'
+         *   type::register_comparators<std::tuple<std::string, int>>();
+         *
+         *   a == b;                // yields to true
+         *  \endcode
+         *
+         * \see variant::operator==(), variant::operator<()
+         */
+        template<typename T>
+        static void register_comparators();
+
     private:
 
         /*!

@@ -46,6 +46,8 @@ namespace rttr
 namespace detail
 {
 
+struct type_comparator_base;
+
 /*!
  * This class holds all type information.
  * It is not part of the rttr API
@@ -68,6 +70,7 @@ class RTTR_LOCAL type_database
         void register_custom_name(const type& t, std::string );
         void register_meta_data( const type& t, std::vector<meta_data> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
+        void register_comparator(const type& t, const type_comparator_base* comparator);
 
         uint16 register_type(const char* name, 
                              const type& raw_type,
@@ -126,6 +129,10 @@ class RTTR_LOCAL type_database
         /////////////////////////////////////////////////////////////////////////////////////
 
         type_converter_base* get_converter(const type& source_type, const type& target_type) const;
+
+        /////////////////////////////////////////////////////////////////////////////////////
+
+        const type_comparator_base* get_comparator(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -285,13 +292,13 @@ class RTTR_LOCAL type_database
         };
 
 
-        template<typename T>
+        template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
         struct type_data
         {
             type_data(type::type_id id) : m_id(id) {}
-            type_data(type::type_id id, std::unique_ptr<T> data) : m_id(id), m_data(std::move(data)) {}
-            type_data(type_data<T>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
-            type_data<T>& operator = (type_data<T>&& other) 
+            type_data(type::type_id id, Data_Type data) : m_id(id), m_data(std::move(data)) {}
+            type_data(type_data<T, Data_Type>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
+            type_data<T, Data_Type>& operator = (type_data<T, Data_Type>&& other) 
             {
                 m_id = other.m_id;
                 m_data = std::move(other.m_data);
@@ -314,8 +321,8 @@ class RTTR_LOCAL type_database
                 }
             };
 
-            type::type_id       m_id;
-            std::unique_ptr<T>  m_data;
+            type::type_id   m_id;
+            Data_Type       m_data;
         };
 
         template<typename T>
@@ -352,17 +359,18 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
                                                                     
-        std::vector<global_member<property_wrapper_base>>         m_global_property_list;
-        std::vector<global_member<method_wrapper_base>>           m_global_method_list;
+        std::vector<global_member<property_wrapper_base>>           m_global_property_list;
+        std::vector<global_member<method_wrapper_base>>             m_global_method_list;
 
-        std::vector<class_member<property_wrapper_base>>          m_class_property_list;
-        std::vector<class_member<method_wrapper_base>>            m_class_method_list;
+        std::vector<class_member<property_wrapper_base>>            m_class_property_list;
+        std::vector<class_member<method_wrapper_base>>              m_class_method_list;
 
-        std::vector<type_data<constructor_wrapper_base>>          m_constructor_list;
-        std::vector<type_data<destructor_wrapper_base>>           m_destructor_list;
+        std::vector<type_data<constructor_wrapper_base>>            m_constructor_list;
+        std::vector<type_data<destructor_wrapper_base>>             m_destructor_list;
 
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
-        std::vector<type_data<enumeration_wrapper_base>>          m_enumeration_list;
+        std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
+        std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
         std::vector<type_data<std::vector<meta_data>>>              m_meta_data_type_list;
         std::vector<std::vector<meta_data>>                         m_meta_data_item_list;
         std::vector<const char*>                                    m_name_item_list;

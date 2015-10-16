@@ -247,6 +247,10 @@ class RTTR_API variant
          * The variant uses the equality operator of the containing \ref get_type() "type" to check for equality.
          * When \p other is not of the same type as the containing type, it will try to convert to it and do then the equality check.
          *
+         * \remark In order to use this function with template types, like `std::tuple<int, std::string>`, 
+         *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
+         *         The reason for that is, template types might define the `==` operator, but not the contained template type.
+         *
          * \see \ref variant::operator!=(const variant&) const "operator!="
          *
          * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
@@ -255,6 +259,10 @@ class RTTR_API variant
 
         /*!
          * \brief Compares this variant with \p other and returns `true` if they are **not** equal; otherwise returns `false`.
+         *
+         * \remark In order to use this function with template types, like `std::tuple<int, std::string>`, 
+         *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
+         *         The reason for that is, template types might define the `!=` operator, but not the contained template type.
          *
          * \see \ref variant::operator==(const variant&) const "operator=="
          *
@@ -267,6 +275,10 @@ class RTTR_API variant
          * 
          * The variant uses the *less than* operator of the containing \ref get_type() "type".
          * When \p other is not of the same type as the containing type, it will try to convert to it and do then the *less than* check.
+         *
+         * \remark In order to use this function with template types, like `std::tuple<int, std::string>`, 
+         *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
+         *         The reason for that is, template types might define the `<` operator, but not the contained template type.
          *
          * \see \ref variant::operator>(const variant&) const "operator\>"
          *

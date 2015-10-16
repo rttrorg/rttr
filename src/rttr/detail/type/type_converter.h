@@ -38,6 +38,8 @@ namespace rttr
 namespace detail
 {
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 struct RTTR_LOCAL type_converter_base
 {
     type_converter_base(const type& target_type) : m_target_type(target_type) {}
@@ -47,6 +49,8 @@ struct RTTR_LOCAL type_converter_base
     type m_target_type;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename TargetType>
 struct type_converter_target : type_converter_base
 {
@@ -55,6 +59,8 @@ struct type_converter_target : type_converter_base
     variant to_variant(void* data, bool& ok) const { return convert(data, ok); }
     virtual TargetType convert(void* data, bool& ok) const = 0;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename TargetType, typename SourceType, typename F>
 struct type_converter : type_converter_target<TargetType>
@@ -70,6 +76,8 @@ struct type_converter : type_converter_target<TargetType>
 
     F m_acc;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

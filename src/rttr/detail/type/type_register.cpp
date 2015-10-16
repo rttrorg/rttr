@@ -100,6 +100,13 @@ void type_register::converter(const type& t, std::unique_ptr<detail::type_conver
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_register::comparator(const type& t, type_comparator_base* comparator)
+{
+    type_database::instance().register_comparator(t, comparator);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 uint16 type_register::type_reg(const char* name, 
                                const type& raw_type,
                                const type& wrapped_type,

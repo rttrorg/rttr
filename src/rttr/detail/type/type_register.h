@@ -53,6 +53,7 @@ class method_wrapper_base;
 class property_wrapper_base;
 
 struct type_converter_base;
+struct type_comparator_base;
 struct base_class_info;
 struct derived_info;
 
@@ -91,6 +92,8 @@ public:
     static void meta_data( const type& t, std::vector<meta_data> data);
 
     static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+
+    static void comparator(const type& t, type_comparator_base* comparator);
 
     /*!
      * \brief Register the type info for the given name

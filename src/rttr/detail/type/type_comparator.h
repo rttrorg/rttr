@@ -25,75 +25,58 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_COMPARE_EQUAL_H_
-#define RTTR_COMPARE_EQUAL_H_
+#ifndef RTTR_TYPE_COMPARATOR_H_
+#define RTTR_TYPE_COMPARATOR_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/type.h"
-
-#include <type_traits>
-#include <cstring>
 
 namespace rttr
 {
+
 namespace detail
 {
 
-RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * \brief This function return the result of the expression `lhs == rhs` when the type \p T has the equal operator defined,
- *         otherwise this function will return false.
- */
-template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type 
-compare_equal(const T& lhs, const T& rhs)
+struct RTTR_LOCAL type_comparator_base
 {
-    return lhs == rhs;
-}
+    using equal_func = bool (*)(const void* lhs, const void* rhs);
+    using less_than_func = bool (*)(const void* lhs, const void* rhs);
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type 
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
-}
+    type_comparator_base(equal_func equal_f = nullptr, less_than_func less_than_f = nullptr)
+    :   equal(equal_f), less_than(less_than_f)
+    {
+    }
+    
+    equal_func      equal;
+    less_than_func  less_than;
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
-compare_equal(const T& lhs, const T& rhs)
+struct type_comparator : type_comparator_base
 {
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
-}
+    type_comparator() : type_comparator_base(equal, less_than) {}
 
-/////////////////////////////////////////////////////////////////////////////////////////
+    static bool equal(const void* lhs, const void* rhs)
+    {
+        const T& l = *static_cast<const T*>(lhs);
+        const T& r = *static_cast<const T*>(rhs);
+        return (l == r);
+    }
 
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_array_equal(lhs, rhs);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
-}
+    static bool less_than(const void* lhs, const void* rhs)
+    {
+        const T& l = *static_cast<const T*>(lhs);
+        const T& r = *static_cast<const T*>(rhs);
+        return (l < r);
+    }
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_COMPARE_EQUAL_H_
+#endif // RTTR_TYPE_COMPARATOR_H_

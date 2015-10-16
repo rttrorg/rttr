@@ -103,6 +103,7 @@ set(HEADER_FILES access_level.h
                  detail/type/get_create_variant_func.h
                  detail/type/get_derived_info_func.h
                  detail/type/type_converter.h
+                 detail/type/type_comparator.h
                  detail/type/type_database_p.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
@@ -126,6 +127,8 @@ set(SOURCE_FILES access_level.cpp
                  type.cpp
                  variant.cpp
                  variant_array_view.cpp
+                 detail/misc/compare_equal.cpp
+                 detail/misc/compare_less.cpp
                  detail/misc/standard_types.cpp
                  detail/conversion/std_conversion_functions.cpp
                  detail/constructor/constructor_wrapper_base.cpp

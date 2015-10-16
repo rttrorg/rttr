@@ -330,3 +330,39 @@ TEST_CASE("variant::operator==() - no build in == operator", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator==() - template type - comparator registered", "[variant]")
+{
+    SECTION("same types, same content")
+    {
+        variant a = std::make_tuple(23, std::string("some long long text"));
+        variant b = std::make_tuple(23, std::string("some long long text"));
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+
+        type::register_comparators<std::tuple<int, std::string>>();
+
+        CHECK((a == b) == true);
+        CHECK((a != b) == false);
+    }
+
+    SECTION("same types, different content")
+    {
+        variant a = std::make_tuple(23, std::string("some long long text"));
+        variant b = std::make_tuple(23, std::string("different content"));
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
+
+    SECTION("self equal test")
+    {
+        variant a = std::make_tuple(23, std::string("some long long text"));
+       
+        CHECK((a == a) == true);
+        CHECK((a != a) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

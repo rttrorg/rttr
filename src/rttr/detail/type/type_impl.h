@@ -37,6 +37,7 @@
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/wrapper_mapper.h"
+#include "rttr/detail/type/type_comparator.h"
 
 namespace rttr
 {
@@ -422,6 +423,16 @@ RTTR_INLINE void type::register_converter_func(F func)
     auto converter = detail::make_unique<type_converter<target_type, source_type, F>>(func);
     type source_t = type::get<source_type>();
     type_register::converter(source_t, std::move(converter));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void type::register_comparators()
+{
+    static_assert(detail::is_class_template<T>::value, "No template type provided! Please use this function only with template types, e.g. My_Custom_Type<T>.");
+    static detail::type_comparator<T> cmp;
+    detail::type_register::comparator(type::get<T>(), &cmp);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

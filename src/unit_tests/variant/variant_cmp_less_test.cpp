@@ -28,6 +28,7 @@
 #include <catch/catch.hpp>
 
 #include <rttr/type>
+#include <tuple>
 
 using namespace rttr;
 using namespace std;
@@ -162,6 +163,49 @@ TEST_CASE("variant::operator<() - double", "[variant]")
         variant b = static_cast<int8_t>(100);
 
         CHECK((a < b) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator<() - template type - comparator registered", "[variant]")
+{
+    SECTION("lower < bigger")
+    {
+        variant a = std::make_tuple<int>(23);
+        variant b = std::make_tuple<int>(42);
+
+        CHECK((a < b) == false);
+        CHECK((b < a) == false);
+
+        type::register_comparators<std::tuple<int>>();
+
+        CHECK((a < b) == true);
+        CHECK((b < a) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator<() - template type - no comparator registered", "[variant]")
+{
+    SECTION("lower < bigger, use std::string comparator")
+    {
+        variant a = std::make_tuple<int, int>(1, 2);
+        variant b = std::make_tuple<int, int>(3, 4);
+
+        CHECK((a < b) == false);
+        CHECK((b < a) == false);
+
+        type::register_converter_func(std::function<std::string(const std::tuple<int, int>& p, bool& ok)>(
+                                     [](const std::tuple<int, int>& p, bool& ok) -> std::string 
+                                     { 
+                                        ok = true;
+                                        return "[" + std::to_string(std::get<0>(p)) + ", " + std::to_string(std::get<1>(p)) + "]";
+                                     }));
+
+        CHECK((a < b) == true);
+        CHECK((b < a) == false);
     }
 }
 

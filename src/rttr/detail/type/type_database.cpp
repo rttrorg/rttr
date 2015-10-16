@@ -714,6 +714,33 @@ type_converter_base* type_database::get_converter(const type& source_type, const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_database::register_comparator(const type& t, const type_comparator_base* comparator)
+{
+    if (!t.is_valid())
+        return;
+
+    using data_type = type_data<const type_comparator_base*>;
+    m_type_comparator_list.push_back({t.get_id(), comparator});
+    std::stable_sort(m_type_comparator_list.begin(), m_type_comparator_list.end(), 
+                     data_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const type_comparator_base* type_database::get_comparator(const type& t) const
+{
+    using vec_value_type = type_data<const type_comparator_base*>;
+    const auto id = t.get_id();
+    auto itr = std::lower_bound(m_type_comparator_list.cbegin(), m_type_comparator_list.cend(), id, 
+                                vec_value_type::order_by_id());
+    if (itr != m_type_comparator_list.cend() && itr->m_id == id)
+        return itr->m_data;
+    else
+        return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void type_database::add_meta_data(meta_data_index index, meta_data data)
 {
     const auto new_max_size = std::max(m_meta_data_item_list.size(), static_cast<std::size_t>(index + 1));
