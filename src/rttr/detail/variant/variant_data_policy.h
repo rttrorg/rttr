@@ -86,12 +86,18 @@ using variant_policy = conditional_t<std::is_same<T, void_variant_type>::value,
                                                                                variant_data_policy_arithmetic<T>,
                                                                                conditional_t<std::is_array<T>::value,
                                                                                              variant_data_policy_array_small<T>,
-                                                                                             variant_data_policy_small<T>
+                                                                                             conditional_t<std::is_enum<T>::value,
+                                                                                                           variant_data_policy_small<T, default_type_converter<T, convert_from_enum<T>>>,
+                                                                                                           variant_data_policy_small<T>
+                                                                                                          >
                                                                                             >
                                                                               >,
                                                                   conditional_t<std::is_array<T>::value,
                                                                                 variant_data_policy_array_big<T>,
-                                                                                variant_data_policy_big<T>
+                                                                                conditional_t<std::is_enum<T>::value,
+                                                                                              variant_data_policy_big<T, default_type_converter<T, convert_from_enum<T>>>,
+                                                                                              variant_data_policy_big<T>
+                                                                                             >
                                                                                >
                                                                 >
                                                   >

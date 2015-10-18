@@ -50,6 +50,7 @@ set(SOURCE_FILES main.cpp
                  variant/variant_ctor_test.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_cmp_less_test.cpp
+                 variant/variant_enum_test.cpp
                  variant/variant_misc_test.cpp
                  variant_array_view/variant_array_view_test.cpp
                  )

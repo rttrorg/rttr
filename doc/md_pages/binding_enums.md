@@ -37,7 +37,7 @@ RTTR_REGISTRATION
 }
 ~~~~
 In order to add the individual enumerators you have to use the `()` operator of the returned @ref rttr::registration::bind "bind" object.
-Then you call for every enumerator you want to add, the function @ref rttr::value(variant, variant) "value()".
+Then you call for every enumerator you want to add, the function @ref rttr::value() "value()".
 
 It has following synopsis:
 ~~~~{.cpp}
@@ -57,7 +57,7 @@ How to use the enumeration class shows following example:
   if (enum_type && enum_type.is_enumeration())
   {
     enumeration enum_align = enum_type.get_enumeration();
-    std::string name = enum_align.value_to_name(MyStruct::AlignHCenter);
+    std::string name = enum_align.value_to_name(E_Alignment::AlignHCenter);
     std::cout << name; // prints "AlignHCenter"
     
     variant var = enum_align.name_to_value(name);
@@ -65,6 +65,12 @@ How to use the enumeration class shows following example:
   std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "4";
 ~~~~
 
+@remark You can also use the @ref rttr::variant "variant" class to convert from an enum value to is integral or string representation.
+~~~~{.cpp}
+variant var = E_Alignment::AlignHCenter;
+std::cout << var.to_int() << std::endl; // prints '4'
+std::cout << var.to_string() << std::endl; // prints 'AlignHCenter'
+~~~~
 <hr>
 
 <div type="button" class="btn btn-default">[previous](@ref binding_properties_page "Binding Properties")</div><div class="btn btn-default">[next](@ref binding_variant_page "Binding Variant")</div>

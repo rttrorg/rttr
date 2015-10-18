@@ -30,6 +30,7 @@
 
 #include "rttr/detail/conversion/std_conversion_functions.h"
 #include "rttr/detail/conversion/number_conversion.h"
+#include "rttr/detail/enumeration/enumeration_helper.h"
 
 namespace rttr
 {
@@ -1244,6 +1245,133 @@ struct RTTR_API convert_from<std::string>
     }
 
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// MSVC generates following warning: 'warning C4800: 'const enum_bool' : forcing value to bool 'true' or 'false' (performance warning)'
+// For unknown reason the MSVC compiler is too dump to recognize that I can safely convert an enumeration
+// with underlying type bool, to type bool (thats no int to bool conversion!)
+// so we disable the warning for enum conversions:
+#if  RTTR_COMPILER == RTTR_COMPILER_MSVC
+
+#pragma warning(push)
+#pragma warning(disable:4800)
+
+#endif
+
+template<typename T>
+struct convert_from_enum
+{
+    template<typename T_>
+    using enum_type_t = typename std::underlying_type<T_>::type;
+
+    static RTTR_INLINE enum_type_t<T> get_underlying_value(const T& from)
+    {
+        return static_cast<enum_type_t<T>>(from);
+    }
+
+    template<typename T1>
+    static RTTR_INLINE
+    enable_if_t<!std::is_same<bool, enum_type_t<T1> >::value, bool>
+    to(const T1& from, bool& to)
+    {
+        const auto value = get_underlying_value(from);
+        if (value == 0)
+        {
+            to = false;
+            return true;
+        }
+        else if (value == 1)
+        {
+            to = true;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    template<typename T1>
+    static RTTR_INLINE
+    enable_if_t<std::is_same<bool, enum_type_t<T1> >::value, bool>
+    to(const T1& from, bool& to)
+    {
+        // for unknown reason MSVC will here scream a warning 'C4800'...
+        to = static_cast<bool>(from);
+        return true;
+    }
+   
+    static RTTR_INLINE bool to(const T& from, char& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, int8& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, int16& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, int32& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, int64& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, uint8& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, uint16& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, uint32& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, uint64& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, float& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, double& to)
+    {
+        return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);
+    }
+
+    static RTTR_INLINE bool to(const T& from, std::string& to)
+    {
+        to = get_enumeration_name(from);
+        return (to.empty() != false);
+    }
+
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#if  RTTR_COMPILER == RTTR_COMPILER_MSVC
+// restore warning level
+#pragma warning(pop)
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

@@ -62,6 +62,7 @@ set(HEADER_FILES access_level.h
                  detail/default_arguments/invoke_with_defaults.h
                  detail/destructor/destructor_wrapper.h
                  detail/destructor/destructor_wrapper_base.h
+                 detail/enumeration/enumeration_helper.h
                  detail/enumeration/enumeration_wrapper.h
                  detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
@@ -133,6 +134,7 @@ set(SOURCE_FILES access_level.cpp
                  detail/conversion/std_conversion_functions.cpp
                  detail/constructor/constructor_wrapper_base.cpp
                  detail/destructor/destructor_wrapper_base.cpp
+                 detail/enumeration/enumeration_helper.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp
                  detail/meta_data/meta_data_handler.cpp
                  detail/method/method_wrapper_base.cpp

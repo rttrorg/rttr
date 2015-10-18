@@ -91,6 +91,8 @@ namespace detail
     
      variant var = enum_align.name_to_value("AlignJustify");
      std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "8";
+     std::cout << var.to_int();                           // prints "8";
+     std::cout << var.to_string();                        // prints "AlignJustify";
   }
 \endcode
  *
