@@ -409,7 +409,7 @@ RTTR_INLINE void type::register_converter_func(F func)
     using namespace detail;
 
     using target_type_orig = typename function_traits<F>::return_type;
-    using target_type = typename std::remove_cv<typename std::remove_reference<target_type_orig>::type>::type;
+    using target_type = remove_cv_t<remove_reference_t<target_type_orig>>;
     
     const std::size_t arg_count = function_traits<F>::arg_count;
     
@@ -417,8 +417,8 @@ RTTR_INLINE void type::register_converter_func(F func)
     static_assert(!std::is_same<void, target_type>::value, "Return type cannot be void!");
     static_assert(std::is_same<bool&, typename param_types<F, 1>::type>::value, "Second argument type must be a bool reference(bool&).");
     
-    using source_type_orig = typename param_types<F, 0>::type;
-    using source_type = typename std::remove_cv<typename std::remove_reference<source_type_orig>::type>::type;
+    using source_type_orig = param_types_t<F, 0>;
+    using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
     auto converter = detail::make_unique<type_converter<target_type, source_type, F>>(func);
     type source_t = type::get<source_type>();
