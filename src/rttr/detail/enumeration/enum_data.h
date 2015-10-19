@@ -54,6 +54,16 @@ class enum_data
         Enum_Type   m_value;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct is_enum_data : std::false_type { };
+
+template<typename T>
+struct is_enum_data<enum_data<T>> : std::true_type { };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

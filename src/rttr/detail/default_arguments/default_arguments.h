@@ -197,32 +197,9 @@ struct has_default_types<type_list<Acc_Args...>, type_list<TArgs...>>
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Enable = void>
-struct count_default_args_impl;
-
-template<>
-struct count_default_args_impl<type_list<>>
-{
-    static const std::size_t value = 0;
-};
-
-template<typename T, typename...TArgs>
-struct count_default_args_impl<type_list<T, TArgs...>, enable_if_t<is_def_type<T>::value>>
-{
-    static const std::size_t value = count_default_args_impl<type_list<TArgs...>>::value + 1;
-};
-
-template<typename T, typename...TArgs>
-struct count_default_args_impl<type_list<T, TArgs...>, enable_if_t<!is_def_type<T>::value>>
-{
-    static const std::size_t value = count_default_args_impl<type_list<TArgs...>>::value;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
 // returns the number of types 'default_args<T...>' provided in the given list of arguments TArgs...
 template<typename...TArgs>
-using count_default_args = count_default_args_impl< type_list< raw_type_t<TArgs>... > >;
+using count_default_args = count_if<is_def_type, type_list< raw_type_t<TArgs>... > >;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

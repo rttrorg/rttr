@@ -731,6 +731,36 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+    // Returns the number of elements in the type list \p T which satisfy the condition \p Condition.
+    // e.g. count_if<is_enum_type, type_list<int, enum_data<E>, std::string>>::value => 1
+
+    template<template<class> class Condition, typename T, typename Enable = void>
+    struct count_if_impl;
+
+    template<template<class> class Condition>
+    struct count_if_impl<Condition, type_list<>>
+    {
+        static const std::size_t value = 0;
+    };
+
+    template<template<class> class Condition, typename T, typename...TArgs>
+    struct count_if_impl<Condition, type_list<T, TArgs...>, enable_if_t<Condition<T>::value>>
+    {
+        static const std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value + 1;
+    };
+
+    template<template<class> class Condition, typename T, typename...TArgs>
+    struct count_if_impl<Condition, type_list<T, TArgs...>, enable_if_t<!Condition<T>::value>>
+    {
+        static const std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value;
+    };
+
+    template<template<class> class Condition, typename...TArgs>
+    using count_if = std::integral_constant<std::size_t, count_if_impl<Condition, type_list< raw_type_t<TArgs>... > >::value>;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
