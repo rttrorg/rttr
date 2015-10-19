@@ -42,12 +42,12 @@ namespace rttr
 namespace detail
 {
 
-template<typename Enum_Type>
+template<typename Enum_Type, std::size_t N>
 class enumeration_wrapper : public enumeration_wrapper_base
 {
     public:
-        enumeration_wrapper(std::vector< enum_data<Enum_Type> > data)
-        :   m_enum_data_list(move(data))
+        enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data)
+        :   m_enum_data_list(std::move(data))
         {
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
@@ -104,7 +104,7 @@ class enumeration_wrapper : public enumeration_wrapper_base
         }
 
     private:
-        std::vector< enum_data<Enum_Type> > m_enum_data_list;
+        std::array< enum_data<Enum_Type>, N > m_enum_data_list;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -43,6 +43,7 @@ template<typename Enum_Type>
 class enum_data
 {
     public:
+        enum_data() : m_name(nullptr) {}
         enum_data(const char* name, Enum_Type value) : m_name(name), m_value(value) { }
 
         const char* get_name() const    { return m_name; }

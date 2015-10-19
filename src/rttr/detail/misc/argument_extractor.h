@@ -47,7 +47,7 @@ namespace detail
 template<typename T, typename... OrigArgs>
 struct argument_extractor
 {
-    using container_size = count_type<T, as_type_list_t<OrigArgs...>>;
+    using container_size = count_type<T, type_list<OrigArgs...>>;
     using array_type = std::array<T, container_size::value>;
 
     static array_type extract_to_array(OrigArgs&&... arg)
@@ -80,13 +80,13 @@ private:
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
-
+    
     template<typename container_type, typename U, typename... Args>
     static
     enable_if_t< std::is_same<T, raw_type_t<U>>::value, void >
     extract_types_recursively(container_type& container, U&& value, Args &&... tail)
     {
-        RTTR_STATIC_CONSTEXPR auto index = count_type<T, as_type_list_t<OrigArgs...>>::value - count_type<T, as_type_list_t<Args...>>::value - 1;
+        RTTR_STATIC_CONSTEXPR auto index = count_type<T, type_list<OrigArgs...>>::value - count_type<T, type_list<Args...>>::value - 1;
         container[index] = std::forward<U>(value);
         extract_types_recursively(container, std::forward< Args >(tail)...);
     }
