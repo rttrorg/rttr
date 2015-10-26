@@ -242,6 +242,9 @@ using add_pointer_t = typename std::add_pointer<T>::type;
 template< bool B, class T = void >
 using enable_if_t = typename std::enable_if<B,T>::type;
 
+template<typename T>
+using decay_t = typename std::decay<T>::type;
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail

@@ -102,7 +102,7 @@ namespace detail
     // this trait will remove the cv-qualifier, pointer types, reference type and also the array dimension
 
     template<typename T, typename Enable = void>
-    struct raw_array_type  { using type = raw_type_t<T>; };
+    struct raw_array_type { using type = raw_type_t<T>; };
 
     template<typename T>
     struct raw_array_type_impl;
@@ -335,6 +335,27 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+
+    template< std::size_t I, typename T >
+    struct type_list_element;
+ 
+    template< std::size_t I, typename Head, typename... Tail >
+    struct type_list_element<I, type_list<Head, Tail...>> : type_list_element<I - 1, type_list<Tail...>> 
+    {
+    };
+ 
+    template< typename Head, typename... Tail >
+    struct type_list_element<0, type_list<Head, Tail...>> 
+    {
+       using type = Head;
+    };
+
+    template<std::size_t I, typename List>
+    using type_list_element_t = typename type_list_element<I, List>::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
     // as_std_tuple
     // use it like this:
     // typename as_std_tuple<int, bool>::type => std::tuple<int, bool>
@@ -370,7 +391,41 @@ namespace detail
 
     template<typename...T>
     using type_list_size = typename type_list_size_impl<as_type_list_t<T...>>::type;
-    
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // pushed the given item \p T at the front of the type list
+
+    template<typename T, typename List>
+    struct push_front;
+
+    template<typename T, template<class...> class Type_List, typename...Ts>
+    struct push_front<T, Type_List<Ts...>>
+    {
+        using type = Type_List<T, Ts...>;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    // pushed the given item \p T N times at the front of the type list
+
+    template<typename T, typename List, std::size_t N>
+    struct push_front_n
+    {
+        using type = typename push_front_n<T, typename push_front<T, List>::type, N - 1>::type;
+    };
+
+    template<typename T, typename List>
+    struct push_front_n<T, List, 0>
+    {
+        using type = List;
+    };
+
+    template<typename T, typename List, std::size_t N>
+    using push_front_n_t = typename push_front_n<T, List, N>::type;
+        
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +638,7 @@ namespace detail
      * Applies lvalue-to-rvalue, function-to-pointer implicit conversions to the type T and removes cv-qualifiers.
      */
     template<typename T>
-    struct decay 
+    struct decay_except_array
     {
         using Tp    = remove_reference_t<T>;
         using type  = conditional_t< std::is_function<Tp>::value,
@@ -593,7 +648,7 @@ namespace detail
     };
 
     template<typename T>
-    using decay_t = typename decay<T>::type;
+    using decay_except_array_t = typename decay_except_array<T>::type;
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
@@ -761,6 +816,49 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    struct is_string_literal : std::false_type {};
+
+    template<std::size_t N>
+    struct is_string_literal<char[N]> : std::true_type {};
+    
+    template<>
+    struct is_string_literal<const char*> : std::true_type {};
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<template<class> class Condition, typename T>
+    struct find_if_impl;
+
+    template<template<class> class Condition, typename T, typename...TArgs>
+    struct find_if_impl<Condition, type_list<T, TArgs...>>
+    {
+        using type = conditional_t< Condition<T>::value,
+                                    T,
+                                    typename find_if_impl<Condition, type_list<TArgs...>>::type
+                                   >;
+    };
+
+    template<template<class> class Condition>
+    struct find_if_impl<Condition, type_list<>>
+    {
+        using type = void;
+    };
+
+    //! This type trait will return the first type which matches the template type `default_args<T...>`
+    template<template<class> class Condition, typename...TArgs>
+    using find_if_t = typename find_if_impl<Condition, type_list< TArgs... > >::type;
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    //! Workaround because msvc2013 cannot handle '<sizeof...(T)' with std::enable_if<T>.
+    template<typename...TArgs>
+    struct is_not_one_argument : std::integral_constant<bool, (sizeof...(TArgs) != 1)> {};
 
 } // end namespace detail
 } // end namespace rttr

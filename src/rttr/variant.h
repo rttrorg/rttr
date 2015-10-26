@@ -58,7 +58,7 @@ namespace detail
 
     enum class variant_policy_operation : uint8_t;
 
-    template<typename T, typename Decayed = decay_t<T>>
+    template<typename T, typename Decayed = decay_except_array_t<T>>
     using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value &&
                                         !std::is_same<Decayed, variant_array_view>::value, Decayed>;
 

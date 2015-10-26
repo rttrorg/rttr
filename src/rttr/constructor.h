@@ -29,7 +29,8 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 
-#include <initializer_list>
+#include "rttr/parameter_info.h"
+
 #include <string>
 #include <vector>
 
@@ -70,25 +71,25 @@ class constructor_wrapper_base;
  * Typical Usage
  * ----------------------
  * 
-\code{.cpp}
-    constructor string_ctor == type::get("std::string").get_constructor({type::get<const char*>()});
-    
-    variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
-    
-    std::cout << my_string.get_value<std::string*>()->c_str() << std::endl; // prints 'Hello World'
-    
-    // don't forget to destroy the instance
-    type::get("std::string").get_destructor().invoke(my_string);
-    
-    my_string.is_valid(); // yield to false
-\endcode
+ * \code{.cpp}
+ *      constructor string_ctor == type::get_by_name("std::string").get_constructor({type::get<const char*>()});
+ *     
+ *      variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
+ *     
+ *      std::cout << my_string.get_value<std::string*>()->c_str() << std::endl; // prints 'Hello World'
+ *     
+ *      // don't forget to destroy the instance
+ *      type::get("std::string").get_destructor().invoke(my_string);
+ *     
+ *      my_string.is_valid(); // yield to false
+ * \endcode
  *
  * \see method, property, enumeration, destructor and type
  */
 class RTTR_API constructor
 {
     public:
-       /*!
+        /*!
          * \brief Returns true if this constructor is valid, otherwise false.
          *
          * \return True if this constructor is valid, otherwise false.
@@ -133,6 +134,13 @@ class RTTR_API constructor
          * \return A list representing the parameters of this constructor.
          */
         std::vector<type> get_parameter_types() const;
+
+        /*!
+         * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the constructor.
+         *
+         * \return A list of parameter_info objects of the constructor signature.
+         */
+        std::vector<parameter_info> get_parameter_infos() const;
 
         /*!
          * \brief Returns the meta data for the given key \p key.

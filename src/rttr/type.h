@@ -65,7 +65,7 @@ static type get_invalid_type();
 } // end namespace detail
 
 /*!
- * This class holds the type information for any arbitrary object.
+ * The \ref type class holds the type information for any arbitrary object.
  * 
  * Every class or primitive data type can have an unique type object.
  * With the help of this object you can compare unknown types for equality at runtime or introspect the type

@@ -67,6 +67,24 @@ RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename...TArgs>
+RTTR_INLINE detail::default_args<TArgs...> default_arguments(TArgs&&...args)
+{
+    return { std::forward<TArgs>(args)... };
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename...TArgs>
+RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(TArgs&&...args)
+{
+    using namespace detail;
+    static_assert(static_all_of<is_string_literal<raw_type_t<TArgs>>::value...>::value, "Please use this function only with string literals!");
+    return { static_cast<detail::decay_t<TArgs>>(std::forward<TArgs>(args))...};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 

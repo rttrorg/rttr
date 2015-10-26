@@ -102,6 +102,13 @@ vector<type> constructor::get_parameter_types() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+std::vector<parameter_info> constructor::get_parameter_infos() const
+{
+    return std::vector<parameter_info>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant constructor::get_meta_data(const variant& key) const
 {
     if (is_valid())

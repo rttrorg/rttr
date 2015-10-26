@@ -36,6 +36,7 @@
 #include "rttr/detail/enumeration/enum_data.h"
 #include "rttr/detail/meta_data/meta_data.h"
 #include "rttr/detail/method/method_wrapper.h"
+#include "rttr/detail/parameter_info/parameter_infos.h"
 #include "rttr/detail/property/property_wrapper.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/detail/misc/misc_type_traits.h"
@@ -155,7 +156,7 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
 
             // at the moment we only supported one policy
             using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
-            m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<Ctor_Args...>(std::forward<Args>(arg)...)) );
+            m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<type_list<Ctor_Args...>>(std::forward<Args>(arg)...)) );
             
             store_meta_data(m_ctor, get_meta_data(std::forward<Args>(arg)...));
             
@@ -208,7 +209,7 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
             static_assert( (count_default_args<Args...>::value <= 1), 
                            "Too many default arguments provided, only one set of default arguments can be provided!");
 
-            auto ctor = create_constructor_wrapper(func, std::move(get_default_args<Acc_Func>(std::forward<Args>(args)...)) );
+            auto ctor = create_constructor_wrapper(func, std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)) );
 
             store_meta_data(ctor, get_meta_data(std::forward<Args>(args)...));
            
@@ -509,7 +510,8 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_default_method(Acc_Func func)
         {
             using namespace detail;
-            return detail::make_unique<method_wrapper<Acc_Func, default_invoke, default_args<>>>(func);
+            using param_info_t =  decltype(create_param_infos<type_list<F>>());
+            return detail::make_unique<method_wrapper<Acc_Func, default_invoke, default_args<>, param_info_t>>(func, param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
@@ -521,10 +523,17 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
             using has_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_default_types::value) ||  !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_default_types::value) || !has_default_args<Args...>::value, 
                             "The provided default arguments, cannot be used with the given method accessor.");
             static_assert((count_default_args<Args...>::value <= 1), 
-                          "Too many default arguments provided, only one set of default arguments can be provided!");
+                          "Only one set of 'default_arguments' can be provided during registration of a method!");
+
+            static_assert((count_param_names<Args...>::value <= 1),
+                          "Only one set of 'parameter_names' can be provided during registration of a method!");
+            
+            static_assert(((!has_param_names<Args...>::value) || 
+                           (param_names_count<Args...>::value == function_traits<Acc_Func>::arg_count)),
+                          "The provided amount of names in 'parameter_names' does not match argument count of the function signature.");
             
             // when no policy was added, we need a default policy
             using policy_list = conditional_t< type_list_size<policy_types_found>::value == 0,
@@ -532,24 +541,30 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
                                                policy_types_found>;
             using policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
 
-            auto meth = create_method_wrapper<policy>(func, std::move(get_default_args<Acc_Func>(std::forward<Args>(args)...)) );
+            auto meth = create_method_wrapper<policy>(func, 
+                                                      std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
+                                                      create_param_infos<type_list<F>>(std::forward<Args>(args)...));
 
             store_meta_data(meth, get_meta_data(std::forward<Args>(args)...));
             return std::move(meth);
         }
 
-        template<typename Policy, typename...TArgs>
+        template<typename Policy, typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
-        create_method_wrapper(F func, detail::default_args<TArgs...> def_args)
+        create_method_wrapper(F func, detail::default_args<TArgs...> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
-            return detail::make_unique<detail::method_wrapper<F, Policy, detail::default_args<TArgs...>>>(func, std::move(def_args));
+            return detail::make_unique<detail::method_wrapper<F, Policy, 
+                                                              detail::default_args<TArgs...>,
+                                                              detail::parameter_infos<Param_Args...>>>(func, std::move(def_args), std::move(param_infos));
         }
 
-        template<typename Policy>
+        template<typename Policy, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
-        create_method_wrapper(F func, detail::default_args<> def_args)
+        create_method_wrapper(F func, detail::default_args<> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
-            return detail::make_unique<detail::method_wrapper<F, Policy, detail::default_args<>>>(func);
+            return detail::make_unique<detail::method_wrapper<F, Policy,
+                                                              detail::default_args<>,
+                                                              detail::parameter_infos<Param_Args...>>>(func, std::move(param_infos));
         }
 
     public:

@@ -32,6 +32,7 @@
 #include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
+#include "rttr/parameter_info.h"
 
 
 #include <string>
@@ -69,6 +70,7 @@ class RTTR_API method_wrapper_base : public meta_data_handler
         virtual std::vector<type> get_parameter_types() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
+        virtual std::vector<parameter_info> get_parameter_infos() const = 0;
 
         virtual variant invoke(instance& object) const = 0;
         virtual variant invoke(instance& object, argument& arg1) const = 0;

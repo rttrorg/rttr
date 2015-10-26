@@ -35,6 +35,7 @@ set(HEADER_FILES access_level.h
                  method.h
                  policy.h
                  property.h
+                 parameter_info.h
                  registration
                  registration.h
                  rttr_cast.h
@@ -85,6 +86,10 @@ set(HEADER_FILES access_level.h
                  detail/misc/misc_type_traits.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
+                 detail/parameter_info/parameter_infos.h
+                 detail/parameter_info/parameter_names.h
+                 detail/parameter_info/parameter_info_wrapper_base.h
+                 detail/parameter_info/parameter_info_wrapper.h
                  detail/policies/prop_policies.h
                  detail/policies/meth_policies.h
                  detail/policies/ctor_policies.h
@@ -123,6 +128,7 @@ set(SOURCE_FILES access_level.cpp
                  destructor.cpp
                  enumeration.cpp
                  method.cpp
+                 parameter_info.cpp
                  policy.cpp
                  property.cpp
                  type.cpp
@@ -138,6 +144,7 @@ set(SOURCE_FILES access_level.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp
                  detail/meta_data/meta_data_handler.cpp
                  detail/method/method_wrapper_base.cpp
+                 detail/parameter_info/parameter_info_wrapper_base.cpp
                  detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
                  detail/type/type_database.cpp

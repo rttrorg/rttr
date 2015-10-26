@@ -38,6 +38,7 @@
 #include "rttr/variant.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
 #include "rttr/detail/default_arguments/invoke_with_defaults.h"
+#include "rttr/detail/parameter_info/parameter_infos.h"
 
 
 #include <functional>
@@ -48,15 +49,15 @@ namespace rttr
 namespace detail
 {
 
-template<typename F, typename Policy, typename Default_Args>
+template<typename F, typename Policy, typename Default_Args, typename Parameter_Infos>
 class method_wrapper;
 
-template<typename F, typename Policy>
-class method_wrapper<F, Policy, default_args<>> : public method_wrapper_base
+template<typename F, typename Policy, typename... Param_Args>
+class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> : public method_wrapper_base
 {
     public:
-        method_wrapper(F func_acc)
-        : m_func_acc(func_acc)
+        method_wrapper(F func_acc, parameter_infos<Param_Args...> param_infos)
+        : m_func_acc(func_acc), m_param_infos(param_infos)
         { }
 
         bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
@@ -64,6 +65,7 @@ class method_wrapper<F, Policy, default_args<>> : public method_wrapper_base
         std::vector<bool> get_is_reference()    const   { return method_accessor<F, Policy>::get_is_reference();    }
         std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
         std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
+        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
 
         variant invoke(instance& object) const
         {
@@ -101,28 +103,34 @@ class method_wrapper<F, Policy, default_args<>> : public method_wrapper_base
 
     private:
         F  m_func_acc;
+        parameter_infos<Param_Args...> m_param_infos;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Policy, typename...TArgs>
-class method_wrapper<F, Policy, default_args<TArgs...> > : public method_wrapper_base
+template<typename F, typename Policy, typename...Default_Args, typename...Param_Args>
+class method_wrapper<F, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...> > : public method_wrapper_base
 {
     using method_type = typename detail::method_type<F>::type;
-    using arg_index_sequence = make_index_sequence< function_traits<F>::arg_count >;
+    using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
     using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;
     using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
 
     public:
-        method_wrapper(F func_acc, default_args<TArgs...> default_args)
-        : m_func_acc(func_acc), m_def_args(std::move(default_args))
-        { }
+        method_wrapper(F func_acc, 
+                       default_args<Default_Args...> default_args,
+                       parameter_infos<Param_Args...> param_infos)
+        :   m_func_acc(func_acc), m_def_args(std::move(default_args)), m_param_infos(param_infos)
+        { 
+            store_default_args_in_param_infos(m_param_infos, m_def_args);
+        }
 
         bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
         type get_return_type()                  const   { return method_accessor<F, Policy>::get_return_type();     }
         std::vector<bool> get_is_reference()    const   { return method_accessor<F, Policy>::get_is_reference();    }
         std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
         std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
+        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
 
         variant invoke(instance& object) const
         {
@@ -162,8 +170,9 @@ class method_wrapper<F, Policy, default_args<TArgs...> > : public method_wrapper
         }
 
     private:
-        F  m_func_acc;
-        default_args<TArgs...> m_def_args;
+        F                               m_func_acc;
+        default_args<Default_Args...>   m_def_args;
+        parameter_infos<Param_Args...>  m_param_infos;
 };
 
 } // end namespace detail

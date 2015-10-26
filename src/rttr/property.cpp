@@ -184,4 +184,6 @@ bool property::operator!=(const property& other) const
     return (m_container != other.m_container); 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace rttr

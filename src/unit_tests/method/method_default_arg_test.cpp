@@ -46,7 +46,6 @@ struct default_arg_test
 RTTR_REGISTRATION
 {
     registration::class_<default_arg_test>("default_arg_test")
-        .constructor<>()
         .method("method_with_default", &default_arg_test::method_with_default)
         (
             default_arguments<std::string, const int*>(std::string("This is a default"), nullptr)

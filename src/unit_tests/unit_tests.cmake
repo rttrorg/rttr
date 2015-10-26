@@ -44,6 +44,7 @@ set(SOURCE_FILES main.cpp
                  enumeration/test_enumeration_reflection.cpp
                  method/test_method_reflection.cpp
                  method/method_default_arg_test.cpp
+                 method/method_param_info_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
                  variant/variant_conv_to_bool_test.cpp

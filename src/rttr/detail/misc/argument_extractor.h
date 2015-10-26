@@ -145,7 +145,7 @@ std::vector<T> forward_to_vector(Args&&... args)
  * \endcode
  */
 template<typename T, typename...Args>
-std::array<T, count_type<T, as_type_list_t<Args...>>::value> forward_to_array(Args&&... args)
+std::array<T, count_type<T, type_list<Args...>>::value> forward_to_array(Args&&... args)
 {
     return argument_extractor<T, Args...>::extract_to_array(std::forward<Args>(args)...);
 }

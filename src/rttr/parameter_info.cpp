@@ -25,30 +25,72 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_CREATOR_H_
-#define RTTR_VARIANT_ARRAY_CREATOR_H_
+#include "rttr/parameter_info.h"
 
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/array/array_wrapper_base.h"
-#include "rttr/detail/variant_array_view/variant_array_view_traits.h"
-
-#include <memory>
+#include "rttr/detail/parameter_info/parameter_info_wrapper_base.h"
+#include "rttr/variant.h"
 
 namespace rttr
 {
-namespace detail
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+parameter_info::parameter_info(const detail::parameter_info_wrapper_base* wrapper)
+:   m_wrapper(wrapper)
 {
 
-template<typename T, typename Tp = decay_except_array_t<T>>
-typename std::enable_if<can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type create_variant_array_view(T&& value);
+}
 
-template<typename T, typename Tp = decay_except_array_t<T>>
-typename std::enable_if<!can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type create_variant_array_view(T&& value);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-} // end namespace detail
+type parameter_info::get_type() const
+{
+    return m_wrapper->get_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool parameter_info::has_default_value() const
+{
+    return m_wrapper->has_default_value();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant parameter_info::get_default_value() const
+{
+    return m_wrapper->get_default_value();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string parameter_info::get_name() const
+{
+    return m_wrapper->get_name();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+uint32 parameter_info::get_index() const
+{
+    return m_wrapper->get_index();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool parameter_info::operator==(const parameter_info& other) const
+{
+    return (m_wrapper == other.m_wrapper); 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool parameter_info::operator!=(const parameter_info& other) const
+{
+    return (m_wrapper != other.m_wrapper); 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
 } // end namespace rttr
-
-#include "rttr/detail/variant_array_view/variant_array_view_creator_impl.h"
-
-#endif // RTTR_VARIANT_ARRAY_CREATOR_H_

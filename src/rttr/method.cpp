@@ -109,6 +109,16 @@ vector<type> method::get_parameter_types() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+std::vector<parameter_info> method::get_parameter_infos() const
+{
+    if (is_valid())
+        return m_container->get_parameter_infos();
+    else
+        return std::vector<parameter_info>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 string method::get_signature() const
 {
     if (is_valid())

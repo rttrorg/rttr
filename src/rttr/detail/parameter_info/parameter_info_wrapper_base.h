@@ -25,30 +25,31 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_CREATOR_H_
-#define RTTR_VARIANT_ARRAY_CREATOR_H_
+#ifndef RTTR_PARAMETER_INFO_WRAPPER_BASE_H_
+#define RTTR_PARAMETER_INFO_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/array/array_wrapper_base.h"
-#include "rttr/detail/variant_array_view/variant_array_view_traits.h"
-
-#include <memory>
+#include "rttr/type.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-template<typename T, typename Tp = decay_except_array_t<T>>
-typename std::enable_if<can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type create_variant_array_view(T&& value);
+class RTTR_API parameter_info_wrapper_base
+{
+    public:
+        parameter_info_wrapper_base();
+        virtual ~parameter_info_wrapper_base();
 
-template<typename T, typename Tp = decay_except_array_t<T>>
-typename std::enable_if<!can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type create_variant_array_view(T&& value);
+        virtual std::string get_name() const = 0;
+        virtual type get_type() const = 0;
+        virtual bool has_default_value() const = 0;
+        virtual variant get_default_value() const = 0;
+        virtual uint32 get_index() const = 0;
+};
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/variant_array_view/variant_array_view_creator_impl.h"
-
-#endif // RTTR_VARIANT_ARRAY_CREATOR_H_
+#endif // RTTR_PARAMETER_INFO_WRAPPER_BASE_H_

@@ -29,6 +29,7 @@
 #define RTTR_METHOD_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/parameter_info.h"
 
 #include <string>
 #include <vector>
@@ -168,6 +169,13 @@ class RTTR_API method
          * \return A list of type objects from the arguments.
          */
         std::vector<type> get_parameter_types() const;
+
+        /*!
+         * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the method.
+         *
+         * \return A list of parameter_info objects of the method signature.
+         */
+        std::vector<parameter_info> get_parameter_infos() const;
 
         /*!
          * \brief Returns the signature of this method as readable string.

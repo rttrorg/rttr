@@ -34,6 +34,7 @@
 #include "rttr/detail/registration/bind_types.h"
 #include "rttr/detail/registration/registration_executer.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
+#include "rttr/detail/parameter_info/parameter_names.h"
 
 namespace rttr
 {
@@ -502,11 +503,36 @@ RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value
  *
  */
 template<typename...TArgs>
-RTTR_INLINE detail::default_args<TArgs...> default_arguments(TArgs&&...args)
-{
-    std::tuple<TArgs...> data{std::forward<TArgs>(args)...};
-    return { std::move(data) };
-}
+RTTR_INLINE detail::default_args<TArgs...> default_arguments(TArgs&&...args);
+
+/*!
+ * The \ref parameter_names function should be used add human-readable names of the parameters, 
+ * for \ref constructor "constructors" or a \ref method "methods" during the registration process of reflection information. 
+ * Use it in the `()` operator of the returned \ref bind object.
+ *
+ * The names must be provided as string literals (i.e. const char*) arguments.
+ *
+ * See following example code:
+ * \code{.cpp}
+ *   using namespace rttr;
+ *   
+ *   void set_window_geometry(const char* name, int w, int h) {...}
+ *   
+ *   RTTR_REGISTRATION
+ *   {
+ *        registration::method("set_window_geometry", &set_window_geometry)
+ *        (
+ *            parameter_names("window name", "width", "height")
+ *        );
+ *   }
+ * \endcode
+ *
+ * \see \ref parameter_info
+ *
+ */
+template<typename...TArgs>
+RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(TArgs&&...args);
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -563,10 +589,10 @@ RTTR_REGISTRATION
  * The class should not be instantiate directly, because it will be created automatically,
  * when a *constructor*, *property*, *method* or *enumeration* is registered.
  * 
- * Additionally, the class has implemented the bracket operator `()` as variadic function tenplate.
- * Use it to forward meta_data or policies to the previous registered item.
+ * Additionally, the class has implemented the bracket operator `()` as variadic function template.
+ * Use it to forward \ref rttr::meta_data() "meta_data()" or \ref policy "policies" to the previous registered item.
  *
- * \remark Do not instantiate this class directly.
+ * \remark Do not instantiate this class directly!
 */
 template<typename...T>
 class registration::bind : public base_class
