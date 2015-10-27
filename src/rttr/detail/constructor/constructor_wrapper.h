@@ -75,10 +75,6 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parame
 
     public:
         constructor_wrapper(parameter_infos<Param_Args...> param_infos) : m_param_infos(std::move(param_infos)) {}
-        RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
-        RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Ctor_Args>()...}; }
-        std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
-        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
        
         type get_instanciated_type()    const { return type::get<instanciated_type>(); }
         type get_declaring_type()       const { return type::get<typename raw_type<Class_Type>::type>(); }
@@ -91,6 +87,8 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parame
 
         std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
+
+        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
 
         template<typename... TArgs>
         static RTTR_FORCE_INLINE
@@ -170,12 +168,11 @@ class constructor_wrapper<ClassType, return_func, Policy, default_args<>, parame
         constructor_wrapper(F creator_func, parameter_infos<Param_Args...> param_infos)
         :   m_creator_func(creator_func), m_param_infos(std::move(param_infos)) {}
 
-        type get_instanciated_type()            const { return type::get<instanciated_type>();                      }
-        type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
-        std::vector<bool> get_is_reference()    const { return method_accessor<F, Policy>::get_is_reference();      }
-        std::vector<bool> get_is_const()        const { return method_accessor<F, Policy>::get_is_const();          }
-        std::vector<type> get_parameter_types() const { return method_accessor<F, Policy>::get_parameter_types();   }
-        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
+        type get_instanciated_type()                        const { return type::get<instanciated_type>();                  }
+        type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }
+        std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
+        std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
+        std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);   }
 
         variant invoke() const
         {

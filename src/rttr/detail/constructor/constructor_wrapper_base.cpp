@@ -67,20 +67,17 @@ std::vector<bool> constructor_wrapper_base::get_is_const() const
 
 string constructor_wrapper_base::get_signature() const
 {
-    auto params = get_parameter_types();
+    auto param_info_list = get_parameter_infos();
     string result = get_instanciated_type().get_raw_type().get_name() + "( ";
-    std::size_t index = 0;
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
-    for (const auto& type : params)
+    for (const auto& param : param_info_list)
     {
-        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
-        if (index < params.size() - 1)
+        result += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        if (param.get_index() < param_info_list.size() - 1)
             result += ", ";
-
-        ++index;
     }
-    if (params.empty())
+    if (param_info_list.empty())
         result += ")";
     else
         result += " )";

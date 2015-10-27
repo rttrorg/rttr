@@ -92,20 +92,20 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 
     auto ctor_list = enum_type.get_constructors();
     REQUIRE(ctor_list.size() == 2);
-    REQUIRE(ctor_list[1].get_parameter_types().size() == 2);
+    REQUIRE(ctor_list[1].get_parameter_infos().size() == 2);
 
-    auto params = ctor_list[1].get_parameter_types();
+    auto params = ctor_list[1].get_parameter_infos();
     REQUIRE(params.size() == 2);
-    REQUIRE(params[0].is_enumeration() == true);
-    REQUIRE(params[1].is_enumeration() == true);
+    REQUIRE(params[0].get_type().is_enumeration() == true);
+    REQUIRE(params[1].get_type().is_enumeration() == true);
 
-    enumeration enum_info_align = params[0].get_enumeration();
+    enumeration enum_info_align = params[0].get_type().get_enumeration();
     REQUIRE(enum_info_align.is_valid() == true);
     REQUIRE(bool(enum_info_align) == true);
     REQUIRE(enum_info_align.get_declaring_type() == type::get<enum_test>());
-    REQUIRE(enum_info_align.get_type() == params[0]);
+    REQUIRE(enum_info_align.get_type() == params[0].get_type());
 
-    enumeration enum_info_orient = params[1].get_enumeration();
+    enumeration enum_info_orient = params[1].get_type().get_enumeration();
     REQUIRE(enum_info_orient.is_valid() == true);
 
     // create instance from enum value

@@ -57,7 +57,7 @@ class constructor_wrapper_base;
  * Meta Information
  * ----------------
  * A \ref constructor has a signature (\ref get_signature()) and instantiate exactly one type (\ref get_instanciated_type()).
- * With \ref get_parameter_types() you retrieve all type objects of the parameters for this constructor.
+ * With \ref get_parameter_infos() you retrieve all information of the parameters for this constructor.
  * When the \ref constructor was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
  * The constructor can be invoked with \ref invoke() or via the \ref type class through \ref type::create(). 
@@ -127,14 +127,6 @@ class RTTR_API constructor
          */
         std::string get_signature() const;
         
-        /*!
-         * \brief Returns a list of type objects representing the number, order
-         *        and type of the parameters for this constructor.
-         *
-         * \return A list representing the parameters of this constructor.
-         */
-        std::vector<type> get_parameter_types() const;
-
         /*!
          * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the constructor.
          *

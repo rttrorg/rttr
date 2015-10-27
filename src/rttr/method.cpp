@@ -99,16 +99,6 @@ type method::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<type> method::get_parameter_types() const
-{
-    if (is_valid())
-        return m_container->get_parameter_types();
-    else
-        return vector<type>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 std::vector<parameter_info> method::get_parameter_infos() const
 {
     if (is_valid())

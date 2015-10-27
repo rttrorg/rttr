@@ -67,7 +67,6 @@ class RTTR_API method_wrapper_base : public meta_data_handler
 
         virtual type get_return_type() const = 0;
         virtual bool is_static() const = 0;
-        virtual std::vector<type> get_parameter_types() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
         virtual std::vector<parameter_info> get_parameter_infos() const = 0;

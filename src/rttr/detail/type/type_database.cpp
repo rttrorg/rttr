@@ -259,6 +259,19 @@ uint16_t type_database::get_global_property_count(const type& t) const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static std::vector<type> convert_param_list(const vector<parameter_info>& param_list)
+{
+    std::vector<type> result;
+    result.reserve(param_list.size());
+
+    for (const auto& item : param_list)
+        result.emplace_back(item.get_type());
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void type_database::register_method(const type& t, std::unique_ptr<method_wrapper_base> method)
 {
     if (!t.is_valid())
@@ -267,12 +280,12 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
     const auto name = method->get_name();
     if (t.is_class())
     {
-        if (get_class_method(t, name, method->get_parameter_types()))
+        if (get_class_method(t, name, convert_param_list(method->get_parameter_infos())))
             return;
     }
     else
     {
-        if (get_global_method(name, method->get_parameter_types()))
+        if (get_global_method(name, convert_param_list(method->get_parameter_infos())))
             return;
     }
     const auto name_hash = generate_hash(name);
@@ -317,9 +330,19 @@ method_wrapper_base* type_database::get_class_method(const type& t, const char* 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static bool does_signature_match_arguments(const vector<type>& param_list, const vector<type>& args)
+static bool does_signature_match_arguments(const vector<parameter_info>& param_list, const vector<type>& args)
 {
-    return (param_list == args);
+    const auto param_count = param_list.size();
+    if (param_count != args.size())
+        return false;
+
+    for (std::size_t index = 0; index < param_count; ++index)
+    {
+        if ((param_list[index].get_type() != args[index]))
+            return false;
+    }
+
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -346,7 +369,7 @@ method_wrapper_base* type_database::get_class_method(const type& t, const char* 
         if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_types(), param_type_list))
+        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), param_type_list))
             return item.m_data.get();
     }
 
@@ -434,7 +457,7 @@ method_wrapper_base* type_database::get_global_method(const char* name,
         if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_types(), param_type_list))
+        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), param_type_list))
             return item.m_data.get();
     }
 
@@ -527,7 +550,7 @@ constructor_wrapper_base* type_database::get_constructor(const type& t, const st
         if (item.m_id != id)
             break;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_types(), arg_type_list))
+        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), arg_type_list))
             return item.m_data.get(); 
     }
 

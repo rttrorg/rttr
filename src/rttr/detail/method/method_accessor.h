@@ -54,11 +54,6 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::true_type>
     {
         return { std::is_const<typename std::remove_reference<typename param_types<F, ArgCount>::type>::type>::value... };
     }
-
-    static std::vector<type> get_parameter_types()
-    {
-        return { type::get<typename param_types<F, ArgCount>::type>()... };
-    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -74,11 +69,6 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::false_type>
     static std::vector<bool> get_is_const()
     {
         return std::vector<bool>();
-    }
-
-    static std::vector<type> get_parameter_types()
-    {
-        return std::vector<type>();
     }
 };
 
@@ -167,14 +157,6 @@ struct method_accessor
     {
         using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
         return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_const(); 
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    static std::vector<type> get_parameter_types()
-    {
-        using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
-        return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_parameter_types(); 
     }
 
     /////////////////////////////////////////////////////////////////////////////////////

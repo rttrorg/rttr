@@ -92,16 +92,6 @@ string constructor::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<type> constructor::get_parameter_types() const
-{
-    if (is_valid())
-        return m_container->get_parameter_types();
-    else
-        return vector<type>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 std::vector<parameter_info> constructor::get_parameter_infos() const
 {
     if (is_valid())

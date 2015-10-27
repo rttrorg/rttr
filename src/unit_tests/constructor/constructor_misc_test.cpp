@@ -99,13 +99,14 @@ TEST_CASE("constructor - get_signature", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_parameter_types", "[constructor]") 
+TEST_CASE("constructor - get_parameter_infos", "[constructor]") 
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
-    CHECK(ctor.get_parameter_types() == std::vector<type>());
+    CHECK(ctor.get_parameter_infos().empty() == true);
 
     ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
-    CHECK(ctor.get_parameter_types() == std::vector<type>(1, type::get<int>()));
+    REQUIRE(ctor.get_parameter_infos().size() == 1);
+    CHECK(ctor.get_parameter_infos()[0].get_type() == type::get<int>());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

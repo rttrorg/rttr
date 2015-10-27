@@ -84,20 +84,17 @@ type method_wrapper_base::get_declaring_type() const
 
 string method_wrapper_base::get_signature() const
 {
-    auto params = get_parameter_types();
+    const auto param_list = get_parameter_infos();
     string result = std::string(get_name()) + "( ";
-    std::size_t index = 0;
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
-    for (const auto& type : params)
+    for (const auto& param : param_list)
     {
-        result += type.get_name() + string(is_const_list[const_list[index]]) + string(is_ref_list[ref_list[index]]);
-        if (index < params.size() - 1)
+        result += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        if (param.get_index() < param_list.size() - 1)
             result += ", ";
-
-        ++index;
     }
-    if (params.empty())
+    if (param_list.empty())
         result += ")";
     else
         result += " )";

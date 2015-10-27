@@ -60,8 +60,6 @@ class RTTR_API constructor_wrapper_base : public meta_data_handler
         std::string get_signature() const;
 
         virtual type get_instanciated_type() const = 0;
-        virtual std::vector<type> get_parameter_types() const = 0;
-
         virtual std::vector<bool> get_is_reference() const;
         virtual std::vector<bool> get_is_const() const;
 

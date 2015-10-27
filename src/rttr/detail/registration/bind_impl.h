@@ -130,7 +130,7 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
 
             // register the type with the following call:
             m_ctor->get_instanciated_type();
-            m_ctor->get_parameter_types();
+            m_ctor->get_parameter_infos();
 
             auto wrapper = detail::make_rref(std::move(m_ctor));
             auto reg_func = [wrapper]()
@@ -248,7 +248,7 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
                 m_ctor = create_default_constructor(m_func);
 
             m_ctor->get_instanciated_type();
-            m_ctor->get_parameter_types();
+            m_ctor->get_parameter_infos();
             
             auto wrapper = detail::make_rref(std::move(m_ctor));
             auto reg_func = [wrapper]()
@@ -603,7 +603,7 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
             m_meth->set_declaring_type(type::get<Class_Type>());
             // register the underlying type with the following call:
             m_meth->get_return_type();
-            m_meth->get_parameter_types();
+            m_meth->get_parameter_infos();
 
             auto wrapper = detail::make_rref(std::move(m_meth));
             auto reg_func = [wrapper]()

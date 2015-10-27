@@ -60,12 +60,11 @@ class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> 
         : m_func_acc(func_acc), m_param_infos(std::move(param_infos))
         { }
 
-        bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
-        type get_return_type()                  const   { return method_accessor<F, Policy>::get_return_type();     }
-        std::vector<bool> get_is_reference()    const   { return method_accessor<F, Policy>::get_is_reference();    }
-        std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
-        std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
-        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
+        bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
+        type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
+        std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
+        std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
+        std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);   }
 
         variant invoke(instance& object) const
         {
@@ -127,12 +126,11 @@ class method_wrapper<F, Policy, default_args<Default_Args...>, parameter_infos<P
             store_default_args_in_param_infos(m_param_infos, m_def_args);
         }
 
-        bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
-        type get_return_type()                  const   { return method_accessor<F, Policy>::get_return_type();     }
-        std::vector<bool> get_is_reference()    const   { return method_accessor<F, Policy>::get_is_reference();    }
-        std::vector<bool> get_is_const()        const   { return method_accessor<F, Policy>::get_is_const();        }
-        std::vector<type> get_parameter_types() const   { return method_accessor<F, Policy>::get_parameter_types(); }
-        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
+        bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
+        type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
+        std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
+        std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
+        std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);   }
 
         variant invoke(instance& object) const
         {

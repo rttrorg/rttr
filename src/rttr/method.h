@@ -58,7 +58,7 @@ namespace detail
  *
  * Meta Information
  * ----------------
- * A \ref method has a \ref get_name "name",  a \ref get_signature "signature", a \ref get_return_type "return type", a list of \ref get_parameter_types "parameter types"
+ * A \ref method has a \ref get_name "name",  a \ref get_signature "signature", a \ref get_return_type "return type", a list of \ref get_parameter_infos "parameter information"
  * as well as attributes that specify its behavior: \ref is_static(). 
  * When the \ref method was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
@@ -69,7 +69,7 @@ namespace detail
  * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
  * A method will be successfully invoked when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
- * When the method has \ref get_parameter_types "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
+ * When the method has \ref get_parameter_infos "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
  * An automatically type conversion is **not** performed.
  *
  * The return type of \ref invoke() is \ef variant object. 
@@ -163,13 +163,6 @@ class RTTR_API method
          */
         type get_declaring_type() const;
         
-        /*!
-         * \brief Returns an ordered list of type objects which represents the parameters of this method.
-         *
-         * \return A list of type objects from the arguments.
-         */
-        std::vector<type> get_parameter_types() const;
-
         /*!
          * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the method.
          *

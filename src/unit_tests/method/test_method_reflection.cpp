@@ -160,7 +160,7 @@ TEST_CASE("Test method", "[method]")
     meth.invoke_variadic(inst, {});
     REQUIRE(obj.method_1_called == true);
     REQUIRE(meth.get_name() == "method_1");
-    REQUIRE(meth.get_parameter_types().empty() == true);
+    REQUIRE(meth.get_parameter_infos().empty() == true);
 
     ////////////////////////////////////////
     t_meth.get_method("method_2").invoke(inst);
@@ -242,8 +242,8 @@ TEST_CASE("Test method", "[method]")
 
     ////////////////////////////////////////
     method m9 = t_meth.get_method("method_9");
-    REQUIRE(m9.get_parameter_types().size() == 10);
-    REQUIRE(m9.get_parameter_types()[4] == type::get<bool>());
+    REQUIRE(m9.get_parameter_infos().size() == 10);
+    REQUIRE(m9.get_parameter_infos()[4].get_type() == type::get<bool>());
 
     ret = m9.invoke_variadic(inst, {1,2,3,4,true,6,7,8,9,10});
     REQUIRE(obj.method_9_called == true);
@@ -299,7 +299,7 @@ TEST_CASE("global methods", "[method]")
     free_function_called = false;
     method global_meth_1 = type::get_global_method("free_function", {type::get<bool>()});
     REQUIRE(bool(global_meth_1) == true);
-    REQUIRE(global_meth_1.get_parameter_types()[0] == type::get<bool>());
+    REQUIRE(global_meth_1.get_parameter_infos()[0].get_type() == type::get<bool>());
     variant success = global_meth_1.invoke(instance());
     REQUIRE(success.is_valid() == false);
     REQUIRE(free_function_called == false);
