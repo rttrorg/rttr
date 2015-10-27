@@ -40,8 +40,8 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property::property(const detail::property_wrapper_base* container)
-:   m_container(container)
+property::property(const detail::property_wrapper_base* wrapper)
+:   m_wrapper(wrapper)
 {
 
 }
@@ -50,14 +50,14 @@ property::property(const detail::property_wrapper_base* container)
 
 bool property::is_valid() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property::operator bool() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ property::operator bool() const
 bool property::is_readonly() const
 {
     if (is_valid())
-        return m_container->is_readonly();
+        return m_wrapper->is_readonly();
     else
         return false;
 }
@@ -75,7 +75,7 @@ bool property::is_readonly() const
 bool property::is_static() const
 {
     if (is_valid())
-        return m_container->is_static();
+        return m_wrapper->is_static();
     else
         return false;
 }
@@ -85,7 +85,7 @@ bool property::is_static() const
 bool property::is_enumeration() const
 {
     if (is_valid())
-        return m_container->get_type().is_enumeration();
+        return m_wrapper->get_type().is_enumeration();
     else
         return false;
 }
@@ -95,7 +95,7 @@ bool property::is_enumeration() const
 enumeration property::get_enumeration() const
 {
     if (is_valid())
-        return m_container->get_type().get_enumeration();
+        return m_wrapper->get_type().get_enumeration();
     else
         return detail::get_invalid_type().get_enumeration();
 }
@@ -105,7 +105,7 @@ enumeration property::get_enumeration() const
 bool property::is_array() const
 {
     if (is_valid())
-        return m_container->is_array();
+        return m_wrapper->is_array();
     else
         return false;
 }
@@ -115,7 +115,7 @@ bool property::is_array() const
 string property::get_name() const
 {
     if (is_valid())
-        return m_container->get_name();
+        return m_wrapper->get_name();
     else
         return string();
 }
@@ -125,7 +125,7 @@ string property::get_name() const
 type property::get_type() const
 {
     if (is_valid())
-        return m_container->get_type();
+        return m_wrapper->get_type();
     else
         return detail::get_invalid_type();
 }
@@ -135,7 +135,7 @@ type property::get_type() const
 type property::get_declaring_type() const
 {
     if (is_valid())
-        return m_container->get_declaring_type();
+        return m_wrapper->get_declaring_type();
     else
         return detail::get_invalid_type();
 }
@@ -145,7 +145,7 @@ type property::get_declaring_type() const
 bool property::set_value(instance object, argument arg) const
 {
     if (is_valid())
-        return m_container->set_value(object, arg);
+        return m_wrapper->set_value(object, arg);
     else
         return false;
 }
@@ -155,7 +155,7 @@ bool property::set_value(instance object, argument arg) const
 variant property::get_value(instance object) const
 {
     if (is_valid())
-        return m_container->get_value(object);
+        return m_wrapper->get_value(object);
     else
         return variant();
 }
@@ -165,7 +165,7 @@ variant property::get_value(instance object) const
 variant property::get_meta_data(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_meta_data(key);
+        return m_wrapper->get_meta_data(key);
     else
         return variant();
 }
@@ -174,14 +174,14 @@ variant property::get_meta_data(const variant& key) const
 
 bool property::operator==(const property& other) const
 {
-    return (m_container == other.m_container); 
+    return (m_wrapper == other.m_wrapper); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::operator!=(const property& other) const
 {
-    return (m_container != other.m_container); 
+    return (m_wrapper != other.m_wrapper); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

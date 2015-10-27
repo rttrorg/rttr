@@ -207,9 +207,9 @@ class RTTR_API enumeration
     private:
         friend class type; // to prevent creation of this class
         //! Constructs a valid MetaProperty from a PropertyContainerBase.
-        enumeration(const detail::enumeration_wrapper_base* container = nullptr);
+        enumeration(const detail::enumeration_wrapper_base* wrapper = nullptr);
     private:
-        const detail::enumeration_wrapper_base* m_container;
+        const detail::enumeration_wrapper_base* m_wrapper;
 };
 
 } // end namespace rttr

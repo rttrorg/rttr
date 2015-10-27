@@ -279,9 +279,9 @@ class RTTR_API method
 
     private:
         friend class type; // to prevent creation of this class
-        method(const detail::method_wrapper_base* container = nullptr);
+        method(const detail::method_wrapper_base* wrapper = nullptr);
     private:
-        const detail::method_wrapper_base* m_container;
+        const detail::method_wrapper_base* m_wrapper;
 };
 
 } // end namespace rttr

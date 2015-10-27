@@ -38,8 +38,8 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::enumeration(const detail::enumeration_wrapper_base* container)
-:   m_container(container)
+enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper)
+:   m_wrapper(wrapper)
 {
 
 }
@@ -48,14 +48,14 @@ enumeration::enumeration(const detail::enumeration_wrapper_base* container)
 
 bool enumeration::is_valid() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration::operator bool() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ enumeration::operator bool() const
 type enumeration::get_underlying_type() const
 {
     if (is_valid())
-        return m_container->get_underlying_type();
+        return m_wrapper->get_underlying_type();
     else
         return detail::get_invalid_type();
 }
@@ -73,7 +73,7 @@ type enumeration::get_underlying_type() const
 type enumeration::get_type() const
 {
     if (is_valid())
-        return m_container->get_type();
+        return m_wrapper->get_type();
     else
         return detail::get_invalid_type();
 }
@@ -83,7 +83,7 @@ type enumeration::get_type() const
 type enumeration::get_declaring_type() const
 {
     if (is_valid())
-        return m_container->get_declaring_type();
+        return m_wrapper->get_declaring_type();
     else
         return detail::get_invalid_type();
 }
@@ -93,7 +93,7 @@ type enumeration::get_declaring_type() const
 variant enumeration::get_meta_data(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_meta_data(key);
+        return m_wrapper->get_meta_data(key);
     else
         return variant();
 }
@@ -103,7 +103,7 @@ variant enumeration::get_meta_data(const variant& key) const
 vector<string> enumeration::get_names() const
 {
     if (is_valid())
-        return m_container->get_names();
+        return m_wrapper->get_names();
     else
         return vector<string>();
 }
@@ -113,7 +113,7 @@ vector<string> enumeration::get_names() const
 vector<variant> enumeration::get_values() const
 {
     if (is_valid())
-        return m_container->get_values();
+        return m_wrapper->get_values();
     else
         return vector<variant>();
 }
@@ -123,7 +123,7 @@ vector<variant> enumeration::get_values() const
 string enumeration::value_to_name(argument value) const
 {
     if (is_valid())
-        return m_container->value_to_name(value);
+        return m_wrapper->value_to_name(value);
     else
         return string();
 }
@@ -133,7 +133,7 @@ string enumeration::value_to_name(argument value) const
 variant enumeration::name_to_value(const std::string& name) const
 {
     if (is_valid())
-        return m_container->name_to_value(name);
+        return m_wrapper->name_to_value(name);
     else
         return variant();
 }
@@ -142,14 +142,14 @@ variant enumeration::name_to_value(const std::string& name) const
 
 bool enumeration::operator==(const enumeration& other) const
 {
-    return (m_container == other.m_container);
+    return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool enumeration::operator!=(const enumeration& other) const
 {
-    return (m_container != other.m_container);
+    return (m_wrapper != other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -116,9 +116,9 @@ class RTTR_API destructor
 
     private:
         friend class type; // to prevent creation of this class
-        destructor(const detail::destructor_wrapper_base* container = nullptr);
+        destructor(const detail::destructor_wrapper_base* wrapper = nullptr);
     private:
-        const detail::destructor_wrapper_base* m_container;
+        const detail::destructor_wrapper_base* m_wrapper;
 };
 
 } // end namespace rttr

@@ -39,8 +39,8 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor::constructor(const detail::constructor_wrapper_base* container)
-:   m_container(container)
+constructor::constructor(const detail::constructor_wrapper_base* wrapper)
+:   m_wrapper(wrapper)
 {
 
 }
@@ -49,14 +49,14 @@ constructor::constructor(const detail::constructor_wrapper_base* container)
 
 bool constructor::is_valid() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 constructor::operator bool() const
 {
-    return (m_container ? true : false);
+    return (m_wrapper ? true : false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ constructor::operator bool() const
 type constructor::get_instanciated_type() const
 {
     if (is_valid())
-        return m_container->get_instanciated_type();
+        return m_wrapper->get_instanciated_type();
     else
         return detail::get_invalid_type();
 }
@@ -74,7 +74,7 @@ type constructor::get_instanciated_type() const
 type constructor::get_declaring_type() const
 {
     if (is_valid())
-        return m_container->get_declaring_type();
+        return m_wrapper->get_declaring_type();
     else
         return detail::get_invalid_type();
 }
@@ -85,7 +85,7 @@ type constructor::get_declaring_type() const
 string constructor::get_signature() const
 {
     if (is_valid())
-        return m_container->get_signature();
+        return m_wrapper->get_signature();
     else
         return string();
 }
@@ -95,7 +95,7 @@ string constructor::get_signature() const
 std::vector<parameter_info> constructor::get_parameter_infos() const
 {
     if (is_valid())
-        return m_container->get_parameter_infos();
+        return m_wrapper->get_parameter_infos();
     else
         return std::vector<parameter_info>();
 }
@@ -105,7 +105,7 @@ std::vector<parameter_info> constructor::get_parameter_infos() const
 variant constructor::get_meta_data(const variant& key) const
 {
     if (is_valid())
-        return m_container->get_meta_data(key);
+        return m_wrapper->get_meta_data(key);
     else
         return variant();
 }
@@ -115,7 +115,7 @@ variant constructor::get_meta_data(const variant& key) const
 variant constructor::invoke() const
 {
     if (is_valid())
-        return m_container->invoke();
+        return m_wrapper->invoke();
     else
         return variant();
 }
@@ -125,7 +125,7 @@ variant constructor::invoke() const
 variant constructor::invoke(argument arg1) const
 {
     if (is_valid())
-        return m_container->invoke(arg1);
+        return m_wrapper->invoke(arg1);
     else
         return variant();
 }
@@ -135,7 +135,7 @@ variant constructor::invoke(argument arg1) const
 variant constructor::invoke(argument arg1, argument arg2) const
 {
     if (is_valid())
-        return m_container->invoke(arg1, arg2);
+        return m_wrapper->invoke(arg1, arg2);
     else
         return variant();
 }
@@ -145,7 +145,7 @@ variant constructor::invoke(argument arg1, argument arg2) const
 variant constructor::invoke(argument arg1, argument arg2, argument arg3) const
 {
     if (is_valid())
-        return m_container->invoke(arg1, arg2, arg3);
+        return m_wrapper->invoke(arg1, arg2, arg3);
     else
         return variant();
 }
@@ -155,7 +155,7 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3) const
 variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4) const
 {
     if (is_valid())
-        return m_container->invoke(arg1, arg2, arg3, arg4);
+        return m_wrapper->invoke(arg1, arg2, arg3, arg4);
     else
         return variant();
 }
@@ -166,7 +166,7 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3, argumen
                             argument arg5) const
 {
     if (is_valid())
-        return m_container->invoke(arg1, arg2, arg3, arg4, arg5);
+        return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5);
     else
         return variant();
 }
@@ -177,7 +177,7 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3, argumen
                             argument arg5, argument arg6) const
 {
     if (is_valid())
-        return m_container->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
+        return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
     else
         return variant();
 }
@@ -187,7 +187,7 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3, argumen
 variant constructor::invoke_variadic(std::vector<argument> args) const
 {
     if (is_valid())
-        return m_container->invoke_variadic(args);
+        return m_wrapper->invoke_variadic(args);
     else
         return variant();
 }
@@ -196,14 +196,14 @@ variant constructor::invoke_variadic(std::vector<argument> args) const
 
 bool constructor::operator==(const constructor& other) const
 {
-    return (m_container == other.m_container);
+    return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool constructor::operator!=(const constructor& other) const
 {
-    return (m_container != other.m_container);
+    return (m_wrapper != other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

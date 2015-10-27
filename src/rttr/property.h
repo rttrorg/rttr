@@ -253,9 +253,9 @@ class RTTR_API property
     private:
         friend class type; // to prevent creation of this class
         //! Constructs a property from a property_wrapper_base.
-        property(const detail::property_wrapper_base* container = nullptr);
+        property(const detail::property_wrapper_base* wrapper = nullptr);
     private:
-        const detail::property_wrapper_base* m_container;
+        const detail::property_wrapper_base* m_wrapper;
 };
 
 } // end namespace rttr
