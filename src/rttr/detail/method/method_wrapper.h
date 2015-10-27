@@ -57,7 +57,7 @@ class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> 
 {
     public:
         method_wrapper(F func_acc, parameter_infos<Param_Args...> param_infos)
-        : m_func_acc(func_acc), m_param_infos(param_infos)
+        : m_func_acc(func_acc), m_param_infos(std::move(param_infos))
         { }
 
         bool is_static()                        const   { return method_accessor<F, Policy>::is_static();           }
@@ -120,7 +120,9 @@ class method_wrapper<F, Policy, default_args<Default_Args...>, parameter_infos<P
         method_wrapper(F func_acc, 
                        default_args<Default_Args...> default_args,
                        parameter_infos<Param_Args...> param_infos)
-        :   m_func_acc(func_acc), m_def_args(std::move(default_args)), m_param_infos(param_infos)
+        :   m_func_acc(func_acc),
+            m_def_args(std::move(default_args)),
+            m_param_infos(std::move(param_infos))
         { 
             store_default_args_in_param_infos(m_param_infos, m_def_args);
         }

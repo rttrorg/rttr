@@ -133,6 +133,18 @@ struct param_info_creater_func_impl<F, Has_Name, Default_Type_List, index_sequen
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename Ctor_Args_List, typename Has_Name, typename Default_Type_List, typename Indices>
+struct param_info_creater_ctor_impl;
+
+template<typename Ctor_Args_List, typename Has_Name, typename Default_Type_List, std::size_t... Arg_Count>
+struct param_info_creater_ctor_impl<Ctor_Args_List, Has_Name, Default_Type_List, index_sequence<Arg_Count...>>
+{
+    using type = parameter_infos< parameter_info_wrapper<type_list_element_t<Arg_Count, Ctor_Args_List>, Arg_Count, Has_Name, 
+                                                         type_list_element_t<Arg_Count, Default_Type_List> >...>;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T, typename Has_Name, typename Default_Type_List, typename Enable = void>
 struct param_info_creater;
 
@@ -149,14 +161,18 @@ struct param_info_creater<type_list<F>, Has_Name, type_list<Def_Args...>, enable
 template<typename T, typename Has_Name, typename...Def_Args>
 struct param_info_creater<type_list<T>, Has_Name, type_list<Def_Args...>, enable_if_t<!is_function<T>::value>>
 {
-    using type = void;
+    using new_default_list = push_front_n_t<void, type_list<Def_Args...>, 1 - sizeof...(Def_Args)>;
+    using idx_seq = make_index_sequence<1>;
+    using type = typename param_info_creater_ctor_impl<type_list<T>, Has_Name, new_default_list, idx_seq>::type;
 };
 
-// ctor with one argument
+// ctor with zero or more then one argument
 template<typename Has_Name, typename...Ctor_Args, typename...Def_Args>
 struct param_info_creater<type_list<Ctor_Args...>, Has_Name, type_list<Def_Args...>, enable_if_t< is_not_one_argument<Ctor_Args...>::value >>
 {
-    using type = void;
+    using new_default_list = push_front_n_t<void, type_list<Def_Args...>, sizeof...(Ctor_Args) - sizeof...(Def_Args)>;
+    using idx_seq = make_index_sequence< sizeof...(Ctor_Args) >;
+    using type = typename param_info_creater_ctor_impl<type_list<Ctor_Args...>, Has_Name, new_default_list, idx_seq>::type;
 };
 
 
@@ -199,9 +215,6 @@ create_param_infos(TArgs&&... args)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename Acc_Args, typename... TArgs>
-using default_as_type_list_t = as_type_list_t<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args>>;
 
 template<typename Acc_Args, typename...TArgs, typename T_Def = as_type_list_t<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args>>>
 static RTTR_INLINE 

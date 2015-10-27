@@ -39,6 +39,7 @@
 #include "rttr/detail/method/method_accessor.h"
 #include "rttr/detail/constructor/constructor_invoker.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
+#include "rttr/detail/parameter_info/parameter_infos.h"
 
 #include <vector>
 #include <utility>
@@ -61,22 +62,23 @@ struct are_args_in_valid_range<type_list<Ctor_Args...>, type_list<Args...>>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename Constructor_Type, typename Policy, typename Default_Args, typename... Args>
+template<typename ClassType, typename Constructor_Type, typename Policy, typename Default_Args, typename Parameter_Infos, typename... Args>
 class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename Policy, typename... Ctor_Args>
-class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_Args...> : public constructor_wrapper_base
+template<typename Class_Type, typename Policy, typename...Param_Args, typename... Ctor_Args>
+class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...> : public constructor_wrapper_base
 {
     using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
     using instanciated_type = typename invoker_class::return_type;
 
     public:
-        constructor_wrapper() {}
+        constructor_wrapper(parameter_infos<Param_Args...> param_infos) : m_param_infos(std::move(param_infos)) {}
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::false_type) const { return {}; }
         RTTR_INLINE std::vector<type> get_parameter_types_impl(std::true_type) const { return { type::get<Ctor_Args>()...}; }
         std::vector<type> get_parameter_types() const { return get_parameter_types_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
+        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
        
         type get_instanciated_type()    const { return type::get<instanciated_type>(); }
         type get_declaring_type()       const { return type::get<typename raw_type<Class_Type>::type>(); }
@@ -149,6 +151,9 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_A
         {
             return invoke_variadic_impl(arg_list, make_index_sequence<sizeof...(Ctor_Args)>());
         }
+
+    private:
+        parameter_infos<Param_Args...> m_param_infos;
 };
 
 
@@ -156,19 +161,21 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_A
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename Policy, typename F>
-class constructor_wrapper<ClassType, return_func, Policy, default_args<>, F> : public constructor_wrapper_base
+template<typename ClassType, typename Policy, typename...Param_Args, typename F>
+class constructor_wrapper<ClassType, return_func, Policy, default_args<>, parameter_infos<Param_Args...>, F> : public constructor_wrapper_base
 {
     using instanciated_type = typename function_traits<F>::return_type;
 
     public:
-        constructor_wrapper(F creator_func) : m_creator_func(creator_func) {}
+        constructor_wrapper(F creator_func, parameter_infos<Param_Args...> param_infos)
+        :   m_creator_func(creator_func), m_param_infos(std::move(param_infos)) {}
 
         type get_instanciated_type()            const { return type::get<instanciated_type>();                      }
         type get_declaring_type()               const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()    const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()        const { return method_accessor<F, Policy>::get_is_const();          }
         std::vector<type> get_parameter_types() const { return method_accessor<F, Policy>::get_parameter_types();   }
+        std::vector<parameter_info> get_parameter_infos() const { return convert_to_parameter_info_list(m_param_infos); }
 
         variant invoke() const
         {
@@ -204,6 +211,7 @@ class constructor_wrapper<ClassType, return_func, Policy, default_args<>, F> : p
         }
     private:
          F  m_creator_func;
+         parameter_infos<Param_Args...> m_param_infos;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

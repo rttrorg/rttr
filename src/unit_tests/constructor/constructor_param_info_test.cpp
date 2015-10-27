@@ -30,26 +30,32 @@
 
 using namespace rttr;
 
-struct method_param_info_test
+struct ctor_param_info_test
 {
-    void method_1()
+    ctor_param_info_test()
     {
 
     }
 
-    void method_2(bool val_1, int val_2, float val_3)
+    ctor_param_info_test(const std::string& val_1, int val_2)
     {
 
     }
 
-    void method_3(bool val_1, int val_2, float val_3)
+    ctor_param_info_test(bool val_1, int val_2, float val_3)
     {
 
     }
 
-    bool method_with_default(int val_1, double val_2, bool val_3)
+   
+    static ctor_param_info_test create_with_default(std::string val_1, int val_2, bool val_3)
     {
-        return false;
+        return ctor_param_info_test();
+    }
+
+    static ctor_param_info_test create_with_default_2(double val_1, int val_2, bool val_3)
+    {
+        return ctor_param_info_test();
     }
 };
 
@@ -57,48 +63,48 @@ struct method_param_info_test
 
 RTTR_REGISTRATION
 {
-    registration::class_<method_param_info_test>("method_param_info_test")
-        .method("method_1", &method_param_info_test::method_1) // no params
-        .method("method_2", &method_param_info_test::method_2)
-        .method("method_3", &method_param_info_test::method_3)
+    registration::class_<ctor_param_info_test>("ctor_param_info_test")
+        .constructor<>() // no params
+        .constructor<std::string, int>()
+        .constructor<bool, int, float>()
         (
             parameter_names("val_1", "val_2", "val_3")
         )
-        .method("method_4", &method_param_info_test::method_with_default)
+        .constructor(&ctor_param_info_test::create_with_default)
         (
-            default_arguments(23.0, true)
+            default_arguments(42, true)
         )
-        .method("method_5", &method_param_info_test::method_with_default)
+        .constructor(&ctor_param_info_test::create_with_default_2)
         (
-            default_arguments(23.0, true),
+            default_arguments(23, true),
             parameter_names("val_1", "val_2", "val_3")
         );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no info", "[method]") 
+TEST_CASE("constructor - parameter info - no info", "[constructor]") 
 {
-    method meth = type::get<method_param_info_test>().get_method("method_1");
-    REQUIRE(meth.is_valid() == true);
+    constructor ctor = type::get<ctor_param_info_test>().get_constructor();
+    REQUIRE(ctor.is_valid() == true);
 
-    std::vector<parameter_info> infos = meth.get_parameter_infos();
+    std::vector<parameter_info> infos = ctor.get_parameter_infos();
     REQUIRE(infos.size() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no names provided", "[method]") 
+TEST_CASE("constructor - parameter info - no names provided", "[constructor]") 
 {
-    method meth = type::get<method_param_info_test>().get_method("method_2");
-    REQUIRE(meth.is_valid() == true);
+    constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<std::string>(), type::get<int>()});
+    REQUIRE(ctor.is_valid() == true);
 
-    std::vector<parameter_info> infos = meth.get_parameter_infos();
-    REQUIRE(infos.size() == 3);
+    std::vector<parameter_info> infos = ctor.get_parameter_infos();
+    REQUIRE(infos.size() == 2);
 
     CHECK(infos[0].get_name()           == std::string());
     CHECK(infos[0].has_default_value()  == false);
-    CHECK(infos[0].get_type()           == type::get<bool>());
+    CHECK(infos[0].get_type()           == type::get<std::string>());
     CHECK(infos[0].get_index()          == 0);
     CHECK(infos[0].get_default_value()  == variant());
 
@@ -107,22 +113,16 @@ TEST_CASE("method - parameter info - no names provided", "[method]")
     CHECK(infos[1].get_type()           == type::get<int>());
     CHECK(infos[1].get_index()          == 1);
     CHECK(infos[1].get_default_value()  == variant());
-
-    CHECK(infos[2].get_name()           == std::string());
-    CHECK(infos[2].has_default_value()  == false);
-    CHECK(infos[2].get_type()           == type::get<float>());
-    CHECK(infos[2].get_index()          == 2);
-    CHECK(infos[2].get_default_value()  == variant());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - names provided", "[method]") 
+TEST_CASE("constructor - parameter info - names provided", "[constructor]") 
 {
-    method meth = type::get<method_param_info_test>().get_method("method_3");
-    REQUIRE(meth.is_valid() == true);
+    constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<bool>(), type::get<int>(), type::get<float>()});
+    REQUIRE(ctor.is_valid() == true);
 
-    std::vector<parameter_info> infos = meth.get_parameter_infos();
+    std::vector<parameter_info> infos = ctor.get_parameter_infos();
     REQUIRE(infos.size() == 3);
 
     CHECK(infos[0].get_name()           == std::string("val_1"));
@@ -146,25 +146,25 @@ TEST_CASE("method - parameter info - names provided", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no names provided & default values", "[method]") 
+TEST_CASE("constructor - parameter info - no names provided & default values", "[constructor]") 
 {
-    method meth = type::get<method_param_info_test>().get_method("method_4");
-    REQUIRE(meth.is_valid() == true);
+    constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<std::string>(), type::get<int>(), type::get<bool>()});
+    REQUIRE(ctor.is_valid() == true);
 
-    std::vector<parameter_info> infos = meth.get_parameter_infos();
+    std::vector<parameter_info> infos = ctor.get_parameter_infos();
     REQUIRE(infos.size() == 3);
 
     CHECK(infos[0].get_name()           == std::string());
     CHECK(infos[0].has_default_value()  == false);
-    CHECK(infos[0].get_type()           == type::get<int>());
+    CHECK(infos[0].get_type()           == type::get<std::string>());
     CHECK(infos[0].get_index()          == 0);
     CHECK(infos[0].get_default_value()  == variant());
 
     CHECK(infos[1].get_name()           == std::string());
     CHECK(infos[1].has_default_value()  == true);
-    CHECK(infos[1].get_type()           == type::get<double>());
+    CHECK(infos[1].get_type()           == type::get<int>());
     CHECK(infos[1].get_index()          == 1);
-    CHECK(infos[1].get_default_value()  == 23.0);
+    CHECK(infos[1].get_default_value()  == 42);
 
     CHECK(infos[2].get_name()           == std::string());
     CHECK(infos[2].has_default_value()  == true);
@@ -175,25 +175,25 @@ TEST_CASE("method - parameter info - no names provided & default values", "[meth
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - names provided & default values", "[method]") 
+TEST_CASE("constructor - parameter info - names provided & default values", "[constructor]") 
 {
-    method meth = type::get<method_param_info_test>().get_method("method_5");
-    REQUIRE(meth.is_valid() == true);
+     constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<double>(), type::get<int>(), type::get<bool>()});
+    REQUIRE(ctor.is_valid() == true);
 
-    std::vector<parameter_info> infos = meth.get_parameter_infos();
+    std::vector<parameter_info> infos = ctor.get_parameter_infos();
     REQUIRE(infos.size() == 3);
 
     CHECK(infos[0].get_name()           == std::string("val_1"));
     CHECK(infos[0].has_default_value()  == false);
-    CHECK(infos[0].get_type()           == type::get<int>());
+    CHECK(infos[0].get_type()           == type::get<double>());
     CHECK(infos[0].get_index()          == 0);
     CHECK(infos[0].get_default_value()  == variant());
 
     CHECK(infos[1].get_name()           == std::string("val_2"));
     CHECK(infos[1].has_default_value()  == true);
-    CHECK(infos[1].get_type()           == type::get<double>());
+    CHECK(infos[1].get_type()           == type::get<int>());
     CHECK(infos[1].get_index()          == 1);
-    CHECK(infos[1].get_default_value()  == 23.0);
+    CHECK(infos[1].get_default_value()  == 23);
 
     CHECK(infos[2].get_name()           == std::string("val_3"));
     CHECK(infos[2].has_default_value()  == true);
@@ -203,4 +203,3 @@ TEST_CASE("method - parameter info - names provided & default values", "[method]
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-

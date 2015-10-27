@@ -104,7 +104,10 @@ vector<type> constructor::get_parameter_types() const
 
 std::vector<parameter_info> constructor::get_parameter_infos() const
 {
-    return std::vector<parameter_info>();
+    if (is_valid())
+        return m_container->get_parameter_infos();
+    else
+        return std::vector<parameter_info>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

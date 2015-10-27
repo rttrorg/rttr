@@ -94,20 +94,24 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
     private:
         using default_create_policy = detail::as_raw_pointer;
     
-        template<typename Policy, typename...TArgs>
+        template<typename Policy, typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(detail::default_args<TArgs...> def_args)
+        create_constructor_wrapper(detail::default_args<TArgs...> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, default_args<TArgs...>, Ctor_Args...>>(std::move(def_args));
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, 
+                                                           default_args<TArgs...>, 
+                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(def_args), std::move(param_infos));
         }
 
-        template<typename Policy>
+        template<typename Policy, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(detail::default_args<> def_args)
+        create_constructor_wrapper(detail::default_args<> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, Ctor_Args...>>();
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, 
+                                                           default_args<>, 
+                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(param_infos));
         }
 
     public:
@@ -119,8 +123,10 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
         ~bind()
         {
             using namespace detail;
+            using param_info_t = decltype(create_param_infos<type_list<Ctor_Args...>>());
             if (!m_ctor.get())
-                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy, detail::default_args<>, Ctor_Args...>>();
+                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy,
+                                                                         detail::default_args<>, param_info_t, Ctor_Args...>>(param_info_t());
 
             // register the type with the following call:
             m_ctor->get_instanciated_type();
@@ -136,7 +142,7 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
         }
 
         template<typename... Args>
-        registration::class_<Class_Type> operator()(Args&&... arg)
+        registration::class_<Class_Type> operator()(Args&&... args)
         {
             using namespace detail;
 
@@ -156,9 +162,10 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
 
             // at the moment we only supported one policy
             using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
-            m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<type_list<Ctor_Args...>>(std::forward<Args>(arg)...)) );
+            m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<type_list<Ctor_Args...>>(std::forward<Args>(args)...)),
+                                                                   std::move(create_param_infos<type_list<Ctor_Args...>>(std::forward<Args>(args)...)));
             
-            store_meta_data(m_ctor, get_meta_data(std::forward<Args>(arg)...));
+            store_meta_data(m_ctor, get_meta_data(std::forward<Args>(args)...));
             
             return registration::class_<Class_Type>(m_reg_exec);
         }
@@ -174,19 +181,28 @@ template<typename Class_Type, typename F>
 class registration::bind<detail::ctor_func, Class_Type, F> : public registration::class_<Class_Type>
 {
     private:
-        template<typename...TArgs>
+        template<typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(F func, detail::default_args<TArgs...> def_args)
+        create_constructor_wrapper(F func, detail::default_args<TArgs...> def_args, 
+                                   detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, default_args<TArgs...>, F>>(func, std::move(def_args));
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, 
+                                                           default_args<TArgs...>,
+                                                           parameter_infos<Param_Args...>,
+                                                           F>>(func, std::move(def_args), std::move(param_infos));
         }
 
+        template<typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(F func, detail::default_args<> def_args)
+        create_constructor_wrapper(F func, detail::default_args<> def_args, 
+                                   detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, default_args<>, F>>(func);
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, 
+                                                           default_args<>,
+                                                           parameter_infos<Param_Args...>,
+                                                           F>>(func, std::move(param_infos));
         }
 
         // this indirection is necessary to delay the instantiation of the created constructor wrapper
@@ -196,7 +212,8 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base> create_default_constructor(Acc_Func func)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, detail::default_args<>, F>>(func);
+            using param_info_t = decltype(create_param_infos<type_list<Acc_Func>>());
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, detail::default_args<>, param_info_t, F>>(func, param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
@@ -209,7 +226,9 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
             static_assert( (count_default_args<Args...>::value <= 1), 
                            "Too many default arguments provided, only one set of default arguments can be provided!");
 
-            auto ctor = create_constructor_wrapper(func, std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)) );
+            auto ctor = create_constructor_wrapper(func, 
+                                                   std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
+                                                   std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)));
 
             store_meta_data(ctor, get_meta_data(std::forward<Args>(args)...));
            
@@ -543,7 +562,7 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
 
             auto meth = create_method_wrapper<policy>(func, 
                                                       std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
-                                                      create_param_infos<type_list<F>>(std::forward<Args>(args)...));
+                                                      std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)));
 
             store_meta_data(meth, get_meta_data(std::forward<Args>(args)...));
             return std::move(meth);

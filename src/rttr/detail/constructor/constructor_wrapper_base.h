@@ -30,6 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/parameter_info.h"
 
 #include <string>
 #include <vector>
@@ -63,6 +64,8 @@ class RTTR_API constructor_wrapper_base : public meta_data_handler
 
         virtual std::vector<bool> get_is_reference() const;
         virtual std::vector<bool> get_is_const() const;
+
+        virtual std::vector<parameter_info> get_parameter_infos() const = 0;
         
         virtual variant invoke() const;
         virtual variant invoke(argument& arg1) const;
