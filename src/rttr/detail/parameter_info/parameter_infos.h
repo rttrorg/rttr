@@ -66,7 +66,7 @@ struct parameter_infos<>
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename...Args>
-using has_param_names = std::integral_constant<bool, !std::is_same<void, find_if_t<is_parameter_names, Args...>>::value>;
+using has_param_names = std::integral_constant<bool, !std::is_same<null_type, find_if_t<is_parameter_names, Args...>>::value>;
 
 template<typename...TArgs>
 using count_param_names = count_if<is_parameter_names, raw_type_t<TArgs>... >;
@@ -161,6 +161,7 @@ struct param_info_creater<type_list<F>, Has_Name, type_list<Def_Args...>, enable
 template<typename T, typename Has_Name, typename...Def_Args>
 struct param_info_creater<type_list<T>, Has_Name, type_list<Def_Args...>, enable_if_t<!is_function<T>::value>>
 {
+    static_assert(sizeof...(Def_Args) < 2, "Invalid 'Def_Args' size.");
     using new_default_list = push_front_n_t<void, type_list<Def_Args...>, 1 - sizeof...(Def_Args)>;
     using idx_seq = make_index_sequence<1>;
     using type = typename param_info_creater_ctor_impl<type_list<T>, Has_Name, new_default_list, idx_seq>::type;
@@ -170,6 +171,7 @@ struct param_info_creater<type_list<T>, Has_Name, type_list<Def_Args...>, enable
 template<typename Has_Name, typename...Ctor_Args, typename...Def_Args>
 struct param_info_creater<type_list<Ctor_Args...>, Has_Name, type_list<Def_Args...>, enable_if_t< is_not_one_argument<Ctor_Args...>::value >>
 {
+    static_assert(sizeof...(Ctor_Args) >= sizeof...(Def_Args), "Invalid 'Def_Args' size.");
     using new_default_list = push_front_n_t<void, type_list<Def_Args...>, sizeof...(Ctor_Args) - sizeof...(Def_Args)>;
     using idx_seq = make_index_sequence< sizeof...(Ctor_Args) >;
     using type = typename param_info_creater_ctor_impl<type_list<Ctor_Args...>, Has_Name, new_default_list, idx_seq>::type;
