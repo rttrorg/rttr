@@ -30,7 +30,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/parameter_info.h"
-#include "rttr/access_level.h"
+#include "rttr/access_levels.h"
 
 #include <string>
 #include <vector>

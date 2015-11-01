@@ -33,7 +33,7 @@
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/parameter_info.h"
-#include "rttr/access_level.h"
+#include "rttr/access_levels.h"
 
 
 #include <string>

@@ -32,7 +32,7 @@
 #include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
-#include "rttr/access_level.h"
+#include "rttr/access_levels.h"
 
 namespace rttr
 {

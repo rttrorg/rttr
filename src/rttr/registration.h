@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/policy.h"
-#include "rttr/access_level.h"
+#include "rttr/access_levels.h"
 #include "rttr/detail/registration/bind_types.h"
 #include "rttr/detail/registration/registration_executer.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
@@ -150,10 +150,10 @@ public:
             /*!
              * \brief Register a constructor for this class type with or without arguments.
              *
-             * \param level  The access level of the constructor 
-             *               (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level  The access level of the constructor; default is: registration::public_access.<br>
+             *               (can be also: registration::protected_access or registration::private_access)
              *
-             * \see type::get_constructor(), type::create()
+             * \see constructor, type::get_constructor(), type::create()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -165,10 +165,10 @@ public:
              *
              * \param func   A function which creates an instance of \p Class_Type;
              *               This can be a pointer to a function or a std::function.
-             * \param level  The access level of the constructor 
-             *               (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level  The access level of the constructor; default is: registration::public_access.<br>
+             *               (can be also: registration::protected_access or registration::private_access)
              *
-             * \see type::get_constructor(), type::create()
+             * \see constructor, type::get_constructor(), type::create()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -181,10 +181,12 @@ public:
              *
              * \param name  The name of the property.
              * \param acc   The accessor to the property; this can be a pointer to a member or a pointer to a variable.
-             * \param level  The access level of the property.
-             *               (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level  The access level of the property; default is: registration::public_access.<br>
+             *               (can be also: registration::protected_access or registration::private_access)
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
+             *
+             * \see property, type::get_property(), type::get_property_value(), type::set_property_value()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -197,10 +199,12 @@ public:
              * \param name  The name of the property.
              * \param acc   The accessor to the property; this can be a pointer to a member, a pointer to a variable,
              *              a pointer to a member function, a pointer to a function or a std::function.
-             * \param level  The access level of the read only property.
-             *               (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level  The access level of the read only property; default is: registration::public_access.<br>
+             *               (can be: registration::protected_access or registration::private_access)
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
+             *
+             * \see property, type::get_property(), type::get_property_value(), type::set_property_value()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -215,10 +219,12 @@ public:
              *               a pointer to a function or a std::function.
              * \param setter The setter accessor to the property; this can be a pointer to a member function,
              *               a pointer to a function or a std::function.
-             * \param level  The access level of the property.
-             *               (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level  The access level of the property; default is: registration::public_access.<br>
+             *               (can be also: registration::protected_access or registration::private_access)
              *
              * \remark The name of the property has to be unique for this class, otherwise it will not be registered.
+             *
+             * \see property, type::get_property(), type::get_property_value(), type::set_property_value()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -231,10 +237,12 @@ public:
              *
              * \param name      The name of the method.
              * \param function  The function accessor to this method; this can be a member function, a function or an std::function.
-             * \param level     The access level of the method.
-             *                  (can be: registration::public_access, registration::protected_access or registration::private_access)
+             * \param level     The access level of the method; default is: registration::public_access.<br>
+             *                  (can be also: registration::protected_access or registration::private_access)
              *
              * \remark The method name does not have to be unique for this class.
+             *
+             * \see method, type::get_method(), type::invoke()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -246,6 +254,8 @@ public:
              * \brief Register a nested enumeration of type \p Enum_Type
              *
              * \param name      The name of the enumeration.
+             *
+             * \see enumeration, type::get_enumeration()
              *
              * \return A \ref bind object, in order to chain more calls.
              */
@@ -269,6 +279,10 @@ public:
      *
      * \remark The name of the property has to be unique, otherwise it will not be registered.
      *
+     * \see property, type::get_global_property(), 
+     *                \ref type::get_property_value(const char*) "type::get_property_value()", 
+     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
+     *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A>
@@ -282,6 +296,10 @@ public:
      *              a pointer to a function or a std::function.
      *
      * \remark The name of the property has to be unique, otherwise it will not be registered.
+     *
+     * \see property, type::get_global_property(), 
+     *                \ref type::get_property_value(const char*) "type::get_property_value()", 
+     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
      *
      * \return A \ref bind object, in order to chain more calls.
      */
@@ -297,6 +315,10 @@ public:
      *
      * \remark The name of the property has to be unique, otherwise it will not be registered.
      *
+     * \see property, type::get_global_property(), 
+     *                \ref type::get_property_value(const char*) "type::get_property_value()", 
+     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
+     *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A1, typename A2>
@@ -310,6 +332,9 @@ public:
      *
      * \remark The method name does *not* have to be unique.
      *
+     * \see method, type::get_global_method(), 
+     *              \ref type::invoke(const char*, std::vector<argument>) "type::invoke()"
+     *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename F>
@@ -321,6 +346,8 @@ public:
      * \param name The name of the enumeration.
      *
      * \remark The name of the enumeration has to be unique, otherwise it will not be registered.
+     *
+     * \see enumeration, type::get_enumeration()
      *
      * \return A \ref bind object, in order to chain more calls.
      */
