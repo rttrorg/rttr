@@ -36,13 +36,16 @@ set(HEADER_FILES test_classes.h
 set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
                  property/test_property_reflection.cpp
+                 property/property_access_level_test.cpp
                  type/test_type.cpp
+                 constructor/constructor_access_level_test.cpp
                  constructor/constructor_default_arg_test.cpp
                  constructor/constructor_param_info_test.cpp
                  constructor/constructor_retrieve_test.cpp
                  constructor/constructor_invoke_test.cpp
                  constructor/constructor_misc_test.cpp
                  enumeration/test_enumeration_reflection.cpp
+                 method/method_access_level_test.cpp
                  method/test_method_reflection.cpp
                  method/method_default_arg_test.cpp
                  method/method_param_info_test.cpp

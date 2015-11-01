@@ -456,8 +456,19 @@ namespace std
 #define RTTR_CAT_IMPL(a,b) a##b
 #define RTTR_CAT(a,b) RTTR_CAT_IMPL(a,b)
 
-static void _rttr_auto_register_reflection_function();
-#define RTTR_REGISTRATION_FRIEND friend void _rttr_auto_register_reflection_function();
+static void rttr_auto_register_reflection_function_();
+namespace rttr
+{
+namespace detail
+{
+template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer>
+struct constructor_invoker;
+}
+}
+
+#define RTTR_REGISTRATION_FRIEND friend void rttr_auto_register_reflection_function_(); \
+                                 template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
+                                 friend struct rttr::detail::constructor_invoker;
 
 
 #define RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();   \

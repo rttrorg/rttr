@@ -61,6 +61,16 @@ constructor::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+access_levels constructor::get_access_level() const
+{
+    if (is_valid())
+        return m_wrapper->get_access_level();
+    else
+        return access_levels::public_access;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type constructor::get_instanciated_type() const
 {
     if (is_valid())

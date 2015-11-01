@@ -33,6 +33,7 @@
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/parameter_info.h"
+#include "rttr/access_level.h"
 
 
 #include <string>
@@ -65,6 +66,7 @@ class RTTR_API method_wrapper_base : public meta_data_handler
         type get_declaring_type() const;
         std::string get_signature() const;
 
+        virtual access_levels get_access_level() const = 0;
         virtual type get_return_type() const = 0;
         virtual bool is_static() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;

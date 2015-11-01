@@ -69,6 +69,16 @@ string method::get_name() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+access_levels method::get_access_level() const
+{
+    if (is_valid())
+        return m_wrapper->get_access_level();
+    else
+        return access_levels::public_access;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool method::is_static() const
 {
     if (is_valid())

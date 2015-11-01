@@ -462,11 +462,10 @@ namespace detail
     };
 
     template<typename T>
-    struct is_array : conditional_t< is_array_impl<remove_cv_t< remove_reference_t<T> > >::value,
-                                     std::true_type,
-                                     std::false_type>
-    {};
+    using is_array = std::integral_constant<bool, is_array_impl<remove_cv_t< remove_reference_t<T> > >::value>;
 
+    template<typename T>
+    using is_raw_array_type = ::rttr::detail::is_array<raw_type_t<T>>;
     /////////////////////////////////////////////////////////////////////////////////////
     // rank_type<T, size_t>::type
     //

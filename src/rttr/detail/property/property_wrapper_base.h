@@ -32,6 +32,7 @@
 #include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
+#include "rttr/access_level.h"
 
 namespace rttr
 {
@@ -60,6 +61,8 @@ class RTTR_API property_wrapper_base : public meta_data_handler
 
         //! returns the name of this property.
         const char* get_name() const;
+
+        virtual access_levels get_access_level() const = 0;
 
         //! Returns true whether this is a constant property, otherwise false.
         virtual bool is_readonly() const = 0;

@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/meta_data/meta_data_handler.h"
 #include "rttr/parameter_info.h"
+#include "rttr/access_level.h"
 
 #include <string>
 #include <vector>
@@ -59,6 +60,7 @@ class RTTR_API constructor_wrapper_base : public meta_data_handler
         virtual type get_declaring_type() const = 0;
         std::string get_signature() const;
 
+        virtual access_levels get_access_level() const = 0;
         virtual type get_instanciated_type() const = 0;
         virtual std::vector<bool> get_is_reference() const;
         virtual std::vector<bool> get_is_const() const;

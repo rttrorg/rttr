@@ -25,16 +25,15 @@
 *                                                                                   *
 *************************************************************************************/
 
-
-#include "rttr/access_level.h"
+#include "rttr/registration.h"
 
 namespace rttr
 {
 
-const detail::public_access access_level::public_access = {};
+const detail::public_access registration::public_access = {};
 
-const detail::protected_access access_level::protected_access = {};
+const detail::protected_access registration::protected_access = {};
 
-const detail::private_access access_level::private_access = {};
+const detail::private_access registration::private_access = {};
 
 } // end namespace rttr

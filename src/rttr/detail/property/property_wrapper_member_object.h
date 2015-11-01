@@ -32,13 +32,14 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read write
 
-template<typename C, typename A>
-class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_value> : public property_wrapper_base
+template<typename C, typename A, access_levels Acc_Level>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, set_value> : public property_wrapper_base
 {
     using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc) { }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
@@ -70,13 +71,14 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, set_val
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read only (because of std::false_type)
 
-template<typename C, typename A>
-class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_only> : public property_wrapper_base
+template<typename C, typename A, access_levels Acc_Level>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, read_only> : public property_wrapper_base
 {
     using accessor = A (C::*);
     public:
         property_wrapper(accessor acc) : m_acc(acc) { }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
@@ -103,8 +105,8 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_copy, read_on
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read write
 
-template<typename C, typename A>
-class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_ptr> : public property_wrapper_base
+template<typename C, typename A, access_levels Acc_Level>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, set_as_ptr> : public property_wrapper_base
 {
     using accessor = A (C::*);
     public:
@@ -113,6 +115,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A*>(); }
@@ -147,8 +150,8 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, set_as_p
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read only
 
-template<typename C, typename A>
-class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_only> : public property_wrapper_base
+template<typename C, typename A, access_levels Acc_Level>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, read_only> : public property_wrapper_base
 {
     using accessor = A (C::*);
     public:
@@ -157,6 +160,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, return_as_ptr, read_onl
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }

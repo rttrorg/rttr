@@ -84,12 +84,24 @@ static RTTR_INLINE auto get_enum_values(Args&&... arg) -> decltype(forward_to_ar
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+using map_access_level_to_enum = conditional_t< std::is_same<T, detail::public_access>::value,
+                                                std::integral_constant<access_levels, access_levels::public_access>,
+                                                conditional_t< std::is_same<T, detail::protected_access>::value,
+                                                               std::integral_constant<access_levels, access_levels::protected_access>,
+                                                               std::integral_constant<access_levels, access_levels::private_access>
+                                                             >
+                                              >;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename...Ctor_Args>
-class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public registration::class_<Class_Type>
+template<typename Class_Type, typename acc_level, typename...Ctor_Args>
+class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : public registration::class_<Class_Type>
 {
     private:
         using default_create_policy = detail::as_raw_pointer;
@@ -99,7 +111,9 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
         create_constructor_wrapper(detail::default_args<TArgs...> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, 
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, 
+                                                           detail::map_access_level_to_enum<acc_level>::value,
+                                                           Policy, 
                                                            default_args<TArgs...>, 
                                                            parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(def_args), std::move(param_infos));
         }
@@ -109,7 +123,8 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
         create_constructor_wrapper(detail::default_args<> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, Policy, 
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, detail::map_access_level_to_enum<acc_level>::value,
+                                                           Policy, 
                                                            default_args<>, 
                                                            parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(param_infos));
         }
@@ -125,7 +140,7 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
             using namespace detail;
             using param_info_t = decltype(create_param_infos<type_list<Ctor_Args...>>());
             if (!m_ctor.get())
-                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, default_create_policy,
+                m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor, detail::map_access_level_to_enum<acc_level>::value, default_create_policy,
                                                                          detail::default_args<>, param_info_t, Ctor_Args...>>(param_info_t());
 
             // register the type with the following call:
@@ -177,8 +192,8 @@ class registration::bind<detail::ctor, Class_Type, Ctor_Args...> : public regist
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename F>
-class registration::bind<detail::ctor_func, Class_Type, F> : public registration::class_<Class_Type>
+template<typename Class_Type, typename F, typename acc_level>
+class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public registration::class_<Class_Type>
 {
     private:
         template<typename...TArgs, typename...Param_Args>
@@ -187,7 +202,9 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, 
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, 
+                                                           detail::map_access_level_to_enum<acc_level>::value,
+                                                           default_invoke, 
                                                            default_args<TArgs...>,
                                                            parameter_infos<Param_Args...>,
                                                            F>>(func, std::move(def_args), std::move(param_infos));
@@ -199,7 +216,9 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, 
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func,
+                                                           detail::map_access_level_to_enum<acc_level>::value,
+                                                           default_invoke, 
                                                            default_args<>,
                                                            parameter_infos<Param_Args...>,
                                                            F>>(func, std::move(param_infos));
@@ -213,7 +232,11 @@ class registration::bind<detail::ctor_func, Class_Type, F> : public registration
         {
             using namespace detail;
             using param_info_t = decltype(create_param_infos<type_list<Acc_Func>>());
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, default_invoke, detail::default_args<>, param_info_t, F>>(func, param_info_t());
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func, 
+                                       detail::map_access_level_to_enum<acc_level>::value,
+                                       default_invoke, 
+                                       detail::default_args<>, 
+                                       param_info_t, F>>(func, param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
@@ -282,8 +305,8 @@ using registration_derived_t = detail::conditional_t< std::is_same<T, void>::val
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename A>
-class registration::bind<detail::prop, Class_Type, A> : public registration_derived_t<Class_Type>
+template<typename Class_Type, typename A, typename acc_level>
+class registration::bind<detail::prop, Class_Type, A, acc_level> : public registration_derived_t<Class_Type>
 {
     private:
         using default_getter_policy = detail::return_as_copy;
@@ -294,7 +317,9 @@ class registration::bind<detail::prop, Class_Type, A> : public registration_deri
         {
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
-            return detail::make_unique<property_wrapper<acc_type, A, void, default_getter_policy, default_setter_policy>>(acc);
+            return detail::make_unique<property_wrapper<acc_type, A, void,
+                                                        detail::map_access_level_to_enum<acc_level>::value,
+                                                        default_getter_policy, default_setter_policy>>(acc);
         }
 
         template<typename Acc, typename... Args>
@@ -315,7 +340,9 @@ class registration::bind<detail::prop, Class_Type, A> : public registration_deri
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<Acc>::type;
 
-            auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void, getter_policy, setter_policy>>(acc);
+            auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void, 
+                                                             detail::map_access_level_to_enum<acc_level>::value,
+                                                             getter_policy, setter_policy>>(acc);
             store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
             return std::move(prop);
         }
@@ -364,8 +391,8 @@ class registration::bind<detail::prop, Class_Type, A> : public registration_deri
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename A1, typename A2>
-class registration::bind<detail::prop, Class_Type, A1, A2> : public registration_derived_t<Class_Type>
+template<typename Class_Type, typename A1, typename A2, typename acc_level>
+class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public registration_derived_t<Class_Type>
 {
     private:
         using default_getter_policy = detail::return_as_copy;
@@ -376,7 +403,9 @@ class registration::bind<detail::prop, Class_Type, A1, A2> : public registration
         {
             using namespace detail;
             using acc_type = typename property_type<A1>::type;
-            return detail::make_unique<property_wrapper<acc_type, Acc1, Acc2, default_getter_policy, default_setter_policy>>(getter, setter);
+            return detail::make_unique<property_wrapper<acc_type, Acc1, Acc2,
+                                                        detail::map_access_level_to_enum<acc_level>::value,
+                                                        default_getter_policy, default_setter_policy>>(getter, setter);
         }
 
         template<typename Acc1, typename Acc2, typename... Args>
@@ -395,7 +424,10 @@ class registration::bind<detail::prop, Class_Type, A1, A2> : public registration
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A1>::type;
-            auto prop = detail::make_unique<property_wrapper<acc_type, Acc1, Acc2, getter_policy, setter_policy>>(getter, setter);
+            auto prop = detail::make_unique<property_wrapper<acc_type, 
+                                                             Acc1, Acc2,
+                                                             detail::map_access_level_to_enum<acc_level>::value,
+                                                             getter_policy, setter_policy>>(getter, setter);
 
             store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
             return std::move(prop);
@@ -443,8 +475,8 @@ class registration::bind<detail::prop, Class_Type, A1, A2> : public registration
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename A>
-class registration::bind<detail::prop_readonly, Class_Type, A> : public registration_derived_t<Class_Type>
+template<typename Class_Type, typename A, typename acc_level>
+class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : public registration_derived_t<Class_Type>
 {
     private:
         using default_getter_policy = detail::return_as_copy;
@@ -455,7 +487,9 @@ class registration::bind<detail::prop_readonly, Class_Type, A> : public registra
         {
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
-            return detail::make_unique<property_wrapper<acc_type, A, void, default_getter_policy, default_setter_policy>>(acc);
+            return detail::make_unique<property_wrapper<acc_type, A, void,
+                                                        detail::map_access_level_to_enum<acc_level>::value,
+                                                        default_getter_policy, default_setter_policy>>(acc);
         }
 
         template<typename Acc, typename... Args>
@@ -474,7 +508,9 @@ class registration::bind<detail::prop_readonly, Class_Type, A> : public registra
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<Acc>::type;
 
-            auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void, getter_policy, default_setter_policy>>(acc);
+            auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void,
+                                                             detail::map_access_level_to_enum<acc_level>::value,
+                                                             getter_policy, default_setter_policy>>(acc);
 
             store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
 
@@ -521,8 +557,8 @@ class registration::bind<detail::prop_readonly, Class_Type, A> : public registra
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename F>
-class registration::bind<detail::meth, Class_Type, F> : public registration_derived_t<Class_Type>
+template<typename Class_Type, typename F, typename acc_level>
+class registration::bind<detail::meth, Class_Type, F, acc_level> : public registration_derived_t<Class_Type>
 {
     private:
         template<typename Acc_Func>
@@ -530,7 +566,8 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
         {
             using namespace detail;
             using param_info_t =  decltype(create_param_infos<type_list<F>>());
-            return detail::make_unique<method_wrapper<Acc_Func, default_invoke, default_args<>, param_info_t>>(func, param_info_t());
+            return detail::make_unique<method_wrapper<Acc_Func, detail::map_access_level_to_enum<acc_level>::value, 
+                                                      default_invoke, default_args<>, param_info_t>>(func, param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
@@ -572,7 +609,7 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
         create_method_wrapper(F func, detail::default_args<TArgs...> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
-            return detail::make_unique<detail::method_wrapper<F, Policy, 
+            return detail::make_unique<detail::method_wrapper<F, detail::map_access_level_to_enum<acc_level>::value, Policy, 
                                                               detail::default_args<TArgs...>,
                                                               detail::parameter_infos<Param_Args...>>>(func, std::move(def_args), std::move(param_infos));
         }
@@ -581,7 +618,7 @@ class registration::bind<detail::meth, Class_Type, F> : public registration_deri
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
         create_method_wrapper(F func, detail::default_args<> def_args, detail::parameter_infos<Param_Args...> param_infos)
         {
-            return detail::make_unique<detail::method_wrapper<F, Policy,
+            return detail::make_unique<detail::method_wrapper<F, detail::map_access_level_to_enum<acc_level>::value, Policy,
                                                               detail::default_args<>,
                                                               detail::parameter_infos<Param_Args...>>>(func, std::move(param_infos));
         }

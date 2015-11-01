@@ -62,6 +62,16 @@ property::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+access_levels property::get_access_level() const
+{
+    if (is_valid())
+        return m_wrapper->get_access_level();
+    else
+        return access_levels::public_access;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool property::is_readonly() const
 {
     if (is_valid())

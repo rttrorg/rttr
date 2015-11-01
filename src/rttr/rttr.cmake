@@ -123,14 +123,14 @@ set(HEADER_FILES access_level.h
                  detail/variant_array_view/variant_array_view_traits.h
                 )
                 
-set(SOURCE_FILES access_level.cpp
-                 constructor.cpp
+set(SOURCE_FILES constructor.cpp
                  destructor.cpp
                  enumeration.cpp
                  method.cpp
                  parameter_info.cpp
                  policy.cpp
                  property.cpp
+                 registration.cpp
                  type.cpp
                  variant.cpp
                  variant_array_view.cpp

@@ -62,13 +62,13 @@ struct are_args_in_valid_range<type_list<Ctor_Args...>, type_list<Args...>>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename Constructor_Type, typename Policy, typename Default_Args, typename Parameter_Infos, typename... Args>
+template<typename ClassType, typename Constructor_Type, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos, typename... Args>
 class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, typename Policy, typename...Param_Args, typename... Ctor_Args>
-class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...> : public constructor_wrapper_base
+template<typename Class_Type, access_levels Acc_Level, typename Policy, typename...Param_Args, typename... Ctor_Args>
+class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...> : public constructor_wrapper_base
 {
     using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
     using instanciated_type = typename invoker_class::return_type;
@@ -76,6 +76,7 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parame
     public:
         constructor_wrapper(parameter_infos<Param_Args...> param_infos) : m_param_infos(std::move(param_infos)) {}
        
+        access_levels get_access_level() const { return Acc_Level; }
         type get_instanciated_type()    const { return type::get<instanciated_type>(); }
         type get_declaring_type()       const { return type::get<typename raw_type<Class_Type>::type>(); }
         
@@ -159,8 +160,8 @@ class constructor_wrapper<Class_Type, class_ctor, Policy, default_args<>, parame
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, typename Policy, typename...Param_Args, typename F>
-class constructor_wrapper<ClassType, return_func, Policy, default_args<>, parameter_infos<Param_Args...>, F> : public constructor_wrapper_base
+template<typename ClassType, access_levels Acc_Level, typename Policy, typename...Param_Args, typename F>
+class constructor_wrapper<ClassType, return_func, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, F> : public constructor_wrapper_base
 {
     using instanciated_type = typename function_traits<F>::return_type;
 
@@ -168,6 +169,7 @@ class constructor_wrapper<ClassType, return_func, Policy, default_args<>, parame
         constructor_wrapper(F creator_func, parameter_infos<Param_Args...> param_infos)
         :   m_creator_func(creator_func), m_param_infos(std::move(param_infos)) {}
 
+        access_levels get_access_level()                     const { return Acc_Level; }
         type get_instanciated_type()                        const { return type::get<instanciated_type>();                  }
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }

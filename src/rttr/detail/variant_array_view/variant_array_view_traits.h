@@ -39,9 +39,6 @@ namespace detail
 {
 
 template<typename T>
-using is_raw_array_type = ::rttr::detail::is_array<typename raw_type<T>::type>;
-
-template<typename T>
 using is_wrapper_array_type = std::integral_constant<bool, is_raw_array_type<wrapper_mapper_t<T>>::value && is_wrapper<T>::value>;
 
 template<typename T>

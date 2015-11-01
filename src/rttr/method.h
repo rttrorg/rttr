@@ -30,6 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/parameter_info.h"
+#include "rttr/access_level.h"
 
 #include <string>
 #include <vector>
@@ -135,6 +136,16 @@ class RTTR_API method
          * \return Name of the method.
          */
         std::string get_name() const;
+
+        /*!
+         * \brief Returns the access_levels with which this method was 
+         *        \ref registration::class_<T>::method() "registered".
+         *
+         * \remark When the method is not valid, this function will return level \ref access_levels::public_access.
+         *
+         * \return \ref access_levels of the method.
+         */
+        access_levels get_access_level() const;
 
         /*!
          * \brief Returns true if this method is static method, otherwise false.

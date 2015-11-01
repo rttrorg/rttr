@@ -32,8 +32,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter/setter - function pointer
 
-template<typename Getter, typename Setter>
-class property_wrapper<function_ptr, Getter, Setter, return_as_copy, set_value> : public property_wrapper_base
+template<typename Getter, typename Setter, access_levels Acc_Level>
+class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value> : public property_wrapper_base
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -46,6 +46,7 @@ class property_wrapper<function_ptr, Getter, Setter, return_as_copy, set_value> 
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
@@ -75,8 +76,8 @@ class property_wrapper<function_ptr, Getter, Setter, return_as_copy, set_value> 
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter
 
-template<typename Getter>
-class property_wrapper<function_ptr, Getter, void, return_as_copy, read_only> : public property_wrapper_base
+template<typename Getter, access_levels Acc_Level>
+class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, read_only> : public property_wrapper_base
 {
     using return_type = typename function_traits<Getter>::return_type;
 
@@ -86,6 +87,7 @@ class property_wrapper<function_ptr, Getter, void, return_as_copy, read_only> : 
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
@@ -111,8 +113,8 @@ class property_wrapper<function_ptr, Getter, void, return_as_copy, read_only> : 
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter/setter
 
-template<typename Getter, typename Setter>
-class property_wrapper<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr> : public property_wrapper_base
+template<typename Getter, typename Setter, access_levels Acc_Level>
+class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr> : public property_wrapper_base
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -129,6 +131,7 @@ class property_wrapper<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr> 
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
@@ -159,8 +162,8 @@ class property_wrapper<function_ptr, Getter, Setter, return_as_ptr, set_as_ptr> 
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter
 
-template<typename Getter>
-class property_wrapper<function_ptr, Getter, void, return_as_ptr, read_only> : public property_wrapper_base
+template<typename Getter, access_levels Acc_Level>
+class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, read_only> : public property_wrapper_base
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:
@@ -169,6 +172,7 @@ class property_wrapper<function_ptr, Getter, void, return_as_ptr, read_only> : p
             static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }

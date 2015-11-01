@@ -40,7 +40,6 @@
 #include "rttr/detail/default_arguments/invoke_with_defaults.h"
 #include "rttr/detail/parameter_info/parameter_infos.h"
 
-
 #include <functional>
 #include <string>
 
@@ -49,11 +48,11 @@ namespace rttr
 namespace detail
 {
 
-template<typename F, typename Policy, typename Default_Args, typename Parameter_Infos>
+template<typename F, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos>
 class method_wrapper;
 
-template<typename F, typename Policy, typename... Param_Args>
-class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> : public method_wrapper_base
+template<typename F, access_levels Acc_Level, typename Policy, typename... Param_Args>
+class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>> : public method_wrapper_base
 {
     public:
         method_wrapper(F func_acc, parameter_infos<Param_Args...> param_infos)
@@ -64,6 +63,7 @@ class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> 
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
+        access_levels get_access_level()                     const { return Acc_Level; }
         std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);   }
 
         variant invoke(instance& object) const
@@ -107,8 +107,8 @@ class method_wrapper<F, Policy, default_args<>, parameter_infos<Param_Args...>> 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Policy, typename...Default_Args, typename...Param_Args>
-class method_wrapper<F, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...> > : public method_wrapper_base
+template<typename F, access_levels Acc_Level, typename Policy, typename...Default_Args, typename...Param_Args>
+class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...> > : public method_wrapper_base
 {
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
@@ -131,6 +131,7 @@ class method_wrapper<F, Policy, default_args<Default_Args...>, parameter_infos<P
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
         std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);   }
+        access_levels get_access_level()                     const { return Acc_Level; }
 
         variant invoke(instance& object) const
         {

@@ -30,6 +30,9 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 
+#include "rttr/parameter_info.h"
+#include "rttr/access_level.h"
+
 #include <string>
 
 namespace rttr
@@ -124,6 +127,16 @@ class RTTR_API property
          * \return True if this property is valid, otherwise false.
          */
         explicit operator bool() const;
+
+        /*!
+         * \brief Returns the access_levels with which this method was 
+         *        \ref registration::class_<T>::property() "registered".
+         *
+         * \remark When the property is not valid, this function will return level \ref access_levels::public_access.
+         *
+         * \return \ref access_levels of the property.
+         */
+        access_levels get_access_level() const;
 
         /*!
          * \brief Returns true if this property is read only, otherwise false.

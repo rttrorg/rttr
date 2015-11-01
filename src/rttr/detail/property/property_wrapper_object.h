@@ -32,14 +32,15 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C>
-class property_wrapper<object_ptr, C*, void, return_as_copy, set_value> : public property_wrapper_base
+template<typename C, access_levels Acc_Level>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value> : public property_wrapper_base
 {
     public:
         property_wrapper(C* pointer) : m_accessor(pointer)
         {
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
@@ -70,14 +71,15 @@ class property_wrapper<object_ptr, C*, void, return_as_copy, set_value> : public
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C>
-class property_wrapper<object_ptr, C*, void, return_as_copy, read_only> : public property_wrapper_base
+template<typename C, access_levels Acc_Level>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only> : public property_wrapper_base
 {
     public:
         property_wrapper(C* pointer) : m_accessor(pointer)
         {
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
@@ -101,8 +103,8 @@ class property_wrapper<object_ptr, C*, void, return_as_copy, read_only> : public
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C>
-class property_wrapper<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public property_wrapper_base
+template<typename C, access_levels Acc_Level>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr> : public property_wrapper_base
 {
     public:
         property_wrapper(C* pointer) : m_accessor(pointer)
@@ -110,6 +112,7 @@ class property_wrapper<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C*>(); }
@@ -140,14 +143,15 @@ class property_wrapper<object_ptr, C*, void, return_as_ptr, set_as_ptr> : public
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C>
-class property_wrapper<object_ptr, C*, void, return_as_ptr, read_only> : public property_wrapper_base
+template<typename C, access_levels Acc_Level>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only> : public property_wrapper_base
 {
     public:
         property_wrapper(C* pointer) : m_accessor(pointer)
         {
         }
 
+        access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<C>::type*>(); }

@@ -130,7 +130,7 @@ registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(A
 
 template<typename Class_Type>
 template<typename... Args, typename acc_level, typename Tp>
-registration::bind<detail::ctor, Class_Type, Args...> registration::class_<Class_Type>::constructor(acc_level level)
+registration::bind<detail::ctor, Class_Type, acc_level, Args...> registration::class_<Class_Type>::constructor(acc_level level)
 {
     return {create_if_empty(m_reg_exec)};
 }
@@ -139,7 +139,7 @@ registration::bind<detail::ctor, Class_Type, Args...> registration::class_<Class
 
 template<typename Class_Type>
 template<typename F, typename acc_level, typename Tp>
-registration::bind<detail::ctor_func, Class_Type, F> registration::class_<Class_Type>::constructor(F func, acc_level level)
+registration::bind<detail::ctor_func, Class_Type, F, acc_level> registration::class_<Class_Type>::constructor(F func, acc_level level)
 {
     using namespace detail;
     static_assert(is_function_ptr<F>::value || is_std_function<F>::value,
@@ -155,10 +155,10 @@ registration::bind<detail::ctor_func, Class_Type, F> registration::class_<Class_
 
 template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop, Class_Type, A> registration::class_<Class_Type>::property(const char* name, A acc, acc_level level)
+registration::bind<detail::prop, Class_Type, A, acc_level> registration::class_<Class_Type>::property(const char* name, A acc, acc_level level)
 {
     using namespace detail;
-    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_member_object_pointer<A>::value || std::is_pointer<A>::value,
                   "No valid property accessor provided!");
 
@@ -169,10 +169,10 @@ registration::bind<detail::prop, Class_Type, A> registration::class_<Class_Type>
 
 template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop_readonly, Class_Type, A> registration::class_<Class_Type>::property_readonly(const char* name, A acc, acc_level level)
+registration::bind<detail::prop_readonly, Class_Type, A, acc_level> registration::class_<Class_Type>::property_readonly(const char* name, A acc, acc_level level)
 {
     using namespace detail;
-    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_pointer<A>::value ||
                   std::is_member_object_pointer<A>::value || std::is_member_function_pointer<A>::value || 
                   is_function_ptr<A>::value || is_std_function<A>::value,
@@ -185,10 +185,10 @@ registration::bind<detail::prop_readonly, Class_Type, A> registration::class_<Cl
 
 template<typename Class_Type>
 template<typename A1, typename A2,  typename Tp, typename acc_level>
-registration::bind<detail::prop, Class_Type, A1, A2> registration::class_<Class_Type>::property(const char* name, A1 getter, A2 setter, acc_level level)
+registration::bind<detail::prop, Class_Type, A1, A2, acc_level> registration::class_<Class_Type>::property(const char* name, A1 getter, A2 setter, acc_level level)
 {
     using namespace detail;
-    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_member_function_pointer<A1>::value || std::is_member_function_pointer<A2>::value ||
                   is_function_ptr<A1>::value || is_function_ptr<A2>::value ||
                   is_std_function<A1>::value || is_std_function<A2>::value, 
@@ -207,10 +207,10 @@ registration::bind<detail::prop, Class_Type, A1, A2> registration::class_<Class_
 
 template<typename Class_Type>
 template<typename F, typename acc_level>
-registration::bind<detail::meth, Class_Type, F> registration::class_<Class_Type>::method(const char* name, F f, acc_level level)
+registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<Class_Type>::method(const char* name, F f, acc_level level)
 {
     using namespace detail;
-    static_assert(contains<acc_level, access_level_list>::value, "The given type of 'level' is not a type of 'rttr::access_level.'");
+    static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_member_function_pointer<F>::value || std::is_member_function_pointer<F>::value ||
                   is_function_ptr<F>::value || is_function_ptr<F>::value ||
                   is_std_function<F>::value || is_std_function<F>::value, 
@@ -236,7 +236,7 @@ registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Cl
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop, void, A> registration::property(const char* name, A acc)
+registration::bind<detail::prop, void, A, detail::public_access> registration::property(const char* name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value, "No valid property accessor provided!");
@@ -246,7 +246,7 @@ registration::bind<detail::prop, void, A> registration::property(const char* nam
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop_readonly, void, A> registration::property_readonly(const char* name, A acc)
+registration::bind<detail::prop_readonly, void, A, detail::public_access> registration::property_readonly(const char* name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value || is_function_ptr<A>::value || is_std_function<A>::value,
@@ -258,7 +258,7 @@ registration::bind<detail::prop_readonly, void, A> registration::property_readon
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A1, typename A2>
-registration::bind<detail::prop, void, A1, A2> registration::property(const char* name, A1 getter, A2 setter)
+registration::bind<detail::prop, void, A1, A2, detail::public_access> registration::property(const char* name, A1 getter, A2 setter)
 {
     using namespace detail;
     static_assert(is_function_ptr<A1>::value || is_function_ptr<A2>::value ||
@@ -271,7 +271,7 @@ registration::bind<detail::prop, void, A1, A2> registration::property(const char
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F>
-registration::bind<detail::meth, void, F> registration::method(const char* name, F f)
+registration::bind<detail::meth, void, F, detail::public_access> registration::method(const char* name, F f)
 {
     using namespace detail;
     static_assert(is_function_ptr<F>::value || is_std_function<F>::value, 
@@ -294,19 +294,19 @@ registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(con
 } // end namespace rttr
 
 #define RTTR_REGISTRATION                                               \
-static void rttr__auto_register_reflection_function__();                \
+static void rttr_auto_register_reflection_function_();                  \
 namespace                                                               \
 {                                                                       \
     struct rttr__auto__register__                                       \
     {                                                                   \
         rttr__auto__register__()                                        \
         {                                                               \
-            rttr__auto_register_reflection_function__();                \
+            rttr_auto_register_reflection_function_();                  \
         }                                                               \
     };                                                                  \
 }                                                                       \
 static const rttr__auto__register__ RTTR_CAT(auto_register__,__LINE__); \
-static void rttr__auto_register_reflection_function__()
+static void rttr_auto_register_reflection_function_()
 
 
 #endif // RTTR_REGISTRATION_IMPL_H_

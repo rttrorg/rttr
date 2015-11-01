@@ -25,64 +25,41 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_ACCESS_LEVEL_H_
-#define RTTR_ACCESS_LEVEL_H_
+#ifndef RTTR_ACCESS_LEVELS_H_
+#define RTTR_ACCESS_LEVELS_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
 
 namespace rttr
 {
-namespace detail
-{
-    struct public_access    {};
-    struct protected_access {};
-    struct private_access   {};
-
-    using access_level_list = type_list<public_access, protected_access, private_access>;
-}
 
 /*!
- * The \ref access_level class contains three static members, which can be used to specify 
- * access control during registration process.
+ * The \ref access_levels enum represents the three access modifiers, which can be used
+ * in classes to encapsulate members access.
  *
- * The access control can be specified for class \ref method "methods", \ref property "properties" or \ref constructor "constructors".
- * When nothing is specified during the registration, the default value will be **public_access**.
+ * In contrast to the three static type values in the \ref registration::public_access "registration" class,
+ * represents this enum the return value to retrieve the access level at runtime.
  *
- * See following example code:
- * \code{.cpp}
- *  using namespace rttr;
- *  struct Foo
- *  {
- *      void func() {}
- *  };
- *
- *  RTTR_REGISTRATION
- *  {
- *      registration::class_<Foo>("Foo")
- *          .method("func", &Foo::func, access_level::protected_access);
- *  }
- *
- * \endcode
+ * \see \ref method::get_access_level(), \ref property::get_access_level(), \ref constructor::get_access_level()
  */
-struct RTTR_API access_level
+enum class access_levels
 {
     /*!
-     * Declares the visibility of class member as *public*.
+     * Declares that this member was registered with `public` access.
      */
-    static const detail::public_access      public_access;
+    public_access,
+    
+    /*!
+     * Declares that this member was registered with `protected` access.
+     */
+    protected_access,
 
     /*!
-     * Declares the visibility of class member as *protected*.
+     * Declares that this member was registered with `private` access.
      */
-    static const detail::protected_access   protected_access;
-
-    /*!
-     * Declares the visibility of class member as *private*.
-     */
-    static const detail::private_access     private_access;
+    private_access
 };
 
 } // end namespace rttr
 
-#endif // RTTR_ACCESS_LEVEL_H_
+#endif // RTTR_ACCESS_LEVELS_H_
