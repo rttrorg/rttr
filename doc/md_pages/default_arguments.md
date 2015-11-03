@@ -1,9 +1,9 @@
 Default Arguments {#default_arguments_page}
 =================
 
-When you want to register a @ref rttr::method "methods" or a @ref rttr::constructor "constructors" which contains default arguments,
-you have to provide them RTTR explicitly. The reason for this is, 
-default arguments are not part of the function signature.
+When you want to register a @ref rttr::method "method" or a @ref rttr::constructor "constructor" which contains default arguments,
+you have to provide them RTTR explicitly. 
+The reason for this is, default arguments are not part of the function signature.
 Nevertheless, RTTR provides a mechanism to register functions with default arguments.
 
 Please take a look at following example:
