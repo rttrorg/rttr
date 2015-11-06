@@ -25,26 +25,27 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
-#include <iostream>
-#include <rttr/type>
+#ifndef RTTR_VARIANT_COMPARE_LESS_H_
+#define RTTR_VARIANT_COMPARE_LESS_H_
 
-using namespace rttr;
-using namespace std;
+#include "rttr/detail/base/core_prerequisites.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("variant - misc", "[variant]")
+namespace rttr
 {
-    SECTION("empty type")
-    {
-        variant var = 12;
 
-        CHECK(var.is_valid() == true);
-        var.clear();
+class variant;
+class type;
 
-        CHECK(var.is_valid() == false);
-    }
-}
+namespace detail
+{
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_API bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type);
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_VARIANT_COMPARE_LESS_H_

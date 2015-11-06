@@ -197,6 +197,32 @@ RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, cons
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_INLINE bool variant::is_nullptr() const
+{
+    return m_policy(detail::variant_policy_operation::IS_NULLPTR, m_data, detail::argument_wrapper());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+typename std::enable_if<detail::is_nullptr_t<T>::value, bool>::type 
+static RTTR_INLINE ptr_to_nullptr(T& to)
+{
+    to = nullptr;
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+typename std::enable_if<!detail::is_nullptr_t<T>::value, bool>::type 
+static RTTR_INLINE ptr_to_nullptr(T& to)
+{
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T>
 RTTR_INLINE bool variant::convert(T& value) const
 {
@@ -207,6 +233,7 @@ RTTR_INLINE bool variant::convert(T& value) const
     if (target_type == source_type)
     {
         value = const_cast<variant&>(*this).get_value<T>();
+        ok = true;
     }
     else if(try_basic_type_conversion(value))
     {
@@ -216,6 +243,11 @@ RTTR_INLINE bool variant::convert(T& value) const
     {
         detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
         value = target_converter->convert(get_ptr(), ok);
+    }
+    else if (target_type == type::get<std::nullptr_t>())
+    {
+        if (is_nullptr())
+            ok = ptr_to_nullptr(value);
     }
     else
     {

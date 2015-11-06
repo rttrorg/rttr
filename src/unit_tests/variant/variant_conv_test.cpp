@@ -583,3 +583,42 @@ TEST_CASE("variant test - convert internal", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant test - convert to nullptr", "[variant]")
+{
+    SECTION("Invalid conversion")
+    {
+        int obj = 42;
+        variant var = &obj;
+
+        CHECK(var.can_convert(type::get<std::nullptr_t>()) == false);
+
+        bool ok = false;
+        std::nullptr_t o = var.convert<std::nullptr_t>(&ok);
+        CHECK(ok == false);
+
+        CHECK(var.convert(type::get<std::nullptr_t>()) == false);
+
+        std::nullptr_t null_obj;
+        CHECK(var.convert(null_obj) == false);
+    }
+
+    SECTION("valid conversion")
+    {
+        int* obj = nullptr;
+        variant var = obj;
+
+        CHECK(var.can_convert(type::get<std::nullptr_t>()) == true);
+        std::nullptr_t null_obj;
+        CHECK(var.convert(null_obj) == true);
+        CHECK(null_obj == nullptr);
+        
+        bool ok = false;
+        std::nullptr_t o = var.convert<std::nullptr_t>(&ok);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<std::nullptr_t>()) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

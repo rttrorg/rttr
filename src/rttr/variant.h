@@ -32,6 +32,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
+#include "rttr/detail/variant/variant_compare_less.h"
 
 #include <type_traits>
 #include <cstddef>
@@ -55,6 +56,7 @@ namespace detail
 
     template<typename T, typename Tp, typename Converter = empty_type_converter<T>>
     struct variant_data_base_policy;
+    struct variant_data_policy_nullptr_t;
 
     enum class variant_policy_operation : uint8_t;
 
@@ -831,13 +833,21 @@ class RTTR_API variant
          */
         bool compare_less(const variant& other) const;
 
+        /*!
+         * \brief A function to check whether the contained pointer type is a `nullptr` or not.
+         *
+         * \return A boolean with value `true`, when the contained value type is equal to `nullptr`; otherwise false.
+         */
+        RTTR_INLINE bool is_nullptr() const;
+
     private:
         friend class argument;
         friend class instance;
 
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;
-
+        friend struct detail::variant_data_policy_nullptr_t;
+        friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&);
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;

@@ -80,7 +80,9 @@ set(HEADER_FILES access_levels.h
                  detail/misc/argument_wrapper.h
                  detail/misc/argument_extractor.h
                  detail/misc/compare_equal.h
+                 detail/misc/compare_equal_impl.h
                  detail/misc/compare_less.h
+                 detail/misc/compare_less_impl.h
                  detail/misc/data_address_container.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
@@ -113,6 +115,7 @@ set(HEADER_FILES access_levels.h
                  detail/type/type_database_p.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
+                 detail/variant/variant_compare_less.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
@@ -149,4 +152,5 @@ set(SOURCE_FILES constructor.cpp
                  detail/registration/registration_executer.cpp
                  detail/type/type_database.cpp
                  detail/type/type_register.cpp
+                 detail/variant/variant_compare_less.cpp
                  )

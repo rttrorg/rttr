@@ -123,7 +123,7 @@ variant& variant::operator=(variant&& other)
 
 bool variant::compare_equal(const variant& other) const
 {
-    return m_policy(detail::variant_policy_operation::COMPARE_EQUAL, m_data, other);
+    return m_policy(detail::variant_policy_operation::COMPARE_EQUAL, m_data, std::tie(*this, other));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -199,6 +199,9 @@ bool variant::can_convert(const type& target_type) const
     }
 
     if (source_type.get_type_converter(target_type))
+        return true;
+
+    if (target_type == type::get<std::nullptr_t>() && is_nullptr())
         return true;
 
     const bool source_is_arithmetic = source_type.is_arithmetic();
@@ -315,8 +318,13 @@ bool variant::convert(const type& target_type, variant& target_var) const
     {
         if (const auto& converter = source_type.get_type_converter(target_type))
         {
-            void* raw_ptr = get_ptr();
-            target_var = converter->to_variant(raw_ptr, ok);
+            void* ptr = get_ptr();
+            target_var = converter->to_variant(ptr, ok);
+        }
+        else if (target_type == type::get<std::nullptr_t>() && is_nullptr())
+        {
+            target_var = nullptr;
+            ok = true;
         }
         else if (source_type.is_pointer() &&
                  (source_type.get_pointer_dimension() == 1 && target_type.get_pointer_dimension() == 1))

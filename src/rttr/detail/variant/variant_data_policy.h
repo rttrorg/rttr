@@ -55,6 +55,8 @@ struct variant_data_policy_array_big;
 struct void_variant_type;
 struct variant_data_policy_void;
 
+struct variant_data_policy_nullptr_t;
+
 struct variant_data_policy_string;
 
 template<typename T>
@@ -79,26 +81,29 @@ using can_place_in_variant = std::integral_constant<bool, Can_Place>;
 template<typename T>
 using variant_policy = conditional_t<std::is_same<T, void_variant_type>::value,
                                      variant_data_policy_void,
-                                     conditional_t<std::is_same<T, std::string>::value || is_one_dim_char_array<T>::value,
-                                                   variant_data_policy_string,
-                                                   conditional_t<can_place_in_variant<T>::value,
-                                                                 conditional_t<std::is_arithmetic<T>::value,
-                                                                               variant_data_policy_arithmetic<T>,
-                                                                               conditional_t<std::is_array<T>::value,
-                                                                                             variant_data_policy_array_small<T>,
-                                                                                             conditional_t<std::is_enum<T>::value,
-                                                                                                           variant_data_policy_small<T, default_type_converter<T, convert_from_enum<T>>>,
-                                                                                                           variant_data_policy_small<T>
+                                     conditional_t<is_nullptr_t<T>::value,
+                                                   variant_data_policy_nullptr_t,
+                                                   conditional_t<std::is_same<T, std::string>::value || is_one_dim_char_array<T>::value,
+                                                                 variant_data_policy_string,
+                                                                 conditional_t<can_place_in_variant<T>::value,
+                                                                               conditional_t<std::is_arithmetic<T>::value,
+                                                                                             variant_data_policy_arithmetic<T>,
+                                                                                             conditional_t<std::is_array<T>::value,
+                                                                                                           variant_data_policy_array_small<T>,
+                                                                                                           conditional_t<std::is_enum<T>::value,
+                                                                                                                         variant_data_policy_small<T, default_type_converter<T, convert_from_enum<T>>>,
+                                                                                                                         variant_data_policy_small<T>
+                                                                                                                        >
                                                                                                           >
-                                                                                            >
-                                                                              >,
-                                                                  conditional_t<std::is_array<T>::value,
-                                                                                variant_data_policy_array_big<T>,
-                                                                                conditional_t<std::is_enum<T>::value,
-                                                                                              variant_data_policy_big<T, default_type_converter<T, convert_from_enum<T>>>,
-                                                                                              variant_data_policy_big<T>
+                                                                                            >,
+                                                                                conditional_t<std::is_array<T>::value,
+                                                                                              variant_data_policy_array_big<T>,
+                                                                                              conditional_t<std::is_enum<T>::value,
+                                                                                                            variant_data_policy_big<T, default_type_converter<T, convert_from_enum<T>>>,
+                                                                                                            variant_data_policy_big<T>
+                                                                                                           >
                                                                                              >
-                                                                               >
+                                                                              >
                                                                 >
                                                   >
                                     >;
@@ -124,6 +129,7 @@ enum class variant_policy_operation : uint8_t
     IS_ARRAY,
     TO_ARRAY,
     IS_VALID,
+    IS_NULLPTR,
     CONVERT,
     COMPARE_EQUAL,
     COMPARE_LESS
@@ -154,9 +160,27 @@ using variant_policy_func = bool (*)(variant_policy_operation, const variant_dat
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static bool is_floating_point(const type& type)
+static RTTR_INLINE bool is_floating_point(const type& type)
 {
     return (type == type::get<float>() || type == type::get<double>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+enable_if_t<std::is_pointer<T>::value, bool>
+static RTTR_INLINE is_nullptr(T& val)
+{
+    return (val == nullptr);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+enable_if_t<!std::is_pointer<T>::value, bool>
+static RTTR_INLINE is_nullptr(T& to)
+{
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -244,9 +268,16 @@ struct variant_data_base_policy
                 return true;
                 break;
             }
+            case variant_policy_operation::IS_NULLPTR:
+            {
+                return is_nullptr(Tp::get_value(src_data));
+                break;
+            }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const variant& rhs = arg.get_value<variant>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
                 if (lhs_type == rhs_type)
@@ -258,6 +289,8 @@ struct variant_data_base_policy
                     variant var_tmp;
                     if (rhs.convert(lhs_type, var_tmp))
                         return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
+                    else if (lhs.convert(rhs_type, var_tmp))
+                        return (var_tmp.compare_equal(rhs));
                 }
 
                 return false;
@@ -276,31 +309,9 @@ struct variant_data_base_policy
                     if (COMPARE_LESS_PRE_PROC(src_data, rhs, result))
                         return (result == -1 ? true : false);
                 }
-                else if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
-                {
-                    if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
-                    {
-                        return (lhs.to_double() < rhs.to_double());
-                    }
-                    else
-                    {
-                        return (lhs.to_int64() < rhs.to_int64());
-                    }
-                }
                 else
                 {
-                    variant rhs_tmp;
-                    if (rhs.convert(lhs_type, rhs_tmp))
-                    {
-                        if (COMPARE_LESS_PRE_PROC(src_data, rhs_tmp, result))
-                            return (result == -1 ? true : false);
-                    }
-
-                    variant lhs_tmp;
-                    if (lhs.convert(rhs_type, lhs_tmp))
-                        return lhs_tmp.compare_less(rhs);
-                    else
-                        return (lhs_type < rhs_type);
+                    return variant_compare_less(lhs, lhs_type, rhs, rhs_type);
                 }
 
                 // as last try, do a string conversion
@@ -603,14 +614,20 @@ struct RTTR_API variant_data_policy_empty
                 return false;
                 break;
             }
+            case variant_policy_operation::IS_NULLPTR:
+            {
+                return false;
+            }
             case variant_policy_operation::CONVERT:
             {
                 return false;
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                auto& other = arg.get_value<variant>();
-                return !other.is_valid();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
+                return !rhs.is_valid();
             }
             case variant_policy_operation::COMPARE_LESS:
             {
@@ -688,6 +705,10 @@ struct RTTR_API variant_data_policy_void
             {
                 break;
             }
+            case variant_policy_operation::IS_NULLPTR:
+            {
+                return false;
+            }
             case variant_policy_operation::IS_VALID:
             {
                 return true;
@@ -699,8 +720,10 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                auto& other = arg.get_value<variant>();
-                return other.is_type<void>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
+                return (rhs.is_type<void>());
             }
             case variant_policy_operation::COMPARE_LESS:
             {
@@ -713,6 +736,153 @@ struct RTTR_API variant_data_policy_void
     template<typename U>
     static RTTR_INLINE void create(U&&, variant_data&)
     {
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*!
+ * This policy is used when the variant does contain a `nullptr`.
+ *
+ * We need this special handling because MSVC 2013 cannot handle correct a const std::nullptr_t,
+ * On the other hand we have some special handling for comparison.
+ */
+struct RTTR_API variant_data_policy_nullptr_t
+{
+    static RTTR_INLINE std::nullptr_t& get_value(const variant_data& data)
+    {
+        return reinterpret_cast<std::nullptr_t&>(const_cast<variant_data&>(data));
+    }
+
+    static RTTR_INLINE void destroy(std::nullptr_t& value)
+    {
+        // for unknown reason we have to fully qualify the dtor call here;
+        // otherwise mingw has reports a problems here: "request for member 'nullptr_t' in non-class type 'std::nullptr_t'"
+        value.std::nullptr_t::~nullptr_t();
+    }
+    
+    static RTTR_INLINE void clone(const std::nullptr_t& value, variant_data& dest)
+    {
+        new (&dest) std::nullptr_t(value);
+    }
+
+    static RTTR_INLINE void swap(std::nullptr_t& value, variant_data& dest)
+    {
+        new (&dest) std::nullptr_t(value);
+        destroy(value);
+    }
+
+    static bool invoke(variant_policy_operation op, const variant_data& src_data, argument_wrapper arg)
+    {
+        switch (op)
+        {
+            case variant_policy_operation::DESTROY:
+            {
+                destroy(get_value(src_data));
+                break;
+            }
+            case variant_policy_operation::CLONE:
+            {
+                clone(get_value(src_data), arg.get_value<variant_data>());
+                break;
+            }
+            case variant_policy_operation::SWAP:
+            {
+                swap(get_value(src_data), arg.get_value<variant_data>());
+                break;
+            }
+            case variant_policy_operation::GET_VALUE:
+            {
+                arg.get_value<const void*>() = &get_value(src_data);
+                break;
+            }
+            case variant_policy_operation::GET_TYPE:
+            {
+                arg.get_value<type>() = type::get<std::nullptr_t>();
+                break;
+            }
+            case variant_policy_operation::GET_PTR:
+            {
+                arg.get_value<void*>() = as_void_ptr(std::addressof(get_value(src_data)));
+            }
+            case variant_policy_operation::GET_RAW_TYPE:
+            {
+                arg.get_value<type>() = type::get<std::nullptr_t>();
+                break;
+            }
+            case variant_policy_operation::GET_RAW_PTR:
+            {
+                arg.get_value<void*>() = as_void_ptr(raw_addressof(get_value(src_data)));
+                break;
+            }
+            case variant_policy_operation::GET_ADDRESS_CONTAINER:
+            {
+                data_address_container& data        = arg.get_value<data_address_container>();
+
+                data.m_type                         = type::get<std::nullptr_t>();
+                data.m_wrapped_type                 = type::get<std::nullptr_t>();
+                data.m_data_address                 = as_void_ptr(raw_addressof(get_value(src_data)));
+                data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(get_value(src_data)));
+                break;
+            }
+            case variant_policy_operation::IS_ARRAY:
+            {
+                return false;
+            }
+            case variant_policy_operation::TO_ARRAY:
+            {
+                break;
+            }
+            case variant_policy_operation::IS_VALID:
+            {
+                return true;
+            }
+            case variant_policy_operation::IS_NULLPTR:
+            {
+                return true;
+            }
+            case variant_policy_operation::CONVERT:
+            {
+                return false;
+            }
+            case variant_policy_operation::COMPARE_EQUAL:
+            {
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
+                const type rhs_type = rhs.get_type();
+                const type lhs_type = type::get<std::nullptr_t>();
+                if (lhs_type == rhs_type)
+                {
+                    return compare_equal(get_value(src_data), rhs.get_value<std::nullptr_t>());
+                }
+                else
+                {
+                    variant var_tmp;
+                    if (rhs.convert(lhs_type, var_tmp))
+                        return compare_equal(get_value(src_data), var_tmp.get_value<std::nullptr_t>());
+                    else if (lhs.convert(rhs_type, var_tmp))
+                        return (var_tmp.compare_equal(rhs));
+                }
+
+                return false;
+            }
+            case variant_policy_operation::COMPARE_LESS:
+            {
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const variant& lhs  = std::get<0>(param);
+                const variant& rhs  = std::get<1>(param);
+                return (lhs.is_nullptr() && !rhs.is_nullptr());
+            }
+        }
+        return true;
+    }
+
+    template<typename U>
+    static RTTR_INLINE void create(U&& value, variant_data& dest)
+    {
+        new (&dest) std::nullptr_t(std::forward<U>(value)); 
     }
 };
 

@@ -283,17 +283,11 @@ TEST_CASE("variant::operator==() - custom", "[variant]")
         CHECK((a == b) == true);
         CHECK((a != b) == false);
 
+        CHECK((b == a) == true);
+        CHECK((b != a) == false);
+
         CHECK(a.is_type<std::string>()  == true);
         CHECK(b.is_type<point>()        == true);
-    }
-
-    SECTION("compare point with std::string")
-    {
-        variant a = point{12, 23};
-        variant b = "[12, 23]";
-
-        CHECK((a == b) == false);
-        CHECK((a != b) == true);
     }
 }
 
@@ -362,6 +356,54 @@ TEST_CASE("variant::operator==() - template type - comparator registered", "[var
        
         CHECK((a == a) == true);
         CHECK((a != a) == false);
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator==() - nullptr type", "[variant]")
+{
+    SECTION("nullptr == nullptr")
+    {
+        variant a = nullptr;
+        variant b = nullptr;
+
+        CHECK((a == b) == true);
+    }
+
+    SECTION("valid ptr == nullptr")
+    {
+        int int_obj = 12;
+        variant a = &int_obj;
+        variant b = nullptr;
+
+        CHECK((a == b) == false);
+    }
+
+    SECTION("nullptr == valid ptr")
+    {
+        int int_obj = 12;
+        variant a = nullptr;
+        variant b = &int_obj;
+
+        CHECK((a == b) == false);
+    }
+
+    SECTION("invalid ptr == nullptr")
+    {
+        int* int_obj = nullptr;
+        variant a = int_obj;
+        variant b = nullptr;
+
+        CHECK((a == b) == true);
+    }
+
+    SECTION("nullptr == invalid ptr")
+    {
+        int* int_obj = nullptr;
+        variant a = nullptr;
+        variant b = int_obj;
+
+        CHECK((a == b) == true);
     }
 }
 

@@ -210,3 +210,35 @@ TEST_CASE("variant::operator<() - template type - no comparator registered", "[v
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator<() - with nullptr", "[variant]")
+{
+    SECTION("nullptr < nullptr")
+    {
+        variant a = nullptr;
+        variant b = nullptr;
+
+        CHECK((a < b) == false);
+        CHECK((b < a) == false);
+    }
+
+    SECTION("nullptr < valid")
+    {
+        int obj = 12;
+        variant a = nullptr;
+        variant b = &obj;
+
+        CHECK((a < b) == true);
+    }
+
+    SECTION("valid < nullptr")
+    {
+        int obj = 12;
+        variant a = &obj;
+        variant b = nullptr;
+
+        CHECK((a < b) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

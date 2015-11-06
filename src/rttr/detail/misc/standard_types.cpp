@@ -36,6 +36,8 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
+    type::get<std::nullptr_t>();
+
     RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(void)
     RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(rttr::type)
     RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(bool)

@@ -25,26 +25,75 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
-#include <iostream>
-#include <rttr/type>
+#ifndef RTTR_COMPARE_EQUAL_IMPL_H_
+#define RTTR_COMPARE_EQUAL_IMPL_H_
 
-using namespace rttr;
-using namespace std;
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/type.h"
+
+#include <type_traits>
+#include <cstring>
+
+namespace rttr
+{
+namespace detail
+{
+
+RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant - misc", "[variant]")
+/*!
+ * \brief This function return the result of the expression `lhs == rhs` when the type \p T has the equal operator defined,
+ *         otherwise this function will return false.
+ */
+template<typename T>
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type 
+compare_equal(const T& lhs, const T& rhs)
 {
-    SECTION("empty type")
-    {
-        variant var = 12;
-
-        CHECK(var.is_valid() == true);
-        var.clear();
-
-        CHECK(var.is_valid() == false);
-    }
+    return lhs == rhs;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type 
+compare_equal(const T& lhs, const T& rhs)
+{
+    return compare_types_equal(&lhs, &rhs, type::get<T>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
+compare_equal(const T& lhs, const T& rhs)
+{
+    return compare_types_equal(&lhs, &rhs, type::get<T>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+compare_equal(const T& lhs, const T& rhs)
+{
+    return compare_array_equal(lhs, rhs);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+compare_equal(const T& lhs, const T& rhs)
+{
+    return compare_types_equal(&lhs, &rhs, type::get<T>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_COMPARE_EQUAL_IMPL_H_

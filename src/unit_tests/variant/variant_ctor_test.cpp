@@ -270,3 +270,30 @@ TEST_CASE("copy non trivial type", "[variant]")
         }
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant - copy nullptr type", "[variant]")
+{
+
+    SECTION("nullptr type")
+    {
+        variant var = nullptr;
+
+        CHECK(var.is_valid() == true);
+        CHECK(var.get_type() == type::get<std::nullptr_t>());
+        CHECK(var.get_value<std::nullptr_t>() == nullptr);
+    }
+
+    SECTION("copy nullptr type")
+    {
+        variant var = nullptr;
+        variant var2 = var;
+
+        CHECK(var2.is_valid() == true);
+        CHECK(var2.get_type() == type::get<std::nullptr_t>());
+        CHECK(var2.get_value<std::nullptr_t>() == nullptr);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

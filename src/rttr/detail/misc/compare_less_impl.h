@@ -25,26 +25,67 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
-#include <iostream>
-#include <rttr/type>
+#ifndef RTTR_COMPARE_LESS_IMPL_H_
+#define RTTR_COMPARE_LESS_IMPL_H_
 
-using namespace rttr;
-using namespace std;
+#include "rttr/type.h"
+#include <type_traits>
+
+namespace rttr
+{
+namespace detail
+{
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant - misc", "[variant]")
+template<typename T>
+RTTR_INLINE typename std::enable_if<has_less_than_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type 
+compare_less_than(const T& lhs, const T& rhs, int& result)
 {
-    SECTION("empty type")
-    {
-        variant var = 12;
-
-        CHECK(var.is_valid() == true);
-        var.clear();
-
-        CHECK(var.is_valid() == false);
-    }
+    result = (lhs < rhs) ? -1 : 1;
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<has_less_than_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type 
+compare_less_than(const T& lhs, const T& rhs, int& result)
+{
+    return compare_types_less_than(&lhs, &rhs, type::get<T>(), result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<!has_less_than_operator<T>::value && !std::is_array<T>::value, bool>::type 
+compare_less_than(const T& lhs, const T& rhs, int& result)
+{
+    return compare_types_less_than(&lhs, &rhs, type::get<T>(), result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+compare_less_than(const T& lhs, const T& rhs, int& result)
+{
+    result = compare_array_less(lhs, rhs) ? -1 : 1;
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_less_than_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+compare_less_than(const T& lhs, const T& rhs, int& result)
+{
+    return compare_types_less_than(&lhs, &rhs, type::get<T>(), result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_COMPARE_LESS_IMPL_H_

@@ -25,26 +25,49 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
-#include <iostream>
-#include <rttr/type>
+#include "rttr/detail/variant/variant_compare_less.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
 
-using namespace rttr;
-using namespace std;
+#include <type_traits>
+
+namespace rttr
+{
+namespace detail
+{
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant - misc", "[variant]")
+bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
 {
-    SECTION("empty type")
+    if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
     {
-        variant var = 12;
-
-        CHECK(var.is_valid() == true);
-        var.clear();
-
-        CHECK(var.is_valid() == false);
+        if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
+            return (lhs.to_double() < rhs.to_double());
+        else
+            return (lhs.to_int64() < rhs.to_int64());
+    }
+    else
+    {
+        variant lhs_tmp;
+        if (lhs.convert(rhs_type, lhs_tmp))
+            return lhs_tmp.compare_less(rhs);
+    
+        if (!lhs.is_nullptr() && rhs.is_nullptr())
+            return false;
+    
+        // as last try, do a string conversion
+        bool ok1 = false;
+        bool ok2 = false;
+        auto ret = (lhs.to_string(&ok1) < rhs.to_string(&ok2));
+        if (ok1 && ok2)
+            return ret;
+        else
+            return (lhs_type < rhs_type);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
