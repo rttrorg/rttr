@@ -77,16 +77,30 @@ argument::argument(T& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-bool argument::is_type()  const { return rttr::type::get<T>() == m_type; }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE type argument::get_type() const { return m_type; }
+RTTR_INLINE argument::ptr_type<T> argument::is_type() const
+{
+    return ((rttr::type::get<T>() == m_type) || m_type == type::get<std::nullptr_t>());
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-argument::arg_value_t<T>& argument::get_value() const
+RTTR_INLINE argument::non_ptr_type<T> argument::is_type() const
+{
+    return (rttr::type::get<T>() == m_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE type argument::get_type() const 
+{ 
+    return m_type; 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE argument::arg_value_t<T>& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
     return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));
@@ -95,7 +109,7 @@ argument::arg_value_t<T>& argument::get_value() const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-argument::arg_rvalue_t<T>&& argument::get_value() const
+RTTR_INLINE argument::arg_rvalue_t<T>&& argument::get_value() const
 {
     using raw_type = typename std::remove_reference<T>::type;
     return std::move(*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));

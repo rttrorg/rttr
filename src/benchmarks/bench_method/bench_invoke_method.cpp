@@ -268,6 +268,39 @@ nonius::benchmark bench_rttr_invoke_method_arg_8()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+nonius::benchmark bench_native_invoke_method_ptr_arg()
+{
+    return nonius::benchmark("native", [](nonius::chronometer meter)
+    {
+        ns_foo::method_class obj;
+       int* ptr = nullptr;
+        meter.measure([&]()
+        {
+            return obj.method_ptr_arg(ptr);
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+nonius::benchmark bench_rttr_invoke_method_ptr_arg()
+{
+    return nonius::benchmark("rttr", [](nonius::chronometer meter)
+    {
+        ns_foo::method_class obj;
+        rttr::method m = rttr::type::get(obj).get_method("method_ptr_arg");
+        int* ptr = nullptr;
+        meter.measure([&]()
+        {
+            return m.invoke(obj, ptr);
+        });
+    });
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void bench_invoke_method()
 {
     nonius::configuration cfg;
@@ -473,6 +506,36 @@ void bench_invoke_method()
                                                bench_rttr_invoke_method_arg_8()};
 
     nonius::go(cfg, std::begin(benchmarks_group_7), std::end(benchmarks_group_7), reporter);
+
+
+    /////////////////////////////////////
+
+    reporter.set_current_group_name("nullptr",  "benchmark code:" 
+                                                "<pre>"
+                                                "// Foo.h\n"
+                                                "struct Foo {\n"
+                                                "    void method(int* ptr);\n"
+                                                "};\n"
+                                                "// Foo.cpp\n"
+                                                "void Foo::method(int* ptr) {}\n"
+                                                "\n"
+                                                "// Setup\n"
+                                                "Foo obj;\n"
+                                                "rttr::method m = rttr::type::get(obj).get_method(\"method\");\n"
+                                                "// Benchmarking:\n\n"
+                                                "// native approach\n"
+                                                "obj.method(nullptr);\n"
+                                                "\n"
+                                                "// rttr approach\n"
+                                                "m.invoke(obj, nullptr);\n"
+                                                "</pre>");
+    nonius::benchmark benchmarks_group_8[] = { bench_native_invoke_method_ptr_arg(),
+                                               bench_rttr_invoke_method_ptr_arg()};
+
+    nonius::go(cfg, nonius::benchmark_registry{bench_rttr_invoke_method_void_return_value()});
+    nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
+
+    /////////////////////////////////////
 
     reporter.generate_report();
 }

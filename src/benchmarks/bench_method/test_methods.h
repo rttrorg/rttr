@@ -56,8 +56,7 @@ struct method_class
                            int arg_4, int arg_5, int arg_6,
                            int arg_7, int arg_8);
     
-
-    RTTR_ENABLE()
+    void method_ptr_arg(int* ptr);
 
     bool method_void_called = false;
     bool method_int_called = false;
@@ -73,6 +72,8 @@ struct method_class
     int value_6 = 0;
     int value_7 = 0;
     int value_8 = 0;
+
+    RTTR_ENABLE()
 };
 
 struct method_class_d_1 : method_class

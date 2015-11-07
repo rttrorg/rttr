@@ -45,6 +45,7 @@ RTTR_REGISTRATION
         .method("void_method_arg_2",    &ns_foo::method_class::void_method_arg_2)
         .method("void_method_arg_3",    &ns_foo::method_class::void_method_arg_3)
         .method("void_method_arg_8",    &ns_foo::method_class::void_method_arg_8)
+        .method("method_ptr_arg",       &ns_foo::method_class::method_ptr_arg)
         ;
 
 
@@ -175,6 +176,12 @@ void method_class::void_method_arg_8(int arg_1, int arg_2, int arg_3,
     value_6 = arg_6;
     value_7 = arg_7;
     value_8 = arg_8;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method_class::method_ptr_arg(int* ptr)
+{
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

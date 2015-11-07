@@ -60,6 +60,12 @@ class RTTR_API argument
     template<typename T>
     using arg_rvalue_t = detail::enable_if_t<std::is_rvalue_reference<T>::value, detail::remove_reference_t<T> >;
 
+    template<typename T>
+    using ptr_type = detail::enable_if_t<std::is_pointer<T>::value, bool>;
+
+    template<typename T>
+    using non_ptr_type = detail::enable_if_t<!std::is_pointer<T>::value, bool>;
+
 public:
 
     RTTR_INLINE argument();
@@ -75,14 +81,24 @@ public:
 
     RTTR_INLINE argument& operator=(const argument& other);
 
-    template<typename T>
-    bool is_type() const;
     RTTR_INLINE type get_type() const;
+#ifdef DOXYGEN
+    template<typename T>
+    RTTR_INLINE bool is_type() const;
+
+    template<typename T>
+    RTTR_INLINE T& get_value() const;
+#else
+    template<typename T>
+    RTTR_INLINE ptr_type<T> is_type() const;
+    template<typename T>
+    RTTR_INLINE non_ptr_type<T> is_type() const;    
 
     template<typename T>
     RTTR_INLINE arg_value_t<T>& get_value() const;
     template<typename T>
     RTTR_INLINE arg_rvalue_t<T> && get_value() const;
+#endif
 
 private:
     const void*         m_data;

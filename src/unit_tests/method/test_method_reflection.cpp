@@ -109,6 +109,7 @@ RTTR_REGISTRATION
             policy::meth::discard_return
         )
         .method("method_fun_ptr_arg", &method_test::method_fun_ptr_arg)
+        .method("method_with_ptr", &method_test::method_with_ptr)
         ;
 
     registration::class_<method_test_derived>("method_test_derived")
@@ -256,6 +257,7 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(obj.method_func_ptr_arg_called == true);
     REQUIRE(obj.m_func_ptr == &my_global_func);
     
+
     ////////////////////////////////////////
     t_meth.get_method("method_default").invoke(derived_inst, 3);
     REQUIRE(derived_inst.method_default_arg_called == true);
@@ -264,7 +266,7 @@ TEST_CASE("Test method", "[method]")
     // check up_cast, cross cast and middle in the hierarchy cast through invoke
     method_test_final final_obj;
     type t_final = type::get(final_obj);
-    REQUIRE(t_final.get_methods().size() == 19); // +1 overloaded
+    REQUIRE(t_final.get_methods().size() == 20); // +1 overloaded
     // test the up cast
     t_final.get_method("method_3").invoke(final_obj, 1000);
     REQUIRE(final_obj.method_3_called == true);
@@ -366,13 +368,13 @@ TEST_CASE("Test method arrays", "[method]")
 TEST_CASE("Test method signature", "[method]") 
 {
     const auto methods = type::get<method_test_final>().get_methods();
-    REQUIRE(methods.size() == 19);
+    REQUIRE(methods.size() == 20);
 
     REQUIRE(methods[0].get_signature() == "method_1( )");
     REQUIRE(methods[3].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");
     REQUIRE(methods[4].get_signature() == "method_5( double* )");
     REQUIRE(methods[5].get_signature() == "method_5( int, double )");
-    REQUIRE(methods[18].get_signature() == "method_13( )");
+    REQUIRE(methods[19].get_signature() == "method_13( )");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -464,6 +466,19 @@ TEST_CASE("Invoke method via wrapper", "[method]")
         CHECK(ret.is_valid() == true);
         CHECK(ret.is_type<void>() == true);
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - invoke with nullptr", "[method]") 
+{
+    type t_meth = type::get<method_test>();
+    method meth = t_meth.get_method("method_with_ptr");
+    method_test obj;
+
+    variant var = meth.invoke(obj, nullptr);
+    CHECK(var.is_valid() == true);
+    CHECK(obj.method_with_ptr_called == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
