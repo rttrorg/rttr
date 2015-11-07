@@ -489,7 +489,7 @@ bool type::set_property_value(const char* name, argument arg)
 vector<property> type::get_properties() const
 {
     const auto& obj = detail::type_database::instance();
-    vector<detail::property_wrapper_base*> props;
+    vector<const detail::property_wrapper_base*> props;
 
     for (const auto& type :get_base_classes())
     {
@@ -671,7 +671,7 @@ type type::get_by_name(const char* name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-detail::type_converter_base* type::get_type_converter(const type& target_type) const
+const detail::type_converter_base* type::get_type_converter(const type& target_type) const
 {
     return detail::type_database::instance().get_converter(*this, target_type);
 }

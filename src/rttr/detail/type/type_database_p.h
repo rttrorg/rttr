@@ -94,12 +94,12 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        property_wrapper_base* get_class_property(const type& t, const char* name) const;
-        std::vector<property_wrapper_base*> get_all_class_properties(const type& t) const;
+        const property_wrapper_base* get_class_property(const type& t, const char* name) const;
+        std::vector<const property_wrapper_base*> get_all_class_properties(const type& t) const;
         uint16_t get_class_property_count(const type& t) const;
     
-        property_wrapper_base* get_global_property(const char* name) const;
-        std::vector<property_wrapper_base*> get_all_global_properties() const;
+        const property_wrapper_base* get_global_property(const char* name) const;
+        std::vector<const property_wrapper_base*> get_all_global_properties() const;
         uint16_t get_global_property_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -119,13 +119,13 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method_wrapper_base* get_global_method(const char* name) const;
+        const method_wrapper_base* get_global_method(const char* name) const;
         template<typename Container, typename Compare_Type>
         const method_wrapper_base* get_global_method(const char* name, const Container& container) const;
 
         const method_wrapper_base* get_global_method(const char* name, const std::vector<type>& arg_type_list) const;
         const method_wrapper_base* get_global_method(const char* name, const std::vector<argument>& arg_list) const;
-        std::vector<method_wrapper_base*> get_all_global_methods() const;
+        std::vector<const method_wrapper_base*> get_all_global_methods() const;
         uint16_t get_global_method_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -140,11 +140,11 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        destructor_wrapper_base* get_destructor(const type& t) const;
+        const destructor_wrapper_base* get_destructor(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        type_converter_base* get_converter(const type& source_type, const type& target_type) const;
+        const type_converter_base* get_converter(const type& source_type, const type& target_type) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,7 +156,7 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        enumeration_wrapper_base* get_enumeration(const type& t) const;
+        const enumeration_wrapper_base* get_enumeration(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 

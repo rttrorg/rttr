@@ -759,7 +759,7 @@ class RTTR_API type
          *        Otherwise this function returns a nullptr.
          *
          */
-        detail::type_converter_base* get_type_converter(const type& target_type) const;
+        const detail::type_converter_base* get_type_converter(const type& target_type) const;
 
         /*!
          * \brief Returns the level of indirection for this this type. A.k.a pointer count. 

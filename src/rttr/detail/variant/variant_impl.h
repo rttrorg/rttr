@@ -241,7 +241,7 @@ RTTR_INLINE bool variant::convert(T& value) const
     }
     else if (const auto& converter = source_type.get_type_converter(target_type))
     {
-        detail::type_converter_target<T>* target_converter = static_cast<detail::type_converter_target<T>*>(converter);
+        const auto target_converter = static_cast<const detail::type_converter_target<T>*>(converter);
         value = target_converter->convert(get_ptr(), ok);
     }
     else if (target_type == type::get<std::nullptr_t>())

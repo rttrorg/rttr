@@ -149,7 +149,7 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base* type_database::get_class_property(const type& t, const char* name) const
+const property_wrapper_base* type_database::get_class_property(const type& t, const char* name) const
 {
     using vec_value_type = class_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -175,7 +175,7 @@ property_wrapper_base* type_database::get_class_property(const type& t, const ch
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<property_wrapper_base*> type_database::get_all_class_properties(const type& t) const
+std::vector<const property_wrapper_base*> type_database::get_all_class_properties(const type& t) const
 {
     using member_type = property_wrapper_base;
     using vec_value_type = class_member<member_type>;
@@ -198,7 +198,7 @@ std::vector<property_wrapper_base*> type_database::get_all_class_properties(cons
     std::sort(sorted_vec.begin(), sorted_vec.end(), [](const sort_item& left, const sort_item& right)
                                                     { return left.first < right.first; });
 
-    std::vector<member_type*> result;
+    std::vector<const member_type*> result;
     result.reserve(sorted_vec.size());
     for (const auto& item : sorted_vec)
         result.push_back(item.second);
@@ -216,7 +216,7 @@ uint16_t type_database::get_class_property_count(const type& t) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base* type_database::get_global_property(const char* name) const
+const property_wrapper_base* type_database::get_global_property(const char* name) const
 {
     using vec_value_type = global_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -237,9 +237,9 @@ property_wrapper_base* type_database::get_global_property(const char* name) cons
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<property_wrapper_base*> type_database::get_all_global_properties() const
+std::vector<const property_wrapper_base*> type_database::get_all_global_properties() const
 {
-    std::vector<property_wrapper_base*> result;
+    std::vector<const property_wrapper_base*> result;
     result.reserve(m_global_property_list.size());
 
     for (const auto& item : as_const(m_global_property_list))
@@ -466,7 +466,7 @@ uint16_t type_database::get_class_method_count(const type& t) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_global_method(const char* name) const
+const method_wrapper_base* type_database::get_global_method(const char* name) const
 {
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
@@ -528,9 +528,9 @@ const method_wrapper_base* type_database::get_global_method(const char* name, co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<method_wrapper_base*> type_database::get_all_global_methods() const
+std::vector<const method_wrapper_base*> type_database::get_all_global_methods() const
 {
-    std::vector<method_wrapper_base*> result;
+    std::vector<const method_wrapper_base*> result;
     result.reserve(m_global_method_list.size());
 
     for (const auto& item : as_const(m_global_method_list))
@@ -668,7 +668,7 @@ void type_database::register_destructor(const type& t, std::unique_ptr<destructo
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor_wrapper_base* type_database::get_destructor(const type& t) const
+const destructor_wrapper_base* type_database::get_destructor(const type& t) const
 {
     return get_item_by_type(t, m_destructor_list);
 }
@@ -684,7 +684,7 @@ void type_database::register_enumeration(const type& t, std::unique_ptr<enumerat
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration_wrapper_base* type_database::get_enumeration(const type& t) const
+const enumeration_wrapper_base* type_database::get_enumeration(const type& t) const
 {
     return get_item_by_type(t, m_enumeration_list);
 }
@@ -792,7 +792,7 @@ void type_database::register_converter(const type& t, std::unique_ptr<type_conve
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type_converter_base* type_database::get_converter(const type& source_type, const type& target_type) const
+const type_converter_base* type_database::get_converter(const type& source_type, const type& target_type) const
 {
     const auto src_id = source_type.get_id();
     const auto target_id = target_type.get_id();
