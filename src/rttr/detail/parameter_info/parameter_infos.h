@@ -198,7 +198,7 @@ create_param_infos_and_store_names(index_sequence<Indices...>, Param_Names& name
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename...TArgs, typename T_Def = as_type_list_t<default_types_t<Acc_Args, TArgs...>>>
+template<typename Acc_Args, typename...TArgs, typename T_Def = as_type_list_t<typename find_default_args<get_default_args_t<TArgs...>, Acc_Args>::default_types_func>>
 static RTTR_INLINE 
 enable_if_t< !has_param_names<TArgs...>::value && has_default_types<Acc_Args, type_list<TArgs...>>::value, param_info_creater_t<Acc_Args, no_param_name, T_Def>>
 create_param_infos(TArgs&&... args)
@@ -218,7 +218,7 @@ create_param_infos(TArgs&&... args)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename...TArgs, typename T_Def = as_type_list_t<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args>>>
+template<typename Acc_Args, typename...TArgs, typename T_Def = as_type_list_t<typename find_default_args<get_default_args_t<TArgs...>, Acc_Args>::default_types_func>>
 static RTTR_INLINE 
 enable_if_t< has_param_names<TArgs...>::value && has_default_types<Acc_Args, type_list<TArgs...>>::value, param_info_creater_t<Acc_Args, has_param_name, T_Def>>
 create_param_infos(TArgs&&... args)

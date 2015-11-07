@@ -11,13 +11,13 @@ Please take a look at following example:
 \code{.cpp}
 using namespace rttr;
 
-void my_function(int a, bool b, const std::string& text);
+void my_function(int a, bool b, const std::string& text, const int* ptr);
 
 RTTR_REGISTRATION
 {
     registration::method("my_function", &my_function)   
     (
-        default_arguments(true, std::string("default text"))
+        default_arguments(true, std::string("default text"), nullptr)
     );
 }
 \endcode
@@ -39,13 +39,13 @@ The following snippet will **not** compile and will raise a *static_assert*:
 \code{.cpp}
 using namespace rttr;
 
-void my_function(int a, bool b, const std::string& text);
+void my_function(int a, bool b, const std::string& text, const int* ptr);
 
 RTTR_REGISTRATION
 {
     registration::method("my_function", &my_function)   
     (
-        default_arguments(true) // default value for "text" not given
+        default_arguments(std::string("default text")) // default value for "ptr" not given
     );
 }
 \endcode

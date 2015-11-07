@@ -48,7 +48,7 @@ RTTR_REGISTRATION
     registration::class_<default_arg_test>("default_arg_test")
         .method("method_with_default", &default_arg_test::method_with_default)
         (
-            default_arguments<std::string, const int*>(std::string("This is a default"), nullptr)
+            default_arguments(std::string("This is a default"), nullptr)
         );
 }
 

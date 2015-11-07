@@ -256,7 +256,6 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(obj.method_func_ptr_arg_called == true);
     REQUIRE(obj.m_func_ptr == &my_global_func);
     
-
     ////////////////////////////////////////
     t_meth.get_method("method_default").invoke(derived_inst, 3);
     REQUIRE(derived_inst.method_default_arg_called == true);

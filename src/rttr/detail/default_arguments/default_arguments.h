@@ -60,6 +60,22 @@ struct default_args<>
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// a helper class to store two default list, the user provided, with std::nullptr_t
+// and the function signature:
+// e.g. default_args<int, bool*> , default_args<int, nullptr>
+// this is needed for the get_default_args() function, to copy the values from the std::nullptr_t list
+// to the function signature list
+template<typename T1, typename T2>
+struct default_list
+{
+    using default_types_func        = T1;
+    using default_types_provided    = T2;
+};
+
+// short cut for an empty list
+using empty_defaults = default_list<default_args<>, default_args<>>;
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 // This type trait will check whether a signature (given via \p Arg_list) match the \o Default_Arg_List types.
 // It will check the signature recursively, beginning with the complete signature,
@@ -77,8 +93,8 @@ struct find_default_args_impl<type_list<T, TArgs...>, Default_Arg_List>
                                     decay_type< TArgs>...
                                   >;
 
-    using type = conditional_t< std::is_same<func_args, Default_Arg_List>::value,
-                                Default_Arg_List,
+    using type = conditional_t< is_same_nullptr<func_args, Default_Arg_List>::value,
+                                default_list<func_args, Default_Arg_List>,
                                 typename find_default_args_impl<type_list<TArgs...>, Default_Arg_List >::type
                                >;
 };
@@ -86,13 +102,13 @@ struct find_default_args_impl<type_list<T, TArgs...>, Default_Arg_List>
 template<typename Default_Arg_List>
 struct find_default_args_impl<type_list<>, Default_Arg_List>
 {
-    using type = default_args<>;
+    using type = default_list<default_args<>, default_args<>>;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * This helper struct is needed to call `find_default_args_t` with a function signature,
+ * This helper struct is needed to call `find_default_args` with a function signature,
  * or a constructor signature (a list of arguments), i.e. I have only one interface to invoke.
  *
  * This avoid code distinction in `has_default_types`or `get_default_args`.
@@ -136,7 +152,7 @@ struct find_default_args_helper<Default_Arg_List, type_list<TArgs...>, enable_if
  * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<int>               will return:    default_args<> (cannot be called; right most argument is missing)
  */
 template<typename Default_Arg_List, typename Acc_Args>
-using find_default_args_t = typename find_default_args_helper<Default_Arg_List, Acc_Args>::type;
+using find_default_args = typename find_default_args_helper<Default_Arg_List, Acc_Args>::type;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +196,7 @@ using get_default_args_t = typename get_default_args_impl< type_list< TArgs... >
  * Otherwise to 'std::false_type'
  */
 template<typename...Args>
-using has_default_args = conditional_t<std::is_same<get_default_args_t<Args...>, default_args<>>::value, std::false_type, std::true_type>;
+using has_default_args = std::integral_constant<bool, !std::is_same<get_default_args_t<Args...>, default_args<>>::value>;
 
 template<typename T1, typename T2>
 struct has_default_types;
@@ -193,15 +209,14 @@ struct has_default_types;
  */
 template<typename Acc_Args, typename... TArgs>
 struct has_default_types<Acc_Args, type_list<TArgs...>> 
-:   conditional_t<std::is_same<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args>, default_args<>>::value,
-                  std::false_type, std::true_type>
+:   std::integral_constant<bool, !std::is_same<find_default_args<get_default_args_t<TArgs...>, Acc_Args>, empty_defaults>::value>
 {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Acc_Args, typename... TArgs>
-using default_types_t = find_default_args_t<get_default_args_t<TArgs...>, Acc_Args>;
+using default_types_t = find_default_args<get_default_args_t<TArgs...>, Acc_Args>;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -214,9 +229,9 @@ using count_default_args = count_if<is_def_type, raw_type_t<TArgs>... >;
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, Acc_Args> >
+template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
 static RTTR_INLINE 
-enable_if_t< std::is_same<Default_Type, default_args<>>::value, Default_Type>
+enable_if_t< std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func>
 get_default_args(Args&&... arg)
 {
     return default_args<>(); // no default arguments provided
@@ -224,16 +239,18 @@ get_default_args(Args&&... arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, Acc_Args> >
+template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
 static RTTR_INLINE 
-enable_if_t< !std::is_same<Default_Type, default_args<>>::value, Default_Type> 
+enable_if_t< !std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func> 
 get_default_args(Args&&... arg)
 {
     // default arguments are provided, extract them
-    auto result = forward_to_array<Default_Type>(std::forward<Args>(arg)...);
+    auto result = forward_to_array<typename Default_Type::default_types_provided>(std::forward<Args>(arg)...);
     // because we knew there is exactly one detail::default_argument,
     // we can extract it without worry to check
-    return result[0];
+    typename Default_Type::default_types_func ret;
+    ret.m_args = std::move(result[0].m_args);
+    return ret;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

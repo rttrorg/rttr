@@ -878,6 +878,49 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
+    // This trait will compare two list of types, they are the same (std::true_type)
+    // when the contain the same types. There is an exception pointer types 
+    // and std::nullptr_t are treated the same
+    // e.g.:
+    // is_same_nullptr<std::tuple<int, bool*>, std::tuple<int, nullptr>>::value => std::true_type
+    // is_same_nullptr<std::tuple<int, bool>, std::tuple<int, nullptr>>::value => std::false_type
+    template<typename List1, typename List2, typename Enable = void>
+    struct is_same_nullptr_impl;
+
+    template<template <class...> class List1, typename T, typename... T1, 
+             template <class...> class List2, typename U, typename... U1>
+    struct is_same_nullptr_impl< List1<T, T1...>, List2<U, U1...>, void >
+    {
+        using type = conditional_t<std::is_same<T, U>::value,
+                                   typename is_same_nullptr_impl<List1<T1...>, List2<U1...>>::type,
+                                   conditional_t< std::is_pointer<T>::value && is_nullptr_t<U>::value,
+                                                  typename is_same_nullptr_impl<List1<T1...>, List2<U1...>>::type,
+                                                  conditional_t< std::is_pointer<U>::value && is_nullptr_t<T>::value,
+                                                                 typename is_same_nullptr_impl<List1<T1...>, List2<U1...>>::type,
+                                                                 std::false_type
+                                                                >
+                                                 >
+                                  >;
+    };
+
+    template<template <class...> class List1, typename ...T,
+             template <class...> class List2, typename ...U>
+    struct is_same_nullptr_impl< List1<T...>, List2<U...>, enable_if_t< is_empty_args<T...>::value && is_empty_args<U...>::value> >
+    {
+        using type = std::true_type;
+    };
+
+    template<template <class...> class List1, typename ...T,
+             template <class...> class List2, typename ...U>
+    struct is_same_nullptr_impl< List1<T...>, List2<U...>, enable_if_t< (!is_empty_args<T...>::value && is_empty_args<U...>::value) ||
+                                                                        (is_empty_args<T...>::value && !is_empty_args<U...>::value)> >
+    {
+        using type = std::false_type;
+    };
+
+
+    template<typename T1, typename T2>
+    using is_same_nullptr = typename is_same_nullptr_impl<T1, T2>::type;
 
 } // end namespace detail
 } // end namespace rttr

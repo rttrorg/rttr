@@ -71,6 +71,7 @@ RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value
 template<typename...TArgs>
 RTTR_INLINE detail::default_args<TArgs...> default_arguments(TArgs&&...args)
 {
+    static_assert((sizeof...(TArgs) > 0), "Please provide at least one default argument!");
     return { std::forward<TArgs>(args)... };
 }
 
