@@ -84,7 +84,7 @@ class RTTR_API method_wrapper_base : public meta_data_handler
         virtual variant invoke(instance& object, argument& arg1, argument& arg2, argument& arg3,
                                argument& arg4, argument& arg5, argument& arg6) const = 0;
 
-        virtual variant invoke_variadic(instance& object, std::vector<argument>& args) const = 0;
+        virtual variant invoke_variadic(const instance& object, std::vector<argument>& args) const = 0;
 };
 
 } // end namespace detail

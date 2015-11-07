@@ -413,7 +413,7 @@ vector<constructor> type::get_constructors() const
 
 variant type::create(vector<argument> args) const
 {
-    if (auto ctor = detail::type_database::instance().get_constructor(*this, extract_types(args)))
+    if (auto ctor = detail::type_database::instance().get_constructor(*this, args))
         return ctor->invoke_variadic(args);
 
     return variant();
@@ -549,7 +549,7 @@ method type::get_method(const char* name, const std::vector<type>& params) const
 vector<method> type::get_methods() const
 {
     const auto& obj = detail::type_database::instance();
-    vector<detail::method_wrapper_base*> methods;
+    vector<const detail::method_wrapper_base*> methods;
 
     for (const auto& type : get_base_classes())
     {
@@ -637,16 +637,29 @@ enumeration type::get_enumeration() const
 
 variant type::invoke(const char* name, instance obj, std::vector<argument> args) const
 {
-    const auto meth = get_method(name, extract_types(args));
-    return meth.invoke_variadic(obj, std::move(args));
+    const auto& db = detail::type_database::instance();
+
+    if (const auto meth = db.get_class_method(get_raw_type(), name, args))
+        return meth->invoke_variadic(obj, args);
+    
+    for (const auto& type : detail::reverse(get_base_classes()))
+    {
+        if (const auto meth = db.get_class_method(type.get_raw_type(), name, args))
+            return meth->invoke_variadic(obj, args);
+    }
+
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant type::invoke(const char* name, std::vector<argument> args)
 {
-    const auto meth = get_global_method(name, extract_types(args));
-    return meth.invoke_variadic(instance(), std::move(args));
+    const auto& db = detail::type_database::instance();
+    if (const auto meth = db.get_global_method(name, args))
+        return meth->invoke_variadic(instance(), args);
+
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

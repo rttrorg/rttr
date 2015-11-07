@@ -104,23 +104,39 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method_wrapper_base* get_class_method(const type& t, const char* name) const;
-        method_wrapper_base* get_class_method(const type& t, const char* name, 
-                                              const std::vector<type>& param_type_list) const;
+        const method_wrapper_base* get_class_method(const type& t, const char* name) const;
 
-        std::vector<method_wrapper_base*> get_all_class_methods(const type& t) const;
+        template<typename Container, typename Compare_Type>
+        const method_wrapper_base* get_class_method(const type& t, const char* name, const Container& container) const;
+
+        const method_wrapper_base* get_class_method(const type& t, const char* name, 
+                                                    const std::vector<type>& param_type_list) const;
+        const method_wrapper_base* get_class_method(const type& t, const char* name, 
+                                                    const std::vector<argument>& arg_list) const;
+
+        std::vector<const method_wrapper_base*> get_all_class_methods(const type& t) const;
         uint16_t get_class_method_count(const type& t) const;
 
+        /////////////////////////////////////////////////////////////////////////////////////
+
         method_wrapper_base* get_global_method(const char* name) const;
-        method_wrapper_base* get_global_method(const char* name, const std::vector<type>& arg_type_list) const;
+        template<typename Container, typename Compare_Type>
+        const method_wrapper_base* get_global_method(const char* name, const Container& container) const;
+
+        const method_wrapper_base* get_global_method(const char* name, const std::vector<type>& arg_type_list) const;
+        const method_wrapper_base* get_global_method(const char* name, const std::vector<argument>& arg_list) const;
         std::vector<method_wrapper_base*> get_all_global_methods() const;
         uint16_t get_global_method_count(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        constructor_wrapper_base* get_constructor(const type& t) const;
-        constructor_wrapper_base* get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
-        std::vector<constructor_wrapper_base*> get_constructors(const type& t) const;
+        const constructor_wrapper_base* get_constructor(const type& t) const;
+        template<typename Container, typename Comparer_Type>
+        const constructor_wrapper_base* get_constructor(const type& t, const Container& container) const;
+
+        const constructor_wrapper_base* get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
+        const constructor_wrapper_base* get_constructor(const type& t, const std::vector<argument>& arg_list) const;
+        std::vector<const constructor_wrapper_base*> get_constructors(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 

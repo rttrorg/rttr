@@ -90,8 +90,8 @@ static type get_invalid_type();
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  *
  * \code{.cpp}
- *   type::get_by_name("int")  == type::get<int>();   // yields to true
- *   type::get_by_name("bool") == type::get<int>();  // yields to false
+ *   type::get_by_name("int")  == type::get<int>(); // yields to true
+ *   type::get_by_name("bool") == type::get<int>(); // yields to false
  *   type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
  * \endcode
  *
@@ -105,9 +105,10 @@ static type get_invalid_type();
  *   int int_obj;
  *   int* int_obj_ptr = &int_obj;
  *   const int* c_int_obj_ptr = int_obj_ptr;
- *   type::get<int>() == type::get(int_obj);             // yields to true
- *   type::get<int*>() == type::get(int_obj_ptr);        // yields to true
- *   type::get<const int*>() == type::get(c_int_obj_ptr);// yields to true
+ *
+ *   type::get<int>()         == type::get(int_obj);        // yields to true
+ *   type::get<int*>()        == type::get(int_obj_ptr);    // yields to true
+ *   type::get<const int*>()  == type::get(c_int_obj_ptr);  // yields to true
  * \endcode
  *
  * When this function is called for a glvalue expression whose type is a polymorphic class type,
@@ -118,13 +119,13 @@ static type get_invalid_type();
  *   struct Derived : Base {};
  *   Derived d;
  *   Base& base = d;
- *   type::get<Derived>() == type::get(base) // yields to true
- *   type::get<Base>() == type::get(base)    // yields to false
+ *   type::get<Derived>()   == type::get(base)  // yields to true
+ *   type::get<Base>()      == type::get(base)  // yields to false
  *   
  *   // remark, when called with pointers:
  *   Base* base_ptr = &d;
- *   type::get<Derived>() == type::get(base_ptr);  // yields to false
- *   type::get<Base*>() == type::get(base_ptr);    // yields to true
+ *   type::get<Derived>()   == type::get(base_ptr); // yields to false
+ *   type::get<Base*>()     == type::get(base_ptr); // yields to true
  * \endcode
  *
  * \remark If the type of the expression is a cv-qualified type, the result of the rttr::type::get expression refers to a rttr::type object representing the cv-unqualified type.
@@ -496,13 +497,14 @@ class RTTR_API type
         std::vector<constructor> get_constructors() const;
 
         /*!
-         * \brief Creates an instance of the given type, with the given arguments for the constructor.
+         * \brief Creates an instance of the current type, with the given arguments \p args for the constructor.
          *
-         * \remark When the arguments does not match the parameter list of the constructor then he will not be invoked.
+         * \remark When the argument types does not match the parameter list of the constructor then the he will not be invoked.
+         *         Constructors with registered \ref default_arguments will be honored.
          * 
          * \return Returns an instance of the given type.
          */
-        variant create(std::vector<argument> args) const;
+        variant create(std::vector<argument> args = std::vector<argument>()) const;
 
         /*!
          * \brief Returns the corresponding destructor for this type.
@@ -662,6 +664,7 @@ class RTTR_API type
          * \remark When it's a static method you still need to provide an instance object,
          *         use therefore the default ctor of \ref instance::instance() "instance()",
          *         or as shortcut use simply `{}`.
+         *         Methods with registered \ref default_arguments will be honored.
          *
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
@@ -673,6 +676,7 @@ class RTTR_API type
          *
          * \return A variant object containing the possible return value, 
          *         otherwise when it is a void function an empty but valid variant object.
+         *         Methods with registered \ref default_arguments will be honored.
          */
         static variant invoke(const char* name, std::vector<argument> args);
 

@@ -242,4 +242,19 @@ TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[
     CHECK(var.get_value<create_type>().get() != nullptr);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - default argument via type (real ctor)", "[constructor]") 
+{
+    type t = type::get<ctor_default_arg_test>();
+    REQUIRE(t.is_valid() == true);
+
+    CHECK(t.create().is_valid()     == true);
+    CHECK(t.create({23}).is_valid() == true); // this will not invoke the same ctor like above, the first registered
+    CHECK(t.create({23, false}).is_valid() == true);
+    CHECK(t.create({23, false, std::string("text")}).is_valid() == true);
+    // too much arguments
+    CHECK(t.create({23, false, std::string("text"), 42}).is_valid() == false);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////

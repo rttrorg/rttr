@@ -304,7 +304,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_class_method(const type& t, const char* name) const
+const method_wrapper_base* type_database::get_class_method(const type& t, const char* name) const
 {
     using vec_value_type = class_member<method_wrapper_base>;
     const auto name_hash = generate_hash(name);
@@ -330,27 +330,60 @@ method_wrapper_base* type_database::get_class_method(const type& t, const char* 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static bool does_signature_match_arguments(const vector<parameter_info>& param_list, const vector<type>& args)
+struct compare_exact
 {
-    const auto param_count = param_list.size();
-    if (param_count != args.size())
-        return false;
-
-    for (std::size_t index = 0; index < param_count; ++index)
+    static RTTR_INLINE bool compare(const vector<parameter_info>& param_list, const vector<type>& arg_types)
     {
-        if ((param_list[index].get_type() != args[index]))
+        const auto param_count = param_list.size();
+        if (param_count != arg_types.size())
             return false;
-    }
 
-    return true;
-}
+        for (std::size_t index = 0; index < param_count; ++index)
+        {
+            if ((param_list[index].get_type() != arg_types[index]))
+                return false;
+        }
+
+        return true;
+    }
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_class_method(const type& t, const char* name, 
-                                                     const std::vector<type>& param_type_list) const
+struct compare_with_defaults
 {
-    // TO DO: return method with const qualifier
+    static RTTR_INLINE bool compare(const vector<parameter_info>& param_list, const vector<argument>& args)
+    {
+        const auto param_count = param_list.size();
+        const auto arg_count = args.size();
+        if (arg_count > param_count)
+            return false;
+
+        std::size_t index = 0;
+        for (; index < arg_count; ++index)
+        {
+            if ((param_list[index].get_type() != args[index].get_type()))
+                return false;
+        }
+
+        // when there are still some parameter left, check if they are default values or not
+        for (;index < param_count; ++index)
+        {
+            if (!param_list[index].has_default_value())
+                return false;
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Container, typename Compare_Type>
+const method_wrapper_base* type_database::get_class_method(const type& t, const char* name, const Container& container) const
+{
     using vec_value_type = class_member<method_wrapper_base>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
@@ -369,7 +402,7 @@ method_wrapper_base* type_database::get_class_method(const type& t, const char* 
         if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), param_type_list))
+        if (Compare_Type::compare(item.m_data->get_parameter_infos(), container))
             return item.m_data.get();
     }
 
@@ -378,7 +411,22 @@ method_wrapper_base* type_database::get_class_method(const type& t, const char* 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<method_wrapper_base*> type_database::get_all_class_methods(const type& t) const
+const method_wrapper_base* type_database::get_class_method(const type& t, const char* name, const std::vector<type>& param_type_list) const
+{
+    return get_class_method<std::vector<type>, compare_exact>(t, name, param_type_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const method_wrapper_base* type_database::get_class_method(const type& t, const char* name, 
+                                                           const std::vector<argument>& arg_list) const
+{
+    return get_class_method<std::vector<argument>, compare_with_defaults>(t, name, arg_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<const method_wrapper_base*> type_database::get_all_class_methods(const type& t) const
 {
     using member_type = method_wrapper_base;
     using vec_value_type = class_member<member_type>;
@@ -400,8 +448,8 @@ std::vector<method_wrapper_base*> type_database::get_all_class_methods(const typ
 
     std::sort(sorted_vec.begin(), sorted_vec.end(), [](const sort_item& left, const sort_item& right)
                                                     { return left.first < right.first; });
-
-    std::vector<member_type*> result;
+    
+    std::vector<const member_type*> result;
     result.reserve(sorted_vec.size());
     for (const auto& item : sorted_vec)
         result.push_back(item.second);
@@ -440,8 +488,8 @@ method_wrapper_base* type_database::get_global_method(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base* type_database::get_global_method(const char* name, 
-                                                      const std::vector<type>& param_type_list) const
+template<typename Container, typename Compare_Type>
+const method_wrapper_base* type_database::get_global_method(const char* name, const Container& container) const
 {
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
@@ -457,11 +505,25 @@ method_wrapper_base* type_database::get_global_method(const char* name,
         if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), param_type_list))
+        if (Compare_Type::compare(item.m_data->get_parameter_infos(), container))
             return item.m_data.get();
     }
 
     return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const method_wrapper_base* type_database::get_global_method(const char* name, const std::vector<type>& arg_type_list) const
+{
+    return get_global_method<std::vector<type>, compare_exact>(name, arg_type_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const method_wrapper_base* type_database::get_global_method(const char* name, const std::vector<argument>& arg_list) const
+{
+    return get_global_method<std::vector<argument>, compare_with_defaults>(name, arg_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -531,14 +593,15 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-constructor_wrapper_base* type_database::get_constructor(const type& t) const
+const constructor_wrapper_base* type_database::get_constructor(const type& t) const
 {
     return get_item_by_type(t, m_constructor_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_wrapper_base* type_database::get_constructor(const type& t, const std::vector<type>& arg_type_list) const
+template<typename Container, typename Comparer_Type>
+const constructor_wrapper_base* type_database::get_constructor(const type& t, const Container& container) const
 {
     using vec_value_type = type_data<constructor_wrapper_base>;
     const auto id = t.get_id();
@@ -550,7 +613,7 @@ constructor_wrapper_base* type_database::get_constructor(const type& t, const st
         if (item.m_id != id)
             break;
 
-        if (does_signature_match_arguments(item.m_data->get_parameter_infos(), arg_type_list))
+        if (Comparer_Type::compare(item.m_data->get_parameter_infos(), container))
             return item.m_data.get(); 
     }
 
@@ -559,14 +622,28 @@ constructor_wrapper_base* type_database::get_constructor(const type& t, const st
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<constructor_wrapper_base*> type_database::get_constructors(const type& t) const
+const constructor_wrapper_base* type_database::get_constructor(const type& t, const std::vector<type>& arg_type_list) const
+{
+    return get_constructor<std::vector<type>, compare_exact>(t, arg_type_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const constructor_wrapper_base* type_database::get_constructor(const type& t, const std::vector<argument>& arg_list) const
+{
+    return get_constructor<std::vector<argument>, compare_with_defaults>(t, arg_list);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<const constructor_wrapper_base*> type_database::get_constructors(const type& t) const
 {
     using vec_value_type = type_data<constructor_wrapper_base>;
     const auto id = t.get_id();
     auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(), 
                                 id, vec_value_type::order_by_id());
 
-    std::vector<constructor_wrapper_base*> result;
+    std::vector<const constructor_wrapper_base*> result;
     for (; itr != m_constructor_list.cend(); ++itr)
     {
         auto& item = *itr;

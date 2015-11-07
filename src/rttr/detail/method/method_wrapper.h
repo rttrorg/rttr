@@ -95,7 +95,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
             return method_accessor<F, Policy>::invoke(m_func_acc, object, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
-        variant invoke_variadic(instance& object, std::vector<argument>& args) const
+        variant invoke_variadic(const instance& object, std::vector<argument>& args) const
         {
             return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, args);
         }
@@ -162,7 +162,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
             return invoke_with_defaults::invoke(m_func_acc, object, m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
         }
 
-        variant invoke_variadic(instance& object, std::vector<argument>& args) const
+        variant invoke_variadic(const instance& object, std::vector<argument>& args) const
         {
             if (args.size() <= function_traits<F>::arg_count)
                 return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_func_acc, object, m_def_args.m_args);
