@@ -1,4 +1,4 @@
-Classes {#binding_classes_page}
+Classes {#register_classes_page}
 =======
 
 For registering classes in RTTR you use a class called @ref rttr::registration::class_<T> "registration::class_<T>". 
@@ -294,4 +294,4 @@ RTTR will try to cast the given object to the class type where the property was 
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref binding_variant_page "Binding Variant")</div><div class="btn btn-default">[next](@ref binding_metadata_page "Binding Metadata")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_variant_page "Binding Variant")</div><div class="btn btn-default">[next](@ref register_metadata_page "Binding Metadata")</div>

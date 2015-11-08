@@ -8,19 +8,19 @@ For the inpatient:
 
 Working with rttr::type
 -----------------------
--# [Retrieve rttr::type objects](@ref retrieve_rttr_type_page)
--# [Query information from rttr::type](@ref query_info_rttr_type)
--# [Register Class Hierarchy](@ref using_rttr_enable_page)
--# [rttr_cast vs. dynamic_cast](@ref using_rttr_cast_page)
+-# [Retrieve rttr::type objects](@ref rttr_type_get_page)
+-# [Query information from rttr::type](@ref rttr_type_info_page)
+-# [Register Class Hierarchy](@ref rttr_type_class_hierachy_page)
+-# [rttr_cast vs. dynamic_cast](@ref rttr_type_rttr_cast_page)
 
 Registration of Types
 -------------
--# [Hello World](@ref binding_hello_world_page)
--# [Methods](@ref binding_methods_page)
--# [Properties](@ref binding_properties_page)
--# [Enums](@ref binding_enums_page)
--# [Variant](@ref binding_variant_page)
--# [Classes](@ref binding_classes_page)
--# [Metadata](@ref binding_metadata_page)
+-# [Hello World](@ref register_hello_world_page)
+-# [Methods](@ref register_methods_page)
+-# [Properties](@ref register_properties_page)
+-# [Enums](@ref register_enums_page)
+-# [Variant](@ref register_variant_page)
+-# [Classes](@ref register_classes_page)
+-# [Metadata](@ref register_metadata_page)
 -# [Default Arguments](@ref default_arguments_page)
--# [Policies](@ref binding_policies_page)
+-# [Policies](@ref register_policies_page)

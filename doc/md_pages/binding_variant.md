@@ -1,4 +1,4 @@
-Variant {#binding_variant_page}
+Variant {#register_variant_page}
 =======
 
 The variant class acts as return value container for properties and methods. This class allows to store data of any type and convert between these types transparently.
@@ -26,4 +26,4 @@ A typical usage is the following example:
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref binding_enums_page "Binding Enums")</div><div class="btn btn-default">[next](@ref binding_classes_page "Binding Classes")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_enums_page "Binding Enums")</div><div class="btn btn-default">[next](@ref register_classes_page "Binding Classes")</div>

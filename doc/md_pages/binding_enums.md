@@ -1,4 +1,4 @@
-Enums {#binding_enums_page}
+Enums {#register_enums_page}
 =====
 
 RTTR allows also to register enumerated constants (enums). Therefore use the function @ref rttr::registration::enumeration() "registration::enumeration()".
@@ -72,4 +72,4 @@ How to use the enumeration class shows following example:
 ~~~~
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref binding_properties_page "Binding Properties")</div><div class="btn btn-default">[next](@ref binding_variant_page "Binding Variant")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_properties_page "Binding Properties")</div><div class="btn btn-default">[next](@ref register_variant_page "Binding Variant")</div>

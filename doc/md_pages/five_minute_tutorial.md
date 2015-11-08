@@ -278,7 +278,7 @@ See the output below:
 
 That's it. 
 
-However, in order to see all the possibilities of RTTR, it is recommend to go through the in-depth tutorial: [Start Tutorial](@ref retrieve_rttr_type_page)       
+However, in order to see all the possibilities of RTTR, it is recommend to go through the in-depth tutorial: [Start Tutorial](@ref rttr_type_get_page)       
 
 <hr>
 

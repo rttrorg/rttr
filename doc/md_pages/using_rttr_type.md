@@ -1,4 +1,4 @@
-Retrieving rttr::type objects  {#retrieve_rttr_type_page}
+Retrieving rttr::type objects  {#rttr_type_get_page}
 =============================
 
 RTTR uses an own, in C++ implemented, alternative to the build in <a target="_blank" href=http://en.wikipedia.org/wiki/Run-time_type_information>RTTI</a> mechanism of C++. 
@@ -119,4 +119,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref query_info_rttr_type "Query information from rttr::type")</div>
+<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref rttr_type_info_page "Query information from rttr::type")</div>

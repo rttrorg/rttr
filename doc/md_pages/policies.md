@@ -1,4 +1,4 @@
-Policies {#binding_policies_page}
+Policies {#register_policies_page}
 ========
 
 Sometimes it is necessary to adjust the default binding behaviour RTTR. Therefore policies were introduced.

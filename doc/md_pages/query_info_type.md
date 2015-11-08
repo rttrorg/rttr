@@ -1,4 +1,4 @@
-Query information from rttr::type  {#query_info_rttr_type}
+Query information from rttr::type  {#rttr_type_info_page}
 =================================
 
 A [type](@ref rttr::type) object contains automatically a lot of useful meta information, 
@@ -47,7 +47,7 @@ type::get(d).is_derived_from<Base>(); // true
 The meta information presented in the first code snipped (e.g. @ref rttr::type::is_class() "is_class()", @ref rttr::type::is_pointer() "is_pointer()")  will work without registering anything manually to the type system.
 In order to retrieve class hierarchy informations, like @ref rttr::type::get_base_classes() "get_base_classes()" or @ref rttr::type::is_derived_from() "is_derived_from()", 
 you will have to add manually some information to the type system.
-How this will be done, is discussed in the [next](@ref using_rttr_enable_page "Using RTTR_ENABLE") chapter.
+How this will be done, is discussed in the [next](@ref rttr_type_class_hierachy_page "Using RTTR_ENABLE") chapter.
 
 Summary
 -------
@@ -55,4 +55,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref retrieve_rttr_type_page "Retrieving rttr::type objects")</div><div class="btn btn-default">[next](@ref using_rttr_enable_page "Using RTTR_ENABLE")</div>
+<div class="btn btn-default">[previous](@ref rttr_type_get_page "Retrieving rttr::type objects")</div><div class="btn btn-default">[next](@ref rttr_type_class_hierachy_page "Using RTTR_ENABLE")</div>

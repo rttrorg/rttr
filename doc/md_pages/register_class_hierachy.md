@@ -1,4 +1,4 @@
-Register Class Hierarchy {#using_rttr_enable_page}
+Register Class Hierarchy {#rttr_type_class_hierachy_page}
 ========================
 
 Within the current C++ standard it is not possible to extract a class hierarchy automatically from a certain type. 
@@ -39,7 +39,7 @@ RTTR supports to register even virtual base classes.
 
 When no class hierarchies are used at all, it is not necessary to use the macro. However it is best practice to place it inside every class.
 This macro will also enable the possible usage of an own cast operator called: `rttr_cast`.
-How this will be done, is discussed in the [next](@ref using_rttr_cast_page "Using rttr_cast") chapter.
+How this will be done, is discussed in the [next](@ref rttr_type_rttr_cast_page "Using rttr_cast") chapter.
 
 Summary
 -------
@@ -48,4 +48,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref query_info_rttr_type "Query information from rttr::type")</div><div class="btn btn-default">[next](@ref using_rttr_cast_page "rttr_cast vs. dynamic_cast")</div>
+<div class="btn btn-default">[previous](@ref rttr_type_info_page "Query information from rttr::type")</div><div class="btn btn-default">[next](@ref rttr_type_rttr_cast_page "rttr_cast vs. dynamic_cast")</div>

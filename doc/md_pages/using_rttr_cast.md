@@ -1,4 +1,4 @@
-rttr_cast vs. dynamic_cast  {#using_rttr_cast_page}
+rttr_cast vs. dynamic_cast  {#rttr_type_rttr_cast_page}
 ==========================
 
 The @ref rttr::rttr_cast "rttr_cast" function behaves similarly to the standard C++
@@ -43,4 +43,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref using_rttr_enable_page "Using RTTR_ENABLE")</div><div class="btn btn-default">[next](@ref tutorial_page "Tutorial page")</div>
+<div class="btn btn-default">[previous](@ref rttr_type_class_hierachy_page "Using RTTR_ENABLE")</div><div class="btn btn-default">[next](@ref tutorial_page "Tutorial page")</div>

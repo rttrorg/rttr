@@ -1,4 +1,4 @@
-Methods {#binding_methods_page}
+Methods {#register_methods_page}
 ========
 
 As already mentioned to register global methods to RTTR use the function \ref rttr::registration::method() "registration::method()".
@@ -100,4 +100,4 @@ The method object is lightweight and can be simply copied around different locat
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref binding_hello_world_page "Binding Hello World")</div><div class="btn btn-default">[next](@ref binding_properties_page "Binding Properties")</div>
+<div class="btn btn-default">[previous](@ref register_hello_world_page "Binding Hello World")</div><div class="btn btn-default">[next](@ref register_properties_page "Binding Properties")</div>
