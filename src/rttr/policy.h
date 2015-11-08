@@ -68,10 +68,10 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *   registration::method("get_text", &get_text)
-         *   (
-         *      policy::meth::return_ref_as_ptr
-         *   );
+         *      registration::method("get_text", &get_text)
+         *                    (
+         *                       policy::meth::return_ref_as_ptr
+         *                    );
          * }
          * int main()
          * {
@@ -97,10 +97,10 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *   registration::method("my_func", &my_func)
-         *   (
-         *      policy::meth::discard_return
-         *   );
+         *      registration::method("my_func", &my_func)
+         *                    (
+         *                       policy::meth::discard_return
+         *                    );
          * }
          *
          * int main()
@@ -137,20 +137,20 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *     registration::class_<Foo>()
-         *         .property("vec", &Foo::vec)
-         *          (
-         *              policy::prop::bind_as_ptr
-         *          );
+         *      registration::class_<Foo>("Foo")
+         *                   .property("vec", &Foo::vec)
+         *                   (
+         *                       policy::prop::bind_as_ptr
+         *                   );
          * }
          *
          * int main()
          * {
          *   Foo obj;
-         *   property vec_prop = type::get<Foo>().get_property("vec");
-         *   variant vec_value = prop.get_value(obj);
-         *   std::cout << value.is_type<std::vector<int>*>();       // prints "true"
-         *   prop.set_value(obj, vec_value);                        // not really necessary, but remark that now a std::vector<int>* is expected
+         *   property prop = type::get<Foo>().get_property("vec");
+         *   variant var = prop.get_value(obj);
+         *   std::cout << var.is_type<std::vector<int>*>(); // prints "true"
+         *   prop.set_value(obj, var);                      // not really necessary, but remark that now a std::vector<int>* is expected
          *   return 0;
          * }
          * \endcode
@@ -180,16 +180,16 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *     registration::class_<Foo>()
-         *         .constructor<>()
-         *          (
-         *              policy::ctor::as_raw_ptr
-         *          );
+         *      registration::class_<Foo>("Foo")
+         *                   .constructor<>()
+         *                   (
+         *                       policy::ctor::as_raw_ptr
+         *                   );
          * }
          *
          * int main()
          * {
-         *   variant var = type::get<Foo>().create({});
+         *   variant var = type::get<Foo>().create();
          *   std::cout << var.is_type<Foo*>();          // prints "true"
          *   var.get_type().destroy(var);               // free's the memory with 'delete'
          *   std::cout << var.is_valid();               // prints "false"
@@ -218,16 +218,16 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *     registration::class_<Foo>()
-         *         .constructor<>()
-         *          (
-         *              policy::ctor::as_std_shared_ptr
-         *          );
+         *      registration::class_<Foo>("Foo")
+         *                   .constructor<>()
+         *                    (
+         *                        policy::ctor::as_std_shared_ptr
+         *                    );
          * }
          *
          * int main()
          * {
-         *   variant var = type::get<Foo>().create({});
+         *   variant var = type::get<Foo>().create();
          *   std::cout << var.is_type<std::shared_ptr<Foo>>();  // prints "true"
          *   return 0;                                          // the memory for contained 'Foo' instance is freed automatically,
          * }                                                    // because the var object is gone out of scope
@@ -252,16 +252,16 @@ struct RTTR_API policy
          *
          * RTTR_REGISTRATION
          * {
-         *     registration::class_<Foo>()
-         *         .constructor<>()
-         *          (
-         *              policy::ctor::as_object
-         *          );
+         *      registration::class_<Foo>("Foo")
+         *                   .constructor<>()
+         *                    (
+         *                        policy::ctor::as_object
+         *                    );
          * }
          *
          * int main()
          * {
-         *   variant var = type::get<Foo>().create({}); // creates a new instance of 'Foo' and moves the content into variant 'var'
+         *   variant var = type::get<Foo>().create();   // creates a new instance of 'Foo' and moves the content into variant 'var'
          *   std::cout << var.is_type<Foo>();           // prints "true"
          *   variant var2 = var;                        // creates a new instance of 'Foo', through copy construction
          *   return 0;                                  // the memory of the two 'Foo' instances is freed automatically

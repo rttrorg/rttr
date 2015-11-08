@@ -2,12 +2,18 @@ Policies {#register_policies_page}
 ========
 
 Sometimes it is necessary to adjust the default binding behaviour RTTR. Therefore policies were introduced.
-At the moment only return value policies are implemented.
-The default binding behaviour of RTTR is to return all values by copying the content in a variant.
+It exists policies for @ref rttr::policy::ctor "constructors", @ref rttr::policy::meth "methods" and @ref rttr::policy::prop "properties".
 
-Currently implemented policies:
+Constructors:
+- @ref rttr::policy::ctor::as_object "policy::ctor::as_object"
+- @ref rttr::policy::ctor::as_std_shared_ptr "policy::ctor::as_std_shared_ptr"
+- @ref rttr::policy::ctor::as_raw_ptr "policy::ctor::as_raw_ptr"
+
+Properties:
 - @ref rttr::policy::prop::bind_as_ptr "policy::prop::bind_as_ptr"
 - @ref rttr::policy::meth::return_ref_as_ptr "policy::meth::return_ref_as_ptr"
+
+Methods:
 - @ref rttr::policy::meth::discard_return "policy::meth::discard_return"
 
 For easier usage, the policies are grouped to its corresponding items; e.g. all policies for methods
@@ -16,6 +22,7 @@ can be found under `policy::meth`; all policies for properties under `policy::pr
 bind_as_ptr
 -----------
 The motivation for this policy is to avoid expensive copies when returning a property.
+The default registration behaviour of RTTR is to return all values by copying the content in a variant.
 When you have primitive data types like integer or doubles you are good to go with the standard binding behaviour.
 But when you have big arrays, it would be a waste to always copy the content when retrieving or setting the value, therefore this policy was introduced.
 
