@@ -81,8 +81,8 @@ static type get_invalid_type();
  * This function just expects one template argument. Use it to check against a known type.
  *
  * \code{.cpp}
- *   type::get<int>() == type::get<int>();  // yields to true
- *   type::get<int>() == type::get<bool>(); // yields to false
+ *      type::get<int>() == type::get<int>();  // yields to true
+ *      type::get<int>() == type::get<bool>(); // yields to false
  * \endcode
  *
  * type::get_by_name(const char*)
@@ -90,9 +90,9 @@ static type get_invalid_type();
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  *
  * \code{.cpp}
- *   type::get_by_name("int")  == type::get<int>(); // yields to true
- *   type::get_by_name("bool") == type::get<int>(); // yields to false
- *   type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
+ *      type::get_by_name("int")  == type::get<int>(); // yields to true
+ *      type::get_by_name("bool") == type::get<int>(); // yields to false
+ *      type::get_by_name("MyNameSpace::MyStruct") == type::get<MyNameSpace::MyStruct>();  // yields to true
  * \endcode
  *
  * \remark Before using the function \ref type::get_by_name(), you have to use one time the function via \ref type::get<T>(), otherwise the type is not registered in the type system.
@@ -102,43 +102,44 @@ static type get_invalid_type();
  * This function takes a universal reference and returns from every given object the corresponding type object.
  *
  * \code{.cpp}
- *   int int_obj;
- *   int* int_obj_ptr = &int_obj;
- *   const int* c_int_obj_ptr = int_obj_ptr;
- *
- *   type::get<int>()         == type::get(int_obj);        // yields to true
- *   type::get<int*>()        == type::get(int_obj_ptr);    // yields to true
- *   type::get<const int*>()  == type::get(c_int_obj_ptr);  // yields to true
+ *      int int_obj;
+ *      int* int_obj_ptr = &int_obj;
+ *      const int* c_int_obj_ptr = int_obj_ptr;
+ *      
+ *      type::get<int>()         == type::get(int_obj);        // yields to true
+ *      type::get<int*>()        == type::get(int_obj_ptr);    // yields to true
+ *      type::get<const int*>()  == type::get(c_int_obj_ptr);  // yields to true
  * \endcode
  *
  * When this function is called for a glvalue expression whose type is a polymorphic class type,
  * then the result refers to a \ref type object representing the type of the most derived object.
  *
  * \code{.cpp}
- *   struct Base {};
- *   struct Derived : Base {};
- *   Derived d;
- *   Base& base = d;
- *   type::get<Derived>()   == type::get(base)  // yields to true
- *   type::get<Base>()      == type::get(base)  // yields to false
- *   
- *   // remark, when called with pointers:
- *   Base* base_ptr = &d;
- *   type::get<Derived>()   == type::get(base_ptr); // yields to false
- *   type::get<Base*>()     == type::get(base_ptr); // yields to true
+ *      struct Base { RTTR_ENABLE() };
+ *      struct Derived : Base { RTTR_ENABLE(Base) };
+ *      //...
+ *      Derived d;
+ *      Base& base = d;
+ *      type::get<Derived>()   == type::get(base);      // yields to true
+ *      type::get<Base>()      == type::get(base);      // yields to false
+ *      
+ *      // remark, when called with pointers:
+ *      Base* base_ptr = &d;
+ *      type::get<Derived>()   == type::get(base_ptr);  // yields to false
+ *      type::get<Base*>()     == type::get(base_ptr);  // yields to true
  * \endcode
  *
  * \remark If the type of the expression is a cv-qualified type, the result of the rttr::type::get expression refers to a rttr::type object representing the cv-unqualified type.
  * 
  * \code{.cpp}
- *   class D { ... };
- *   D d1;
- *   const D d2;
- *   type::get(d1)  == type::get(d2);         // yields true
- *   type::get<D>() == type::get<const D>();  // yields true
- *   type::get<D>() == type::get(d2);         // yields true
- *   type::get<D>() == type::get<const D&>(); // yields true
- *   type::get<D>() == type::get<const D*>(); // yields false
+ *      class D { ... };
+ *      D d1;
+ *      const D d2;
+ *      type::get(d1)  == type::get(d2);         // yields true
+ *      type::get<D>() == type::get<const D>();  // yields true
+ *      type::get<D>() == type::get(d2);         // yields true
+ *      type::get<D>() == type::get<const D&>(); // yields true
+ *      type::get<D>() == type::get<const D*>(); // yields false
  * \endcode
  * Any `top level` cv-qualifier of the given type `T` will be removed.
  *
