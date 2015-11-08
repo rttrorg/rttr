@@ -36,7 +36,7 @@ Remark that when comparing types, internally always a simple integer comparison 
 instead how often with <a target="_blank" href=http://en.cppreference.com/w/cpp/language/typeid>typeid</a>, a string comparison.
  
 rttr::type::get<T>(T&& obj)
----------------------
+---------------------------
 
 This function takes a universal reference and returns from every given object the corresponding [type](@ref rttr::type) object.
 

@@ -76,7 +76,7 @@ static type get_invalid_type();
  * ------------------
  * A type object **cannot** be created. It is only possible to retrieve a type object via three static template member functions:
  *
- * type::get<T>()
+ * ### type::get<T>() ###
  *
  * This function just expects one template argument. Use it to check against a known type.
  *
@@ -85,7 +85,7 @@ static type get_invalid_type();
  *      type::get<int>() == type::get<bool>(); // yields to false
  * \endcode
  *
- * type::get_by_name(const char*)
+ * ### type::get_by_name(const char*) ###
  *
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  *
@@ -97,7 +97,7 @@ static type get_invalid_type();
  *
  * \remark Before using the function \ref type::get_by_name(), you have to use one time the function via \ref type::get<T>(), otherwise the type is not registered in the type system.
  *
- * type::get<T>(T&& obj)
+ * ### type::get<T>(T&& obj) ###
  *
  * This function takes a universal reference and returns from every given object the corresponding type object.
  *
