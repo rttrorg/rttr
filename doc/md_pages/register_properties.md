@@ -86,4 +86,4 @@ The property object is very lightweight and can be simply copied around differen
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_methods_page "Binding Methods")</div><div class="btn btn-default">[next](@ref register_enums_page "Binding Enums")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_methods_page "Register Methods")</div><div class="btn btn-default">[next](@ref register_enums_page "Register Enums")</div>

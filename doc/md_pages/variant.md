@@ -26,4 +26,4 @@ A typical usage is the following example:
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_enums_page "Binding Enums")</div><div class="btn btn-default">[next](@ref register_classes_page "Binding Classes")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_enums_page "Register Enums")</div><div class="btn btn-default">[next](@ref register_classes_page "Register Classes")</div>

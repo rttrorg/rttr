@@ -1,5 +1,5 @@
-Binding Types - Hello World  {#register_hello_world_page}
-===========================
+Register Types - Hello World  {#register_hello_world_page}
+============================
 Let's start with the traditional hello world example.
 
 ~~~~{.cpp}
@@ -37,4 +37,4 @@ When the returned @ref rttr::variant "variant" is @ref rttr::variant::is_valid()
 
 <hr>
 
-<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref register_methods_page "Binding Methods")</div>
+<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref register_methods_page "Register Methods")</div>

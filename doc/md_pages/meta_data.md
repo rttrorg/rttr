@@ -62,4 +62,4 @@ Every \ref property, \ref method, \ref enumeration and \ref constructor can have
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_classes_page "Binding Classes")</div><div class="btn btn-default">[next](@ref default_arguments_page "Default Arguments")</div>
+<div type="button" class="btn btn-default">[previous](@ref register_classes_page "Register Classes")</div><div class="btn btn-default">[next](@ref default_arguments_page "Default Arguments")</div>
