@@ -200,6 +200,39 @@ This way, accessing the property will now call these functions, instead the prop
 
 The following sub sections will now show how to retrieve these informations for creating, invoking and setting properties of an instance of this class.
 
+Access Level Of Class Members
+------------------------------
+With RTTR it is also possible to specify on of the three access modifiers during the registration.
+
+~~~~{.cpp}
+using namespace rttr;
+
+struct Foo
+{
+public:
+    Foo() {}
+protected:
+    void func() {}
+private:
+    int value;
+
+    RTTR_REGISTRATION_FRIEND
+};
+
+RTTR_REGISTRATION
+{
+    registration::class_<Foo>("Foo")
+                  .constructor<>(registration::public_access)   // not necessary, because that is the default
+                  .method("func", &Foo::func, registration::protected_access)
+                  .property("value", &Foo::value, registration::private_access);
+}
+~~~~
+The access level has to be specified as last argument in the corresponding \ref rttr::registration::class_ "class_" registration function.
+Use therefore one of the three static member variables in the \ref rttr::registration "registration" class.
+This information can be retrieved at runtime for \ref rttr::property::get_access_level() "properties", \ref rttr::method::get_access_level() "methods" or 
+\ref rttr::constructor::get_access_level() "constructors". via the function `get_access_level()`, which will return a enum value of type \ref rttr::access_levels "access_levels".
+
+
 Create/destroy of classes
 -------------------------
 There are two options for creating/destroying a class. 
