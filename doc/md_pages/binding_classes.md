@@ -14,11 +14,11 @@ Let's start with a simple example. Consider the following C++ class:
 #include <rttr/type>
 
 // test class.h
-class test_class{
-public:
+struct test_class
+{
     test_class(int value) : m_value(value) {}
     void print_value() const { std::cout << m_value; }
-private:
+
     int m_value;
 
     RTTR_ENABLE()
@@ -36,10 +36,10 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
         
-    registration::class_<test_class>()
-        .constructor<int>()
-        .method("print_value", &test_class::print_value);
-        .property("value", &test_class::m_value);
+    registration::class_<test_class>("test_class")
+                 .constructor<int>()
+                 .method("print_value", &test_class::print_value)
+                 .property("value", &test_class::m_value);
 }
 ~~~~
 
@@ -60,23 +60,24 @@ Here's an example illustrating this:
 ~~~~{.cpp}
 struct Foo
 {
-    void f();
-    void f(int);
-    void f(int) const;
+    void f() {}
+    void f(int) {}
+    void f(int) const {}
 };
+
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<Foo>()
-        .method("f", select_overload<void(void)>(&Foo::f))
-        .method("f", select_overload<void(int)>(&Foo::f))
-        .method("f", select_const(&Foo::f));                // register a overloaded const method
+    registration::class_<Foo>("Foo")
+                 .method("f", select_overload<void(void)>(&Foo::f))
+                 .method("f", select_overload<void(int)>(&Foo::f))
+                 .method("f", select_const(&Foo::f));                // register a overloaded const method
 }
 ~~~~
 
-The last function is a overloaded const function, use therfore the 
+The last function is a overloaded const function, use therefore the 
 @ref rttr::select_const() "select_const()" function.
 
 Register constructor
@@ -104,10 +105,10 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<Foo>()
-        .constructor<>()
-        .constructor<int,double>()
-        .constructor<const std::string&>();
+    registration::class_<Foo>("Foo")
+                 .constructor<>()
+                 .constructor<int,double>()
+                 .constructor<const std::string&>();
 }
 ~~~~
 
@@ -137,7 +138,10 @@ RTTR_REGISTRATION
 ~~~~
 
 With the @ref rttr::registration::class_<T>::property() "property()" member function you will register the member variable `Foo::value` 
-with read and write access. When you want a register a property with `read-only` access, 
+with read and write access.
+
+###Read Only Properties###
+When you want a register a property with `read-only` access, 
 then this is also possible with @ref rttr::registration::class_<T>::property_readonly "property_readonly()" member function.
 
 ~~~~{.cpp}
@@ -149,6 +153,8 @@ RTTR_REGISTRATION
         .property_readonly("value", &Foo::value);
 }
 ~~~~
+
+###Private Properties###
 
 When you have a class and the property is declared in private scope, then you can still register this property when you insert the macro: \ref RTTR_REGISTRATION_FRIEND
 inside the class.
@@ -164,6 +170,7 @@ private:
 
 This will make this class a friend to the registration system.
 
+###Getter Setter For Properties###
 You can also register getter and setter functions and make them look as if they were a public data member. Consider the following class:
 ~~~~{.cpp}
 class Foo
@@ -203,21 +210,24 @@ There are two options for creating/destroying a class.
 int main()
 {
     using namespace rttr;
-    
     // option 1
     type class_type = type::get_by_name("test_class");
     if (class_type)
     {
         variant obj = class_type.create({23});
-        class_type.destroy(obj);
+        if (obj.get_type().is_pointer())
+            class_type.destroy(obj);
     }
     // option 2
     if (class_type)
     {
        constructor ctor = class_type.get_constructor({type::get<int>()});
        variant obj = ctor.invoke(23);
-       destructor dtor = class_type.get_destructor();
-       dtor.invoke(obj);
+       if (obj.get_type().is_pointer())
+       {
+            destructor dtor = class_type.get_destructor();
+            dtor.invoke(obj);
+       }
     }
 }
 ~~~~
@@ -258,7 +268,7 @@ int main()
 
 Set/Get property of a class
 ---------------------------
-Properties can be also set an get in two ways.
+Properties can be also set and get in two steps:
 
 ~~~~{.cpp}
 int main()

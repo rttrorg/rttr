@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 ~~~~
-Remark, that there is actuall no include of `node.h`.
+Remark, that there is actual no include of `node.h`.
 See the output below:
 ###Output###
 

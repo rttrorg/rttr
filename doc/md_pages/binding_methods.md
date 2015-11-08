@@ -14,6 +14,9 @@ For example when you want to register the byte string to integer conversion func
 
 Do it in the following way:
 ~~~~{.cpp}
+#include <rttr/registration>
+#include <cstdlib>
+
 RTTR_REGISTRATION
 {
     using namespace rttr;
@@ -31,24 +34,25 @@ For example the two functions: `float sin (float x);` and `double sin (double x)
 
 ~~~~{.cpp}
 #include <rttr/registration>
-#include <cmath.h>
+#include <cmath>
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
-    registration::method("sin", select_overload<float(float)>(&sin));
+    registration::method("sin", select_overload<float(float)>(&sin))
                  .method("sin", select_overload<double(double)>(&sin));
 }
 ~~~~
 It is possible the chain multiple registration calls, because of the temporary returned @ref rttr::registration::bind "bind" object.
 
 \remark The select_overload function cannot be used with MSVC x86 compiler, because of the different calling convention for global- and member-functions. 
+        See here for a @ref rttr::select_overload<Signature>(Signature*) "workaround".
 
 Invoke of methods
 -----------------
 Invoking a method with RTTR can be done in two ways:
-- calling @ref rttr::type::invoke(const std::string&, std::vector< argument >) "type::invoke()" from the [type](@ref rttr::type) class.
-- retrieving first a @ref rttr::method "method" object from @ref rttr::type::get_global_method(const std::string &, const std::vector< type >&) "type::get_global_method()" and then calling invoke
+- calling @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" from the [type](@ref rttr::type) class.
+- retrieving first a @ref rttr::method "method" object from @ref rttr::type::get_global_method(const char*, const std::vector< type >&) "type::get_global_method()" and then calling invoke
 
 The first option needs less typing, but it is slower when you need to invoke the function several times.
 For the second option you need more code to write, but it invokes the method faster.

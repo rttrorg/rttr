@@ -464,6 +464,15 @@ private:
  * \endcode
  *
  * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
+ * As workaround you have to explicitly cast to the function pointer:
+ *
+ * \code{.cpp}
+ * 
+ * RTTR_REGISTRATION
+ * {
+ *      registration::method("pow", static_cast<float(*)(float, float)>(&pow));
+ * }
+ * \endcode
  *
  */
 template<typename Signature>
@@ -485,20 +494,30 @@ Signature* select_overload(Signature* func)
  *
  * struct Foo
  * {
- *   void func(int);
- *   void func(int, int);
+ *   void func(int) {}
+ *   void func(int, int) {}
  * };
  * 
  * RTTR_REGISTRATION
  * {
- *      registration::class_<foo>("foo")
- *          .method("func", select_overload<void(int)>(&foo::func))
- *          .method("func", select_overload<void(int, int)>(&foo::func));
+ *      registration::class_<Foo>("Foo")
+ *                   .method("func", select_overload<void(int)>(&Foo::func))
+ *                   .method("func", select_overload<void(int, int)>(&Foo::func));
  * }
  * \endcode
  *
  * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
+ * As workaround you have to explicitly cast to the member function pointer:
  *
+ * \code{.cpp}
+ * 
+ * RTTR_REGISTRATION
+ * {
+ *      registration::class_<Foo>("Foo")
+ *                   .method("func", static_cast<void(Foo::*)(int)>(&Foo::func))
+ *                   .method("func", static_cast<void(Foo::*)(int, int)>(&Foo::func));
+ * }
+ * \endcode
  */
 template<typename Signature, typename ClassType>
 auto select_overload(Signature (ClassType::*func)) -> decltype(func)
@@ -517,20 +536,30 @@ auto select_overload(Signature (ClassType::*func)) -> decltype(func)
  * using namespace rttr;
  * struct Foo
  * {
- *   void func();
- *   void func() const;
+ *   void func() {}
+ *   void func() const {}
  * };
  * 
  * RTTR_REGISTRATION
  * {
- *      registration::class<Foo>("Foo")
- *         .method("func", select_non_const(&Foo::func))
- *         .method("func", select_const(&Foo::func));
+ *      registration::class_<Foo>("Foo")
+ *                   .method("func", select_non_const(&Foo::func))
+ *                   .method("func", select_const(&Foo::func));
  * }
  * \endcode
  *
  * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
+ * As workaround you have to explicitly cast to the member function pointer:
  *
+ * \code{.cpp}
+ * 
+ * RTTR_REGISTRATION
+ * {
+ *      registration::class_<Foo>("Foo")
+ *                   .method("func", static_cast<void(Foo::*)()>(&Foo::func))
+ *                   .method("func", static_cast<void(Foo::*)()const>(&Foo::func));
+ * }
+ * \endcode
  */
 template<typename ClassType, typename ReturnType, typename... Args>
 auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func)
@@ -548,19 +577,30 @@ auto select_const(ReturnType (ClassType::*func)(Args...) const) -> decltype(func
  * using namespace rttr;
  * struct Foo
  * {
- *   void func();
- *   void func() const;
+ *   void func() {}
+ *   void func() const {}
  * };
  * 
  * RTTR_REGISTRATION
  * {
  *      registration::class<Foo>("Foo")
- *          .method("func", select_non_const(&Foo::func))
- *          .method("func", select_const(&Foo::func));
+ *                   .method("func", select_non_const(&Foo::func))
+ *                   .method("func", select_const(&Foo::func));
  * }
  * \endcode
  *
  * \remark The method **cannot** be used with *MSVC x86* compiler, because of the different calling convention for global- and member-functions.
+ * As workaround you have to explicitly cast to the member function pointer:
+ *
+ * \code{.cpp}
+ * 
+ * RTTR_REGISTRATION
+ * {
+ *      registration::class_<Foo>("Foo")
+ *                   .method("func", static_cast<void(Foo::*)()>(&Foo::func))
+ *                   .method("func", static_cast<void(Foo::*)()const>(&Foo::func));
+ * }
+ * \endcode
  *
  */
 template<typename ClassType, typename ReturnType, typename... Args>

@@ -23,29 +23,29 @@ Example:
 ~~~~{.cpp}
 struct Foo
 {
-  std::vector<int> vec;
+    std::vector<int> vec;
 };
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::class_<Foo>()
-        .property("vec", &Foo::vec)
-        (
-            policy::prop::bind_as_ptr
-        );
+    registration::class_<Foo>("Foo")
+                 .property("vec", &Foo::vec)
+                 (
+                     policy::prop::bind_as_ptr
+                 )
 }
 
 int main()
 {
     Foo obj;
-    property vec_prop = type::get<Foo>().get_property("vec");
-    variant vec_value = prop.get_value(obj);
-    std::cout << value.is_type<std::vector<int>*>(); // prints "true"
+    property prop = type::get<Foo>().get_property("vec");
+    variant var = prop.get_value(obj);
+    std::cout << var.is_type<std::vector<int>*>(); // prints "true"
     
     // not really necessary, but remark that now a std::vector<int>* is expected
-    prop.set_value(obj, vec_value);
+    prop.set_value(obj, var);
 }
 ~~~~
 
@@ -60,26 +60,26 @@ Example:
 ~~~~{.cpp}
 struct Foo
 {
-    std::string& get_text() { static text; return text; }
+    std::string& get_text() { static std::string text; return text; }
 };
 
 RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Foo>()
-        .method("get_text", &Foo::get_text)
-        (
-            policy::meth::return_ref_as_ptr
-        );
+    registration::class_<Foo>("Foo")
+                 .method("get_text", &Foo::get_text)
+                 (
+                     policy::meth::return_ref_as_ptr
+                 );
 }
 
 int main()
 {
     Foo obj;
-    method text_meth  = type::get<Foo>().get_method("get_text");
-    variant vec_value = text_meth.invoke(obj);
-    std::cout << value.is_type<std::string*>(); // prints "true"
+    method meth  = type::get<Foo>().get_method("get_text");
+    variant var = meth.invoke(obj);
+    std::cout << var.is_type<std::string*>(); // prints "true"
 }
 ~~~~
 
@@ -99,19 +99,19 @@ RTTR_REGISTRATION
 {
     using namespace rttr;
 
-    registration::class_<Foo>()
-        .method("get_value", &Foo::calculate_func)
-        (
-            policy::meth::discard_return
-        );
+    registration::class_<Foo>("Foo")
+                 .method("get_value", &Foo::calculate_func)
+                 (
+                     policy::meth::discard_return
+                 );
 }
 
 int main()
 {
     Foo obj;
-    method text_meth  = type::get<Foo>().get_method("calculate_func");
-    variant vec_value = text_meth.invoke(obj);
-    std::cout << value.is_type<void>(); // prints "true"
+    method meth  = type::get<Foo>().get_method("calculate_func");
+    variant var = meth.invoke(obj);
+    std::cout << var.is_type<void>(); // prints "true"
 }
 ~~~~
 

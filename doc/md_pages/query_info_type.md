@@ -14,7 +14,7 @@ type::get<D*>().is_pointer();             // true
 type::get<D>().is_array();                // false
 type::get<D[50]>().is_array();            // true
 type::get<std::vector<D>>().is_array();   // true
-type::get<D>().is_primitive();            // false
+type::get<D>().is_arithmetic();           // false
 type::get<D>().is_enumeration();          // false
 ~~~~
 
@@ -35,7 +35,7 @@ Derived d;
 std::vector<type> base_list = type::get(d).get_base_classes();
 
 for (auto& t : base_list)
-  std::cout << t.get_name() << std::endl; // 'Base'
+  std::cout << t.get_name() << std::endl; // 'struct Base'
 ~~~~
 
 Or use a shorthand method to check if a type is derived from another:

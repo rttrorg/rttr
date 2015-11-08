@@ -7,11 +7,11 @@ For registration of a property to RTTR you can use following functions:
 
 They have following synopsis:
 ~~~~{.cpp}
-  template<typename A>
-  registration rttr::registration::property( const char* name, A accessor );
+    template<typename A>
+    registration rttr::registration::property( const char* name, A accessor );
   
-  template<typename A>
-  registration rttr::registration::property_readonly( const char* name, A accessor);
+    template<typename A>
+    registration rttr::registration::property_readonly( const char* name, A accessor);
 ~~~~
 - `name` is the name of the property
 - `A` is the pointer to the property
@@ -21,8 +21,8 @@ Therefore the @ref rttr::registration::property(const char*, A1, A2) "property()
 
 It has following synopsis:
 ~~~~{.cpp}
-  template<typename A1, typename A2>
-  registration rttr::registration::property( const char* name, A1 getter, A2 setter );
+    template<typename A1, typename A2>
+    registration rttr::registration::property( const char* name, A1 getter, A2 setter );
 ~~~~
 - `name` is the name of the property
 - `A1` is the function pointer to the getter and A2 is the function pointer to the setter of the property
@@ -57,19 +57,18 @@ For setting and getting a property you have two options like with methods:
 using namespace rttr;
 int main()
 {
-  // option 1, via type
-   variant value = type::get_property_value("pi");
-   if (value && value.is_type<double>())
-      std::cout << value.get_value<double>() << std::endl; // outputs: "3.14259"
-      
-  // option 2, via property class
-   property prop = type::get_property_value("pi");
-   if (prop)
-   {
-      value = prop.get_value();
-      if (value.is_valid() && value.is_type<double>())
+    // option 1, via type
+    variant value = type::get_property_value("PI"); // remark the capitalization of "PI"
+    if (value && value.is_type<double>())
         std::cout << value.get_value<double>() << std::endl; // outputs: "3.14259"
-   }
+    // option 2, via property class
+    property prop = type::get_global_property("PI");
+    if (prop)
+    {
+        value = prop.get_value(instance());
+        if (value.is_valid() && value.is_type<double>())
+            std::cout << value.get_value<double>() << std::endl; // outputs: "3.14259"
+    }
 }
 ~~~~
 

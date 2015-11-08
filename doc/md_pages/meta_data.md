@@ -11,15 +11,24 @@ So the only requirement for metadata is that it has to be copyable.
 Please take a look at following example:
 
 \code{.cpp}
+
+#include <rttr/registration>
+
+enum class MetaData_Type
+{
+    SCRIPTABLE,
+    GUI
+};
+
 RTTR_REGISTRATION
 {
     using namespace rttr;
     
-    registration::property("value", value)
-    (    
-        meta_data(SCRIPTABLE, false), 
-        meta_data("Description", "This is a value.")
-    );
+    registration::property("value", &g_Value)
+                  (    
+                      meta_data(MetaData_Type::SCRIPTABLE, false), 
+                      meta_data("Description", "This is a value.")
+                  );
 }
 \endcode
 In order to add metadata to a registered item you have to use the `()` operator of the returned @ref rttr::registration::bind "bind" object.
@@ -39,8 +48,9 @@ int main()
 {
     using namespace rttr;
 
+    using namespace rttr;
     property prop = type::get_global_property("value");
-    variant value = prop.get_meta_data(SCRIPTABLE);
+    variant value = prop.get_meta_data(MetaData_Type::SCRIPTABLE);
     std::cout << value.get_value<bool>(); // prints "false"
     
     value = prop.get_meta_data("Description");

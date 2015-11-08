@@ -16,9 +16,9 @@ void my_function(int a, bool b, const std::string& text, const int* ptr);
 RTTR_REGISTRATION
 {
     registration::method("my_function", &my_function)   
-    (
-        default_arguments(true, std::string("default text"), nullptr)
-    );
+                  (
+                      default_arguments(true, std::string("default text"), nullptr)
+                  );
 }
 \endcode
 
@@ -31,7 +31,22 @@ The function has following synopsis:
     detail::default_args<TArgs...> default_arguments(TArgs&&...args)
 ~~~~
 The values will be copied internally and will be provided during invoke of the method or constructor,
-when the corresponding argument is missing.
+when the corresponding argument is missing:
+
+\code{.cpp}
+int main()
+{
+    using namespace rttr;
+    method meth = type::get_global_method("my_function");
+    // the default values: 'true', 'std::string("default text"'), 'nullptr' will be forwarded by RTTR automatically
+    variant var = meth.invoke(instance(), 23);
+    std::cout << var.is_valid(); // prints 'true'
+
+    // the default value: 'nullptr' will be forwarded by RTTR automatically
+    var = meth.invoke(instance(), 23, true, std::string("text"));
+    std::cout << var.is_valid(); // prints 'true'
+}
+\endcode
 
 \remark The given arguments must match the signature from the starting position to the right most argument.
 

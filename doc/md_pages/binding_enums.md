@@ -6,8 +6,8 @@ RTTR allows also to register enumerated constants (enums). Therefore use the fun
 It has following synopsis:
 
 ~~~~{.cpp}
-  template<typename Enum_Type>
-  registration rttr::registration::enumeration( const char* name );
+    template<typename Enum_Type>
+    registration rttr::registration::enumeration( const char* name );
 ~~~~
 
 - `name` the declared name of this enum
@@ -16,7 +16,7 @@ It has following synopsis:
 #include <rttr/registration>
 using namespace rttr;
 
-enum E_Alignment
+enum class E_Alignment
 {
     AlignLeft       = 0x0001,
     AlignRight      = 0x0002,
@@ -26,14 +26,13 @@ enum E_Alignment
 
 RTTR_REGISTRATION
 {
-    using namespace rttr;
     registration::enumeration<E_Alignment>("E_Alignment")
-    (
-        value("AlignLeft",    enum_test::E_Alignment::AlignLeft),
-        value("AlignRight",   enum_test::E_Alignment::AlignRight),
-        value("AlignHCenter", enum_test::E_Alignment::AlignHCenter),
-        value("AlignJustify", enum_test::E_Alignment::AlignJustify)
-    )
+                  (
+                      value("AlignLeft",    E_Alignment::AlignLeft),
+                      value("AlignRight",   E_Alignment::AlignRight),
+                      value("AlignHCenter", E_Alignment::AlignHCenter),
+                      value("AlignJustify", E_Alignment::AlignJustify)
+                  );
 }
 ~~~~
 In order to add the individual enumerators you have to use the `()` operator of the returned @ref rttr::registration::bind "bind" object.
@@ -52,24 +51,24 @@ functions between the value representation and its literal representation.
 
 How to use the enumeration class shows following example:
 ~~~~{.cpp}
-  using namespace rttr;  
-  type enum_type = type::get_by_name("E_Alignment");
-  if (enum_type && enum_type.is_enumeration())
-  {
-    enumeration enum_align = enum_type.get_enumeration();
-    std::string name = enum_align.value_to_name(E_Alignment::AlignHCenter);
-    std::cout << name; // prints "AlignHCenter"
-    
-    variant var = enum_align.name_to_value(name);
-  }
-  std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "4";
+    using namespace rttr;  
+    type enum_type = type::get_by_name("E_Alignment");
+    if (enum_type && enum_type.is_enumeration())
+    {
+        enumeration enum_align = enum_type.get_enumeration();
+        std::string name = enum_align.value_to_name(E_Alignment::AlignHCenter);
+        std::cout << name; // prints "AlignHCenter"
+      
+        variant var = enum_align.name_to_value(name);
+        E_Alignment value = var.get_value<E_Alignment>(); // stores value 'AlignHCenter'
+    }
 ~~~~
 
 @remark You can also use the @ref rttr::variant "variant" class to convert from an enum value to is integral or string representation.
 ~~~~{.cpp}
-variant var = E_Alignment::AlignHCenter;
-std::cout << var.to_int() << std::endl; // prints '4'
-std::cout << var.to_string() << std::endl; // prints 'AlignHCenter'
+    variant var = E_Alignment::AlignHCenter;
+    std::cout << var.to_int() << std::endl; // prints '4'
+    std::cout << var.to_string() << std::endl; // prints 'AlignHCenter'
 ~~~~
 <hr>
 
