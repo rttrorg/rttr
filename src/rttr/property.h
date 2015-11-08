@@ -129,7 +129,7 @@ class RTTR_API property
         explicit operator bool() const;
 
         /*!
-         * \brief Returns the access_levels with which this method was 
+         * \brief Returns the access level with which this property was 
          *        \ref registration::class_<T>::property() "registered".
          *
          * \remark When the property is not valid, this function will return level \ref access_levels::public_access.

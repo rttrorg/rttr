@@ -138,7 +138,7 @@ class RTTR_API method
         std::string get_name() const;
 
         /*!
-         * \brief Returns the access_levels with which this method was 
+         * \brief Returns the access level with which this method was 
          *        \ref registration::class_<T>::method() "registered".
          *
          * \remark When the method is not valid, this function will return level \ref access_levels::public_access.

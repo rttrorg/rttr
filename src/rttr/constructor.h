@@ -105,10 +105,10 @@ class RTTR_API constructor
         explicit operator bool() const;
 
         /*!
-         * \brief Returns the access_levels with which this method was 
+         * \brief Returns access level with which this constructor was 
          *        \ref registration::class_<T>::constructor() "registered".
          *
-         * \remark When the method is not valid, this function will return level \ref access_levels::public_access.
+         * \remark When the constructor is not valid, this function will return level \ref access_levels::public_access.
          *
          * \return \ref access_levels of the method.
          */
