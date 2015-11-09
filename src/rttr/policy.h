@@ -235,7 +235,7 @@ struct RTTR_API policy
          */
         static const detail::as_std_shared_ptr      as_std_shared_ptr;
 
-         /*!
+        /*!
          * The \ref as_object policy will create an instance of a class with automatic storage.
          *
          * Objects with automatic storage duration are automatically destroyed when the block in which they are created exits.
