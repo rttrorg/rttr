@@ -73,16 +73,11 @@ class constructor_wrapper_base;
  * ----------------------
  * 
  * \code{.cpp}
- *      constructor string_ctor == type::get_by_name("std::string").get_constructor({type::get<const char*>()});
- *     
- *      variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
- *     
- *      std::cout << my_string.get_value<std::string*>()->c_str() << std::endl; // prints 'Hello World'
- *     
- *      // don't forget to destroy the instance
- *      type::get("std::string").get_destructor().invoke(my_string);
- *     
- *      my_string.is_valid(); // yield to false
+ *      constructor ctor = type::get_by_name("std::string").get_constructor({type::get<std::string>()}); // retrieve the copy ctor
+ *    
+ *      variant var = ctor.invoke(std::string("Hello World"));          // returns an object with automatic storage
+ *    
+ *      std::cout << var.get_value<std::string>().c_str() << std::endl; // prints 'Hello World'
  * \endcode
  *
  * \see method, property, enumeration, destructor and type
