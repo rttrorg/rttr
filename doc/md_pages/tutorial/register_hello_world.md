@@ -37,4 +37,4 @@ When the returned @ref rttr::variant "variant" is @ref rttr::variant::is_valid()
 
 <hr>
 
-<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref register_methods_page "Register Methods")</div>
+<div class="btn btn-default doxy-button" disabled="true">previous</div><div class="btn btn-default doxy-button">[next](@ref register_methods_page "Register Methods")</div>

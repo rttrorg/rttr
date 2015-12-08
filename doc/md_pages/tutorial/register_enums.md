@@ -72,4 +72,4 @@ How to use the enumeration class shows following example:
 ~~~~
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_properties_page "Register Properties")</div><div class="btn btn-default">[next](@ref register_variant_page "Variant")</div>
+<div type="button" class="btn btn-default doxy-button">[previous](@ref register_properties_page "Register Properties")</div><div class="btn btn-default doxy-button">[next](@ref register_variant_page "Variant")</div>

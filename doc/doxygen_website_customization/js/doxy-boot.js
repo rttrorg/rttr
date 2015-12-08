@@ -1,44 +1,32 @@
 $( document ).ready(function() {
+    
+    function ends_with(text, suffix) {
+        return text.indexOf(suffix, text.length - suffix.length) !== -1;
+    };
 
+        
     $("div.headertitle").addClass("page-header");
     $("div.title").addClass("h1");
     
-    // some ugly hacks because of doxygen bugs
+    // here we mark with the help of js the current active tab
+    var classes_link = $('li > a[href="classes.html"]');
+    var tutorial_link = $('li > a[href="tutorial_page.html"]');
+    var install_link = $('li > a[href="building_install_page.html"]');
+    
+    // by default, because we cannot check for all 
+    classes_link.parent().addClass("current active");
     var title = $("title");
-    if (title.text() == "rttr: Main Page")
-    {
-      title.text("RTTR - Run Time Type Reflection");
-      var header_title = $("div.title.h1");
-      if (header_title.text() == "rttr Documentation")
-        header_title.text("RTTR - Run Time Type Reflection");
-    }
-    else 
-    {
-        var new_title = title.text().replace("rttr:", "RTTR:");
-        title.text(new_title);
-    }
-
-    $('li > a[href="index.html"] > span').before("<i class='fa fa-cog'></i> ");
-    var tutorial_link = $('li > a[href="pages.html"]');
-    tutorial_link.attr("href", "tutorial_page.html");
-    
-    var install_link = $('li > a > span:contains("Installation")').parent();
-    install_link.attr("href", "building_install_page.html");
-    
-    var license_link = $('li > a > span:contains("License")').parent();
-    license_link.attr("href", "license_page.html");
-    
     if (title.text().search("Building & Installation") > - 1)
     {
-        tutorial_link.parent().removeClass("current active");
+        classes_link.parent().removeClass("current active");
         install_link.parent().addClass("current active");
     }
-    else if (title.text().search("License") > -1)
+    else if (ends_with(window.location.pathname, "page.html"))
     {
-        tutorial_link.parent().removeClass("current active");
-        license_link.parent().addClass("current active");
+        classes_link.parent().removeClass("current active");
+        tutorial_link.parent().addClass("current active");
     }
-    
+        
     // replace the div tags with the <a> tags below,
     // the reason we are doing this, is because we cannot style directly the <a> tags with classes within doxygen
     // and explicit <a> tags cannot be using with internal links
@@ -88,7 +76,7 @@ $( document ).ready(function() {
     $("span.mlabel").addClass("label label-info");
 
     $("table.memberdecls").addClass("table");
-    $("[class^=memitem]").addClass("active");
+    //$("[class^=memitem]").addClass("active");
 
     $("div.ah").addClass("btn btn-default");
     $("span.mlabels").addClass("pull-right");
@@ -145,10 +133,19 @@ $( document ).ready(function() {
         t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
         return t.width;
     }
-    
+    /*
     $('div.dyncontent').find('img').each(function(){
-        if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
+        var w = $('#content>div.container').width();
+        
+        if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width()){
             $(this).css('width', '100%');
+            console.log("width" + w);
+        }
+    });
+    */
+    $('div.dyncontent').find('img').each(function(){
+        var currentSrc = $(this).attr("src");
+        $(this).attr("src", "doc/" + currentSrc);
     });
     
     $(".memitem").removeClass('memitem');

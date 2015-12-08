@@ -100,4 +100,4 @@ The method object is lightweight and can be simply copied around different locat
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref register_hello_world_page "Register Hello World")</div><div class="btn btn-default">[next](@ref register_properties_page "Register Properties")</div>
+<div class="btn btn-default doxy-button">[previous](@ref register_hello_world_page "Register Hello World")</div><div class="btn btn-default doxy-button">[next](@ref register_properties_page "Register Properties")</div>

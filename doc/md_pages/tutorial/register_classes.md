@@ -327,4 +327,4 @@ RTTR will try to cast the given object to the class type where the property was 
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_variant_page "Variant")</div><div class="btn btn-default">[next](@ref register_metadata_page "Register Metadata")</div>
+<div type="button" class="btn btn-default doxy-button">[previous](@ref register_variant_page "Variant")</div><div class="btn btn-default doxy-button">[next](@ref register_metadata_page "Register Metadata")</div>

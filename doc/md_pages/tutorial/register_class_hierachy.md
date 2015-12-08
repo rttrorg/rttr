@@ -48,4 +48,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref rttr_type_info_page "Query information from rttr::type")</div><div class="btn btn-default">[next](@ref rttr_type_rttr_cast_page "rttr_cast vs. dynamic_cast")</div>
+<div class="btn btn-default doxy-button">[previous](@ref rttr_type_info_page "Query information from rttr::type")</div><div class="btn btn-default doxy-button">[next](@ref rttr_type_rttr_cast_page "rttr_cast vs. dynamic_cast")</div>

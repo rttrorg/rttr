@@ -38,6 +38,7 @@ set(DOXYGEN_CONFIG_FILE_IN    "DoxyFile.cfg.in")
 set(DOXYGEN_LAYOUT_FILE_IN    "doxygen-customization/layout/DoxygenLayout.xml.in")
 set(DOXYGEN_EXCLUDE           "")
 set(DOXYGEN_STRIP_FROM_PATH   "${CMAKE_SOURCE_DIR}/src/rttr")
+set(DOXYGEN_CUSTOM_HTML_DIR   "rttr-${RTTR_VERSION_MAJOR}-${RTTR_VERSION_MINOR}-${RTTR_VERSION_PATCH}")
 set(DOXYGEN_PREDEFINED        "DOXYGEN \\
                                RTTR_INLINE= \\
                                RTTR_API= \\
@@ -61,6 +62,8 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
                               */src/test/* \\
                               */src/benchmark/*")
                               
+set(DOXYGEN_INDEX_FILE_IN   "index.html.in")
+                              
 #### LAYOUT VARIABLES
 set(DOXY_LAYOUT_MAIN_PAGE_TITLE "RTTR")
 set(DOXY_LAYOUT_PAGES_TITLE     "Tutorial")
@@ -80,8 +83,9 @@ if(NOT DOXYGEN_FOUND)
 endif()
 
 string ( REGEX REPLACE ".cfg.in$" ".cfg" DOXYGEN_CONFIG_FILE ${DOXYGEN_CONFIG_FILE_IN} )
+string ( REGEX REPLACE ".html.in$" ".html" DOXYGEN_INDEX_FILE ${DOXYGEN_INDEX_FILE_IN} )
 string ( REGEX REPLACE ".xml.in$" ".xml" DOXYGEN_LAYOUT_FILE ${DOXYGEN_LAYOUT_FILE_IN} )
-string(REGEX REPLACE "[^\\/]*/(.*)" "\\1" DOXYGEN_LAYOUT_FILE "${DOXYGEN_LAYOUT_FILE}")
+string ( REGEX REPLACE "[^\\/]*/(.*)" "\\1" DOXYGEN_LAYOUT_FILE "${DOXYGEN_LAYOUT_FILE}")
   
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN})
   message(WARNING "Doxygen configuration file not found - Documentation will not be generated!")
@@ -91,35 +95,63 @@ endif()
 # modify the doxygen file, i.e. substitute the variables with values
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_LAYOUT_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_LAYOUT_FILE})
-# copy our shortcut html file (this 'index.html' will call itself the 'index.html' from doxygen, but this file is hard to locat in the big doxygen output directory)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/index.html DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_INDEX_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE})
+# copy our shortcut html file (this 'index.html' will call itself the 'index.html' from doxygen, 
+# but this file is hard to locate in the big doxygen output directory)
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/index.html DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY})
 
 if (${CUSTOM_DOXYGEN_STYLE})
   #fonts
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/ptsans_regular_macroman DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html/fonts)
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/source_code_pro_regular DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html/fonts)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/ptsans_regular_macroman DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/fonts)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/source_code_pro_regular DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/fonts)
   
   
   #bootstrap
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/bootstrap-3.3.2/css/bootstrap.min.css DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html/bootstrap/css)
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/bootstrap-3.3.2/js/bootstrap.min.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html/bootstrap/js)
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/css/custom-bootstrap.css DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/bootstrap-3.3.2/css/bootstrap.min.css DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/bootstrap/css)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/bootstrap-3.3.2/js/bootstrap.min.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/bootstrap/js)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/css/custom-bootstrap.css DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
   #jquery
-  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/jquery-2.1.3/jquery.min.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
+  file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/3rd-party/jquery-2.1.3/jquery.min.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
   #the connection between the doxygen style and the bootstrap style
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/js/doxy-boot.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/img/favicon.ico DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/html)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/js/doxy-boot.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/img/favicon.ico DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
 endif()
+
+#########################################################################################
+
 add_custom_target(doc ALL 
                   COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE}"
                   WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
                   COMMENT "Building documentation...")
-         
-install(DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}/html" 
+                  
+install(DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}" 
         DESTINATION "${DOXYGEN_DOC_INSTALL_DIR}"
         PATTERN "*.*"
         PERMISSIONS OWNER_READ)
         
-install(FILES "${DOXYGEN_OUTPUT_DIRECTORY}/index.html" 
+install(FILES "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE}" 
         DESTINATION "${DOXYGEN_DOC_INSTALL_DIR}" 
         PERMISSIONS OWNER_READ)
+        
+#########################################################################################
+                  
+if (BUILD_WEBSITE_DOCU)
+    set(DOXYGEN_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/doc_website")
+    set(DOXYGEN_CUSTOM_HTML_FOOTER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/footer.html")
+    set(DOXYGEN_CUSTOM_HTML_HEADER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/header.html")
+    set(DOXYGEN_CUSTOM_HTML_STYLESHEET  "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/css/custom-doxygen.css")
+  
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE})
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_LAYOUT_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_LAYOUT_FILE})
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_INDEX_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE})
+  
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/css/custom-bootstrap.css DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/js/doxy-boot.js DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR})
+    
+    add_custom_target(doc_website ALL 
+                      COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE}"
+                      WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
+                      COMMENT "Building documentation...")
+endif()
+         
+#########################################################################################

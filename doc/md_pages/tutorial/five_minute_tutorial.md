@@ -282,4 +282,4 @@ However, in order to see all the possibilities of RTTR, it is recommend to go th
 
 <hr>
 
-<div class="btn btn-default">[back](@ref tutorial_page "Tutorial")</div>
+<div class="btn btn-default doxy-button">[back](@ref tutorial_page "Tutorial")</div>

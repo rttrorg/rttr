@@ -119,4 +119,5 @@ Summary
 
 <hr>
 
-<div class="btn btn-default" disabled="true">previous</div><div class="btn btn-default">[next](@ref rttr_type_info_page "Query information from rttr::type")</div>
+<div class="btn btn-default doxy-button" disabled="true">previous</div><div class="btn btn-default  doxy-button">[next](@ref rttr_type_info_page "Query information from rttr::type")</div>
+

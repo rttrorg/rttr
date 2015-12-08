@@ -52,6 +52,7 @@ option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries
 option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" TRUE)
+option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" FALSE)
 
 # one precompiled headers cannot be used for multipleninja targets
 # thats why we have to disable this option, when BUILD_STATIC or 

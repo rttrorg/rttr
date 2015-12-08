@@ -55,4 +55,4 @@ Summary
 
 <hr>
 
-<div class="btn btn-default">[previous](@ref rttr_type_get_page "Retrieving rttr::type objects")</div><div class="btn btn-default">[next](@ref rttr_type_class_hierachy_page "Using RTTR_ENABLE")</div>
+<div class="btn btn-default doxy-button">[previous](@ref rttr_type_get_page "Retrieving rttr::type objects")</div><div class="btn btn-default doxy-button">[next](@ref rttr_type_class_hierachy_page "Using RTTR_ENABLE")</div>

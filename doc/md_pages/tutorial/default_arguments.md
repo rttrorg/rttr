@@ -69,4 +69,4 @@ Every \ref method and \ref constructor can have default arguments.
 
 <hr>
 
-<div type="button" class="btn btn-default">[previous](@ref register_metadata_page "Register Metadata")</div><div class="btn btn-default">[next](@ref register_policies_page "Register Policies")</div>
+<div type="button" class="btn btn-default doxy-button">[previous](@ref register_metadata_page "Register Metadata")</div><div class="btn btn-default doxy-button">[next](@ref register_policies_page "Register Policies")</div>
