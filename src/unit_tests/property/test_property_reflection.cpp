@@ -83,7 +83,7 @@ RTTR_REGISTRATION
     using namespace rttr;
 
     registration::class_<property_test>("property_test")
-        .constructor<>()
+        .constructor<>() ( policy::ctor::as_raw_ptr )
         .property("p1",    &property_test::_p1)
         .property_readonly("p2",     &property_test::_p2)
         .property("p3",    &property_test::_p3)

@@ -104,7 +104,7 @@ template<typename Class_Type, typename acc_level, typename...Ctor_Args>
 class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : public registration::class_<Class_Type>
 {
     private:
-        using default_create_policy = detail::as_raw_pointer;
+        using default_create_policy = detail::as_object;
     
         template<typename Policy, typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>

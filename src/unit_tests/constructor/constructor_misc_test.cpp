@@ -53,12 +53,14 @@ RTTR_REGISTRATION
    registration::class_<ctor_misc_test>("ctor_misc_test")
         (
             meta_data(E_MetaData::SCRIPTABLE, true),
-            meta_data(E_MetaData::TOOL_TIP, "This is a type ToolTip.")
+            meta_data(E_MetaData::TOOL_TIP, "This is a type ToolTip."),
+            policy::ctor::as_raw_ptr
         )
         .constructor<>()
         (
             meta_data(E_MetaData::SCRIPTABLE, true),
-            meta_data(E_MetaData::TOOL_TIP, "This is a ToolTip.")
+            meta_data(E_MetaData::TOOL_TIP, "This is a ToolTip."),
+            policy::ctor::as_raw_ptr
         )
         .constructor<>()
         (

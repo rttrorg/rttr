@@ -72,7 +72,7 @@ bool method_test::method_7_called = false;
 RTTR_REGISTRATION
 {
     registration::class_<method_test>("method_test")
-        .constructor<>()
+        .constructor<>() (policy::ctor::as_raw_ptr)
         .method("method_1", &method_test::method_1)
         .method("method_2", &method_test::method_2)    
         .method("method_3", &method_test::method_3)

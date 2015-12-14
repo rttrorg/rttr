@@ -50,8 +50,8 @@ enum E_MetaData
 RTTR_REGISTRATION
 {
     registration::class_<enum_test>("enum_test")
-        .constructor<>()
-        .constructor<enum_test::E_Alignment, enum_test::E_Orientation>()
+        .constructor<>() (policy::ctor::as_raw_ptr)
+        .constructor<enum_test::E_Alignment, enum_test::E_Orientation>() (policy::ctor::as_raw_ptr)
         .enumeration<enum_test::E_Alignment>("enum_test::E_Alignment")
         (
             value("AlignLeft",    enum_test::E_Alignment::AlignLeft),

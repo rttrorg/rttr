@@ -64,11 +64,11 @@ struct ctor_invoke_test
 RTTR_REGISTRATION
 {
     registration::class_<ctor_invoke_test>("ctor_invoke_test")
-        .constructor<>()
-        .constructor<const ctor_invoke_test&>()
-        .constructor<int, double>()
+        .constructor<>() (policy::ctor::as_raw_ptr)
+        .constructor<const ctor_invoke_test&>() (policy::ctor::as_raw_ptr)
+        .constructor<int, double>() (policy::ctor::as_raw_ptr)
         .constructor(&ctor_invoke_test::create_object)
-        .constructor<int, int, int, int, int, int, const int* const>()
+        .constructor<int, int, int, int, int, int, const int* const>() (policy::ctor::as_raw_ptr)
         .constructor<>()
         (
             policy::ctor::as_object
