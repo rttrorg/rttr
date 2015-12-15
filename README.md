@@ -41,5 +41,4 @@ so it is free to use in your free or commercial projects.
 
 Get Started:
 ------------
-Take a look at the documentation: [http://rttr.org/doc/rttr-0-9-5/classes.html](http://rttr.org/doc/rttr-0-9-5/classes.html)
-or start with the tutorial: [http://rttr.org/doc/rttr-0-9-5/tutorial_page.html](http://rttr.org/doc/rttr-0-9-5/tutorial_page.html)
+Take a look at the [documentation](http://rttr.org/doc/rttr-0-9-5/classes.html) or start with the [tutorial](http://rttr.org/doc/rttr-0-9-5/tutorial_page.html).
