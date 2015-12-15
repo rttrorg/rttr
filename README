@@ -1,56 +1,45 @@
-/************************************************************************************
-*                                                                                   *
-*   Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     *
-*                                                                                   *
-*   This file is part of RTTR (Run Time Type Reflection)                            *
-*   License: MIT License                                                            *
-*                                                                                   *
-*   Permission is hereby granted, free of charge, to any person obtaining           *
-*   a copy of this software and associated documentation files (the "Software"),    *
-*   to deal in the Software without restriction, including without limitation       *
-*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
-*   and/or sell copies of the Software, and to permit persons to whom the           *
-*   Software is furnished to do so, subject to the following conditions:            *
-*                                                                                   *
-*   The above copyright notice and this permission notice shall be included in      *
-*   all copies or substantial portions of the Software.                             *
-*                                                                                   *
-*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
-*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
-*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
-*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
-*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
-*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
-*   SOFTWARE.                                                                       *
-*                                                                                   *
-*************************************************************************************/
+RTTR
+====
 
-Build instruction for RTTR with Windows and Visual Studio 2013 and above:
-=========================================================================
-1. Set environment variables in command shell:
-set CMAKE_ROOT = <Your path to cmake directory> - REQUIRED
+RTTR stands for Run Time Type Reflection. 
+It describes the ability of a computer program to introspect and modify an object at runtime. It is also the name of the library itself, which is written in C++ and released as open source library.
+You can find more information on: [www.rttr.org](http://www.rttr.org)
 
-set DOXYGEN_ROOT = <Your path to cmake directory> - OPTIONAL otherwise no documentation will be generated
+----------
 
-Start CMake:
-e.g.
-cmake -G "Visual Studio 12 2013" <Absolute Path to RTTR source code directory>
-or with make files:
-cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" <Absolute Path to RTTR source code directory>
-// compile with
-nmake install
+Features
+---------
+- reflect constructors, methods, data member or enums
+- classes; with single-, multiple- and virtual-inheritance
+- constructors (arbitrary argument count)
+- methods (virtual, abstract, overloaded, arbitrary argument count)
+- arrays (incl. raw-arrays; arbitrary dimension count)
+- ability to invoke properties and methods of classes from any arbitrary class level
+- no header pollution; the reflection information is created in the cpp file to minimize compile time when modifying the data
+- working with custom types without the need of having the declaration of the type available at compile time (useful for plugins)
+- possibility to add additional metadata to all reflection objects
+- possibility to add default arguments to methods or constructors
+- adjust registration behaviour through policies
+- minimal macro usage
+- no additional 3rd party dependencies are needed
+- no rtti required; contains a faster and across shared libraries working replacement
+- no exceptions (this feature come with cost and is also regularly disabled on consoles)
+- no external compiler or tool needed, only standard ISO C++11
+
+Portability
+-----------
+Tested and compiled with:
+- Microsoft Visual Studio 2013
+- GCC 4.8.1
+- MinGW 4.8.1
+
+License:
+--------
+RTTR is released under the terms of the MIT license,
+so it is free to use in your free or commercial projects.
 
 
-
-Build instruction for RTTR with Linux and g++:
-==============================================
-1. Set environment variables in your shell:
-CMAKE_ROOT => <Your path to cmake directory> - REQUIRED
-
-DOXYGEN_ROOT => <Your path to cmake directory> - OPTIONAL otherwise no documentation generated
-
-Start CMake:
-e.g.
-cmake -DCMAKE_BUILD_TYPE=Release <Absolute Path to RTTR source code directory>
-// compile with:
-make install
+Get Started:
+------------
+Take a look at the documentation: [http://rttr.org/doc/rttr-0-9-5/classes.html](http://rttr.org/doc/rttr-0-9-5/classes.html)
+or start with the tutorial: [http://rttr.org/doc/rttr-0-9-5/tutorial_page.html](http://rttr.org/doc/rttr-0-9-5/tutorial_page.html)
