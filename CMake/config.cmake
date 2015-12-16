@@ -37,7 +37,7 @@ message("Project version: ${RTTR_VERSION_STR}")
 
 # files
 set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
-set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.md")
+set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
 
 # dirs where the binaries should be placed, installed
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
@@ -119,6 +119,6 @@ install(
     Devel
 )
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "${CMAKE_CURRENT_SOURCE_DIR}/README"
+install(FILES "${LICENSE_FILE}" "${README_FILE}"
         DESTINATION "."
         PERMISSIONS OWNER_READ)
