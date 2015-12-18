@@ -71,8 +71,8 @@ set(HEADER_FILES access_levels.h
                  detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
                  detail/impl/wrapper_mapper_impl.h
-                 detail/meta_data/meta_data.h
-                 detail/meta_data/meta_data_handler.h
+                 detail/metadata/metadata.h
+                 detail/metadata/metadata_handler.h
                  detail/method/method_accessor.h
                  detail/method/method_invoker.h
                  detail/method/method_wrapper.h
@@ -145,7 +145,7 @@ set(SOURCE_FILES constructor.cpp
                  detail/destructor/destructor_wrapper_base.cpp
                  detail/enumeration/enumeration_helper.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp
-                 detail/meta_data/meta_data_handler.cpp
+                 detail/metadata/metadata_handler.cpp
                  detail/method/method_wrapper_base.cpp
                  detail/parameter_info/parameter_info_wrapper_base.cpp
                  detail/property/property_wrapper_base.cpp

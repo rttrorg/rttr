@@ -34,7 +34,7 @@
 #include "rttr/detail/destructor/destructor_wrapper.h"
 #include "rttr/detail/enumeration/enumeration_wrapper.h"
 #include "rttr/detail/enumeration/enum_data.h"
-#include "rttr/detail/meta_data/meta_data.h"
+#include "rttr/detail/metadata/metadata.h"
 #include "rttr/detail/method/method_wrapper.h"
 #include "rttr/detail/parameter_info/parameter_infos.h"
 #include "rttr/detail/property/property_wrapper.h"
@@ -58,19 +58,19 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename... Args>
-static RTTR_INLINE std::vector<meta_data> get_meta_data(Args&&... arg)
+static RTTR_INLINE std::vector<metadata> get_metadata(Args&&... arg)
 {
-    return forward_to_vector<meta_data>(std::forward<Args>(arg)...);
+    return forward_to_vector<metadata>(std::forward<Args>(arg)...);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_INLINE void store_meta_data(T& obj, std::vector<meta_data> data)
+static RTTR_INLINE void store_metadata(T& obj, std::vector<metadata> data)
 {
     for (auto& item : data)
     {
-        obj->add_meta_data(std::move(item));
+        obj->add_metadata(std::move(item));
     }
 }
 
@@ -189,7 +189,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
             m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_default_args<type_list<Ctor_Args...>>(std::forward<Args>(args)...)),
                                                                    std::move(create_param_infos<type_list<Ctor_Args...>>(std::forward<Args>(args)...)));
             
-            store_meta_data(m_ctor, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(m_ctor, get_metadata(std::forward<Args>(args)...));
             
             return registration::class_<Class_Type>(m_reg_exec);
         }
@@ -271,7 +271,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
                                                    std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
                                                    std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)));
 
-            store_meta_data(ctor, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(ctor, get_metadata(std::forward<Args>(args)...));
            
             return std::move(ctor);
         }
@@ -361,7 +361,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
             auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void, 
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy>>(acc);
-            store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(prop, get_metadata(std::forward<Args>(args)...));
             return std::move(prop);
         }
 
@@ -447,7 +447,7 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy>>(getter, setter);
 
-            store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(prop, get_metadata(std::forward<Args>(args)...));
             return std::move(prop);
         }
 
@@ -530,7 +530,7 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, default_setter_policy>>(acc);
 
-            store_meta_data(prop, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(prop, get_metadata(std::forward<Args>(args)...));
 
             return std::move(prop);
         }
@@ -621,7 +621,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                                                       std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
                                                       std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)));
 
-            store_meta_data(meth, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(meth, get_metadata(std::forward<Args>(args)...));
             return std::move(meth);
         }
 
@@ -708,7 +708,7 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
             static_assert(enum_count == global_enum_count, "Invalid 'value' pair for enumeration type provided, please specify values only for enums of type 'Enum_Type'.");
             auto enum_wrapper = detail::make_unique<enumeration_wrapper<E_Type, enum_count>>(get_enum_values<E_Type>(std::forward<Args>(args)...));
 
-            store_meta_data(enum_wrapper, get_meta_data(std::forward<Args>(args)...));
+            store_metadata(enum_wrapper, get_metadata(std::forward<Args>(args)...));
             return std::move(enum_wrapper);
         }
 

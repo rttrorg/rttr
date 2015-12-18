@@ -148,7 +148,7 @@ class RTTR_API constructor
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_meta_data(const variant& key) const;
+        variant get_metadata(const variant& key) const;
 
         /*!
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().

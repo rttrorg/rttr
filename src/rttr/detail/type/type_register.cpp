@@ -33,7 +33,7 @@
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 #include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/detail/property/property_wrapper.h"
-#include "rttr/detail/meta_data/meta_data.h"
+#include "rttr/detail/metadata/metadata.h"
 
 using namespace std;
 
@@ -86,9 +86,9 @@ void type_register::custom_name(const type& t, std::string custom_name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::meta_data(const type& t, std::vector< ::rttr::detail::meta_data > data)
+void type_register::metadata(const type& t, std::vector< ::rttr::detail::metadata > data)
 {
-    type_database::instance().register_meta_data(t, move(data));
+    type_database::instance().register_metadata(t, move(data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

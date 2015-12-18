@@ -58,13 +58,13 @@ RTTR_REGISTRATION
             value("AlignRight",   enum_test::E_Alignment::AlignRight),
             value("AlignHCenter", enum_test::E_Alignment::AlignHCenter),
             value("AlignJustify", enum_test::E_Alignment::AlignJustify),
-            meta_data(E_MetaData::SCRIPTABLE, true)
+            metadata(E_MetaData::SCRIPTABLE, true)
         )
         .enumeration<enum_test::E_Orientation>("enum_test::E_Orientation")
         (
             value("Horizontal", enum_test::E_Orientation::Horizontal),
             value("Vertical",   enum_test::E_Orientation::Vertical),
-            meta_data(E_MetaData::SCRIPTABLE, false)
+            metadata(E_MetaData::SCRIPTABLE, false)
         )
         .property("alignment",   &enum_test::_alignment)
         .property("orientation", &enum_test::_orientation);
@@ -78,7 +78,7 @@ RTTR_REGISTRATION
         value("Friday",    Friday),
         value("Saturday",  Saturday),
         value("Sunday",    Sunday),
-        meta_data("Global_Tag", true)
+        metadata("Global_Tag", true)
     );
 
 }
@@ -180,19 +180,19 @@ TEST_CASE("Test enumeration meta data", "[enumeration]")
 {
     enumeration enum_align = type::get<enum_test::E_Alignment>().get_enumeration();
 
-    variant value = enum_align.get_meta_data(E_MetaData::SCRIPTABLE);
+    variant value = enum_align.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
     
     // not scriptable
     enumeration enum_orient = type::get<enum_test::E_Orientation>().get_enumeration();
-    value = enum_orient.get_meta_data(E_MetaData::SCRIPTABLE);
+    value = enum_orient.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);
 
     // integer meta data
     enumeration enum_day = type::get<E_DayOfWeek>().get_enumeration();
-    value = enum_day.get_meta_data("Global_Tag");
+    value = enum_day.get_metadata("Global_Tag");
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
 }

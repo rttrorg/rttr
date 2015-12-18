@@ -196,7 +196,7 @@ class RTTR_API method
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_meta_data(const variant& key) const;
+        variant get_metadata(const variant& key) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object.

@@ -372,9 +372,9 @@ std::vector<type> type::get_types()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_meta_data(const variant& key) const
+variant type::get_metadata(const variant& key) const
 {
-    return detail::type_database::instance().get_meta_data(*this, key);
+    return detail::type_database::instance().get_metadata(*this, key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -25,56 +25,48 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_META_DATA_H_
-#define RTTR_META_DATA_H_
-
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/variant.h"
+#include "rttr/detail/metadata/metadata_handler.h"
+#include "rttr/detail/type/type_database_p.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-/*!
- * This class holds meta data.
- * 
- */
-class RTTR_API meta_data
+static uint32 get_global_index()
 {
-    public:
-        meta_data(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
-        meta_data(const meta_data& other) : m_key(other.m_key), m_value(other.m_value) {}
-        meta_data(meta_data&& other) : m_key(std::move(other.m_key)), m_value(std::move(other.m_value)) {}
-        meta_data& operator=(const meta_data& other) { m_key = other.m_key; m_value = other.m_value; return *this; }
+    static uint32 item_count;
+    return item_count++;
+}
 
-        variant get_key() const      { return m_key; }
-        variant get_value() const    { return m_value; }
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        struct order_by_key
-        {
-            RTTR_INLINE bool operator () ( const meta_data& _left, const meta_data& _right )  const
-            {
-                return _left.m_key < _right.m_key;
-            }
-            RTTR_INLINE bool operator () ( const variant& _left, const meta_data& _right ) const
-            {
-                return _left < _right.m_key;
-            }
-            RTTR_INLINE bool operator () ( const meta_data& _left, const variant& _right ) const
-            {
-                return _left.m_key < _right;
-            }
-        };
+metadata_handler::metadata_handler()
+:   m_index(get_global_index())
+{
+}
 
-    private:
-        variant m_key;
-        variant m_value;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
-using meta_data_index = uint32;
+metadata_handler::~metadata_handler()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void metadata_handler::add_metadata(detail::metadata data) const 
+{
+    type_database::instance().add_metadata(m_index, std::move(data));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant metadata_handler::get_metadata(const variant& key) const
+{
+    return type_database::instance().get_metadata(m_index, key);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#endif // RTTR_META_DATA_H_

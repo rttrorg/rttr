@@ -25,48 +25,38 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/meta_data/meta_data_handler.h"
-#include "rttr/detail/type/type_database_p.h"
+#ifndef RTTR_METADATA_HANDLER_H_
+#define RTTR_METADATA_HANDLER_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/metadata/metadata.h"
+#include "rttr/variant.h"
 
 namespace rttr
 {
 namespace detail
 {
 
-static uint32 get_global_index()
+/*!
+ * This class holds an index to possible meta data.
+ * This can be also a name or the declaring type of a property or method.
+ */
+class RTTR_API metadata_handler
 {
-    static uint32 item_count;
-    return item_count++;
-}
+    public:
+        metadata_handler();
+        virtual ~metadata_handler();
 
-/////////////////////////////////////////////////////////////////////////////////////////
+        void add_metadata(detail::metadata data) const;
+        variant get_metadata(const variant& key) const;
 
-meta_data_handler::meta_data_handler()
-:   m_index(get_global_index())
-{
-}
+        RTTR_INLINE uint32 get_meta_index() const { return m_index; }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-meta_data_handler::~meta_data_handler()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void meta_data_handler::add_meta_data(detail::meta_data data) const 
-{
-    type_database::instance().add_meta_data(m_index, std::move(data));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant meta_data_handler::get_meta_data(const variant& key) const
-{
-    return type_database::instance().get_meta_data(m_index, key);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+    private:
+        uint32 m_index;
+};
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_METADATA_HANDLER_H_

@@ -129,10 +129,10 @@ string method::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::get_meta_data(const variant& key) const
+variant method::get_metadata(const variant& key) const
 {
     if (is_valid())
-        return m_wrapper->get_meta_data(key);
+        return m_wrapper->get_metadata(key);
     else
         return variant();
 }

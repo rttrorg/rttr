@@ -42,7 +42,7 @@ namespace rttr
 
 namespace detail
 {
-    class meta_data;
+    class metadata;
     template<typename Enum_Type>
     class enum_data;
     struct public_access    {};
@@ -101,18 +101,18 @@ namespace detail
  *          value("TS_PARENT", TS_PARENT),
  *          value("TS_WORLD", TS_WORLD),
  *
- *          meta_data("GUI_DESCR", "This enum describes the transformation.")
+ *          metadata("GUI_DESCR", "This enum describes the transformation.")
  *      )
  *      .property("pos", &Mesh::getPosition, &Mesh::setPosition)
  *      (
- *          meta_data("GUI_LABEL", "Position."),
- *          meta_data("GUI_DESCR", "The position of the mesh."),
+ *          metadata("GUI_LABEL", "Position."),
+ *          metadata("GUI_DESCR", "The position of the mesh."),
  *      )
  *      .method("setDirection", &Mesh::setDirection);
  *  }
  * \endcode
  *
- * \remark See the usage of `()` operator to add additional \ref rttr::meta_data(variant, variant) "meta data", \ref policy "policies" or
+ * \remark See the usage of `()` operator to add additional \ref rttr::metadata(variant, variant) "meta data", \ref policy "policies" or
  *         \ref rttr::value "enum values".
  *
  */
@@ -610,11 +610,11 @@ auto select_non_const(ReturnType(ClassType::*func)(Args...)) -> decltype(func)
 }
 
 /*!
- * The \ref meta_data function can be used to add additional meta data information during the 
+ * The \ref metadata function can be used to add additional meta data information during the 
  * registration process of reflection information. Use it in the `()` operator of the returned 
  * \ref bind object.
  */
-RTTR_INLINE detail::meta_data meta_data(variant key, variant value);
+RTTR_INLINE detail::metadata metadata(variant key, variant value);
 
 
 /*!
@@ -746,7 +746,7 @@ RTTR_REGISTRATION
  * when a *constructor*, *property*, *method* or *enumeration* is registered.
  * 
  * Additionally, the class has implemented the bracket operator `()` as variadic function template.
- * Use it to forward \ref rttr::meta_data() "meta_data()" or \ref policy "policies" to the previous registered item.
+ * Use it to forward \ref rttr::metadata() "metadata()" or \ref policy "policies" to the previous registered item.
  *
  * \remark Do not instantiate this class directly!
 */

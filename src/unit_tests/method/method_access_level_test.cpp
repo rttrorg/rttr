@@ -46,22 +46,22 @@ RTTR_REGISTRATION
         .method("method_2", &method_access_level_test::method_1, registration::private_access)
         .method("method_3", &method_access_level_test::method_2, registration::protected_access)
         .method("method_4", &method_access_level_test::method_3, registration::public_access)
-        // method with meta_data
+        // method with metadata
         .method("method_5", &method_access_level_test::method_1) // default with custom data, should be "public_access"
         (
-            meta_data("23", 43)
+            metadata("23", 43)
         )
         .method("method_6", &method_access_level_test::method_2, registration::private_access)
         (
-            meta_data("23", 43)
+            metadata("23", 43)
         )
         .method("method_7", &method_access_level_test::method_3, registration::protected_access)
         (
-            meta_data("23", 43)
+            metadata("23", 43)
         )
         .method("method_8", &method_access_level_test::method_3, registration::public_access)
         (
-            meta_data("23", 43)
+            metadata("23", 43)
         )
         ;
 }

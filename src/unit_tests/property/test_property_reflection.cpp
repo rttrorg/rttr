@@ -90,17 +90,17 @@ RTTR_REGISTRATION
         .property_readonly("p4",     &property_test::_p4)
         .property("p5",    &property_test::_p5)
         (
-            meta_data(E_MetaData::SCRIPTABLE, true), 
-            meta_data(E_MetaData::TOOL_TIP, "This is property 5.")
+            metadata(E_MetaData::SCRIPTABLE, true), 
+            metadata(E_MetaData::TOOL_TIP, "This is property 5.")
         )
         .property_readonly("p6",     &property_test::_p6)
         (
-            meta_data(E_MetaData::SCRIPTABLE, false)
+            metadata(E_MetaData::SCRIPTABLE, false)
         )
         .property("p7",    &property_test::get_p7, &property_test::set_p7)
         .property("p8",    &singleton_property)
         (
-            meta_data("Global_Tag", true)
+            metadata("Global_Tag", true)
         )
         .property_readonly("p9",     &get_propert_p9)
         .property_readonly("p10",    std::function<int()>([](){ return 45;}))
@@ -724,31 +724,31 @@ TEST_CASE("Test get_base_classes", "[property]")
 TEST_CASE("Test property meta data", "[property]") 
 {
     property p5 = type::get<property_test>().get_property("p5");
-    variant value = p5.get_meta_data(E_MetaData::SCRIPTABLE);
+    variant value = p5.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
     
-    value = p5.get_meta_data(E_MetaData::TOOL_TIP);
+    value = p5.get_metadata(E_MetaData::TOOL_TIP);
     REQUIRE(value.is_type<std::string>() == true);
     REQUIRE(value.get_value<std::string>() == "This is property 5.");
 
     // no meta data
     property p4 = type::get<property_test>().get_property("p4");
     REQUIRE(p4.is_valid() == true);
-    REQUIRE(p4.get_meta_data(E_MetaData::SCRIPTABLE).is_valid() == false);
+    REQUIRE(p4.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == false);
 
     // not scriptable property
     property p6 = type::get<property_test>().get_property("p6");
     REQUIRE(p6.is_valid() == true);
-    REQUIRE(p6.get_meta_data(E_MetaData::SCRIPTABLE).is_valid() == true);
-    REQUIRE(p6.get_meta_data(E_MetaData::SCRIPTABLE).get_value<bool>() == false);
+    REQUIRE(p6.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == true);
+    REQUIRE(p6.get_metadata(E_MetaData::SCRIPTABLE).get_value<bool>() == false);
 
 
     // string metdadata
     property p8 = type::get<property_test>().get_property("p8");
     REQUIRE(bool(p8) == true);
 
-    value = p8.get_meta_data("Global_Tag");
+    value = p8.get_metadata("Global_Tag");
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
 

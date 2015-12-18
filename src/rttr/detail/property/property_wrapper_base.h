@@ -29,7 +29,7 @@
 #define RTTR_PROPERTY_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/access_levels.h"
@@ -49,7 +49,7 @@ namespace detail
  * It provide the basic mechanism for getting all meta data of a property,
  * but it also define a general interface to set/get properties via string: toString and fromString.
  */
-class RTTR_API property_wrapper_base : public meta_data_handler
+class RTTR_API property_wrapper_base : public metadata_handler
 {
     public:
         property_wrapper_base();

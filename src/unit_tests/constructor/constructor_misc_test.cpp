@@ -52,14 +52,14 @@ RTTR_REGISTRATION
 {
    registration::class_<ctor_misc_test>("ctor_misc_test")
         (
-            meta_data(E_MetaData::SCRIPTABLE, true),
-            meta_data(E_MetaData::TOOL_TIP, "This is a type ToolTip."),
+            metadata(E_MetaData::SCRIPTABLE, true),
+            metadata(E_MetaData::TOOL_TIP, "This is a type ToolTip."),
             policy::ctor::as_raw_ptr
         )
         .constructor<>()
         (
-            meta_data(E_MetaData::SCRIPTABLE, true),
-            meta_data(E_MetaData::TOOL_TIP, "This is a ToolTip."),
+            metadata(E_MetaData::SCRIPTABLE, true),
+            metadata(E_MetaData::TOOL_TIP, "This is a ToolTip."),
             policy::ctor::as_raw_ptr
         )
         .constructor<>()
@@ -72,8 +72,8 @@ RTTR_REGISTRATION
         )
         .constructor(&ctor_misc_test::create_object)
         (
-            meta_data(E_MetaData::SCRIPTABLE, false),
-            meta_data(E_MetaData::TOOL_TIP, "This is another ToolTip.")
+            metadata(E_MetaData::SCRIPTABLE, false),
+            metadata(E_MetaData::TOOL_TIP, "This is another ToolTip.")
         );
 }
 
@@ -124,16 +124,16 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_meta_data", "[constructor]") 
+TEST_CASE("constructor - get_metadata", "[constructor]") 
 {
     SECTION("default ctor")
     {
         constructor ctor = type::get<ctor_misc_test>().get_constructor();
-        variant value = ctor.get_meta_data(E_MetaData::SCRIPTABLE);
+        variant value = ctor.get_metadata(E_MetaData::SCRIPTABLE);
         REQUIRE(value.is_type<bool>() == true);
         CHECK(value.get_value<bool>() == true);
 
-        value = ctor.get_meta_data(E_MetaData::TOOL_TIP);
+        value = ctor.get_metadata(E_MetaData::TOOL_TIP);
         REQUIRE(value.is_type<std::string>() == true);
         CHECK(value.get_value<std::string>() == "This is a ToolTip.");
     }
@@ -141,11 +141,11 @@ TEST_CASE("constructor - get_meta_data", "[constructor]")
     SECTION("function as ctor")
     {
         constructor ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
-        variant value = ctor.get_meta_data(E_MetaData::SCRIPTABLE);
+        variant value = ctor.get_metadata(E_MetaData::SCRIPTABLE);
         REQUIRE(value.is_type<bool>() == true);
         CHECK(value.get_value<bool>() == false);
 
-        value = ctor.get_meta_data(E_MetaData::TOOL_TIP);
+        value = ctor.get_metadata(E_MetaData::TOOL_TIP);
         REQUIRE(value.is_type<std::string>() == true);
         CHECK(value.get_value<std::string>() == "This is another ToolTip.");
     }
@@ -153,13 +153,13 @@ TEST_CASE("constructor - get_meta_data", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_meta_data - type", "[constructor]") 
+TEST_CASE("constructor - get_metadata - type", "[constructor]") 
 {
-    variant var = type::get<ctor_misc_test>().get_meta_data(E_MetaData::SCRIPTABLE);
+    variant var = type::get<ctor_misc_test>().get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(var.is_type<bool>() == true);
     CHECK(var.get_value<bool>() == true);
 
-    var = type::get<ctor_misc_test>().get_meta_data(E_MetaData::TOOL_TIP);
+    var = type::get<ctor_misc_test>().get_metadata(E_MetaData::TOOL_TIP);
     REQUIRE(var.is_type<std::string>() == true);
     CHECK(var.get_value<std::string>() == "This is a type ToolTip.");
 }

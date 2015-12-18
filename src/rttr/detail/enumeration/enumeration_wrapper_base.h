@@ -29,7 +29,7 @@
 #define RTTR_ENUMERATION_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/variant.h"
 #include "rttr/type.h"
 
@@ -50,7 +50,7 @@ namespace detail
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API enumeration_wrapper_base : public meta_data_handler
+class RTTR_API enumeration_wrapper_base : public metadata_handler
 {
     public:
         enumeration_wrapper_base();

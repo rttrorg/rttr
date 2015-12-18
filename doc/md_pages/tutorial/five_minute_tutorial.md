@@ -62,7 +62,7 @@ RTTR_REGISTRATION
         )
         .property("name", &node::get_name, &node::set_name)
         (
-            meta_data("TOOL_TIP", "Set the name of node.")  // stores meta_data associated with this property
+            metadata("TOOL_TIP", "Set the name of node.")  // stores metadata associated with this property
         )
         // register directly a member object pointer; mark it as 'private'
         .property("parent", &ns_3d::node::m_parent, registration::private_access)
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     prop.set_value(var, std::string("A New Name"));
     std::cout << prop.get_value(var).to_string() << "\n";
     // retrieve the stored meta data of the property
-    std::cout << "MetaData TOOL_TIP: " << prop.get_meta_data("TOOL_TIP").to_string() << "\n";
+    std::cout << "MetaData TOOL_TIP: " << prop.get_metadata("TOOL_TIP").to_string() << "\n";
 
     // invoke a method
     method meth = t.get_method("set_visible");

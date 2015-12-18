@@ -29,7 +29,7 @@
 #define RTTR_TYPE_DATABASE_P_H_
 
 #include "rttr/type.h"
-#include "rttr/detail/meta_data/meta_data.h"
+#include "rttr/detail/metadata/metadata.h"
 
 #include <vector>
 #include <string>
@@ -68,7 +68,7 @@ class RTTR_LOCAL type_database
         void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
         void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
         void register_custom_name(const type& t, std::string );
-        void register_meta_data( const type& t, std::vector<meta_data> data);
+        void register_metadata( const type& t, std::vector<metadata> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
@@ -152,7 +152,7 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        variant get_meta_data(const type& t, const variant& key) const;
+        variant get_metadata(const type& t, const variant& key) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,14 +160,14 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        void add_meta_data(meta_data_index index, meta_data data);
-        variant get_meta_data(meta_data_index index, const variant& key) const;
+        void add_metadata(metadata_index index, metadata data);
+        variant get_metadata(metadata_index index, const variant& key) const;
 
-        void set_item_name(meta_data_index index, const char* name);
-        const char* get_item_name(meta_data_index index);
+        void set_item_name(metadata_index index, const char* name);
+        const char* get_item_name(metadata_index index);
 
-        void set_declaring_item_type(meta_data_index index, type declaring_type);
-        type get_declaring_item_type(meta_data_index index) const;
+        void set_declaring_item_type(metadata_index index, type declaring_type);
+        type get_declaring_item_type(metadata_index index) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
         
@@ -179,8 +179,8 @@ class RTTR_LOCAL type_database
         //! Returns true, when the name was already registered
         bool register_name(const char* name, const type& array_raw_type, uint16& id);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
-        std::vector<meta_data>* get_meta_data_list(const type& t) const;
-        variant get_meta_data(const variant& key, const std::vector<meta_data>& data) const;
+        std::vector<metadata>* get_metadata_list(const type& t) const;
+        variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
         using hash_type = std::size_t;
         RTTR_INLINE static hash_type generate_hash(const std::string& text) { return generate_hash(text.c_str()); }
@@ -387,8 +387,8 @@ class RTTR_LOCAL type_database
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
         std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
-        std::vector<type_data<std::vector<meta_data>>>              m_meta_data_type_list;
-        std::vector<std::vector<meta_data>>                         m_meta_data_item_list;
+        std::vector<type_data<std::vector<metadata>>>              m_metadata_type_list;
+        std::vector<std::vector<metadata>>                         m_metadata_item_list;
         std::vector<const char*>                                    m_name_item_list;
         std::vector<type>                                           m_declaring_type_item_list;
 };

@@ -247,7 +247,7 @@ class RTTR_API property
          *
          * \return A variant object, containing arbitrary data.
          */
-        variant get_meta_data(const variant& key) const;
+        variant get_metadata(const variant& key) const;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.

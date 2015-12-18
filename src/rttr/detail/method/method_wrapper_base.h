@@ -29,7 +29,7 @@
 #define RTTR_METHOD_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data_handler.h"
+#include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/parameter_info.h"
@@ -54,7 +54,7 @@ namespace detail
  * This is the base class for all methods.
  * You can invoke the method via method_wrapper_base::invoke.
  */
-class RTTR_API method_wrapper_base : public meta_data_handler
+class RTTR_API method_wrapper_base : public metadata_handler
 {
     public:
         method_wrapper_base();

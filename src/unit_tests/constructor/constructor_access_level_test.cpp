@@ -42,7 +42,7 @@ struct ctor_access_level_test
         static ctor_access_level_test create_object_3(std::string, int) { return {}; }
         static ctor_access_level_test create_object_4(std::string, bool) { return {}; }
 
-        // ctors which gets meta_data
+        // ctors which gets metadata
         static ctor_access_level_test create_object_5(std::size_t) { return {}; }
         static ctor_access_level_test create_object_6(std::size_t, float) { return {}; }
         static ctor_access_level_test create_object_7(std::size_t, int) { return {}; }
@@ -67,18 +67,18 @@ RTTR_REGISTRATION
         .constructor<bool>(registration::private_access)
         .constructor<float>(registration::public_access)
         /////////////////////////////////////////////////////////////////////////////////
-        // native ctor with meta_data
+        // native ctor with metadata
         .constructor<int, int>(registration::protected_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .constructor<bool, bool>(registration::private_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .constructor<float, float>(registration::public_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         /////////////////////////////////////////////////////////////////////////////////
         // ctor via function register
@@ -87,22 +87,22 @@ RTTR_REGISTRATION
         .constructor(&ctor_access_level_test::create_object_3, registration::private_access)
         .constructor(&ctor_access_level_test::create_object_4, registration::public_access)
         /////////////////////////////////////////////////////////////////////////////////
-        // ctor via function register, with meta_data
+        // ctor via function register, with metadata
         .constructor(&ctor_access_level_test::create_object_5) // default, should be "public_access"
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .constructor(&ctor_access_level_test::create_object_6, registration::protected_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .constructor(&ctor_access_level_test::create_object_7, registration::private_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .constructor(&ctor_access_level_test::create_object_8, registration::public_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         ;
 }
@@ -143,7 +143,7 @@ TEST_CASE("constructor - access_levels test - via function", "[constructor]")
     CHECK(t.get_constructor({type::get<std::string>(), type::get<int>()}).get_access_level()    == access_levels::private_access);
     CHECK(t.get_constructor({type::get<std::string>(), type::get<bool>()}).get_access_level()   == access_levels::public_access);
 
-    // with meta_data
+    // with metadata
     // has to be checked, because get_access_level() default return value is public_access
     CHECK(t.get_constructor({type::get<std::size_t>()}).is_valid() == true);
     CHECK(t.get_constructor({type::get<std::size_t>()}).get_access_level() == access_levels::public_access);

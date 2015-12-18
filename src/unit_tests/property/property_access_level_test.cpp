@@ -64,19 +64,19 @@ RTTR_REGISTRATION
         .property("val_4", &prop_access_level_test::value_4, registration::public_access)
         .property("val_5", &prop_access_level_test::value_5) // default, should be "public_access"
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("val_6", &prop_access_level_test::value_6, registration::protected_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("val_7", &prop_access_level_test::value_7, registration::private_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("val_8", &prop_access_level_test::value_8, registration::public_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         /////////////////////////////////////////////////////////////////////////////////
         // property with getter/setter function
@@ -86,19 +86,19 @@ RTTR_REGISTRATION
         .property("prop_func_4", &prop_access_level_test::get_value_2, &prop_access_level_test::set_value_2, registration::public_access)
         .property("prop_func_5", &prop_access_level_test::get_value_2, &prop_access_level_test::set_value_2) // default, should be "public_access"
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("prop_func_6", &prop_access_level_test::get_value_2, &prop_access_level_test::set_value_2, registration::protected_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("prop_func_7", &prop_access_level_test::get_value_2, &prop_access_level_test::set_value_2, registration::private_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property("prop_func_8", &prop_access_level_test::get_value_2, &prop_access_level_test::set_value_2, registration::public_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         /////////////////////////////////////////////////////////////////////////////////
         // property_readonly
@@ -108,19 +108,19 @@ RTTR_REGISTRATION
         .property_readonly("const_val_4", &prop_access_level_test::get_value_1, registration::public_access)
         .property_readonly("const_val_5", &prop_access_level_test::get_value_1) // default, should be "public_access"
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property_readonly("const_val_6", &prop_access_level_test::get_value_1, registration::protected_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property_readonly("const_val_7", &prop_access_level_test::get_value_1, registration::private_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
         .property_readonly("const_val_8", &prop_access_level_test::get_value_1, registration::public_access)
         (
-            meta_data(23, 42)
+            metadata(23, 42)
         )
        ;
 }

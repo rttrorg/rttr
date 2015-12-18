@@ -53,9 +53,9 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE detail::meta_data meta_data(variant key, variant value)
+RTTR_INLINE detail::metadata metadata(variant key, variant value)
 {
-    return detail::meta_data{std::move(key), std::move(value)}; 
+    return detail::metadata{std::move(key), std::move(value)}; 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +122,8 @@ template<typename...Args>
 registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(Args&&...args)
 {
     using namespace detail;
-    auto data = get_meta_data(std::forward<Args>(args)...);
-    type_register::meta_data(type::get<Class_Type>(), std::move(data));
+    auto data = get_metadata(std::forward<Args>(args)...);
+    type_register::metadata(type::get<Class_Type>(), std::move(data));
     return *this;
 }
 

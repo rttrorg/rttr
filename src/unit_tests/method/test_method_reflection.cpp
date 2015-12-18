@@ -90,12 +90,12 @@ RTTR_REGISTRATION
         .method("method_7", &method_test::method_7)
         .method("method_8", &method_test::method_8)
         (
-            meta_data(E_MetaData::SCRIPTABLE, true),
-            meta_data("TAG",  42)
+            metadata(E_MetaData::SCRIPTABLE, true),
+            metadata("TAG",  42)
         )
         .method("method_9", &method_test::method_9)
         (
-            meta_data(E_MetaData::SCRIPTABLE, false)
+            metadata(E_MetaData::SCRIPTABLE, false)
         )
         .method("method_10", std::function<int(double, bool)>([](double, bool)->int{ return 42;}))
         .method("method_raw_array", &method_test::method_raw_array)
@@ -486,22 +486,22 @@ TEST_CASE("method - invoke with nullptr", "[method]")
 TEST_CASE("Test method meta data", "[method]") 
 {
     method m8 = type::get<method_test_final>().get_method("method_8");
-    variant value = m8.get_meta_data(E_MetaData::SCRIPTABLE);
+    variant value = m8.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
     // string meta data
-    value = m8.get_meta_data("TAG");
+    value = m8.get_metadata("TAG");
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<int>() == 42);
     
     // no meta data
     method m7 = type::get<method_test_final>().get_method("method_7");
     REQUIRE(m7.is_valid() == true);
-    REQUIRE(m7.get_meta_data(E_MetaData::SCRIPTABLE).is_valid() == false);
+    REQUIRE(m7.get_metadata(E_MetaData::SCRIPTABLE).is_valid() == false);
 
     // not scriptable
     method m9 = type::get<method_test_final>().get_method("method_9");
-    value = m9.get_meta_data(E_MetaData::SCRIPTABLE);
+    value = m9.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<bool>() == false);
 }

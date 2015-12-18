@@ -26,17 +26,17 @@ RTTR_REGISTRATION
     
     registration::property("value", &g_Value)
                   (    
-                      meta_data(MetaData_Type::SCRIPTABLE, false), 
-                      meta_data("Description", "This is a value.")
+                      metadata(MetaData_Type::SCRIPTABLE, false), 
+                      metadata("Description", "This is a value.")
                   );
 }
 \endcode
 In order to add metadata to a registered item you have to use the `()` operator of the returned @ref rttr::registration::bind "bind" object.
-Then you call for every metadata item you want to add, the function @ref rttr::meta_data(variant, variant) "meta_data()".
+Then you call for every metadata item you want to add, the function @ref rttr::metadata(variant, variant) "metadata()".
 
 It has following synopsis:
 ~~~~{.cpp}
-  rttr::detail::meta_data rttr::meta_data( variant key, variant value );
+  rttr::detail::metadata rttr::metadata( variant key, variant value );
 ~~~~
 
 This will register a global property named `"value"` with two metadata informations.
@@ -50,10 +50,10 @@ int main()
 
     using namespace rttr;
     property prop = type::get_global_property("value");
-    variant value = prop.get_meta_data(MetaData_Type::SCRIPTABLE);
+    variant value = prop.get_metadata(MetaData_Type::SCRIPTABLE);
     std::cout << value.get_value<bool>(); // prints "false"
     
-    value = prop.get_meta_data("Description");
+    value = prop.get_metadata("Description");
     std::cout << value.get_value<int>(); // prints "This is a value."
 }
 \endcode

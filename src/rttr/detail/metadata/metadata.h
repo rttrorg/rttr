@@ -25,11 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_META_DATA_HANDLER_H_
-#define RTTR_META_DATA_HANDLER_H_
+#ifndef RTTR_METADATA_H_
+#define RTTR_METADATA_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/meta_data/meta_data.h"
 #include "rttr/variant.h"
 
 namespace rttr
@@ -38,25 +37,44 @@ namespace detail
 {
 
 /*!
- * This class holds an index to possible meta data.
- * This can be also a name or the declaring type of a property or method.
+ * This class holds meta data.
+ * 
  */
-class RTTR_API meta_data_handler
+class RTTR_API metadata
 {
     public:
-        meta_data_handler();
-        virtual ~meta_data_handler();
+        metadata(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
+        metadata(const metadata& other) : m_key(other.m_key), m_value(other.m_value) {}
+        metadata(metadata&& other) : m_key(std::move(other.m_key)), m_value(std::move(other.m_value)) {}
+        metadata& operator=(const metadata& other) { m_key = other.m_key; m_value = other.m_value; return *this; }
 
-        void add_meta_data(detail::meta_data data) const;
-        variant get_meta_data(const variant& key) const;
+        variant get_key() const      { return m_key; }
+        variant get_value() const    { return m_value; }
 
-        RTTR_INLINE uint32 get_meta_index() const { return m_index; }
+        struct order_by_key
+        {
+            RTTR_INLINE bool operator () ( const metadata& _left, const metadata& _right )  const
+            {
+                return _left.m_key < _right.m_key;
+            }
+            RTTR_INLINE bool operator () ( const variant& _left, const metadata& _right ) const
+            {
+                return _left < _right.m_key;
+            }
+            RTTR_INLINE bool operator () ( const metadata& _left, const variant& _right ) const
+            {
+                return _left.m_key < _right;
+            }
+        };
 
     private:
-        uint32 m_index;
+        variant m_key;
+        variant m_value;
 };
+
+using metadata_index = uint32;
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_META_DATA_HANDLER_H_
+#endif // RTTR_METADATA_H_
