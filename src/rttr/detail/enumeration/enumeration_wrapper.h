@@ -42,12 +42,14 @@ namespace rttr
 namespace detail
 {
 
-template<typename Enum_Type, std::size_t N>
-class enumeration_wrapper : public enumeration_wrapper_base
+template<typename Enum_Type, std::size_t N, std::size_t Metadata_Count>
+class enumeration_wrapper : public enumeration_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data)
-        :   m_enum_data_list(std::move(data))
+        enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data, 
+                            std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_enum_data_list(std::move(data))
         {
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
@@ -102,6 +104,9 @@ class enumeration_wrapper : public enumeration_wrapper_base
             }
             return variant();
         }
+
+        void add_metadata(detail::metadata data) const { }
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
     private:
         std::array< enum_data<Enum_Type>, N > m_enum_data_list;

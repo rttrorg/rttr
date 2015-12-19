@@ -41,19 +41,41 @@ namespace detail
  * This class holds an index to possible meta data.
  * This can be also a name or the declaring type of a property or method.
  */
-class RTTR_API metadata_handler
+template<std::size_t Metadata_Count>
+class metadata_handler
 {
     public:
-        metadata_handler();
-        virtual ~metadata_handler();
+        RTTR_FORCE_INLINE metadata_handler(std::array<metadata, Metadata_Count> new_data) : m_metadata_list(std::move(new_data)) { }
 
-        void add_metadata(detail::metadata data) const;
-        variant get_metadata(const variant& key) const;
+        RTTR_FORCE_INLINE variant get_metadata(const variant& key) const
+        {
+            // I don't expect that many data, so we iterate from start to end
+            for (const auto& item : m_metadata_list)
+            {
+                if (item.get_key() == key)
+                    return item.get_value();
+            }
 
-        RTTR_INLINE uint32 get_meta_index() const { return m_index; }
+            return variant();
+        }
 
     private:
-        uint32 m_index;
+        std::array<metadata, Metadata_Count> m_metadata_list;
+};
+
+/*!
+ * We use the C++ idiom of empty base class optimization.
+ * So a wrapper with no metadata, will increase its sizeof(T).
+ */
+template<>
+class metadata_handler<0>
+{
+    public:
+        RTTR_FORCE_INLINE metadata_handler(std::array<metadata, 0>) {}
+
+        RTTR_FORCE_INLINE void set_metadata(std::array<metadata, 0> new_data) { }
+
+        RTTR_FORCE_INLINE variant get_metadata(const variant& key) const  { return variant(); }
 };
 
 } // end namespace detail

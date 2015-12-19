@@ -840,62 +840,6 @@ const type_comparator_base* type_database::get_comparator(const type& t) const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-void type_database::add_metadata(metadata_index index, metadata data)
-{
-    const auto new_max_size = std::max(m_metadata_item_list.size(), static_cast<std::size_t>(index + 1));
-    m_metadata_item_list.resize(new_max_size);
-    auto& metadata_vec = m_metadata_item_list[index];
-    if (get_metadata(data.get_key(), metadata_vec).is_valid() == false)
-    {
-        metadata_vec.emplace_back(std::move(data));
-        std::sort(metadata_vec.begin(), metadata_vec.end(), metadata::order_by_key());
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant type_database::get_metadata(metadata_index index, const variant& key) const
-{
-    if (index < m_metadata_item_list.size())
-        return get_metadata(key, m_metadata_item_list[index]);
-    else
-        return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_database::set_item_name(metadata_index index, const char* name)
-{
-    const auto new_max_size = std::max(m_name_item_list.size(), static_cast<std::size_t>(index + 1));
-    m_name_item_list.resize(new_max_size);
-    m_name_item_list[index] = name;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-const char* type_database::get_item_name(metadata_index index)
-{
-    return m_name_item_list[index];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_database::set_declaring_item_type(metadata_index index, type declaring_type)
-{
-    const auto new_max_size = std::max(m_declaring_type_item_list.size(), static_cast<std::size_t>(index + 1));
-    m_declaring_type_item_list.resize(new_max_size, get_invalid_type());
-    m_declaring_type_item_list[index] = declaring_type;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type type_database::get_declaring_item_type(metadata_index index) const
-{
-    return m_declaring_type_item_list[index];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 

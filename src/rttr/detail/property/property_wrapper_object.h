@@ -32,11 +32,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C, access_levels Acc_Level>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value> : public property_wrapper_base
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer) : m_accessor(pointer)
+        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_accessor(pointer)
         {
         }
 
@@ -45,6 +47,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -71,11 +75,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C, access_levels Acc_Level>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only> : public property_wrapper_base
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer) : m_accessor(pointer)
+        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
         }
 
@@ -84,6 +89,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -103,11 +110,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C, access_levels Acc_Level>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr> : public property_wrapper_base
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer) : m_accessor(pointer)
+        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
         }
@@ -117,6 +125,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -143,11 +153,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C, access_levels Acc_Level>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only> : public property_wrapper_base
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer) : m_accessor(pointer)
+        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
         }
 
@@ -156,6 +167,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<C>::type*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {

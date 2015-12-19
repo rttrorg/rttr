@@ -36,6 +36,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration_wrapper_base::enumeration_wrapper_base()
+:   m_declaring_type(get_invalid_type())
 {
 }
 
@@ -47,16 +48,16 @@ enumeration_wrapper_base::~enumeration_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void enumeration_wrapper_base::set_declaring_type(type declaring_type) const
+void enumeration_wrapper_base::set_declaring_type(type declaring_type)
 {
-    return type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
+    m_declaring_type = declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type enumeration_wrapper_base::get_declaring_type() const
 {
-    return type_database::instance().get_declaring_item_type(get_meta_index());
+    return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

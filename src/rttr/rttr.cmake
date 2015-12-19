@@ -145,7 +145,6 @@ set(SOURCE_FILES constructor.cpp
                  detail/destructor/destructor_wrapper_base.cpp
                  detail/enumeration/enumeration_helper.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp
-                 detail/metadata/metadata_handler.cpp
                  detail/method/method_wrapper_base.cpp
                  detail/parameter_info/parameter_info_wrapper_base.cpp
                  detail/property/property_wrapper_base.cpp

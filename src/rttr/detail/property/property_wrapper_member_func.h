@@ -32,15 +32,18 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter/Setter - pointer to member function
 
-template<typename Getter, typename Setter, access_levels Acc_Level>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value> : public property_wrapper_base
+template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get, Setter set) : m_getter(get), m_setter(set)
+        property_wrapper(Getter get, Setter set, 
+                         std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_getter(get), m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
@@ -53,6 +56,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -82,14 +87,16 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Getter, access_levels Acc_Level>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy, read_only> : public property_wrapper_base
+template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get) : m_getter(get)
+        property_wrapper(Getter get, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
         }
@@ -99,6 +106,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -122,15 +131,18 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Getter/Setter pointer to member function
-template<typename Getter, typename Setter, access_levels Acc_Level>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr> : public property_wrapper_base
+template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get, Setter set) : m_getter(get), m_setter(set)
+        property_wrapper(Getter get, Setter set, 
+                         std::array<metadata, Metadata_Count> metadata_list) 
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_getter(get), m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
@@ -145,6 +157,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -176,14 +190,17 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Getter, access_levels Acc_Level>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, read_only> : public property_wrapper_base
+template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get) : m_getter(get)
+        property_wrapper(Getter get, 
+                         std::array<metadata, Metadata_Count> metadata_list) 
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
@@ -194,6 +211,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
         {

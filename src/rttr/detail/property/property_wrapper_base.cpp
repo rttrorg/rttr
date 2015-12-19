@@ -36,6 +36,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property_wrapper_base::property_wrapper_base()
+:   m_declaring_type(get_invalid_type())
 {
 }
 
@@ -47,30 +48,30 @@ property_wrapper_base::~property_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void property_wrapper_base::set_name(const char* name) const
+void property_wrapper_base::set_name(const char* name)
 {
-    type_database::instance().set_item_name(get_meta_index(), name);
+    m_name = name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 const char* property_wrapper_base::get_name() const
 {
-    return type_database::instance().get_item_name(get_meta_index());
+    return m_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void property_wrapper_base::set_declaring_type(type declaring_type) const
+void property_wrapper_base::set_declaring_type(type declaring_type)
 {
-    type_database::instance().set_declaring_item_type(get_meta_index(), declaring_type);
+    m_declaring_type = declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type property_wrapper_base::get_declaring_type() const
 {
-    return type_database::instance().get_declaring_item_type(get_meta_index());
+    return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

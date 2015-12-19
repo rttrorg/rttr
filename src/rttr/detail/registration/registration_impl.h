@@ -121,9 +121,7 @@ template<typename Class_Type>
 template<typename...Args>
 registration::class_<Class_Type>& registration::class_<Class_Type>::operator()(Args&&...args)
 {
-    using namespace detail;
-    auto data = get_metadata(std::forward<Args>(args)...);
-    type_register::metadata(type::get<Class_Type>(), std::move(data));
+    detail::type_register::metadata(type::get<Class_Type>(), detail::forward_to_vector<detail::metadata>(std::forward<Args>(args)...));
     return *this;
 }
 

@@ -50,7 +50,7 @@ namespace detail
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API enumeration_wrapper_base : public metadata_handler
+class RTTR_API enumeration_wrapper_base
 {
     public:
         enumeration_wrapper_base();
@@ -68,9 +68,13 @@ class RTTR_API enumeration_wrapper_base : public metadata_handler
 
         virtual variant name_to_value(const std::string& name) const = 0;
 
-        void set_declaring_type(type declaring_type) const;
+        void set_declaring_type(type declaring_type);
 
         type get_declaring_type() const;
+
+        virtual variant get_metadata(const variant& key) const = 0;
+    private:
+        type m_declaring_type;
 };
 
 } // end namespace detail

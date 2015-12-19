@@ -51,7 +51,7 @@ namespace detail
  * This is the base class for all methods.
  * You can invoke the method.
  */
-class RTTR_API constructor_wrapper_base : public metadata_handler
+class RTTR_API constructor_wrapper_base
 {
     public:
         constructor_wrapper_base();
@@ -64,8 +64,8 @@ class RTTR_API constructor_wrapper_base : public metadata_handler
         virtual type get_instanciated_type() const = 0;
         virtual std::vector<bool> get_is_reference() const;
         virtual std::vector<bool> get_is_const() const;
-
         virtual std::vector<parameter_info> get_parameter_infos() const = 0;
+        virtual variant get_metadata(const variant& key) const = 0;
         
         virtual variant invoke() const;
         virtual variant invoke(argument& arg1) const;

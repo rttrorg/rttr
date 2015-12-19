@@ -49,7 +49,7 @@ namespace detail
  * It provide the basic mechanism for getting all meta data of a property,
  * but it also define a general interface to set/get properties via string: toString and fromString.
  */
-class RTTR_API property_wrapper_base : public metadata_handler
+class RTTR_API property_wrapper_base
 {
     public:
         property_wrapper_base();
@@ -57,7 +57,7 @@ class RTTR_API property_wrapper_base : public metadata_handler
         virtual ~property_wrapper_base();
 
         //! sets the name of this property.
-        void set_name(const char* name) const;
+        void set_name(const char* name);
 
         //! returns the name of this property.
         const char* get_name() const;
@@ -77,7 +77,10 @@ class RTTR_API property_wrapper_base : public metadata_handler
         type get_declaring_type() const;
 
         //! Sets the declaring type for this property.
-        void set_declaring_type(type declaring_type) const;
+        void set_declaring_type(type declaring_type);
+
+        //! Retrieve the stored metadata for this property
+        virtual variant get_metadata(const variant& key) const = 0;
 
         //! Returns true when the underlying property is an array type.
         virtual bool is_array() const = 0;
@@ -87,6 +90,10 @@ class RTTR_API property_wrapper_base : public metadata_handler
 
         //! Returns the value of this property from the given instance \p instance.
         virtual variant get_value(instance& object) const = 0;
+
+    private:
+        const char* m_name;
+        type        m_declaring_type;
 };
 
 } // end namespace detail

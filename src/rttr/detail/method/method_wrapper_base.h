@@ -54,15 +54,15 @@ namespace detail
  * This is the base class for all methods.
  * You can invoke the method via method_wrapper_base::invoke.
  */
-class RTTR_API method_wrapper_base : public metadata_handler
+class RTTR_API method_wrapper_base
 {
     public:
         method_wrapper_base();
         virtual ~method_wrapper_base();
 
-        void set_name(const char* name) const;
+        void set_name(const char* name);
         const char* get_name() const;
-        void set_declaring_type(type declaring_type) const;
+        void set_declaring_type(type declaring_type);
         type get_declaring_type() const;
         std::string get_signature() const;
 
@@ -72,6 +72,7 @@ class RTTR_API method_wrapper_base : public metadata_handler
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
         virtual std::vector<parameter_info> get_parameter_infos() const = 0;
+        virtual variant get_metadata(const variant& key) const = 0;
 
         virtual variant invoke(instance& object) const = 0;
         virtual variant invoke(instance& object, argument& arg1) const = 0;
@@ -85,6 +86,10 @@ class RTTR_API method_wrapper_base : public metadata_handler
                                argument& arg4, argument& arg5, argument& arg6) const = 0;
 
         virtual variant invoke_variadic(const instance& object, std::vector<argument>& args) const = 0;
+
+    private:
+        const char* m_name;
+        type        m_declaring_type;
 };
 
 } // end namespace detail

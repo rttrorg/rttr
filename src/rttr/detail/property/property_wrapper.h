@@ -46,7 +46,7 @@ namespace rttr
 namespace detail
 {
 
-template<typename Accessor_Type, typename Getter, typename Setter, access_levels Acc_Level, typename Get_Policy, typename Set_Policy>
+template<typename Accessor_Type, typename Getter, typename Setter, access_levels Acc_Level, typename Get_Policy, typename Set_Policy, std::size_t Metadata_Count>
 class property_wrapper;
 
 #include "rttr/detail/property/property_wrapper_member_func.h"

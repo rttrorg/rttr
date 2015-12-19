@@ -159,17 +159,6 @@ class RTTR_LOCAL type_database
         const enumeration_wrapper_base* get_enumeration(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
-
-        void add_metadata(metadata_index index, metadata data);
-        variant get_metadata(metadata_index index, const variant& key) const;
-
-        void set_item_name(metadata_index index, const char* name);
-        const char* get_item_name(metadata_index index);
-
-        void set_declaring_item_type(metadata_index index, type declaring_type);
-        type get_declaring_item_type(metadata_index index) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
         
     private:
         type_database();
@@ -387,10 +376,7 @@ class RTTR_LOCAL type_database
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
         std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
-        std::vector<type_data<std::vector<metadata>>>              m_metadata_type_list;
-        std::vector<std::vector<metadata>>                         m_metadata_item_list;
-        std::vector<const char*>                                    m_name_item_list;
-        std::vector<type>                                           m_declaring_type_item_list;
+        std::vector<type_data<std::vector<metadata>>>               m_metadata_type_list;
 };
 
 } // end namespace detail
