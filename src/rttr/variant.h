@@ -588,160 +588,160 @@ class RTTR_API variant
         std::string to_string(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `int8` when the \ref is_type() "type" is an `int8`.
+         * \brief Returns the containing variant as an `int8_t` when the \ref is_type() "type" is an `int8_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int8`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int8` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int8_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int8_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int8`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int8_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `int8`, the conversion will fail.
-         *         Precision loss, such as in conversion from floating-point to `int8` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int8_t`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int8_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `int8` value.
+         * \return A `int8_t` value.
          */
-        int8 to_int8(bool *ok = nullptr) const;
+        int8_t to_int8(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `int16` when the \ref is_type() "type" is an `int16`.
+         * \brief Returns the containing variant as an `int16_t` when the \ref is_type() "type" is an `int16_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int16`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int16` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int16_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int16_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int16`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int16_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `int16`, the conversion will fail.
-         *         Precision loss, such as in conversion from floating-point to `int16` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int16_t`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int16_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `int16` value.
+         * \return A `int16_t` value.
          */
-        int16 to_int16(bool *ok = nullptr) const;
+        int16_t to_int16(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `int32` when the \ref is_type() "type" is an `int32`.
+         * \brief Returns the containing variant as an `int32_t` when the \ref is_type() "type" is an `int32_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int32`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int32` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int32_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int32_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int32`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int32_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `int32`, the conversion will fail.
-         *         Precision loss, such as in conversion from floating-point to `int32` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int32_t`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int32_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `int32` value.
+         * \return A `int32_t` value.
          */
-        int32 to_int32(bool *ok = nullptr) const;
+        int32_t to_int32(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `int64` when the \ref is_type() "type" is an `int64`.
+         * \brief Returns the containing variant as an `int64_t` when the \ref is_type() "type" is an `int64_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int64`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int64` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `int64_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `int64_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int64`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `int64_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `int64`, the conversion will fail.
-         *         Precision loss, such as in conversion from floating-point to `int64` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `int64_t`, the conversion will fail.
+         *         Precision loss, such as in conversion from floating-point to `int64_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `int64` value.
+         * \return A `int64_t` value.
          */
-        int64 to_int64(bool *ok = nullptr) const;
+        int64_t to_int64(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `uint8` when the \ref is_type() "type" is an `uint8`.
+         * \brief Returns the containing variant as an `uint8_t` when the \ref is_type() "type" is an `uint8_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint8`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint8` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint8_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint8_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `uint8`, the conversion will fail.
-         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint8`.
-         *         Precision loss, such as in conversion from floating-point to `uint8` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint8_t`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint8_t`.
+         *         Precision loss, such as in conversion from floating-point to `uint8_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `uint8` value.
+         * \return A `uint8_t` value.
          */
-        uint8 to_uint8(bool *ok = nullptr) const;
+        uint8_t to_uint8(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `uint16` when the \ref is_type() "type" is an `uint16`.
+         * \brief Returns the containing variant as an `uint16_t` when the \ref is_type() "type" is an `uint16_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint16`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint16` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint16_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint16_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint16`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint16_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `uint16`, the conversion will fail.
-         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint16`.
-         *         Precision loss, such as in conversion from floating-point to `uint16` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint16_t`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint16_t`.
+         *         Precision loss, such as in conversion from floating-point to `uint16_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `uint16` value.
+         * \return A `uint16_t` value.
          */
-        uint16 to_uint16(bool *ok = nullptr) const;
+        uint16_t to_uint16(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `uint32` when the \ref is_type() "type" is an `uint32`.
+         * \brief Returns the containing variant as an `uint32_t` when the \ref is_type() "type" is an `uint32_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint32`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint32` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint32_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint32_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint32`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint32_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `uint32`, the conversion will fail.
-         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint32`.
-         *         Precision loss, such as in conversion from floating-point to `uint32` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint32_t`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint32_t`.
+         *         Precision loss, such as in conversion from floating-point to `uint32_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `uint32` value.
+         * \return A `uint32_t` value.
          */
-        uint32 to_uint32(bool *ok = nullptr) const;
+        uint32_t to_uint32(bool *ok = nullptr) const;
 
         /*!
-         * \brief Returns the containing variant as an `uint64` when the \ref is_type() "type" is an `uint64`.
+         * \brief Returns the containing variant as an `uint64_t` when the \ref is_type() "type" is an `uint64_t`.
          *       
-         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint64`
-         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint64` 
+         * When the variant contains an \ref type::is_arithmetic() "arithmetic type" or an `std::string` then a conversion to `uint64_t`
+         * will be tried. Also any user-defined \ref type::register_converter_func() "conversion function" from the \ref is_type() "source type" to `uint64_t` 
          * will be executed when necessary.
          *
-         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8`; otherwise \p *ok is set to `false`.
+         * If \p ok is non-null: \p *ok is set to `true` if the value could be converted to an `uint8_t`; otherwise \p *ok is set to `false`.
          *
-         * \remark A value overflow is not allowed, so if the internal value is larger than `uint64`, the conversion will fail.
-         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint64`.
-         *         Precision loss, such as in conversion from floating-point to `uint64` on platforms where they differ in size is allowed.
+         * \remark A value overflow is not allowed, so if the internal value is larger than `uint64_t`, the conversion will fail.
+         *         Also a loss of signedness is not allowed, that means a negative signed integer cannot be converted to `uint64_t`.
+         *         Precision loss, such as in conversion from floating-point to `uint64_t` on platforms where they differ in size is allowed.
          *         A conversion from `std::string` which contains non-numeric characters will fail.
          *
          * \see can_convert(), is_type()
          *
-         * \return A `uint64` value.
+         * \return A `uint64_t` value.
          */
-        uint64 to_uint64(bool *ok = nullptr) const;
+        uint64_t to_uint64(bool *ok = nullptr) const;
 
     private:
         /////////////////////////////////////////////////////////////////////////////////

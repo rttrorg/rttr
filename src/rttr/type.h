@@ -34,6 +34,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <cstdint>
 
 namespace rttr
 {
@@ -152,7 +153,7 @@ static type get_invalid_type();
 class RTTR_API type
 {
     public:
-        typedef uint16 type_id;
+        typedef uint16_t type_id;
 
         /*!
          * \brief Assigns a type to another one.

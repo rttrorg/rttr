@@ -103,23 +103,23 @@ public:
      *
      * \return A valid type object.
      */
-    static uint16 type_reg(const char* name, 
-                           const type& raw_type,
-                           const type& wrapped_type,
-                           const type& array_raw_type,
-                           std::vector<base_class_info> base_classes, 
-                           get_derived_func derived_func_ptr,
-                           variant_create_func var_func_ptr,
-                           std::size_t type_size,
-                           bool is_class,
-                           bool is_enum,
-                           bool is_array,
-                           bool is_pointer,
-                           bool is_arithmetic,
-                           bool is_function_pointer,
-                           bool is_member_object_pointer,
-                           bool is_member_function_pointer,
-                           std::size_t pointer_dimension);
+    static uint16_t type_reg(const char* name, 
+                             const type& raw_type,
+                             const type& wrapped_type,
+                             const type& array_raw_type,
+                             std::vector<base_class_info> base_classes, 
+                             get_derived_func derived_func_ptr,
+                             variant_create_func var_func_ptr,
+                             std::size_t type_size,
+                             bool is_class,
+                             bool is_enum,
+                             bool is_array,
+                             bool is_pointer,
+                             bool is_arithmetic,
+                             bool is_function_pointer,
+                             bool is_member_object_pointer,
+                             bool is_member_function_pointer,
+                             std::size_t pointer_dimension);
 
 private:
 

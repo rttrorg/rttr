@@ -71,7 +71,7 @@ std::string parameter_info::get_name() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint32 parameter_info::get_index() const
+uint32_t parameter_info::get_index() const
 {
     return m_wrapper->get_index();
 }

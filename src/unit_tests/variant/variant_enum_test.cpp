@@ -29,13 +29,15 @@
 
 #include <rttr/registration>
 
+#include <cstdint>
+
 enum class enum_bool : bool
 {
     ON = true,
     OFF = false
 };
 
-enum class enum_int8 : rttr::int8
+enum class enum_int8 : int8_t
 {
     VALUE_1 = 0,
     VALUE_2,

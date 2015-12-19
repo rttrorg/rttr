@@ -247,51 +247,51 @@ bool variant::convert(const type& target_type, variant& target_var) const
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<int8>())
+        else if (target_type == type::get<int8_t>())
         {
-            int8 value;
+            int8_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<int16>())
+        else if (target_type == type::get<int16_t>())
         {
-            int16 value;
+            int16_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<int32>())
+        else if (target_type == type::get<int32_t>())
         {
-            int32 value;
+            int32_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<int64>())
+        else if (target_type == type::get<int64_t>())
         {
-            int64 value;
+            int64_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<uint8>())
+        else if (target_type == type::get<uint8_t>())
         {
-            uint8 value;
+            uint8_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<uint16>())
+        else if (target_type == type::get<uint16_t>())
         {
-            uint16 value;
+            uint16_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<uint32>())
+        else if (target_type == type::get<uint32_t>())
         {
-            uint32 value;
+            uint32_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
-        else if (target_type == type::get<uint64>())
+        else if (target_type == type::get<uint64_t>())
         {
-            uint64 value;
+            uint64_t value;
             if (ok = try_basic_type_conversion(value))
                 target_var = value;
         }
@@ -388,58 +388,58 @@ double variant::to_double(bool* ok) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int8 variant::to_int8(bool *ok) const
+int8_t variant::to_int8(bool *ok) const
 {
-    return convert<int8>(ok);
+    return convert<int8_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int16 variant::to_int16(bool *ok) const
+int16_t variant::to_int16(bool *ok) const
 {
-    return convert<int16>(ok);
+    return convert<int16_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int32 variant::to_int32(bool *ok) const
+int32_t variant::to_int32(bool *ok) const
 {
-    return convert<int32>(ok);
+    return convert<int32_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int64 variant::to_int64(bool *ok) const
+int64_t variant::to_int64(bool *ok) const
 {
-    return convert<int64>(ok);
+    return convert<int64_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint8 variant::to_uint8(bool *ok) const
+uint8_t variant::to_uint8(bool *ok) const
 {
-    return convert<uint8>(ok);
+    return convert<uint8_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16 variant::to_uint16(bool *ok) const
+uint16_t variant::to_uint16(bool *ok) const
 {
-    return convert<uint16>(ok);
+    return convert<uint16_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint32 variant::to_uint32(bool *ok) const
+uint32_t variant::to_uint32(bool *ok) const
 {
-    return convert<uint32>(ok);
+    return convert<uint32_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint64 variant::to_uint64(bool *ok) const
+uint64_t variant::to_uint64(bool *ok) const
 {
-    return convert<uint64>(ok);
+    return convert<uint64_t>(ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

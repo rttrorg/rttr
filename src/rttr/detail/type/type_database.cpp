@@ -967,7 +967,7 @@ std::string type_database::derive_name(const type& array_raw_type, const char* n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(const char* name, const type& array_raw_type, uint16& id)
+bool type_database::register_name(const char* name, const type& array_raw_type, uint16_t& id)
 {
     using namespace detail;
 
@@ -1059,30 +1059,30 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16 type_database::register_type(const char* name, 
-                                    const type& raw_type,
-                                    const type& wrapped_type,
-                                    const type& array_raw_type,
-                                    vector<base_class_info> base_classes,
-                                    get_derived_func derived_func_ptr,
-                                    variant_create_func var_func_ptr,
-                                    std::size_t type_size,
-                                    bool is_class,
-                                    bool is_enum,
-                                    bool is_array,
-                                    bool is_pointer,
-                                    bool is_arithmetic,
-                                    bool is_function_pointer,
-                                    bool is_member_object_pointer,
-                                    bool is_member_function_pointer,
-                                    std::size_t pointer_dimension)
+uint16_t type_database::register_type(const char* name, 
+                                      const type& raw_type,
+                                      const type& wrapped_type,
+                                      const type& array_raw_type,
+                                      vector<base_class_info> base_classes,
+                                      get_derived_func derived_func_ptr,
+                                      variant_create_func var_func_ptr,
+                                      std::size_t type_size,
+                                      bool is_class,
+                                      bool is_enum,
+                                      bool is_array,
+                                      bool is_pointer,
+                                      bool is_arithmetic,
+                                      bool is_function_pointer,
+                                      bool is_member_object_pointer,
+                                      bool is_member_function_pointer,
+                                      std::size_t pointer_dimension)
 {
     type::init_globals();
 
     //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
 
     using namespace detail;
-    uint16 id = 0;
+    uint16_t id = 0;
     const bool isAlreadyRegistered = register_name(name, array_raw_type, id);
     if (isAlreadyRegistered)
         return id;

@@ -72,23 +72,23 @@ class RTTR_LOCAL type_database
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
-        uint16 register_type(const char* name, 
-                             const type& raw_type,
-                             const type& wrapped_type,
-                             const type& array_raw_type,
-                             std::vector<base_class_info> base_classes, 
-                             get_derived_func derived_func_ptr,
-                             variant_create_func var_func_ptr,
-                             std::size_t type_size,
-                             bool is_class,
-                             bool is_enum,
-                             bool is_array,
-                             bool is_pointer,
-                             bool is_arithmetic,
-                             bool is_function_pointer,
-                             bool is_member_object_pointer,
-                             bool is_member_function_pointer,
-                             std::size_t pointer_dimension);
+        uint16_t register_type(const char* name, 
+                               const type& raw_type,
+                               const type& wrapped_type,
+                               const type& array_raw_type,
+                               std::vector<base_class_info> base_classes, 
+                               get_derived_func derived_func_ptr,
+                               variant_create_func var_func_ptr,
+                               std::size_t type_size,
+                               bool is_class,
+                               bool is_enum,
+                               bool is_array,
+                               bool is_pointer,
+                               bool is_arithmetic,
+                               bool is_function_pointer,
+                               bool is_member_object_pointer,
+                               bool is_member_function_pointer,
+                               std::size_t pointer_dimension);
 
         uint16_t get_by_name(const char* name) const;
 
@@ -166,7 +166,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, const char* name);
         //! Returns true, when the name was already registered
-        bool register_name(const char* name, const type& array_raw_type, uint16& id);
+        bool register_name(const char* name, const type& array_raw_type, uint16_t& id);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;

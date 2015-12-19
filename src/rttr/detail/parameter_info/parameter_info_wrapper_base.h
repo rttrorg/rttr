@@ -46,7 +46,7 @@ class RTTR_API parameter_info_wrapper_base
         virtual type get_type() const = 0;
         virtual bool has_default_value() const = 0;
         virtual variant get_default_value() const = 0;
-        virtual uint32 get_index() const = 0;
+        virtual uint32_t get_index() const = 0;
 };
 
 } // end namespace detail

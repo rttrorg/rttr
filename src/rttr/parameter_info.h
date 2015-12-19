@@ -31,6 +31,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace rttr
 {
@@ -147,7 +148,7 @@ class RTTR_API parameter_info
          *
          * \return An integer representing the position this parameter occupies in the parameter list.
          */
-        uint32 get_index() const;
+        uint32_t get_index() const;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.

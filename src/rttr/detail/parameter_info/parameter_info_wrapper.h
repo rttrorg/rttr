@@ -58,7 +58,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, Default_Ty
         bool has_default_value() const      { return true; }
         variant get_default_value() const   { return variant(*m_default_value); }
         void set_default_value(const Default_Type* default_value) { m_default_value = default_value; }
-        uint32 get_index() const            { return static_cast<uint32>(Param_Index); }
+        uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
     private:
         const Default_Type* m_default_value;
         const char*         m_name;
@@ -80,7 +80,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, Default_Typ
         bool has_default_value() const      { return true; }
         variant get_default_value() const   { return variant(*m_default_value); }
         void set_default_value(const Default_Type* default_value) { m_default_value = default_value; }
-        uint32 get_index() const            { return static_cast<uint32>(Param_Index); }
+        uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
     private:
         const Default_Type* m_default_value;
 };
@@ -102,7 +102,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, void> : pu
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return false; }
         variant get_default_value() const   { return variant(); }
-        uint32 get_index() const            { return static_cast<uint32>(Param_Index); }
+        uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
     private:
         const char* m_name;
 };
@@ -119,7 +119,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, void> : pub
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return false; }
         variant get_default_value() const   { return variant(); }
-        uint32 get_index() const            { return static_cast<uint32>(Param_Index); }
+        uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
