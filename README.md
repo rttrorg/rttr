@@ -12,6 +12,9 @@ How to Use
 
 ####Manual registration
 ```
+#include <rttr/registration>
+using namespace rttr;
+
 struct MyStruct { MyStruct() {}; void func(double) {}; int data; };
 
 RTTR_REGISTRATION

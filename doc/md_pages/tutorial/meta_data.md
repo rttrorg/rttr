@@ -48,7 +48,6 @@ int main()
 {
     using namespace rttr;
 
-    using namespace rttr;
     property prop = type::get_global_property("value");
     variant value = prop.get_metadata(MetaData_Type::SCRIPTABLE);
     std::cout << value.get_value<bool>(); // prints "false"
