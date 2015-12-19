@@ -332,8 +332,9 @@ void bench_invoke_method()
                                             "</pre>");
     nonius::benchmark benchmarks_group_1[] = { bench_native_invoke_method_void_return_value(),
                                                bench_rttr_invoke_method_void_return_value()};
-
-    nonius::go(cfg, nonius::benchmark_registry{bench_rttr_invoke_method_void_return_value()});
+    // for unknown reason we have the run a pre-benchmark, otherwise we get wrong result (all samples are at: 0ns)
+    auto dummy_benchmark = nonius::benchmark_registry{bench_rttr_invoke_method_void_return_value()};
+    nonius::go(cfg, dummy_benchmark);
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
 
     /////////////////////////////////////
@@ -532,7 +533,7 @@ void bench_invoke_method()
     nonius::benchmark benchmarks_group_8[] = { bench_native_invoke_method_ptr_arg(),
                                                bench_rttr_invoke_method_ptr_arg()};
 
-    nonius::go(cfg, nonius::benchmark_registry{bench_rttr_invoke_method_void_return_value()});
+    nonius::go(cfg, dummy_benchmark);
     nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
 
     /////////////////////////////////////
