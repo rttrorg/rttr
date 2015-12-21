@@ -87,7 +87,7 @@ namespace detail
  *
  *   //...
  *
- *   method meth = type::get_global_method("my_func");
+ *   method meth = type::get_global_method("set_window_geometry");
  *   std::vector<parameter_info> param_list = meth.get_parameter_infos();
  *   for (const auto& info : param_list)
  *   {

@@ -236,4 +236,4 @@ then bind the wrapper instead of the original accessor.
 
 <hr>
 
-<div type="button" class="btn btn-default doxy-button">[previous](@ref default_arguments_page "Default Arguments")</div><div class="btn btn-default doxy-button">[Finished](@ref tutorial_page "Tutorial")</div>
+<div type="button" class="btn btn-default doxy-button">[previous](@ref parameter_names_page "Parameter Names")</div><div class="btn btn-default doxy-button">[Finished](@ref tutorial_page "Tutorial")</div>

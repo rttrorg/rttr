@@ -66,14 +66,21 @@ For this reason, you have to set up an environment variable called: `RTTR_DIR`, 
 
 e.g for windows:
 
-    set RTTR_DIR=c:\rttr-1.0.0-win64-vs2013
+    set RTTR_DIR=c:/rttr-1.0.0-win64-vs2013
 
 Then add following to your CMake script file:
 
-    find_package(RTTR CONFIG REQUIRED Core_Lib)
+    find_package(RTTR CONFIG REQUIRED Core)
 
 and final step is to link against the library:
 
-    target_link_libraries(MyApp RTTR::Core_Lib)
+    target_link_libraries(MyApp RTTR::Core)
+    
+Following link targets are available, depending on the build config:
+
+    target_link_libraries(MyApp RTTR::Core)         # rttr as dynamic library
+    target_link_libraries(MyApp RTTR::Core_STL)     # rttr as dynamic library but with static runtime library
+    target_link_libraries(MyApp RTTR::Core_Lib)     # rttr as static library
+    target_link_libraries(MyApp RTTR::Core_Lib_STL) # rttr as static library and static runtime library
 
 That's it, you can use RTTR in your own library now. Congrats!

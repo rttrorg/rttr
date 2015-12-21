@@ -23,4 +23,5 @@ Registration of Types
 -# [Classes](@ref register_classes_page)
 -# [Metadata](@ref register_metadata_page)
 -# [Default Arguments](@ref default_arguments_page)
+-# [Parameter Names](@ref parameter_names_page)
 -# [Policies](@ref register_policies_page)
