@@ -95,7 +95,7 @@ using param_names_count = std::integral_constant<std::size_t, param_names_count_
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_INLINE
+RTTR_INLINE
 parameter_info create_param_info(const T& data)
 {
     return parameter_info(&data);
@@ -110,7 +110,7 @@ convert_to_parameter_info_list_impl(index_sequence<Indices...>, const parameter_
 
 
 template<typename...T>
-static RTTR_INLINE std::vector<parameter_info>
+RTTR_INLINE std::vector<parameter_info>
 convert_to_parameter_info_list(const parameter_infos<T...>& param_infos)
  { 
      return convert_to_parameter_info_list_impl(make_index_sequence<sizeof...(T)>(), param_infos);
