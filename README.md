@@ -11,7 +11,7 @@ How to Use
 ----------
 
 ####Manual registration
-```
+```cpp
 #include <rttr/registration>
 using namespace rttr;
 
@@ -26,7 +26,7 @@ RTTR_REGISTRATION
 }
 ```
 ####Iterate over members
-```
+```cpp
 type t = type::get<MyStruct>();
 for (auto& prop : t.get_properties())
     std::cout << "name: " << prop.get_name();
@@ -36,7 +36,7 @@ for (auto& meth : t.get_methods())
 ```
 
 ####Constructing types
-```
+```cpp
 type t = type::get_by_name("MyStruct");
 variant var = t.create();    // will invoke the previously registered ctor
 
@@ -46,7 +46,7 @@ std::cout << var.get_type().get_name(); // prints 'MyStruct'
 ```
 
 ####Set/get properties
-```
+```cpp
 MyStruct obj;
 
 property prop = type::get(obj).get_property("data");
@@ -57,7 +57,7 @@ std::cout << var_prop.to_int(); // prints '23'
 ```
 
 ####Invoke Methods:
-```
+```cpp
 MyStruct obj;
 
 method meth = type::get(obj).get_method("func");
