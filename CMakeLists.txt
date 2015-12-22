@@ -50,11 +50,12 @@ include(utility)
 option(BUILD_STATIC "Build RTTR as static library" FALSE)
 option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" FALSE)
 option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
+option(BUILD_BENCHMARKS "Enable this to build the benchmarks" TRUE)
 option(USE_PCH "Use precompiled header files for compilation" TRUE)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" TRUE)
 option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" FALSE)
 
-# one precompiled headers cannot be used for multipleninja targets
+# one precompiled headers cannot be used for multiple ninja targets
 # thats why we have to disable this option, when BUILD_STATIC or 
 # BUILD_WITH_STATIC_RUNTIME_LIBS is ON (every target will create the same PCH.pch file)
 # to get it working, we need the feature to enable different source properties

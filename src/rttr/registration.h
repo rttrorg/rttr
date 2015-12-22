@@ -153,6 +153,8 @@ public:
              * \param level  The access level of the constructor; default is: registration::public_access.<br>
              *               (can be also: registration::protected_access or registration::private_access)
              *
+             * \remark The default constructor create policy is: \ref policy::ctor::as_object.
+             *
              * \see constructor, type::get_constructor(), type::create()
              *
              * \return A \ref bind object, in order to chain more calls.

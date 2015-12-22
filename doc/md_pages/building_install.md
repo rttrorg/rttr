@@ -34,6 +34,7 @@ The build of RTTR can be configured at CMake configuration time with following v
 - `BUILD_STATIC`: Build RTTR as static library; Default: `FALSE`
 - `BUILD_WITH_STATIC_RUNTIME_LIBS`: Link against the static runtime libraries; Default: `FALSE`
 - `BUILD_WITH_RTTI`: Enable the C++ language feature for runtime type information (RTTI); Default: `TRUE`
+- `BUILD_BENCHMARKS`: Enable this to build the benchmarks; Default: `TRUE`
 - `USE_PCH`: Use precompiled header files for compilation; Default: `TRUE`*
 - `CUSTOM_DOXYGEN_STYLE`: Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used; Default: `TRUE`
 

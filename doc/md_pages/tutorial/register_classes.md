@@ -94,11 +94,15 @@ struct Foo
     Foo();
     Foo(int, double);
     Foo(const std::string&);
+    
+    static Foo* create();
 };
 ~~~~
 
-For registering these constructors you now have to specify every parameter as template parameter 
+For registering three `Foo` constructors you now have to specify every parameter as template parameter 
 in the member function @ref rttr::registration::class_<T>::constructor() "constructor()".
+As second option, it is possible to register a static function as constructor.
+In order to do this, just forward the function pointer.
 
 ~~~~{.cpp}
 RTTR_REGISTRATION
@@ -108,11 +112,13 @@ RTTR_REGISTRATION
     registration::class_<Foo>("Foo")
                  .constructor<>()
                  .constructor<int,double>()
-                 .constructor<const std::string&>();
+                 .constructor<const std::string&>()
+                 .constructor(&Foo::create);
 }
 ~~~~
 
 When a constructor is registered a destructor is registered automatically.
+The used default policy for creating an instance is @ref rttr::policy::ctor::as_object "policy::ctor::as_object".
 
 Register class properties
 -------------------------
@@ -299,6 +305,28 @@ int main()
 }
 ~~~~
 
+It is possible to invoke a method, when the instance is wrapped inside a wrapper class, for example `std::shared_ptr<T>`.
+
+~~~~{.cpp}
+int main()
+{
+    std::shared_ptr<test_class> obj = std::make_shared<test_class>(23);
+
+    method meth = type::get_by_name("test_class").get_method("print_value");
+
+    method.invoke(obj);         // successful invoke
+    method.invoke(obj.get());   // successful invoke
+    method.invoke(*obj.get());  // successful invoke
+
+    variant var = obj;
+    // or use the variant
+    method.invoke(var);         // successful invoke
+
+    return 0;
+}
+~~~~
+When you want to use RTTR with a custom wrapper type, you have provide a specialization of the class template @ref rttr::wrapper_mapper<T> "wrapper_mapper<T>".
+
 Set/Get property of a class
 ---------------------------
 Properties can be also set and get in two steps:
@@ -322,7 +350,7 @@ int main()
 ~~~~
 
 In difference to the global properties, a valid \ref type object and an instance (object) of the class is now needed to set and get the value.
-It doesn't matter in what hierarchy level the object is. Or if its a pointer, an object on the stack or wrapped inside a variant.
+It doesn't matter in what hierarchy level the object is or if its a pointer, an object on the stack or wrapped inside a variant.
 RTTR will try to cast the given object to the class type where the property was registered to.
 
 <hr>

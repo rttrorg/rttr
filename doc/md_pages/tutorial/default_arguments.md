@@ -16,9 +16,9 @@ void my_function(int a, bool b, const std::string& text, const int* ptr);
 RTTR_REGISTRATION
 {
     registration::method("my_function", &my_function)   
-                  (
-                      default_arguments(true, std::string("default text"), nullptr)
-                  );
+    (
+        default_arguments(true, std::string("default text"), nullptr)
+    );
 }
 \endcode
 
