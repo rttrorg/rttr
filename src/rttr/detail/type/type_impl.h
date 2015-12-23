@@ -152,6 +152,9 @@ namespace detail                                                            \
 #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
     // sizeof("const char* rttr::detail::f() [with T = "), sizeof("]")
     RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(40, 1)
+#elif RTTR_COMPILER == RTTR_COMPILER_CLANG
+    // sizeof("const char* rttr::detail::f() [T = "), sizeof("]")
+    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(35, 1)
 #else
 #   error "This compiler does not supported extracting a function signature via preprocessor!"
 #endif
@@ -180,6 +183,10 @@ RTTR_INLINE static const char* f()
                                                             __FUNCSIG__
     #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
                                                             __PRETTY_FUNCTION__
+    #elif RTTR_COMPILER == RTTR_COMPILER_CLANG
+                                                            __PRETTY_FUNCTION__
+    #else
+        #error "Don't know how the extract type signatur for this compiler! Abort! Abort!" 
     #endif
                                    );
 }

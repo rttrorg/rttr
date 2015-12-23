@@ -238,79 +238,79 @@ bool variant::convert(const type& target_type, variant& target_var) const
         if (target_type == type::get<bool>())
         {
             bool value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<char>())
         {
             char value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<int8_t>())
         {
             int8_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<int16_t>())
         {
             int16_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<int32_t>())
         {
             int32_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<int64_t>())
         {
             int64_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<uint8_t>())
         {
             uint8_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<uint16_t>())
         {
             uint16_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<uint32_t>())
         {
             uint32_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<uint64_t>())
         {
             uint64_t value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<float>())
         {
             float value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == type::get<double>())
         {
             double value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = value;
         }
         else if (target_type == string_type)
         {
             std::string value;
-            if (ok = try_basic_type_conversion(value))
+            if ((ok = try_basic_type_conversion(value)))
                 target_var = std::move(value);
         }
     }

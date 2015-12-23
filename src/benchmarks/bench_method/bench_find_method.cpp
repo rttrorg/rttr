@@ -68,7 +68,7 @@ nonius::benchmark bench_rttr_find_method_level_1()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_1"))
+            if ((m = rttr::type::get(obj_base).get_method("method_1")))
             {
                 value = 1;
             }
@@ -110,7 +110,7 @@ nonius::benchmark bench_rttr_find_method_level_3()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_3"))
+            if ((m = rttr::type::get(obj_base).get_method("method_3")))
             {
                 value = 1;
             }
@@ -152,7 +152,7 @@ nonius::benchmark bench_rttr_find_method_level_6()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_6"))
+            if ((m = rttr::type::get(obj_base).get_method("method_6")))
             {
                 value = 1;
             }
@@ -196,7 +196,7 @@ nonius::benchmark bench_rttr_find_method_neg_level_1()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_2"))
+            if ((m = rttr::type::get(obj_base).get_method("method_2")))
             {
                 value = 1;
             }
@@ -238,7 +238,7 @@ nonius::benchmark bench_rttr_find_method_neg_level_3()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_4"))
+            if ((m = rttr::type::get(obj_base).get_method("method_4")))
             {
                 value = 1;
             }
@@ -281,7 +281,7 @@ nonius::benchmark bench_rttr_find_method_neg_level_6()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_7"))
+            if ((m = rttr::type::get(obj_base).get_method("method_7")))
             {
                 value = 1;
             }
@@ -324,7 +324,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_level_1()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_13")) //method 13 is contained in 'class_multiple_1C'
+            if ((m = rttr::type::get(obj_base).get_method("method_13"))) //method 13 is contained in 'class_multiple_1C'
             {
                 value = 1;
             }
@@ -366,7 +366,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_level_3()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_15")) //method 15 is contained in 'class_multiple_3C'
+            if ((m = rttr::type::get(obj_base).get_method("method_15"))) //method 15 is contained in 'class_multiple_3C'
             {
                 value = 1;
             }
@@ -408,7 +408,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_level_6()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_18")) //method 18 is contained in 'class_multiple_final'
+            if ((m = rttr::type::get(obj_base).get_method("method_18"))) //method 18 is contained in 'class_multiple_final'
             {
                 value = 1;
             }
@@ -452,7 +452,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_neg_level_1()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_13")) //method 13 is contained in 'class_multiple_1C'
+            if ((m = rttr::type::get(obj_base).get_method("method_13"))) //method 13 is contained in 'class_multiple_1C'
             {
                 value = 1;
             }
@@ -494,7 +494,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_neg_level_3()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_15")) //method 15 is contained in 'class_multiple_3C'
+            if ((m = rttr::type::get(obj_base).get_method("method_15"))) //method 15 is contained in 'class_multiple_3C'
             {
                 value = 1;
             }
@@ -536,7 +536,7 @@ nonius::benchmark bench_rttr_find_method_cross_cast_neg_level_6()
         rttr::method m = rttr::type::get(nullptr).get_method("");
         meter.measure([&]()
         {
-            if (m = rttr::type::get(obj_base).get_method("method_19")) //method 19 is contained in 'class_multiple_final_D'
+            if ((m = rttr::type::get(obj_base).get_method("method_19"))) //method 19 is contained in 'class_multiple_final_D'
             {
                 value = 1;
             }

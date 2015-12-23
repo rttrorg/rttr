@@ -258,10 +258,10 @@ namespace nonius {
         void print_outliers(outlier_classification o) {
             std::cout << "found " << o.total() << " outliers among " << o.samples_seen << " samples (" << detail::percentage_ratio(o.total(), o.samples_seen) << ")\n";
             if(verbose) {
-                std::cout << "low severe", o.low_severe, o.samples_seen;
-                std::cout << "low mild", o.low_mild, o.samples_seen;
-                std::cout << "high mild", o.high_mild, o.samples_seen;
-                std::cout << "high severe", o.high_severe, o.samples_seen;
+                std::cout << "low severe" << o.low_severe << " " << o.samples_seen;
+                std::cout << "low mild" << o.low_mild << " " << o.samples_seen;
+                std::cout << "high mild" << o.high_mild << " " << o.samples_seen;
+                std::cout << "high severe" << o.high_severe << " " << o.samples_seen;
             }
         }
         void print_statistic_estimate(const char* name, estimate<fp_seconds> estimate) {

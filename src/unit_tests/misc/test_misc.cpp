@@ -44,6 +44,7 @@ namespace
 {
     struct custom_type
     {
+        custom_type(){}
         int value = 23;
 
         int my_func() { return value; }

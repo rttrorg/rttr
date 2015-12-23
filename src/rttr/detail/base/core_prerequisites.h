@@ -38,6 +38,7 @@ namespace rttr
 
 #define RTTR_COMPILER_MSVC 1
 #define RTTR_COMPILER_GNUC 2
+#define RTTR_COMPILER_CLANG 3
 
 #define RTTR_ENDIAN_LITTLE 1
 #define RTTR_ENDIAN_BIG 2
@@ -57,7 +58,12 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Compiler
 /////////////////////////////////////////////////////////////////////////////////////////
-#if defined( __GNUC__ )
+#if defined( __clang__ )
+#   define RTTR_COMPILER RTTR_COMPILER_CLANG
+#   define RTTR_COMP_VER (((__clang_major__)*100) + \
+                         (__clang_minor__*10) + \
+                         __clang_patchlevel__)
+#elif defined( __GNUC__ )
 #   define RTTR_COMPILER RTTR_COMPILER_GNUC
 #   define RTTR_COMP_VER (((__GNUC__)*1000) + \
                          (__GNUC_MINOR__*100) + \
@@ -86,6 +92,9 @@ namespace rttr
 #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
 #   define RTTR_INLINE          inline
 #   define RTTR_FORCE_INLINE    inline  __attribute__((always_inline))
+#elif RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   define RTTR_INLINE          inline
+#   define RTTR_FORCE_INLINE    inline  __attribute__((always_inline))
 #else
 #   define RTTR_INLINE          inline
 #   define RTTR_FORCE_INLINE    inline // no force inline for other platforms possible
@@ -108,6 +117,10 @@ namespace rttr
 #       define RTTR_HELPER_DLL_EXPORT
 #       define RTTR_HELPER_DLL_LOCAL
 #   endif
+#elif RTTR_COMPILER == RTTR_COMPILER_CLANG
+#       define RTTR_HELPER_DLL_IMPORT __attribute__ ((visibility ("default")))
+#       define RTTR_HELPER_DLL_EXPORT __attribute__ ((visibility ("default")))
+#       define RTTR_HELPER_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 #else
 #   error "Do not know how to export classes for this platform"
 #endif

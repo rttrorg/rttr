@@ -238,7 +238,7 @@ TEST_CASE("copy non trivial type", "[variant]")
 {
     static_assert(std::is_nothrow_move_constructible<self_aware>::value, "");
 
-#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER <= 5000
+#if __GNUG__ && __GNUC__ < 5
     static_assert(!std::has_trivial_copy_constructor<self_aware>::value, "");
 #else
     static_assert(!std::is_trivially_copyable<self_aware>::value, "");

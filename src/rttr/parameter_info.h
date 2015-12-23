@@ -46,11 +46,10 @@ namespace detail
     template<typename...T> 
     struct parameter_infos;
     template<typename...T> 
-    std::vector<parameter_info> convert_to_parameter_info_list(const parameter_infos<T...>&);
-
+    static std::vector<parameter_info> convert_to_parameter_info_list(const parameter_infos<T...>&);
 
     template<typename T>
-    parameter_info create_param_info(const T&);
+    static parameter_info create_param_info(const T&);
 }
 
 /*!
@@ -170,9 +169,7 @@ class RTTR_API parameter_info
 
         template<typename T>
         friend parameter_info detail::create_param_info(const T&);
-        //template<typename T> 
-        //friend std::vector<parameter_info> detail::convert_to_parameter_info_list(const T&);
-        //! Constructs a property from a property_wrapper_base.
+
         parameter_info(const detail::parameter_info_wrapper_base* wrapper = nullptr);
     private:
         const detail::parameter_info_wrapper_base* m_wrapper;
