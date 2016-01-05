@@ -1,4 +1,4 @@
-RTTR [![Build Status](https://travis-ci.org/rttrorg/rttr.svg?branch=master)](https://travis-ci.org/rttrorg/rttr)
+RTTR <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a>
 ====
 
 RTTR stands for Run Time Type Reflection. 
@@ -106,3 +106,6 @@ The installation guide can be found [here](http://www.rttr.org/doc/rttr-0-9-5/bu
 Get Started:
 ------------
 Take a look at the [documentation](http://www.rttr.org/doc/rttr-0-9-5/classes.html) or start with the [tutorial](http://www.rttr.org/doc/rttr-0-9-5/tutorial_page.html).
+
+<!-- Links -->
+[badge.Travis]: https://travis-ci.org/rttrorg/rttr.svg?branch=master
