@@ -22,7 +22,7 @@ matrix:
     - os: osx
       osx_image: xcode7
       compiler: clang
-      env: UNIT_TESTS=true COMPILER=clang++ V='Apple LLVM 7.0.0' # Apple LLVM version 7.0.0 (clang-700.0.72) CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+      env: UNIT_TESTS=true COMPILER=clang++ V='Apple LLVM 7.0.0' # Apple LLVM version 7.0.0 (clang-700.0.72) STDLIB=libstdc++ CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
     
 before_install:
   - export CIT_ROOT=`pwd`

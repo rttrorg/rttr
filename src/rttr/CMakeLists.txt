@@ -41,10 +41,6 @@ endif()
 
 add_library(rttr_core SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_link_libraries(rttr_core c++abi)
-endif()
-
 install(TARGETS rttr_core EXPORT rttr_targets
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
         LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
