@@ -1,5 +1,4 @@
 language: cpp
-sudo: true
 
 matrix:
   include:
@@ -7,8 +6,8 @@ matrix:
       compiler: gcc
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8']
+          sources: ['ubuntu-toolchain-r-test', 'kalakris-cmake']
+          packages: ['g++-4.8', 'cmake']
       env: COMPILER=g++-4.8
     
 before_install:
