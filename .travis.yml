@@ -1,0 +1,25 @@
+language: cpp
+sudo: true
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8']
+      env: COMPILER=g++-4.8
+    
+before_install:
+  - export CIT_ROOT=`pwd`
+  - cd $CIT_ROOT
+
+install:
+  - cd $CIT_ROOT
+  - mkdir build
+
+script:
+  - cd $CIT_ROOT
+  - cmake -DCMAKE_BUILD_TYPE=Debug -G "Make"
+  - make unit_tests -j 2
