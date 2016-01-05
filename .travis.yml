@@ -17,7 +17,7 @@ before_install:
 
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/3rd_party"
-  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  - cd ${DEPS_DIR}
   
   ############################################################################
   # Install a recent CMake
