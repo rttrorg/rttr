@@ -11,6 +11,14 @@ matrix:
           packages: ['g++-4.8']
       env: UNIT_TESTS=true COMPILER=g++-4.8 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
     
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
+          packages: ['clang-3.7']
+      env: UNIT_TESTS=true COMPILER=clang++-3.7 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+    
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
