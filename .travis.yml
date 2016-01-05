@@ -40,4 +40,5 @@ before_script:
   - (mkdir build && cd build && cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} ${CMAKE_OPTIONS})
 
 script:
+  - cd build
   - make unit_tests -j 2
