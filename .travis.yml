@@ -41,7 +41,7 @@ before_script:
 
 script:
   - |
-    if [[ "${UNIT_TESTS}" == "true" then
+    if [[ "${UNIT_TESTS}" == "true" ]]; then
       # Run unit tests on two cores
       (cd build && make run_tests -j2)
     fi
