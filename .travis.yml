@@ -21,5 +21,5 @@ install:
 
 script:
   - cd $CIT_ROOT
-  - cmake -DCMAKE_BUILD_TYPE=Debug -G
+  - cmake -DCMAKE_BUILD_TYPE=Debug
   - make unit_tests -j 2
