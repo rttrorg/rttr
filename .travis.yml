@@ -1,4 +1,5 @@
 language: cpp
+sudo: false
 
 matrix:
   include:
@@ -6,19 +7,37 @@ matrix:
       compiler: gcc
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'kalakris-cmake']
-          packages: ['g++-4.8', 'cmake']
-      env: COMPILER=g++-4.8
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8']
+      env: COMPILER=g++-4.8 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release"
     
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
 
 install:
-  - cd $CIT_ROOT
-  - mkdir build
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/3rd_party"
+  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  
+  ############################################################################
+  # Install a recent CMake
+  ############################################################################
+   - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      CMAKE_URL="http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz"
+      mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    else
+      brew install cmake
+    fi
+    
+before_script:
+
+  ############################################################################
+  # Go back to the root of the project and setup the build directory
+  ############################################################################
+  - cd ${TRAVIS_BUILD_DIR}
+  - (mkdir build && cd build && cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} ${CMAKE_OPTIONS})
 
 script:
-  - cd $CIT_ROOT
-  - cmake -DCMAKE_BUILD_TYPE=Debug
   - make unit_tests -j 2
