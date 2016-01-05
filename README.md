@@ -1,4 +1,4 @@
-RTTR
+RTTR <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a>
 ====
 
 RTTR stands for Run Time Type Reflection. 
