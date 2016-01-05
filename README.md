@@ -1,5 +1,7 @@
-RTTR <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a>
+RTTR <a target="_blank" href="https://travis-ci.org/rttrorg/rttr.svg?branch=add-travis-ci">![Travis status][badge.Travis]</a>
 ====
+
+[![Build Status](https://travis-ci.org/rttrorg/rttr.svg?branch=add-travis-ci)](https://travis-ci.org/rttrorg/rttr)
 
 RTTR stands for Run Time Type Reflection. 
 It describes the ability of a computer program to introspect and modify an object at runtime. It is also the name of the library itself, which is written in C++ and released as open source library.
