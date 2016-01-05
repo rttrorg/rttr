@@ -1,4 +1,4 @@
-RTTR [![Build Status](https://travis-ci.org/rttrorg/rttr.svg?branch=add-travis-ci)](https://travis-ci.org/rttrorg/rttr)
+RTTR [![Build Status](https://travis-ci.org/rttrorg/rttr.svg?branch=master)](https://travis-ci.org/rttrorg/rttr)
 ====
 
 RTTR stands for Run Time Type Reflection. 
