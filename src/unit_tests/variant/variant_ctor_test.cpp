@@ -239,7 +239,7 @@ TEST_CASE("copy non trivial type", "[variant]")
     static_assert(std::is_nothrow_move_constructible<self_aware>::value, "");
 
 #if __GNUG__ && __GNUC__ < 5
-    static_assert(!std::has_trivial_copy_constructor<self_aware>::value, "");
+    static_assert(!__has_trivial_copy(self_aware), "");
 #else
     static_assert(!std::is_trivially_copyable<self_aware>::value, "");
 #endif

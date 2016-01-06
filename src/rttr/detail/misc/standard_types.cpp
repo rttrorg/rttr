@@ -32,6 +32,8 @@
 #include <list>
 #include <set>
 
+// explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx
+// thats a bug in libc++, because of interaction with __attribute__ ((__visibility__("hidden"), __always_inline__)) in std::string
 template class std::basic_string<char>;
 
 RTTR_REGISTRATION
