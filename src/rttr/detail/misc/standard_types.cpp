@@ -32,6 +32,8 @@
 #include <list>
 #include <set>
 
+template class std::basic_string<char>;
+
 RTTR_REGISTRATION
 {
     using namespace rttr;
