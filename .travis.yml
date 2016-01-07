@@ -28,6 +28,11 @@
 language: cpp
 sudo: false
 
+env:
+  global:
+    - ARCH_FLAGS_x86='-m32'
+    - ARCH_FLAGS_x86_64='-msse4.2'
+
 matrix:
   include:
     - os: linux
@@ -35,25 +40,55 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8']
-      env: COMPILER=g++-4.8 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release" UNIT_TESTS=true
-    
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
+      env: COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib']
+      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
           packages: ['clang-3.7']
-      env: COMPILER=clang++-3.7 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release" UNIT_TESTS=true
+      env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: osx
       osx_image: xcode7
       compiler: clang
-      env: COMPILER=clang++ CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release" UNIT_TESTS=true
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
+      env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
+    
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib']
+      after_success:
+        - pip install --user cpp-coveralls
+        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
+      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
       
   allow_failures:
-    - env: COMPILER=clang++-3.7 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release" UNIT_TESTS=true
-    - env: COMPILER=clang++ CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Release" UNIT_TESTS=true
+    - env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    - env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
     
 before_install:
   - export CIT_ROOT=`pwd`
@@ -76,9 +111,15 @@ install:
     fi
     
 before_script:
-
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} ${CMAKE_OPTIONS})
+  - mkdir build
+  - >
+      eval "ARCH_FLAGS=\${ARCH_FLAGS_${ARCH}}" ;
+      (cd build && cmake
+      -DCMAKE_CXX_COMPILER=${COMPILER}
+      -DCMAKE_BUILD_TYPE=${CONF}
+      -DCMAKE_CXX_FLAGS="$ARCH_FLAGS $GCOV_FLAGS"
+      ..)
 
 script:
   - |
