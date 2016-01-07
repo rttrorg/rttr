@@ -114,7 +114,7 @@ Take a look at the [documentation][rttr.docs] or start with the [tutorial][rttr.
 [badge.version]: https://badge.fury.io/gh/rttrorg%2Frttr.svg
 [badge.Travis]: https://travis-ci.org/rttrorg/rttr.svg?branch=master
 [badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=master
-[badge.Coveralls]: https://coveralls.io/repos/rttrorg/rttr/badge.svg?branch=add-coveralls-ci&service=github
+[badge.Coveralls]: https://coveralls.io/repos/rttrorg/rttr/badge.svg?branch=master&service=github
 [badge.License]: https://img.shields.io/badge/license-MIT-blue.svg
 [rttr.docs]: http://www.rttr.org/doc/rttr-0-9-5/classes.html
 [rttr.install]: http://www.rttr.org/doc/rttr-0-9-5/building_install_page.html
