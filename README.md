@@ -113,7 +113,7 @@ Take a look at the [documentation][rttr.docs] or start with the [tutorial][rttr.
 <!-- Links -->
 [badge.version]: https://badge.fury.io/gh/rttrorg%2Frttr.svg
 [badge.Travis]: https://travis-ci.org/rttrorg/rttr.svg?branch=master
-[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=add-appveyor-ci
+[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=master
 [badge.License]: https://img.shields.io/badge/license-MIT-blue.svg
 [rttr.docs]: http://www.rttr.org/doc/rttr-0-9-5/classes.html
 [rttr.install]: http://www.rttr.org/doc/rttr-0-9-5/building_install_page.html
