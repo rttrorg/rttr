@@ -1,9 +1,12 @@
-RTTR <a target="_blank" href="https://github.com/rttrorg/rttr/releases/latest">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a>
+<a target="_blank" href="https://github.com/rttrorg/rttr/releases/latest">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/project/acki-m/rttr">![Appveyor status][badge.Appveyor]</a> <a target="_blank" href="https://raw.githubusercontent.com/rttrorg/rttr/master/LICENSE.txt">![License][badge.license]</a>
+
+RTTR
 ====
+> C++ Reflection Library
 
 RTTR stands for Run Time Type Reflection. 
 It describes the ability of a computer program to introspect and modify an object at runtime. It is also the name of the library itself, which is written in C++ and released as open source library.
-You can find more information on: [www.rttr.org](http://www.rttr.org)
+You can find more information on: <a target="_blank" href="http://www.rttr.org">www.rttr.org</a>
 
 ----------
 
@@ -95,18 +98,23 @@ Tested and compiled with:
 
 License
 -------
-RTTR is released under the terms of the MIT license,
+RTTR is released under the terms of the [MIT](LICENSE.txt) license,
 so it is free to use in your free or commercial projects.
 
 Installation
 ------------
-The installation guide can be found [here](http://www.rttr.org/doc/rttr-0-9-5/building_install_page.html).
+The installation guide can be found [here][rttr.install].
 
 
 Get Started:
 ------------
-Take a look at the [documentation](http://www.rttr.org/doc/rttr-0-9-5/classes.html) or start with the [tutorial](http://www.rttr.org/doc/rttr-0-9-5/tutorial_page.html).
+Take a look at the [documentation][rttr.docs] or start with the [tutorial][rttr.tutorial].
 
 <!-- Links -->
 [badge.version]: https://badge.fury.io/gh/rttrorg%2Frttr.svg
 [badge.Travis]: https://travis-ci.org/rttrorg/rttr.svg?branch=master
+[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=add-appveyor-ci
+[badge.License]: https://img.shields.io/badge/license-MIT-blue.svg
+[rttr.docs]: http://www.rttr.org/doc/rttr-0-9-5/classes.html
+[rttr.install]: http://www.rttr.org/doc/rttr-0-9-5/building_install_page.html
+[rttr.tutorial]: http://www.rttr.org/doc/rttr-0-9-5/tutorial_page.html

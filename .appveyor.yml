@@ -1,0 +1,126 @@
+####################################################################################
+#                                                                                  #
+#  Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     #
+#                                                                                  #
+#  This file is part of RTTR (Run Time Type Reflection)                            #
+#  License: MIT License                                                            #
+#                                                                                  #
+#  Permission is hereby granted, free of charge, to any person obtaining           #
+#  a copy of this software and associated documentation files (the "Software"),    #
+#  to deal in the Software without restriction, including without limitation       #
+#  the rights to use, copy, modify, merge, publish, distribute, sublicense,        #
+#  and/or sell copies of the Software, and to permit persons to whom the           #
+#  Software is furnished to do so, subject to the following conditions:            #
+#                                                                                  #
+#  The above copyright notice and this permission notice shall be included in      #
+#  all copies or substantial portions of the Software.                             #
+#                                                                                  #
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      #
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        #
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     #
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          #
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   #
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   #
+#  SOFTWARE.                                                                       #
+#                                                                                  #
+####################################################################################
+
+shallow_clone: true
+
+environment:
+  matrix:
+  - COMPILER: MSVC_12
+    ARCHITECTURE: x86
+    TESTS_ONLY: true
+  - COMPILER: MSVC_12
+    ARCHITECTURE: x64
+    TESTS_ONLY: true
+  - COMPILER: MSVC_14
+    ARCHITECTURE: x86
+    TESTS_ONLY: true
+  - COMPILER: MSVC_14
+    ARCHITECTURE: x64
+    TESTS_ONLY: true
+  - COMPILER: MINGW_482
+    ARCHITECTURE: x86
+    TESTS_ONLY: true
+
+
+build:
+  verbosity: detailed
+  parallel: true
+
+install:
+  #######################################################################################
+  # All external dependencies are installed in C:\projects\deps
+  #######################################################################################
+  - mkdir C:\projects\deps
+  - cd C:\projects\deps
+
+  #######################################################################################
+  # Install Ninja
+  #######################################################################################
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\deps\ninja > nul
+  - set PATH=C:\projects\deps\ninja;%PATH%
+  - ninja --version
+
+  #######################################################################################
+  # Install a recent CMake
+  #######################################################################################
+  - set CMAKE_URL="https://cmake.org/files/v3.4/cmake-3.4.1-win32-x86.zip"
+  - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
+  - 7z x cmake.zip -oC:\projects\deps\cmake > nul
+  - set PATH=C:\projects\deps\cmake\bin;%PATH%
+  - cmake --version
+
+before_build:
+  - ps: >-
+      function Get-Batchfile ($file) {  
+        $cmd = "`"$file`" & set"
+         cmd /c $cmd | Foreach-Object {
+              $p, $v = $_.split('=')
+              Set-Item -path env:$p -value $v
+          }
+      }
+      function VisualStudioVars($version, $envVariable, $batFile)  
+      {
+          $key = "HKLM:SOFTWARE\Wow6432Node\Microsoft\VisualStudio\" + $version
+          $VsKey = Get-ItemProperty $key
+          $VsInstallPath = [System.IO.Path]::GetDirectoryName($VsKey.InstallDir)
+          $VsInstallDir = [System.IO.Path]::GetDirectoryName($VsInstallPath)
+          $VsToolsDir = [System.IO.Path]::Combine($VsInstallDir, "Tools")
+          $vsComntools = (Get-ChildItem env:$envVariable).Value 
+          $batchFile = [System.IO.Path]::Combine($vsComntools, $batFile)
+          Get-Batchfile $batchFile
+      }
+      if ($env:ARCHITECTURE -eq "x86")
+      {
+        switch ($env:COMPILER)
+        {
+           "MSVC_12" { VisualStudioVars "12.0" "VS120COMNTOOLS" "vsvars32.bat" }
+           "MSVC_14" { VisualStudioVars "14.0" "VS140COMNTOOLS" "vsvars32.bat" }
+           "MINGW_482" { $env:PATH = "C:\Qt\Tools\mingw482_32\bin;$($env:PATH)" }
+           default { write-host "unknown compiler for x86" }
+        }
+      }
+      else
+      {
+        switch ($env:COMPILER)
+        {
+           "MSVC_12" { VisualStudioVars "12.0" "VS120COMNTOOLS" "..\..\VC\bin\x86_amd64\vcvarsx86_amd64.bat" }
+           "MSVC_14" { VisualStudioVars "14.0" "VS140COMNTOOLS" "..\..\VC\bin\x86_amd64\vcvarsx86_amd64.bat" }
+           default { write-host "unknown compiler for x64" }
+        }
+      }
+  - cmd: cd C:\projects\rttr
+
+#######################################################################################
+# we can use Ninja for all configurations
+#######################################################################################
+build_script:
+  - mkdir build
+  - cd build
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+  - if "%TESTS_ONLY%" == "true" (ninja run_tests)
