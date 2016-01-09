@@ -272,18 +272,6 @@ TEST_CASE("Test rttr::type - TypeId/ClassInheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test rttr::type - type::get_by_name", "[type]")
-{
-    CHECK(type::get_by_name("std::string").is_valid()   == true);
-    CHECK(type::get_by_name("std::string*").is_valid()  == true);
-
-    CHECK(type::get_by_name("std::string[100]").is_valid()   == false);
-    type::get<std::string[100]>(); // register it first, now it is available also by name lookup too
-    CHECK(type::get_by_name("std::string[100]").is_valid()   == true);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 TEST_CASE("Test rttr::type - Check get_sizeof", "[type]")
 {
     CHECK(type::get<bool>().get_sizeof()        == 1);
