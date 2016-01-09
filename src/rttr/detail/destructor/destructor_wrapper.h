@@ -43,12 +43,17 @@ class destructor_wrapper : public destructor_wrapper_base
     public:
         type get_destructed_type() const { return type::get<ClassType*>(); }
 
-        void invoke(variant& obj) const
+        bool invoke(variant& obj) const
         {
             if (obj.is_type<ClassType*>())
             {
                 delete obj.get_value<ClassType*>();
                 obj = variant();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 };

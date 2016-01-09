@@ -25,70 +25,44 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/destructor.h"
-#include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include <rttr/registration>
+#include <catch/catch.hpp>
 
-using namespace std;
+using namespace rttr;
 
-namespace rttr
+struct dtor_invoke_test
 {
+    dtor_invoke_test()
+    { 
+      
+    }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+};
 
-destructor::destructor(const detail::destructor_wrapper_base* wrapper)
-:   m_wrapper(wrapper)
+RTTR_REGISTRATION
 {
+    registration::class_<dtor_invoke_test>("dtor_invoke_test")
+        .constructor<>() (policy::ctor::as_raw_ptr)
+       ;
+}
 
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("destructor - invoke", "[destructor]") 
+{
+    type t = type::get<dtor_invoke_test>();
+    REQUIRE(t.is_valid() == true);
+
+    destructor dtor = t.get_destructor();
+    CHECK(dtor.is_valid() == true);
+    CHECK(static_cast<bool>(dtor) == true);
+
+    variant var = t.create();
+
+    CHECK(var.is_valid() == true);
+    CHECK(dtor.invoke(var) == true);
+
+    CHECK(var.is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::is_valid() const
-{
-    return (m_wrapper ? true : false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-destructor::operator bool() const
-{
-    return (m_wrapper ? true : false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type destructor::get_destructed_type() const
-{
-    if (is_valid())
-        return m_wrapper->get_destructed_type();
-    else
-        return detail::get_invalid_type();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::invoke(variant& obj) const
-{
-    if (is_valid())
-        return m_wrapper->invoke(obj);
-    else
-        return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::operator==(const destructor& other) const
-{
-    return (m_wrapper == other.m_wrapper);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::operator!=(const destructor& other) const
-{
-    return (m_wrapper != other.m_wrapper);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace rttr

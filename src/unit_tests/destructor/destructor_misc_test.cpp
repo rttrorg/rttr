@@ -25,70 +25,62 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/destructor.h"
-#include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include <rttr/registration>
+#include <catch/catch.hpp>
 
-using namespace std;
+using namespace rttr;
 
-namespace rttr
+struct dtor_misc_test
 {
+    dtor_misc_test()
+    { 
+      
+    }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+};
 
-destructor::destructor(const detail::destructor_wrapper_base* wrapper)
-:   m_wrapper(wrapper)
+RTTR_REGISTRATION
 {
-
+    registration::class_<dtor_misc_test>("dtor_misc_test")
+        .constructor<>() (policy::ctor::as_raw_ptr)
+       ;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool destructor::is_valid() const
+TEST_CASE("destructor - general test", "[destructor]") 
 {
-    return (m_wrapper ? true : false);
+    destructor dtor = type::get_by_name("dtor_misc_test").get_destructor();
+    CHECK(dtor.is_valid() == true);
+    CHECK(static_cast<bool>(dtor) == true);
+
+    //negative test
+    dtor = type::get_by_name("").get_destructor();
+    CHECK(dtor.is_valid() == false);
+    CHECK(static_cast<bool>(dtor) == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor::operator bool() const
+TEST_CASE("destructor - get_destructed_type()", "[destructor]") 
 {
-    return (m_wrapper ? true : false);
+    CHECK(type::get<dtor_misc_test>().get_destructor().get_destructed_type() == type::get<dtor_misc_test*>());
+
+    //negative test
+    CHECK(type::get_by_name("").get_destructor().get_destructed_type().is_valid() == false);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type destructor::get_destructed_type() const
+TEST_CASE("destructor - compare operator", "[destructor]") 
 {
-    if (is_valid())
-        return m_wrapper->get_destructed_type();
-    else
-        return detail::get_invalid_type();
+    destructor dtor1 = type::get_by_name("dtor_misc_test").get_destructor();
+    destructor dtor1a = type::get_by_name("dtor_misc_test").get_destructor();
+    destructor dtor2 = type::get_by_name("").get_destructor();
+
+    CHECK(dtor1 == dtor1a);
+    CHECK(dtor1 != dtor2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::invoke(variant& obj) const
-{
-    if (is_valid())
-        return m_wrapper->invoke(obj);
-    else
-        return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::operator==(const destructor& other) const
-{
-    return (m_wrapper == other.m_wrapper);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool destructor::operator!=(const destructor& other) const
-{
-    return (m_wrapper != other.m_wrapper);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace rttr

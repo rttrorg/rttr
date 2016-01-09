@@ -39,6 +39,8 @@ set(SOURCE_FILES main.cpp
                  property/property_access_level_test.cpp
                  type/test_type.cpp
                  type/test_type_names.cpp
+                 destructor/destructor_invoke_test.cpp
+                 destructor/destructor_misc_test.cpp
                  constructor/constructor_access_level_test.cpp
                  constructor/constructor_default_arg_test.cpp
                  constructor/constructor_param_info_test.cpp

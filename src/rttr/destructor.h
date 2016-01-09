@@ -93,12 +93,14 @@ class RTTR_API destructor
         type get_destructed_type() const;
 
         /*!
-         * \brief Destroys the given object \p obj.
+         * \brief Destroys the contained object in the variant \p obj.
          *
          * \remark When the \p obj could be destroyed the given \p obj is invalid after calling this method;
          *         Otherwise it is still valid.
+         *
+         * \return True if the destructor of the object could be invoked, otherwise false.
          */
-        void invoke(variant& obj) const;
+        bool invoke(variant& obj) const;
 
         /*!
          * \brief Returns true if this destructor is the same like the \p other.
