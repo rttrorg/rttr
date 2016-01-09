@@ -86,10 +86,6 @@ matrix:
         - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
       
-  allow_failures:
-    - env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-    - env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
-    
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
