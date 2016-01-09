@@ -38,6 +38,7 @@ set(SOURCE_FILES main.cpp
                  property/test_property_reflection.cpp
                  property/property_access_level_test.cpp
                  type/test_type.cpp
+                 type/test_type_names.cpp
                  constructor/constructor_access_level_test.cpp
                  constructor/constructor_default_arg_test.cpp
                  constructor/constructor_param_info_test.cpp
