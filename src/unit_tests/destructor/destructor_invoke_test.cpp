@@ -57,12 +57,29 @@ TEST_CASE("destructor - invoke", "[destructor]")
     CHECK(dtor.is_valid() == true);
     CHECK(static_cast<bool>(dtor) == true);
 
-    variant var = t.create();
+    SECTION("Invoke positive")
+    {
+        variant var = t.create();
 
-    CHECK(var.is_valid() == true);
-    CHECK(dtor.invoke(var) == true);
+        CHECK(var.is_valid() == true);
+        CHECK(dtor.invoke(var) == true);
 
-    CHECK(var.is_valid() == false);
+        CHECK(var.is_valid() == false);
+    }
+
+    SECTION("Invoke negative")
+    {
+        variant var;
+        CHECK(var.is_valid() == false);
+        destructor dtor_invalid = type::get_by_name("").get_destructor();
+        REQUIRE(dtor_invalid.is_valid() == false);
+        
+        // cannot invoke destructor, because dtor wrapper is invalid
+        CHECK(dtor_invalid.invoke(var) == false);
+
+        // cannot invoke destructor, because given type is invalid
+        CHECK(dtor.invoke(var) == false);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
