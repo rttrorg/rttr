@@ -94,7 +94,8 @@ Portability
 Tested and compiled with:
 - Microsoft Visual Studio 2013 & 2015
 - GCC 4.8.1
-- MinGW 4.8.1
+- Clang 3.7
+- MinGW 4.8.2
 
 License
 -------
