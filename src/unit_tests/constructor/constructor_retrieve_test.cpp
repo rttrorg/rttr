@@ -62,18 +62,21 @@ TEST_CASE("constructor - retrieve", "[constructor]")
     {
         constructor ctor = t.get_constructor();
         CHECK(ctor.is_valid() == true);
+        CHECK(static_cast<bool>(ctor) == true);
     }
 
     SECTION("retrieve copy-ctor")
     {
         constructor ctor = t.get_constructor({type::get<ctor_test>()});
         CHECK(ctor.is_valid() == true);
+        CHECK(static_cast<bool>(ctor) == true);
     }
 
     SECTION("retrieve custom ctor")
     {
         constructor ctor = t.get_constructor({type::get<int>(), type::get<double>()});
         CHECK(ctor.is_valid() == true);
+        CHECK(static_cast<bool>(ctor) == true);
     }
 
     SECTION("retrieve all ctors")

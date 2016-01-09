@@ -86,6 +86,8 @@ TEST_CASE("constructor - get_instanciated_type", "[constructor]")
     CHECK(ctor_list[1].get_instanciated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
     CHECK(ctor_list[2].get_instanciated_type() == type::get<ctor_misc_test>());
     CHECK(ctor_list[3].get_instanciated_type() == type::get<ctor_misc_test>());
+    //negative test
+    CHECK(type::get_by_name("").get_constructor().get_instanciated_type().is_valid() == false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +99,9 @@ TEST_CASE("constructor - get_signature", "[constructor]")
 
     ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
     CHECK(ctor.get_signature() == "ctor_misc_test( int )");
+
+    //negative test
+    CHECK(type::get_by_name("").get_constructor().get_signature() == "");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +125,9 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
     ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
     CHECK(ctor.get_declaring_type() == type::get<ctor_misc_test>());
+
+    //negative test
+    CHECK(type::get_by_name("").get_constructor().get_declaring_type().is_valid() == false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +157,9 @@ TEST_CASE("constructor - get_metadata", "[constructor]")
         REQUIRE(value.is_type<std::string>() == true);
         CHECK(value.get_value<std::string>() == "This is another ToolTip.");
     }
+
+    //negative test
+    CHECK(type::get_by_name("").get_constructor().get_metadata("42").is_valid() == false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -164,5 +175,18 @@ TEST_CASE("constructor - get_metadata - type", "[constructor]")
     CHECK(var.get_value<std::string>() == "This is a type ToolTip.");
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - compare - type", "[constructor]") 
+{
+    constructor ctor1 = type::get<ctor_misc_test>().get_constructor();
+    constructor ctor2 = type::get<ctor_misc_test>().get_constructor();
+    
+    CHECK(ctor1 == ctor2);
+
+    const auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    REQUIRE(ctor_list.size() > 2);
+    CHECK(ctor_list[0] != ctor_list[1]);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////

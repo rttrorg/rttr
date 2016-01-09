@@ -154,3 +154,13 @@ TEST_CASE("constructor - access_levels test - via function", "[constructor]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - access_levels test - negative", "[constructor]") 
+{
+    constructor ctor = type::get_by_name("wrong_type").get_constructor();
+    
+    CHECK(ctor.is_valid() == false);
+    CHECK(ctor.get_access_level() == access_levels::public_access);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

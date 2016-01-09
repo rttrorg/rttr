@@ -90,6 +90,9 @@ TEST_CASE("constructor - parameter info - no info", "[constructor]")
 
     std::vector<parameter_info> infos = ctor.get_parameter_infos();
     REQUIRE(infos.size() == 0);
+
+    //negative test
+    CHECK(type::get_by_name("").get_constructor().get_parameter_infos().size() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

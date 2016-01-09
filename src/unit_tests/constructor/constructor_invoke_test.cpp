@@ -61,6 +61,18 @@ struct ctor_invoke_test
     std::string _text;
 };
 
+struct ctor_invoke_arg_test
+{
+    ctor_invoke_arg_test() {}
+    ctor_invoke_arg_test(int) {}
+    ctor_invoke_arg_test(int, int) {}
+    ctor_invoke_arg_test(int, int, int) {}
+    ctor_invoke_arg_test(int, int, int, int) {}
+    ctor_invoke_arg_test(int, int, int, int, int) {}
+    ctor_invoke_arg_test(int, int, int, int, int, int) {}
+    ctor_invoke_arg_test(int, int, int, int, int, int, int) {}
+};
+
 RTTR_REGISTRATION
 {
     registration::class_<ctor_invoke_test>("ctor_invoke_test")
@@ -94,6 +106,17 @@ RTTR_REGISTRATION
         (
             policy::ctor::as_std_shared_ptr
         );
+
+    registration::class_<ctor_invoke_arg_test>("ctor_invoke_arg_test")
+        .constructor<>()
+        .constructor<int>()
+        .constructor<int, int>()
+        .constructor<int, int, int>()
+        .constructor<int, int, int, int>()
+        .constructor<int, int, int, int, int>()
+        .constructor<int, int, int, int, int, int>()
+        .constructor<int, int, int, int, int, int, int>()
+        ;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -223,6 +246,39 @@ TEST_CASE("constructor - invoke variadic", "[constructor]")
     ctor_invoke_test* obj = var.get_value<ctor_invoke_test*>();
     CHECK(obj->value_1 == 1);
     CHECK(obj->value_2 == 2);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke positive", "[constructor]") 
+{
+    const auto ctor_list = type::get<ctor_invoke_arg_test>().get_constructors();
+    REQUIRE(ctor_list.size() == 8);
+
+    CHECK(ctor_list[0].invoke().is_valid() == true);
+    CHECK(ctor_list[1].invoke(1).is_valid() == true);
+    CHECK(ctor_list[2].invoke(1, 2).is_valid() == true);
+    CHECK(ctor_list[3].invoke(1, 2, 3).is_valid() == true);
+    CHECK(ctor_list[4].invoke(1, 2, 3, 4).is_valid() == true);
+    CHECK(ctor_list[5].invoke(1, 2, 3, 4, 5).is_valid() == true);
+    CHECK(ctor_list[6].invoke(1, 2, 3, 4, 5, 6).is_valid() == true);
+    CHECK(ctor_list[7].invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke negative", "[constructor]") 
+{
+    constructor ctor = type::get_by_name("").get_constructor();
+
+    CHECK(ctor.invoke().is_valid() == false);
+    CHECK(ctor.invoke(1).is_valid() == false);
+    CHECK(ctor.invoke(1, 2).is_valid() == false);
+    CHECK(ctor.invoke(1, 2, 3).is_valid() == false);
+    CHECK(ctor.invoke(1, 2, 3, 4).is_valid() == false);
+    CHECK(ctor.invoke(1, 2, 3, 4, 5).is_valid() == false);
+    CHECK(ctor.invoke(1, 2, 3, 4, 5, 6).is_valid() == false);
+    CHECK(ctor.invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
