@@ -88,3 +88,14 @@ TEST_CASE("method - access_levels test", "[method]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - NEGATIVE - access_levels test", "[method]") 
+{
+    type t = type::get_by_name("method_access_level_test");
+    REQUIRE(t.is_valid() == true);
+
+    CHECK(t.get_method("").is_valid() == false);
+    CHECK(t.get_method("").get_access_level() == access_levels::public_access);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

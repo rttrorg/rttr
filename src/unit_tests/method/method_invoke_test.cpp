@@ -99,12 +99,11 @@ TEST_CASE("method - invoke", "[method]")
 
     CHECK(meth_list[7].invoke_variadic(obj, {1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
     CHECK(obj.m_invoked[7] == true);
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - NEGATIVE", "[method]") 
+TEST_CASE("method - invoke - NEGATIVE - invalid method", "[method]") 
 {
     method meth = type::get_by_name("").get_method("");
     REQUIRE(meth.is_valid() == false);
@@ -132,6 +131,40 @@ TEST_CASE("method - invoke - NEGATIVE", "[method]")
     CHECK(obj.m_invoked[6] == false);
 
     CHECK(meth.invoke_variadic(obj, {1, 2, 3, 4, 5, 6, 7}).is_valid() == false);
+    CHECK(obj.m_invoked[7] == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]") 
+{
+    type t = type::get<method_invoke_test>();
+    const auto meth_list = t.get_methods();
+    REQUIRE(meth_list.size() == 8);
+
+    method_invoke_test obj;
+    CHECK(meth_list[0].invoke(obj, 1).is_valid() == false);
+    CHECK(obj.m_invoked[0] == false);
+
+    CHECK(meth_list[1].invoke(obj).is_valid() == false);
+    CHECK(obj.m_invoked[1] == false);
+
+    CHECK(meth_list[2].invoke(obj, 1).is_valid() == false);
+    CHECK(obj.m_invoked[2] == false);
+
+    CHECK(meth_list[3].invoke(obj, 1, 2).is_valid() == false);
+    CHECK(obj.m_invoked[3] == false);
+
+    CHECK(meth_list[4].invoke(obj, 1, 2, 3).is_valid() == false);
+    CHECK(obj.m_invoked[4] == false);
+
+    CHECK(meth_list[5].invoke(obj, 1, 2, 3, 4).is_valid() == false);
+    CHECK(obj.m_invoked[5] == false);
+
+    CHECK(meth_list[6].invoke(obj, 1, 2, 3, 4, 5).is_valid() == false);
+    CHECK(obj.m_invoked[6] == false);
+
+    CHECK(meth_list[7].invoke_variadic(obj, {1, 2, 3, 4, 5, 6}).is_valid() == false);
     CHECK(obj.m_invoked[7] == false);
 }
 

@@ -84,6 +84,11 @@ TEST_CASE("method - parameter info - no info", "[method]")
 
     std::vector<parameter_info> infos = meth.get_parameter_infos();
     REQUIRE(infos.size() == 0);
+
+    // negative test
+    meth = type::get<method_param_info_test>().get_method("");
+    REQUIRE(meth.is_valid() == false);
+    CHECK(meth.get_parameter_infos().size() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
