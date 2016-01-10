@@ -35,6 +35,8 @@ struct method_access_level_test
     void method_1() {}
     void method_2() {}
     void method_3() {}
+
+    void default_method(int value = 23) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +64,10 @@ RTTR_REGISTRATION
         .method("method_8", &method_access_level_test::method_3, registration::public_access)
         (
             metadata("23", 43)
+        )
+        .method("default_method", &method_access_level_test::default_method, registration::public_access)
+        (
+            default_arguments(23)
         )
         ;
 }
@@ -94,8 +100,11 @@ TEST_CASE("method - NEGATIVE - access_levels test", "[method]")
     type t = type::get_by_name("method_access_level_test");
     REQUIRE(t.is_valid() == true);
 
-    CHECK(t.get_method("").is_valid() == false);
+    REQUIRE(t.get_method("").is_valid() == false);
     CHECK(t.get_method("").get_access_level() == access_levels::public_access);
+
+    REQUIRE(t.get_method("default_method").is_valid() == true);
+    CHECK(t.get_method("default_method").get_access_level() == access_levels::public_access);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
