@@ -95,7 +95,7 @@ matrix:
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
       after_success:
-        - valgrind --leak-check=full --error-exitcode=1 bin/unit_tests_d
+        - valgrind --leak-check=full --error-exitcode=1 ${TRAVIS_BUILD_DIR}/bin/unit_tests_d
       
 before_install:
   - export CIT_ROOT=`pwd`
