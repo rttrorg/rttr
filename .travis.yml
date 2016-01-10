@@ -34,11 +34,6 @@ env:
     - ARCH_FLAGS_x86_64=''
     - secure: iwgYkkpbrmO5g2MgO1OTt/ljLl1NrFFvjO/2635hLg2MCdz6IlZcEMw/2n4luNofPJYP9xUs2WqAa/n5CtGbYat/Y3MjIgMaH+g491jMAbBS3QPrHLkyOfzJZT8QKZFJ4BQNUYCu9pD2pNwe66D21CkPkWDJmEcWyPFQEs8ReMfik8S1/ZY2FmJmcYRv9/QisBMCaOCBedvrq739GNL8tD8J5O04GEa21R4pZJukVp2DzHRa7wrhjqacDTnnseevXHgFae06sLR6xAeqpWpOaMnZqI8oUso2nKhRnpyNkFj1LXWfYaZRuvNYb8aWq3PyzAwKwVRkvRqb3f8GXFWFVQ5Qow+4VmbCeh9QW2qmAy11UBORs7x+3e+xKo2OalnZvjVakJFDVVvpcw+pfOKov4yuWA3VISREbajVaRI7xOZvI7VgSQ3EiwcNI9ac7ayfjXKbXb5s5Jyqc0s+CB2BFLVHDGhxsiVnu/2EOHahNjylcMi/hWfpn66BjMDS8xxlZicQOzn+QPstBwaUZT9gomfAiRObhttSH+QMdw0u+8lS22D6F1sGD+6/1KhcDPWdZUKH9IrGIg3vYB7ZhlI+KFu3ZzJJXop65ut2t55excXkEIBRaq98sm62MMwBjCTGYPfUi3X0kVQXBHa6u1VBK8o/HcIgOGDt0EjuHwnZgSU=
 
-addons:
-  apt:
-    packages:
-      - valgrind
-      
 matrix:
   include:
     - os: linux
@@ -97,8 +92,10 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
+      after_success:
+        - valgrind --leak-check=full --error-exitcode=1 bin/unit_tests_d
       
 before_install:
   - export CIT_ROOT=`pwd`
@@ -136,10 +133,6 @@ script:
     if [[ "${UNIT_TESTS}" == "true" ]]; then
       # Run unit tests on two cores
       (cd build && make run_tests -j2)
-    fi
-  - |
-    if [[ "${VALGRIND}" == "true" ]]; then
-      (valgrind --leak-check=full --error-exitcode=1 bin/unit_tests_d)
     fi
 
 notifications:
