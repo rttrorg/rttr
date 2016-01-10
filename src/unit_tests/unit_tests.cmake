@@ -48,9 +48,12 @@ set(SOURCE_FILES main.cpp
                  constructor/constructor_invoke_test.cpp
                  constructor/constructor_misc_test.cpp
                  enumeration/test_enumeration_reflection.cpp
+                 method/method_invoke_defaults_test.cpp
                  method/method_access_level_test.cpp
                  method/test_method_reflection.cpp
                  method/method_default_arg_test.cpp
+                 method/method_misc_test.cpp
+                 method/method_invoke_test.cpp
                  method/method_param_info_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
