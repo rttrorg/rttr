@@ -476,10 +476,12 @@ destructor type::get_destructor() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type::destroy(variant& obj) const
+bool type::destroy(variant& obj) const
 {
     if (auto dtor = detail::type_database::instance().get_destructor(*this))
-        dtor->invoke(obj);
+        return dtor->invoke(obj);
+    else
+        return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

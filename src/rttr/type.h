@@ -519,12 +519,14 @@ class RTTR_API type
         destructor get_destructor() const;
 
         /*!
-         * \brief Destroys the given object \p obj.
+         * \brief Destroys the contained object in the variant \p obj.
          *
          * \remark When the \p obj could be destroyed the given \p obj is invalid after calling this method;
          *         Otherwise it is still valid.
+         *
+         * \return True if the destructor of the object could be invoked, otherwise false.
          */
-        void destroy(variant& obj) const;
+        bool destroy(variant& obj) const;
 
 
         /*!

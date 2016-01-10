@@ -136,7 +136,7 @@ TEST_CASE("constructor - invoke general", "[constructor]")
         CHECK(var.get_type() == type::get<ctor_invoke_test*>());
         ctor_invoke_test* obj = var.get_value<ctor_invoke_test*>();
         CHECK(obj->default_ctor_invoked == true);
-        t.get_destructor().invoke(var);
+        CHECK(t.get_destructor().invoke(var) == true);
     }
 
     SECTION("invoke copy-ctor")
@@ -153,7 +153,7 @@ TEST_CASE("constructor - invoke general", "[constructor]")
 
         ctor_invoke_test* obj = var.get_value<ctor_invoke_test*>();
         CHECK(obj->cpy_ctor_invoked == true);
-        t.get_destructor().invoke(var);
+        CHECK(t.get_destructor().invoke(var) == true);
     }
 
     SECTION("invoke custom ctor")
@@ -170,6 +170,8 @@ TEST_CASE("constructor - invoke general", "[constructor]")
         CHECK(obj->custom_ctor_invoked == true);
         CHECK(obj->value_1 == 23);
         CHECK(obj->value_2 == 42);
+
+        CHECK(t.get_destructor().invoke(var) == true);
     }
 }
 
@@ -199,7 +201,7 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
         CHECK(var.is_valid() == true);
         CHECK(var.get_type() == type::get<ctor_invoke_test*>());
 
-        type::get<ctor_invoke_test>().destroy(var);
+        CHECK(type::get<ctor_invoke_test>().destroy(var) == true);
 
         var = ctor_list[9].invoke(23, 42.0);
         CHECK(var.is_valid() == true);
@@ -208,7 +210,11 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
         CHECK(obj->value_1 == 23);
         CHECK(obj->value_2 == 42);
 
-        type::get<ctor_invoke_test>().destroy(var);
+        CHECK(type::get<ctor_invoke_test>().destroy(var) == true);
+
+        // negative test
+        // var must be cleaned
+        CHECK(type::get<ctor_invoke_test>().destroy(var) == false);
     }
 
     SECTION("as_std_shared_ptr")
@@ -246,6 +252,7 @@ TEST_CASE("constructor - invoke variadic", "[constructor]")
     ctor_invoke_test* obj = var.get_value<ctor_invoke_test*>();
     CHECK(obj->value_1 == 1);
     CHECK(obj->value_2 == 2);
+    CHECK(t.get_destructor().invoke(var) == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
