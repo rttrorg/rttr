@@ -94,8 +94,6 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
-      after_success:
-        - valgrind --leak-check=full --error-exitcode=1 ${TRAVIS_BUILD_DIR}/build/bin/unit_tests_d
       
 before_install:
   - export CIT_ROOT=`pwd`
@@ -133,6 +131,11 @@ script:
     if [[ "${UNIT_TESTS}" == "true" ]]; then
       # Run unit tests on two cores
       (cd build && make run_tests -j2)
+    fi
+  - |
+    if [[ "${VALGRIND}" == "true" ]]; then
+      # Run unit tests on two cores
+      (valgrind --leak-check=full --error-exitcode=1 ${TRAVIS_BUILD_DIR}/build/bin/unit_tests_d)
     fi
 
 notifications:
