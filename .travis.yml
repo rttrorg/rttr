@@ -36,7 +36,7 @@ env:
 
 matrix:
   include:
-   - os: osx
+    - os: osx
       osx_image: xcode7
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
