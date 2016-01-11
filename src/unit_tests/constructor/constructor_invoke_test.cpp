@@ -215,6 +215,7 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
         // negative test
         // var must be cleaned
         CHECK(type::get<ctor_invoke_test>().destroy(var) == false);
+        CHECK(type::get_by_name("").destroy(var) == false);
     }
 
     SECTION("as_std_shared_ptr")
