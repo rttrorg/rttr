@@ -36,14 +36,11 @@ env:
 
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'vera++']
-      env: COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
-
+   - os: osx
+      osx_image: xcode7
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+      
     - os: linux
       compiler: gcc
       addons:
@@ -51,7 +48,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=true
-
+      
     - os: linux
       compiler: gcc
       addons:
@@ -59,7 +56,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-
+      
     - os: linux
       compiler: clang
       addons:
@@ -67,7 +64,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
           packages: ['clang-3.7']
       env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-
+      
     - os: osx
       osx_image: xcode7
       compiler: clang
@@ -122,6 +119,7 @@ install:
     else
       brew install cmake
     fi
+  - if [[ "${CHECK_FORMATTING}" == "true" ]]; then brew install vera++; fi
     
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
