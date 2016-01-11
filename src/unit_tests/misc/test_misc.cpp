@@ -359,7 +359,7 @@ TEST_CASE("Test raw_type type traits", "[raw_type<T>]")
     SECTION("Test reference to pointer types")
     {
         raw_type_check<int*&,                        int >();
-        raw_type_check<std::vector<int> const & ,   std::vector<int> >();
+        raw_type_check<std::vector<int> const & , std::vector<int> >();
     }
 
     SECTION("Test array types")
@@ -446,21 +446,21 @@ TEST_CASE("Test raw_type type traits", "[raw_type<T>]")
 
     SECTION("Test member function type")
     {
-        raw_type_check<mem_func_ptr_t,                      mem_func_ptr_t>();
-        raw_type_check<const mem_func_ptr_t,                mem_func_ptr_t>();
-        raw_type_check<const volatile mem_func_ptr_t,       mem_func_ptr_t>();
-
-        raw_type_check<mem_func_ptr_t*,                     mem_func_ptr_t>();
-        raw_type_check<const mem_func_ptr_t*,               mem_func_ptr_t>();
-        raw_type_check<const volatile mem_func_ptr_t*,      mem_func_ptr_t>();
-
-        raw_type_check<mem_const_func_ptr_t,                mem_const_func_ptr_t>();
-        raw_type_check<const mem_const_func_ptr_t,          mem_const_func_ptr_t>();
-        raw_type_check<const volatile mem_const_func_ptr_t, mem_const_func_ptr_t>();
-
-        raw_type_check<mem_const_func_ptr_t*,               mem_const_func_ptr_t>();
-        raw_type_check<const mem_const_func_ptr_t*,         mem_const_func_ptr_t>();
-        raw_type_check<const volatile mem_const_func_ptr_t*,mem_const_func_ptr_t>();
+        raw_type_check<mem_func_ptr_t,                       mem_func_ptr_t>();
+        raw_type_check<const mem_func_ptr_t,                 mem_func_ptr_t>();
+        raw_type_check<const volatile mem_func_ptr_t,        mem_func_ptr_t>();
+                                                             
+        raw_type_check<mem_func_ptr_t*,                      mem_func_ptr_t>();
+        raw_type_check<const mem_func_ptr_t*,                mem_func_ptr_t>();
+        raw_type_check<const volatile mem_func_ptr_t*,       mem_func_ptr_t>();
+                                                             
+        raw_type_check<mem_const_func_ptr_t,                 mem_const_func_ptr_t>();
+        raw_type_check<const mem_const_func_ptr_t,           mem_const_func_ptr_t>();
+        raw_type_check<const volatile mem_const_func_ptr_t,  mem_const_func_ptr_t>();
+                                                             
+        raw_type_check<mem_const_func_ptr_t*,                mem_const_func_ptr_t>();
+        raw_type_check<const mem_const_func_ptr_t*,          mem_const_func_ptr_t>();
+        raw_type_check<const volatile mem_const_func_ptr_t*, mem_const_func_ptr_t>();
     }
 }
 

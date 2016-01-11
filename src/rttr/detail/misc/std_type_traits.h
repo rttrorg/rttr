@@ -219,7 +219,7 @@ using remove_cv = std::remove_cv<T>;
 // C++14 has support for this, but we support at the moment C++11
 
 template< bool B, class T, class F >
-using conditional_t = typename std::conditional<B,T,F>::type;
+using conditional_t = typename std::conditional<B, T, F>::type;
 
 template<typename T>
 using remove_cv_t = typename remove_cv<T>::type;
@@ -240,7 +240,7 @@ template<typename T>
 using add_pointer_t = typename std::add_pointer<T>::type;
 
 template< bool B, class T = void >
-using enable_if_t = typename std::enable_if<B,T>::type;
+using enable_if_t = typename std::enable_if<B, T>::type;
 
 template<typename T>
 using decay_t = typename std::decay<T>::type;

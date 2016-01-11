@@ -158,7 +158,7 @@ bool is_stored_internally(const void* obj, const rttr::variant& var)
 struct big_custom_type
 {
     // two doubles, cannot be stored internally inside variant
-    std::aligned_storage<sizeof(double[2]),8>::type m_data;
+    std::aligned_storage<sizeof(double[2]), 8>::type m_data;
 };
 
 // this type should be stored internally inside variant class.

@@ -36,11 +36,14 @@ env:
 
 matrix:
   include:
-    - os: osx
-      osx_image: xcode7
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
-      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'vera++']
+      env: COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+
     - os: linux
       compiler: gcc
       addons:
@@ -48,7 +51,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=true
-      
+
     - os: linux
       compiler: gcc
       addons:
@@ -56,7 +59,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
+
     - os: linux
       compiler: clang
       addons:
@@ -64,7 +67,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
           packages: ['clang-3.7']
       env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
+
     - os: osx
       osx_image: xcode7
       compiler: clang
@@ -119,7 +122,6 @@ install:
     else
       brew install cmake
     fi
-  - if [[ "${CHECK_FORMATTING}" == "true" ]]; then brew install vera++; fi
     
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -143,7 +145,7 @@ script:
       # T009: Comma should not be preceded by whitespace, but should be followed by one
       # T011: Curly brackets from the same pair should be either in the same line or in the same column
       # T013: Source files should contain the copyright notice
-      find src -name \*\.h -print -o -name \*\.cpp -print | vera++ --rule F001 --rule L001 --rule L002 --rule T001 --rule T002 --rule T009 --rule T011 --rule T013 --error
+      find src/rttr src/unit_tests -name \*\.h -print -o -name \*\.cpp -print | vera++ --rule F001 --rule L001 --rule L002 --rule T001 --rule T002 --rule T009 --rule T011 --rule T013 --error
     fi
   - |
     if [[ "${UNIT_TESTS}" == "true" ]]; then

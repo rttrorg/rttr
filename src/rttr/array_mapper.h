@@ -161,7 +161,7 @@ struct array_mapper
     {
     }
 
-    static bool insert_value(array_type&, const T& value, std::size_t,)
+    static bool insert_value(array_type&, const T& value, std::size_t)
     {
     }
 

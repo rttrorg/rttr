@@ -79,11 +79,11 @@ RTTR_REGISTRATION
         .method("method_4", &method_test::method_4)
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
         .method("method_5", static_cast<int(method_test::*)(double*)>(&method_test::method_5))
-        .method("method_5", static_cast<int(method_test::*)(int,double)>(&method_test::method_5))
-        .method("method_5", static_cast<int(method_test::*)(int,double) const>(&method_test::method_5))
+        .method("method_5", static_cast<int(method_test::*)(int, double)>(&method_test::method_5))
+        .method("method_5", static_cast<int(method_test::*)(int, double) const>(&method_test::method_5))
 #else
         .method("method_5", select_overload<int(double*)>(&method_test::method_5))
-        .method("method_5", select_overload<int(int,double)>(&method_test::method_5))
+        .method("method_5", select_overload<int(int, double)>(&method_test::method_5))
         .method("method_5", select_const(&method_test::method_5))
 #endif
         .method("method_6", &method_test::method_6)
@@ -246,7 +246,7 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(m9.get_parameter_infos().size() == 10);
     REQUIRE(m9.get_parameter_infos()[4].get_type() == type::get<bool>());
 
-    ret = m9.invoke_variadic(inst, {1,2,3,4,true,6,7,8,9,10});
+    ret = m9.invoke_variadic(inst, {1, 2, 3, 4, true, 6, 7, 8, 9, 10});
     REQUIRE(obj.method_9_called == true);
 
     ////////////////////////////////////////

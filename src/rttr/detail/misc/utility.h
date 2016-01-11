@@ -274,7 +274,7 @@ struct compare_array_less_impl<ElementType[Count]>
 {
     int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
     {
-    	int flag = 0;
+        int flag = 0;
         for(std::size_t i = 0; i < Count; ++i)
         {
             if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)

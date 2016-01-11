@@ -593,7 +593,7 @@ TEST_CASE("variant_array_view::set_value", "[variant_array_view]")
             for (std::size_t j = 0; j < array.get_size_variadic({i}); ++j)
                 for (std::size_t k = 0; k < array.get_size_variadic({i, j}); ++k)
                     for (std::size_t l = 0; l < array.get_size_variadic({i, j, k}); ++l)
-                        array.set_value_variadic({i ,j, k, l}, -1);
+                        array.set_value_variadic({i, j, k, l}, -1);
 
         CHECK(obj[0][0][0][0] == -1);
         CHECK(obj[2][2][2][2] == -1);
