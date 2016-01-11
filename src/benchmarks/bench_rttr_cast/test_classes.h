@@ -30,7 +30,7 @@
 
 #include <rttr/type>
 
-#define CLASS(CLASS_NAME) struct CLASS_NAME { virtual ~CLASS_NAME() {} RTTR_ENABLE() virtual int getType() { return 0; } int dummyIntValue; }; 
+#define CLASS(CLASS_NAME) struct CLASS_NAME { virtual ~CLASS_NAME() {} RTTR_ENABLE() virtual int getType() { return 0; } int dummyIntValue; };
 
 #define CLASS_INHERIT(CLASS1, CLASS2) struct CLASS1 : CLASS2 { virtual int getType() { return 1; } RTTR_ENABLE(CLASS2) double dummyDoubleValue; };
 

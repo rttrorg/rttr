@@ -198,12 +198,12 @@ struct array_mapper<std::array<T, N> >
         arr.resize(new_size);
         return true;
     }
-    
+
     static std::vector<bool>::const_reference get_value(const std::vector<bool>& arr, std::size_t index)
     {
         return arr[index];
     }
-    
+
     static std::vector<bool>::reference get_value(std::vector<bool>& arr, std::size_t index)
     {
         return arr[index];

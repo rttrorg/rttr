@@ -40,7 +40,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get, Setter set, 
+        property_wrapper(Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
@@ -139,8 +139,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get, Setter set, 
-                         std::array<metadata, Metadata_Count> metadata_list) 
+        property_wrapper(Getter get, Setter set,
+                         std::array<metadata, Metadata_Count> metadata_list)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -183,7 +183,7 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
     private:
         Getter  m_getter;
         Setter  m_setter;
-    
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -197,8 +197,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(Getter get, 
-                         std::array<metadata, Metadata_Count> metadata_list) 
+        property_wrapper(Getter get,
+                         std::array<metadata, Metadata_Count> metadata_list)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get)
         {

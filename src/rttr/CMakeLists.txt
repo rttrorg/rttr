@@ -30,7 +30,7 @@ project(rttr)
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
-generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH} 
+generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
                                 "RTTR" "Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>" "MIT License")
 
 loadFolder("rttr" HPP_FILES SRC_FILES True)
@@ -42,15 +42,15 @@ endif()
 add_library(rttr_core SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
 
 install(TARGETS rttr_core EXPORT rttr_targets
-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
+        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
         LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
         ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
-        
+
 install(EXPORT rttr_targets
         DESTINATION cmake
         NAMESPACE RTTR::
         FILE rttr-config.cmake)
-        
+
 target_include_directories(rttr_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
@@ -59,7 +59,7 @@ target_include_directories(rttr_core PUBLIC
 target_compile_definitions(rttr_core PRIVATE RTTR_DLL_EXPORTS)
 target_compile_definitions(rttr_core PUBLIC RTTR_DLL)
 
-set_target_properties(rttr_core PROPERTIES 
+set_target_properties(rttr_core PROPERTIES
                       VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                       EXPORT_NAME Core)
 
@@ -68,17 +68,17 @@ install_pdb_files(rttr_core)
 
 if (BUILD_STATIC)
     add_library(rttr_core_lib STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-    
+
     install(TARGETS rttr_core_lib EXPORT rttr_targets
             ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
             LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
-            
+
     target_include_directories(rttr_core_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
     $<INSTALL_INTERFACE:include>)
-    
-    set_target_properties(rttr_core_lib PROPERTIES 
+
+    set_target_properties(rttr_core_lib PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_Lib)
     if (MSVC)
@@ -92,12 +92,12 @@ endif()
 
 if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     add_library(rttr_core_s SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
- 
+
     install(TARGETS rttr_core_s EXPORT rttr_targets
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} 
+            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
             LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
             ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
-            
+
     target_compile_definitions(rttr_core_s PRIVATE RTTR_DLL_EXPORTS)
     target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
 
@@ -106,10 +106,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
     $<INSTALL_INTERFACE:include>)
 
-    set_target_properties(rttr_core_s PROPERTIES 
+    set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL)
-                          
+
     install_pdb_files(rttr_core_s)
 
     if (MSVC)
@@ -119,20 +119,20 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     else()
         message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
     endif()
-   
+
     if (BUILD_STATIC)
         add_library(rttr_core_lib_s STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-        
+
         install(TARGETS rttr_core_lib_s EXPORT rttr_targets
                 ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
                 LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
-                
+
         target_include_directories(rttr_core_lib_s PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
         $<INSTALL_INTERFACE:include>)
-        
-        set_target_properties(rttr_core_lib_s PROPERTIES 
+
+        set_target_properties(rttr_core_lib_s PROPERTIES
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                               EXPORT_NAME Core_Lib_STL)
         if (MSVC)

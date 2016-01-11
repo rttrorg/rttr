@@ -36,7 +36,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-registration_executer::registration_executer() 
+registration_executer::registration_executer()
 {
 }
 

@@ -58,14 +58,14 @@ struct set_value
 template<typename T>
 struct get_getter_policy
 {
-    using type = return_as_copy; 
+    using type = return_as_copy;
 };
 
 // default setter policy
 template<typename T>
 struct get_setter_policy
 {
-    using type = set_value; 
+    using type = set_value;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

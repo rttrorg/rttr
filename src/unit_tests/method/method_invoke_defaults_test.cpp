@@ -56,7 +56,7 @@ struct method_invoke_defaults_test
 RTTR_REGISTRATION
 {
     registration::class_<method_invoke_defaults_test>("method_invoke_test")
-        .method("func_0", &method_invoke_defaults_test::func_0) 
+        .method("func_0", &method_invoke_defaults_test::func_0)
         .method("func_1", &method_invoke_defaults_test::func_1) ( default_arguments(1) )
         .method("func_2", &method_invoke_defaults_test::func_2) ( default_arguments(1, 2) )
         .method("func_3", &method_invoke_defaults_test::func_3) ( default_arguments(1, 2, 3))
@@ -69,7 +69,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - defaults", "[method]") 
+TEST_CASE("method - invoke - defaults", "[method]")
 {
     type t = type::get<method_invoke_defaults_test>();
     const auto meth_list = t.get_methods();
@@ -103,7 +103,7 @@ TEST_CASE("method - invoke - defaults", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - defaults - skip last value", "[method]") 
+TEST_CASE("method - invoke - defaults - skip last value", "[method]")
 {
     type t = type::get<method_invoke_defaults_test>();
     const auto meth_list = t.get_methods();
@@ -135,7 +135,7 @@ TEST_CASE("method - invoke - defaults - skip last value", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - defaults - NEGATIVE", "[method]") 
+TEST_CASE("method - invoke - defaults - NEGATIVE", "[method]")
 {
     method meth = type::get_by_name("").get_method("");
     REQUIRE(meth.is_valid() == false);

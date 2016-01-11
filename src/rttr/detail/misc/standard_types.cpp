@@ -71,7 +71,7 @@ RTTR_REGISTRATION
                 .constructor<const std::string&>()
                 .constructor<const std::string&, unsigned int, unsigned int>()
                 .constructor<const char*>()
-                .constructor<const char*, unsigned int>() 
+                .constructor<const char*, unsigned int>()
                 .constructor<unsigned int, char>()
                 .method("length",       &std::string::length)
                 .method("size",         &std::string::size)

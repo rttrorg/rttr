@@ -46,31 +46,31 @@ namespace detail
  *         otherwise this function will return false.
  */
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////

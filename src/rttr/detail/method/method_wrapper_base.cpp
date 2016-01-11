@@ -63,7 +63,7 @@ void method_wrapper_base::set_name(const char* name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const char* method_wrapper_base::get_name() const 
+const char* method_wrapper_base::get_name() const
 {
     return m_name;
 }

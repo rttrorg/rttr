@@ -68,13 +68,13 @@ void variant::swap(variant& other)
 
     if (!is_this_valid && !is_other_valid)
         return;
-    
+
     if (is_this_valid && is_other_valid)
     {
         detail::variant_data tmp_data;
         detail::variant_policy_func tmp_policy_func = other.m_policy;
         other.m_policy(detail::variant_policy_operation::SWAP, other.m_data, tmp_data);
-        
+
         m_policy(detail::variant_policy_operation::SWAP, m_data, other.m_data);
         other.m_policy = m_policy;
 
@@ -188,7 +188,7 @@ bool variant::can_convert(const type& target_type) const
         return false;
 
     const type source_type = get_type();
-    
+
     if (source_type == target_type)
         return true;
 

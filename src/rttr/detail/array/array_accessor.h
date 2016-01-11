@@ -91,7 +91,7 @@ struct array_accessor
     template<typename... Indices>
     static bool remove_value(const Array_Type&, Indices... indices);
     static bool remove_value(const Array_Type&, const std::vector<std::size_t>&);
-    
+
     template<typename... Indices>
     static bool remove_value(Array_Type& array, Indices... indices);
     static bool remove_value(Array_Type& array, const std::vector<std::size_t>& index_list);

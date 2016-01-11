@@ -74,7 +74,7 @@ RTTR_REGISTRATION
     registration::class_<method_test>("method_test")
         .constructor<>() (policy::ctor::as_raw_ptr)
         .method("method_1", &method_test::method_1)
-        .method("method_2", &method_test::method_2)    
+        .method("method_2", &method_test::method_2)
         .method("method_3", &method_test::method_3)
         .method("method_4", &method_test::method_4)
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
@@ -138,7 +138,7 @@ RTTR_REGISTRATION
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-TEST_CASE("Test method", "[method]") 
+TEST_CASE("Test method", "[method]")
 {
     type t_meth = type::get<method_test>();
     REQUIRE(t_meth.is_valid() == true);
@@ -154,7 +154,7 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(obj.method_1_called == true);
     REQUIRE(ret.is_valid() == true);
     REQUIRE(ret.is_type<void>() == true);
-    
+
     ////////////////////////////////////////
     obj.method_1_called = false; // reset
     method meth = t_meth.get_method("method_1");
@@ -187,7 +187,7 @@ TEST_CASE("Test method", "[method]")
     string ref_for_method4;
     t_meth.get_method("method_4").invoke(inst, ref_for_method4);
     REQUIRE(ref_for_method4 == "Text Changed");
-    
+
     obj.method_4_called = false;
     ref_for_method4 = "";
     t_meth.get_method("method_4").invoke_variadic(inst, {ref_for_method4});
@@ -234,7 +234,7 @@ TEST_CASE("Test method", "[method]")
 
     ret = t_meth.get_method("method_8").invoke(inst);
     REQUIRE(obj.method_8_called == true);
-    
+
     ////////////////////////////////////////
     method_test_derived derived_inst;
     derived_inst.get_type().get_method("method_8").invoke(derived_inst);
@@ -256,7 +256,7 @@ TEST_CASE("Test method", "[method]")
     ret = t_meth.get_method("method_fun_ptr_arg").invoke(obj, func);
     REQUIRE(obj.method_func_ptr_arg_called == true);
     REQUIRE(obj.m_func_ptr == &my_global_func);
-    
+
 
     ////////////////////////////////////////
     t_meth.get_method("method_default").invoke(derived_inst, 3);
@@ -295,7 +295,7 @@ TEST_CASE("Test method", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("global methods", "[method]") 
+TEST_CASE("global methods", "[method]")
 {
     free_function_called = false;
     method global_meth_1 = type::get_global_method("free_function", {type::get<bool>()});
@@ -323,7 +323,7 @@ TEST_CASE("global methods", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ShortCut via type - method invoke", "[method]") 
+TEST_CASE("ShortCut via type - method invoke", "[method]")
 {
     // with instance
     method_test_final obj;
@@ -346,7 +346,7 @@ TEST_CASE("ShortCut via type - method invoke", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test method arrays", "[method]") 
+TEST_CASE("Test method arrays", "[method]")
 {
     method_test obj;
     method meth_array = type::get(obj).get_method("method_raw_array");
@@ -365,7 +365,7 @@ TEST_CASE("Test method arrays", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test method signature", "[method]") 
+TEST_CASE("Test method signature", "[method]")
 {
     const auto methods = type::get<method_test_final>().get_methods();
     REQUIRE(methods.size() == 20);
@@ -379,7 +379,7 @@ TEST_CASE("Test method signature", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method policies", "[method]") 
+TEST_CASE("method policies", "[method]")
 {
     method_test obj;
     type meth_type = type::get(obj);
@@ -411,7 +411,7 @@ TEST_CASE("method policies", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Invoke method via wrapper", "[method]") 
+TEST_CASE("Invoke method via wrapper", "[method]")
 {
     SECTION("test method invoke via shared_ptr wrapper")
     {
@@ -470,7 +470,7 @@ TEST_CASE("Invoke method via wrapper", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke with nullptr", "[method]") 
+TEST_CASE("method - invoke with nullptr", "[method]")
 {
     type t_meth = type::get<method_test>();
     method meth = t_meth.get_method("method_with_ptr");
@@ -483,7 +483,7 @@ TEST_CASE("method - invoke with nullptr", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test method meta data", "[method]") 
+TEST_CASE("Test method meta data", "[method]")
 {
     method m8 = type::get<method_test_final>().get_method("method_8");
     variant value = m8.get_metadata(E_MetaData::SCRIPTABLE);
@@ -493,7 +493,7 @@ TEST_CASE("Test method meta data", "[method]")
     value = m8.get_metadata("TAG");
     REQUIRE(value.is_valid() == true);
     REQUIRE(value.get_value<int>() == 42);
-    
+
     // no meta data
     method m7 = type::get<method_test_final>().get_method("method_7");
     REQUIRE(m7.is_valid() == true);

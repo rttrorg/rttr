@@ -28,7 +28,7 @@
 set(HEADER_FILES version.rc.in
                   test_methods.h
                   )
-                
+
 set(SOURCE_FILES main.cpp
                  bench_method.cpp
                  bench_find_method.cpp

@@ -56,16 +56,16 @@ type_database::type_database()
     m_custom_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_orig_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_custom_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    
+
     m_base_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_derived_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_conversion_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_get_derived_info_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    
+
     m_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_array_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_variant_create_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    
+
     m_type_size.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_is_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
@@ -77,24 +77,24 @@ type_database::type_database()
     m_is_member_object_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_member_function_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_pointer_dim_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    
-    
+
+
     // The following inserts are done, because we use the type_id directly
     // as index for the vector to access the following type information
     // type_id 0 is the invalid type, therfore we have to fill some dummy data
     m_orig_names.push_back("!invalid_type!");
     m_custom_names.push_back(m_orig_names[0]);
-    
+
     m_base_class_list.push_back(0);
     m_derived_class_list.push_back(0);
     m_conversion_list.push_back(0);
     m_get_derived_info_func_list.push_back(nullptr);
-    
+
     m_raw_type_list.push_back(0);
     m_wrapped_type_list.push_back(0);
     m_array_raw_type_list.push_back(0);
     m_variant_create_func_list.push_back(nullptr);
-    
+
     m_type_size.push_back(0);
 
     m_is_class_list.push_back(false);
@@ -112,8 +112,8 @@ type_database::type_database()
 
 type_database& type_database::instance()
 {
-    static type_database obj; 
-    return obj; 
+    static type_database obj;
+    return obj;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ const property_wrapper_base* type_database::get_class_property(const type& t, co
     using vec_value_type = class_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(), 
+    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(),
                                 vec_value_type{raw_type.get_id(), name_hash},
                                 vec_value_type::order());
     for (; itr != m_class_property_list.cend(); ++itr)
@@ -179,9 +179,9 @@ std::vector<const property_wrapper_base*> type_database::get_all_class_propertie
 {
     using member_type = property_wrapper_base;
     using vec_value_type = class_member<member_type>;
-    
+
     const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(), 
+    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(),
                                 vec_value_type{raw_type.get_id()}, vec_value_type::order());
 
     using sort_item = std::pair<uint16_t, member_type*>;
@@ -220,7 +220,7 @@ const property_wrapper_base* type_database::get_global_property(const char* name
 {
     using vec_value_type = global_member<property_wrapper_base>;
     const auto name_hash = generate_hash(name);
-    auto itr = std::lower_bound(m_global_property_list.cbegin(), m_global_property_list.cend(), 
+    auto itr = std::lower_bound(m_global_property_list.cbegin(), m_global_property_list.cend(),
                                 vec_value_type{name_hash}, vec_value_type::order());
     for (; itr != m_global_property_list.cend(); ++itr)
     {
@@ -309,7 +309,7 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
     using vec_value_type = class_member<method_wrapper_base>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(), 
+    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
                                 vec_value_type{raw_type.get_id(), name_hash},
                                 vec_value_type::order());
     for (; itr != m_class_method_list.cend(); ++itr)
@@ -387,7 +387,7 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
     using vec_value_type = class_member<method_wrapper_base>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(), 
+    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
                                 vec_value_type{raw_type.get_id(), name_hash},
                                 vec_value_type::order());
     for (; itr != m_class_method_list.cend(); ++itr)
@@ -418,7 +418,7 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const method_wrapper_base* type_database::get_class_method(const type& t, const char* name, 
+const method_wrapper_base* type_database::get_class_method(const type& t, const char* name,
                                                            const std::vector<argument>& arg_list) const
 {
     return get_class_method<std::vector<argument>, compare_with_defaults>(t, name, arg_list);
@@ -432,7 +432,7 @@ std::vector<const method_wrapper_base*> type_database::get_all_class_methods(con
     using vec_value_type = class_member<member_type>;
 
     const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(), 
+    auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
                                 vec_value_type{raw_type.get_id()}, vec_value_type::order());
 
     using sort_item = std::pair<uint16_t, member_type*>;
@@ -448,7 +448,7 @@ std::vector<const method_wrapper_base*> type_database::get_all_class_methods(con
 
     std::sort(sorted_vec.begin(), sorted_vec.end(), [](const sort_item& left, const sort_item& right)
                                                     { return left.first < right.first; });
-    
+
     std::vector<const member_type*> result;
     result.reserve(sorted_vec.size());
     for (const auto& item : sorted_vec)
@@ -471,7 +471,7 @@ const method_wrapper_base* type_database::get_global_method(const char* name) co
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
     const auto name_hash = generate_hash(name);
-    auto itr = std::lower_bound(m_global_method_list.cbegin(), m_global_method_list.cend(), 
+    auto itr = std::lower_bound(m_global_method_list.cbegin(), m_global_method_list.cend(),
                                 vec_value_type{name_hash}, vec_value_type::order());
     for (; itr != m_global_method_list.cend(); ++itr)
     {
@@ -494,7 +494,7 @@ const method_wrapper_base* type_database::get_global_method(const char* name, co
     using member_type = method_wrapper_base;
     using vec_value_type = global_member<member_type>;
     const auto name_hash = generate_hash(name);
-    auto itr = std::lower_bound(m_global_method_list.cbegin(), m_global_method_list.cend(), 
+    auto itr = std::lower_bound(m_global_method_list.cbegin(), m_global_method_list.cend(),
                                 vec_value_type{name_hash}, vec_value_type::order());
     for (; itr != m_global_method_list.cend(); ++itr)
     {
@@ -561,7 +561,7 @@ RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<
     {
         auto& item = *itr;
         if (item.m_id == id)
-            return item.m_data.get(); 
+            return item.m_data.get();
         else
             break;
     }
@@ -572,7 +572,7 @@ RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<
 /////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_ptr<T> new_item, 
+RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_ptr<T> new_item,
                                                    std::vector<type_data<T>>& vec)
 {
     if (!t.is_valid())
@@ -605,7 +605,7 @@ const constructor_wrapper_base* type_database::get_constructor(const type& t, co
 {
     using vec_value_type = type_data<constructor_wrapper_base>;
     const auto id = t.get_id();
-    auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(), 
+    auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(),
                                 id, vec_value_type::order_by_id());
     for (; itr != m_constructor_list.cend(); ++itr)
     {
@@ -614,7 +614,7 @@ const constructor_wrapper_base* type_database::get_constructor(const type& t, co
             break;
 
         if (Comparer_Type::compare(item.m_data->get_parameter_infos(), container))
-            return item.m_data.get(); 
+            return item.m_data.get();
     }
 
     return nullptr;
@@ -640,7 +640,7 @@ std::vector<const constructor_wrapper_base*> type_database::get_constructors(con
 {
     using vec_value_type = type_data<constructor_wrapper_base>;
     const auto id = t.get_id();
-    auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(), 
+    auto itr = std::lower_bound(m_constructor_list.cbegin(), m_constructor_list.cend(),
                                 id, vec_value_type::order_by_id());
 
     std::vector<const constructor_wrapper_base*> result;
@@ -711,7 +711,7 @@ void type_database::register_custom_name(const type& t, std::string custom_name)
             name_to_id.m_hash_value = generate_hash(m_custom_names[id]);
         }
     }
-    
+
     std::sort(m_custom_name_to_id.begin(), m_custom_name_to_id.end(), name_to_id::order_by_name());
 }
 
@@ -726,7 +726,7 @@ void type_database::register_metadata(const type& t, std::vector<metadata> data)
 
     if (!meta_vec)
     {
-        auto new_meta_vec = detail::make_unique<std::vector<metadata>>(data.cbegin(), data.cend());        
+        auto new_meta_vec = detail::make_unique<std::vector<metadata>>(data.cbegin(), data.cend());
         meta_vec = new_meta_vec.get();
         register_item_type(t, std::move(new_meta_vec), m_metadata_type_list);
     }
@@ -784,7 +784,7 @@ void type_database::register_converter(const type& t, std::unique_ptr<type_conve
 
     if (get_converter(t, converter->m_target_type))
         return;
-    
+
     using vec_value_type = type_data<type_converter_base>;
     m_type_converter_list.push_back({t.get_id(), std::move(converter)});
     std::stable_sort(m_type_converter_list.begin(), m_type_converter_list.end(), vec_value_type::order_by_id());
@@ -797,7 +797,7 @@ const type_converter_base* type_database::get_converter(const type& source_type,
     const auto src_id = source_type.get_id();
     const auto target_id = target_type.get_id();
     using vec_value_type = type_data<type_converter_base>;
-    auto itr = std::lower_bound(m_type_converter_list.cbegin(), m_type_converter_list.cend(), 
+    auto itr = std::lower_bound(m_type_converter_list.cbegin(), m_type_converter_list.cend(),
                                 src_id, vec_value_type::order_by_id());
     for (; itr != m_type_converter_list.cend(); ++itr)
     {
@@ -821,7 +821,7 @@ void type_database::register_comparator(const type& t, const type_comparator_bas
 
     using data_type = type_data<const type_comparator_base*>;
     m_type_comparator_list.push_back({t.get_id(), comparator});
-    std::stable_sort(m_type_comparator_list.begin(), m_type_comparator_list.end(), 
+    std::stable_sort(m_type_comparator_list.begin(), m_type_comparator_list.end(),
                      data_type::order_by_id());
 }
 
@@ -831,7 +831,7 @@ const type_comparator_base* type_database::get_comparator(const type& t) const
 {
     using vec_value_type = type_data<const type_comparator_base*>;
     const auto id = t.get_id();
-    auto itr = std::lower_bound(m_type_comparator_list.cbegin(), m_type_comparator_list.cend(), id, 
+    auto itr = std::lower_bound(m_type_comparator_list.cbegin(), m_type_comparator_list.cend(), id,
                                 vec_value_type::order_by_id());
     if (itr != m_type_comparator_list.cend() && itr->m_id == id)
         return itr->m_data;
@@ -916,7 +916,7 @@ static void insert_space_before(std::string& text, const std::string& part)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_database::derive_name(const std::string& src_name, const std::string& raw_name, 
+std::string type_database::derive_name(const std::string& src_name, const std::string& raw_name,
                                        const std::string& custom_name)
 {
     auto tmp_src_name = src_name;
@@ -949,7 +949,7 @@ std::string type_database::derive_name(const std::string& src_name, const std::s
 
     return tmp_src_name;
 }
- 
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 std::string type_database::derive_name(const type& array_raw_type, const char* name)
@@ -998,7 +998,7 @@ bool type_database::register_name(const char* name, const type& array_raw_type, 
     m_custom_names.emplace_back(std::move(custom_name));
 
     id = m_type_id_counter;
-    
+
     return false;
 }
 
@@ -1036,7 +1036,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
         m_conversion_list[row + index] = type.m_rttr_cast_func;
         ++index;
     }
-    
+
     m_derived_class_list.resize(std::max(m_derived_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT));
     const auto id = src_type.get_id();
     // here we store for a type Y all its derived classes
@@ -1050,7 +1050,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
                 m_derived_class_list[row + i] = id;
                 break;
             }
-                
+
         }
     }
 }
@@ -1059,7 +1059,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::register_type(const char* name, 
+uint16_t type_database::register_type(const char* name,
                                       const type& raw_type,
                                       const type& wrapped_type,
                                       const type& array_raw_type,
@@ -1121,7 +1121,7 @@ uint16_t type_database::get_by_name(const char* name) const
 {
     // TO DO normalize name
     const auto hash_value = generate_hash(name);
-    auto itr = std::lower_bound(m_custom_name_to_id.cbegin(), m_custom_name_to_id.cend(), hash_value, 
+    auto itr = std::lower_bound(m_custom_name_to_id.cbegin(), m_custom_name_to_id.cend(), hash_value,
                                 name_to_id::order_by_name());
     for (; itr != m_custom_name_to_id.cend(); ++itr)
     {

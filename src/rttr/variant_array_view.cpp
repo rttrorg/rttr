@@ -64,7 +64,7 @@ size_t variant_array_view::get_rank() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
- 
+
 type variant_array_view::get_rank_type(std::size_t index) const
 {
     return m_array_wrapper->get_rank_type(index);
@@ -104,7 +104,7 @@ std::size_t variant_array_view::get_size_variadic(const std::vector<std::size_t>
 {
     return m_array_wrapper->get_size_variadic(index_list);
 }
-        
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant_array_view::set_size(std::size_t new_size)

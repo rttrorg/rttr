@@ -53,7 +53,7 @@ struct argument_wrapper
     argument_wrapper(T&& data) : m_data(const_cast<void*>(reinterpret_cast<const void*>(std::addressof(data)))) {}
 
     template<typename T>
-    T& get_value() const 
+    T& get_value() const
     {
         using raw_type = typename std::remove_reference<T>::type;
         return (*reinterpret_cast<raw_type*>(const_cast<void *>(m_data)));

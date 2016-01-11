@@ -25,55 +25,35 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_METADATA_H_
-#define RTTR_METADATA_H_
+#include <rttr/registration>
+#include <catch/catch.hpp>
 
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/variant.h"
+using namespace rttr;
 
-namespace rttr
-{
-namespace detail
+struct prop_misc_test
 {
 
-/*!
- * This class holds meta data.
- *
- */
-class RTTR_API metadata
-{
-    public:
-        metadata() { }
-        metadata(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
-        metadata(const metadata& other) : m_key(other.m_key), m_value(other.m_value) {}
-        metadata(metadata&& other) : m_key(std::move(other.m_key)), m_value(std::move(other.m_value)) {}
-        metadata& operator=(const metadata& other) { m_key = other.m_key; m_value = other.m_value; return *this; }
+    int value_1;
+    bool value_7;
 
-        variant get_key() const      { return m_key; }
-        variant get_value() const    { return m_value; }
-
-        struct order_by_key
-        {
-            RTTR_INLINE bool operator () ( const metadata& _left, const metadata& _right )  const
-            {
-                return _left.m_key < _right.m_key;
-            }
-            RTTR_INLINE bool operator () ( const variant& _left, const metadata& _right ) const
-            {
-                return _left < _right.m_key;
-            }
-            RTTR_INLINE bool operator () ( const metadata& _left, const variant& _right ) const
-            {
-                return _left.m_key < _right;
-            }
-        };
-
-    private:
-        variant m_key;
-        variant m_value;
+    RTTR_REGISTRATION_FRIEND
 };
 
-} // end namespace detail
-} // end namespace rttr
+/////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // RTTR_METADATA_H_
+RTTR_REGISTRATION
+{
+    registration::class_<prop_misc_test>("prop_misc_test")
+        .property("val_1", &prop_misc_test::value_1)
+
+       ;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - access_levels test - object ptr", "[property]")
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

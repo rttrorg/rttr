@@ -85,7 +85,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test Enumeration", "[enumeration]") 
+TEST_CASE("Test Enumeration", "[enumeration]")
 {
     type enum_type = type::get<enum_test>();
     REQUIRE(enum_type.is_valid() == true);
@@ -131,7 +131,7 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 
     REQUIRE(align_value.get_type() == enum_info_align.get_type());
     REQUIRE(orient_value.get_type() == enum_info_orient.get_type());
-    
+
     // the underlying type is compiler specific implemented(can be int or unsigned int)
     // so simple check if one is returned
     REQUIRE(enum_info_align.get_underlying_type().is_valid() == true);
@@ -143,7 +143,7 @@ TEST_CASE("Test Enumeration", "[enumeration]")
     std::string bad_key = enum_info_align.value_to_name(5000);
     REQUIRE(bad_value.is_valid() == false);
     REQUIRE(bad_key == string());
-    
+
     std::vector<std::string> enum_keys = enum_info_align.get_names();
     REQUIRE(enum_keys.size() == 4);
 
@@ -164,26 +164,26 @@ TEST_CASE("Test Enumeration", "[enumeration]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test global enum", "[enumeration]") 
+TEST_CASE("Test global enum", "[enumeration]")
 {
     type enum_type = type::get<E_DayOfWeek>();
     REQUIRE(enum_type.is_valid() == true);
     REQUIRE(enum_type.is_enumeration() == true);
-    
+
     enumeration e_day = enum_type.get_enumeration();
     REQUIRE(e_day.get_declaring_type().is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test enumeration meta data", "[enumeration]") 
+TEST_CASE("Test enumeration meta data", "[enumeration]")
 {
     enumeration enum_align = type::get<enum_test::E_Alignment>().get_enumeration();
 
     variant value = enum_align.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
-    
+
     // not scriptable
     enumeration enum_orient = type::get<enum_test::E_Orientation>().get_enumeration();
     value = enum_orient.get_metadata(E_MetaData::SCRIPTABLE);

@@ -30,12 +30,12 @@ project(bench_rttr_cast)
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
-generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH} 
+generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
                                 "Benchmark rttr_cast" "Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>" "MIT License")
 
 loadFolder("bench_rttr_cast" HPP_FILES SRC_FILES)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-                    
+
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
@@ -104,7 +104,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     set_target_properties(bench_rttr_cast_s PROPERTIES DEBUG_POSTFIX _d)
 
     add_dependencies(bench_rttr_cast_s rttr_core_s)
-    
+
     if (MSVC)
         target_compile_options(bench_rttr_cast_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
     elseif(CMAKE_COMPILER_IS_GNUCXX)
@@ -115,7 +115,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     install(TARGETS bench_rttr_cast_s
             RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
-            
+
     if (BUILD_STATIC)
         add_executable(bench_rttr_cast_lib_s ${SRC_FILES} ${HPP_FILES})
         if (MSVC)
@@ -133,7 +133,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         set_target_properties(bench_rttr_cast_lib_s PROPERTIES DEBUG_POSTFIX _d)
 
         add_dependencies(bench_rttr_cast_lib_s rttr_core_lib_s)
-        
+
         if (MSVC)
             target_compile_options(bench_rttr_cast_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
         elseif(CMAKE_COMPILER_IS_GNUCXX)

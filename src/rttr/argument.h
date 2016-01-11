@@ -51,7 +51,7 @@ class instance;
 class RTTR_API argument
 {
     template<typename T>
-    using decay_arg_t = detail::enable_if_t<!std::is_same<argument, T>::value && 
+    using decay_arg_t = detail::enable_if_t<!std::is_same<argument, T>::value &&
                                             !std::is_same<variant_array_view, T>::value, T>;
 
     template<typename T>
@@ -92,7 +92,7 @@ public:
     template<typename T>
     RTTR_INLINE ptr_type<T> is_type() const;
     template<typename T>
-    RTTR_INLINE non_ptr_type<T> is_type() const;    
+    RTTR_INLINE non_ptr_type<T> is_type() const;
 
     template<typename T>
     RTTR_INLINE arg_value_t<T>& get_value() const;

@@ -47,7 +47,7 @@ namespace detail
 
 /*!
  * Abstract class for a method.
- * 
+ *
  * This is the base class for all methods.
  * You can invoke the method.
  */
@@ -66,7 +66,7 @@ class RTTR_API constructor_wrapper_base
         virtual std::vector<bool> get_is_const() const;
         virtual std::vector<parameter_info> get_parameter_infos() const = 0;
         virtual variant get_metadata(const variant& key) const = 0;
-        
+
         virtual variant invoke() const;
         virtual variant invoke(argument& arg1) const;
         virtual variant invoke(argument& arg1, argument& arg2) const;
@@ -76,7 +76,7 @@ class RTTR_API constructor_wrapper_base
                                argument& arg5) const;
         virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
                                argument& arg5, argument& arg6) const;
-        
+
         virtual variant invoke_variadic(std::vector<argument>& args) const = 0;
 };
 

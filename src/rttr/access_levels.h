@@ -48,7 +48,7 @@ enum class access_levels
      * Declares that this member was registered with `public` access.
      */
     public_access,
-    
+
     /*!
      * Declares that this member was registered with `protected` access.
      */

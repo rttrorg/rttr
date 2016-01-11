@@ -52,10 +52,10 @@ bool variant_compare_less(const variant& lhs, const type& lhs_type, const varian
         variant lhs_tmp;
         if (lhs.convert(rhs_type, lhs_tmp))
             return lhs_tmp.compare_less(rhs);
-    
+
         if (!lhs.is_nullptr() && rhs.is_nullptr())
             return false;
-    
+
         // as last try, do a string conversion
         bool ok1 = false;
         bool ok2 = false;

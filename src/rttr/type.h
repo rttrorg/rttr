@@ -67,12 +67,12 @@ static type get_invalid_type();
 
 /*!
  * The \ref type class holds the type information for any arbitrary object.
- * 
+ *
  * Every class or primitive data type can have an unique type object.
  * With the help of this object you can compare unknown types for equality at runtime or introspect the type
- * for its \ref property "properties", \ref method "methods", \ref enumeration "enumerations", 
+ * for its \ref property "properties", \ref method "methods", \ref enumeration "enumerations",
  * \ref constructor "constructors" and \ref destructor "destructor".
- * 
+ *
  * Retrieve %type
  * ------------------
  * A type object **cannot** be created. It is only possible to retrieve a type object via three static template member functions:
@@ -106,7 +106,7 @@ static type get_invalid_type();
  *      int int_obj;
  *      int* int_obj_ptr = &int_obj;
  *      const int* c_int_obj_ptr = int_obj_ptr;
- *      
+ *
  *      type::get<int>()         == type::get(int_obj);        // yields to true
  *      type::get<int*>()        == type::get(int_obj_ptr);    // yields to true
  *      type::get<const int*>()  == type::get(c_int_obj_ptr);  // yields to true
@@ -123,7 +123,7 @@ static type get_invalid_type();
  *      Base& base = d;
  *      type::get<Derived>()   == type::get(base);      // yields to true
  *      type::get<Base>()      == type::get(base);      // yields to false
- *      
+ *
  *      // remark, when called with pointers:
  *      Base* base_ptr = &d;
  *      type::get<Derived>()   == type::get(base_ptr);  // yields to false
@@ -131,7 +131,7 @@ static type get_invalid_type();
  * \endcode
  *
  * \remark If the type of the expression is a cv-qualified type, the result of the rttr::type::get expression refers to a rttr::type object representing the cv-unqualified type.
- * 
+ *
  * \code{.cpp}
  *      class D { ... };
  *      D d1;
@@ -197,7 +197,7 @@ class RTTR_API type
         RTTR_INLINE bool operator<=(const type& other) const;
 
         /*!
-         * \brief Compares this type with the \a other type and returns true 
+         * \brief Compares this type with the \a other type and returns true
          *        if both describe the same type, otherwise returns false.
          *
          * \return True if both type are equal, otherwise false.
@@ -205,7 +205,7 @@ class RTTR_API type
         RTTR_INLINE bool operator==(const type& other) const;
 
         /*!
-         * \brief Compares this type with the \a other type and returns true 
+         * \brief Compares this type with the \a other type and returns true
          *        if both describe different types, otherwise returns false.
          *
          * \return True if both type are \b not equal, otherwise false.
@@ -230,10 +230,10 @@ class RTTR_API type
          * \return The type name.
          */
         std::string get_name() const;
-        
+
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
-         * 
+         *
          * \return True if this type is valid, otherwise false.
          */
         RTTR_INLINE bool is_valid() const;
@@ -262,10 +262,10 @@ class RTTR_API type
          *
          * See following example code:
          * \code{.cpp}
-         *   type wrapped_type = type::get<std::shared_ptr<int>>().get_wrapped_type(); 
+         *   type wrapped_type = type::get<std::shared_ptr<int>>().get_wrapped_type();
          *   wrapped_type == type::get<int*>(); // yields to true
          *
-         *   wrapped_type = type::get<std::reference_wrapper<int>>().get_wrapped_type(); 
+         *   wrapped_type = type::get<std::reference_wrapper<int>>().get_wrapped_type();
          *   wrapped_type == type::get<int>(); // yields to true
          * \endcode
          *
@@ -282,7 +282,7 @@ class RTTR_API type
          *
          * \return type for the template type \a T.
          */
-        template<typename T> 
+        template<typename T>
         static type get();
 
         /*!
@@ -295,7 +295,7 @@ class RTTR_API type
          *
          * \return type for an \a object of type \a T.
          */
-        template<typename T> 
+        template<typename T>
         static type get(T&& object);
 
         /*!
@@ -341,7 +341,7 @@ class RTTR_API type
         bool is_enumeration() const;
 
         /*!
-         * \brief Returns the enumerator if this type is an enum type; 
+         * \brief Returns the enumerator if this type is an enum type;
          *        otherwise the returned value is \ref enumeration::is_valid "not valid".
          *
          * \see is_enumeration()
@@ -354,7 +354,7 @@ class RTTR_API type
          * \brief Returns true whether the given type represents a wrapper type.
          *        A wrapper type is a class which encapsulate an instance of another type.
          *        RTTR recognize automatically following wrapper types:
-         *        - \p `std::shared_ptr<T>` 
+         *        - \p `std::shared_ptr<T>`
          *        - \p `std::reference_wrapper<T>`
          *        - \p `std::weak_ptr<T>`
          *        - \p `std::unique_ptr<T>`
@@ -396,7 +396,7 @@ class RTTR_API type
         bool is_arithmetic() const;
 
         /*!
-         * \brief Returns true whether the given type represents a pointer to a function 
+         * \brief Returns true whether the given type represents a pointer to a function
          *        e.g. `void (*)(void)`
          *
          * \return True if the type is a function pointer, otherwise false.
@@ -474,7 +474,7 @@ class RTTR_API type
          /*!
          * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no meta data is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key,
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.
@@ -486,14 +486,14 @@ class RTTR_API type
          *
          * \remark When no parameter list is given, it will be searched for the default constructor.
          *
-         * \return A valid constructor will be returned when the parameter matches the registered constructor; 
+         * \return A valid constructor will be returned when the parameter matches the registered constructor;
          *         otherwise an invalid constructor.
          */
         constructor get_constructor(const std::vector<type>& params = std::vector<type>() ) const;
 
         /*!
          * \brief Returns a list of all registered constructors for this type; the order is unspecified.
-         * 
+         *
          * \return Returns a list of all registered constructors.
          */
         std::vector<constructor> get_constructors() const;
@@ -503,7 +503,7 @@ class RTTR_API type
          *
          * \remark When the argument types does not match the parameter list of the constructor then the he will not be invoked.
          *         Constructors with registered \ref default_arguments will be honored.
-         * 
+         *
          * \return Returns an instance of the given type.
          */
         variant create(std::vector<argument> args = std::vector<argument>()) const;
@@ -561,7 +561,7 @@ class RTTR_API type
          * \brief Returns a list of all registered global properties.
          *
          * \remark The order of the properties in the vector is undefined.
-         *         Client code should **not** depend on the order in which properties are returned, 
+         *         Client code should **not** depend on the order in which properties are returned,
          *         because that order varies.
          *
          * \return A vector with properties.
@@ -620,7 +620,7 @@ class RTTR_API type
          * \return A method with name \p name.
          */
         method get_method(const char* name, const std::vector<type>& params) const;
-        
+
         /*!
          * \brief Returns a list of all registered methods for this type and
          *        all its base classes.
@@ -654,7 +654,7 @@ class RTTR_API type
          * \brief Returns a list of all registered global methods.
          *
          * \remark The order of the methods in the vector is undefined.
-         *         Client code should **not** depend on the order in which methods are returned, 
+         *         Client code should **not** depend on the order in which methods are returned,
          *         because that order varies.
          *
          * \return A vector with methods.
@@ -670,7 +670,7 @@ class RTTR_API type
          *         or as shortcut use simply `{}`.
          *         Methods with registered \ref default_arguments will be honored.
          *
-         * \return A variant object containing the possible return value, 
+         * \return A variant object containing the possible return value,
          *         otherwise when it is a void function an empty but valid variant object.
          */
         variant invoke(const char* name, instance obj, std::vector<argument> args) const;
@@ -678,14 +678,14 @@ class RTTR_API type
         /*!
          * \brief Invokes a global method named \p name with the specified argument \p args.
          *
-         * \return A variant object containing the possible return value, 
+         * \return A variant object containing the possible return value,
          *         otherwise when it is a void function an empty but valid variant object.
          *         Methods with registered \ref default_arguments will be honored.
          */
         static variant invoke(const char* name, std::vector<argument> args);
 
         /*!
-         * \brief Register a converter func `F`, which will be used internally by the 
+         * \brief Register a converter func `F`, which will be used internally by the
          *        \ref variant class to convert between types.
          *
          *  This function converts a *source* type to a *target* type.
@@ -766,7 +766,7 @@ class RTTR_API type
         const detail::type_converter_base* get_type_converter(const type& target_type) const;
 
         /*!
-         * \brief Returns the level of indirection for this this type. A.k.a pointer count. 
+         * \brief Returns the level of indirection for this this type. A.k.a pointer count.
          *        E.g. (`int` will return `0`; `int*` will return `1`; `int**` will return `2`; etc...)
          *
          * \return The pointer dimension.
@@ -820,7 +820,7 @@ class RTTR_API type
         friend class detail::type_register;
         friend type detail::get_invalid_type();
         friend class detail::type_database;
-        
+
     private:
         type_id  m_id;
         static const type_id m_invalid_id = 0;

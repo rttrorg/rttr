@@ -75,7 +75,7 @@ nonius::benchmark bench_native_invoke_method_int_return_value()
     return nonius::benchmark("native", [](nonius::chronometer meter)
     {
         ns_foo::method_class obj;
-       
+
         meter.measure([&]()
         {
             return obj.method_0();
@@ -108,7 +108,7 @@ nonius::benchmark bench_native_invoke_method_string_return_value()
     return nonius::benchmark("native", [](nonius::chronometer meter)
     {
         ns_foo::method_class obj;
-       
+
         meter.measure([&]()
         {
             return obj.string_method();
@@ -141,7 +141,7 @@ nonius::benchmark bench_native_invoke_method_arg_1()
     return nonius::benchmark("native", [](nonius::chronometer meter)
     {
         ns_foo::method_class obj;
-       
+
         meter.measure([&]()
         {
             return obj.void_method_arg_1(23);
@@ -207,7 +207,7 @@ nonius::benchmark bench_native_invoke_method_arg_3()
     return nonius::benchmark("native", [](nonius::chronometer meter)
     {
         ns_foo::method_class obj;
-       
+
         meter.measure([&]()
         {
             return obj.void_method_arg_3(23, 42, 5);
@@ -240,7 +240,7 @@ nonius::benchmark bench_native_invoke_method_arg_8()
     return nonius::benchmark("native", [](nonius::chronometer meter)
     {
         ns_foo::method_class obj;
-       
+
         meter.measure([&]()
         {
             return obj.void_method_arg_8(1, 2, 3, 4, 5, 6, 7, 8);
@@ -305,13 +305,13 @@ void bench_invoke_method()
 {
     nonius::configuration cfg;
     cfg.title = "invoke member method";
-    
+
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_invoke_method.html");
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("void", "benchmark code:" 
+    reporter.set_current_group_name("void", "benchmark code:"
                                             "<pre>"
                                             "// Foo.h\n"
                                             "struct Foo {\n"
@@ -339,7 +339,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("int", "benchmark code:" 
+    reporter.set_current_group_name("int", "benchmark code:"
                                             "<pre>"
                                             "// Foo.h\n"
                                             "struct Foo {\n"
@@ -366,7 +366,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("std::string", "benchmark code:" 
+    reporter.set_current_group_name("std::string", "benchmark code:"
                                                    "<pre>"
                                                    "// Foo.h\n"
                                                    "struct Foo {\n"
@@ -393,7 +393,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("arg 1", "benchmark code:" 
+    reporter.set_current_group_name("arg 1", "benchmark code:"
                                               "<pre>"
                                               "// Foo.h\n"
                                               "struct Foo {\n"
@@ -421,7 +421,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("arg 2", "benchmark code:" 
+    reporter.set_current_group_name("arg 2", "benchmark code:"
                                               "<pre>"
                                               "// Foo.h\n"
                                               "struct Foo {\n"
@@ -449,7 +449,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("arg 3", "benchmark code:" 
+    reporter.set_current_group_name("arg 3", "benchmark code:"
                                               "<pre>"
                                               "// Foo.h\n"
                                               "struct Foo {\n"
@@ -477,7 +477,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("arg 8", "benchmark code:" 
+    reporter.set_current_group_name("arg 8", "benchmark code:"
                                               "<pre>"
                                               "// Foo.h\n"
                                               "struct Foo {\n"
@@ -511,7 +511,7 @@ void bench_invoke_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("nullptr",  "benchmark code:" 
+    reporter.set_current_group_name("nullptr",  "benchmark code:"
                                                 "<pre>"
                                                 "// Foo.h\n"
                                                 "struct Foo {\n"

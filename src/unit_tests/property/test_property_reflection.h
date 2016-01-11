@@ -32,9 +32,9 @@
 
 struct property_test
 {
-    property_test() : _p1(0), _p2(12), _p3(true), _p4(23) 
+    property_test() : _p1(0), _p2(12), _p3(true), _p4(23)
     {
-        _array.resize(1000); 
+        _array.resize(1000);
         for (int i = 0; i < 100; ++i)
             _other_array[i] = i;
     }
@@ -43,7 +43,7 @@ struct property_test
     const std::string& get_p7() const { return _p7; }
     void set_p7(const std::string& text) { _p7 = text; }
     int get_prop() const volatile { return 22; }
-   
+
     int                 _p1;
     short int           _p2;
     bool                _p3;

@@ -36,7 +36,7 @@ namespace nonius {
     struct html_group_reporter : reporter {
 
     void set_current_group_name(std::string benchmark_group, std::string tooltip = std::string()){
-        
+
         m_all_benchmarks.push_back(std::make_pair(group_data{benchmark_group, tooltip}, benchmark_list()));
         current_benchmark_group = std::move(benchmark_group);
     }
@@ -67,12 +67,12 @@ namespace nonius {
         std::cout << "\ngenerating HTML report: '" << file_name << "'\n";
 
         auto&& templ = template_string();
-        
+
         const auto samples_magnitude = ideal_magnitude_from_samples();
         const auto mean_magnitude = ideal_magnitude_from_mean_analysis();
 
         cpptempl::data_map map;
-        
+
         map["page_title"]           = escape(title);
         map["height_barchart"]      = m_barchart_height;
         map["height_scatterchart"]  = m_scatterchart_height;
@@ -112,7 +112,7 @@ namespace nonius {
 
                 benchmark_data["outliers"]          = get_outliers_analysis(bench_list.second.m_analysis);
                 benchmark_data["outliers_descr"]    = get_outliers_effect(bench_list.second.m_analysis);
-                
+
                 for(auto e : bench_list.second.m_sample_data) {
                     benchmark_data["times"].push_back(e.count() * samples_magnitude);
                 }
@@ -161,7 +161,7 @@ namespace nonius {
             n_resamples = cfg.resamples;
             title = cfg.title;
         }
-        
+
         static std::string const& template_string() {
             static char const* template_parts[] = {
 // generated content broken into pieces because MSVC is in the 1990s.
@@ -211,11 +211,11 @@ namespace nonius {
             std::cout.unsetf(std::ios::floatfield);
             if(!summary) std::cout << "collecting " << n_samples << " samples, " << plan.iterations_per_sample << " iterations each, in estimated " << detail::pretty_duration(plan.estimated_duration) << "\n";
         }
-        
+
         void do_measurement_complete(std::vector<fp_seconds> const& samples) override {
             set_bench_data(samples);
         }
-        
+
         void do_analysis_start() override {
             if(verbose) std::cout << "bootstrapping with " << n_resamples << " resamples\n";
         }
@@ -243,9 +243,9 @@ namespace nonius {
         }
 
         collected_data do_get_collected_data() const {
-            return collected_data(); 
+            return collected_data();
         }
-        
+
         void print_environment_estimate(environment_estimate<fp_seconds> e, int iterations) {
             std::cout  << std::setprecision(7);
             std::cout.unsetf(std::ios::floatfield);
@@ -275,7 +275,7 @@ namespace nonius {
             }
             std::cout << "\n";
         }
-        
+
         static double truncate(double x) {
             return static_cast<int>(x * 1000.) / 1000.;
         }
@@ -302,7 +302,7 @@ namespace nonius {
             auto min = mins.empty() ? fp_seconds() : *std::min_element(mins.begin(), mins.end());
             return detail::get_magnitude(min);
         }
-        
+
         static std::string escape(std::string const& source) {
             static const std::unordered_map<char, std::string> escapes {
                 { '\'', "&apos;" },
@@ -332,7 +332,7 @@ namespace nonius {
                 return true;
             } else {
                 return false;
-            }   
+            }
         }
 
         static inline std::string gen_unique_filename(const std::string& filename) {
@@ -371,16 +371,16 @@ namespace nonius {
         std::string title;
         std::string current_benchmark;
         std::string current_benchmark_group;
-        
+
         struct group_data
         {
             std::string title;
             std::string tooltip;
         };
-        
+
         typedef std::vector<std::pair<std::string, collected_data>> benchmark_list;
         std::vector<std::pair<group_data, benchmark_list>> m_all_benchmarks;
-        
+
     };
 
     NONIUS_REPORTER("html_group", html_group_reporter);

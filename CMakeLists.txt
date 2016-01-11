@@ -28,7 +28,7 @@
 ####################################################################################
 # Welcome to the CMake build system for RTTR( Run Time Type Reflection).           #
 # This is the main file where the general build environment is set-up and the      #
-# the build configuration options are initialized.                                 # 
+# the build configuration options are initialized.                                 #
 ####################################################################################
 
 cmake_minimum_required (VERSION 2.8.12)
@@ -36,7 +36,7 @@ cmake_minimum_required (VERSION 2.8.12)
 project ("rttr")
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
-    
+
 if (CMAKE_BUILD_TYPE STREQUAL "")
   # CMake defaults to leaving CMAKE_BUILD_TYPE empty. This screws up
   # differentiation between debug and release builds.
@@ -56,7 +56,7 @@ option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style fo
 option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" FALSE)
 
 # one precompiled headers cannot be used for multiple ninja targets
-# thats why we have to disable this option, when BUILD_STATIC or 
+# thats why we have to disable this option, when BUILD_STATIC or
 # BUILD_WITH_STATIC_RUNTIME_LIBS is ON (every target will create the same PCH.pch file)
 # to get it working, we need the feature to enable different source properties
 # for different targets
@@ -71,9 +71,9 @@ include(3rd_party_libs)
 include(installer)
 
 # here we add our source code
-add_subdirectory(src) 
+add_subdirectory(src)
 # and the documentation
-add_subdirectory(doc) 
+add_subdirectory(doc)
 
 # here we specify the installation directory
 set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)

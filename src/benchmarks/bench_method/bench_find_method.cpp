@@ -553,13 +553,13 @@ void bench_find_method()
 {
     nonius::configuration cfg;
     cfg.title = "find member method";
-    
+
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_find_method.html");
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("single hierarchy - Lvl. 1", "benchmark code:" 
+    reporter.set_current_group_name("single hierarchy - Lvl. 1", "benchmark code:"
                                                                  "<pre>"
                                                                  "struct Base { virtual ~Base(){} };\n"
                                                                  "struct Derived_1 : Base { void method_1(){} };\n"
@@ -578,10 +578,10 @@ void bench_find_method()
                                                bench_rttr_find_method_level_1()};
 
     nonius::go(cfg, std::begin(benchmarks_group_1), std::end(benchmarks_group_1), reporter);
-    
+
     /////////////////////////////////////
 
-    reporter.set_current_group_name("single hierarchy - Lvl. 3", "benchmark code:" 
+    reporter.set_current_group_name("single hierarchy - Lvl. 3", "benchmark code:"
                                                                  "<pre>"
                                                                  "struct Base { virtual ~Base(){} };\n"
                                                                  "...\n"
@@ -604,7 +604,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("single hierarchy - Lvl. 6", "benchmark code:" 
+    reporter.set_current_group_name("single hierarchy - Lvl. 6", "benchmark code:"
                                                                   "<pre>"
                                                                   "struct Base { virtual ~Base(){} };\n"
                                                                   "...\n"
@@ -628,7 +628,7 @@ void bench_find_method()
     /////////////////////////////////////
     /////////////////////////////////////
 
-    reporter.set_current_group_name("across hierarchy - Lvl. 1", "benchmark code:" 
+    reporter.set_current_group_name("across hierarchy - Lvl. 1", "benchmark code:"
                                                                   "<pre>"
                                                                   "struct Base_A { virtual ~Base_A(){} };\n"
                                                                   "struct Base_B { virtual ~Base_B(){} };\n"
@@ -662,7 +662,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("across hierarchy - Lvl. 3", "benchmark code:" 
+    reporter.set_current_group_name("across hierarchy - Lvl. 3", "benchmark code:"
                                                                   "<pre>"
                                                                   "struct Base_A { virtual ~Base_A(){} };\n"
                                                                   "struct Base_B { virtual ~Base_B(){} };\n"
@@ -696,7 +696,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("across hierarchy - Lvl. 6", "benchmark code:" 
+    reporter.set_current_group_name("across hierarchy - Lvl. 6", "benchmark code:"
                                                                   "<pre>"
                                                                   "struct Base_A { virtual ~Base_A(){} };\n"
                                                                   "struct Base_B { virtual ~Base_B(){} };\n"
@@ -732,7 +732,7 @@ void bench_find_method()
     ////////////////////////////////////////
     // negative test - methods could not be found or cast was not successfull
 
-    reporter.set_current_group_name("neg. single hierarchy - Lvl. 1", "benchmark code:" 
+    reporter.set_current_group_name("neg. single hierarchy - Lvl. 1", "benchmark code:"
                                                                       "<pre>"
                                                                       "struct Base { virtual ~Base(){} };\n"
                                                                       "struct Derived_1 : Base { void method_1(){} };\n"
@@ -756,7 +756,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("neg. single hierarchy - Lvl. 3", "benchmark code:" 
+    reporter.set_current_group_name("neg. single hierarchy - Lvl. 3", "benchmark code:"
                                                                       "<pre>"
                                                                       "struct Base { virtual ~Base(){} };\n"
                                                                       "struct Derived_1 : Base { void method_1(){} };\n"
@@ -780,7 +780,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("neg. single hierarchy - Lvl. 6", "benchmark code:" 
+    reporter.set_current_group_name("neg. single hierarchy - Lvl. 6", "benchmark code:"
                                                                       "<pre>"
                                                                       "struct Base { virtual ~Base(){} };\n"
                                                                       "struct Derived_1 : Base { void method_1(){} };\n"
@@ -806,7 +806,7 @@ void bench_find_method()
     /////////////////////////////////////
     /////////////////////////////////////
 
-    reporter.set_current_group_name("neg. across hierarchy - Lvl. 1", "benchmark code:" 
+    reporter.set_current_group_name("neg. across hierarchy - Lvl. 1", "benchmark code:"
                                                                       "<pre>"
                                                                       "struct Base_A { virtual ~Base_A(){} };\n"
                                                                       "struct Base_B { virtual ~Base_B(){} };\n"
@@ -840,7 +840,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("neg. across hierarchy - Lvl. 3", "benchmark code:" 
+    reporter.set_current_group_name("neg. across hierarchy - Lvl. 3", "benchmark code:"
                                                                       "<pre>"
                                                                       "struct Base_A { virtual ~Base_A(){} };\n"
                                                                       "struct Base_B { virtual ~Base_B(){} };\n"
@@ -874,7 +874,7 @@ void bench_find_method()
 
     /////////////////////////////////////
 
-    reporter.set_current_group_name("neg. across hierarchy - Lvl. 6", "benchmark code:" 
+    reporter.set_current_group_name("neg. across hierarchy - Lvl. 6", "benchmark code:"
                                                                      "<pre>"
                                                                      "struct Base_A { virtual ~Base_A(){} };\n"
                                                                      "struct Base_B { virtual ~Base_B(){} };\n"

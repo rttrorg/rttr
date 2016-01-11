@@ -184,14 +184,14 @@ variant property::get_metadata(const variant& key) const
 
 bool property::operator==(const property& other) const
 {
-    return (m_wrapper == other.m_wrapper); 
+    return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::operator!=(const property& other) const
 {
-    return (m_wrapper != other.m_wrapper); 
+    return (m_wrapper != other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

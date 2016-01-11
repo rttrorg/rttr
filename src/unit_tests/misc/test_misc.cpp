@@ -61,7 +61,7 @@ namespace
 } // end namespace anonymous
 
 
-TEST_CASE("Test raw_adressof", "[raw_adressof]") 
+TEST_CASE("Test raw_adressof", "[raw_adressof]")
 {
     volatile ClassSingleBase* obj = nullptr;
 
@@ -245,7 +245,7 @@ TEST_CASE("Test raw_adressof", "[raw_adressof]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test get_wrapper_adressof", "[wrapped_raw_addressof]") 
+TEST_CASE("Test get_wrapper_adressof", "[wrapped_raw_addressof]")
 {
     SECTION("Test std::shared_ptr")
     {
@@ -288,7 +288,7 @@ bool raw_type_check()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test raw_type type traits", "[raw_type<T>]") 
+TEST_CASE("Test raw_type type traits", "[raw_type<T>]")
 {
     SECTION("Test pointer type")
     {
@@ -361,7 +361,7 @@ TEST_CASE("Test raw_type type traits", "[raw_type<T>]")
         raw_type_check<int*&,                        int >();
         raw_type_check<std::vector<int> const & ,   std::vector<int> >();
     }
-    
+
     SECTION("Test array types")
     {
         raw_type_check<int[10],                     int[10]>();
@@ -475,7 +475,7 @@ bool raw_array_type_check()
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test raw_array_type type traits", "[raw_array_type<T>]") 
+TEST_CASE("Test raw_array_type type traits", "[raw_array_type<T>]")
 {
     SECTION("Test array types")
     {

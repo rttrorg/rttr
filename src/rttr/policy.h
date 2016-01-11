@@ -79,7 +79,7 @@ struct RTTR_API policy
          *   std::cout << meth.get_return_type().get_name();    // prints "std::string*"
          *   variant var = meth.invoke(instance());
          *   std::cout << var.is_type<std::string*>();          // prints "true"
-         *   return 0;  
+         *   return 0;
          * }
          * \endcode
          */
@@ -109,7 +109,7 @@ struct RTTR_API policy
          *   std::cout << meth.get_return_type().get_name();    // prints "void"
          *   variant var = meth.invoke(instance());
          *   std::cout << var.is_type<void>();                  // prints "true"
-         *   return 0;  
+         *   return 0;
          * }
          * \endcode
          */
@@ -167,8 +167,8 @@ struct RTTR_API policy
         /*!
          * The \ref as_raw_ptr policy will create an instance of a class as raw pointer.
          *
-         * That means the object is created with a *new*-expression and its lifetime lasts 
-         * until it is destroyed using a *delete*-expression. 
+         * That means the object is created with a *new*-expression and its lifetime lasts
+         * until it is destroyed using a *delete*-expression.
          * In order to invoke the delete expression use the corresponding \ref destructor.
          *
          * See following example code:
@@ -203,7 +203,7 @@ struct RTTR_API policy
          * The \ref as_std_shared_ptr policy will create an instance of a class through *std::make_shared<T>*.
          *
          * That means the object is \ref type::is_wrapper() "wrapped" into a *std::shared_ptr<T>*.
-         * The wrapped object is destroyed and its memory deallocated when either of the following happens: 
+         * The wrapped object is destroyed and its memory deallocated when either of the following happens:
          * - the last remaining variant object (which contains the *shared_ptr* owning the object is destroyed.
          * - the last remaining variant owning the *shared_ptr* is assigned another object.
          *

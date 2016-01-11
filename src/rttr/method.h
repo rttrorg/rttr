@@ -60,12 +60,12 @@ namespace detail
  * Meta Information
  * ----------------
  * A \ref method has a \ref get_name "name",  a \ref get_signature "signature", a \ref get_return_type "return type", a list of \ref get_parameter_infos "parameter information"
- * as well as attributes that specify its behavior: \ref is_static(). 
+ * as well as attributes that specify its behavior: \ref is_static().
  * When the \ref method was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
  * The method can be invoked with \ref invoke(); When its not a \ref is_static "static method" you have to provide a valid class instance to invoke the method.
  * This instance can be the raw type on the stack; the current class hierarchy level doesn't matter. It can be also a raw pointer to the object or
- * a \ref variant which contains the instance, again as pointer or stack object. 
+ * a \ref variant which contains the instance, again as pointer or stack object.
  * When the method is declared as static you you still have to provide an empty instance object,
  * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
@@ -73,11 +73,11 @@ namespace detail
  * When the method has \ref get_parameter_infos "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
  * An automatically type conversion is **not** performed.
  *
- * The return type of \ref invoke() is \ef variant object. 
+ * The return type of \ref invoke() is \ef variant object.
  * This object contains not only the possible return value of a function, it also indicates whether the method was invoked or not.
  * A \ref variant::is_valid "valid" variant object means, that then the method was successfully invoked, otherwise not.
  * When the invoked method has no return type, i.e. is a `void` method, then a valid variant of type `void` is returned.
- * 
+ *
  * While the \ref invoke() function can directly forward up to six arguments, it is sometime necessary to forward even more arguments.
  * Therefore the function \ref invoke_variadic() should be used; it allows to pack an unlimited amount of arguments into a std::vector and forward them to the function.
  *
@@ -89,7 +89,7 @@ namespace detail
  *
  * Typical Usage
  * ----------------------
- * 
+ *
  * \code{.cpp}
  *  using namespace rttr;
  *  struct MyStruct { int my_method(int param) { return param; } };
@@ -138,7 +138,7 @@ class RTTR_API method
         std::string get_name() const;
 
         /*!
-         * \brief Returns the access level with which this method was 
+         * \brief Returns the access level with which this method was
          *        \ref registration::class_<T>::method() "registered".
          *
          * \remark When the method is not valid, this function will return level \ref access_levels::public_access.
@@ -173,7 +173,7 @@ class RTTR_API method
          * \return Type of the underlying property.
          */
         type get_declaring_type() const;
-        
+
         /*!
          * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the method.
          *
@@ -191,7 +191,7 @@ class RTTR_API method
         /*!
          * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no meta data is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key,
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.
@@ -250,7 +250,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5) const;
 
         /*!
@@ -260,7 +260,7 @@ class RTTR_API method
          *
          * \return The type of the return type.
          */
-        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+        variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5, argument arg6) const;
 
         /*!

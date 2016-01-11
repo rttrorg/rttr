@@ -49,7 +49,7 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::true_type>
     {
         return { std::is_reference<typename param_types<F, ArgCount>::type>::value... };
     }
-    
+
     static std::vector<bool> get_is_const()
     {
         return { std::is_const<typename std::remove_reference<typename param_types<F, ArgCount>::type>::type>::value... };
@@ -65,7 +65,7 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::false_type>
     {
         return std::vector<bool>();
     }
-    
+
     static std::vector<bool> get_is_const()
     {
         return std::vector<bool>();
@@ -133,7 +133,7 @@ struct method_accessor
     static bool is_static()
     {
         using method_type = typename detail::method_type<F>::type;
-        return method_accessor_helper_is_static<method_type>::is_static(); 
+        return method_accessor_helper_is_static<method_type>::is_static();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -148,21 +148,21 @@ struct method_accessor
     static std::vector<bool> get_is_reference()
     {
         using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
-        return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_reference(); 
+        return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_reference();
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////////
 
     static std::vector<bool> get_is_const()
     {
         using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
-        return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_const(); 
+        return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_const();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename... TArgs>
-    static RTTR_FORCE_INLINE 
+    static RTTR_FORCE_INLINE
     enable_if_t< does_argument_count_match<F, TArgs...>::value, variant>
     invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
@@ -172,7 +172,7 @@ struct method_accessor
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename... TArgs>
-    static RTTR_FORCE_INLINE 
+    static RTTR_FORCE_INLINE
     enable_if_t< !does_argument_count_match<F, TArgs...>::value, variant>
     invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {

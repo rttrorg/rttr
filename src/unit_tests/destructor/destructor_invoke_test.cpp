@@ -33,8 +33,8 @@ using namespace rttr;
 struct dtor_invoke_test
 {
     dtor_invoke_test()
-    { 
-      
+    {
+
     }
 
 };
@@ -48,7 +48,7 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("destructor - invoke", "[destructor]") 
+TEST_CASE("destructor - invoke", "[destructor]")
 {
     type t = type::get<dtor_invoke_test>();
     REQUIRE(t.is_valid() == true);
@@ -73,7 +73,7 @@ TEST_CASE("destructor - invoke", "[destructor]")
         CHECK(var.is_valid() == false);
         destructor dtor_invalid = type::get_by_name("").get_destructor();
         REQUIRE(dtor_invalid.is_valid() == false);
-        
+
         // cannot invoke destructor, because dtor wrapper is invalid
         CHECK(dtor_invalid.invoke(var) == false);
 

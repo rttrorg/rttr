@@ -39,9 +39,9 @@ MESSAGE(STATUS "===========================")
 # Because of that, the benchmarks cannot be build with the static runtime lib option enabled
 set(Boost_USE_STATIC_LIBS       ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-set(BOOST_ALL_DYN_LINK          OFF) 
+set(BOOST_ALL_DYN_LINK          OFF)
 
 find_package(Boost COMPONENTS chrono system)
 find_package(Threads REQUIRED)
-      
+
 MESSAGE(STATUS "Finished finding 3rd party libs!")

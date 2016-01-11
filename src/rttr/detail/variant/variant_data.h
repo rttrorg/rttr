@@ -38,7 +38,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-using variant_basic_types = type_list<bool, 
+using variant_basic_types = type_list<bool,
                                       signed char, unsigned char, char, wchar_t,
                                       short int, unsigned short int, int, unsigned int,
                                       long int, unsigned long int, long long int,

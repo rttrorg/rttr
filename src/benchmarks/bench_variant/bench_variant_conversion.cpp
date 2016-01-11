@@ -365,7 +365,7 @@ void bench_variant_conversion()
 {
     nonius::configuration cfg;
     cfg.title = "rttr::variant conversion";
-    
+
     nonius::html_group_reporter reporter;
     reporter.set_output_file("benchmark_variant_conversion.html");
 

@@ -53,7 +53,7 @@ RTTR_INLINE Target_Type rttr_cast(Source_Type object)
     static_assert( (std::is_const<Arg_Type>::value && std::is_const<Return_Type>::value) ||
                    (!std::is_const<Arg_Type>::value && std::is_const<Return_Type>::value) ||
                    (!std::is_const<Arg_Type>::value && !std::is_const<Return_Type>::value), "Return type must have const qualifier");
-   
+
     using source_type_no_cv = typename detail::remove_cv<typename detail::remove_pointer<Source_Type>::type>::type;
     return static_cast<Target_Type>(type::apply_offset(const_cast<source_type_no_cv*>(object)->get_ptr(), const_cast<source_type_no_cv*>(object)->get_type(), type::get<Target_Type>()));
 }

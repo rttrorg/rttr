@@ -47,7 +47,7 @@ struct RTTR_LOCAL type_comparator_base
     :   equal(equal_f), less_than(less_than_f)
     {
     }
-    
+
     equal_func      equal;
     less_than_func  less_than;
 };

@@ -52,7 +52,7 @@ struct invalid_array_type {};
  *
  * Out of the box, RTTR has specialization for following array types:
  * - \p `T[N]`, raw arrays
- * - \p `std::vector<T>` 
+ * - \p `std::vector<T>`
  * - \p `std::array<T, N>`
  * - \p `std::list<T>`
  *
@@ -69,7 +69,7 @@ struct invalid_array_type {};
  * 4. `static T& get_value(array_type& arr, std::size_t index);`
  * 5. `static bool insert_value(array_type& arr, const T& value, std::size_t index);`
  * 6. `static bool remove_value(array_type& arr, std::size_t index);`
- * 
+ *
  *
  * Following code example for `std::vector<T>` illustrates how to add a specialization:
  *
@@ -81,39 +81,39 @@ struct invalid_array_type {};
  *  {
  *    using raw_type = typename array_mapper<T>::raw_type;
  *    using sub_type = T;
- *    
+ *
  *    static bool is_dynamic()
  *    {
  *        return true;
  *    }
- *    
+ *
  *    static std::size_t get_size(const std::vector<T>& arr)
  *    {
  *        return arr.size();
  *    }
- *    
+ *
  *    static bool set_size(std::vector<T>& arr, std::size_t new_size)
  *    {
  *        arr.resize(new_size);
  *        return true;
  *    }
- *    
+ *
  *    static const T& get_value(const std::vector<T>& arr, std::size_t index)
  *    {
  *        return arr[index];
  *    }
- *    
+ *
  *    static T& get_value(std::vector<T>& arr, std::size_t index)
  *    {
  *        return arr[index];
  *    }
- *    
+ *
  *    static bool insert_value(std::vector<T>& arr, const T& value, std::size_t index)
  *    {
  *        arr.insert(arr.begin() + index, value);
  *        return true;
  *    }
- *    
+ *
  *    static bool remove_value(std::vector<T>& arr, std::size_t index)
  *    {
  *        arr.erase(arr.begin() + index);
@@ -124,7 +124,7 @@ struct invalid_array_type {};
  * \endcode
  *
  * \remark
- * Make sure you put your specialization inside the namespace `rttr`. 
+ * Make sure you put your specialization inside the namespace `rttr`.
  * The best place for this code, is below the declaration of your custom array type.
  * When this is not possible, include your specialization code before registering your types to RTTR.
  *
@@ -140,7 +140,7 @@ struct array_mapper
     using array_type = T;
     using raw_type = typename array_mapper<T>::raw_type;
     using sub_type = T;
-    
+
     static bool is_dynamic()
     {
     }
@@ -156,7 +156,7 @@ struct array_mapper
     static const T& get_value(const array_type& arr, std::size_t index)
     {
     }
-    
+
     static T& get_value(array_type& arr, std::size_t index)
     {
     }

@@ -189,7 +189,7 @@ variant method::invoke(instance object, argument arg1, argument arg2, argument a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5) const
 {
     if (is_valid())
@@ -200,7 +200,7 @@ variant method::invoke(instance object, argument arg1, argument arg2, argument a
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4, 
+variant method::invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5, argument arg6) const
 {
     if (is_valid())

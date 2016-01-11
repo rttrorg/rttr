@@ -66,7 +66,7 @@ namespace detail
                                           conditional_t< std::is_member_object_pointer<T>::value,
                                                          member_object_ptr,
                                                          conditional_t< is_function_ptr<T>::value || is_std_function<T>::value,
-                                                                        function_ptr, 
+                                                                        function_ptr,
                                                                         conditional_t< std::is_pointer<T>::value,
                                                                                        object_ptr,
                                                                                        void
@@ -80,7 +80,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
-    
+
     struct void_member_func
     {
         using type = void_member_func;
@@ -100,7 +100,7 @@ namespace detail
     {
         using type = return_func;
     };
- 
+
     template<typename T>
     struct method_type : conditional_t<std::is_member_function_pointer<T>::value,
                                        conditional_t< is_void_func<T>::value,

@@ -55,7 +55,7 @@ struct method_class
     void void_method_arg_8(int arg_1, int arg_2, int arg_3,
                            int arg_4, int arg_5, int arg_6,
                            int arg_7, int arg_8);
-    
+
     void method_ptr_arg(int* ptr);
 
     bool method_void_called = false;
@@ -79,7 +79,7 @@ struct method_class
 struct method_class_d_1 : method_class
 {
 
-    void method_1()                  { } 
+    void method_1()                  { }
     virtual void method_v()          { }
 
     RTTR_ENABLE(method_class)
@@ -91,7 +91,7 @@ CLASS_INHERIT(method_class_d_2, method_class_d_1, 2)
 struct method_class_d_3 : method_class_d_2
 {
 
-    void method_3()                  { } 
+    void method_3()                  { }
     virtual void method_v()          { }
 
     RTTR_ENABLE(method_class_d_2)
@@ -104,7 +104,7 @@ CLASS_INHERIT(method_class_d_5, method_class_d_4, 5)
 struct method_class_d_6 : method_class_d_5
 {
 
-    void method_6()                  { } 
+    void method_6()                  { }
     virtual void method_v()          { }
 
     RTTR_ENABLE(method_class_d_5)
@@ -113,7 +113,7 @@ struct method_class_d_6 : method_class_d_5
 struct method_class_d_7 : method_class_d_6
 {
 
-    void method_7()                  { } 
+    void method_7()                  { }
     virtual void method_v()          { }
 
     RTTR_ENABLE(method_class_d_6)
@@ -146,7 +146,7 @@ CLASS_INHERIT(class_multiple_5C, class_multiple_4C, 17)
 
 struct class_multiple_final : class_multiple_5A, class_multiple_5B, class_multiple_5C
 {
-    void method_18()        { } 
+    void method_18()        { }
     virtual void method_v() { }
 
     RTTR_ENABLE(class_multiple_5A, class_multiple_5B, class_multiple_5C)
@@ -154,7 +154,7 @@ struct class_multiple_final : class_multiple_5A, class_multiple_5B, class_multip
 
 struct class_multiple_final_D : class_multiple_final
 {
-    void method_19()        { } 
+    void method_19()        { }
     virtual void method_v() { }
 
     RTTR_ENABLE(class_multiple_final)

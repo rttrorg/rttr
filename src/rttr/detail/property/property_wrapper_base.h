@@ -44,7 +44,7 @@ namespace detail
 {
 /*!
  * Abstract class for an instance of a Property.
- * 
+ *
  * This is the base class for all properties of the system.
  * It provide the basic mechanism for getting all meta data of a property,
  * but it also define a general interface to set/get properties via string: toString and fromString.
@@ -69,7 +69,7 @@ class RTTR_API property_wrapper_base
 
         //! Returns true whether this is a static property, otherwise false.
         virtual bool is_static() const = 0;
-    
+
         //! Returns the type of the underlying property.
         virtual type get_type() const = 0;
 

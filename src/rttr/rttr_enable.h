@@ -48,7 +48,7 @@ namespace detail
 /*!
  * \brief This macro is necessary in order to retrieve type information about the
  *        inheritance graph of a class.
- * 
+ *
  * Put the macro inside every class, where you need the complete inheritance information about the class type.
  *
  * \code{.cpp}
@@ -58,7 +58,7 @@ namespace detail
  * };
  * \endcode
  *
- * Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public, 
+ * Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public,
  * protected or private class accessor section.
  *
  * Into the derived class you put the same macro, but now as argument the name of the parent class.
@@ -78,8 +78,8 @@ namespace detail
  *   };
  * \endcode
  *
- * \remark Without this macro, it will not be possible to use \ref rttr::rttr_cast "rttr_cast" or 
- *         meta information in the type class, like: \ref rttr::type::get_base_classes() "get_base_classes()" or 
+ * \remark Without this macro, it will not be possible to use \ref rttr::rttr_cast "rttr_cast" or
+ *         meta information in the type class, like: \ref rttr::type::get_base_classes() "get_base_classes()" or
  *         \ref rttr::type::get_derived_classes() "get_derived_classes()".
  */
 #define RTTR_ENABLE(...)

@@ -193,7 +193,7 @@ void move_pointer_and_ref_to_type(std::string& type_name)
     const auto non_whitespace = type_name.find_last_not_of(' ');
     type_name.resize(non_whitespace + 1);
 }
-    
+
 } // end anonymous namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ vector<type> type::get_base_classes() const
         else
             break;
     }
-    
+
     return result;
 }
 
@@ -315,7 +315,7 @@ vector<type> type::get_derived_classes() const
         else
             break;
     }
-    
+
     return result;
 }
 
@@ -433,7 +433,7 @@ static std::vector<type> extract_types(const vector<argument>& args)
     result.reserve(args.size());
     for (const auto& arg : args)
         result.push_back(arg.get_type());
-    
+
     return result;
 }
 
@@ -492,7 +492,7 @@ property type::get_property(const char* name) const
 
     if (const auto prop = obj.get_class_property(get_raw_type(), name))
         return property(prop);
-    
+
     for (const auto& type : get_base_classes())
     {
         if (const auto prop = obj.get_class_property(type.get_raw_type(), name))
@@ -566,7 +566,7 @@ method type::get_method(const char* name) const
 
     if (const auto meth = obj.get_class_method(get_raw_type(), name))
         return method(meth);
-    
+
     for (const auto& type : detail::reverse(get_base_classes()))
     {
         if (const auto meth = obj.get_class_method(type.get_raw_type(), name))
@@ -584,7 +584,7 @@ method type::get_method(const char* name, const std::vector<type>& params) const
 
     if (const auto meth = obj.get_class_method(get_raw_type(), name, params))
         return method(meth);
-    
+
     for (const auto& type : detail::reverse(get_base_classes()))
     {
         if (const auto meth = obj.get_class_method(type.get_raw_type(), name, params))
@@ -691,7 +691,7 @@ variant type::invoke(const char* name, instance obj, std::vector<argument> args)
 
     if (const auto meth = db.get_class_method(get_raw_type(), name, args))
         return meth->invoke_variadic(obj, args);
-    
+
     for (const auto& type : detail::reverse(get_base_classes()))
     {
         if (const auto meth = db.get_class_method(type.get_raw_type(), name, args))

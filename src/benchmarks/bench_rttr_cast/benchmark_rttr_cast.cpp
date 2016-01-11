@@ -261,7 +261,7 @@ nonius::benchmark bench_level_1_rttr_cast()
     {
         bench_data_single_base bench_data = setup_level_1();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -300,7 +300,7 @@ nonius::benchmark bench_level_3_dynamic_cast()
     {
         bench_data_single_base bench_data = setup_level_3();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -339,7 +339,7 @@ nonius::benchmark bench_level_3_rttr_cast()
     {
         bench_data_single_base bench_data = setup_level_3();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -378,7 +378,7 @@ nonius::benchmark bench_level_6_dynamic_cast()
     {
         bench_data_single_base bench_data = setup_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -417,7 +417,7 @@ nonius::benchmark bench_level_6_rttr_cast()
     {
         bench_data_single_base bench_data = setup_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -458,7 +458,7 @@ nonius::benchmark bench_virtual_inheritance_level_1_dynamic_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_1();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -489,7 +489,7 @@ nonius::benchmark bench_virtual_inheritance_level_1_rttr_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_1();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -520,7 +520,7 @@ nonius::benchmark bench_virtual_inheritance_level_3_dynamic_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_3();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -551,7 +551,7 @@ nonius::benchmark bench_virtual_inheritance_level_3_rttr_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_3();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -583,7 +583,7 @@ nonius::benchmark bench_virtual_inheritance_level_6_dynamic_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -614,7 +614,7 @@ nonius::benchmark bench_virtual_inheritance_level_6_rttr_cast()
     {
         bench_data_virtual bench_data = setup_virtual_inheritance_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -647,7 +647,7 @@ nonius::benchmark bench_multiple_inheritance_dynamic_cast()
     {
         auto bench_data = setup_multiple_class_hierachy();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -670,7 +670,7 @@ nonius::benchmark bench_multiple_inheritance_rttr_cast()
     {
         auto bench_data = setup_multiple_class_hierachy();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -695,7 +695,7 @@ nonius::benchmark bench_cross_cast_dynamic_cast_1()
     {
         auto bench_data = setup_cross_cast_class_hierachy_1();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -718,7 +718,7 @@ nonius::benchmark bench_cross_cast_rttr_cast_1()
     {
         auto bench_data = setup_cross_cast_class_hierachy_1();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -741,7 +741,7 @@ nonius::benchmark bench_cross_cast_dynamic_cast_2()
     {
         auto bench_data = setup_cross_cast_class_hierachy_2();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -764,7 +764,7 @@ nonius::benchmark bench_cross_cast_rttr_cast_2()
     {
         auto bench_data = setup_cross_cast_class_hierachy_2();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -790,7 +790,7 @@ nonius::benchmark bench_level_6_typeid()
     {
         bench_data_single_base bench_data = setup_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -829,7 +829,7 @@ nonius::benchmark bench_level_6_type()
     {
         bench_data_single_base bench_data = setup_level_6();
         volatile std::size_t value = 0;
-        meter.measure([&]() 
+        meter.measure([&]()
         {
             for (std::size_t i = 0; i < bench_data.m_vec.size(); ++i)
             {
@@ -911,8 +911,8 @@ void start_rttr_cast_benchmark()
     reporter.set_current_group_name("cross cast 1", "A cross cast in the 4th hierarchy level (out of 8)<br>to the third (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_8[] = { bench_cross_cast_dynamic_cast_1(), bench_cross_cast_rttr_cast_1() };
     nonius::go(cfg, std::begin(benchmarks_group_8), std::end(benchmarks_group_8), reporter);
-      
-    
+
+
     reporter.set_current_group_name("cross cast 2", "A cross cast in the 7th hierarchy level (out of 8)<br>to the fifth (out of 5 class wide hierarchy).");
     nonius::benchmark benchmarks_group_9[] = { bench_cross_cast_dynamic_cast_2(), bench_cross_cast_rttr_cast_2() };
     nonius::go(cfg, std::begin(benchmarks_group_9), std::end(benchmarks_group_9), reporter);
@@ -1008,7 +1008,7 @@ void bench_type_get_vs_typeid()
 
     if (result != result_reference)
         std::cout << "ERROR - Invalid rttr_cast - bench_type_get_vs_typeid" << std::endl;
-    
+
     print_stats("BaseClass to Level 6 [typeid]", elapsedTime_1, elapsedTime_2);
 }
 

@@ -57,7 +57,7 @@ using is_integer = std::integral_constant<bool, !std::is_same<F, T>::value &&
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-typename std::enable_if<is_integer<F, T>::value && 
+typename std::enable_if<is_integer<F, T>::value &&
                         std::numeric_limits<F>::is_signed &&
                         !std::numeric_limits<T>::is_signed,
                         bool>::type
@@ -65,7 +65,7 @@ convert_to(const F& from, T& to)
 {
     if ((from < 0) || ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max()))))
         return false; // value too large
-    else if (static_cast<T>(from) > std::numeric_limits<T>::max()) 
+    else if (static_cast<T>(from) > std::numeric_limits<T>::max())
         return false; // value too large
 
     to = static_cast<T>(from);
@@ -75,7 +75,7 @@ convert_to(const F& from, T& to)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-typename std::enable_if<is_integer<F, T>::value && 
+typename std::enable_if<is_integer<F, T>::value &&
                         !std::numeric_limits<F>::is_signed &&
                         std::numeric_limits<T>::is_signed,
                         bool>::type
@@ -83,7 +83,7 @@ convert_to(const F& from, T& to)
 {
     if ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max())))
         return false; // value too large
-    else if (static_cast<T>(from) > std::numeric_limits<T>::max()) 
+    else if (static_cast<T>(from) > std::numeric_limits<T>::max())
         return false; // value too large
 
     to = static_cast<T>(from);
@@ -101,7 +101,7 @@ convert_to(const F& from, T& to)
 {
     if (from > std::numeric_limits<T>::max())
         return false; // value too large
-    else if (from < std::numeric_limits<T>::min()) 
+    else if (from < std::numeric_limits<T>::min())
         return false; // value too small
 
     to = static_cast<T>(from);
@@ -111,7 +111,7 @@ convert_to(const F& from, T& to)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-typename std::enable_if<is_integer<F, T>::value && 
+typename std::enable_if<is_integer<F, T>::value &&
                         !std::numeric_limits<F>::is_signed &&
                         !std::numeric_limits<T>::is_signed,
                         bool>::type
@@ -130,16 +130,16 @@ convert_to(const F& from, T& to)
 // floating point conversion
 
 template<typename F, typename T>
-typename std::enable_if<std::is_floating_point<F>::value && 
+typename std::enable_if<std::is_floating_point<F>::value &&
                         std::is_integral<T>::value && std::numeric_limits<T>::is_signed,
                         bool>::type
 convert_to(const F& from, T& to)
 {
     if (from > std::numeric_limits<T>::max())
         return false; // value too large
-    else if (from < -std::numeric_limits<T>::max()) 
+    else if (from < -std::numeric_limits<T>::max())
         return false; // value to small
-    
+
     to = static_cast<T>(from);
     return true;
 }
@@ -147,14 +147,14 @@ convert_to(const F& from, T& to)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-typename std::enable_if<std::is_floating_point<F>::value && 
+typename std::enable_if<std::is_floating_point<F>::value &&
                         std::is_integral<T>::value && !std::numeric_limits<T>::is_signed,
                         bool>::type
 convert_to(const F& from, T& to)
 {
     if (from < 0 || from > std::numeric_limits<T>::max())
         return false; // value too large
-    
+
     to = static_cast<T>(from);
     return true;
 }

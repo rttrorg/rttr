@@ -53,11 +53,11 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - retrieve", "[constructor]") 
+TEST_CASE("constructor - retrieve", "[constructor]")
 {
     type t = type::get<ctor_test>();
     REQUIRE(t.is_valid() == true);
-    
+
     SECTION("retrieve default ctor")
     {
         constructor ctor = t.get_constructor();

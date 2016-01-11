@@ -33,7 +33,7 @@ namespace rttr
 {
 namespace detail
 {
-    
+
 struct base_class_info
 {
     base_class_info(type t,void*(*rttr_cast_func)(void*))
@@ -64,7 +64,7 @@ public:
 };
 
 /*!
- * If T has a type alias called \a 'base_class_list' then inherits from true_type, otherwise inherits from false_type. 
+ * If T has a type alias called \a 'base_class_list' then inherits from true_type, otherwise inherits from false_type.
  */
 template<typename T>
 using has_base_class_list = std::integral_constant<bool, has_base_class_list_impl<T>::value>;
@@ -74,14 +74,14 @@ using info_container = std::vector<detail::base_class_info>;
 /*!
  * This class fills from a given type_list the corresponding type objects into a std::vector.
  */
-template<typename DerivedClass, typename... T> 
+template<typename DerivedClass, typename... T>
 struct type_from_base_classes;
 
 template<typename DerivedClass>
-struct type_from_base_classes<DerivedClass> 
+struct type_from_base_classes<DerivedClass>
 {
-    static RTTR_INLINE void fill(info_container&) 
-    { 
+    static RTTR_INLINE void fill(info_container&)
+    {
     }
 };
 
@@ -100,15 +100,15 @@ static void* rttr_cast_impl(void* ptr)
     return static_cast<void*>(static_cast<BaseType*>(static_cast<DerivedType*>(ptr)));
 }
 
-template<typename DerivedClass, typename BaseClass, typename... U> 
+template<typename DerivedClass, typename BaseClass, typename... U>
 struct type_from_base_classes<DerivedClass, BaseClass, U...>
 {
     static RTTR_INLINE void fill(info_container& vec)
     {
         static_assert(has_base_class_list<BaseClass>::value, "The parent class has no base class list defined - please use the macro RTTR_ENABLE");
         vec.emplace_back(type::get<BaseClass>(), &rttr_cast_impl<DerivedClass, BaseClass>);
-        // retrieve also the types of all base classes of the base classes; you will get an compile error here, 
-        // when the base class has not defined the 'base_class_list' typedef 
+        // retrieve also the types of all base classes of the base classes; you will get an compile error here,
+        // when the base class has not defined the 'base_class_list' typedef
         type_from_base_classes<DerivedClass, typename BaseClass::base_class_list>::fill(vec);
         // continue with the rest
         type_from_base_classes<DerivedClass, U...>::fill(vec);

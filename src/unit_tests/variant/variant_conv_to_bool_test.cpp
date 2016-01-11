@@ -46,13 +46,13 @@ TEST_CASE("variant::to_bool() - from bool", "[variant]")
     variant var = true;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
-    
+
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
-    
+
     var = false;
     CHECK(var.to_bool() == false);
     CHECK(var.convert(type::get<bool>()) == true);
@@ -66,18 +66,18 @@ TEST_CASE("variant::to_bool() - from char", "[variant]")
     variant var = "true";
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
-    
+
     var = "fdsfsdf";
     CHECK(var.to_bool() == true);
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
-    
+
     var = "false";
     CHECK(var.to_bool() == false);
     var = "false   ";
@@ -88,7 +88,7 @@ TEST_CASE("variant::to_bool() - from char", "[variant]")
     CHECK(var.to_bool() == false);
     var = " \n  FALSE\n";
     CHECK(var.to_bool() == false);
-    
+
     CHECK(var.convert<bool>() == false);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == false);
@@ -101,12 +101,12 @@ TEST_CASE("variant::to_bool() - from std::string", "[variant]")
     variant var = std::string("true");
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
-    
+
     var = std::string("fdsfsdf");
     CHECK(var.to_bool() == true);
-    
+
     var = std::string("false");
     CHECK(var.to_bool() == false);
     var = std::string("false   ");
@@ -126,12 +126,12 @@ TEST_CASE("variant::to_bool() - from int", "[variant]")
     variant var = 1;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
-    
+
     var = 0;
     CHECK(var.to_bool() == false);
     CHECK(var.convert<bool>() == false);
@@ -147,15 +147,15 @@ TEST_CASE("variant::to_bool() - from float", "[variant]")
     variant var = 1.0f;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
-    
+
     var = 0.0f;
     CHECK(var.to_bool() == false);
-    
+
     var = 1.17149435e-38f;
     CHECK(var.to_bool() == false);
     var = 1.17149435e-37f;
@@ -172,12 +172,12 @@ TEST_CASE("variant::to_bool() - from double", "[variant]")
     variant var = 1.0;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
-    
+
     CHECK(var.to_bool() == true);
-    
+
     var = 0.0;
     CHECK(var.to_bool() == false);
-    
+
     var = 0.5;
     CHECK(var.to_bool() == true);
 }

@@ -42,14 +42,14 @@ namespace detail { struct invalid_wrapper_type { }; }
  * A wrapper type is a class which encapsulate an instance of another type.
  * This are for instance smart pointer classes, e.g. `std::shared_ptr<T>` or `std::unique_ptr<T>`.
  * Out of the box, RTTR recognize following wrapper types:
- * - \p `std::shared_ptr<T>` 
+ * - \p `std::shared_ptr<T>`
  * - \p `std::reference_wrapper<T>`
  * - \p `std::weak_ptr<T>`
  * - \p `std::unique_ptr<T>`
  *
  * Custom wrapper types
  * --------------------
- * In order to work with custom wrapper types, its required to specialize the class 
+ * In order to work with custom wrapper types, its required to specialize the class
  * \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>". Therefore you have to provide two nested type aliases:
  * 1. `using wrapped_type = typename T::encapsulated_type;`
  * 2. `using type = T`
@@ -91,7 +91,7 @@ namespace detail { struct invalid_wrapper_type { }; }
  *      inline static type create(const wrapped_type& value)
  *      {
  *         return custom_type<T>(value);
- *      } 
+ *      }
  *  };
  *
  *  } // end namespace rttr
@@ -99,7 +99,7 @@ namespace detail { struct invalid_wrapper_type { }; }
  *
  * \remark
  * It is very important that the type alias for `wrapped_type` is the actual return type of the getter function.
- * Make also sure you put your specialization inside the namespace `rttr`. 
+ * Make also sure you put your specialization inside the namespace `rttr`.
  * The best place for this code, is below the declaration of your wrapper type.
  * When this is not possible, include your specialization code before registering your types to RTTR.
  */
@@ -121,7 +121,7 @@ struct wrapper_mapper
     inline static type create(const wrapped_type& value)
     {
         return type(value);
-    } 
+    }
 #endif
 };
 

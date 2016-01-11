@@ -42,7 +42,7 @@ namespace detail
 {
 /*!
  * Abstract class for a method.
- * 
+ *
  * This is the base class for all methods.
  * You can invoke the method.
  */

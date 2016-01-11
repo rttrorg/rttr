@@ -103,20 +103,20 @@ RTTR_INLINE bool type::operator<=(const type& other) const
 
 RTTR_INLINE bool type::operator==(const type& other) const
 {
-    return (m_id == other.m_id); 
+    return (m_id == other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator!=(const type& other) const
 {
-    return (m_id != other.m_id); 
+    return (m_id != other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type_id type::get_id() const 
-{ 
+RTTR_INLINE type::type_id type::get_id() const
+{
     return m_id;
 }
 
@@ -124,14 +124,14 @@ RTTR_INLINE type::type_id type::get_id() const
 
 RTTR_INLINE bool type::is_valid() const
 {
-    return (m_id != 0); 
+    return (m_id != 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::operator bool() const
 {
-    return (m_id != 0); 
+    return (m_id != 0);
 }
 
 
@@ -186,7 +186,7 @@ RTTR_INLINE static const char* f()
     #elif RTTR_COMPILER == RTTR_COMPILER_CLANG
                                                             __PRETTY_FUNCTION__
     #else
-        #error "Don't know how the extract type signatur for this compiler! Abort! Abort!" 
+        #error "Don't know how the extract type signatur for this compiler! Abort! Abort!"
     #endif
                                    );
 }
@@ -248,7 +248,7 @@ struct type_getter
 {
     static type get_type()
     {
-        // when you get an error here, then the type was not completely defined 
+        // when you get an error here, then the type was not completely defined
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
@@ -385,7 +385,7 @@ struct type_converter;
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T> 
+template<typename T>
 RTTR_INLINE type type::get()
 {
     return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
@@ -393,7 +393,7 @@ RTTR_INLINE type type::get()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T> 
+template<typename T>
 RTTR_INLINE type type::get(T&& object)
 {
     using remove_ref = typename std::remove_reference<T>::type;
@@ -417,13 +417,13 @@ RTTR_INLINE void type::register_converter_func(F func)
 
     using target_type_orig = typename function_traits<F>::return_type;
     using target_type = remove_cv_t<remove_reference_t<target_type_orig>>;
-    
+
     const std::size_t arg_count = function_traits<F>::arg_count;
-    
+
     static_assert(arg_count == 2, "Invalid argument count! The converter function signature must be: <target_type(source_type, bool&)>");
     static_assert(!std::is_same<void, target_type>::value, "Return type cannot be void!");
     static_assert(std::is_same<bool&, typename param_types<F, 1>::type>::value, "Second argument type must be a bool reference(bool&).");
-    
+
     using source_type_orig = param_types_t<F, 0>;
     using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
@@ -447,7 +447,7 @@ void type::register_comparators()
 } // end namespace rttr
 
 
-namespace std 
+namespace std
 {
     template <>
     class hash<rttr::type>
@@ -480,5 +480,5 @@ struct constructor_invoker;
 
 #define RTTR_REGISTRATION_STANDARD_TYPE_VARIANTS(T) rttr::type::get<T>();       \
                                                     rttr::type::get<T*>();      \
-                                                    rttr::type::get<const T*>();  
+                                                    rttr::type::get<const T*>();
 #endif // RTTR_TYPE_IMPL_H_

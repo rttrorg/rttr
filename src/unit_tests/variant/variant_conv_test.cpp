@@ -136,7 +136,7 @@ TEST_CASE("variant conversion - to int", "[variant]")
 
         var = "-12";
         CHECK(var.to_int() == -12);
-    
+
         var = "text 34 and text";
         bool ok = false;
         CHECK(var.to_int(&ok) == 0);
@@ -163,7 +163,7 @@ TEST_CASE("variant conversion - to int", "[variant]")
 
         var = std::string("-12");
         CHECK(var.to_int() == -12);
-    
+
         var = std::string("text 34 and text");
         bool ok = false;
         CHECK(var.to_int(&ok) == 0);
@@ -174,7 +174,7 @@ TEST_CASE("variant conversion - to int", "[variant]")
         CHECK(var.to_int(&ok) == 0);
         CHECK(ok == false);
     }
-    
+
     SECTION("bool to int")
     {
         variant var = true;
@@ -260,7 +260,7 @@ TEST_CASE("variant conversion - to std::string", "[variant]")
         var = std::string("-12");
         CHECK(var.to_string() == "-12");
     }
-    
+
     SECTION("bool to std::string")
     {
         variant var = true;
@@ -374,7 +374,7 @@ TEST_CASE("variant conversion - to float", "[variant]")
         CHECK(var.to_float(&ok) == 0);
         CHECK(ok == false);
     }
-    
+
     SECTION("bool to float")
     {
         variant var = true;
@@ -484,7 +484,7 @@ TEST_CASE("variant conversion - to double", "[variant]")
         CHECK(var.to_double(&ok) == 0.0);
         CHECK(ok == false);
     }
-    
+
     SECTION("bool to double")
     {
         variant var = true;
@@ -569,7 +569,7 @@ TEST_CASE("variant test - convert internal", "[variant]")
     REQUIRE(var.can_convert(type::get<derived*>())  == true);
     REQUIRE(var.can_convert(type::get<derived**>()) == false);
     REQUIRE(var.can_convert(type::get<other_derived*>())  == false);
-        
+
     bool could_convert = var.convert(type::get<derived**>());
     CHECK(could_convert == false);
 
@@ -613,7 +613,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
         std::nullptr_t null_obj;
         CHECK(var.convert(null_obj) == true);
         CHECK(null_obj == nullptr);
-        
+
         bool ok = false;
         std::nullptr_t o = var.convert<std::nullptr_t>(&ok);
         CHECK(ok == true);

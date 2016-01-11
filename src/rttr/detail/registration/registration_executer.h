@@ -42,11 +42,11 @@ namespace detail
  * The \ref registration_executer class will be used to delay the execution of a function call.
  *
  * The purpose of this class is to preserve the registration order during the manual register process.
- * For a certain key, which is ideally the *this* pointer, a function can be registered. 
+ * For a certain key, which is ideally the *this* pointer, a function can be registered.
  * This function can be actually empty or not. For already registered keys the function can be overwritten.
  *
  * When an instance of a registration_executer object will be freed,
- * all the contained functions will be executed in the order of its registration. 
+ * all the contained functions will be executed in the order of its registration.
  */
 class RTTR_API registration_executer
 {

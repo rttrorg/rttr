@@ -72,11 +72,11 @@ class RTTR_LOCAL type_database
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
-        uint16_t register_type(const char* name, 
+        uint16_t register_type(const char* name,
                                const type& raw_type,
                                const type& wrapped_type,
                                const type& array_raw_type,
-                               std::vector<base_class_info> base_classes, 
+                               std::vector<base_class_info> base_classes,
                                get_derived_func derived_func_ptr,
                                variant_create_func var_func_ptr,
                                std::size_t type_size,
@@ -97,7 +97,7 @@ class RTTR_LOCAL type_database
         const property_wrapper_base* get_class_property(const type& t, const char* name) const;
         std::vector<const property_wrapper_base*> get_all_class_properties(const type& t) const;
         uint16_t get_class_property_count(const type& t) const;
-    
+
         const property_wrapper_base* get_global_property(const char* name) const;
         std::vector<const property_wrapper_base*> get_all_global_properties() const;
         uint16_t get_global_property_count(const type& t) const;
@@ -109,9 +109,9 @@ class RTTR_LOCAL type_database
         template<typename Container, typename Compare_Type>
         const method_wrapper_base* get_class_method(const type& t, const char* name, const Container& container) const;
 
-        const method_wrapper_base* get_class_method(const type& t, const char* name, 
+        const method_wrapper_base* get_class_method(const type& t, const char* name,
                                                     const std::vector<type>& param_type_list) const;
-        const method_wrapper_base* get_class_method(const type& t, const char* name, 
+        const method_wrapper_base* get_class_method(const type& t, const char* name,
                                                     const std::vector<argument>& arg_list) const;
 
         std::vector<const method_wrapper_base*> get_all_class_methods(const type& t) const;
@@ -159,7 +159,7 @@ class RTTR_LOCAL type_database
         const enumeration_wrapper_base* get_enumeration(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
-        
+
     private:
         type_database();
 
@@ -218,11 +218,11 @@ class RTTR_LOCAL type_database
             class_member(type::type_id id, hash_type hash_value) : m_class_id(id), m_register_index(0), m_name_hash(hash_value) {}
             class_member(type::type_id id, uint16_t register_index, hash_type hash_value, std::unique_ptr<T> data)
             :   m_class_id(id), m_register_index(register_index), m_name_hash(hash_value), m_data(move(data)) {}
-           
-            class_member(class_member<T>&& other) : m_class_id(other.m_class_id), m_register_index(other.m_register_index), 
+
+            class_member(class_member<T>&& other) : m_class_id(other.m_class_id), m_register_index(other.m_register_index),
                                                     m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)) {}
 
-            class_member<T>& operator = (class_member<T>&& other) 
+            class_member<T>& operator = (class_member<T>&& other)
             {
                 m_class_id = other.m_class_id;
                 m_register_index = other.m_register_index;
@@ -252,7 +252,7 @@ class RTTR_LOCAL type_database
 
                     if (_left.m_register_index < _right.m_register_index)
                         return true;
-                    
+
                     return false;
                 }
             };
@@ -269,7 +269,7 @@ class RTTR_LOCAL type_database
             global_member(hash_type hash_value, std::unique_ptr<T> data) : m_name_hash(hash_value), m_data(move(data)) {}
             global_member(hash_type hash_value) : m_name_hash(hash_value) {}
             global_member(global_member<T>&& other) : m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)) {}
-            global_member<T>& operator = (global_member<T>&& other) 
+            global_member<T>& operator = (global_member<T>&& other)
             {
                 m_name_hash = other.m_name_hash;
                 m_data = std::move(other.m_data);
@@ -303,7 +303,7 @@ class RTTR_LOCAL type_database
             type_data(type::type_id id) : m_id(id) {}
             type_data(type::type_id id, Data_Type data) : m_id(id), m_data(std::move(data)) {}
             type_data(type_data<T, Data_Type>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
-            type_data<T, Data_Type>& operator = (type_data<T, Data_Type>&& other) 
+            type_data<T, Data_Type>& operator = (type_data<T, Data_Type>&& other)
             {
                 m_id = other.m_id;
                 m_data = std::move(other.m_data);
@@ -363,7 +363,7 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_object_pointer_list;
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
-                                                                    
+
         std::vector<global_member<property_wrapper_base>>           m_global_property_list;
         std::vector<global_member<method_wrapper_base>>             m_global_method_list;
 

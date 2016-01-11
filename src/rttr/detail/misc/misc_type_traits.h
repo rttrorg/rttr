@@ -54,14 +54,14 @@ namespace detail
         using type = detail::remove_cv_t<T>;
     };
 
-    template<typename T> struct raw_type<T, enable_if_t<std::is_pointer<T>::value && !detail::is_function_ptr<T>::value>> 
+    template<typename T> struct raw_type<T, enable_if_t<std::is_pointer<T>::value && !detail::is_function_ptr<T>::value>>
     {
-        using type = typename raw_type< detail::remove_pointer_t<T>>::type; 
+        using type = typename raw_type< detail::remove_pointer_t<T>>::type;
     };
 
-    template<typename T> struct raw_type<T, enable_if_t<std::is_reference<T>::value> > 
+    template<typename T> struct raw_type<T, enable_if_t<std::is_reference<T>::value> >
     {
-        using type = typename raw_type< remove_reference_t<T> >::type; 
+        using type = typename raw_type< remove_reference_t<T> >::type;
     };
 
     template<typename T>
@@ -75,12 +75,12 @@ namespace detail
     template<typename T>
     struct remove_pointers<T, enable_if_t<std::is_pointer<T>::value>>
     {
-        using type = typename remove_pointers<remove_pointer_t<T> >::type; 
+        using type = typename remove_pointers<remove_pointer_t<T> >::type;
     };
 
     template<typename T>
     using remove_pointers_t = typename remove_pointers<T>::type;
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
     // this trait removes all pointers except one
 
@@ -97,7 +97,7 @@ namespace detail
 
     template<typename T>
     using remove_pointers_except_one_t = typename remove_pointers_except_one<T>::type;
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
     // this trait will remove the cv-qualifier, pointer types, reference type and also the array dimension
 
@@ -111,9 +111,9 @@ namespace detail
     struct raw_array_type_impl<T[N]> { using type = typename raw_array_type<T>::type; };
 
     template<typename T>
-    struct raw_array_type<T, typename std::enable_if<std::is_array<T>::value>::type> 
+    struct raw_array_type<T, typename std::enable_if<std::is_array<T>::value>::type>
     {
-         using type = typename raw_array_type_impl< remove_cv_t<T> >::type; 
+         using type = typename raw_array_type_impl< remove_cv_t<T> >::type;
     };
 
     template<typename T>
@@ -123,10 +123,10 @@ namespace detail
 
     template <bool... b> struct static_all_of;
     //specialization for type true, go continue recurse if the first argument is true
-    template <bool... tail> 
+    template <bool... tail>
     struct static_all_of<true, tail...> : static_all_of<tail...> {};
     // end recursion if first argument is false
-    template <bool... tail> 
+    template <bool... tail>
     struct static_all_of<false, tail...> : std::false_type {};
 
     // finish when no argument are left
@@ -139,17 +139,17 @@ namespace detail
 
     template <bool... b> struct static_any_of;
 
-    template <bool... tail> 
+    template <bool... tail>
     struct static_any_of<true, tail...> : std::true_type {};
 
-    template <bool... tail> 
+    template <bool... tail>
     struct static_any_of<false, tail...> : static_any_of<tail...> {};
 
     // finish when no argument are left
     template <> struct static_any_of<> : std::false_type {};
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    /*! 
+    /*!
      * Determine if the given type \a T has the method
      * 'type get_type() const' declared.
      */
@@ -159,7 +159,7 @@ namespace detail
         typedef char YesType[1];
         typedef char NoType[2];
 
-        template <typename U, rttr::type (U::*)() const> 
+        template <typename U, rttr::type (U::*)() const>
         class check { };
 
         template <typename C>
@@ -173,7 +173,7 @@ namespace detail
     };
 
     /*!
-     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type. 
+     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type.
      */
     template<class T, typename Enable = void>
     struct has_get_type_func : std::false_type
@@ -184,8 +184,8 @@ namespace detail
     {};
 
     /////////////////////////////////////////////////////////////////////////////////
-    
-    /*! 
+
+    /*!
      * Determine if the given type \a T has the method
      * 'type get_type() const' declared.
      */
@@ -195,7 +195,7 @@ namespace detail
         typedef char YesType[1];
         typedef char NoType[2];
 
-        template <typename U, void* (U::*)()> 
+        template <typename U, void* (U::*)()>
         class check { };
 
         template <typename C>
@@ -209,7 +209,7 @@ namespace detail
     };
 
     /*!
-     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type. 
+     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type.
      */
     template<class T, typename Enable = void>
     struct has_get_ptr_func : std::false_type
@@ -220,8 +220,8 @@ namespace detail
     {};
 
     /////////////////////////////////////////////////////////////////////////////////
-    
-    /*! 
+
+    /*!
      * Determine if the given type \a T has the method
      * 'type get_type() const' declared.
      */
@@ -231,7 +231,7 @@ namespace detail
         typedef char YesType[1];
         typedef char NoType[2];
 
-        template <typename U, derived_info (U::*)()> 
+        template <typename U, derived_info (U::*)()>
         class check { };
 
         template <typename C>
@@ -245,7 +245,7 @@ namespace detail
     };
 
     /*!
-     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type. 
+     * If T has a member function 'type get_type() const;' then inherits from true_type, otherwise inherits from false_type.
      */
     template<class T, typename Enable = void>
     struct has_get_derived_info_func : std::false_type
@@ -338,14 +338,14 @@ namespace detail
 
     template< std::size_t I, typename T >
     struct type_list_element;
- 
+
     template< std::size_t I, typename Head, typename... Tail >
-    struct type_list_element<I, type_list<Head, Tail...>> : type_list_element<I - 1, type_list<Tail...>> 
+    struct type_list_element<I, type_list<Head, Tail...>> : type_list_element<I - 1, type_list<Tail...>>
     {
     };
- 
+
     template< typename Head, typename... Tail >
-    struct type_list_element<0, type_list<Head, Tail...>> 
+    struct type_list_element<0, type_list<Head, Tail...>>
     {
        using type = Head;
     };
@@ -425,7 +425,7 @@ namespace detail
 
     template<typename T, typename List, std::size_t N>
     using push_front_n_t = typename push_front_n<T, List, N>::type;
-        
+
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
@@ -490,7 +490,7 @@ namespace detail
         using sub_type = typename array_mapper<T>::sub_type;
         using type = typename concat_array_types< List<Types..., T>, sub_type, typename std::is_same<T, sub_type>::type >::type;
     };
- 
+
     template<typename T>
     struct array_rank_type_list
     {
@@ -503,7 +503,7 @@ namespace detail
     {
         using type = typename std::tuple_element<N, typename array_rank_type_list<T>::types>::type;
     };
-    
+
     /////////////////////////////////////////////////////////////////////////////////////
     // rank<T>::value
     //
@@ -552,25 +552,25 @@ namespace detail
     //      is_char_array<int[10]>::value => false
     //      is_char_array<char>::value => false
     template<typename T>
-    using is_one_dim_char_array = std::integral_constant<bool, std::is_array<T>::value && 
+    using is_one_dim_char_array = std::integral_constant<bool, std::is_array<T>::value &&
                                                                std::is_same<char, raw_array_type_t<T>>::value &&
                                                                (std::rank<T>::value == 1)>;
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template <typename T, typename...Ts> 
+    template <typename T, typename...Ts>
     struct max_sizeof_list_impl;
 
-     template <typename T> 
+     template <typename T>
     struct max_sizeof_list_impl<T>
     {
         static RTTR_CONSTEXPR_OR_CONST size_t value = sizeof(T);
     };
 
-    template<typename T1, typename T2, typename... U> 
-    struct max_sizeof_list_impl<T1, T2, U...> 
+    template<typename T1, typename T2, typename... U>
+    struct max_sizeof_list_impl<T1, T2, U...>
     {
-        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl< conditional_t< sizeof(T1) >= sizeof(T2), 
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_sizeof_list_impl< conditional_t< sizeof(T1) >= sizeof(T2),
                                                                                               T1,
                                                                                               T2>,
                                                                                  U...>::value;
@@ -592,18 +592,18 @@ namespace detail
 
 
     /////////////////////////////////////////////////////////////////////////////////////
-    
-    template <typename T, typename...Ts> 
+
+    template <typename T, typename...Ts>
     struct max_alignof_list_impl;
 
-     template <typename T> 
+     template <typename T>
     struct max_alignof_list_impl<T>
     {
         static RTTR_CONSTEXPR_OR_CONST size_t value = std::alignment_of<T>::value;
     };
 
-    template<typename T1, typename T2, typename... U> 
-    struct max_alignof_list_impl<T1, T2, U...> 
+    template<typename T1, typename T2, typename... U>
+    struct max_alignof_list_impl<T1, T2, U...>
     {
         static RTTR_CONSTEXPR_OR_CONST std::size_t value = max_alignof_list_impl<
                                                                 conditional_t<std::alignment_of<T1>::value >= std::alignment_of<T2>::value,
@@ -653,25 +653,25 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     // checks whether the given type T has a less than operator
-    template<typename T, typename = decltype(std::declval<T>() < std::declval<T>() )> 
+    template<typename T, typename = decltype(std::declval<T>() < std::declval<T>() )>
     std::true_type  supports_less_than_test(const T&);
     std::false_type supports_less_than_test(...);
 
     template<typename T>
-    struct has_less_than_operator : std::integral_constant<bool, std::is_same<std::true_type, 
+    struct has_less_than_operator : std::integral_constant<bool, std::is_same<std::true_type,
                                                                              decltype(supports_less_than_test(std::declval<T>()))>::value> {};
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
     // checks whether the given type T has the equal operator
-    template<typename T, typename = decltype(std::declval<T>() == std::declval<T>() )> 
+    template<typename T, typename = decltype(std::declval<T>() == std::declval<T>() )>
     std::true_type  supports_equal_test(const T&);
     std::false_type supports_equal_test(...);
 
 
     template<typename T>
-    struct has_equal_operator : std::integral_constant<bool, std::is_same<std::true_type, 
+    struct has_equal_operator : std::integral_constant<bool, std::is_same<std::true_type,
                                                                           decltype(supports_equal_test(std::declval<T>()))>::value> {};
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -679,8 +679,8 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     // count the number of type in a variadic template list
     // e.g. count_type<int, std::tuple<bool, int, bool, int, int, std::string>>::value => 3
- 
-    template <typename T, typename Type_List> 
+
+    template <typename T, typename Type_List>
     struct count_type_impl;
 
     template<typename T>
@@ -692,13 +692,13 @@ namespace detail
     template<typename T, typename... Tail>
     struct count_type_impl<T, type_list<T, Tail...>>
     {
-        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value + 1; 
+        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value + 1;
     };
 
     template<typename T, typename U, typename... Tail>
     struct count_type_impl<T, type_list<U, Tail...>>
     {
-        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value; 
+        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value;
     };
 
     template<typename T, typename Type_List>
@@ -711,17 +711,17 @@ namespace detail
     // find from a list of types
     // find_types<std::tuple<int, bool>, bool, float>::type => std::tuple<bool>
 
-    template<typename Result_List, typename Types_To_Find, typename Types_To_Iterate> 
+    template<typename Result_List, typename Types_To_Find, typename Types_To_Iterate>
     struct find_types_impl;
 
-    template<typename...Rs, typename...Tf> 
+    template<typename...Rs, typename...Tf>
     struct find_types_impl<type_list<Rs...>, type_list<Tf...>, type_list<>>
     {
         using type = type_list<Rs...>;
     };
-    
 
-    template<typename...Rs, typename Types_To_Find, typename T, typename...Tail> 
+
+    template<typename...Rs, typename Types_To_Find, typename T, typename...Tail>
     struct find_types_impl<type_list<Rs...>, Types_To_Find, type_list<T, Tail...>>
     {
         using type = conditional_t< contains<T, Types_To_Find>::value,
@@ -730,7 +730,7 @@ namespace detail
                                    >;
     };
 
-    template<typename Types_To_Find, typename Types_To_Iterate>  
+    template<typename Types_To_Find, typename Types_To_Iterate>
     using find_types = find_types_impl<type_list<>, as_type_list_t<Types_To_Find>, as_type_list_t<Types_To_Iterate>>;
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -749,7 +749,7 @@ namespace detail
     };
 
     template<typename...Orig_Types, typename T, typename... Tail>
-    struct has_double_types_impl<type_list<Orig_Types...>, type_list<T, Tail...>> 
+    struct has_double_types_impl<type_list<Orig_Types...>, type_list<T, Tail...>>
     :   conditional_t< count_type<T, type_list<Orig_Types...>>::value >= 2,
                        std::true_type,
                        typename has_double_types_impl<type_list<Orig_Types...>, type_list<Tail...>>::type
@@ -757,7 +757,7 @@ namespace detail
     {
     };
 
-    template <typename... T> 
+    template <typename... T>
     using has_double_types = typename has_double_types_impl<as_type_list_t<T...>, as_type_list_t<T...>>::type;
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -821,7 +821,7 @@ namespace detail
 
     template<std::size_t N>
     struct is_string_literal<char[N]> : std::true_type {};
-    
+
     template<>
     struct is_string_literal<const char*> : std::true_type {};
 
@@ -879,7 +879,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
     // This trait will compare two list of types, they are the same (std::true_type)
-    // when the contain the same types. There is an exception pointer types 
+    // when the contain the same types. There is an exception pointer types
     // and std::nullptr_t are treated the same
     // e.g.:
     // is_same_nullptr<std::tuple<int, bool*>, std::tuple<int, nullptr>>::value => std::true_type
@@ -887,7 +887,7 @@ namespace detail
     template<typename List1, typename List2, typename Enable = void>
     struct is_same_nullptr_impl;
 
-    template<template <class...> class List1, typename T, typename... T1, 
+    template<template <class...> class List1, typename T, typename... T1,
              template <class...> class List2, typename U, typename... U1>
     struct is_same_nullptr_impl< List1<T, T1...>, List2<U, U1...>, void >
     {

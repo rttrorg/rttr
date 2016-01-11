@@ -57,7 +57,7 @@ RTTR_INLINE argument::argument(const variant& var) : m_data(var.get_ptr()), m_ty
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-argument::argument(const T& data) 
+argument::argument(const T& data)
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {
@@ -67,7 +67,7 @@ argument::argument(const T& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-argument::argument(T& data) 
+argument::argument(T& data)
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_type(rttr::type::get<T>())
 {
@@ -92,9 +92,9 @@ RTTR_INLINE argument::non_ptr_type<T> argument::is_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type argument::get_type() const 
-{ 
-    return m_type; 
+RTTR_INLINE type argument::get_type() const
+{
+    return m_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

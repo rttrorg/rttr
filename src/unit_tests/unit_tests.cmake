@@ -32,7 +32,7 @@ set(HEADER_FILES test_classes.h
                  type/test_type.h
                  version.rc.in
                  )
-                
+
 set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
                  property/test_property_reflection.cpp

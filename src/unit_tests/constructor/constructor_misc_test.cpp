@@ -79,7 +79,7 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_instanciated_type", "[constructor]") 
+TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 {
     auto ctor_list = type::get<ctor_misc_test>().get_constructors();
     CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
@@ -92,7 +92,7 @@ TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_signature", "[constructor]") 
+TEST_CASE("constructor - get_signature", "[constructor]")
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_signature() == "ctor_misc_test( )");
@@ -106,7 +106,7 @@ TEST_CASE("constructor - get_signature", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_parameter_infos", "[constructor]") 
+TEST_CASE("constructor - get_parameter_infos", "[constructor]")
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_parameter_infos().empty() == true);
@@ -118,7 +118,7 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("ctor - get_declaring_type", "[constructor]") 
+TEST_CASE("ctor - get_declaring_type", "[constructor]")
 {
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_declaring_type() == type::get<ctor_misc_test>());
@@ -132,7 +132,7 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_metadata", "[constructor]") 
+TEST_CASE("constructor - get_metadata", "[constructor]")
 {
     SECTION("default ctor")
     {
@@ -164,7 +164,7 @@ TEST_CASE("constructor - get_metadata", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_metadata - type", "[constructor]") 
+TEST_CASE("constructor - get_metadata - type", "[constructor]")
 {
     variant var = type::get<ctor_misc_test>().get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(var.is_type<bool>() == true);
@@ -177,11 +177,11 @@ TEST_CASE("constructor - get_metadata - type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - compare - type", "[constructor]") 
+TEST_CASE("constructor - compare - type", "[constructor]")
 {
     constructor ctor1 = type::get<ctor_misc_test>().get_constructor();
     constructor ctor2 = type::get<ctor_misc_test>().get_constructor();
-    
+
     CHECK(ctor1 == ctor2);
 
     const auto ctor_list = type::get<ctor_misc_test>().get_constructors();

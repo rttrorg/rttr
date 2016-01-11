@@ -51,14 +51,14 @@ namespace rttr
 namespace detail
 {
 
-template<typename ClassType, typename Constructor_Type, access_levels Acc_Level, typename Policy, 
+template<typename ClassType, typename Constructor_Type, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename Default_Args, typename Parameter_Infos, typename... Args>
 class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count, typename... Def_Args, typename...Param_Args, typename... Ctor_Args>
-class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Count, default_args<Def_Args...>, parameter_infos<Param_Args...>, Ctor_Args...> 
+class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Count, default_args<Def_Args...>, parameter_infos<Param_Args...>, Ctor_Args...>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
         using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
@@ -66,10 +66,10 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
         using invoke_with_defaults = invoke_defaults_helper<invoker_class, type_list<Ctor_Args...>>;
 
     public:
-        constructor_wrapper(std::array<metadata, Metadata_Count> metadata_list, 
+        constructor_wrapper(std::array<metadata, Metadata_Count> metadata_list,
                             default_args<Def_Args...> default_args,
                             parameter_infos<Param_Args...> param_infos)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), 
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_def_args(std::move(default_args)), m_param_infos(std::move(param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
@@ -81,7 +81,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
 
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type) const { return {std::is_reference<Ctor_Args>::value...}; }
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::false_type) const { return {}; }
-        
+
         RTTR_INLINE std::vector<bool> get_is_const_impl(std::true_type) const { return {std::is_const<typename std::remove_reference<Ctor_Args>::type>::value...}; }
         RTTR_INLINE std::vector<bool> get_is_const_impl(std::false_type) const { return {}; }
 
@@ -136,10 +136,10 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy, 
+template<typename ClassType, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename... Def_Args, typename...Param_Args, typename F>
-class constructor_wrapper<ClassType, return_func, Acc_Level, Policy, 
-                          Metadata_Count, default_args<Def_Args...>, parameter_infos<Param_Args...>, F> 
+class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
+                          Metadata_Count, default_args<Def_Args...>, parameter_infos<Param_Args...>, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using instanciated_type = typename function_traits<F>::return_type;
@@ -149,7 +149,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
     using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
 
     public:
-        constructor_wrapper(F creator_func, 
+        constructor_wrapper(F creator_func,
                             std::array<metadata, Metadata_Count> metadata_list,
                             default_args<Def_Args...> default_args,
                             parameter_infos<Param_Args...> param_infos)

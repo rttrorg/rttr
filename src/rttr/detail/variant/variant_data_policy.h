@@ -64,7 +64,7 @@ struct variant_data_policy_arithmetic;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, bool Can_Place = (sizeof(T) <= sizeof(variant_data)) && 
+template<typename T, bool Can_Place = (sizeof(T) <= sizeof(variant_data)) &&
                                       (std::alignment_of<T>::value <= std::alignment_of<variant_data>::value)>
 using can_place_in_variant = std::integral_constant<bool, Can_Place>;
 
@@ -145,17 +145,17 @@ using variant_policy_func = bool (*)(variant_policy_operation, const variant_dat
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
     #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
         compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
-#else                                                                             
+#else
     #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
-        compare_equal(Tp::get_value(src_data), rhs.get_value<T>())                 
+        compare_equal(Tp::get_value(src_data), rhs.get_value<T>())
 #endif
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
     #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
         compare_less_than(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), result)
-#else                                                                             
+#else
     #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
-        compare_less_than(Tp::get_value(src_data), rhs.get_value<T>(), result)                      
+        compare_less_than(Tp::get_value(src_data), rhs.get_value<T>(), result)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ static RTTR_INLINE is_nullptr(T& to)
  * This class represents the base implementation for variant_data policy.
  *
  * We use the C++ idiom CRTP (Curiously Recurring Template Pattern) to avoid rewriting the same code over an over again.
- * The template parameter \p Tp represents the derived class, which will be invoked. 
+ * The template parameter \p Tp represents the derived class, which will be invoked.
  * Hopefully, the function call to derived class will be inlined.
  */
 template<typename T, typename Tp, typename Converter>
@@ -199,7 +199,7 @@ struct variant_data_base_policy
     {
         switch (op)
         {
-            case variant_policy_operation::DESTROY: 
+            case variant_policy_operation::DESTROY:
             {
                 Tp::destroy(const_cast<T&>(Tp::get_value(src_data)));
                 break;
@@ -340,12 +340,12 @@ struct variant_data_policy_small : variant_data_base_policy<T, variant_data_poli
     {
         return reinterpret_cast<const T&>(data);
     }
-    
+
     static RTTR_INLINE void destroy(T& value)
     {
         value.~T();
     }
-    
+
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
         new (&dest) T(value);
@@ -360,7 +360,7 @@ struct variant_data_policy_small : variant_data_base_policy<T, variant_data_poli
     template<typename U>
     static RTTR_INLINE void create(U&& value, variant_data& dest)
     {
-        new (&dest) T(std::forward<U>(value)); 
+        new (&dest) T(std::forward<U>(value));
     }
 };
 
@@ -378,12 +378,12 @@ struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy
     {
         return *reinterpret_cast<T* const &>(data);
     }
-    
+
     static RTTR_INLINE void destroy(T& value)
     {
         delete &value;
     }
-    
+
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
         reinterpret_cast<T*&>(dest) = new T(value);
@@ -423,11 +423,11 @@ struct variant_data_policy_array_small : variant_data_base_policy<T, variant_dat
     {
         return reinterpret_cast<const T&>(data);
     }
-    
+
     static RTTR_INLINE void destroy(T& value)
     {
     }
-    
+
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
         COPY_ARRAY_PRE_PROC(value, dest);
@@ -461,12 +461,12 @@ struct variant_data_policy_array_big : variant_data_base_policy<T, variant_data_
     {
         return reinterpret_cast<const T&>(*reinterpret_cast<const array_dest_type&>(data));
     }
-    
+
     static RTTR_INLINE void destroy(T& value)
     {
         delete [] &value;
     }
-    
+
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
         reinterpret_cast<array_dest_type&>(dest) = new T;
@@ -503,11 +503,11 @@ struct variant_data_policy_arithmetic : variant_data_base_policy<T, variant_data
     {
         return reinterpret_cast<const T&>(data);
     }
-    
+
     static RTTR_INLINE void destroy(T& value)
     {
     }
-    
+
     static RTTR_INLINE void clone(const T& value, variant_data& dest)
     {
         reinterpret_cast<T&>(dest) = value;
@@ -560,7 +560,7 @@ struct RTTR_API variant_data_policy_empty
     {
         switch (op)
         {
-            case variant_policy_operation::DESTROY: 
+            case variant_policy_operation::DESTROY:
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
             {
@@ -657,7 +657,7 @@ struct RTTR_API variant_data_policy_void
     {
         switch (op)
         {
-            case variant_policy_operation::DESTROY: 
+            case variant_policy_operation::DESTROY:
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
             {
@@ -761,7 +761,7 @@ struct RTTR_API variant_data_policy_nullptr_t
         // otherwise mingw has reports a problems here: "request for member 'nullptr_t' in non-class type 'std::nullptr_t'"
         value.std::nullptr_t::~nullptr_t();
     }
-    
+
     static RTTR_INLINE void clone(const std::nullptr_t& value, variant_data& dest)
     {
         new (&dest) std::nullptr_t(value);
@@ -882,7 +882,7 @@ struct RTTR_API variant_data_policy_nullptr_t
     template<typename U>
     static RTTR_INLINE void create(U&& value, variant_data& dest)
     {
-        new (&dest) std::nullptr_t(std::forward<U>(value)); 
+        new (&dest) std::nullptr_t(std::forward<U>(value));
     }
 };
 

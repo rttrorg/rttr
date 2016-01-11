@@ -43,9 +43,9 @@ class parameter_info;
 namespace detail
 {
     class parameter_info_wrapper_base;
-    template<typename...T> 
+    template<typename...T>
     struct parameter_infos;
-    template<typename...T> 
+    template<typename...T>
     static std::vector<parameter_info> convert_to_parameter_info_list(const parameter_infos<T...>&);
 
     template<typename T>
@@ -70,12 +70,12 @@ namespace detail
  *
  * Typical Usage
  * ----------------------
- * 
+ *
  * \code{.cpp}
  *   using namespace rttr;
- *   
+ *
  *   void set_window_geometry(const char* name, int w, int h) {...}
- *   
+ *
  *   RTTR_REGISTRATION
  *   {
  *        registration::method("set_window_geometry", &set_window_geometry)
@@ -126,7 +126,7 @@ class RTTR_API parameter_info
         bool has_default_value() const;
 
         /*!
-         * \brief Returns the default value as \ref variant for this parameter; 
+         * \brief Returns the default value as \ref variant for this parameter;
          *        or an \ref variant::is_valid() "invalid" variant to indicate that no default value is available.
          *
          * \return Default value as variant.
@@ -164,7 +164,7 @@ class RTTR_API parameter_info
         bool operator!=(const parameter_info& other) const;
 
     private:
-        template<typename... T> 
+        template<typename... T>
         friend std::vector<parameter_info> detail::convert_to_parameter_info_list(const detail::parameter_infos<T...>&);
 
         template<typename T>

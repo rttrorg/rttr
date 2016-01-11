@@ -37,7 +37,7 @@ namespace detail
 
 /*!
  * This class holds one enum data.
- * 
+ *
  */
 template<typename Enum_Type>
 class enum_data

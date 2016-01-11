@@ -35,16 +35,16 @@
 # FILE_LIST <= a list of files with absolute path
 ####################################################################################
 function (createSrcGroups FILE_LIST )
-  # we want to get the relative path from the 
+  # we want to get the relative path from the
   # current source dir
   string(LENGTH ${CMAKE_CURRENT_SOURCE_DIR} curDirLen)
   set(TMP_FILE_LIST ${${FILE_LIST}})
-  
+
   foreach ( SOURCE ${TMP_FILE_LIST} )
     string(LENGTH ${SOURCE} fullPathLen)
     math(EXPR RelPathLen ${fullPathLen}-${curDirLen})
     string(SUBSTRING ${SOURCE} ${curDirLen} ${RelPathLen} curStr)
-    
+
     string ( REGEX REPLACE "[\\/]" "\\\\" normPath ${curStr} )
     string ( REGEX MATCH "\\\\(.*)\\\\" ouput ${normPath} )
     if(NOT CMAKE_MATCH_1 STREQUAL "")
@@ -52,7 +52,7 @@ function (createSrcGroups FILE_LIST )
     endif()
   endforeach()
 endfunction()
- 
+
 ####################################################################################
 # Create a UnityFile. This is a file which inlcudes all other source files.
 # This is usefull, when you want a fast rebuild.
@@ -123,7 +123,7 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
   set(QT_MOC_HEADERS)
   set(QT_UI_FILES)
   set(QT_QRC_FILES)
-  
+
   foreach(headerFile ${HEADER_FILES} )
     if (${headerFile} MATCHES ".*.h.in$")
       string ( REGEX REPLACE ".h.in$" ".h" out_path ${headerFile} )
@@ -155,7 +155,7 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
       if(var)
          list(APPEND QT_MOC_HEADERS ${FULL_HEADER_PATH})
       endif()
-      
+
       # returns the relative path, from the current source dir
       getRelativePath(FULL_HEADER_PATH REL_PATH)
       list(APPEND HEADER_LIST_OF_CUR_DIR ${FULL_HEADER_PATH})
@@ -169,7 +169,7 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
       endif()
     endif()
   endforeach()
-  
+
   # and now the source files
   list(APPEND QML_SOURCES)
   foreach(srcFile ${SOURCE_FILES} )
@@ -194,29 +194,29 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
      else()
        list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
      endif()
-    
+
     list(APPEND SOURCE_LIST_OF_CUR_DIR ${ABS_PATH_TO_FILES}/${srcFile})
   endforeach()
- 
+
   list(APPEND QT_MOC_SOURCES)
- 
+
   if (QT_MOC_HEADERS)
     qt5_wrap_cpp(QT_MOC_SOURCES ${QT_MOC_HEADERS})
     source_group("Generated Files" FILES ${QT_MOC_SOURCES})
   endif()
-  
+
   list(APPEND QT_UI_SOURCES)
   if (QT_UI_FILES)
     qt5_wrap_ui(QT_UI_SOURCES ${QT_UI_FILES})
     source_group("Generated Files" FILES ${QT_UI_SOURCES})
   endif()
-  
+
   list(APPEND QT_QRC_SOURCES)
   if (QT_QRC_FILES)
     qt5_add_resources(QT_QRC_SOURCES ${QT_QRC_FILES})
     source_group("Generated Files" FILES ${QT_QRC_SOURCES})
   endif()
-  
+
   list(APPEND ALL_HPP_FILES ${${_HEADER_FILES}} ${HEADER_LIST_OF_CUR_DIR})
   list(APPEND ALL_CPP_FILES ${${_SOURCE_FILES}} ${SOURCE_LIST_OF_CUR_DIR} ${QT_MOC_SOURCES} ${QT_UI_SOURCES} ${QT_QRC_SOURCES} ${QML_SOURCES})
   set(${_HEADER_FILES} ${ALL_HPP_FILES} PARENT_SCOPE)
@@ -261,14 +261,14 @@ function(copy_dependency_release _INPUT _OUTPUT)
   # make the path to normal path with / as dir separator
   string ( REGEX REPLACE "[\\/]" "/" FILE_PATH ${_PATH} )
   get_filename_component(FILE_NAME ${FILE_PATH} NAME)
-  
+
   if (VS_BUILD)
     if (IS_DIRECTORY ${_INPUT})
       file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${REL_PATH})
     else()
-      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${REL_PATH}/${FILE_NAME} COPYONLY)  
-      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/RelWithDebInfo/${REL_PATH}/${FILE_NAME} COPYONLY) 
-      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MinSizeRel/${REL_PATH}/${FILE_NAME} COPYONLY) 
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/${REL_PATH}/${FILE_NAME} COPYONLY)
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/RelWithDebInfo/${REL_PATH}/${FILE_NAME} COPYONLY)
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MinSizeRel/${REL_PATH}/${FILE_NAME} COPYONLY)
     endif()
   else()
     if (IS_DIRECTORY ${_INPUT})
@@ -277,14 +277,14 @@ function(copy_dependency_release _INPUT _OUTPUT)
       configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH}/${FILE_NAME} COPYONLY)
     endif()
   endif()
-  
+
   if (IS_DIRECTORY ${_INPUT})
     install(DIRECTORY
             ${FILE_PATH}
             DESTINATION ${_OUTPUT}/${REL_PATH}
             CONFIGURATIONS Release)
   else()
-    install(FILES 
+    install(FILES
             ${FILE_PATH}
             DESTINATION ${_OUTPUT}/${REL_PATH}
             CONFIGURATIONS Release)
@@ -313,28 +313,28 @@ function(copy_dependency_debug _INPUT _OUTPUT)
   # make the path to normal path with / as dir separator
   string ( REGEX REPLACE "[\\/]" "////" FILE_PATH ${_PATH} )
   get_filename_component(FILE_NAME ${FILE_PATH} NAME)
-    
+
   if (VS_BUILD)
     if (IS_DIRECTORY ${_INPUT})
       file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${REL_PATH})
      else()
-      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${REL_PATH}/${FILE_NAME} COPYONLY)  
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug/${REL_PATH}/${FILE_NAME} COPYONLY)
     endif()
   else()
     if (IS_DIRECTORY ${_INPUT})
       file(COPY ${_INPUT} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH})
     else()
-      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH}/${FILE_NAME} COPYONLY)  
+      configure_file(${FILE_PATH} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${REL_PATH}/${FILE_NAME} COPYONLY)
     endif()
   endif()
-  
+
  if (IS_DIRECTORY ${_INPUT})
    install(DIRECTORY
            ${FILE_PATH}
            DESTINATION ${_OUTPUT}/${REL_PATH}
            CONFIGURATIONS Debug)
  else()
-   install(FILES 
+   install(FILES
            ${FILE_PATH}
            DESTINATION ${_OUTPUT}/${REL_PATH}
            CONFIGURATIONS Debug)
@@ -351,7 +351,7 @@ function(activate_precompiled_headers _PRECOMPILED_HEADER _SOURCE_FILES)
   get_filename_component(pch_basename ${_PRECOMPILED_HEADER} NAME_WE)
   set(pch_abs ${CMAKE_CURRENT_SOURCE_DIR}/${_PRECOMPILED_HEADER})
   set(pch_unity ${CMAKE_CURRENT_BINARY_DIR}/${pch_basename}.cpp)
-     
+
   if(MSVC)
     # First specify the name of the PCH file
     # it seems to be that nmake build cant handle the $(IntDir) variable
@@ -370,13 +370,13 @@ function(activate_precompiled_headers _PRECOMPILED_HEADER _SOURCE_FILES)
                                 PROPERTIES COMPILE_FLAGS "/Yc\"${pch_abs}\" /Fp\"${pch_bin}\""
                                            OBJECT_OUTPUTS "${pch_bin}")
     # Update properties of source files to use the precompiled header.
-    # Additionally, force the inclusion of the precompiled header at beginning of each source file.                                       
+    # Additionally, force the inclusion of the precompiled header at beginning of each source file.
     set_source_files_properties(${SRC_FILES}
                                 PROPERTIES COMPILE_FLAGS "/Yu\"${pch_abs}\" /FI\"${pch_abs}\" /Fp\"${pch_bin}\""
-                                           OBJECT_DEPENDS "${pch_bin}")  
+                                           OBJECT_DEPENDS "${pch_bin}")
     # Finally, update the source file collection to contain the precompiled header translation unit
     set(${_SOURCE_FILES} ${pch_unity} ${pch_abs} ${${_SOURCE_FILES}} PARENT_SCOPE)
-    
+
     source_group("Generated Files" FILES ${pch_unity})
     get_filename_component(PATH_TO_PCH ${_PRECOMPILED_HEADER} DIRECTORY)
     if (PATH_TO_PCH)
@@ -400,7 +400,7 @@ macro( replaceCompilerOption _OLD_OPTION _NEW_OPTION)
     else()
       set(${flag_var} "${${flag_var}} ${_NEW_OPTION}")
     endif()
-   # set(${flag_var} ${${flag_var}} PARENT_SCOPE)    
+   # set(${flag_var} ${${flag_var}} PARENT_SCOPE)
   endforeach()
 endmacro()
 
@@ -423,7 +423,7 @@ macro(enable_rtti _ENABLE)
   else()
     message(FATAL_ERROR "Don't know how to enable/disable RTTI for this compiler.")
   endif()
-  
+
   if (${_ENABLE})
     message(STATUS "Enabled: use of RTTI")
     replaceCompilerOption("${disable_rtti_opt}" "${enable_rtti_opt}")
@@ -464,8 +464,8 @@ function(getCompilerName _COMPILER_NAME)
     message(WARNING "Can not retrieve compiler name!")
     return()
   endif()
-  
-  set(${_COMPILER_NAME} ${COMPILER_NAME} PARENT_SCOPE)    
+
+  set(${_COMPILER_NAME} ${COMPILER_NAME} PARENT_SCOPE)
 endfunction()
 
 ####################################################################################

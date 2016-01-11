@@ -75,7 +75,7 @@ RTTR_REGISTRATION
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default argument test", "[method]") 
+TEST_CASE("method - default argument test", "[method]")
 {
     type t = type::get_by_name("default_arg_test");
     method meth = t.get_method("method_with_default");
@@ -87,12 +87,12 @@ TEST_CASE("method - default argument test", "[method]")
     REQUIRE(var.is_type<bool>());
     // invoke was successfully
     CHECK(var.get_value<bool>() == true);
-    
+
     // using one default argument
     var = meth.invoke(obj, 23, std::string("This is a default"));
     REQUIRE(var.is_type<bool>());
     CHECK(var.get_value<bool>() == true);
-    
+
     // using no default argument
     const int* ptr = nullptr;
     var = meth.invoke(obj, 23, std::string("This is a default"), ptr);
@@ -110,7 +110,7 @@ TEST_CASE("method - default argument test", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default argument test (invoke_variadic)", "[method]") 
+TEST_CASE("method - default argument test (invoke_variadic)", "[method]")
 {
     type t = type::get_by_name("default_arg_test");
     method meth = t.get_method("method_with_default");
@@ -130,10 +130,10 @@ TEST_CASE("method - default argument test (invoke_variadic)", "[method]")
 #else
     var = meth.invoke_variadic(obj, {23, std::string("This is a default")});
 #endif
-    
+
     REQUIRE(var.is_type<bool>());
     CHECK(var.get_value<bool>() == true);
-    
+
     // using no default argument
     const int* ptr = nullptr;
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
@@ -160,7 +160,7 @@ TEST_CASE("method - default argument test (invoke_variadic)", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default argument test - invoke via type - member method", "[method]") 
+TEST_CASE("method - default argument test - invoke via type - member method", "[method]")
 {
     type t = type::get_by_name("default_arg_test");
     REQUIRE(t.is_valid() == true);
@@ -175,7 +175,7 @@ TEST_CASE("method - default argument test - invoke via type - member method", "[
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default argument test - invoke via type - global method", "[method]") 
+TEST_CASE("method - default argument test - invoke via type - global method", "[method]")
 {
     CHECK(type::invoke("global_meth_with_defaults", {}).is_valid()   == false);
     CHECK(type::invoke("global_meth_with_defaults", {23}).is_valid() == true);

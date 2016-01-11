@@ -61,7 +61,7 @@ class constructor_wrapper_base;
  * With \ref get_parameter_infos() you retrieve all information of the parameters for this constructor.
  * When the \ref constructor was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
- * The constructor can be invoked with \ref invoke() or via the \ref type class through \ref type::create(). 
+ * The constructor can be invoked with \ref invoke() or via the \ref type class through \ref type::create().
  * The created object will be copied into a variant and returned. Depending on the used policy during the registration process,
  * it can be an object with automatic or dynamic storage.
  *
@@ -71,12 +71,12 @@ class constructor_wrapper_base;
  *
  * Typical Usage
  * ----------------------
- * 
+ *
  * \code{.cpp}
  *      constructor ctor = type::get_by_name("std::string").get_constructor({type::get<std::string>()}); // retrieve the copy ctor
- *    
+ *
  *      variant var = ctor.invoke(std::string("Hello World"));          // returns an object with automatic storage
- *    
+ *
  *      std::cout << var.get_value<std::string>().c_str() << std::endl; // prints 'Hello World'
  * \endcode
  *
@@ -100,7 +100,7 @@ class RTTR_API constructor
         explicit operator bool() const;
 
         /*!
-         * \brief Returns access level with which this constructor was 
+         * \brief Returns access level with which this constructor was
          *        \ref registration::class_<T>::constructor() "registered".
          *
          * \remark When the constructor is not valid, this function will return level \ref access_levels::public_access.
@@ -132,7 +132,7 @@ class RTTR_API constructor
          * \return The signature as readable string.
          */
         std::string get_signature() const;
-        
+
         /*!
          * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the constructor.
          *
@@ -143,7 +143,7 @@ class RTTR_API constructor
         /*!
          * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no meta data is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key,
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.
@@ -154,7 +154,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -165,7 +165,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -176,7 +176,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -187,7 +187,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -198,7 +198,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -209,7 +209,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -221,7 +221,7 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().
@@ -235,7 +235,7 @@ class RTTR_API constructor
          *         Use this method when you need to instantiate a constructor with more then 6 parameters.
          *
          * \remark Using this invoke function is slower, then specifying the arguments directly.
-         *         Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does 
+         *         Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
          * \return An instance of the type \ref get_instanciated_type().

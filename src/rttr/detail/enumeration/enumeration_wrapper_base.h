@@ -46,7 +46,7 @@ namespace detail
 
 /*!
  * Abstract class for a method.
- * 
+ *
  * This is the base class for all methods.
  * You can invoke the method.
  */
@@ -57,7 +57,7 @@ class RTTR_API enumeration_wrapper_base
         virtual ~enumeration_wrapper_base();
 
         virtual type get_underlying_type() const = 0;
-        
+
         virtual type get_type() const = 0;
 
         virtual std::vector<std::string> get_names() const = 0;

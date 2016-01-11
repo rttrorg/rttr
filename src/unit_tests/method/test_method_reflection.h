@@ -57,7 +57,7 @@ struct method_test
     void method_with_ptr(int* ptr)   { method_with_ptr_called = true; }
 
     void method_fun_ptr_arg(void(*func_ptr)(int)) { method_func_ptr_arg_called = true; m_func_ptr = func_ptr; }
-    
+
     double dummy_data = 12;
     std::string dummy_text = "Hello World";
     int method_3_value = 0;

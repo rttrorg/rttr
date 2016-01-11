@@ -77,7 +77,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no info", "[method]") 
+TEST_CASE("method - parameter info - no info", "[method]")
 {
     method meth = type::get<method_param_info_test>().get_method("method_1");
     REQUIRE(meth.is_valid() == true);
@@ -93,7 +93,7 @@ TEST_CASE("method - parameter info - no info", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no names provided", "[method]") 
+TEST_CASE("method - parameter info - no names provided", "[method]")
 {
     method meth = type::get<method_param_info_test>().get_method("method_2");
     REQUIRE(meth.is_valid() == true);
@@ -122,7 +122,7 @@ TEST_CASE("method - parameter info - no names provided", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - names provided", "[method]") 
+TEST_CASE("method - parameter info - names provided", "[method]")
 {
     method meth = type::get<method_param_info_test>().get_method("method_3");
     REQUIRE(meth.is_valid() == true);
@@ -151,7 +151,7 @@ TEST_CASE("method - parameter info - names provided", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - no names provided & default values", "[method]") 
+TEST_CASE("method - parameter info - no names provided & default values", "[method]")
 {
     method meth = type::get<method_param_info_test>().get_method("method_4");
     REQUIRE(meth.is_valid() == true);
@@ -180,7 +180,7 @@ TEST_CASE("method - parameter info - no names provided & default values", "[meth
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - parameter info - names provided & default values", "[method]") 
+TEST_CASE("method - parameter info - names provided & default values", "[method]")
 {
     method meth = type::get<method_param_info_test>().get_method("method_5");
     REQUIRE(meth.is_valid() == true);

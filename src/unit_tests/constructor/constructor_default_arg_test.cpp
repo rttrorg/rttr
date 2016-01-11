@@ -33,17 +33,17 @@ using namespace rttr;
 struct ctor_default_arg_test
 {
     ctor_default_arg_test(int value1, bool value2, const std::string& text)
-    { 
+    {
     }
 
     ctor_default_arg_test(int value1)
-    { 
+    {
     }
 
-    static std::shared_ptr<ctor_default_arg_test> create_object(int value1, bool value2, const std::string& value3) 
-    { 
+    static std::shared_ptr<ctor_default_arg_test> create_object(int value1, bool value2, const std::string& value3)
+    {
         if (value1 == 23 && value2 == true && value3 == std::string("default text"))
-            return std::make_shared<ctor_default_arg_test>(value1, value2, value3); 
+            return std::make_shared<ctor_default_arg_test>(value1, value2, value3);
         else
             return std::shared_ptr<ctor_default_arg_test>();
     }
@@ -70,7 +70,7 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - default argument test (real ctor)", "[constructor]") 
+TEST_CASE("constructor - default argument test (real ctor)", "[constructor]")
 {
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
@@ -104,7 +104,7 @@ TEST_CASE("constructor - default argument test (real ctor)", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - default argument test (func ctor)", "[constructor]") 
+TEST_CASE("constructor - default argument test (func ctor)", "[constructor]")
 {
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
@@ -138,7 +138,7 @@ TEST_CASE("constructor - default argument test (func ctor)", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - default argument test (invoke variadic; real ctor)", "[constructor]") 
+TEST_CASE("constructor - default argument test (invoke variadic; real ctor)", "[constructor]")
 {
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
@@ -191,7 +191,7 @@ TEST_CASE("constructor - default argument test (invoke variadic; real ctor)", "[
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[constructor]") 
+TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[constructor]")
 {
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
@@ -244,7 +244,7 @@ TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - default argument via type (real ctor)", "[constructor]") 
+TEST_CASE("constructor - default argument via type (real ctor)", "[constructor]")
 {
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);

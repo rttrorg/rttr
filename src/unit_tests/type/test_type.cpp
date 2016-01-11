@@ -130,7 +130,7 @@ TEST_CASE("Test rttr::type - ComplexerTypes", "[type]")
     CHECK((type::get(myMap) == type::get(myMap2)));
 
     CHECK((type::get(myMap) != type::get<std::map<int, int> >()));
-    
+
     // check typedef
     typedef std::map<int, std::string> MyMap;
     CHECK((type::get<MyMap>() == type::get<std::map<int, std::string>>()));
@@ -245,7 +245,7 @@ TEST_CASE("Test rttr::type - Virtual Inheritance", "[type]")
     DiamondTop* base    = &diamond;
     DiamondLeft* left   = &diamond;
     DiamondRight* right = &diamond;
- 
+
     CHECK(rttr_cast<DiamondBottom*>(base)   == &diamond);   // top to bottom cast
     CHECK(rttr_cast<DiamondTop*>(&diamond)  == base);       // bottom to top
     CHECK(rttr_cast<DiamondLeft*>(base)     == left);       // base to one level up - left class
@@ -451,7 +451,7 @@ TEST_CASE("Test rttr::type - Check get_wrapped_type", "[type]")
 
     CHECK(type::get<std::shared_ptr<const int>>().get_wrapped_type()          == type::get<const int*>());
     CHECK(type::get<std::reference_wrapper<const int>>().get_wrapped_type()   == type::get<int>());
-    
+
     std::shared_ptr<ClassSingle6A> sharedPtr = std::make_shared<ClassSingle6A>();
     CHECK(type::get(sharedPtr).get_wrapped_type()           == type::get<ClassSingle6A*>());
 

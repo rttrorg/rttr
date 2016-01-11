@@ -40,7 +40,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         property_wrapper(accessor acc, std::array<metadata, Metadata_Count> metadata_list)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
-        { 
+        {
         }
 
         access_levels get_access_level() const { return Acc_Level; }

@@ -107,7 +107,7 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_register::type_reg(const char* name, 
+uint16_t type_register::type_reg(const char* name,
                                  const type& raw_type,
                                  const type& wrapped_type,
                                  const type& array_raw_type,
@@ -125,10 +125,10 @@ uint16_t type_register::type_reg(const char* name,
                                  bool is_member_function_pointer,
                                  std::size_t pointer_dimension)
 {
-    return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes), 
-                                                   derived_func_ptr, var_func_ptr, 
+    return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes),
+                                                   derived_func_ptr, var_func_ptr,
                                                    type_size,
-                                                   is_class, is_enum, is_array, is_pointer, is_arithmetic, 
+                                                   is_class, is_enum, is_array, is_pointer, is_arithmetic,
                                                    is_function_pointer, is_member_object_pointer, is_member_function_pointer, pointer_dimension);
 }
 

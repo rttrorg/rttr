@@ -182,7 +182,7 @@ struct set_value_to_array_impl<ArrayValue, std::false_type>
 };
 
 /*!
- * Specialization for std::vector<bool>::reference, 
+ * Specialization for std::vector<bool>::reference,
  * because we cannot call a function with an rvalue by reference, like in the default implementation.
  *
  */
@@ -332,7 +332,7 @@ struct array_accessor_impl<Array_Type, std::true_type>
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    
+
     template<typename... Indices>
     static variant get_value(const Array_Type& obj, Indices... indices)
     {
@@ -393,7 +393,7 @@ struct array_accessor_impl<Array_Type, std::false_type>
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
-    
+
     template<typename... Indices>
     static variant get_value(const Array_Type& obj, Indices... indices)
     {
@@ -611,7 +611,7 @@ struct array_accessor_impl<Array_Type, std::integral_constant<std::size_t, 0>>
     {
         return type::get<typename rank_type<Array_Type, 0>::type>();
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
 };
 

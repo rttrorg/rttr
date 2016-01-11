@@ -94,7 +94,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
 {
     private:
         using default_create_policy = detail::as_object;
-    
+
         // this additional wrapper function is needed, because of not triggered static_assert in func: 'operator()(Args&&... args)'
         // when we create the object directly inside the operator function, seems to be a bug in MSVC
         template<typename Policy, std::size_t Metadata_Count, typename...TArgs, typename...Param_Args>
@@ -104,20 +104,20 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor, 
+            return detail::make_unique<constructor_wrapper<Class_Type, class_ctor,
                                                            detail::map_access_level_to_enum<acc_level>::value,
                                                            Policy,
                                                            Metadata_Count,
-                                                           default_args<TArgs...>, 
-                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(metadata_list), 
-                                                                                                          std::move(def_args), 
+                                                           default_args<TArgs...>,
+                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(metadata_list),
+                                                                                                          std::move(def_args),
                                                                                                           std::move(param_infos));
         }
 
         template<typename Policy, std::size_t Metadata_Count, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(std::array<detail::metadata, Metadata_Count> metadata_list, 
-                                   detail::default_args<> def_args, 
+        create_constructor_wrapper(std::array<detail::metadata, Metadata_Count> metadata_list,
+                                   detail::default_args<> def_args,
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
@@ -125,8 +125,8 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
                                                            detail::map_access_level_to_enum<acc_level>::value,
                                                            Policy,
                                                            Metadata_Count,
-                                                           default_args<>, 
-                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(metadata_list), 
+                                                           default_args<>,
+                                                           parameter_infos<Param_Args...>, Ctor_Args...>>(std::move(metadata_list),
                                                                                                           std::move(param_infos));
         }
 
@@ -171,17 +171,17 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
             using has_valid_default_types = has_default_types<type_list<Ctor_Args...>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given constructor. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
 
-            static_assert((count_default_args<Args...>::value <= 1), 
+            static_assert((count_default_args<Args...>::value <= 1),
                           "Only one set of 'default_arguments' can be provided during registration of a constructor!");
 
             static_assert((count_param_names<Args...>::value <= 1),
                           "Only one set of 'parameter_names' can be provided during registration of a constructor!");
-            
-            static_assert(((!has_param_names<Args...>::value) || 
+
+            static_assert(((!has_param_names<Args...>::value) ||
                            (param_names_count<Args...>::value == sizeof...(Ctor_Args))),
                           "The provided amount of names in 'parameter_names' does not match argument count of the constructor signature.");
 
@@ -212,13 +212,13 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
     private:
         template<std::size_t Metadata_Count, typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(F func, 
+        create_constructor_wrapper(F func,
                                    std::array<detail::metadata, Metadata_Count> metadata_list,
-                                   detail::default_args<TArgs...> def_args, 
+                                   detail::default_args<TArgs...> def_args,
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, 
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func,
                                                            detail::map_access_level_to_enum<acc_level>::value,
                                                            default_invoke,
                                                            Metadata_Count,
@@ -232,9 +232,9 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
 
         template<std::size_t Metadata_Count, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base>
-        create_constructor_wrapper(F func, 
+        create_constructor_wrapper(F func,
                                    std::array<detail::metadata, Metadata_Count> metadata_list,
-                                   detail::default_args<> def_args, 
+                                   detail::default_args<> def_args,
                                    detail::parameter_infos<Param_Args...> param_infos)
         {
             using namespace detail;
@@ -257,11 +257,11 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
         {
             using namespace detail;
             using param_info_t = decltype(create_param_infos<type_list<Acc_Func>>());
-            return detail::make_unique<constructor_wrapper<Class_Type, return_func, 
+            return detail::make_unique<constructor_wrapper<Class_Type, return_func,
                                        detail::map_access_level_to_enum<acc_level>::value,
                                        default_invoke,
                                        0,
-                                       detail::default_args<>, 
+                                       detail::default_args<>,
                                        param_info_t, F>>(func, std::array<detail::metadata, 0>(), param_info_t());
         }
 
@@ -270,17 +270,17 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
         {
             using namespace detail;
             using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given constructor. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
 
-            static_assert((count_default_args<Args...>::value <= 1), 
+            static_assert((count_default_args<Args...>::value <= 1),
                           "Only one set of 'default_arguments' can be provided during registration of a constructor!");
 
             static_assert((count_param_names<Args...>::value <= 1),
                           "Only one set of 'parameter_names' can be provided during registration of a constructor!");
-            
-            static_assert(((!has_param_names<Args...>::value) || 
+
+            static_assert(((!has_param_names<Args...>::value) ||
                            (param_names_count<Args...>::value == function_traits<Acc_Func>::arg_count)),
                           "The provided amount of names in 'parameter_names' does not match argument count of the function signature.");
 
@@ -305,7 +305,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
 
             m_ctor->get_instanciated_type();
             m_ctor->get_parameter_infos();
-            
+
             auto wrapper = detail::make_rref(std::move(m_ctor));
             auto reg_func = [wrapper]()
             {
@@ -360,8 +360,8 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
         }
 
         template<typename Acc, std::size_t Metadata_Count, typename... Args>
-        static RTTR_INLINE 
-        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc acc, 
+        static RTTR_INLINE
+        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc acc,
                                                                               std::array<detail::metadata, Metadata_Count> metadata_list,
                                                                               Args&&...args)
         {
@@ -382,7 +382,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
 
             auto prop = detail::make_unique<property_wrapper<acc_type,
                                                              Acc,
-                                                             void, 
+                                                             void,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
                                                              Metadata_Count>>(acc, std::move(metadata_list));
@@ -390,8 +390,8 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A acc) 
-        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc) 
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A acc)
+        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc)
         {
             m_reg_exec->add_registration_func(this);
         }
@@ -401,12 +401,12 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
             using namespace detail;
             if (!m_prop.get())
                 m_prop = create_default_property(m_acc);
-        
+
             m_prop->set_name(m_name);
             m_prop->set_declaring_type(type::get<Class_Type>());
             // register the underlying type with the following call:
             m_prop->get_type();
-        
+
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -441,20 +441,20 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
         using default_setter_policy = detail::set_value;
 
         template<typename Acc1, typename Acc2>
-        static RTTR_INLINE 
+        static RTTR_INLINE
         std::unique_ptr<detail::property_wrapper_base> create_default_property(Acc1 getter, Acc2 setter)
         {
             using namespace detail;
             using acc_type = typename property_type<A1>::type;
-            return detail::make_unique<property_wrapper<acc_type, 
+            return detail::make_unique<property_wrapper<acc_type,
                                                         Acc1, Acc2,
                                                         detail::map_access_level_to_enum<acc_level>::value,
                                                         default_getter_policy, default_setter_policy, 0>>(getter, setter, std::array<detail::metadata, 0>());
         }
 
         template<typename Acc1, typename Acc2, std::size_t Metadata_Count, typename... Args>
-        static RTTR_INLINE 
-        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc1 getter, Acc2 setter, 
+        static RTTR_INLINE
+        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc1 getter, Acc2 setter,
                                                                               std::array<detail::metadata, Metadata_Count> metadata_list,
                                                                               Args&&...args)
         {
@@ -471,7 +471,7 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A1>::type;
-            auto prop = detail::make_unique<property_wrapper<acc_type, 
+            auto prop = detail::make_unique<property_wrapper<acc_type,
                                                              Acc1, Acc2,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
@@ -481,7 +481,7 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
 
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A1 getter, A2 setter)
-        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_getter(getter), m_setter(setter) 
+        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_getter(getter), m_setter(setter)
         {
             m_reg_exec->add_registration_func(this);
         }
@@ -503,7 +503,7 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
             };
             m_reg_exec->add_registration_func(this, std::move(reg_func));
         }
-    
+
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
@@ -530,7 +530,7 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
         using default_setter_policy = detail::read_only;
 
         template<typename Acc>
-        static RTTR_INLINE 
+        static RTTR_INLINE
         std::unique_ptr<detail::property_wrapper_base> create_default_property(Acc acc)
         {
             using namespace detail;
@@ -591,7 +591,7 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
             };
             m_reg_exec->add_registration_func(this, std::move(reg_func));
         }
-    
+
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
@@ -619,10 +619,10 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             using namespace detail;
             using param_info_t =  decltype(create_param_infos<type_list<F>>());
             return detail::make_unique<method_wrapper<Acc_Func,
-                                                      map_access_level_to_enum<acc_level>::value, 
+                                                      map_access_level_to_enum<acc_level>::value,
                                                       default_invoke,
                                                       default_args<>,
-                                                      param_info_t, 
+                                                      param_info_t,
                                                       0>>(func, std::array<detail::metadata, 0>(), param_info_t());
         }
 
@@ -635,28 +635,28 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
             using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>>;
-            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value, 
+            static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given method. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
 
-            static_assert((count_default_args<Args...>::value <= 1), 
+            static_assert((count_default_args<Args...>::value <= 1),
                           "Only one set of 'default_arguments' can be provided during registration of a method!");
 
             static_assert((count_param_names<Args...>::value <= 1),
                           "Only one set of 'parameter_names' can be provided during registration of a method!");
-            
-            static_assert(((!has_param_names<Args...>::value) || 
+
+            static_assert(((!has_param_names<Args...>::value) ||
                            (param_names_count<Args...>::value == function_traits<Acc_Func>::arg_count)),
                           "The provided amount of names in 'parameter_names' does not match argument count of the function signature.");
-            
+
             // when no policy was added, we need a default policy
             using policy_list = conditional_t< type_list_size<policy_types_found>::value == 0,
                                                default_invoke,
                                                policy_types_found>;
             using policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
             using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
-            auto meth = create_method_wrapper<policy, 
-                                              metadata_count::value>(func, 
+            auto meth = create_method_wrapper<policy,
+                                              metadata_count::value>(func,
                                                                      std::move(get_metadata(std::forward<Args>(args)...)),
                                                                      std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
                                                                      std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)) );
@@ -672,7 +672,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
         {
             return detail::make_unique<detail::method_wrapper<F,
                                                               detail::map_access_level_to_enum<acc_level>::value,
-                                                              Policy, 
+                                                              Policy,
                                                               detail::default_args<TArgs...>,
                                                               detail::parameter_infos<Param_Args...>,
                                                               Metadata_Count>>(func,
@@ -700,7 +700,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
 
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, F f)
-        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_func(f) 
+        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_func(f)
         {
             m_reg_exec->add_registration_func(this);
         }
@@ -759,13 +759,13 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
             using namespace detail;
             static const std::size_t enum_count = count_type<enum_data<Enum_Type>, as_type_list_t<raw_type_t<Args>...>>::value;
             static const std::size_t global_enum_count = count_if<is_enum_data, raw_type_t<Args>...>::value;
-            
+
             static_assert(enum_count == global_enum_count, "Invalid 'value' pair for enumeration type provided, please specify values only for enums of type 'Enum_Type'.");
 
             using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
-            auto enum_wrapper = detail::make_unique<enumeration_wrapper<E_Type, 
+            auto enum_wrapper = detail::make_unique<enumeration_wrapper<E_Type,
                                                                         enum_count,
-                                                                        metadata_count::value>>(get_enum_values<E_Type>(std::forward<Args>(args)...), 
+                                                                        metadata_count::value>>(get_enum_values<E_Type>(std::forward<Args>(args)...),
                                                                                                 std::move(get_metadata(std::forward<Args>(args)...)));
 
             return std::move(enum_wrapper);
@@ -801,7 +801,7 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
             };
             m_reg_exec->add_registration_func(this, std::move(reg_func));
         }
-    
+
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... arg)
         {

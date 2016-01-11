@@ -45,7 +45,7 @@ class destructor_wrapper_base;
 
 /*!
  * The \ref destructor class provides a destructor for registered types.
- * 
+ *
  * A instance of a destructor class can only be obtained from the \ref type class.
  * See \ref type::get_destructor().
  *
@@ -55,14 +55,14 @@ class destructor_wrapper_base;
  *
  * Typical Usage
  * ----------------------
- * 
+ *
  * \code{.cpp}
  *     constructor string_ctor == type::get_by_name("std::string").get_constructor({type::get<const char*>()});
- * 
+ *
  *     variant my_string = string_ctor.invoke("Hello World"); // returns an ptr to the object on the heap
- * 
+ *
  *     type::get("std::string").get_destructor().invoke(my_string);
- * 
+ *
  *     my_string.is_valid(); // yield to false
  * \endcode
  *
@@ -73,7 +73,7 @@ class RTTR_API destructor
     public:
         /*!
          * \brief Returns true whether this destructor object is valid; otherwise false.
-         * 
+         *
          * \return Returns true when the destructor is valid; otherwise false.
          */
         bool is_valid() const;

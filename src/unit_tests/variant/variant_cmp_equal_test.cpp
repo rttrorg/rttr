@@ -353,7 +353,7 @@ TEST_CASE("variant::operator==() - template type - comparator registered", "[var
     SECTION("self equal test")
     {
         variant a = std::make_tuple(23, std::string("some long long text"));
-       
+
         CHECK((a == a) == true);
         CHECK((a != a) == false);
     }

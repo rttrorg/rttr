@@ -52,7 +52,7 @@ template<typename T, typename Tp>
 RTTR_INLINE variant::variant(T&& val)
 :   m_policy(&detail::variant_policy<Tp>::invoke)
 {
-    static_assert(std::is_copy_constructible<Tp>::value || std::is_array<Tp>::value, 
+    static_assert(std::is_copy_constructible<Tp>::value || std::is_array<Tp>::value,
                   "The given value is not copy constructible, try to add a copy constructor to the class.");
 
     detail::variant_policy<Tp>::create(std::forward<T>(val), m_data);
@@ -189,7 +189,7 @@ RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, cons
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<detail::pointer_count<T>::value != 1, bool>::type 
+typename std::enable_if<detail::pointer_count<T>::value != 1, bool>::type
 RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, const type& target_type) const
 {
     return false;
@@ -205,7 +205,7 @@ RTTR_INLINE bool variant::is_nullptr() const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<detail::is_nullptr_t<T>::value, bool>::type 
+typename std::enable_if<detail::is_nullptr_t<T>::value, bool>::type
 static RTTR_INLINE ptr_to_nullptr(T& to)
 {
     to = nullptr;
@@ -215,7 +215,7 @@ static RTTR_INLINE ptr_to_nullptr(T& to)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-typename std::enable_if<!detail::is_nullptr_t<T>::value, bool>::type 
+typename std::enable_if<!detail::is_nullptr_t<T>::value, bool>::type
 static RTTR_INLINE ptr_to_nullptr(T& to)
 {
     return false;
@@ -253,7 +253,7 @@ RTTR_INLINE bool variant::convert(T& value) const
     {
         ok = try_pointer_conversion(value, source_type, target_type);
     }
-    
+
     return ok;
 }
 

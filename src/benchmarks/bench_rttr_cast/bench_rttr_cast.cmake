@@ -28,7 +28,7 @@
 set(HEADER_FILES test_classes.h
                  version.rc.in
                  )
-                
+
 set(SOURCE_FILES benchmark_rttr_cast.cpp
                  main.cpp
                  )

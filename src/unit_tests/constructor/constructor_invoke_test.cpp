@@ -33,18 +33,18 @@ using namespace rttr;
 struct ctor_invoke_test
 {
     ctor_invoke_test(bool is_default_ctor = true)
-    { 
-        default_ctor_invoked = is_default_ctor; 
-        func_as_ctor_invoked = is_default_ctor; 
+    {
+        default_ctor_invoked = is_default_ctor;
+        func_as_ctor_invoked = is_default_ctor;
     }
     ctor_invoke_test(const ctor_invoke_test& other) { cpy_ctor_invoked = true; }
     ctor_invoke_test(int param_1, double param_2)
-    { 
+    {
         value_1 = param_1;
         value_2 = param_2;
-        custom_ctor_invoked = true; 
+        custom_ctor_invoked = true;
     }
-    ctor_invoke_test(ctor_invoke_test&& other) 
+    ctor_invoke_test(ctor_invoke_test&& other)
     :   value_1(std::move(other.value_1)), value_2(std::move(other.value_2)), _text(std::move(other._text))
     {}
 
@@ -121,11 +121,11 @@ RTTR_REGISTRATION
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke general", "[constructor]") 
+TEST_CASE("constructor - invoke general", "[constructor]")
 {
     type t = type::get<ctor_invoke_test>();
     REQUIRE(t.is_valid() == true);
-    
+
     SECTION("invoke default ctor")
     {
         constructor ctor = t.get_constructor();
@@ -177,7 +177,7 @@ TEST_CASE("constructor - invoke general", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke policy", "[constructor]") 
+TEST_CASE("constructor - invoke policy", "[constructor]")
 {
    auto ctor_list = type::get<ctor_invoke_test>().get_constructors();
 
@@ -235,12 +235,12 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke variadic", "[constructor]") 
+TEST_CASE("constructor - invoke variadic", "[constructor]")
 {
     type t = type::get<ctor_invoke_test>();
 
-    constructor ctor = t.get_constructor({type::get<int>(), type::get<int>(), type::get<int>(), 
-                                          type::get<int>(), type::get<int>(), type::get<int>(), 
+    constructor ctor = t.get_constructor({type::get<int>(), type::get<int>(), type::get<int>(),
+                                          type::get<int>(), type::get<int>(), type::get<int>(),
                                           type::get<const int* const>()});
     REQUIRE(ctor.is_valid() == true);
 
@@ -258,7 +258,7 @@ TEST_CASE("constructor - invoke variadic", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke positive", "[constructor]") 
+TEST_CASE("constructor - invoke positive", "[constructor]")
 {
     const auto ctor_list = type::get<ctor_invoke_arg_test>().get_constructors();
     REQUIRE(ctor_list.size() == 8);
@@ -275,7 +275,7 @@ TEST_CASE("constructor - invoke positive", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke negative", "[constructor]") 
+TEST_CASE("constructor - invoke negative", "[constructor]")
 {
     constructor ctor = type::get_by_name("").get_constructor();
 

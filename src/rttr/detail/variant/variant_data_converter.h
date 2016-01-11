@@ -45,12 +45,12 @@ struct convert_from;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * The default converter manager class. 
+ * The default converter manager class.
  *
  * It will check at runtime the incoming argument type and will forward its value to the corresponding conversion function.
  * All basic fixed integer and floating-point (float, double) types are handled.
  *
- * \remark Custom types will not be handled here, 
+ * \remark Custom types will not be handled here,
  *         therefore a converter function has to be registered explicitly. See \ref type::register_converter_func.
  *         With this class we can avoid this step.
  */
@@ -983,7 +983,7 @@ struct RTTR_API convert_from<float>
 {
     static RTTR_INLINE bool to(const float& from, bool& to)
     {
-        to = !(from <= std::numeric_limits<float>::min() && 
+        to = !(from <= std::numeric_limits<float>::min() &&
                from >= -1 * std::numeric_limits<float>::min());
 
         return true;
@@ -1059,7 +1059,7 @@ struct RTTR_API convert_from<double>
 {
     static RTTR_INLINE bool to(const double& from, bool& to)
     {
-        to = !(from <= std::numeric_limits<double>::min() && 
+        to = !(from <= std::numeric_limits<double>::min() &&
                from >= -1 * std::numeric_limits<double>::min());
 
         return true;
@@ -1152,7 +1152,7 @@ struct RTTR_API convert_from<std::string>
             to ='\0';
         else
             to = val[0];
-    
+
         return true;
     }
 
@@ -1301,7 +1301,7 @@ struct convert_from_enum
         to = static_cast<bool>(from);
         return true;
     }
-   
+
     static RTTR_INLINE bool to(const T& from, char& to)
     {
         return convert_from<enum_type_t<T>>::to(get_underlying_value(from), to);

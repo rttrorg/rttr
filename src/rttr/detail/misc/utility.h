@@ -189,7 +189,7 @@ static RTTR_INLINE bool check_all_true(bool arg1, BoolArgs... args) { return arg
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// copy the content of any arbitrary array, use it like: 
+// copy the content of any arbitrary array, use it like:
 // copy_array(in, out);
 // works with every dimension
 
@@ -235,7 +235,7 @@ struct compare_array_equal_impl
 };
 
 template<typename ElementType, std::size_t Count>
-struct compare_array_equal_impl<ElementType[Count]> 
+struct compare_array_equal_impl<ElementType[Count]>
 {
     bool operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
     {
@@ -268,9 +268,9 @@ struct compare_array_less_impl
         return (lhs < rhs ? - 1 : ((rhs < lhs) ? 1 : 0));
     }
 };
- 
+
 template<typename ElementType, std::size_t Count>
-struct compare_array_less_impl<ElementType[Count]> 
+struct compare_array_less_impl<ElementType[Count]>
 {
     int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
     {
@@ -280,11 +280,11 @@ struct compare_array_less_impl<ElementType[Count]>
             if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)
                 return flag;
         }
- 
+
         return 0;
     }
 };
- 
+
 template<typename ElementType, std::size_t Count>
 bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
 {
@@ -298,31 +298,31 @@ bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs
 /////////////////////////////////////////////////////////////////////////////////////////
 // make_unqiue implementation for C++11
 
-template<class T> struct _Unique_if 
+template<class T> struct _Unique_if
 {
     using _Single_object = std::unique_ptr<T>;
 };
 
-template<class T> struct _Unique_if<T[]> 
+template<class T> struct _Unique_if<T[]>
 {
     using _Unknown_bound = std::unique_ptr<T[]>;
 };
 
-template<class T, size_t N> struct _Unique_if<T[N]> 
+template<class T, size_t N> struct _Unique_if<T[N]>
 {
     using _Known_bound = void;
 };
 
 template<class T, class... Args>
 typename _Unique_if<T>::_Single_object
-make_unique(Args&&... args) 
+make_unique(Args&&... args)
 {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 template<class T>
 typename _Unique_if<T>::_Unknown_bound
-make_unique(size_t n) 
+make_unique(size_t n)
 {
     using U = typename std::remove_extent<T>::type;
     return std::unique_ptr<T>(new U[n]());
@@ -331,7 +331,7 @@ make_unique(size_t n)
 template<class T, class... Args>
 typename _Unique_if<T>::_Known_bound
 make_unique(Args&&...) = delete;
-        
+
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -343,10 +343,10 @@ template< typename T >
 RTTR_INLINE const T& as_const(const T& obj) { return obj; }
 
 template<typename T>
-RTTR_INLINE const T as_const(T&& obj) 
+RTTR_INLINE const T as_const(T&& obj)
 {
     static_assert(!std::is_const<T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
-    return std::forward<T>(obj); 
+    return std::forward<T>(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -354,14 +354,14 @@ RTTR_INLINE const T as_const(T&& obj)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_FORCE_INLINE typename std::enable_if<std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
+RTTR_FORCE_INLINE typename std::enable_if<std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj)
 {
     return const_cast<void*>(reinterpret_cast<const volatile void*>(obj));
 }
 
 
 template<typename T>
-RTTR_FORCE_INLINE typename std::enable_if<!std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj) 
+RTTR_FORCE_INLINE typename std::enable_if<!std::is_pointer<T>::value, void*>::type as_void_ptr(const T& obj)
 {
     return const_cast<void*>(reinterpret_cast<const volatile void*>(&obj));
 }
@@ -372,11 +372,11 @@ RTTR_FORCE_INLINE typename std::enable_if<!std::is_pointer<T>::value, void*>::ty
 
 /*!
  * Helper class to iterate in a ranged-based for loops backwards through a container.
- * use it like following: 
+ * use it like following:
  * \code{.cpp}
  *   for(const auto& value: reverse(my_vector))
  *      std::cout << value << std::endl;
- * \endcode                
+ * \endcode
  */
 template<class T>
 class reverse_wrapper
@@ -409,25 +409,25 @@ class reverse_move_wrapper
 
 
 template<class T>
-reverse_move_wrapper<T> reverse(T&& container) 
+reverse_move_wrapper<T> reverse(T&& container)
 {
     return reverse_move_wrapper<T>(std::forward<T>(container));
 }
 
 template<class T>
-const reverse_move_wrapper<const T> reverse(const T&& container) 
+const reverse_move_wrapper<const T> reverse(const T&& container)
 {
     return reverse_move_wrapper<const T>(std::forward<const T>(container));
 }
 
 template<class T>
-reverse_wrapper<T> reverse(T& container) 
+reverse_wrapper<T> reverse(T& container)
 {
      return reverse_wrapper<T>(container);
 }
 
 template<class T>
-const reverse_wrapper<const T> reverse(const T& container) 
+const reverse_wrapper<const T> reverse(const T& container)
 {
      return reverse_wrapper<const T>(container);
 }
@@ -435,7 +435,7 @@ const reverse_wrapper<const T> reverse(const T& container)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-        
+
 template<typename T>
 using return_type_normal = add_pointer_t< remove_pointers_t<T> >;
 
@@ -500,7 +500,7 @@ static RTTR_INLINE raw_addressof_return_type_t<T> raw_addressof(T& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
- 
+
 /*!
  * The \ref move_wrapper class wraps a move-only type in a copyable object.
  *

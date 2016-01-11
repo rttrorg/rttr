@@ -68,10 +68,10 @@ class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Class_Type, access_levels Acc_Level, typename Policy, 
+template<typename Class_Type, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename...Param_Args, typename... Ctor_Args>
-class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, 
-                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...> 
+class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
+                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
@@ -79,18 +79,18 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 
     public:
         constructor_wrapper(std::array<metadata, Metadata_Count> metadata_list,
-                            parameter_infos<Param_Args...> param_infos) 
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_param_infos(std::move(param_infos)) 
+                            parameter_infos<Param_Args...> param_infos)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_param_infos(std::move(param_infos))
         {
         }
-       
+
         access_levels get_access_level()    const { return Acc_Level; }
         type get_instanciated_type()        const { return type::get<instanciated_type>(); }
         type get_declaring_type()           const { return type::get<typename raw_type<Class_Type>::type>(); }
-        
+
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type)     const { return {std::is_reference<Ctor_Args>::value...}; }
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::false_type)    const { return {}; }
-        
+
         RTTR_INLINE std::vector<bool> get_is_const_impl(std::true_type)     const { return {std::is_const<typename std::remove_reference<Ctor_Args>::type>::value...}; }
         RTTR_INLINE std::vector<bool> get_is_const_impl(std::false_type)    const { return {}; }
 
@@ -169,10 +169,10 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy, 
+template<typename ClassType, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename...Param_Args, typename F>
 class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
-                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, F> 
+                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using instanciated_type = typename function_traits<F>::return_type;
@@ -182,7 +182,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
                             std::array<metadata, Metadata_Count> metadata_list,
                             parameter_infos<Param_Args...> param_infos)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
-            m_creator_func(creator_func), m_param_infos(std::move(param_infos)) 
+            m_creator_func(creator_func), m_param_infos(std::move(param_infos))
         {
         }
 

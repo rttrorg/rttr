@@ -38,7 +38,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-typename std::enable_if<can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type 
+typename std::enable_if<can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type
 create_variant_array_view(T&& value)
 {
     return detail::make_unique<array_wrapper<Tp>>(wrapped_raw_addressof(value));
@@ -47,7 +47,7 @@ create_variant_array_view(T&& value)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-typename std::enable_if<!can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type 
+typename std::enable_if<!can_create_array_container<T>::value, std::unique_ptr<array_wrapper_base>>::type
 create_variant_array_view(T&& value)
 {
     return detail::make_unique<array_wrapper_base>();

@@ -40,7 +40,7 @@ bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
 {
     if (auto cmp_f = type_database::instance().get_comparator(t))
         return cmp_f->equal(lhs, rhs);
-    
+
     return (std::memcmp(lhs, rhs, t.get_sizeof()) == 0);
 }
 

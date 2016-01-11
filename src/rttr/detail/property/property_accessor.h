@@ -37,7 +37,7 @@ template<typename T>
 struct property_accessor
 {
     static bool set_value(T& prop, argument& arg)
-    {           
+    {
         prop = arg.get_value<T>();
         return true;
     }
@@ -47,7 +47,7 @@ template<typename T, std::size_t N>
 struct property_accessor<T[N]>
 {
     static bool set_value(T (& prop)[N], argument& arg)
-    {           
+    {
         copy_array(arg.get_value<T[N]>(), prop);
         return true;
     }
@@ -57,7 +57,7 @@ template<typename T>
 struct property_accessor<T*>
 {
     static bool set_value(T* prop, argument& arg)
-    {           
+    {
         *prop = *arg.get_value<T*>();
         return true;
     }
@@ -67,7 +67,7 @@ template<typename T, std::size_t N>
 struct property_accessor<T(*)[N]>
 {
     static bool set_value(T (* prop)[N], argument& arg)
-    {           
+    {
         copy_array(*arg.get_value<T(*)[N]>(), *prop);
         return true;
     }

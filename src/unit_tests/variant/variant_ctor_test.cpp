@@ -88,15 +88,15 @@ TEST_CASE("constructor", "[variant]")
 struct simple_type
 {
     simple_type() {}
-    simple_type(const simple_type& other) 
+    simple_type(const simple_type& other)
     :   moved(other.moved),
         moved_from(other.moved_from)
     {
     }
     simple_type(simple_type&& other)
-    :   moved(true) 
-    { 
-        other.moved_from = true; 
+    :   moved(true)
+    {
+        other.moved_from = true;
     }
 
     bool moved = false;
@@ -124,7 +124,7 @@ TEST_CASE("move ctor", "[variant]")
         variant var(obj);
 
         CHECK(obj.moved_from == false);
-    
+
         variant var_2(std::move(obj));
         CHECK(obj.moved_from == true);
         CHECK(var_2.get_value<simple_type>().moved == true );
@@ -136,7 +136,7 @@ TEST_CASE("move ctor", "[variant]")
         variant var(obj);
 
         CHECK(obj.moved_from == false);
-    
+
         variant var_2(std::move(obj));
         CHECK(obj.moved_from == true);
         CHECK(var_2.get_value<simple_type>().moved == true );
@@ -156,14 +156,14 @@ bool is_stored_internally(const void* obj, const rttr::variant& var)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 struct big_custom_type
-{ 
+{
     // two doubles, cannot be stored internally inside variant
     std::aligned_storage<sizeof(double[2]),8>::type m_data;
 };
 
 // this type should be stored internally inside variant class.
-struct small_custom_type 
-{ 
+struct small_custom_type
+{
     float value;
 };
 
@@ -220,9 +220,9 @@ TEST_CASE("check storage type", "[variant]")
 struct self_aware
 {
     self_aware() { }
-    ~self_aware() 
-    { 
-        CHECK(self == this); 
+    ~self_aware()
+    {
+        CHECK(self == this);
     }
     self_aware(const self_aware&) { }
     self_aware& operator=(const self_aware&) { return *this; }

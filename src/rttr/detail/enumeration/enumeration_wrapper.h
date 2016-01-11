@@ -46,7 +46,7 @@ template<typename Enum_Type, std::size_t N, std::size_t Metadata_Count>
 class enumeration_wrapper : public enumeration_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data, 
+        enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data,
                             std::array<metadata, Metadata_Count> metadata_list)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_enum_data_list(std::move(data))

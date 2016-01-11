@@ -53,7 +53,7 @@ int char_to_int(const char* source, bool* ok)
     char *end_ptr;
     errno = 0;
     long n = strtol(source, &end_ptr, 0);
- 
+
     if (ERANGE != errno && (n > INT_MIN && n < INT_MAX) &&
         end_ptr != source && *end_ptr == '\0')
     {
@@ -74,8 +74,8 @@ long long char_to_long_long(const char* source, bool* ok)
     char *end_ptr;
     errno = 0;
     long long n = strtoll(source, &end_ptr, 0);
-     if (errno != ERANGE && 
-        end_ptr != source && 
+     if (errno != ERANGE &&
+        end_ptr != source &&
         *end_ptr == '\0')
     {
         if (ok)
@@ -95,8 +95,8 @@ unsigned int char_to_uint(const char* source, bool* ok)
     char *end_ptr;
     errno = 0;
     long n = strtoul(source, &end_ptr, 0);
-    if (errno != ERANGE && 
-        end_ptr != source && 
+    if (errno != ERANGE &&
+        end_ptr != source &&
         *end_ptr == '\0')
     {
         if (ok)
@@ -116,9 +116,9 @@ float char_to_float(const char* source, bool* ok)
     char *end_ptr;
     errno = 0;
     float n = strtof(source, &end_ptr);
- 
-    if (errno != ERANGE && 
-        end_ptr != source && 
+
+    if (errno != ERANGE &&
+        end_ptr != source &&
         *end_ptr == '\0')
     {
         if (ok)
@@ -138,9 +138,9 @@ double char_to_double(const char* source, bool* ok)
     char *end_ptr;
     errno = 0;
     double n = strtod(source, &end_ptr);
- 
-    if (errno != ERANGE && 
-        end_ptr != source && 
+
+    if (errno != ERANGE &&
+        end_ptr != source &&
         *end_ptr == '\0')
     {
         if (ok)
@@ -228,7 +228,7 @@ bool string_to_bool(std::string text, bool* ok)
 
     if (ok)
         *ok = true;
-    
+
     return true;
 }
 

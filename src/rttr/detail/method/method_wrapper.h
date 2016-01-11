@@ -60,7 +60,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
                        parameter_infos<Param_Args...> param_infos)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc), m_param_infos(std::move(param_infos))
-        { 
+        {
         }
 
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
@@ -129,7 +129,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
             m_func_acc(func_acc),
             m_def_args(std::move(default_args)),
             m_param_infos(std::move(param_infos))
-        { 
+        {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
         }
 

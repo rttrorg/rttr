@@ -80,14 +80,14 @@ uint32_t parameter_info::get_index() const
 
 bool parameter_info::operator==(const parameter_info& other) const
 {
-    return (m_wrapper == other.m_wrapper); 
+    return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool parameter_info::operator!=(const parameter_info& other) const
 {
-    return (m_wrapper != other.m_wrapper); 
+    return (m_wrapper != other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

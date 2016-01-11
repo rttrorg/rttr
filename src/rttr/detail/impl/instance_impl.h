@@ -38,7 +38,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance() 
+RTTR_INLINE instance::instance()
 :   m_data_container(detail::data_address_container{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr})
 {
 
@@ -93,10 +93,10 @@ template<typename Target_Type>
 RTTR_INLINE Target_Type* instance::try_convert() const
 {
     Target_Type* target = static_cast<Target_Type*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type, type::get<Target_Type>()));
-    
+
     if (!target)
         return (static_cast<Target_Type*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address_wrapped_type, m_data_container.m_wrapped_type, type::get<Target_Type>())));
-    
+
     return target;
 }
 

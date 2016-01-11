@@ -80,16 +80,16 @@ using empty_defaults = default_list<default_args<>, default_args<>>;
 // This type trait will check whether a signature (given via \p Arg_list) match the \o Default_Arg_List types.
 // It will check the signature recursively, beginning with the complete signature,
 // then removing the first argument and check against Default_Arg_List, then removing the second...
-template<typename Arg_list, typename Default_Arg_List> 
+template<typename Arg_list, typename Default_Arg_List>
 struct find_default_args_impl;
 
-template<typename Default_Arg_List, typename T, typename...TArgs> 
+template<typename Default_Arg_List, typename T, typename...TArgs>
 struct find_default_args_impl<type_list<T, TArgs...>, Default_Arg_List>
 {
     template<typename Tx>
     using decay_type = remove_cv_t<remove_reference_t< Tx >>;
 
-    using func_args = default_args< decay_type< T>, 
+    using func_args = default_args< decay_type< T>,
                                     decay_type< TArgs>...
                                   >;
 
@@ -208,7 +208,7 @@ struct has_default_types;
  * Otherwise to 'std::false_type'
  */
 template<typename Acc_Args, typename... TArgs>
-struct has_default_types<Acc_Args, type_list<TArgs...>> 
+struct has_default_types<Acc_Args, type_list<TArgs...>>
 :   std::integral_constant<bool, !std::is_same<find_default_args<get_default_args_t<TArgs...>, Acc_Args>, empty_defaults>::value>
 {
 };
@@ -230,7 +230,7 @@ using count_default_args = count_if<is_def_type, raw_type_t<TArgs>... >;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
-static RTTR_INLINE 
+static RTTR_INLINE
 enable_if_t< std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func>
 get_default_args(Args&&... arg)
 {
@@ -240,8 +240,8 @@ get_default_args(Args&&... arg)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
-static RTTR_INLINE 
-enable_if_t< !std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func> 
+static RTTR_INLINE
+enable_if_t< !std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func>
 get_default_args(Args&&... arg)
 {
     // default arguments are provided, extract them

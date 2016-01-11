@@ -44,10 +44,10 @@ TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
    {
         variant_array_view a;
         CHECK(a.is_valid() == false);
-        
+
         variant_array_view b(a);
         CHECK(b.is_valid() == false);
-        
+
         variant var;
         variant_array_view c = var.create_array_view();
         CHECK(c.is_valid() == false);
@@ -59,7 +59,7 @@ TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
         variant var = std::array<int, 10>();
         variant_array_view a = var.create_array_view();
         CHECK(a.is_valid() == true);
-        
+
         variant_array_view b(a);
         CHECK(b.is_valid() == true);
    }
@@ -75,7 +75,7 @@ TEST_CASE("variant_array_view::assignment", "[variant_array_view]")
         variant_array_view b;
         b = a;
         CHECK(b.is_valid() == false);
-        
+
         variant var;
         variant_array_view c;
         c = var.create_array_view();
@@ -88,7 +88,7 @@ TEST_CASE("variant_array_view::assignment", "[variant_array_view]")
         variant_array_view a;
         a = var.create_array_view();
         CHECK(a.is_valid() == true);
-        
+
         variant_array_view b;
         b = a;
         CHECK(b.is_valid() == true);
@@ -279,7 +279,7 @@ TEST_CASE("variant_array_view::get_size", "[variant_array_view]")
         vec.push_back(std::vector<int>(30, 0));
         vec.push_back(std::vector<int>(40, 0));
         vec.push_back(std::vector<int>(50, 0));
-        
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -294,11 +294,11 @@ TEST_CASE("variant_array_view::get_size", "[variant_array_view]")
 
     SECTION("3D")
     {
-        int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}}, 
+        int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}},
                              {{6, 7}, {8, 9}, {10, 11}},
                              {{12, 13}, {14, 15}, {16, 17}},
                              {{18, 19}, {20, 21}, {22, 23}} };
-       
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -317,7 +317,7 @@ TEST_CASE("variant_array_view::get_size", "[variant_array_view]")
     SECTION("get_size_variadic")
     {
         int vec[6][5][4][3] = {0};
-       
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -367,7 +367,7 @@ TEST_CASE("variant_array_view::set_size", "[variant_array_view]")
     SECTION("2D - dynamic")
     {
         std::vector<std::vector<int>> vec;
-        
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -391,7 +391,7 @@ TEST_CASE("variant_array_view::set_size", "[variant_array_view]")
     SECTION("3D - dynamic")
     {
         std::vector<std::vector<std::vector<int>>> vec;
-        
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -415,7 +415,7 @@ TEST_CASE("variant_array_view::set_size", "[variant_array_view]")
     SECTION("set_size_variadic")
     {
         std::vector<std::vector<std::vector<int>>> vec;
-        
+
         variant var = vec;
         variant_array_view array = var.create_array_view();
 
@@ -501,7 +501,7 @@ TEST_CASE("variant_array_view::get_value", "[variant_array_view]")
         obj[0][5] = 23;
         obj[1][0] = 23;
         obj[1][5] = 23;
-        
+
         CHECK(array.get_value(0, 0).to_int() == 23);
         CHECK(array.get_value(0, 5).to_int() == 23);
 
@@ -835,7 +835,7 @@ TEST_CASE("variant_array_view::misc", "[variant_array_view]")
         variant_array_view array = var.create_array_view();
         REQUIRE(array.is_valid()    == true);
         REQUIRE(array.get_type()    == type::get<decltype(vec)>());
-       
+
         array.set_size(70);
         CHECK(array.get_size()      == 70);
         CHECK(vec.size()            == 70);

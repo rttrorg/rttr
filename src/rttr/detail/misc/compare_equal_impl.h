@@ -49,7 +49,7 @@ RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& 
  *         otherwise this function will return false.
  */
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return lhs == rhs;
@@ -58,7 +58,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_types_equal(&lhs, &rhs, type::get<T>());
@@ -67,7 +67,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_types_equal(&lhs, &rhs, type::get<T>());
@@ -76,7 +76,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_array_equal(lhs, rhs);
@@ -85,7 +85,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type 
+RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_types_equal(&lhs, &rhs, type::get<T>());

@@ -72,7 +72,7 @@ namespace rttr
 #   define RTTR_COMPILER RTTR_COMPILER_MSVC
 #   define RTTR_COMP_VER _MSC_VER
 #else
-#   error "No known compiler. Abort! Abort!" 
+#   error "No known compiler. Abort! Abort!"
 #endif
 
 
@@ -126,7 +126,7 @@ namespace rttr
 #endif
 
 #ifdef RTTR_DLL // compiled as a DLL
-#   ifdef RTTR_DLL_EXPORTS // defined if we are building the DLL 
+#   ifdef RTTR_DLL_EXPORTS // defined if we are building the DLL
 #       define RTTR_API RTTR_HELPER_DLL_EXPORT
 #   else
 #       define RTTR_API RTTR_HELPER_DLL_IMPORT

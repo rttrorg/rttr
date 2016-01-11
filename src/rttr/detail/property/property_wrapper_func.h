@@ -87,8 +87,8 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
     using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_wrapper(Getter get, std::array<metadata, Metadata_Count> metadata_list) 
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), 
+        property_wrapper(Getter get, std::array<metadata, Metadata_Count> metadata_list)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");

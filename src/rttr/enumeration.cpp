@@ -127,7 +127,7 @@ string enumeration::value_to_name(argument value) const
     else
         return string();
 }
-        
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant enumeration::name_to_value(const std::string& name) const

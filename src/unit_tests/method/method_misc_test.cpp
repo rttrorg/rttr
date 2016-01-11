@@ -76,7 +76,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - get_name()", "[method]") 
+TEST_CASE("method - get_name()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func");
     CHECK(meth.get_name() == "func");
@@ -91,7 +91,7 @@ TEST_CASE("method - get_name()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - is_static()", "[method]") 
+TEST_CASE("method - is_static()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("static_func");
     CHECK(meth.is_static() == true);
@@ -109,11 +109,11 @@ TEST_CASE("method - is_static()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - get_return_type()", "[method]") 
+TEST_CASE("method - get_return_type()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func_return");
     CHECK(meth.get_return_type() == type::get<int>());
-    
+
     meth = type::get_by_name("method_misc_test").get_method("default_func");
     CHECK(meth.get_return_type() == type::get<void>());
 
@@ -124,7 +124,7 @@ TEST_CASE("method - get_return_type()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - get_declaring_type()", "[method]") 
+TEST_CASE("method - get_declaring_type()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func");
     CHECK(meth.get_declaring_type() == type::get<method_misc_test>());
@@ -139,7 +139,7 @@ TEST_CASE("method - get_declaring_type()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - get_signature()", "[method]") 
+TEST_CASE("method - get_signature()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func");
     CHECK(meth.get_signature() == "func( )");
@@ -154,13 +154,13 @@ TEST_CASE("method - get_signature()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - compare operators", "[method]") 
+TEST_CASE("method - compare operators", "[method]")
 {
     method meth_1 = type::get_by_name("method_misc_test").get_method("func");
     method meth_1a = type::get_by_name("method_misc_test").get_method("func");
     method meth_2 = type::get_by_name("method_misc_test").get_method("func_return");
     method meth_invalid = type::get_by_name("method_misc_test").get_method("");
-    
+
     CHECK(meth_1 == meth_1a);
     CHECK(meth_1 != meth_2);
 
@@ -170,7 +170,7 @@ TEST_CASE("method - compare operators", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - get_metadata()", "[method]") 
+TEST_CASE("method - get_metadata()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func");
     variant var = meth.get_metadata(E_MetaData::SCRIPTABLE);
@@ -184,7 +184,7 @@ TEST_CASE("method - get_metadata()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default func - get_metadata()", "[method]") 
+TEST_CASE("method - default func - get_metadata()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("default_func");
     variant var = meth.get_metadata(E_MetaData::SCRIPTABLE);
@@ -198,7 +198,7 @@ TEST_CASE("method - default func - get_metadata()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - NEGATIVE - get_metadata()", "[method]") 
+TEST_CASE("method - NEGATIVE - get_metadata()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("func");
     // no metadata found
@@ -215,7 +215,7 @@ TEST_CASE("method - NEGATIVE - get_metadata()", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - default_func - NEGATIVE - get_metadata()", "[method]") 
+TEST_CASE("method - default_func - NEGATIVE - get_metadata()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("default_func");
     // no metadata found

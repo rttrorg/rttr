@@ -47,7 +47,7 @@ struct ctor_param_info_test
 
     }
 
-   
+
     static ctor_param_info_test create_with_default(std::string val_1, int val_2, bool val_3)
     {
         return ctor_param_info_test();
@@ -83,7 +83,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - parameter info - no info", "[constructor]") 
+TEST_CASE("constructor - parameter info - no info", "[constructor]")
 {
     constructor ctor = type::get<ctor_param_info_test>().get_constructor();
     REQUIRE(ctor.is_valid() == true);
@@ -97,7 +97,7 @@ TEST_CASE("constructor - parameter info - no info", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - parameter info - no names provided", "[constructor]") 
+TEST_CASE("constructor - parameter info - no names provided", "[constructor]")
 {
     constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<std::string>(), type::get<int>()});
     REQUIRE(ctor.is_valid() == true);
@@ -120,7 +120,7 @@ TEST_CASE("constructor - parameter info - no names provided", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - parameter info - names provided", "[constructor]") 
+TEST_CASE("constructor - parameter info - names provided", "[constructor]")
 {
     constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<bool>(), type::get<int>(), type::get<float>()});
     REQUIRE(ctor.is_valid() == true);
@@ -149,7 +149,7 @@ TEST_CASE("constructor - parameter info - names provided", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - parameter info - no names provided & default values", "[constructor]") 
+TEST_CASE("constructor - parameter info - no names provided & default values", "[constructor]")
 {
     constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<std::string>(), type::get<int>(), type::get<bool>()});
     REQUIRE(ctor.is_valid() == true);
@@ -178,7 +178,7 @@ TEST_CASE("constructor - parameter info - no names provided & default values", "
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - parameter info - names provided & default values", "[constructor]") 
+TEST_CASE("constructor - parameter info - names provided & default values", "[constructor]")
 {
      constructor ctor = type::get<ctor_param_info_test>().get_constructor({type::get<double>(), type::get<int>(), type::get<bool>()});
     REQUIRE(ctor.is_valid() == true);

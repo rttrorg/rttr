@@ -109,11 +109,11 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - access_levels test - direct", "[constructor]") 
+TEST_CASE("constructor - access_levels test - direct", "[constructor]")
 {
     type t = type::get_by_name("ctor_access_level_test");
     REQUIRE(t.is_valid() == true);
-    
+
     // has to be checked, because get_access_level() default return value is public_access
     CHECK(t.get_constructor({}).is_valid() == true);
     CHECK(t.get_constructor({}).get_access_level() == access_levels::public_access);
@@ -130,11 +130,11 @@ TEST_CASE("constructor - access_levels test - direct", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - access_levels test - via function", "[constructor]") 
+TEST_CASE("constructor - access_levels test - via function", "[constructor]")
 {
     type t = type::get_by_name("ctor_access_level_test");
     REQUIRE(t.is_valid() == true);
-    
+
     // has to be checked, because get_access_level() default return value is public_access
     CHECK(t.get_constructor({type::get<std::string>()}).is_valid() == true);
     CHECK(t.get_constructor({type::get<std::string>()}).get_access_level() == access_levels::public_access);
@@ -155,10 +155,10 @@ TEST_CASE("constructor - access_levels test - via function", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - access_levels test - negative", "[constructor]") 
+TEST_CASE("constructor - access_levels test - negative", "[constructor]")
 {
     constructor ctor = type::get_by_name("wrong_type").get_constructor();
-    
+
     CHECK(ctor.is_valid() == false);
     CHECK(ctor.get_access_level() == access_levels::public_access);
 }

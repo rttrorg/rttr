@@ -69,7 +69,7 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////
     template<typename T>
-    struct is_function_ptr : std::integral_constant<bool, std::is_pointer<T>::value && 
+    struct is_function_ptr : std::integral_constant<bool, std::is_pointer<T>::value &&
                                                           std::is_function<::rttr::detail::remove_pointer_t<T>>::value>
     {
     };
@@ -87,7 +87,7 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T> 
+    template<typename T>
     struct function_traits_func_ptr;
 
     template<typename R, typename... Args>
@@ -109,7 +109,7 @@ namespace detail
         using return_type   = R;
         using class_type    = C;
     };
-    
+
     template<typename R, typename C, typename... Args>
     struct function_traits_mem_ptr<R (C::*)(Args...) const> : function_args<Args...>
     {
@@ -130,8 +130,8 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T> 
-    struct function_traits : conditional_t< std::is_member_function_pointer< T >::value, 
+    template<typename T>
+    struct function_traits : conditional_t< std::is_member_function_pointer< T >::value,
                                             function_traits_mem_ptr< T >,
                                             conditional_t< std::is_function< T >::value,
                                                            function_traits_func_ptr< add_pointer_t< T > >,
@@ -158,7 +158,7 @@ namespace detail
     using param_types_t = typename param_types<F, Index>::type;
 
     /////////////////////////////////////////////////////////////////////////////////////
-    
+
     template<typename F>
     struct is_void_func : conditional_t< std::is_same<typename function_traits<F>::return_type, void>::value,
                                          std::true_type,

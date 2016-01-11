@@ -52,14 +52,14 @@ namespace detail
  * The \ref variant_array_view describes a class that refers to an array inside a \ref variant.
  * With an instance of that class you can set/get values of an array,
  * without having access to the type declaration of the type or it's elements.
- * 
+ *
  * A \ref variant_array_view can be created directly from a \ref variant with its member function \ref variant::create_array_view() "create_array_view()".
  * \remark The instance of an variant_array_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_array_view
  *         is undefined behaviour.
  *
  * Meta Information
  * ----------------
- * An array is defined by its \ref variant_array_view::get_rank() "rank", it's \ref variant_array_view::get_size "size" and 
+ * An array is defined by its \ref variant_array_view::get_rank() "rank", it's \ref variant_array_view::get_size "size" and
  * whether he is \ref variant_array_view::is_dynamic() "dynamic" or not.
  *
  * The rank of an array describes the number of dimensions. E.g. `int[10]` has a rank of `1`. `int[2][10]` has an rank of `2` and so on.
@@ -78,7 +78,7 @@ namespace detail
  *
  * When the given array type is \ref variant_array_view::is_dynamic() "dynamic" you can change the size of the array,
  * therefore \ref variant_array_view::set_size "set_size()" should be used.
- * A value of an array can be accessed with \ref variant_array_view::get_value "get_value()" or set with 
+ * A value of an array can be accessed with \ref variant_array_view::get_value "get_value()" or set with
  * \ref variant_array_view::set_value "set_value". These function expect an index for up to rank level 3.
  * The array class has here one interesting feature, you can set and get the value of an array up to its rank count. e.g:
  * \code{.cpp}
@@ -90,25 +90,25 @@ namespace detail
  *  array.set_value(0, 1, 23);   // equivalent to call obj[0][1] == 23
  * \endcode
  *
- * When you have arrays bigger then rank count three, use the counterpart functions: 
+ * When you have arrays bigger then rank count three, use the counterpart functions:
  * \ref variant_array_view::get_value_variadic "get_value_variadic" and \ref variant_array_view::set_value_variadic "set_value_variadic"
  * which expects a list of indices. When the array is dynamic it is also possible to
  * \ref variant_array_view::insert_value "insert" or \ref variant_array_view::remove_value "remove" values.
  *
  * RTTR recognize whether a type is an array or not with the help of the \ref array_mapper class template.
- * This call can access different array types via one common interface. 
- * At the moment there exist specializations for following types: 
+ * This call can access different array types via one common interface.
+ * At the moment there exist specializations for following types:
  * `std::array<T, N>`, `std::vector<T>`, `std::list<T>` and raw-arrays `T[N]`.
  *
  *
  * Copying and Assignment
  * ----------------------
- * A \ref variant_array_view object can be copied and assigned, 
+ * A \ref variant_array_view object can be copied and assigned,
  * however each copy will reference the address of same underlying \ref variant array value.
  *
  * Typical Usage
  * ----------------------
- * 
+ *
  * \code{.cpp}
  *  int obj[2][10];
  *  variant var = obj;
@@ -122,7 +122,7 @@ namespace detail
  *        array.set_value(index_1, index_2, 0);
  *      }
  *    }
- *  
+ *
  *    // it is also possible to set the sub array in one step
  *    for (std::size_t index_1 = 0; index_1 < array.get_size(); ++index_1)
  *    {
@@ -187,7 +187,7 @@ class RTTR_API variant_array_view
          * \brief Swaps this variant_array_view with the \a other variant_array_view.
          */
         void swap(variant_array_view& other);
-       
+
 
         /*!
          * \brief Returns true if this array is dynamic, otherwise false.
@@ -201,7 +201,7 @@ class RTTR_API variant_array_view
         bool is_dynamic() const;
 
         /*!
-         * \brief Gets the rank (number of dimensions) of the array. 
+         * \brief Gets the rank (number of dimensions) of the array.
          *
          * Take a look at following return values:
          *  - \p `int[4]` => `1`
@@ -225,7 +225,7 @@ class RTTR_API variant_array_view
          * \return The rank type at the given dimension \p index.
          */
         type get_rank_type(std::size_t index) const;
-        
+
        /*!
          * \brief Returns the \ref type object of this array.
          *
@@ -243,7 +243,7 @@ class RTTR_API variant_array_view
         std::size_t get_size() const;
 
         /*!
-         * \brief Returns the size of the array at the second dimension 
+         * \brief Returns the size of the array at the second dimension
          *        at index \p index_1.
          *
          * \return The size of the array.
@@ -265,7 +265,7 @@ class RTTR_API variant_array_view
          * \return The size of the array.
          */
         std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const;
-        
+
         /*!
          * \brief Sets the size of the array at the first dimension to \p new_size.
          *
@@ -304,9 +304,9 @@ class RTTR_API variant_array_view
          * \return True if the value could be set, otherwise false.
          */
         bool set_value(argument arg);
-        
+
         /*!
-         * \brief Set the content of the the argument \p arg into the in the first dimension 
+         * \brief Set the content of the the argument \p arg into the in the first dimension
          *        of the array at index \p index_1.
          *
          * \return True if the value could be set, otherwise false.
@@ -332,7 +332,7 @@ class RTTR_API variant_array_view
         /*!
          * \brief Set the content of the the argument \p arg into the array in the n-th dimension given in the list \p index_list.
          *
-         * \remark Use this function when you want to set a value into a dimension which is bigger then three. 
+         * \remark Use this function when you want to set a value into a dimension which is bigger then three.
          *         Otherwise use the corresponding functions of \ref set_value() .
          *
          * \return True if the value could be set, otherwise false.

@@ -57,7 +57,7 @@ RTTR_REGISTRATION
 {
     registration::class_<method_invoke_test>("method_invoke_test")
         .method("func_0", &method_invoke_test::func_0)
-        .method("func_1", &method_invoke_test::func_1)   
+        .method("func_1", &method_invoke_test::func_1)
         .method("func_2", &method_invoke_test::func_2)
         .method("func_3", &method_invoke_test::func_3)
         .method("func_4", &method_invoke_test::func_4)
@@ -69,7 +69,7 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke", "[method]") 
+TEST_CASE("method - invoke", "[method]")
 {
     type t = type::get<method_invoke_test>();
     const auto meth_list = t.get_methods();
@@ -103,7 +103,7 @@ TEST_CASE("method - invoke", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - NEGATIVE - invalid method", "[method]") 
+TEST_CASE("method - invoke - NEGATIVE - invalid method", "[method]")
 {
     method meth = type::get_by_name("").get_method("");
     REQUIRE(meth.is_valid() == false);
@@ -136,7 +136,7 @@ TEST_CASE("method - invoke - NEGATIVE - invalid method", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]") 
+TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]")
 {
     type t = type::get<method_invoke_test>();
     const auto meth_list = t.get_methods();

@@ -90,7 +90,7 @@ RTTR_REGISTRATION
         .property_readonly("p4",     &property_test::_p4)
         .property("p5",    &property_test::_p5)
         (
-            metadata(E_MetaData::SCRIPTABLE, true), 
+            metadata(E_MetaData::SCRIPTABLE, true),
             metadata(E_MetaData::TOOL_TIP, "This is property 5.")
         )
         .property_readonly("p6",     &property_test::_p6)
@@ -174,11 +174,11 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test Properties", "[property]") 
+TEST_CASE("Test Properties", "[property]")
 {
     type prop_type = type::get<property_test>();
     REQUIRE(prop_type.is_valid() == true);
-    
+
     REQUIRE(prop_type.get_property("p1").is_valid() == true);
     REQUIRE(prop_type.get_property("p2").is_valid() == true);
     REQUIRE(prop_type.get_property("p3").is_valid() == true);
@@ -196,11 +196,11 @@ TEST_CASE("Test Properties", "[property]")
 
         property p1 = prop_type.get_property("p1");
         REQUIRE(p1.is_readonly() == false);
-        
+
         // access
         bool ret = p1.set_value(prop_inst, 2);
         REQUIRE(ret == true);
-    
+
         variant val = p1.get_value(prop_inst);
         REQUIRE(val.is_type<int>() == true);
 
@@ -210,11 +210,11 @@ TEST_CASE("Test Properties", "[property]")
         // class bool property
         property p3 = prop_type.get_property("p3");
         REQUIRE(p3.is_readonly() == false);
-        
+
         // access
         ret = p3.set_value(prop_inst, false);
         REQUIRE(ret == true);
-    
+
         val = p3.get_value(prop_inst);
         REQUIRE(val.is_type<bool>() == true);
         REQUIRE(val.get_value<bool>() == false);
@@ -223,11 +223,11 @@ TEST_CASE("Test Properties", "[property]")
         // class static int property
         property p5 = prop_type.get_property("p5");
         REQUIRE(p5.is_readonly() == false);
-        
+
         // access
         ret = p5.set_value(prop_inst, 1000);
         REQUIRE(ret == true);
-    
+
         val = p5.get_value(prop_inst);
         REQUIRE(val.is_type<int>() == true);
         REQUIRE(val.get_value<int>() == 1000);
@@ -238,11 +238,11 @@ TEST_CASE("Test Properties", "[property]")
         property p8 = prop_type.get_property("p8");
         REQUIRE(p8.is_readonly() == false);
         REQUIRE(p8.is_static() == true);
-        
+
         // access
         ret = p8.set_value(prop_inst, 5.678f);
         REQUIRE(ret == true);
-    
+
         val = p8.get_value(prop_inst);
         REQUIRE(val.is_type<float>() == true);
         REQUIRE(val.get_value<float>() == 5.678f);
@@ -251,11 +251,11 @@ TEST_CASE("Test Properties", "[property]")
         // a getter/setter member function property
         property p7 = prop_type.get_property("p7");
         REQUIRE(p7.is_readonly() == false);
-        
+
         // access
         ret = p7.set_value(prop_inst, string("hello world"));
         REQUIRE(ret == true);
-    
+
         val = p7.get_value(prop_inst);
         REQUIRE(val.is_type<std::string>() == true);
         REQUIRE(val.get_value<std::string>() == "hello world");
@@ -264,11 +264,11 @@ TEST_CASE("Test Properties", "[property]")
         // a getter/setter function property
         property p11 = prop_type.get_property("p11");
         REQUIRE(p11.is_readonly() == false);
-        
+
         // access
         ret = p11.set_value(prop_inst, string("hello world"));
         REQUIRE(ret == true);
-    
+
         val = p11.get_value(prop_inst);
         REQUIRE(val.is_type<std::string>() == true);
         REQUIRE(val.get_value<std::string>() == "hello world");
@@ -277,11 +277,11 @@ TEST_CASE("Test Properties", "[property]")
         // a getter/setter function property
         property p12 = prop_type.get_property("p12");
         REQUIRE(p12.is_readonly() == false);
-        
+
         // access
         ret = p12.set_value(prop_inst, string("Another Text"));
         REQUIRE(ret == true);
-    
+
         val = p12.get_value(prop_inst);
         REQUIRE(val.is_type<std::string>() == true);
         REQUIRE(val.get_value<std::string>() == "Another Text");
@@ -372,7 +372,7 @@ TEST_CASE("Test Properties", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Invoke property via wrapper", "[property]") 
+TEST_CASE("Invoke property via wrapper", "[property]")
 {
     SECTION("test property access via shared_ptr wrapper")
     {
@@ -389,10 +389,10 @@ TEST_CASE("Invoke property via wrapper", "[property]")
         // access
         bool ret = p1.set_value(obj, 2);
         CHECK(ret == true);
-    
+
         variant val = p1.get_value(obj);
         CHECK(val.is_type<int>() == true);
-    
+
         CHECK(val.get_value<int>() == 2);
         CHECK(obj.get()->_p1 == 2);
     }
@@ -410,7 +410,7 @@ TEST_CASE("Invoke property via wrapper", "[property]")
         // access
         bool ret = p1.set_value(var, 2);
         CHECK(ret == true);
-    
+
         variant val = p1.get_value(var);
         CHECK(val.is_type<int>() == true);
         CHECK(val.get_value<int>() == 2);
@@ -433,7 +433,7 @@ TEST_CASE("Invoke property via wrapper", "[property]")
         // access
         bool ret = p1.set_value(obj, 2);
         CHECK(ret == true);
-    
+
         variant val = p1.get_value(obj);
         CHECK(val.is_type<int>() == true);
         CHECK(val.get_value<int>() == 2);
@@ -444,7 +444,7 @@ TEST_CASE("Invoke property via wrapper", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test property array access", "[property]") 
+TEST_CASE("Test property array access", "[property]")
 {
     SECTION("test raw array")
     {
@@ -454,7 +454,7 @@ TEST_CASE("Test property array access", "[property]")
         REQUIRE(bool(prop) == true);
         variant var = prop.get_value(obj);
         REQUIRE(var.is_type<std::vector<int>>() == true);
-        
+
         variant_array_view var_array = var.create_array_view();
         var_array.set_size(10);
         prop.set_value(obj, var);
@@ -464,7 +464,7 @@ TEST_CASE("Test property array access", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test property policy", "[property]") 
+TEST_CASE("Test property policy", "[property]")
 {
     SECTION("global property - array - return value converted to pointer")
     {
@@ -500,7 +500,7 @@ TEST_CASE("Test property policy", "[property]")
         property p3 = type::get_global_property("p3_as_ptr");
         REQUIRE(p3.get_type() == type::get<const std::string*>());
         REQUIRE(p3.is_readonly() == true);
-        
+
         variant ret = p3.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
@@ -512,7 +512,7 @@ TEST_CASE("Test property policy", "[property]")
         property p3 = type::get_global_property("p3_as_ptr");
         REQUIRE(p3.get_type() == type::get<const std::string*>());
         REQUIRE(p3.is_readonly() == true);
-        
+
         variant ret = p3.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
@@ -524,7 +524,7 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p4.is_array() == false);
         REQUIRE(p4.get_type() == type::get<const std::string*>());
         REQUIRE(p4.is_readonly() == false);
-        
+
         variant ret = p4.get_value(instance());
         REQUIRE(ret.is_valid() == true);
         REQUIRE(ret.is_type<const std::string*>() == true);
@@ -538,7 +538,7 @@ TEST_CASE("Test property policy", "[property]")
         property_test obj;
         type prop_type = type::get(obj);
 
-  
+
         property array_prop = prop_type.get_property("raw_array");
         REQUIRE(array_prop.is_array() == true);
         variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
@@ -582,7 +582,7 @@ TEST_CASE("Test property policy", "[property]")
         REQUIRE(p7_as_ptr.is_readonly() == true);
         REQUIRE(p7_as_ptr.get_type() == type::get<const std::string*>());
     }
-  
+
     SECTION("class property - getter/setter member function")
     {
         property_test obj;
@@ -596,7 +596,7 @@ TEST_CASE("Test property policy", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test property inheritance", "[property]") 
+TEST_CASE("Test property inheritance", "[property]")
 {
     type t = type::get<ns_property::bottom>();
     auto props = t.get_properties();
@@ -622,7 +622,7 @@ TEST_CASE("Test property inheritance", "[property]")
     // try to change the value
     props[0].set_value(top, 2000);
     CHECK(instance._p1 == 2000);
-    
+
     // and now the other way around, from bottom a top property
     ret = props[5].get_value(&instance);
     REQUIRE(ret.is_type<double>() == true);
@@ -691,7 +691,7 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
         success = type::get(bottom).set_property_value("callback", obj, cb);
         REQUIRE(bottom.m_funcPtr == cb);
     }
-    
+
     SECTION("test set global property")
     {
         bool success = type::set_property_value("Global_Text", string("Another Text"));
@@ -721,13 +721,13 @@ TEST_CASE("Test get_base_classes", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("Test property meta data", "[property]") 
+TEST_CASE("Test property meta data", "[property]")
 {
     property p5 = type::get<property_test>().get_property("p5");
     variant value = p5.get_metadata(E_MetaData::SCRIPTABLE);
     REQUIRE(value.is_type<bool>() == true);
     REQUIRE(value.get_value<bool>() == true);
-    
+
     value = p5.get_metadata(E_MetaData::TOOL_TIP);
     REQUIRE(value.is_type<std::string>() == true);
     REQUIRE(value.get_value<std::string>() == "This is property 5.");

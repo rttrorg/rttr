@@ -47,33 +47,33 @@ namespace detail
 {
     class property_wrapper_base;
 }
-  
+
 /*!
  * The \ref property class provides several meta information about a property and gives read/write access to its value.
  *
  * A instance of a property class can only be obtained from the \ref type class.
  * See \ref type::get_property() and \ref type::get_properties().
  *
- * For registration a property, nested inside a class, see \ref registration::class_<T>::property() 
+ * For registration a property, nested inside a class, see \ref registration::class_<T>::property()
  * and for global properties see \ref registration::property().
  *
  * Meta Information
  * ----------------
  * A \ref property has a \ref get_name() "name", and a \ref get_type() "type" as well as attributes that specify its behavior:
- * \ref is_readonly(), \ref is_static(), \ref is_enumeration(), \ref is_array(). 
+ * \ref is_readonly(), \ref is_static(), \ref is_enumeration(), \ref is_array().
  * When the \ref property was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
  * The property's values are set and retrieved with \ref set_value() and \ref get_value();
  * When its not a \ref is_static "static property" you have to provide a class instance to set/get the property value.
  * This instance can be the raw type on the stack; the current hierarchy level doesn't matter. It can be also a raw pointer to the object or
  * a \ref variant which contains the instance, again as pointer or stack object.
- * When the property is declared as \ref is_static "static" you you still have to provide an empty instance object, 
+ * When the property is declared as \ref is_static "static" you you still have to provide an empty instance object,
  * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
  * A property will be successfully \ref set_value "set" when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
  * The new forwarded property value must 100% match the type of the registered property. An automatically type conversion is **not** performed.
  *
- * The return type of \ref get_value() is \ref variant object. 
+ * The return type of \ref get_value() is \ref variant object.
  * This object contains not only the value of the property, it also indicates whether the property value could be retrieved or not.
  * A \ref variant::is_valid "valid" variant object means, that the property was successfully retrieved, otherwise not.
  *
@@ -85,7 +85,7 @@ namespace detail
  *
  * Typical Usage
  * ----------------------
- * 
+ *
 \code{.cpp}
   using namespace rttr;
   struct MyStruct { int value = 23; };
@@ -129,7 +129,7 @@ class RTTR_API property
         explicit operator bool() const;
 
         /*!
-         * \brief Returns the access level with which this property was 
+         * \brief Returns the access level with which this property was
          *        \ref registration::class_<T>::property() "registered".
          *
          * \remark When the property is not valid, this function will return level \ref access_levels::public_access.
@@ -169,7 +169,7 @@ class RTTR_API property
         bool is_enumeration() const;
 
        /*!
-         * \brief Returns the enumerator if this property is an enum type; 
+         * \brief Returns the enumerator if this property is an enum type;
          *        otherwise the returned value is \ref enumeration::is_valid "not valid".
          *
          * \see is_enumeration()
@@ -227,7 +227,7 @@ class RTTR_API property
          * \return The return value indicates whether the operation was successful or not.
          */
         bool set_value(instance object, argument arg) const;
-        
+
         /*!
          * \brief Returns the current property value of the given instance \p object.
          *
@@ -242,7 +242,7 @@ class RTTR_API property
         /*!
          * \brief Returns the meta data for the given key \p key.
          *
-         * \remark When no meta data is registered with the given \p key, 
+         * \remark When no meta data is registered with the given \p key,
          *         an invalid \ref variant object is returned (see \ref variant::is_valid).
          *
          * \return A variant object, containing arbitrary data.

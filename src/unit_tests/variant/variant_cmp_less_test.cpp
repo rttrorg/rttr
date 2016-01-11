@@ -198,8 +198,8 @@ TEST_CASE("variant::operator<() - template type - no comparator registered", "[v
         CHECK((b < a) == false);
 
         type::register_converter_func(std::function<std::string(const std::tuple<int, int>& p, bool& ok)>(
-                                     [](const std::tuple<int, int>& p, bool& ok) -> std::string 
-                                     { 
+                                     [](const std::tuple<int, int>& p, bool& ok) -> std::string
+                                     {
                                         ok = true;
                                         return "[" + std::to_string(std::get<0>(p)) + ", " + std::to_string(std::get<1>(p)) + "]";
                                      }));
