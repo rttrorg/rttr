@@ -138,7 +138,7 @@ script:
       # T009: Comma should not be preceded by whitespace, but should be followed by one
       # T011: Curly brackets from the same pair should be either in the same line or in the same column
       # T013: Source files should contain the copyright notice
-      find include -name \*\.h | vera++ --rule F001 --rule L001 --rule L002 -rule T001 -rule T002 -rule T009 -rule T011 -rule T013 --error
+      find . -name \*.h -print -o -name \*.cpp -print | vera++ --rule F001 --rule L001 --rule L002 -rule T001 -rule T002 -rule T009 -rule T011 -rule T013 --error
     fi
   - |
     if [[ "${UNIT_TESTS}" == "true" ]]; then
