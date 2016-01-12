@@ -215,7 +215,7 @@ registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<
                   is_std_function<F>::value || is_std_function<F>::value,
                   "No valid method accessor provided!");
 
-    return {create_if_empty(m_reg_exec), name , f};
+    return {create_if_empty(m_reg_exec), name, f};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -292,19 +292,19 @@ registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(con
 
 } // end namespace rttr
 
-#define RTTR_REGISTRATION                                               \
-static void rttr_auto_register_reflection_function_();                  \
-namespace                                                               \
-{                                                                       \
-    struct rttr__auto__register__                                       \
-    {                                                                   \
-        rttr__auto__register__()                                        \
-        {                                                               \
-            rttr_auto_register_reflection_function_();                  \
-        }                                                               \
-    };                                                                  \
-}                                                                       \
-static const rttr__auto__register__ RTTR_CAT(auto_register__,__LINE__); \
+#define RTTR_REGISTRATION                                                \
+static void rttr_auto_register_reflection_function_();                   \
+namespace                                                                \
+{                                                                        \
+    struct rttr__auto__register__                                        \
+    {                                                                    \
+        rttr__auto__register__()                                         \
+        {                                                                \
+            rttr_auto_register_reflection_function_();                   \
+        }                                                                \
+    };                                                                   \
+}                                                                        \
+static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__); \
 static void rttr_auto_register_reflection_function_()
 
 

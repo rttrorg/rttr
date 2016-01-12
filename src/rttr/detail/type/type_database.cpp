@@ -51,6 +51,7 @@ namespace detail
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type_database::type_database()
+:   m_type_id_counter(0)
 {
     m_orig_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_custom_names.reserve(RTTR_DEFAULT_TYPE_COUNT);

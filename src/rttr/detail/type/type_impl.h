@@ -300,7 +300,7 @@ struct type_getter<void>
                                                         false,
                                                         false,
                                                         false,
-                                                        false);
+                                                        0);
         return val;
     }
 };
