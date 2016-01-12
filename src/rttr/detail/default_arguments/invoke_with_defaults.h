@@ -51,7 +51,7 @@ struct are_args_and_defaults_in_valid_range<type_list<Ctor_Args...>, type_list<T
 
 template<typename F, typename...TArgs, typename...Default_Args>
 struct are_args_and_defaults_in_valid_range<F, type_list<TArgs...>, type_list<Default_Args...>>
-:   are_args_and_defaults_in_valid_range<as_type_list_t<typename function_traits<F>::arg_types> ,type_list<TArgs...>, type_list<Default_Args...>>
+:   are_args_and_defaults_in_valid_range<as_type_list_t<typename function_traits<F>::arg_types>, type_list<TArgs...>, type_list<Default_Args...>>
 {
 };
 

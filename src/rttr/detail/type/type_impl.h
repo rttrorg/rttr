@@ -461,7 +461,7 @@ namespace std
 } // end namespace std
 
 #define RTTR_CAT_IMPL(a, b) a##b
-#define RTTR_CAT(a ,b) RTTR_CAT_IMPL(a, b)
+#define RTTR_CAT(a, b) RTTR_CAT_IMPL(a, b)
 
 static void rttr_auto_register_reflection_function_();
 namespace rttr

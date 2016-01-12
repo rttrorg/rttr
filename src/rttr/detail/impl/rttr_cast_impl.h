@@ -48,7 +48,7 @@ RTTR_INLINE Target_Type rttr_cast(Source_Type object)
 
     static_assert((std::is_volatile<Arg_Type>::value && std::is_volatile<Return_Type>::value) ||
                    (!std::is_volatile<Arg_Type>::value && std::is_volatile<Return_Type>::value) ||
-                   (!std::is_volatile<Arg_Type>::value && !std::is_volatile<Return_Type>::value) , "Return type must have volatile qualifier");
+                   (!std::is_volatile<Arg_Type>::value && !std::is_volatile<Return_Type>::value),  "Return type must have volatile qualifier");
 
     static_assert( (std::is_const<Arg_Type>::value && std::is_const<Return_Type>::value) ||
                    (!std::is_const<Arg_Type>::value && std::is_const<Return_Type>::value) ||

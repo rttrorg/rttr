@@ -297,7 +297,8 @@ TEST_CASE("variant_array_view::get_size", "[variant_array_view]")
         int vec[4][3][2] = { {{0, 1}, {2, 3}, {4, 5}},
                              {{6, 7}, {8, 9}, {10, 11}},
                              {{12, 13}, {14, 15}, {16, 17}},
-                             {{18, 19}, {20, 21}, {22, 23}} };
+                             {{18, 19}, {20, 21}, {22, 23}}
+                           };
 
         variant var = vec;
         variant_array_view array = var.create_array_view();

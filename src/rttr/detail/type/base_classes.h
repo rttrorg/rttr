@@ -36,8 +36,8 @@ namespace detail
 
 struct base_class_info
 {
-    base_class_info(type t,void*(*rttr_cast_func)(void*))
-    : m_base_type(t), m_rttr_cast_func(rttr_cast_func)
+    base_class_info(type t, void*(*rttr_cast_func)(void*))
+    :	m_base_type(t), m_rttr_cast_func(rttr_cast_func)
     {}
     type            m_base_type;
     void*           (*m_rttr_cast_func)(void*);
