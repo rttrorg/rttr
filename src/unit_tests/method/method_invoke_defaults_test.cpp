@@ -135,7 +135,7 @@ TEST_CASE("method - invoke - defaults - skip last value", "[method]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("method - invoke - defaults - NEGATIVE", "[method]")
+TEST_CASE("method - invoke - NEGATIVE - defaults", "[method]")
 {
     method meth = type::get_by_name("").get_method("");
     REQUIRE(meth.is_valid() == false);

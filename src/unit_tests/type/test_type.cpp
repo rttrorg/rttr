@@ -254,6 +254,29 @@ TEST_CASE("Test rttr::type - Virtual Inheritance", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("type - get_base_classes()", "[type]")
+{
+    DiamondBottom d;
+    const auto base_list = type::get(d).get_base_classes();
+    REQUIRE(base_list.size() == 3);
+
+    REQUIRE(base_list[0] == type::get<DiamondTop>());
+    REQUIRE(base_list[1] == type::get<DiamondLeft>());
+    REQUIRE(base_list[2] == type::get<DiamondRight>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("type - is_derived_from()", "[type]")
+{
+    DiamondBottom d;
+
+    REQUIRE(type::get(d).is_derived_from(type::get<DiamondTop>()) == true); // dynamic
+    REQUIRE(type::get(d).is_derived_from<DiamondTop>() == true); // static
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test rttr::type - TypeId/ClassInheritance", "[type]")
 {
     ClassSingle6A instance6A;

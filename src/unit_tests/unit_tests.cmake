@@ -28,17 +28,23 @@
 set(HEADER_FILES test_classes.h
                  enumeration/test_enumeration_reflection.h
                  method/test_method_reflection.h
-                 property/test_property_reflection.h
                  type/test_type.h
                  version.rc.in
                  )
 
 set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
-                 property/test_property_reflection.cpp
                  property/property_access_level_test.cpp
+                 property/property_misc_test.cpp
+                 property/property_class_inheritance.cpp
+                 property/property_class_invoke.cpp
+                 property/property_class_invoke_policy.cpp
+                 property/property_class_invoke_wrapper.cpp
+                 property/property_global_invoke.cpp
+                 property/property_global_invoke_policy.cpp
                  type/test_type.cpp
                  type/test_type_names.cpp
+                 type/type_prop_meth_invoke.cpp
                  destructor/destructor_invoke_test.cpp
                  destructor/destructor_misc_test.cpp
                  constructor/constructor_access_level_test.cpp

@@ -1,3 +1,5 @@
+
+
 /************************************************************************************
 *                                                                                   *
 *   Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     *
@@ -25,102 +27,101 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef TEST_PROPERTY_REFLECTION_H_
-#define TEST_PROPERTY_REFLECTION_H_
+#include <rttr/registration>
 
-#include <rttr/type>
+#include <iostream>
+#include <memory>
+#include <functional>
 
-struct property_test
+#include <catch/catch.hpp>
+
+using namespace rttr;
+using namespace std;
+
+static std::string g_name;
+
+static const std::string& get_global_name()
 {
-    property_test() : _p1(0), _p2(12), _p3(true), _p4(23)
-    {
-        _array.resize(1000);
-        for (int i = 0; i < 100; ++i)
-            _other_array[i] = i;
-    }
-    virtual ~property_test() {}
+    return g_name;
+}
 
-    const std::string& get_p7() const { return _p7; }
-    void set_p7(const std::string& text) { _p7 = text; }
-    int get_prop() const volatile { return 22; }
+static void set_global_name(const std::string& text)
+{
+    g_name = text;
+}
 
-    int                 _p1;
-    short int           _p2;
-    bool                _p3;
-    const double        _p4;
-    static int          _p5;
-    static const int    _p6;
-    std::string         _p7;
-    double*             _p8;
-    std::vector<int>    _array;
-    int                 _other_array[100];
-
-    RTTR_REGISTRATION_FRIEND;
-};
+static const double pi = 3.124256;
+static int g_value = 23;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// test derived properties
 
-namespace ns_property
+RTTR_REGISTRATION
 {
-struct top
-{
-    virtual ~top() {}
-    top() : _p1(12){}
-    int _p1;
-    RTTR_ENABLE()
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct left : virtual top
-{
-
-    left() : _p2(true){}
-    bool _p2;
-
-    RTTR_ENABLE(top)
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct right : virtual top
-{
-
-    right() : _p3(true){}
-    bool _p3;
-
-    RTTR_ENABLE(top)
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct right_2
-{
-    virtual ~right_2() {}
-    right_2() : _p4(true){}
-    bool _p4;
-    RTTR_ENABLE()
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-typedef void(*func_ptr)(int);
-
-struct bottom : left, right, right_2
-{
-    bottom() : _p5(23.0){}
-    void set_function_cb(func_ptr cb) { m_funcPtr = cb; }
-    func_ptr get_function_cb() const { return m_funcPtr; }
-
-    double _p5;
-    func_ptr m_funcPtr;
-
-    RTTR_ENABLE(left, right, right_2)
-};
-
+    registration::property("g_value", &g_value)
+        .property("global_name", &get_global_name, &set_global_name)
+        .property_readonly("PI", &pi)
+        ;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // TEST_PROPERTY_REFLECTION_H_
+TEST_CASE("property - global - get/set - variable", "[property]")
+{
+    property prop = type::get_global_property("g_value");
+    CHECK(prop.is_valid() == true);
+
+    variant var = prop.get_value(instance());
+
+    CHECK(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == 23);
+
+    int new_value = 42;
+    bool result = prop.set_value(instance(), new_value);
+    CHECK(result == true);
+    CHECK(g_value == new_value);
+
+    var = prop.get_value(instance());
+    CHECK(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == new_value);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global - get/set - functions", "[property]")
+{
+    property prop = type::get_global_property("global_name");
+    CHECK(prop.is_valid() == true);
+
+    variant var = prop.get_value(instance());
+
+    CHECK(var.is_type<std::string>() == true);
+    CHECK(var.get_value<std::string>() == std::string());
+
+    std::string new_value("test");
+    bool result = prop.set_value(instance(), new_value);
+    CHECK(result == true);
+    CHECK(get_global_name() == new_value);
+
+    var = prop.get_value(instance());
+    CHECK(var.is_type<std::string>() == true);
+    CHECK(var.get_value<std::string>() == new_value);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global - get/set - readonly", "[property]")
+{
+    property prop = type::get_global_property("PI");
+    CHECK(prop.is_valid() == true);
+
+    variant var = prop.get_value(instance());
+
+    CHECK(var.is_type<double>() == true);
+    CHECK(var.get_value<double>() == 3.124256);
+
+    bool result = prop.set_value(instance(), 2.0);
+    CHECK(result == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
