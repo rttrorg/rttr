@@ -42,7 +42,7 @@ struct type_prop_invoke_test : type_prop_invoke_test_base
     RTTR_ENABLE(type_prop_invoke_test_base)
 };
 
-static int g_value = 42;
+static int g_prop_invoke = 42;
 
 
 using namespace rttr;
@@ -55,7 +55,7 @@ RTTR_REGISTRATION
     registration::class_<type_prop_invoke_test>("type_prop_invoke_test")
         .property("p2", &type_prop_invoke_test::p2);
 
-    registration::property("g_value", &g_value);
+    registration::property("g_prop_invoke", &g_prop_invoke);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -91,10 +91,10 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
 
     SECTION("test set global property")
     {
-        bool success = type::set_property_value("g_value", 23);
+        bool success = type::set_property_value("g_prop_invoke", 23);
         CHECK(success == true);
 
-        variant var = type::get_property_value("g_value");
+        variant var = type::get_property_value("g_prop_invoke");
         REQUIRE(var.is_type<int>() == true);
         CHECK(var.get_value<int>() == 23);
     }
