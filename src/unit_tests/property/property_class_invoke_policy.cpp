@@ -41,7 +41,7 @@ struct property_member_policy
         for (int i = 0; i < 100; ++i)
             _other_array[i] = i;
     }
-    
+
     virtual ~property_member_policy() {}
 
     const std::string& get_text() const { return m_text; }
@@ -104,24 +104,24 @@ TEST_CASE("property - class - get/set - bind_as_ptr - raw_array", "[property]")
 {
     property_member_policy obj;
     type prop_type = type::get(obj);
-    
+
     property array_prop = prop_type.get_property("raw_array");
     REQUIRE(array_prop.is_array() == true);
     variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
     variant_array_view other_array = array_obj.create_array_view();
     REQUIRE(other_array.is_valid() == true);
-    
+
     variant ret = other_array.get_value(23);
     REQUIRE(ret.is_type<int>() == true);
     REQUIRE(ret.get_value<int>() == 23);
-    
+
     for (std::size_t i = 0; i < other_array.get_size(); ++i)
         other_array.set_value(i, static_cast<int>(i * 2));
-    
+
     // did we really set the value?
     for (std::size_t i = 0; i < other_array.get_size(); ++i)
         REQUIRE(obj._other_array[i] == i * 2);
-    
+
     bool wasSet = array_prop.set_value(obj, array_obj);
     REQUIRE(wasSet == true);
 }

@@ -217,7 +217,7 @@ TEST_CASE("property - compare operators()", "[property]")
     property prop1  = type::get<prop_misc_test>().get_property("value_1");
     property prop1a = type::get<prop_misc_test>().get_property("value_1");
     property prop2  = type::get<prop_misc_test>().get_property("value_2");
-   
+
     CHECK(prop1 == prop1a);
     CHECK(prop1 != prop2);
 }

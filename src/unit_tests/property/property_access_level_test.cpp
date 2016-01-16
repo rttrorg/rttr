@@ -199,11 +199,11 @@ TEST_CASE("property - access_levels test - readonly property", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("property - NEGATIVE - access_levels", "[property]") 
+TEST_CASE("property - NEGATIVE - access_levels", "[property]")
 {
     type t = type::get_by_name("prop_access_level_test");
     REQUIRE(t.is_valid() == true);
-    
+
     CHECK(t.get_property("").is_valid() == false);
     CHECK(t.get_property("").get_access_level() == access_levels::public_access);
 }

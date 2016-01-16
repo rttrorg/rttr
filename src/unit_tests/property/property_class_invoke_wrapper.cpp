@@ -74,7 +74,7 @@ TEST_CASE("property - class - get/set - std::shared_ptr", "[property]")
 
     type obj_t = type::get(obj);
     REQUIRE(obj_t.is_wrapper() == true);
-    
+
     type wrapper_t = obj_t.get_wrapped_type();
     REQUIRE(wrapper_t.is_wrapper() == false);
     REQUIRE(wrapper_t == type::get<property_wrapper_test_base*>());
@@ -83,10 +83,10 @@ TEST_CASE("property - class - get/set - std::shared_ptr", "[property]")
     // access
     bool ret = p1.set_value(obj, 2);
     CHECK(ret == true);
-    
+
     variant val = p1.get_value(obj);
     REQUIRE(val.is_type<int>() == true);
-    
+
     CHECK(val.get_value<int>() == 2);
     CHECK(obj.get()->p1 == 2);
 }
@@ -118,20 +118,20 @@ TEST_CASE("property - class - get/set - reference_wrapper", "[property]")
 {
     property_wrapper_test_base instance;
     std::reference_wrapper<property_wrapper_test_base> obj = std::ref(instance);
-    
+
     type obj_t = type::get(obj);
     REQUIRE(obj_t.is_wrapper() == true);
-    
+
     type wrapper_t = obj_t.get_wrapped_type();
     CHECK(wrapper_t.is_wrapper() == false);
     CHECK(wrapper_t == type::get<property_wrapper_test_base>());
-    
+
     property p1 = wrapper_t.get_property("p1");
     CHECK(p1.is_readonly() == false);
     // access
     bool ret = p1.set_value(obj, 2);
     CHECK(ret == true);
-    
+
     variant val = p1.get_value(obj);
     REQUIRE(val.is_type<int>() == true);
     CHECK(val.get_value<int>() == 2);
@@ -151,10 +151,10 @@ TEST_CASE("property - class - get/set - shared_ptr with inheritance", "[property
         // access
         bool ret = p1.set_value(obj, 2);
         CHECK(ret == true);
-    
+
         variant val = p1.get_value(obj);
         CHECK(val.is_type<int>() == true);
-    
+
         REQUIRE(val.get_value<int>() == 2);
         CHECK(obj.get()->p1 == 2);
     }
@@ -162,13 +162,13 @@ TEST_CASE("property - class - get/set - shared_ptr with inheritance", "[property
     SECTION("from base to bottom")
     {
         std::shared_ptr<property_wrapper_test_base> obj = std::make_shared<property_wrapper_test>();
-        
+
         property p2 = type::get(*obj.get()).get_property("p2");
         CHECK(p2.is_valid() == true);
         // access
         bool ret = p2.set_value(obj, true);
         CHECK(ret == true);
-    
+
         variant var = p2.get_value(obj);
         REQUIRE(var.is_type<bool>() == true);
         CHECK(var.get_value<bool>() == true);

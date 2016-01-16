@@ -54,7 +54,7 @@ struct property_invoke
     static const int    _p3;
     std::string         m_text;
     func_ptr            m_funcPtr;
-    
+
 
     RTTR_REGISTRATION_FRIEND;
 };
@@ -110,12 +110,12 @@ TEST_CASE("property - class - get/set - variable", "[property]")
     property_invoke obj;
     type prop_type = type::get(obj);
     REQUIRE(prop_type.is_valid() == true);
-   
+
     property p1 = prop_type.get_property("p1");
 
     bool ret = p1.set_value(obj, 2);
     CHECK(ret == true);
-    
+
     variant var = p1.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 2);
@@ -127,13 +127,13 @@ TEST_CASE("property - class - get/set - static variable", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p2");
     CHECK(prop.is_static() == true);
 
     bool ret = prop.set_value(obj, 2);
     CHECK(ret == true);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 2);
@@ -145,12 +145,12 @@ TEST_CASE("property - class - get/set - function", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p3");
 
     bool ret = prop.set_value(obj, std::string("text"));
     CHECK(ret == true);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<std::string>() == true);
     CHECK(var.get_value<std::string>() == std::string("text"));
@@ -162,12 +162,12 @@ TEST_CASE("property - class - get/set - readonly", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p4");
 
     bool ret = prop.set_value(obj, 34);
     CHECK(ret == false);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 2);
@@ -179,12 +179,12 @@ TEST_CASE("property - class - get/set - readonly - static", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p5");
 
     bool ret = prop.set_value(obj, 23);
     CHECK(ret == false);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 12);
@@ -196,13 +196,13 @@ TEST_CASE("property - class - get/set - global variable", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p6");
     CHECK(prop.is_static() == true);
 
     bool ret = prop.set_value(obj, 23.0f);
     CHECK(ret == true);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<float>() == true);
     CHECK(var.get_value<float>() == 23.0f);
@@ -214,13 +214,13 @@ TEST_CASE("property - class - get/set - readonly - global function", "[property]
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p7");
     CHECK(prop.is_static() == true);
 
     bool ret = prop.set_value(obj, 23);
     CHECK(ret == false);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 512);
@@ -232,13 +232,13 @@ TEST_CASE("property - class - get/set - readonly - std::function", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p8");
     CHECK(prop.is_static() == true);
 
     bool ret = prop.set_value(obj, 23);
     CHECK(ret == false);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 45);
@@ -250,14 +250,14 @@ TEST_CASE("property - class - get/set - std::function", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("p9");
     CHECK(prop.is_static() == true);
 
     std::string new_value("text");
     bool ret = prop.set_value(obj, new_value);
     CHECK(ret == true);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<std::string>() == true);
     CHECK(var.get_value<std::string>() == new_value);
@@ -269,13 +269,13 @@ TEST_CASE("property - class - get/set - function pointer", "[property]")
 {
     property_invoke obj;
     type prop_type = type::get(obj);
-   
+
     property prop = prop_type.get_property("callback");
 
     auto cb = &my_callback;
     bool ret = prop.set_value(obj, cb);
     CHECK(ret == true);
-    
+
     variant var = prop.get_value(obj);
     CHECK(var.is_type<func_ptr>() == true);
     CHECK(var.get_value<func_ptr>() == cb);
