@@ -102,6 +102,14 @@ RTTR_REGISTRATION
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant - basic - can_convert()", "[variant]")
+{
+    variant var;
+    CHECK(var.can_convert(type::get<int>()) == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant conversion - to int", "[variant]")
 {
     SECTION("int to int")

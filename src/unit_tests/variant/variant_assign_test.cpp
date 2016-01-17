@@ -165,14 +165,6 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
 
         CHECK(a.is_valid() == true);
     }
-
-    SECTION("self assign - swap")
-    {
-        variant a = 1;
-        a.swap(a);
-
-        CHECK(a.is_valid() == true);
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

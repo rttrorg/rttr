@@ -47,14 +47,17 @@ TEST_CASE("variant::to_bool() - from bool", "[variant]")
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<bool>() == true);
 
+    // true case
     CHECK(var.to_bool() == true);
 
     CHECK(var.convert<bool>() == true);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == true);
 
+    // false case
     var = false;
     CHECK(var.to_bool() == false);
+    CHECK(var.convert<bool>() == false);
     CHECK(var.convert(type::get<bool>()) == true);
     CHECK(var.get_value<bool>() == false);
 }
