@@ -174,6 +174,25 @@ std::string int_to_string(int value, bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+std::string long_long_to_string(long long value, bool* ok)
+{
+    try
+    {
+        std::string text = std::to_string(value);
+        if (ok)
+            *ok = true;
+        return text;
+    }
+    catch (...)
+    {
+        if (ok)
+            *ok = false;
+        return std::string();
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 std::string float_to_string(float value, bool* ok)
 {
     try
@@ -240,6 +259,33 @@ int string_to_int(const std::string& source, bool* ok)
     {
         std::size_t pos = 0;
         const int value = std::stoi(source, &pos);
+        if (pos == source.length())
+        {
+            if (ok)
+                *ok = true;
+            return value;
+        }
+    }
+    catch (...)
+    {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+
+    if (ok)
+        *ok = false;
+    return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+long long string_to_long_long(const std::string& source, bool* ok)
+{
+    try
+    {
+        std::size_t pos = 0;
+        const long long value = std::stoll(source, &pos);
         if (pos == source.length())
         {
             if (ok)

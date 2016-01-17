@@ -72,5 +72,6 @@ set(SOURCE_FILES main.cpp
                  variant/variant_conv_to_int8.cpp
                  variant/variant_conv_to_int16.cpp
                  variant/variant_conv_to_int32.cpp
+                 variant/variant_conv_to_int64.cpp
                  variant_array_view/variant_array_view_test.cpp
                  )
