@@ -186,3 +186,239 @@ TEST_CASE("variant::to_bool() - from double", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from int8_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = int8_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("negative")
+    {
+        variant var = int8_t(-23);
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = int8_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from int16_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = int16_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("negative")
+    {
+        variant var = int16_t(-23);
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = int16_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from int32_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = int32_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("negative")
+    {
+        variant var = int32_t(-23);
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = int32_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from int64_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = int64_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("negative")
+    {
+        variant var = int64_t(-23);
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = int64_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from uint8_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = uint8_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = uint8_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from uint16_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = uint16_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = uint16_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from uint32_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = uint32_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = uint32_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from uint64_t", "[variant]")
+{
+    SECTION("positive")
+    {
+        variant var = uint64_t(23);
+        REQUIRE(var.can_convert<bool>() == true);
+
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("from zero")
+    {
+        variant var = uint64_t(0);
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert<bool>() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
