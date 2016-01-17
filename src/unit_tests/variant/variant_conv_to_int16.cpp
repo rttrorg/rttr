@@ -33,493 +33,469 @@ using namespace rttr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from empty", "[variant]")
+TEST_CASE("variant::to_int16() - from empty", "[variant]")
 {
     variant var;
     bool ok = false;
-    CHECK(var.to_int8(&ok) == 0);
+    CHECK(var.to_int16(&ok) == 0);
     CHECK(ok == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from bool", "[variant]")
+TEST_CASE("variant::to_int16() - from bool", "[variant]")
 {
     variant var = true;
     REQUIRE(var.is_valid() == true);
-    REQUIRE(var.can_convert<int8_t>() == true);
+    REQUIRE(var.can_convert<int16_t>() == true);
 
     // true case
     bool ok = false;
-    CHECK(var.to_int8(&ok) == 1);
+    CHECK(var.to_int16(&ok) == 1);
     CHECK(ok == true);
 
-    CHECK(var.convert<int8_t>(&ok) == 1);
+    CHECK(var.convert<int16_t>(&ok) == 1);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<int8_t>()) == true);
-    CHECK(var.get_value<int8_t>() == 1);
+    CHECK(var.convert(type::get<int16_t>()) == true);
+    CHECK(var.get_value<int16_t>() == 1);
 
     // false case
     var = false;
-    CHECK(var.to_int8(&ok) == 0);
+    CHECK(var.to_int16(&ok) == 0);
     CHECK(ok == true);
 
-    CHECK(var.convert<int8_t>(&ok) == 0);
+    CHECK(var.convert<int16_t>(&ok) == 0);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<int8_t>()) == true);
-    CHECK(var.get_value<int8_t>() == 0);
+    CHECK(var.convert(type::get<int16_t>()) == true);
+    CHECK(var.get_value<int16_t>() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from std::string", "[variant]")
+TEST_CASE("variant::to_int16() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = std::string("23");
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = std::string("32760");
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 23);
+        CHECK(var.to_int16(&ok) == 32760);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == 23);
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == 32760);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = std::string("-12");
+        variant var = std::string("-32760");
         bool ok = false;
-        CHECK(var.to_int8(&ok) == -12);
+        CHECK(var.to_int16(&ok) == -32760);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = std::string("512");
+        variant var = std::string("42767");
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = std::string("-512");
+        variant var = std::string("-42767");
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("invalid conversion")
     {
         variant var = std::string("text 34 and text");
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
 
         var = std::string("34 and text");
         ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from int", "[variant]")
+TEST_CASE("variant::to_int16() - from int", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 50;
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = 32760;
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
-        CHECK(ok == true);
+        CHECK(var.to_int16(&ok) == 32760);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == 50);
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == 32760);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = -60;
+        variant var = -32760;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == -60);
+        CHECK(var.to_int16(&ok) == -32760);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = 512;
+        variant var = 42760;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = -512;
+        variant var = -42760;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from float", "[variant]")
+TEST_CASE("variant::to_int16() - from float", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 1.5f;
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = 32760.9f;
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 1);
+        CHECK(var.to_int16(&ok) == 32760);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == 1);
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == 32760);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = -21.9f;
+        variant var = -32760.9f;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == -21);
+        CHECK(var.to_int16(&ok) == -32760);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = 512.2f;
+        variant var = 42760.2f;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = -512.2f;
+        variant var = -42760.2f;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from double", "[variant]")
+TEST_CASE("variant::to_int16() - from double", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 1.5;
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = 32760.9;
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 1);
-
+        CHECK(var.to_int16(&ok) == 32760);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == 1);
+
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == 32760);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = -21.9;
+        variant var = -32760.9;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == -21);
+        CHECK(var.to_int16(&ok) == -32760);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = 512.2;
+        variant var = 42760.2;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = -512.2;
+        variant var = -42760.2;
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from int8_t", "[variant]")
+TEST_CASE("variant::to_int16() - from int8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = int8_t(50);
-        REQUIRE(var.can_convert<int8_t>() == true);
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
+        CHECK(var.to_int16(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == 50);
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == 50);
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int8_t(-60);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int8_t(-60));
+        CHECK(var.to_int16(&ok) == int8_t(-60));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from int16_t", "[variant]")
+TEST_CASE("variant::to_int16() - from int16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int16_t(50);
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = int16_t(32760);
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int16_t(50));
+        CHECK(var.to_int16(&ok) == int16_t(32760));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == int16_t(50));
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == int16_t(32760));
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = int16_t(-60);
+        variant var = int16_t(-32760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int16_t(-60));
+        CHECK(var.to_int16(&ok) == int16_t(-32760));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
-    }
-
-    SECTION("too big")
-    {
-        variant var = int16_t(512);
-        bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
-    }
-
-    SECTION("too small")
-    {
-        variant var = int16_t(-512);
-        bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from int32_t", "[variant]")
+TEST_CASE("variant::to_int16() - from int32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int32_t(50);
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = int32_t(32760);
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int32_t(50));
+        CHECK(var.to_int16(&ok) == int32_t(32760));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == int32_t(50));
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == int32_t(32760));
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = int32_t(-60);
+        variant var = int32_t(-32760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int32_t(-60));
+        CHECK(var.to_int16(&ok) == int32_t(-32760));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = int32_t(512);
+        variant var = int32_t(42760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = int32_t(-512);
+        variant var = int32_t(-42760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from int64_t", "[variant]")
+TEST_CASE("variant::to_int16() - from int64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int64_t(50);
-        REQUIRE(var.can_convert<int8_t>() == true);
+        variant var = int64_t(32760);
+        REQUIRE(var.can_convert<int16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int64_t(50));
+        CHECK(var.to_int16(&ok) == int64_t(32760));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int8_t>()) == true);
-        CHECK(var.get_value<int8_t>() == int64_t(50));
+        CHECK(var.convert(type::get<int16_t>()) == true);
+        CHECK(var.get_value<int16_t>() == int64_t(32760));
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = int64_t(-60);
+        variant var = int64_t(-32760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == int64_t(-60));
+        CHECK(var.to_int16(&ok) == int64_t(-32760));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int8_t>()) == true);
+        CHECK(var.convert(type::get<int16_t>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = int64_t(512);
+        variant var = int64_t(42760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = int64_t(-512);
+        variant var = int64_t(-42760);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from uint8_t", "[variant]")
+TEST_CASE("variant::to_int16() - from uint8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = uint8_t(50);
         REQUIRE(var.can_convert<uint8_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
+        CHECK(var.to_int16(&ok) == 50);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
-
-    SECTION("too big")
-    {
-        variant var = uint8_t(200);
-        bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from uint16_t", "[variant]")
+TEST_CASE("variant::to_int16() - from uint16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint16_t(50);
+        variant var = uint16_t(32760);
         REQUIRE(var.can_convert<uint16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
+        CHECK(var.to_int16(&ok) == uint16_t(32760));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == 50);
+        CHECK(var.get_value<uint16_t>() == uint16_t(32760));
     }
 
     SECTION("too big")
     {
-        variant var = uint16_t(1000);
+        variant var = uint16_t(65530);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
+        CHECK(var.get_value<uint16_t>() == uint16_t(65530));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from uint32_t", "[variant]")
+TEST_CASE("variant::to_int16() - from uint32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint32_t(50);
+        variant var = uint32_t(32760);
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
+        CHECK(var.to_int16(&ok) == uint32_t(32760));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == 50);
+        CHECK(var.get_value<uint32_t>() == uint32_t(32760));
     }
 
     SECTION("too big")
     {
-        variant var = uint32_t(1000);
+        variant var = uint32_t(65530);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
+        CHECK(var.get_value<uint32_t>() == uint32_t(65530));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int8() - from uint64_t", "[variant]")
+TEST_CASE("variant::to_int16() - from uint64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint64_t(50);
+        variant var = uint64_t(32760);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 50);
+        CHECK(var.to_int16(&ok) == uint64_t(32760));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 50);
+        CHECK(var.get_value<uint64_t>() == uint64_t(32760));
     }
 
     SECTION("too big")
     {
-        variant var = uint64_t(1000);
+        variant var = uint64_t(65530);
         bool ok = false;
-        CHECK(var.to_int8(&ok) == 0);
+        CHECK(var.to_int16(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int8_t>()) == false);
+        CHECK(var.convert(type::get<int16_t>()) == false);
+        CHECK(var.get_value<uint64_t>() == uint64_t(65530));
     }
 }
 
