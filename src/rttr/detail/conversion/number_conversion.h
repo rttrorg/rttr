@@ -65,8 +65,6 @@ convert_to(const F& from, T& to)
 {
     if ((from < 0) || ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max()))))
         return false; // value too large
-    else if (from > static_cast<F>(std::numeric_limits<T>::max()))
-        return false; // value too large
 
     to = static_cast<T>(from);
     return true;

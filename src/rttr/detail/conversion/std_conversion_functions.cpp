@@ -27,6 +27,8 @@
 
 #include "rttr/detail/conversion/std_conversion_functions.h"
 
+#include "rttr/detail/conversion/number_conversion.h"
+
 #include <sstream>
 #include <locale>
 #include <limits>
@@ -280,12 +282,67 @@ int string_to_int(const std::string& source, bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+unsigned long string_to_ulong(const std::string& source, bool* ok)
+{
+    try
+    {
+        std::size_t pos = 0;
+        const long long value = std::stoll(source, &pos);
+        unsigned long result = 0;
+        if (pos == source.length() && convert_to(value, result))
+        {
+            if (ok)
+                *ok = true;
+            return result;
+        }
+    }
+    catch (...)
+    {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+
+    if (ok)
+        *ok = false;
+    return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 long long string_to_long_long(const std::string& source, bool* ok)
 {
     try
     {
         std::size_t pos = 0;
         const long long value = std::stoll(source, &pos);
+        if (pos == source.length())
+        {
+            if (ok)
+                *ok = true;
+            return value;
+        }
+    }
+    catch (...)
+    {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+
+    if (ok)
+        *ok = false;
+    return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+unsigned long long string_to_ulong_long(const std::string& source, bool* ok)
+{
+    try
+    {
+        std::size_t pos = 0;
+        const unsigned long long value = std::stoull(source, &pos);
         if (pos == source.length())
         {
             if (ok)
