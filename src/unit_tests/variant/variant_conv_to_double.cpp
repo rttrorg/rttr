@@ -33,423 +33,349 @@ using namespace rttr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from empty", "[variant]")
+TEST_CASE("variant::to_double() - from empty", "[variant]")
 {
     variant var;
     bool ok = false;
-    CHECK(var.to_int32(&ok) == 0);
+    CHECK(var.to_double(&ok) == 0);
     CHECK(ok == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from bool", "[variant]")
+TEST_CASE("variant::to_double() - from bool", "[variant]")
 {
     variant var = true;
     REQUIRE(var.is_valid() == true);
-    REQUIRE(var.can_convert<int32_t>() == true);
+    REQUIRE(var.can_convert<double>() == true);
 
     // true case
     bool ok = false;
-    CHECK(var.to_int32(&ok) == 1);
+    CHECK(var.to_double(&ok) == 1);
     CHECK(ok == true);
 
-    CHECK(var.convert<int32_t>(&ok) == 1);
+    CHECK(var.convert<double>(&ok) == 1);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<int32_t>()) == true);
-    CHECK(var.get_value<int32_t>() == 1);
+    CHECK(var.convert(type::get<double>()) == true);
+    CHECK(var.get_value<double>() == 1);
 
     // false case
     var = false;
-    CHECK(var.to_int32(&ok) == 0);
+    CHECK(var.to_double(&ok) == 0);
     CHECK(ok == true);
 
-    CHECK(var.convert<int32_t>(&ok) == 0);
+    CHECK(var.convert<double>(&ok) == 0);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<int32_t>()) == true);
-    CHECK(var.get_value<int32_t>() == 0);
+    CHECK(var.convert(type::get<double>()) == true);
+    CHECK(var.get_value<double>() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from std::string", "[variant]")
+TEST_CASE("variant::to_double() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = std::string("2147483640");
-        REQUIRE(var.can_convert<int32_t>() == true);
+        variant var = std::string("5000000000");
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 2147483640);
+        CHECK(var.to_double(&ok) == 5000000000);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == 2147483640);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 5000000000);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = std::string("-2147483640");
+        variant var = std::string("-5000000000");
         bool ok = false;
-        CHECK(var.to_int32(&ok) == -2147483640);
+        CHECK(var.to_double(&ok) == -5000000000);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 
     SECTION("too big")
     {
-        variant var = std::string("3147483640");
+        variant var = std::string("1.79769e+309");
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
+        CHECK(var.to_double(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == false);
     }
 
     SECTION("too small")
     {
-        variant var = std::string("-3147483640");
+        variant var = std::string("-1.79769e+309");
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
+        CHECK(var.to_double(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == false);
     }
 
     SECTION("invalid conversion")
     {
         variant var = std::string("text 34 and text");
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
+        CHECK(var.to_double(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == false);
 
         var = std::string("34 and text");
         ok = false;
-        CHECK(var.to_int32(&ok) == 0);
+        CHECK(var.to_double(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from int", "[variant]")
+TEST_CASE("variant::to_double() - from int", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = 2147483640;
-        REQUIRE(var.can_convert<int32_t>() == true);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 2147483640);
+        CHECK(var.to_double(&ok) == 2147483640);
 
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == 2147483640);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 2147483640);
     }
 
     SECTION("valid conversion negative")
     {
         variant var = -2147483640;
         bool ok = false;
-        CHECK(var.to_int32(&ok) == -2147483640);
+        CHECK(var.to_double(&ok) == -2147483640);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from float", "[variant]")
+TEST_CASE("variant::to_double() - from float", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = 214748.9f;
-        REQUIRE(var.can_convert<int32_t>() == true);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 214748);
+        CHECK(var.to_double(&ok) == Approx(214748.9));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == 214748);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == Approx(214748.9));
     }
 
     SECTION("valid conversion negative")
     {
         variant var = -214748.9f;
         bool ok = false;
-        CHECK(var.to_int32(&ok) == -214748);
+        CHECK(var.to_double(&ok) == Approx(-214748.9));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
-    }
-
-    SECTION("too big")
-    {
-        variant var = 3.40282e+37f;
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
-    }
-
-    SECTION("too small")
-    {
-        variant var = -3.40282e+37f;
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from double", "[variant]")
+TEST_CASE("variant::to_double() - from double", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 2147483640.9;
-        REQUIRE(var.can_convert<int32_t>() == true);
+        variant var = 5000000000.9;
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 2147483640);
+        CHECK(var.to_double(&ok) == Approx(5000000000.9));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == 2147483640);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == Approx(5000000000.9));
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = -2147483640.9;
+        variant var = -5000000000.9;
         bool ok = false;
-        CHECK(var.to_int32(&ok) == -2147483640);
+        CHECK(var.to_double(&ok) == Approx(-5000000000.9));
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
-    }
-
-    SECTION("too big")
-    {
-        variant var = 3147483640.2;
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
-    }
-
-    SECTION("too small")
-    {
-        variant var = -3147483640.2;
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from int8_t", "[variant]")
+TEST_CASE("variant::to_double() - from int8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = int8_t(50);
-        REQUIRE(var.can_convert<int32_t>() == true);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 50);
+        CHECK(var.to_double(&ok) == 50.0);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == 50);
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 50.0);
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int8_t(-60);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int8_t(-60));
+        CHECK(var.to_double(&ok) == -60.0);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from int16_t", "[variant]")
+TEST_CASE("variant::to_double() - from int16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = int16_t(32760);
-        REQUIRE(var.can_convert<int32_t>() == true);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int16_t(32760));
+        CHECK(var.to_double(&ok) == 32760.0);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == int16_t(32760));
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 32760.0);
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int16_t(-32760);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int16_t(-32760));
+        CHECK(var.to_double(&ok) == -32760.0);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from int32_t", "[variant]")
+TEST_CASE("variant::to_double() - from int32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = int32_t(2147483640);
-        REQUIRE(var.can_convert<int32_t>() == true);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int32_t(2147483640));
+        CHECK(var.to_double(&ok) == 2147483640.0);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == int32_t(2147483640));
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 2147483640.0);
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int32_t(-2147483640);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int32_t(-2147483640));
+        CHECK(var.to_double(&ok) == -2147483640.0);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from int64_t", "[variant]")
+TEST_CASE("variant::to_double() - from int64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int64_t(2147483640);
-        REQUIRE(var.can_convert<int32_t>() == true);
+        variant var = int64_t(5000000000L);
+        REQUIRE(var.can_convert<double>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int64_t(2147483640));
+        CHECK(var.to_double(&ok) == 5000000000.0);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == int64_t(2147483640));
+        CHECK(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 5000000000.0);
     }
 
     SECTION("valid conversion negative")
     {
-        variant var = int64_t(-2147483640);
+        variant var = int64_t(-5000000000L);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int64_t(-2147483640));
+        CHECK(var.to_double(&ok) == -5000000000.0);
         CHECK(ok == true);
-        CHECK(var.convert(type::get<int32_t>()) == true);
-    }
-
-    SECTION("too big")
-    {
-        variant var = int64_t(3147483640);
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
-    }
-
-    SECTION("too small")
-    {
-        variant var = -int64_t(3147483640);
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
+        CHECK(var.convert(type::get<double>()) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from uint8_t", "[variant]")
+TEST_CASE("variant::to_double() - from uint8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = uint8_t(50);
         REQUIRE(var.can_convert<uint8_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == 50);
+        CHECK(var.to_double(&ok) == 50.0);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint8_t>()) == true);
-        CHECK(var.get_value<uint8_t>() == 50);
+        CHECK(var.get_value<uint8_t>() == 50.0);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from uint16_t", "[variant]")
+TEST_CASE("variant::to_double() - from uint16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = uint16_t(32760);
         REQUIRE(var.can_convert<uint16_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint16_t(32760));
+        CHECK(var.to_double(&ok) == 32760.0);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == uint16_t(32760));
+        CHECK(var.get_value<uint16_t>() == 32760.0);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from uint32_t", "[variant]")
+TEST_CASE("variant::to_double() - from uint32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = uint32_t(32760);
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint32_t(32760));
+        CHECK(var.to_double(&ok) == 32760.0);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == uint32_t(32760));
-    }
-
-    SECTION("too big")
-    {
-        variant var = uint32_t(3294967295);
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
-        CHECK(var.get_value<uint32_t>() == uint32_t(3294967295));
+        CHECK(var.get_value<uint32_t>() == 32760.0);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_int32() - from uint64_t", "[variant]")
+TEST_CASE("variant::to_double() - from uint64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
         variant var = uint64_t(2147483640);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint64_t(2147483640));
+        CHECK(var.to_double(&ok) == 2147483640.0);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == uint64_t(2147483640));
-    }
-
-    SECTION("too big")
-    {
-        variant var = uint64_t(3294967295);
-        bool ok = false;
-        CHECK(var.to_int32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<int32_t>()) == false);
-        CHECK(var.get_value<uint64_t>() == uint64_t(3294967295));
+        CHECK(var.get_value<uint64_t>() == 2147483640.0);
     }
 }
 

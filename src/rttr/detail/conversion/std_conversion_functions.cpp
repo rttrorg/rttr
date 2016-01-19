@@ -342,12 +342,16 @@ unsigned long long string_to_ulong_long(const std::string& source, bool* ok)
     try
     {
         std::size_t pos = 0;
-        const unsigned long long value = std::stoull(source, &pos);
-        if (pos == source.length())
+        const auto itr = std::find_if(source.begin(), source.end(), [](char c){ return !std::isdigit(c, std::locale()); });
+        if (itr == source.end())
         {
-            if (ok)
-                *ok = true;
-            return value;
+            const unsigned long long value = std::stoull(source, &pos);
+            if (pos == source.length())
+            {
+                if (ok)
+                    *ok = true;
+                return value;
+            }
         }
     }
     catch (...)

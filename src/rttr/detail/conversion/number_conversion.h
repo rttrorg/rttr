@@ -63,8 +63,11 @@ typename std::enable_if<is_integer<F, T>::value &&
                         bool>::type
 convert_to(const F& from, T& to)
 {
-    if ((from < 0) || ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max()))))
-        return false; // value too large
+    if (from < 0)
+        return false; // value too small
+
+    if (static_cast<uint64_t>(from) > std::numeric_limits<T>::max())
+        return false;
 
     to = static_cast<T>(from);
     return true;

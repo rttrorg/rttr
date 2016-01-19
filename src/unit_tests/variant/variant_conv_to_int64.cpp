@@ -182,7 +182,7 @@ TEST_CASE("variant::to_int64() - from float", "[variant]")
 
     SECTION("too big")
     {
-        variant var = 3.40282e+37;
+        variant var = 3.40282e+37f;
         bool ok = false;
         CHECK(var.to_int64(&ok) == 0);
         CHECK(ok == false);
@@ -191,7 +191,7 @@ TEST_CASE("variant::to_int64() - from float", "[variant]")
 
     SECTION("too small")
     {
-        variant var = -3.40282e+37;
+        variant var = -3.40282e+37f;
         bool ok = false;
         CHECK(var.to_int64(&ok) == 0);
         CHECK(ok == false);
