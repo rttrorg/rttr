@@ -1213,15 +1213,21 @@ struct RTTR_API convert_from<std::string>
     static RTTR_INLINE bool to(const std::string& from, uint32_t& to)
     {
         bool ok;
-        to = string_to_ulong(from, &ok);
-        return ok;
+        const auto val = string_to_ulong(from, &ok);
+        if (!ok)
+            return false;
+
+        return convert_to(val, to);
     }
 
     static RTTR_INLINE bool to(const std::string& from, uint64_t& to)
     {
         bool ok;
-        to = string_to_ulong_long(from, &ok);
-        return ok;
+        const auto val = string_to_ulong_long(from, &ok);
+        if (!ok)
+            return false;
+
+        return convert_to(val, to);
     }
 
     static RTTR_INLINE bool to(const std::string& from, float& to)
