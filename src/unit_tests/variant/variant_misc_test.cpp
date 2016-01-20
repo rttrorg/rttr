@@ -48,3 +48,67 @@ TEST_CASE("variant - misc", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant - swap", "[variant]")
+{
+    SECTION("self")
+    {
+        variant a = 1;
+        a.swap(a);
+
+        CHECK(a.is_valid() == true);
+    }
+
+    SECTION("both valid")
+    {
+        variant a = 12;
+        variant b = std::string("text");
+        a.swap(b);
+
+        CHECK(a.is_type<std::string>() == true);
+        CHECK(b.is_type<int>() == true);
+    }
+
+    SECTION("left valid")
+    {
+        variant a = 12;
+        variant b;
+        a.swap(b);
+
+        CHECK(a.is_valid() == false);
+        CHECK(b.is_type<int>() == true);
+    }
+
+    SECTION("right valid")
+    {
+        variant a;
+        variant b = 12;
+        a.swap(b);
+
+        CHECK(a.is_type<int>() == true);
+        CHECK(b.is_valid() == false);
+    }
+
+    SECTION("both invalid")
+    {
+        variant a, b;
+        a.swap(b);
+
+        CHECK(a.is_valid() == false);
+        CHECK(b.is_valid() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant - is_array", "[variant]")
+{
+    variant a = std::vector<int>(100, 1);
+    CHECK(a.is_array() == true);
+
+    int raw_array[100];
+    variant b = raw_array;
+    CHECK(b.is_array() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

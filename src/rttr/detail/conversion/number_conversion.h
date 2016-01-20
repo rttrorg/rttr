@@ -63,9 +63,10 @@ typename std::enable_if<is_integer<F, T>::value &&
                         bool>::type
 convert_to(const F& from, T& to)
 {
-    if ((from < 0) || ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max()))))
-        return false; // value too large
-    else if (static_cast<T>(from) > std::numeric_limits<T>::max())
+    if (from < 0)
+        return false; // value too small
+
+    if (static_cast<typename std::make_unsigned<F>::type>(from) > std::numeric_limits<T>::max())
         return false; // value too large
 
     to = static_cast<T>(from);
@@ -81,9 +82,7 @@ typename std::enable_if<is_integer<F, T>::value &&
                         bool>::type
 convert_to(const F& from, T& to)
 {
-    if ((sizeof(T) < sizeof(F)) && (from > static_cast<F>(std::numeric_limits<T>::max())))
-        return false; // value too large
-    else if (static_cast<T>(from) > std::numeric_limits<T>::max())
+    if (from > static_cast<typename std::make_unsigned<T>::type>(std::numeric_limits<T>::max()))
         return false; // value too large
 
     to = static_cast<T>(from);
@@ -165,39 +164,12 @@ convert_to(const F& from, T& to)
 // string conversion
 
 template<typename F, typename T>
-typename std::enable_if<std::is_integral<F>::value &&
-                        std::is_same<T, std::string>::value,
+typename std::enable_if<std::is_same<T, std::string>::value,
                         bool>::type
 convert_to(const F& from, T& to)
 {
     bool ok = false;
-    to = static_cast<T>(int_to_string(static_cast<int>(from), &ok));
-    return ok;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename F, typename T>
-typename std::enable_if<std::is_same<F, float>::value &&
-                        std::is_same<T, std::string>::value,
-                        bool>::type
-convert_to(const F& from, T& to)
-{
-    bool ok = false;
-    to = float_to_string(from, &ok);
-    return ok;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename F, typename T>
-typename std::enable_if<std::is_same<F, double>::value &&
-                        std::is_same<T, std::string>::value,
-                        bool>::type
-convert_to(const F& from, T& to)
-{
-    bool ok = false;
-    to = double_to_string(from, &ok);
+    to = to_string(from, &ok);
     return ok;
 }
 

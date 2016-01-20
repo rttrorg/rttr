@@ -63,11 +63,22 @@ set(SOURCE_FILES main.cpp
                  method/method_param_info_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
-                 variant/variant_conv_to_bool_test.cpp
                  variant/variant_ctor_test.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_cmp_less_test.cpp
                  variant/variant_enum_test.cpp
                  variant/variant_misc_test.cpp
+                 variant/variant_conv_to_bool.cpp
+                 variant/variant_conv_to_int8.cpp
+                 variant/variant_conv_to_int16.cpp
+                 variant/variant_conv_to_int32.cpp
+                 variant/variant_conv_to_int64.cpp
+                 variant/variant_conv_to_uint8.cpp
+                 variant/variant_conv_to_uint16.cpp
+                 variant/variant_conv_to_uint32.cpp
+                 variant/variant_conv_to_uint64.cpp
+                 variant/variant_conv_to_double.cpp
+                 variant/variant_conv_to_float.cpp
+                 variant/variant_conv_to_string.cpp
                  variant_array_view/variant_array_view_test.cpp
                  )
