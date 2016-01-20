@@ -295,11 +295,11 @@ TEST_CASE("variant::to_uint8() - from int32_t", "[variant]")
         variant var = int32_t(50);
         REQUIRE(var.can_convert<uint8_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint8(&ok) == int32_t(50));
+        CHECK(var.to_uint8(&ok) == uint8_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint8_t>()) == true);
-        CHECK(var.get_value<uint8_t>() == int32_t(50));
+        CHECK(var.get_value<uint8_t>() == uint8_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -334,7 +334,7 @@ TEST_CASE("variant::to_uint8() - from int64_t", "[variant]")
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint8_t>()) == true);
-        CHECK(var.get_value<uint8_t>() == int64_t(50));
+        CHECK(var.get_value<uint8_t>() == uint8_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -385,8 +385,8 @@ TEST_CASE("variant::to_uint8() - from uint16_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == 50);
+        CHECK(var.convert(type::get<uint8_t>()) == true);
+        CHECK(var.get_value<uint8_t>() == 50);
     }
 
     SECTION("too big")
@@ -411,8 +411,8 @@ TEST_CASE("variant::to_uint8() - from uint32_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == 50);
+        CHECK(var.convert(type::get<uint8_t>()) == true);
+        CHECK(var.get_value<uint8_t>() == 50);
     }
 
     SECTION("too big")
@@ -437,8 +437,8 @@ TEST_CASE("variant::to_uint8() - from uint64_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 50);
+        CHECK(var.convert(type::get<uint8_t>()) == true);
+        CHECK(var.get_value<uint8_t>() == 50);
     }
 
     SECTION("too big")
@@ -448,6 +448,7 @@ TEST_CASE("variant::to_uint8() - from uint64_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 0);
         CHECK(ok == false);
         CHECK(var.convert(type::get<uint8_t>()) == false);
+        CHECK(var.get_value<uint64_t>() == 1000);
     }
 }
 

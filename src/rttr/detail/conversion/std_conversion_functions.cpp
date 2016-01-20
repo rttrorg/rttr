@@ -157,7 +157,8 @@ double char_to_double(const char* source, bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string int_to_string(int value, bool* ok)
+template<typename T>
+std::string to_string_impl(T value, bool* ok)
 {
     try
     {
@@ -176,26 +177,49 @@ std::string int_to_string(int value, bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string long_long_to_string(long long value, bool* ok)
+std::string to_string(int value, bool* ok)
 {
-    try
-    {
-        std::string text = std::to_string(value);
-        if (ok)
-            *ok = true;
-        return text;
-    }
-    catch (...)
-    {
-        if (ok)
-            *ok = false;
-        return std::string();
-    }
+    return to_string_impl(value, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string float_to_string(float value, bool* ok)
+std::string to_string(long value, bool* ok)
+{
+    return to_string_impl(value, ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string to_string(long long value, bool* ok)
+{
+    return to_string_impl(value, ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string to_string(unsigned value, bool* ok)
+{
+    return to_string_impl(value, ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string to_string(unsigned long value, bool* ok)
+{
+    return to_string_impl(value, ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string to_string(unsigned long long value, bool* ok)
+{
+    return to_string_impl(value, ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string to_string(float value, bool* ok)
 {
     try
     {
@@ -215,7 +239,7 @@ std::string float_to_string(float value, bool* ok)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string double_to_string(double value, bool* ok)
+std::string to_string(double value, bool* ok)
 {
     try
     {
@@ -233,6 +257,8 @@ std::string double_to_string(double value, bool* ok)
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool string_to_bool(std::string text, bool* ok)

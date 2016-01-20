@@ -263,7 +263,7 @@ TEST_CASE("variant::to_int32() - from int8_t", "[variant]")
     {
         variant var = int8_t(-60);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int8_t(-60));
+        CHECK(var.to_int32(&ok) == int32_t(-60));
         CHECK(ok == true);
         CHECK(var.convert(type::get<int32_t>()) == true);
     }
@@ -278,18 +278,18 @@ TEST_CASE("variant::to_int32() - from int16_t", "[variant]")
         variant var = int16_t(32760);
         REQUIRE(var.can_convert<int32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int16_t(32760));
+        CHECK(var.to_int32(&ok) == int32_t(32760));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == int16_t(32760));
+        CHECK(var.get_value<int32_t>() == int32_t(32760));
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int16_t(-32760);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int16_t(-32760));
+        CHECK(var.to_int32(&ok) == int32_t(-32760));
         CHECK(ok == true);
         CHECK(var.convert(type::get<int32_t>()) == true);
     }
@@ -330,18 +330,18 @@ TEST_CASE("variant::to_int32() - from int64_t", "[variant]")
         variant var = int64_t(2147483640);
         REQUIRE(var.can_convert<int32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int64_t(2147483640));
+        CHECK(var.to_int32(&ok) == int32_t(2147483640));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<int32_t>()) == true);
-        CHECK(var.get_value<int32_t>() == int64_t(2147483640));
+        CHECK(var.get_value<int32_t>() == int32_t(2147483640));
     }
 
     SECTION("valid conversion negative")
     {
         variant var = int64_t(-2147483640);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == int64_t(-2147483640));
+        CHECK(var.to_int32(&ok) == int32_t(-2147483640));
         CHECK(ok == true);
         CHECK(var.convert(type::get<int32_t>()) == true);
     }
@@ -372,13 +372,13 @@ TEST_CASE("variant::to_int32() - from uint8_t", "[variant]")
     SECTION("valid conversion positive")
     {
         variant var = uint8_t(50);
-        REQUIRE(var.can_convert<uint8_t>() == true);
+        REQUIRE(var.can_convert<int32_t>() == true);
         bool ok = false;
         CHECK(var.to_int32(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
-        CHECK(var.get_value<uint8_t>() == 50);
+        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.get_value<int32_t>() == 50);
     }
 }
 
@@ -389,13 +389,13 @@ TEST_CASE("variant::to_int32() - from uint16_t", "[variant]")
     SECTION("valid conversion positive")
     {
         variant var = uint16_t(32760);
-        REQUIRE(var.can_convert<uint16_t>() == true);
+        REQUIRE(var.can_convert<int32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint16_t(32760));
+        CHECK(var.to_int32(&ok) == int32_t(32760));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == uint16_t(32760));
+        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.get_value<int32_t>() == int32_t(32760));
     }
 }
 
@@ -406,13 +406,13 @@ TEST_CASE("variant::to_int32() - from uint32_t", "[variant]")
     SECTION("valid conversion positive")
     {
         variant var = uint32_t(32760);
-        REQUIRE(var.can_convert<uint32_t>() == true);
+        REQUIRE(var.can_convert<int32_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint32_t(32760));
+        CHECK(var.to_int32(&ok) == int32_t(32760));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == uint32_t(32760));
+        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.get_value<int32_t>() == int32_t(32760));
     }
 
     SECTION("too big")
@@ -435,11 +435,11 @@ TEST_CASE("variant::to_int32() - from uint64_t", "[variant]")
         variant var = uint64_t(2147483640);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_int32(&ok) == uint64_t(2147483640));
+        CHECK(var.to_int32(&ok) == int32_t(2147483640));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == uint64_t(2147483640));
+        CHECK(var.convert(type::get<int32_t>()) == true);
+        CHECK(var.get_value<int32_t>() == int32_t(2147483640));
     }
 
     SECTION("too big")

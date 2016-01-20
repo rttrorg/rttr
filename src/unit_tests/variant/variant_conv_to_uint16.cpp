@@ -260,11 +260,11 @@ TEST_CASE("variant::to_uint16() - from int16_t", "[variant]")
         variant var = int16_t(50);
         REQUIRE(var.can_convert<uint16_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint16(&ok) == int16_t(50));
+        CHECK(var.to_uint16(&ok) == uint16_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == int16_t(50));
+        CHECK(var.get_value<uint16_t>() == uint16_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -286,11 +286,11 @@ TEST_CASE("variant::to_uint16() - from int32_t", "[variant]")
         variant var = int32_t(50);
         REQUIRE(var.can_convert<uint16_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint16(&ok) == int32_t(50));
+        CHECK(var.to_uint16(&ok) == uint16_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == int32_t(50));
+        CHECK(var.get_value<uint16_t>() == uint16_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -325,7 +325,7 @@ TEST_CASE("variant::to_uint16() - from int64_t", "[variant]")
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint16_t>()) == true);
-        CHECK(var.get_value<uint16_t>() == int64_t(50));
+        CHECK(var.get_value<uint16_t>() == uint16_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -393,8 +393,8 @@ TEST_CASE("variant::to_uint16() - from uint32_t", "[variant]")
         CHECK(var.to_uint16(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == 50);
+        CHECK(var.convert(type::get<uint16_t>()) == true);
+        CHECK(var.get_value<uint16_t>() == 50);
     }
 
     SECTION("too big")
@@ -419,8 +419,8 @@ TEST_CASE("variant::to_uint16() - from uint64_t", "[variant]")
         CHECK(var.to_uint16(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 50);
+        CHECK(var.convert(type::get<uint16_t>()) == true);
+        CHECK(var.get_value<uint16_t>() == 50);
     }
 
     SECTION("too big")
@@ -430,6 +430,7 @@ TEST_CASE("variant::to_uint16() - from uint64_t", "[variant]")
         CHECK(var.to_uint16(&ok) == 0);
         CHECK(ok == false);
         CHECK(var.convert(type::get<uint16_t>()) == false);
+        CHECK(var.get_value<uint64_t>() == uint64_t(72767));
     }
 }
 

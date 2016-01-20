@@ -252,11 +252,11 @@ TEST_CASE("variant::to_uint32() - from int16_t", "[variant]")
         variant var = int16_t(50);
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint32(&ok) == int16_t(50));
+        CHECK(var.to_uint32(&ok) == uint32_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == int16_t(50));
+        CHECK(var.get_value<uint32_t>() == uint32_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -282,7 +282,7 @@ TEST_CASE("variant::to_uint32() - from int32_t", "[variant]")
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == int32_t(50));
+        CHECK(var.get_value<uint32_t>() == uint32_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -304,11 +304,11 @@ TEST_CASE("variant::to_uint32() - from int64_t", "[variant]")
         variant var = int64_t(50);
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint32(&ok) == int64_t(50));
+        CHECK(var.to_uint32(&ok) == uint32_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint32_t>()) == true);
-        CHECK(var.get_value<uint32_t>() == int64_t(50));
+        CHECK(var.get_value<uint32_t>() == uint32_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -394,8 +394,8 @@ TEST_CASE("variant::to_uint32() - from uint64_t", "[variant]")
         CHECK(var.to_uint32(&ok) == 3147483640);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 3147483640);
+        CHECK(var.convert(type::get<uint32_t>()) == true);
+        CHECK(var.get_value<uint32_t>() == 3147483640);
     }
 
     SECTION("too big")
@@ -405,6 +405,7 @@ TEST_CASE("variant::to_uint32() - from uint64_t", "[variant]")
         CHECK(var.to_uint32(&ok) == 0);
         CHECK(ok == false);
         CHECK(var.convert(type::get<uint32_t>()) == false);
+        CHECK(var.get_value<uint64_t>() == uint64_t(5147483640UL));
     }
 }
 

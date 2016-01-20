@@ -230,7 +230,7 @@ TEST_CASE("variant::to_uint64() - from int8_t", "[variant]")
         variant var = int8_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == 50);
+        CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
@@ -256,11 +256,11 @@ TEST_CASE("variant::to_uint64() - from int16_t", "[variant]")
         variant var = int16_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == int16_t(50));
+        CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == int16_t(50));
+        CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -282,11 +282,11 @@ TEST_CASE("variant::to_uint64() - from int32_t", "[variant]")
         variant var = int32_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == int32_t(50));
+        CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == int32_t(50));
+        CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
     SECTION("invalid conversion negative")
@@ -308,11 +308,11 @@ TEST_CASE("variant::to_uint64() - from int64_t", "[variant]")
         variant var = int64_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == int64_t(50));
+        CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == int64_t(50));
+        CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
     SECTION("invalid conversion negative")
