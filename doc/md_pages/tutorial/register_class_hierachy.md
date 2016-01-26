@@ -5,7 +5,7 @@ Within the current C++ standard it is not possible to extract a class hierarchy 
 Therefore the programmer has to put a certain macro inside every class in order to provide this information. 
 Additionally this macro will be needed to retrieve the information about the most derived [type](@ref rttr::type) of a current instance.
 
-The macro you have to insert in the class declaration is named @ref RTTR_ENABLE()
+The macro you have to insert in the class declaration is named: @ref RTTR_ENABLE()
 
 Suppose we have a base struct called `Base`:
 ~~~~{.cpp}
@@ -37,7 +37,7 @@ So it is best practice to use the same order like in your class.
 RTTR supports to register even virtual base classes. 
 @remark The only limitation you have is: It is **not** possible to register a class twice in the same class hierarchy.
 
-When no class hierarchies are used at all, it is not necessary to use the macro. However it is best practice to place it inside every class.
+When no class hierarchies are used at all, it is **not necessary** to use the macro. However it is best practice to place it inside every class.
 This macro will also enable the possible usage of an own cast operator called: `rttr_cast`.
 How this will be done, is discussed in the [next](@ref rttr_type_rttr_cast_page "Using rttr_cast") chapter.
 
@@ -45,6 +45,7 @@ Summary
 -------
 - to retrieve meta information of derived and base classes or using @ref rttr::rttr_cast "rttr_cast",
   it is necessary to place the macro: @ref RTTR_ENABLE() inside every class declaration
+- the macro is **not** needed when working with classes which are not inherited, e.g. POD classes
 
 <hr>
 

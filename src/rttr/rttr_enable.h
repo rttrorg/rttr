@@ -47,7 +47,7 @@ namespace detail
 
 /*!
  * \brief This macro is necessary in order to retrieve type information about the
- *        inheritance graph of a class.
+ *        inheritance graph of a class. When there is no inheritance graph, the macro is **not** needed, e.g. for POD types.
  *
  * Put the macro inside every class, where you need the complete inheritance information about the class type.
  *
