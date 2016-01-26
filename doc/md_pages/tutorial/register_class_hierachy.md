@@ -45,7 +45,7 @@ Summary
 -------
 - to retrieve meta information of derived and base classes or using @ref rttr::rttr_cast "rttr_cast",
   it is necessary to place the macro: @ref RTTR_ENABLE() inside every class declaration
-- the macro is **not** needed when working with classes which are not inherited, e.g. POD classes
+- the macro is **not** needed when working with classes which will be not inherited, e.g. POD classes
 
 <hr>
 
