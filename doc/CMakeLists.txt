@@ -140,7 +140,7 @@ if (BUILD_WEBSITE_DOCU)
     set(DOXYGEN_CUSTOM_HTML_FOOTER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/footer.html")
     set(DOXYGEN_CUSTOM_HTML_HEADER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/header.html")
     set(DOXYGEN_CUSTOM_HTML_STYLESHEET  "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/css/custom-doxygen.css")
-
+    set(DOXYGEN_CUSTOM_HTML_DIR         "master")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_LAYOUT_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_LAYOUT_FILE})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_INDEX_FILE_IN} ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE})

@@ -32,7 +32,9 @@ env:
   global:
     - ARCH_FLAGS_x86='-m32'
     - ARCH_FLAGS_x86_64=''
-    - secure: iwgYkkpbrmO5g2MgO1OTt/ljLl1NrFFvjO/2635hLg2MCdz6IlZcEMw/2n4luNofPJYP9xUs2WqAa/n5CtGbYat/Y3MjIgMaH+g491jMAbBS3QPrHLkyOfzJZT8QKZFJ4BQNUYCu9pD2pNwe66D21CkPkWDJmEcWyPFQEs8ReMfik8S1/ZY2FmJmcYRv9/QisBMCaOCBedvrq739GNL8tD8J5O04GEa21R4pZJukVp2DzHRa7wrhjqacDTnnseevXHgFae06sLR6xAeqpWpOaMnZqI8oUso2nKhRnpyNkFj1LXWfYaZRuvNYb8aWq3PyzAwKwVRkvRqb3f8GXFWFVQ5Qow+4VmbCeh9QW2qmAy11UBORs7x+3e+xKo2OalnZvjVakJFDVVvpcw+pfOKov4yuWA3VISREbajVaRI7xOZvI7VgSQ3EiwcNI9ac7ayfjXKbXb5s5Jyqc0s+CB2BFLVHDGhxsiVnu/2EOHahNjylcMi/hWfpn66BjMDS8xxlZicQOzn+QPstBwaUZT9gomfAiRObhttSH+QMdw0u+8lS22D6F1sGD+6/1KhcDPWdZUKH9IrGIg3vYB7ZhlI+KFu3ZzJJXop65ut2t55excXkEIBRaq98sm62MMwBjCTGYPfUi3X0kVQXBHa6u1VBK8o/HcIgOGDt0EjuHwnZgSU=
+    - BUILD_DOCU=false
+    - secure: "k1o939GwFc0AJY8cCprAeF9OYUs00Ad+ggrhzxtw4GLdjn0CYGnqrftHtkJ5WySDXj7rnEL4qur1oO19OeVGufhLQTV0+yian8meYppk7rlPIOOl6ygltTxMxNgvmkqCsHC1J1l+7vMEJUm1MunWedCnORWySoK2pZ89nAiMmzY/fjpsOKR8vpXQw5BTZPR775lYZyzbm8/ZY8eATd4EJGH+4YH/sTzYFa9SL2J/ieWR+SvALNLos7x6Civ0Nl6LXx5hXMenpSUpAbu7wBm6KDoL6vGHYa7oKrnJ5BAqOP4poNXF000riy3TENSO1sf+dGQJO8O2IQwe352VKw+paQ4s0SGe5lWAmn2hexU+dZ7rNO0LwA+bdt8XGIXZo2lvdHgsO2Ymj/wPLrqYHGwBgGceBilyD7ZAcKQ/OvHmvkHCytMSVhftcllsOZFwDen/5FliNTRI+Cs68pZUiT2PgT44t/8i5X3F1o8FlV9T+wDsPdH909g/pOFt4U3N8aGxst9bmrQvYAhVmPKtuxjz7ycBfsOTxON9HfTQFEGv3KCREdN8lzi/J9FBCFTtIwHbBKvEeaXrZ3oHSa9UoVG5VQtw14aBdzs7K2MrEYMxg4LCfSHe8ecYbRg1LM9uSdK5dcn/A9wLKEdFmU/pvbl3ryaF4KpL7w0fvNMC/k6o5tc="
+    - secure: "1ogFHnhUroT3nA1HxyXN5/Hoek6LcTazRPTGpYjKAge8To/x614D6R9j2yu0EDOZalolq0VeOONnHLnss6aPGeMvvHH1rvoKTDQsFjsm1fB6qLRr/qpZXs+G4mxStarxrXr5487hEkPP10fEi/PSOx8Gme6Kny+tXHxDzP04ljcZYVvxWfkb+cQBCnYupbHk4hzfKRmPYcUn6lCPyOGIzwsHQQI/LubmkiU+wQ0zcLLsTZSThk+zt6FlxYWykZGL24yrqmoXRszx8dR14cWPzvkxVeEOe3OY9mNix1Z7ki2eVeEk8m7d70yPmV5p8F2/nPGC7kUXTvPrAL62CcE5moHubijJwKXJM6nBQJYCPGygnvRnWxnoqO/9JpDuds4Cv+tbJMgo2ViLPsYk3BgMnYo4z+p4JViN9P4/jzbhsVtWd4rnXmPt9j4FkED+Eyt8BUzXFdTAPpuzwZSvmYzzR8MdZE/telCAcWUoiS35IQcWJ0UmPpNZfR1Lll0cWQ+dTmjNETJvwognuaTAexL7m0uMhX6KQIZfap2H0w+CIua7+jl6eb9iyvXv9vZZEUCH2kTWnYXqBmDGRHG3tEp97o5+yWQm1qjweLvKAMRirdkSaZEL0lrsJ8mBS6Y+PQwAQxlu+P3pFEJ6uU3fJrKyciuWnVDZKyddIrJEZorXjOA="
 
 matrix:
   include:
@@ -40,6 +42,23 @@ matrix:
       osx_image: xcode7
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'lftp']
+      after_success:
+        - |
+          echo "current branch: ${TRAVIS_BRANCH}"
+          if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+            echo "Upload documentation..."
+            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mirror -R ${TRAVIS_BUILD_DIR}/build/doc_website/master doc_tmp"
+            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
+            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
+          fi
+      env: BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
       
     - os: linux
       compiler: gcc
@@ -99,7 +118,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
-      
+     
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
@@ -119,6 +138,18 @@ install:
     else
       brew install cmake
     fi
+  #######################################################################################
+  # Install recent Doxygen
+  #######################################################################################
+  - |
+    if [[ "${BUILD_DOCU}" == "true" ]]; then
+      DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.linux.bin.tar.gz"
+      mkdir doxygen && travis_retry wget --quiet -O - ${DOXYGEN_URL} | tar --strip-components=1 -xz -C doxygen
+      export PATH=${DEPS_DIR}/doxygen/bin:${PATH}
+    fi
+  #######################################################################################
+  # Install vera++
+  #######################################################################################
   - if [[ "${CHECK_FORMATTING}" == "true" ]]; then brew install vera++; fi
     
 before_script:
@@ -130,6 +161,7 @@ before_script:
       -DCMAKE_CXX_COMPILER=${COMPILER}
       -DCMAKE_BUILD_TYPE=${CONF}
       -DCMAKE_CXX_FLAGS="$ARCH_FLAGS $GCOV_FLAGS"
+      -DBUILD_WEBSITE_DOCU=$BUILD_DOCU
       ..)
 
 script:
@@ -148,6 +180,11 @@ script:
     if [[ "${UNIT_TESTS}" == "true" ]]; then
       # Run unit tests on two cores
       (cd build && make run_tests -j2)
+    fi
+  - |
+    if [[ "${BUILD_DOCU}" == "true" ]]; then
+      # Run unit tests on two cores
+      (cd build && make doc_website -j2)
     fi
   - |
     if [[ "${VALGRIND}" == "true" ]]; then
