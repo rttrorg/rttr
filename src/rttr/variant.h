@@ -125,12 +125,12 @@ namespace detail
  * ----------
  * The \ref variant class offers three possibilities to convert to a new type.
  * - \ref convert(const type& target_type) "convert(const type& target_type)" - convert the variant internally to a new type
- * - \ref variant::convert(bool* ok) "convert\<T\>(bool *ok)" - convert the contained value to an internally default created value of type \p T
+ * - \ref variant::convert(bool* ok) "convert\<T\>(bool *ok)" - convert the contained value to an internally default created value of type \p T and returns this new value
  * - \ref variant::convert(T& value) "convert\<T\>(T& value)" - convert the contained value to a given \p value of type \p T
  *
  * See following example code:
  * \code{.cpp}
- *  variant var = 500;                          // var contains an int
+ *  variant var = 23;                           // var contains an int
  *  if(var.can_convert<std::string>())          // check whether conversion is possible
  *  {
  *    var.convert(type::get<std::string>());    // var contains now a std::string, with value => "23"

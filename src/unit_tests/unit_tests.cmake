@@ -54,6 +54,7 @@ set(SOURCE_FILES main.cpp
                  constructor/constructor_invoke_test.cpp
                  constructor/constructor_misc_test.cpp
                  enumeration/test_enumeration_reflection.cpp
+                 enumeration/enumeration_misc.cpp
                  method/method_invoke_defaults_test.cpp
                  method/method_access_level_test.cpp
                  method/test_method_reflection.cpp

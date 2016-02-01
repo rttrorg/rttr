@@ -757,16 +757,19 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
         static RTTR_INLINE std::unique_ptr<detail::enumeration_wrapper_base> create_custom_enum(Args&&...args)
         {
             using namespace detail;
-            static const std::size_t enum_count = count_type<enum_data<Enum_Type>, as_type_list_t<raw_type_t<Args>...>>::value;
+
+            static const std::size_t enum_count = count_type<enum_data<Enum_Type>, type_list<raw_type_t<Args>...>>::value;
             static const std::size_t global_enum_count = count_if<is_enum_data, raw_type_t<Args>...>::value;
 
             static_assert(enum_count == global_enum_count, "Invalid 'value' pair for enumeration type provided, please specify values only for enums of type 'Enum_Type'.");
 
             using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
+
             auto enum_wrapper = detail::make_unique<enumeration_wrapper<E_Type,
                                                                         enum_count,
                                                                         metadata_count::value>>(get_enum_values<E_Type>(std::forward<Args>(args)...),
                                                                                                 std::move(get_metadata(std::forward<Args>(args)...)));
+
 
             return std::move(enum_wrapper);
         }
