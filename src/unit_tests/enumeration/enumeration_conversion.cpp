@@ -85,9 +85,6 @@ TEST_CASE("enumeration - name_to_value()", "[enumeration]")
 {
     enumeration e = type::get_by_name("access_t").get_enumeration();
 
-    // osx test..
-    CHECK(e.name_to_value("read").is_type<access_t>()   == true);
-
     REQUIRE(e.name_to_value("read").is_type<access_t>()   == true);
     REQUIRE(e.name_to_value("write").is_type<access_t>()  == true);
     REQUIRE(e.name_to_value("write").is_type<access_t>()  == true);
@@ -95,6 +92,9 @@ TEST_CASE("enumeration - name_to_value()", "[enumeration]")
     CHECK(e.name_to_value("read").get_value<access_t>()   == access_t::read);
     CHECK(e.name_to_value("write").get_value<access_t>()  == access_t::write);
     CHECK(e.name_to_value("exec").get_value<access_t>()   == access_t::exec);
+
+    // invalid
+    CHECK(e.name_to_value("some name").is_valid()   == false);
 
     // negative
     e = type::get_by_name("access_unknown").get_enumeration();
