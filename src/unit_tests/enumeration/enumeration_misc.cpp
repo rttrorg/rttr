@@ -225,6 +225,11 @@ TEST_CASE("enumeration - get_metadata()", "[enumeration]")
     REQUIRE(var.is_type<std::string>() == true);
 
     CHECK(var.get_value<std::string>() == "List of Weekdays.");
+
+    // negative test
+    e = type::get_by_name("weekday_unknown").get_enumeration();
+    var = e.get_metadata(ui_metainfo::description);
+    REQUIRE(var.is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

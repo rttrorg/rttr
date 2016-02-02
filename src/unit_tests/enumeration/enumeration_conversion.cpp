@@ -25,48 +25,69 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef TEST_ENUMERATION_REFLECTION_H_
-#define TEST_ENUMERATION_REFLECTION_H_
+#include <rttr/registration>
 
-#include <rttr/type>
+using namespace rttr;
+using namespace std;
 
+#include <iostream>
+#include <memory>
+#include <functional>
 
-struct enum_test
+#include <catch/catch.hpp>
+
+enum class access
 {
-    enum E_Alignment
-    {
-        AlignLeft       = 0x0001,
-        AlignRight      = 0x0002,
-        AlignHCenter    = 0x0004,
-        AlignJustify    = 0x0008
-    };
-
-    enum class E_Orientation
-    {
-        Horizontal      = 0,
-        Vertical        = 1
-    };
-
-    enum_test() : _alignment(E_Alignment::AlignLeft), _orientation(E_Orientation::Vertical)
-    {}
-
-    enum_test(E_Alignment align, E_Orientation orient) : _alignment(align), _orientation(orient)
-    {}
-
-
-    E_Alignment     _alignment;
-    E_Orientation   _orientation;
+    read = 1,
+    write = 2,
+    exec = 4
 };
 
-enum E_DayOfWeek
-{
-    Monday      = 0,
-    Tuesday     = 1,
-    Wednesday   = 2,
-    Thursday    = 3,
-    Friday      = 4,
-    Saturday    = 5,
-    Sunday      = 6
-};
 
-#endif // TEST_ENUMERATION_REFLECTION_H_
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_REGISTRATION
+{
+    registration::enumeration<access>("access")
+    (
+        value("read",    access::read),
+        value("write",   access::write),
+        value("exec", access::exec)
+    );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("enumeration - value_to_name()", "[enumeration]")
+{
+    enumeration e = type::get_by_name("access").get_enumeration();
+
+    CHECK(e.value_to_name(access::read)     == "read");
+    CHECK(e.value_to_name(access::write)    == "write");
+    CHECK(e.value_to_name(access::exec)     == "exec");
+
+    // negative
+    e = type::get_by_name("access_unknown").get_enumeration();
+    CHECK(e.value_to_name(access::read).empty() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("enumeration - name_to_value()", "[enumeration]")
+{
+    enumeration e = type::get_by_name("access").get_enumeration();
+
+    REQUIRE(e.name_to_value("read").is_type<access>()   == true);
+    REQUIRE(e.name_to_value("write").is_type<access>()  == true);
+    REQUIRE(e.name_to_value("write").is_type<access>()  == true);
+
+    CHECK(e.name_to_value("read").get_value<access>()   == access::read);
+    CHECK(e.name_to_value("write").get_value<access>()  == access::write);
+    CHECK(e.name_to_value("exec").get_value<access>()   == access::exec);
+
+    // negative
+    e = type::get_by_name("access_unknown").get_enumeration();
+    REQUIRE(e.name_to_value("write").is_type<access>() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
