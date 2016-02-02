@@ -94,9 +94,6 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
 
         variant name_to_value(const std::string& name) const
         {
-            if (name.empty())
-                return variant();
-
             for (const auto& item : m_enum_data_list)
             {
                 if (item.get_name() == name)

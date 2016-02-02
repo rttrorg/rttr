@@ -36,7 +36,7 @@ using namespace std;
 
 #include <catch/catch.hpp>
 
-enum class access
+enum class access_t : int
 {
     read = 1,
     write = 2,
@@ -48,11 +48,11 @@ enum class access
 
 RTTR_REGISTRATION
 {
-    registration::enumeration<access>("access")
+    registration::enumeration<access_t>("access_t")
     (
-        value("read",    access::read),
-        value("write",   access::write),
-        value("exec", access::exec)
+        value("read",   access_t::read),
+        value("write",  access_t::write),
+        value("exec",   access_t::exec)
     );
 }
 
@@ -60,34 +60,45 @@ RTTR_REGISTRATION
 
 TEST_CASE("enumeration - value_to_name()", "[enumeration]")
 {
-    enumeration e = type::get_by_name("access").get_enumeration();
+    enumeration e = type::get_by_name("access_t").get_enumeration();
 
-    CHECK(e.value_to_name(access::read)     == "read");
-    CHECK(e.value_to_name(access::write)    == "write");
-    CHECK(e.value_to_name(access::exec)     == "exec");
+    // normal
+    CHECK(e.value_to_name(access_t::read)     == "read");
+    CHECK(e.value_to_name(access_t::write)    == "write");
+    CHECK(e.value_to_name(access_t::exec)     == "exec");
+
+    // implicit
+    CHECK(e.value_to_name(4)                  == "exec");
+
+    // invalid
+    CHECK(e.value_to_name("test")             == "");
+    CHECK(e.value_to_name(42)                 == "");
 
     // negative
     e = type::get_by_name("access_unknown").get_enumeration();
-    CHECK(e.value_to_name(access::read).empty() == true);
+    CHECK(e.value_to_name(access_t::read).empty() == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("enumeration - name_to_value()", "[enumeration]")
 {
-    enumeration e = type::get_by_name("access").get_enumeration();
+    enumeration e = type::get_by_name("access_t").get_enumeration();
 
-    REQUIRE(e.name_to_value("read").is_type<access>()   == true);
-    REQUIRE(e.name_to_value("write").is_type<access>()  == true);
-    REQUIRE(e.name_to_value("write").is_type<access>()  == true);
+    // osx test..
+    CHECK(e.name_to_value("read").is_type<access_t>()   == true);
 
-    CHECK(e.name_to_value("read").get_value<access>()   == access::read);
-    CHECK(e.name_to_value("write").get_value<access>()  == access::write);
-    CHECK(e.name_to_value("exec").get_value<access>()   == access::exec);
+    REQUIRE(e.name_to_value("read").is_type<access_t>()   == true);
+    REQUIRE(e.name_to_value("write").is_type<access_t>()  == true);
+    REQUIRE(e.name_to_value("write").is_type<access_t>()  == true);
+
+    CHECK(e.name_to_value("read").get_value<access_t>()   == access_t::read);
+    CHECK(e.name_to_value("write").get_value<access_t>()  == access_t::write);
+    CHECK(e.name_to_value("exec").get_value<access_t>()   == access_t::exec);
 
     // negative
     e = type::get_by_name("access_unknown").get_enumeration();
-    REQUIRE(e.name_to_value("write").is_type<access>() == false);
+    REQUIRE(e.name_to_value("write").is_type<access_t>() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
