@@ -29,7 +29,7 @@
 #include "rttr/type.h"
 #include "rttr/variant.h"
 
-#include <cstdlib>
+#include <cmath>
 #include <algorithm>
 
 namespace rttr
