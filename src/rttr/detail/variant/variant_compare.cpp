@@ -25,9 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/enumeration/enumeration_helper.h"
-#include "rttr/enumeration.h"
-#include "rttr/argument.h"
+#include "rttr/detail/variant/variant_compare.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
+
+#include <type_traits>
 
 namespace rttr
 {
@@ -36,64 +38,46 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string get_enumeration_name(const argument& arg)
+bool variant_compare_equal(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
 {
-    return arg.get_type().get_enumeration().value_to_name(arg);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool to_enumeration(const std::string& from, argument& to)
-{
-    auto& var_ref = to.get_value<std::reference_wrapper<variant>>();
-    variant& var = var_ref.get();
-    const type enum_type = var.get_value<type>();
-    if (variant var_tmp = enum_type.get_enumeration().name_to_value(from))
+    if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
     {
-        var = var_tmp;
-        return var.is_valid();
+        return almost_equal(lhs.to_double(), rhs.to_double());
     }
     else
     {
-        return false;
+        return (lhs.to_int64() == rhs.to_int64());
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool to_enumeration(const variant& from, argument& to)
+bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
 {
-    auto& var_ref = to.get_value<std::reference_wrapper<variant>>();
-    variant& var = var_ref.get();
-    const type enum_type = var.get_value<type>();
-    const enumeration e = enum_type.get_enumeration();
-    const type underlying_enum_type = e.get_underlying_type();
-    for (const auto& value : e.get_values())
+    if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
     {
-        variant var_cpy = value;
-        const bool ret = var_cpy.convert(underlying_enum_type);
-        if (ret && var_cpy == from)
-        {
-            var = value;
-            return var.is_valid();
-        }
-    }
-
-    return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool is_variant_with_enum(const argument& arg)
-{
-    if (arg.is_type<std::reference_wrapper<variant>>())
-    {
-        const auto& var = arg.get_value<std::reference_wrapper<variant>>().get();
-        return (var.is_type<type>() && var.get_value<type>().is_enumeration());
+        if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
+            return (lhs.to_double() < rhs.to_double());
+        else
+            return (lhs.to_int64() < rhs.to_int64());
     }
     else
     {
-        return false;
+        variant lhs_tmp;
+        if (lhs.convert(rhs_type, lhs_tmp))
+            return lhs_tmp.compare_less(rhs);
+
+        if (!lhs.is_nullptr() && rhs.is_nullptr())
+            return false;
+
+        // as last try, do a string conversion
+        bool ok1 = false;
+        bool ok2 = false;
+        auto ret = (lhs.to_string(&ok1) < rhs.to_string(&ok2));
+        if (ok1 && ok2)
+            return ret;
+        else
+            return (lhs_type < rhs_type);
     }
 }
 

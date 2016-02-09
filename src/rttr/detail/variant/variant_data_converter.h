@@ -87,6 +87,8 @@ struct default_type_converter
             return Type_Converter::to(value, arg.get_value<double>());
         else if (target_type == type::get<std::string>())
             return Type_Converter::to(value, arg.get_value<std::string>());
+        else if (is_variant_with_enum(arg))
+            return Type_Converter::to_enum(value, arg);
         else
             return false;
     }
@@ -185,6 +187,11 @@ struct convert_from
     {
         return false;
     }
+
+    static RTTR_INLINE bool to_enum(const T& from, argument& to)
+    {
+        return false;
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -272,6 +279,11 @@ struct RTTR_API convert_from<bool>
         to = (from ? "true" : "false");
         return true;
     }
+
+    static RTTR_INLINE bool to_enum(const bool& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -356,6 +368,11 @@ struct RTTR_API convert_from<char>
         to = std::string(1, from);
         return true;
     }
+
+    static RTTR_INLINE bool to_enum(const char& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -435,6 +452,11 @@ struct RTTR_API convert_from<int8_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const int8_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -512,6 +534,11 @@ struct RTTR_API convert_from<int16_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const int16_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -588,6 +615,11 @@ struct RTTR_API convert_from<int32_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const int32_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -662,6 +694,11 @@ struct RTTR_API convert_from<int64_t>
     static RTTR_INLINE bool to(const int64_t& from, std::string& to)
     {
         return convert_to(from, to);
+    }
+
+    static RTTR_INLINE bool to_enum(const int64_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
     }
 };
 
@@ -745,6 +782,11 @@ struct RTTR_API convert_from<uint8_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const uint8_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -823,6 +865,11 @@ struct RTTR_API convert_from<uint16_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const uint16_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -899,6 +946,11 @@ struct RTTR_API convert_from<uint32_t>
     {
         return convert_to(from, to);
     }
+
+    static RTTR_INLINE bool to_enum(const uint32_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -973,6 +1025,11 @@ struct RTTR_API convert_from<uint64_t>
     static RTTR_INLINE bool to(const uint64_t& from, std::string& to)
     {
         return convert_to(from, to);
+    }
+
+    static RTTR_INLINE bool to_enum(const uint64_t& from, argument& to)
+    {
+        return to_enumeration(from, to);
     }
 };
 
@@ -1049,6 +1106,11 @@ struct RTTR_API convert_from<float>
     static RTTR_INLINE bool to(const float& from, std::string& to)
     {
         return convert_to(from, to);
+    }
+
+    static RTTR_INLINE bool to_enum(const float& from, argument& to)
+    {
+        return to_enumeration(from, to);
     }
 };
 
@@ -1130,6 +1192,11 @@ struct RTTR_API convert_from<double>
     static RTTR_INLINE bool to(const double& from, std::string& to)
     {
         return convert_to(from, to);
+    }
+
+    static RTTR_INLINE bool to_enum(const double& from, argument& to)
+    {
+        return to_enumeration(from, to);
     }
 };
 
@@ -1248,6 +1315,11 @@ struct RTTR_API convert_from<std::string>
     {
         to = from;
         return true;
+    }
+
+    static RTTR_INLINE bool to_enum(const std::string& from, argument& to)
+    {
+        return to_enumeration(from, to);
     }
 
 };
@@ -1369,6 +1441,10 @@ struct convert_from_enum
         return (to.empty() == false);
     }
 
+    static RTTR_INLINE bool to_enum(const T& from, argument& to)
+    {
+        return false;
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

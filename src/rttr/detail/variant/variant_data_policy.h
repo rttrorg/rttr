@@ -167,6 +167,13 @@ static RTTR_INLINE bool is_floating_point(const type& type)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static RTTR_INLINE bool almost_equal(double p1, double p2)
+{
+    return (std::abs(p1 - p2) * 1000000000000. <= std::min(std::abs(p1), std::abs(p2)));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T>
 enable_if_t<std::is_pointer<T>::value, bool>
 static RTTR_INLINE is_nullptr(T& val)
@@ -286,11 +293,18 @@ struct variant_data_base_policy
                 }
                 else
                 {
-                    variant var_tmp;
-                    if (rhs.convert(lhs_type, var_tmp))
-                        return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
-                    else if (lhs.convert(rhs_type, var_tmp))
-                        return (var_tmp.compare_equal(rhs));
+                    if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
+                    {
+                        return variant_compare_equal(lhs, lhs_type, rhs, rhs_type);
+                    }
+                    else
+                    {
+                        variant var_tmp;
+                        if (rhs.convert(lhs_type, var_tmp))
+                            return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
+                        else if (lhs.convert(rhs_type, var_tmp))
+                            return (var_tmp.compare_equal(rhs));
+                    }
                 }
 
                 return false;

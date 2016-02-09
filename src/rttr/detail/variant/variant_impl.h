@@ -273,7 +273,7 @@ RTTR_INLINE detail::enable_if_t<std::is_arithmetic<T>::value, T> variant::conver
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE detail::enable_if_t<!std::is_arithmetic<T>::value, T> variant::convert_impl(bool* ok) const
+RTTR_INLINE detail::enable_if_t<!std::is_arithmetic<T>::value && !std::is_enum<T>::value, T> variant::convert_impl(bool* ok) const
 {
     static_assert(std::is_default_constructible<T>::value, "The given type T has no default constructor."
                                                            "You can only convert to a type, with a default constructor.");
@@ -283,6 +283,20 @@ RTTR_INLINE detail::enable_if_t<!std::is_arithmetic<T>::value, T> variant::conve
         *ok = could_convert;
 
     return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE detail::enable_if_t<std::is_enum<T>::value, T> variant::convert_impl(bool* ok) const
+{
+    variant var = type::get<T>();
+    auto wrapper = std::ref(var);
+    const bool could_convert = convert<std::reference_wrapper<variant>>(wrapper);
+    if (ok)
+        *ok = could_convert;
+
+    return var.get_value<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

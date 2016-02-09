@@ -25,9 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
+#include "unit_tests/variant/test_enums.h"
 
-#include <rttr/registration>
+#include <catch/catch.hpp>
+#include <rttr/type>
 
 using namespace rttr;
 
@@ -418,6 +419,28 @@ TEST_CASE("variant::to_bool() - from uint64_t", "[variant]")
         CHECK(var.convert<bool>() == false);
         CHECK(var.convert(type::get<bool>()) == true);
         CHECK(var.get_value<bool>() == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_bool() - from enum", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = enum_bool::ON;
+        REQUIRE(var.can_convert<bool>() == true);
+        CHECK(var.to_bool() == true);
+
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
+    }
+
+    SECTION("invalid conversion")
+    {
+        variant var = enum_int8_t::VALUE_4;
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert(type::get<bool>()) == false);
     }
 }
 

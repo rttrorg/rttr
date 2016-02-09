@@ -206,11 +206,15 @@ bool variant::can_convert(const type& target_type) const
 
     const bool source_is_arithmetic = source_type.is_arithmetic();
     const bool target_is_arithmetic = target_type.is_arithmetic();
+    const bool target_is_enumeration = target_type.is_enumeration();
     const type string_type = type::get<std::string>();
 
     return ((source_is_arithmetic && target_is_arithmetic) ||
             (source_is_arithmetic && target_type == string_type) ||
-            (source_type == string_type && target_is_arithmetic));
+            (source_type == string_type && target_is_arithmetic) ||
+            (source_type.is_enumeration() && target_is_arithmetic) ||
+            (source_is_arithmetic && target_is_enumeration) ||
+            (source_type == string_type && target_is_enumeration));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -233,7 +237,9 @@ bool variant::convert(const type& target_type, variant& target_var) const
     }
     else if ((source_is_arithmetic && target_is_arithmetic) ||
             (source_is_arithmetic && target_type == string_type) ||
-            (source_type == string_type && target_is_arithmetic))
+            (source_type == string_type && target_is_arithmetic) ||
+            (source_type.is_enumeration() && target_is_arithmetic) ||
+            (source_type.is_enumeration() && target_type == string_type))
     {
         if (target_type == type::get<bool>())
         {
@@ -313,6 +319,14 @@ bool variant::convert(const type& target_type, variant& target_var) const
             if ((ok = try_basic_type_conversion(value)))
                 target_var = std::move(value);
         }
+    }
+    else if ((source_is_arithmetic || source_type == string_type)
+             && target_type.is_enumeration())
+    {
+        variant var = target_type;
+        auto wrapper = std::ref(var);
+        if ((ok = try_basic_type_conversion(wrapper)))
+            target_var = std::move(var);
     }
     else
     {

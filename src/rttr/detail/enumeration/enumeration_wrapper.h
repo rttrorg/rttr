@@ -102,7 +102,6 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
             return variant();
         }
 
-        void add_metadata(detail::metadata data) const { }
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
     private:

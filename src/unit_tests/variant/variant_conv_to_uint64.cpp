@@ -25,9 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
+#include "unit_tests/variant/test_enums.h"
 
-#include <rttr/registration>
+#include <catch/catch.hpp>
+#include <rttr/type>
 
 using namespace rttr;
 
@@ -390,6 +391,32 @@ TEST_CASE("variant::to_uint64() - from uint64_t", "[variant]")
 
         CHECK(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 3147483640);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_uint64() - from enum", "[variant]")
+{
+    SECTION("valid conversion positive")
+    {
+        variant var = enum_uint64_t::VALUE_1;
+        REQUIRE(var.can_convert<uint64_t>() == true);
+        bool ok = false;
+        CHECK(var.to_uint64(&ok) == 17446744073709551615U);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<uint64_t>()) == true);
+        CHECK(var.get_value<uint64_t>() == 17446744073709551615U);
+    }
+
+    SECTION("too small")
+    {
+        variant var = enum_int8_t::VALUE_NEG;
+        bool ok = false;
+        CHECK(var.to_uint64(&ok) == 0);
+        CHECK(ok == false);
+        CHECK(var.convert(type::get<uint64_t>()) == false);
     }
 }
 

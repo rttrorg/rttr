@@ -28,6 +28,7 @@
 set(HEADER_FILES test_classes.h
                  method/test_method_reflection.h
                  type/test_type.h
+                 variant/test_enums.h
                  version.rc.in
                  )
 
@@ -66,7 +67,6 @@ set(SOURCE_FILES main.cpp
                  variant/variant_ctor_test.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_cmp_less_test.cpp
-                 variant/variant_enum_test.cpp
                  variant/variant_misc_test.cpp
                  variant/variant_conv_to_bool.cpp
                  variant/variant_conv_to_int8.cpp
@@ -80,5 +80,6 @@ set(SOURCE_FILES main.cpp
                  variant/variant_conv_to_double.cpp
                  variant/variant_conv_to_float.cpp
                  variant/variant_conv_to_string.cpp
+                 variant/variant_conv_to_enum.cpp
                  variant_array_view/variant_array_view_test.cpp
                  )

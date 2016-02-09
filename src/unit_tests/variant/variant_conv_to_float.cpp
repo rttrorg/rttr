@@ -25,9 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
+#include "unit_tests/variant/test_enums.h"
 
-#include <rttr/registration>
+#include <catch/catch.hpp>
+#include <rttr/type>
 
 using namespace rttr;
 
@@ -395,6 +396,32 @@ TEST_CASE("variant::to_float() - from uint64_t", "[variant]")
 
         CHECK(var.convert(type::get<float>()) == true);
         CHECK(var.get_value<float>() == 2147483640.0f);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_float() - from enum", "[variant]")
+{
+    SECTION("valid conversion positive")
+    {
+        variant var = enum_int32_t::VALUE_1;
+        REQUIRE(var.can_convert<float>() == true);
+        bool ok = false;
+        CHECK(var.to_float(&ok) == 2147483630.0f);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<float>()) == true);
+        CHECK(var.get_value<float>() == 2147483630.0f);
+    }
+
+    SECTION("valid conversion negative")
+    {
+        variant var = enum_int32_t::VALUE_NEG;
+        bool ok = false;
+        CHECK(var.to_float(&ok) == -2147483630.0f);
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<float>()) == true);
     }
 }
 

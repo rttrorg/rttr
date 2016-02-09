@@ -121,6 +121,24 @@ TEST_CASE("variant::operator==() - basic", "[variant]")
         CHECK((a == b) == false);
         CHECK((a != b) == true);
     }
+
+    SECTION("double - int")
+    {
+        variant a = 12.1234;
+        variant b = 12;
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
+
+    SECTION("int - double")
+    {
+        variant a = 12;
+        variant b = 12.1234;
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -137,11 +155,14 @@ TEST_CASE("variant::operator==() - enums", "[variant]")
     variant a = COLOR::RED;
     variant b = 0;
 
-    CHECK((a == b) == false);
-    CHECK((a != b) == true);
+    CHECK((a == b) == true);
+    CHECK((a != b) == false);
+
+    // commutative
+    CHECK((b == a) == true);
+    CHECK((b != a) == false);
 
     b = COLOR::RED;
-
     CHECK((a == b) == true);
     CHECK((a != b) == false);
 

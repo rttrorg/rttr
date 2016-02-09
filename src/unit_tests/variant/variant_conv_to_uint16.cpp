@@ -25,9 +25,10 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
+#include "unit_tests/variant/test_enums.h"
 
-#include <rttr/registration>
+#include <catch/catch.hpp>
+#include <rttr/type>
 
 using namespace rttr;
 
@@ -431,6 +432,41 @@ TEST_CASE("variant::to_uint16() - from uint64_t", "[variant]")
         CHECK(ok == false);
         CHECK(var.convert(type::get<uint16_t>()) == false);
         CHECK(var.get_value<uint64_t>() == uint64_t(72767));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_uint16() - from enum", "[variant]")
+{
+    SECTION("valid conversion positive")
+    {
+        variant var = enum_uint16_t::VALUE_1;
+        REQUIRE(var.can_convert<uint16_t>() == true);
+        bool ok = false;
+        CHECK(var.to_uint16(&ok) == 65530);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<uint16_t>()) == true);
+        CHECK(var.get_value<uint16_t>() == 65530);
+    }
+
+    SECTION("too big")
+    {
+        variant var = enum_uint32_t::VALUE_1;
+        bool ok = false;
+        CHECK(var.to_uint16(&ok) == 0);
+        CHECK(ok == false);
+        CHECK(var.convert(type::get<uint16_t>()) == false);
+    }
+
+    SECTION("too small")
+    {
+        variant var = enum_int8_t::VALUE_NEG;
+        bool ok = false;
+        CHECK(var.to_uint16(&ok) == 0);
+        CHECK(ok == false);
+        CHECK(var.convert(type::get<uint16_t>()) == false);
     }
 }
 

@@ -25,49 +25,119 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/variant/variant_compare_less.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
+#ifndef TEST_ENUMS_H_
+#define TEST_ENUMS_H_
 
-#include <type_traits>
+#include <cstdint>
 
-namespace rttr
+enum class variant_enum_test : uint8_t
 {
-namespace detail
-{
+    VALUE_0 = 0,
+    VALUE_1 = 1,
+    VALUE_2 = 2
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
+enum class variant_enum_test_big : int32_t
 {
-    if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
-    {
-        if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
-            return (lhs.to_double() < rhs.to_double());
-        else
-            return (lhs.to_int64() < rhs.to_int64());
-    }
-    else
-    {
-        variant lhs_tmp;
-        if (lhs.convert(rhs_type, lhs_tmp))
-            return lhs_tmp.compare_less(rhs);
-
-        if (!lhs.is_nullptr() && rhs.is_nullptr())
-            return false;
-
-        // as last try, do a string conversion
-        bool ok1 = false;
-        bool ok2 = false;
-        auto ret = (lhs.to_string(&ok1) < rhs.to_string(&ok2));
-        if (ok1 && ok2)
-            return ret;
-        else
-            return (lhs_type < rhs_type);
-    }
-}
+    VALUE_0 = 500,
+    VALUE_1 = 501,
+    VALUE_2 = 502
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-} // end namespace detail
-} // end namespace rttr
+enum class enum_bool : bool
+{
+    ON = true,
+    OFF = false
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_int8_t : int8_t
+{
+    VALUE_1 = 100,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4,
+    VALUE_NEG = -100
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_int16_t : int16_t
+{
+    VALUE_1 = 32760,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4,
+    VALUE_NEG = -32760
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_int32_t : int32_t
+{
+    VALUE_1 = 2147483630,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4,
+    VALUE_NEG = -2147483630
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_int64_t : int64_t
+{
+    VALUE_1 = 8223372036854775807L,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4,
+    VALUE_NEG = -8223372036854775807L
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_uint8_t : uint8_t
+{
+    VALUE_1 = 200U,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_uint16_t : uint16_t
+{
+    VALUE_1 = 65530,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_uint32_t : uint32_t
+{
+    VALUE_1 = 4147483630U,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class enum_uint64_t : uint64_t
+{
+    VALUE_1 = 17446744073709551615U,
+    VALUE_2,
+    VALUE_3,
+    VALUE_4
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#endif // TEST_ENUMS_H_

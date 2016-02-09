@@ -25,11 +25,25 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <catch/catch.hpp>
+#include "unit_tests/variant/test_enums.h"
 
+#include <catch/catch.hpp>
 #include <rttr/registration>
 
 using namespace rttr;
+
+RTTR_REGISTRATION
+{
+    registration::enumeration<enum_int64_t>("enum_int64_t")
+    (
+        value("VALUE_1", enum_int64_t::VALUE_1),
+        value("VALUE_2", enum_int64_t::VALUE_2),
+        value("VALUE_3", enum_int64_t::VALUE_3),
+        value("VALUE_4", enum_int64_t::VALUE_4),
+        value("VALUE_X", enum_int64_t::VALUE_NEG)
+    )
+    ;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +70,7 @@ TEST_CASE("variant::to_string() - from bool", "[variant]")
 
     CHECK(var.convert<std::string>(&ok) == "true");
     CHECK(ok == true);
-    CHECK(var.convert(type::get<std::string>()) == true);
+    REQUIRE(var.convert(type::get<std::string>()) == true);
     CHECK(var.get_value<std::string>() == "true");
 
     // false case
@@ -66,7 +80,7 @@ TEST_CASE("variant::to_string() - from bool", "[variant]")
 
     CHECK(var.convert<std::string>(&ok) == "false");
     CHECK(ok == true);
-    CHECK(var.convert(type::get<std::string>()) == true);
+    REQUIRE(var.convert(type::get<std::string>()) == true);
     CHECK(var.get_value<std::string>() == "false");
 }
 
@@ -82,7 +96,7 @@ TEST_CASE("variant::to_string() - from std::string", "[variant]")
 
     var = std::string("-12");
     CHECK(var.to_string() == "-12");
-    CHECK(var.convert(type::get<std::string>()) == true);
+    REQUIRE(var.convert(type::get<std::string>()) == true);
     CHECK(var.get_value<std::string>() == "-12");
 }
 
@@ -98,7 +112,7 @@ TEST_CASE("variant::to_string() - from int", "[variant]")
         CHECK(var.to_string(&ok) == "2147483640");
 
         CHECK(ok == true);
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "2147483640");
     }
 
@@ -124,7 +138,7 @@ TEST_CASE("variant::to_string() - from float", "[variant]")
         CHECK(var.to_string(&ok) == "214749");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "214749");
     }
 
@@ -150,7 +164,7 @@ TEST_CASE("variant::to_string() - from double", "[variant]")
         CHECK(var.to_string(&ok) == "5000000000.9");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "5000000000.9");
     }
 
@@ -176,7 +190,7 @@ TEST_CASE("variant::to_string() - from int8_t", "[variant]")
         CHECK(var.to_string(&ok) == "50");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "50");
     }
 
@@ -202,7 +216,7 @@ TEST_CASE("variant::to_string() - from int16_t", "[variant]")
         CHECK(var.to_string(&ok) == "32760");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "32760");
     }
 
@@ -228,7 +242,7 @@ TEST_CASE("variant::to_string() - from int32_t", "[variant]")
         CHECK(var.to_string(&ok) == "2147483640");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "2147483640");
     }
 
@@ -280,7 +294,7 @@ TEST_CASE("variant::to_string() - from uint8_t", "[variant]")
         CHECK(var.to_string(&ok) == "50");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "50");
     }
 }
@@ -297,7 +311,7 @@ TEST_CASE("variant::to_string() - from uint16_t", "[variant]")
         CHECK(var.to_string(&ok) == "32760");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "32760");
     }
 }
@@ -331,8 +345,38 @@ TEST_CASE("variant::to_string() - from uint64_t", "[variant]")
         CHECK(var.to_string(&ok) == "2147483640");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "2147483640");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+enum class unregisterd_enum { VALUE_1 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::to_string() - from enum", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = enum_int64_t::VALUE_1;
+        REQUIRE(var.can_convert<int64_t>() == true);
+        bool ok = false;
+        CHECK(var.to_string(&ok) == "VALUE_1");
+        CHECK(ok == true);
+
+        REQUIRE(var.convert(type::get<std::string>()) == true);
+        CHECK(var.get_value<std::string>() == "VALUE_1");
+    }
+
+    SECTION("invalid conversion")
+    {
+        variant var = unregisterd_enum::VALUE_1;
+        bool ok = false;
+        CHECK(var.to_string(&ok) == "");
+        CHECK(ok == false);
+        CHECK(var.convert(type::get<std::string>()) == false);
     }
 }
 
