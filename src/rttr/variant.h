@@ -783,7 +783,7 @@ class RTTR_API variant
         detail::enable_if_t<!std::is_arithmetic<T>::value && !std::is_enum<T>::value, T> convert_impl(bool* ok = nullptr) const;
 
         template<typename T>
-        detail::enable_if_t<std::is_enum<T>::value , T> convert_impl(bool* ok = nullptr) const;
+        detail::enable_if_t<std::is_enum<T>::value, T> convert_impl(bool* ok = nullptr) const;
 
         /*!
          * \brief Returns a pointer to the underlying object pointer wrapped in a smart_ptr.
