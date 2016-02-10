@@ -73,6 +73,32 @@ TEST_CASE("variant::to_double() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::to_double() - from char", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = char('A');
+        REQUIRE(var.can_convert<double>() == true);
+        bool ok = false;
+        CHECK(var.to_double(&ok) == 65.0);
+        CHECK(ok == true);
+
+        REQUIRE(var.convert(type::get<double>()) == true);
+        CHECK(var.get_value<double>() == 65.0);
+    }
+
+    SECTION("valid conversion negative")
+    {
+        variant var = char(-60);
+        bool ok = false;
+        CHECK(var.to_double(&ok) == -60.0);
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<double>()) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::to_double() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")

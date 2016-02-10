@@ -73,6 +73,32 @@ TEST_CASE("variant::to_float() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::to_float() - from char", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = char('A');
+        REQUIRE(var.can_convert<float>() == true);
+        bool ok = false;
+        CHECK(var.to_float(&ok) == 65.0);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<float>()) == true);
+        CHECK(var.get_value<float>() == 65.0);
+    }
+
+    SECTION("valid conversion negative")
+    {
+        variant var = char(-60);
+        bool ok = false;
+        CHECK(var.to_float(&ok) == -60.0);
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<float>()) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::to_float() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")

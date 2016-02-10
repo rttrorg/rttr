@@ -73,6 +73,32 @@ TEST_CASE("variant::to_uint8() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::to_uint8() - from char", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = char('A');
+        REQUIRE(var.can_convert<uint8_t>() == true);
+        bool ok = false;
+        CHECK(var.to_uint8(&ok) == 65);
+        CHECK(ok == true);
+
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
+        CHECK(var.get_value<uint8_t>() == 65);
+    }
+
+    SECTION("invalid conversion negative")
+    {
+        variant var = char(-60);
+        bool ok = false;
+        CHECK(var.to_uint8(&ok) == 0);
+        CHECK(ok == false);
+        CHECK(var.convert(type::get<uint8_t>()) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::to_uint8() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")

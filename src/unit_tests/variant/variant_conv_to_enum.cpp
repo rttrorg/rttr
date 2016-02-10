@@ -47,6 +47,15 @@ RTTR_REGISTRATION
         value("VALUE_1", variant_enum_test_big::VALUE_1),
         value("VALUE_2", variant_enum_test_big::VALUE_2)
     );
+
+    registration::enumeration<enum_int8_t>("enum_int8_t")
+    (
+        value("VALUE_1", enum_int8_t::VALUE_1),
+        value("VALUE_2", enum_int8_t::VALUE_2),
+        value("VALUE_3", enum_int8_t::VALUE_3),
+        value("VALUE_4", enum_int8_t::VALUE_4),
+        value("VALUE_NEG", enum_int8_t::VALUE_NEG)
+    );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +109,36 @@ TEST_CASE("variant:to enum - from bool", "[variant]")
 
         CHECK(var.convert(type::get<variant_enum_test_big>()) == false);
         CHECK(var.is_type<bool>() == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant:to enum - from char", "[variant]")
+{
+    SECTION("valid conversion positive")
+    {
+        variant var = char('d'); // the dec value for ACII char 'd' is 100
+        REQUIRE(var.can_convert<enum_int8_t>() == true);
+        bool ok = false;
+        CHECK(var.convert<enum_int8_t>(&ok) == enum_int8_t::VALUE_1);
+        CHECK(ok == true);
+
+        CHECK(var.convert(type::get<enum_int8_t>()) == true);
+        REQUIRE(var.is_type<enum_int8_t>() == true);
+        CHECK(var.get_value<enum_int8_t>() == enum_int8_t::VALUE_1);
+    }
+
+    SECTION("invalid conversion")
+    {
+        variant var = char('+');
+        REQUIRE(var.can_convert<enum_int8_t>() == true);
+        bool ok = false;
+        var.convert<enum_int8_t>(&ok); // undefined return value.. thats why no compare is done.
+        CHECK(ok == false);
+
+        CHECK(var.convert(type::get<enum_int8_t>()) == false);
+        CHECK(var.is_type<char>() == true);
     }
 }
 

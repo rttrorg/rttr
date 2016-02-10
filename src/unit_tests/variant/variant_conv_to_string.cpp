@@ -86,6 +86,32 @@ TEST_CASE("variant::to_string() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::to_string() - from char", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = char('A');
+        REQUIRE(var.can_convert<std::string>() == true);
+        bool ok = false;
+        CHECK(var.to_string(&ok) == "A");
+        CHECK(ok == true);
+
+        REQUIRE(var.convert(type::get<std::string>()) == true);
+        CHECK(var.get_value<std::string>() == "A");
+    }
+
+    SECTION("valid conversion negative")
+    {
+        variant var = char(-60);
+        bool ok = false;
+        CHECK(var.to_string(&ok) == "Ä");
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<std::string>()) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::to_string() - from std::string", "[variant]")
 {
     variant var = std::string("23");

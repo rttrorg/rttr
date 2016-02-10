@@ -104,6 +104,24 @@ TEST_CASE("variant::operator==() - basic", "[variant]")
         CHECK((a != b) == false);
     }
 
+    SECTION("int[neg] - uint8_t")
+    {
+        variant a = -12;
+        variant b = static_cast<uint8_t>(12);
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
+
+     SECTION("uint8_t - int[neg]")
+    {
+        variant a = static_cast<uint8_t>(12);
+        variant b = -12;
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
+
     SECTION("double - float")
     {
         variant a = 12.5f;

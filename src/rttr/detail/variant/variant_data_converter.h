@@ -329,26 +329,22 @@ struct RTTR_API convert_from<char>
 
     static RTTR_INLINE bool to(const char& from, uint8_t& to)
     {
-        to = static_cast<uint8_t>(from);
-        return true;
+        return convert_to(from, to);
     }
 
     static RTTR_INLINE bool to(const char& from, uint16_t& to)
     {
-        to = static_cast<uint16_t>(from);
-        return true;
+        return convert_to(from, to);
     }
 
     static RTTR_INLINE bool to(const char& from, uint32_t& to)
     {
-        to = static_cast<uint32_t>(from);
-        return true;
+        return convert_to(from, to);
     }
 
     static RTTR_INLINE bool to(const char& from, uint64_t& to)
     {
-        to = static_cast<uint64_t>(from);
-        return true;
+        return convert_to(from, to);
     }
 
     static RTTR_INLINE bool to(const char& from, float& to)

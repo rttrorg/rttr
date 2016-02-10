@@ -67,35 +67,23 @@ TEST_CASE("variant::to_bool() - from bool", "[variant]")
 
 TEST_CASE("variant::to_bool() - from char", "[variant]")
 {
-    variant var = "true";
-    REQUIRE(var.is_valid() == true);
-    REQUIRE(var.can_convert<bool>() == true);
+    SECTION("valid conversion")
+    {
+        // true
+        variant var = char('A');
+        REQUIRE(var.can_convert<bool>() == true);
+        CHECK(var.to_bool() == true);
 
-    CHECK(var.to_bool() == true);
-    CHECK(var.convert<bool>() == true);
-    CHECK(var.convert(type::get<bool>()) == true);
-    CHECK(var.get_value<bool>() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == true);
 
-    var = "fdsfsdf";
-    CHECK(var.to_bool() == true);
-    CHECK(var.convert<bool>() == true);
-    CHECK(var.convert(type::get<bool>()) == true);
-    CHECK(var.get_value<bool>() == true);
+        // false
+        var = char('\0');
+        CHECK(var.to_bool() == false);
 
-    var = "false";
-    CHECK(var.to_bool() == false);
-    var = "false   ";
-    CHECK(var.to_bool() == false);
-    var = "   false   ";
-    CHECK(var.to_bool() == false);
-    var = "   FALSE   ";
-    CHECK(var.to_bool() == false);
-    var = " \n  FALSE\n";
-    CHECK(var.to_bool() == false);
-
-    CHECK(var.convert<bool>() == false);
-    CHECK(var.convert(type::get<bool>()) == true);
-    CHECK(var.get_value<bool>() == false);
+        REQUIRE(var.convert(type::get<bool>()) == true);
+        CHECK(var.get_value<bool>() == false);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -434,6 +422,15 @@ TEST_CASE("variant::to_bool() - from enum", "[variant]")
 
         CHECK(var.convert(type::get<bool>()) == true);
         CHECK(var.get_value<bool>() == true);
+
+        // test with non-bool enum
+        var = variant_enum_test::VALUE_0;
+        CHECK(var.to_bool() == false);
+        CHECK(var.convert(type::get<bool>()) == true);
+
+        var = variant_enum_test::VALUE_1;
+        CHECK(var.to_bool() == true);
+        CHECK(var.convert(type::get<bool>()) == true);
     }
 
     SECTION("invalid conversion")

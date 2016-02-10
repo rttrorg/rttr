@@ -73,6 +73,32 @@ TEST_CASE("variant::to_int64() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::to_int64() - from char", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        variant var = char('A');
+        REQUIRE(var.can_convert<int64_t>() == true);
+        bool ok = false;
+        CHECK(var.to_int64(&ok) == 65);
+        CHECK(ok == true);
+
+        REQUIRE(var.convert(type::get<int64_t>()) == true);
+        CHECK(var.get_value<int64_t>() == 65);
+    }
+
+    SECTION("valid conversion negative")
+    {
+        variant var = char(-60);
+        bool ok = false;
+        CHECK(var.to_int64(&ok) == -60);
+        CHECK(ok == true);
+        CHECK(var.convert(type::get<int64_t>()) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::to_int64() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")
