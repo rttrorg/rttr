@@ -129,8 +129,7 @@ struct convert_from
 
     static RTTR_INLINE bool to(const T& from, char& to)
     {
-        to = static_cast<char>(from ? 1 : 0);
-        return true;
+        return false;
     }
 
     static RTTR_INLINE bool to(const T& from, int8_t& to)
