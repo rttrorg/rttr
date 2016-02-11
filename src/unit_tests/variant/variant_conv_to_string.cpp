@@ -104,7 +104,7 @@ TEST_CASE("variant::to_string() - from char", "[variant]")
     {
         variant var = char(-60);
         bool ok = false;
-        CHECK(var.to_string(&ok) == "Ä");
+        CHECK(var.to_string(&ok) == std::string(1, char(-60)));
         CHECK(ok == true);
         CHECK(var.convert(type::get<std::string>()) == true);
     }
