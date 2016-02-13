@@ -50,7 +50,41 @@ TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
 
         variant var;
         variant_array_view c = var.create_array_view();
+
         CHECK(c.is_valid() == false);
+        CHECK(c.is_dynamic() == false);
+        CHECK(c.get_rank() == 0);
+        CHECK(c.get_type().is_valid() == false);
+        CHECK(c.get_size() == 0);
+        CHECK(c.get_size(0) == 0);
+        CHECK(c.get_size(0, 0) == 0);
+        CHECK(c.get_size_variadic({}) == 0);
+
+        CHECK(c.set_size(0) == false);
+        CHECK(c.set_size(0, 0) == false);
+        CHECK(c.set_size(0, 0, 0) == false);
+        CHECK(c.set_size_variadic(0, {}) == false);
+
+        CHECK(c.set_value(0) == false);
+        CHECK(c.set_value(0, 0) == false);
+        CHECK(c.set_value(0, 0, 0) == false);
+        CHECK(c.set_value(0, 0, 0, 0) == false);
+        CHECK(c.set_value_variadic({}, 0) == false);
+
+        CHECK(c.get_value(0).is_valid() == false);
+        CHECK(c.get_value(0, 0).is_valid() == false);
+        CHECK(c.get_value(0, 0, 0).is_valid() == false);
+        CHECK(c.get_value_variadic({}).is_valid() == false);
+
+        CHECK(c.insert_value(0, 0) == false);
+        CHECK(c.insert_value(0, 0, 0) == false);
+        CHECK(c.insert_value(0, 0, 0, 0) == false);
+        CHECK(c.insert_value_variadic({}, 0) == false);
+
+        CHECK(c.remove_value(0) == false);
+        CHECK(c.remove_value(0, 0) == false);
+        CHECK(c.remove_value(0, 0, 0) == false);
+        CHECK(c.remove_value_variadic({}) == false);
    }
 
 
