@@ -73,6 +73,23 @@ struct ctor_invoke_arg_test
     ctor_invoke_arg_test(int, int, int, int, int, int, int) {}
 };
 
+struct ctor_func_invoke_arg_test
+{
+    static ctor_func_invoke_arg_test create() { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int, int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int, int, int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int, int, int, int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int, int, int, int, int) { return ctor_func_invoke_arg_test(); }
+    static ctor_func_invoke_arg_test create(int, int, int, int, int, int, int) { return ctor_func_invoke_arg_test(); }
+
+private:
+    ctor_func_invoke_arg_test() {}
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_REGISTRATION
 {
     registration::class_<ctor_invoke_test>("ctor_invoke_test")
@@ -117,6 +134,30 @@ RTTR_REGISTRATION
         .constructor<int, int, int, int, int, int>()
         .constructor<int, int, int, int, int, int, int>()
         ;
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
+    registration::class_<ctor_func_invoke_arg_test>("ctor_func_invoke_arg_test")
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)()>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(static_cast<ctor_func_invoke_arg_test(*)(int, int, int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        ;
+#else
+        registration::class_<ctor_func_invoke_arg_test>("ctor_func_invoke_arg_test")
+        .constructor(select_overload<ctor_func_invoke_arg_test(void)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        .constructor(select_overload<ctor_func_invoke_arg_test(int, int, int, int, int, int, int)>(&ctor_func_invoke_arg_test::create))
+        ;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +300,7 @@ TEST_CASE("constructor - invoke variadic", "[constructor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - invoke positive", "[constructor]")
+TEST_CASE("constructor - invoke ctor valid", "[constructor]")
 {
     const auto ctor_list = type::get<ctor_invoke_arg_test>().get_constructors();
     REQUIRE(ctor_list.size() == 8);
@@ -272,6 +313,41 @@ TEST_CASE("constructor - invoke positive", "[constructor]")
     CHECK(ctor_list[5].invoke(1, 2, 3, 4, 5).is_valid() == true);
     CHECK(ctor_list[6].invoke(1, 2, 3, 4, 5, 6).is_valid() == true);
     CHECK(ctor_list[7].invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke func ctor valid", "[constructor]")
+{
+    const auto ctor_list = type::get<ctor_func_invoke_arg_test>().get_constructors();
+    REQUIRE(ctor_list.size() == 8);
+
+    CHECK(ctor_list[0].invoke().is_valid() == true);
+    CHECK(ctor_list[1].invoke(1).is_valid() == true);
+    CHECK(ctor_list[2].invoke(1, 2).is_valid() == true);
+    CHECK(ctor_list[3].invoke(1, 2, 3).is_valid() == true);
+    CHECK(ctor_list[4].invoke(1, 2, 3, 4).is_valid() == true);
+    CHECK(ctor_list[5].invoke(1, 2, 3, 4, 5).is_valid() == true);
+    CHECK(ctor_list[6].invoke(1, 2, 3, 4, 5, 6).is_valid() == true);
+    CHECK(ctor_list[7].invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke ctor invalid", "[constructor]")
+{
+    constructor ctor = type::get_by_name("ctor_invoke_arg_test").get_constructor();
+
+    CHECK(ctor.invoke(1).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke ctor func invalid", "[constructor]")
+{
+    constructor ctor = type::get_by_name("ctor_func_invoke_arg_test").get_constructor();
+
+    CHECK(ctor.invoke(1).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
