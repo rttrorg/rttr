@@ -57,7 +57,7 @@ TEST_CASE("variant::to_uint64() - from bool", "[variant]")
 
     CHECK(var.convert<uint64_t>(&ok) == 1);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<uint64_t>()) == true);
+    REQUIRE(var.convert(type::get<uint64_t>()) == true);
     CHECK(var.get_value<uint64_t>() == 1);
 
     // false case
@@ -67,7 +67,7 @@ TEST_CASE("variant::to_uint64() - from bool", "[variant]")
 
     CHECK(var.convert<uint64_t>(&ok) == 0);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<uint64_t>()) == true);
+    REQUIRE(var.convert(type::get<uint64_t>()) == true);
     CHECK(var.get_value<uint64_t>() == 0);
 }
 
@@ -110,7 +110,7 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
         CHECK(var.to_uint64(&ok) == 17446744073709551615UL);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 17446744073709551615UL);
     }
 
@@ -163,7 +163,7 @@ TEST_CASE("variant::to_uint64() - from int", "[variant]")
         CHECK(var.to_uint64(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 50);
     }
 
@@ -189,7 +189,7 @@ TEST_CASE("variant::to_uint64() - from float", "[variant]")
         CHECK(var.to_uint64(&ok) == 214748);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 214748);
     }
 
@@ -224,7 +224,7 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
         CHECK(var.to_uint64(&ok) == 174407329551615);
 
         CHECK(ok == true);
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 174407329551615);
     }
 
@@ -243,7 +243,7 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
-        CHECK(var.convert(type::get<uint64_t>()) == false);
+        REQUIRE(var.convert(type::get<uint64_t>()) == false);
         CHECK(var.get_value<double>() == 19446744073709551615.2);
     }
 }
@@ -260,7 +260,7 @@ TEST_CASE("variant::to_uint64() - from int8_t", "[variant]")
         CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 50);
     }
 
@@ -286,7 +286,7 @@ TEST_CASE("variant::to_uint64() - from int16_t", "[variant]")
         CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
@@ -312,7 +312,7 @@ TEST_CASE("variant::to_uint64() - from int32_t", "[variant]")
         CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
@@ -338,7 +338,7 @@ TEST_CASE("variant::to_uint64() - from int64_t", "[variant]")
         CHECK(var.to_uint64(&ok) == uint64_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == uint64_t(50));
     }
 
@@ -364,7 +364,7 @@ TEST_CASE("variant::to_uint64() - from uint8_t", "[variant]")
         CHECK(var.to_uint64(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 50);
     }
 }
@@ -381,7 +381,7 @@ TEST_CASE("variant::to_uint64() - from uint16_t", "[variant]")
         CHECK(var.to_uint64(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 50);
     }
 }
@@ -398,7 +398,7 @@ TEST_CASE("variant::to_uint64() - from uint32_t", "[variant]")
         CHECK(var.to_uint64(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 50);
     }
 }
@@ -415,7 +415,7 @@ TEST_CASE("variant::to_uint64() - from uint64_t", "[variant]")
         CHECK(var.to_uint64(&ok) == 3147483640);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 3147483640);
     }
 }
@@ -432,7 +432,7 @@ TEST_CASE("variant::to_uint64() - from enum", "[variant]")
         CHECK(var.to_uint64(&ok) == 17446744073709551615U);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint64_t>()) == true);
+        REQUIRE(var.convert(type::get<uint64_t>()) == true);
         CHECK(var.get_value<uint64_t>() == 17446744073709551615U);
     }
 

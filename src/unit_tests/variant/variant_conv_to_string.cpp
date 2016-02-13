@@ -294,7 +294,7 @@ TEST_CASE("variant::to_string() - from int64_t", "[variant]")
         CHECK(var.to_string(&ok) == "9023372036854775807");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "9023372036854775807");
     }
 
@@ -354,7 +354,7 @@ TEST_CASE("variant::to_string() - from uint32_t", "[variant]")
         CHECK(var.to_string(&ok) == "32760");
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<std::string>()) == true);
+        REQUIRE(var.convert(type::get<std::string>()) == true);
         CHECK(var.get_value<std::string>() == "32760");
     }
 }

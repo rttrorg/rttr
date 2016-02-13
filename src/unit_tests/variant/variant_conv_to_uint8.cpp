@@ -57,7 +57,7 @@ TEST_CASE("variant::to_uint8() - from bool", "[variant]")
 
     CHECK(var.convert<uint8_t>(&ok) == 1);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<uint8_t>()) == true);
+    REQUIRE(var.convert(type::get<uint8_t>()) == true);
     CHECK(var.get_value<uint8_t>() == 1);
 
     // false case
@@ -67,7 +67,7 @@ TEST_CASE("variant::to_uint8() - from bool", "[variant]")
 
     CHECK(var.convert<uint8_t>(&ok) == 0);
     CHECK(ok == true);
-    CHECK(var.convert(type::get<uint8_t>()) == true);
+    REQUIRE(var.convert(type::get<uint8_t>()) == true);
     CHECK(var.get_value<uint8_t>() == 0);
 }
 
@@ -109,7 +109,7 @@ TEST_CASE("variant::to_uint8() - from std::string", "[variant]")
         CHECK(var.to_uint8(&ok) == 23);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 23);
     }
 
@@ -159,7 +159,7 @@ TEST_CASE("variant::to_uint8() - from int", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 
@@ -194,7 +194,7 @@ TEST_CASE("variant::to_uint8() - from float", "[variant]")
         CHECK(var.to_uint8(&ok) == 1);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 1);
     }
 
@@ -229,7 +229,7 @@ TEST_CASE("variant::to_uint8() - from double", "[variant]")
         CHECK(var.to_uint8(&ok) == 1);
 
         CHECK(ok == true);
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 1);
     }
 
@@ -264,7 +264,7 @@ TEST_CASE("variant::to_uint8() - from int8_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 
@@ -290,7 +290,7 @@ TEST_CASE("variant::to_uint8() - from int16_t", "[variant]")
         CHECK(var.to_uint8(&ok) == int16_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == int16_t(50));
     }
 
@@ -325,7 +325,7 @@ TEST_CASE("variant::to_uint8() - from int32_t", "[variant]")
         CHECK(var.to_uint8(&ok) == uint8_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == uint8_t(50));
     }
 
@@ -360,7 +360,7 @@ TEST_CASE("variant::to_uint8() - from int64_t", "[variant]")
         CHECK(var.to_uint8(&ok) == int64_t(50));
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == uint8_t(50));
     }
 
@@ -395,7 +395,7 @@ TEST_CASE("variant::to_uint8() - from uint8_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 }
@@ -412,7 +412,7 @@ TEST_CASE("variant::to_uint8() - from uint16_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 
@@ -438,7 +438,7 @@ TEST_CASE("variant::to_uint8() - from uint32_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 
@@ -464,7 +464,7 @@ TEST_CASE("variant::to_uint8() - from uint64_t", "[variant]")
         CHECK(var.to_uint8(&ok) == 50);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 50);
     }
 
@@ -491,7 +491,7 @@ TEST_CASE("variant::to_uint8() - from enum", "[variant]")
         CHECK(var.to_uint8(&ok) == 200);
         CHECK(ok == true);
 
-        CHECK(var.convert(type::get<uint8_t>()) == true);
+        REQUIRE(var.convert(type::get<uint8_t>()) == true);
         CHECK(var.get_value<uint8_t>() == 200);
     }
 
