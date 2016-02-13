@@ -87,6 +87,12 @@ TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
         CHECK(c.remove_value_variadic({}) == false);
    }
 
+   SECTION("invalid")
+   {
+       variant var = 2;
+       variant_array_view a = var.create_array_view();
+       CHECK(a.is_valid() == false);
+   }
 
    SECTION("full")
    {
