@@ -70,7 +70,8 @@ RTTR_REGISTRATION
         // native ctor with metadata
         .constructor<int, int>(registration::protected_access)
         (
-            metadata(23, 42)
+            metadata(23, 42),
+            default_arguments(0)
         )
         .constructor<bool, bool>(registration::private_access)
         (
@@ -90,7 +91,8 @@ RTTR_REGISTRATION
         // ctor via function register, with metadata
         .constructor(&ctor_access_level_test::create_object_5) // default, should be "public_access"
         (
-            metadata(23, 42)
+            metadata(23, 42),
+            default_arguments(std::size_t(0))
         )
         .constructor(&ctor_access_level_test::create_object_6, registration::protected_access)
         (

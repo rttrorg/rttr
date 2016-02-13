@@ -100,12 +100,19 @@ RTTR_REGISTRATION
         .constructor<int, int, int, int, int, int, int>() ( default_arguments(1, 2, 3, 4, 5, 6, 7) )
         ///
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2, 3) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2, 3, 4) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2, 3, 4, 5) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2, 3, 4, 5, 6) )
         .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ( default_arguments(1, 2, 3, 4, 5, 6, 7) )
         ;
 
 }

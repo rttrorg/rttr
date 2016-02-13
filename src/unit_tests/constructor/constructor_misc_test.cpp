@@ -77,11 +77,13 @@ RTTR_REGISTRATION
         )
         .constructor<int>()
         (
-            default_arguments(23)
+            default_arguments(23),
+            metadata(E_MetaData::SCRIPTABLE, true)
         )
         .constructor(&ctor_misc_test::create_object)
         (
-            default_arguments(23)
+            default_arguments(23),
+            metadata(E_MetaData::SCRIPTABLE, true)
         )
         ;
 }
@@ -105,11 +107,13 @@ TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 
 TEST_CASE("constructor - get_signature", "[constructor]")
 {
-    constructor ctor = type::get<ctor_misc_test>().get_constructor();
-    CHECK(ctor.get_signature() == "ctor_misc_test( )");
+    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    REQUIRE(ctor_list.size() >= 4);
 
-    ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
-    CHECK(ctor.get_signature() == "ctor_misc_test( int )");
+    CHECK(ctor_list[0].get_signature() == "ctor_misc_test( )");
+    CHECK(ctor_list[3].get_signature() == "ctor_misc_test( int )");
+    CHECK(ctor_list[4].get_signature() == "ctor_misc_test( int )");
+    CHECK(ctor_list[5].get_signature() == "ctor_misc_test( int )");
 
     //negative test
     CHECK(type::get_by_name("").get_constructor().get_signature() == "");
@@ -147,6 +151,9 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
 TEST_CASE("constructor - get_metadata", "[constructor]")
 {
+    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    REQUIRE(ctor_list.size() >= 6);
+
     SECTION("default ctor")
     {
         constructor ctor = type::get<ctor_misc_test>().get_constructor();
@@ -169,6 +176,18 @@ TEST_CASE("constructor - get_metadata", "[constructor]")
         value = ctor.get_metadata(E_MetaData::TOOL_TIP);
         REQUIRE(value.is_type<std::string>() == true);
         CHECK(value.get_value<std::string>() == "This is another ToolTip.");
+    }
+
+    SECTION("normal ctor - with default argument")
+    {
+        REQUIRE(ctor_list[4].get_metadata(E_MetaData::SCRIPTABLE).is_type<bool>() == true);
+        CHECK(ctor_list[4].get_metadata(E_MetaData::SCRIPTABLE).get_value<bool>() == true);
+    }
+
+    SECTION("function as ctor - with default arguments")
+    {
+        REQUIRE(ctor_list[5].get_metadata(E_MetaData::SCRIPTABLE).is_type<bool>() == true);
+        CHECK(ctor_list[5].get_metadata(E_MetaData::SCRIPTABLE).get_value<bool>() == true);
     }
 
     //negative test
