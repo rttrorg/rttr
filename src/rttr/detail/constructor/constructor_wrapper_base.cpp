@@ -51,20 +51,6 @@ constructor_wrapper_base::~constructor_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> constructor_wrapper_base::get_is_reference() const
-{
-    return{};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<bool> constructor_wrapper_base::get_is_const() const
-{
-    return{};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 string constructor_wrapper_base::get_signature() const
 {
     auto param_info_list = get_parameter_infos();
@@ -83,57 +69,6 @@ string constructor_wrapper_base::get_signature() const
         result += " )";
 
     return result;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke() const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
-                                           argument& arg5) const
-{
-    return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
-                                           argument& arg5, argument& arg6) const
-{
-    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
