@@ -234,6 +234,10 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
         const ctor_invoke_test& obj = var.get_value<ctor_invoke_test>();
         CHECK(obj.value_1 == 23);
         CHECK(obj.value_2 == 42);
+
+        // negative
+        var = ctor_list[8].invoke(23, "test");
+        CHECK(var.is_valid() == false);
     }
 
     SECTION("as_raw_ptr")
@@ -271,6 +275,10 @@ TEST_CASE("constructor - invoke policy", "[constructor]")
         const std::shared_ptr<ctor_invoke_test>& obj = var.get_value<std::shared_ptr<ctor_invoke_test>>();
         CHECK(obj->value_1 == 23);
         CHECK(obj->value_2 == 42);
+
+        // negative
+        var = ctor_list[10].invoke(23, "test");
+        CHECK(var.is_valid() == false);
     }
 }
 
