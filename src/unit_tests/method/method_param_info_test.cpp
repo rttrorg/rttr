@@ -209,3 +209,17 @@ TEST_CASE("method - parameter info - names provided & default values", "[method]
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("method - parameter info - compare", "[method]")
+{
+    method meth = type::get<method_param_info_test>().get_method("method_3");
+    REQUIRE(meth.is_valid() == true);
+
+    auto infos = meth.get_parameter_infos();
+    REQUIRE(infos.size() == 3);
+
+    CHECK(infos[0] == infos[0]);
+    CHECK(infos[0] != infos[1]);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
