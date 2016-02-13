@@ -49,6 +49,29 @@ struct ctor_default_arg_test
     }
 };
 
+struct ctor_default_arg_invoke_test
+{
+    ctor_default_arg_invoke_test(int) {};
+    ctor_default_arg_invoke_test(int, int) {};
+    ctor_default_arg_invoke_test(int, int, int) {};
+    ctor_default_arg_invoke_test(int, int, int, int) {};
+    ctor_default_arg_invoke_test(int, int, int, int, int) {};
+    ctor_default_arg_invoke_test(int, int, int, int, int, int) {};
+    ctor_default_arg_invoke_test(int, int, int, int, int, int, int) {};
+
+    static ctor_default_arg_invoke_test create(int a) { return ctor_default_arg_invoke_test(a); }
+    static ctor_default_arg_invoke_test create(int a, int b) { return ctor_default_arg_invoke_test(a, b); }
+    static ctor_default_arg_invoke_test create(int a, int b, int c) { return ctor_default_arg_invoke_test(a, b, c); }
+    static ctor_default_arg_invoke_test create(int a, int b, int c, int d) { return ctor_default_arg_invoke_test(a, b, c, d); }
+    static ctor_default_arg_invoke_test create(int a, int b, int c, int d, int e) { return ctor_default_arg_invoke_test(a, b, c, d, e); }
+    static ctor_default_arg_invoke_test create(int a, int b, int c, int d, int e, int f) { return ctor_default_arg_invoke_test(a, b, c, d, e, f); }
+    static ctor_default_arg_invoke_test create(int a, int b, int c, int d, int e, int f, int g) { return ctor_default_arg_invoke_test(a, b, c, d, e, f, g); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_REGISTRATION
 {
     registration::class_<ctor_default_arg_test>("ctor_default_arg_test")
@@ -66,6 +89,25 @@ RTTR_REGISTRATION
             default_arguments(23),
             policy::ctor::as_std_shared_ptr
         );
+
+     registration::class_<ctor_default_arg_invoke_test>("ctor_default_arg_invoke_test")
+        .constructor<int>() ( default_arguments(1) )
+        .constructor<int, int>() ( default_arguments(1, 2) )
+        .constructor<int, int, int>() ( default_arguments(1, 2, 3) )
+        .constructor<int, int, int, int>() ( default_arguments(1, 2, 3, 4) )
+        .constructor<int, int, int, int, int>() ( default_arguments(1, 2, 3, 4, 5) )
+        .constructor<int, int, int, int, int, int>() ( default_arguments(1, 2, 3, 4, 5, 6) )
+        .constructor<int, int, int, int, int, int, int>() ( default_arguments(1, 2, 3, 4, 5, 6, 7) )
+        ///
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        .constructor(static_cast<ctor_default_arg_invoke_test(*)(int, int, int, int, int, int, int)>(&ctor_default_arg_invoke_test::create))
+        ;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -255,6 +297,38 @@ TEST_CASE("constructor - default argument via type (real ctor)", "[constructor]"
     CHECK(t.create({23, false, std::string("text")}).is_valid() == true);
     // too much arguments
     CHECK(t.create({23, false, std::string("text"), 42}).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke ctor with defaults valid", "[constructor]")
+{
+    const auto ctor_list = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    REQUIRE(ctor_list.size() == 14);
+
+    CHECK(ctor_list[0].invoke(1).is_valid() == true);
+    CHECK(ctor_list[1].invoke(1, 2).is_valid() == true);
+    CHECK(ctor_list[2].invoke(1, 2, 3).is_valid() == true);
+    CHECK(ctor_list[3].invoke(1, 2, 3, 4).is_valid() == true);
+    CHECK(ctor_list[4].invoke(1, 2, 3, 4, 5).is_valid() == true);
+    CHECK(ctor_list[5].invoke(1, 2, 3, 4, 5, 6).is_valid() == true);
+    CHECK(ctor_list[6].invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - invoke ctor func with defaults valid", "[constructor]")
+{
+    const auto ctor_list = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    REQUIRE(ctor_list.size() == 14);
+
+    CHECK(ctor_list[7].invoke(1).is_valid() == true);
+    CHECK(ctor_list[8].invoke(1, 2).is_valid() == true);
+    CHECK(ctor_list[9].invoke(1, 2, 3).is_valid() == true);
+    CHECK(ctor_list[10].invoke(1, 2, 3, 4).is_valid() == true);
+    CHECK(ctor_list[11].invoke(1, 2, 3, 4, 5).is_valid() == true);
+    CHECK(ctor_list[12].invoke(1, 2, 3, 4, 5, 6).is_valid() == true);
+    CHECK(ctor_list[13].invoke_variadic({1, 2, 3, 4, 5, 6, 7}).is_valid() == true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

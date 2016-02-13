@@ -74,7 +74,16 @@ RTTR_REGISTRATION
         (
             metadata(E_MetaData::SCRIPTABLE, false),
             metadata(E_MetaData::TOOL_TIP, "This is another ToolTip.")
-        );
+        )
+        .constructor<int>()
+        (
+            default_arguments(23)
+        )
+        .constructor(&ctor_misc_test::create_object)
+        (
+            default_arguments(23)
+        )
+        ;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +91,8 @@ RTTR_REGISTRATION
 TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 {
     auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    REQUIRE(ctor_list.size() >= 4);
+
     CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
     CHECK(ctor_list[1].get_instanciated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
     CHECK(ctor_list[2].get_instanciated_type() == type::get<ctor_misc_test>());
@@ -120,11 +131,13 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
 
 TEST_CASE("ctor - get_declaring_type", "[constructor]")
 {
-    constructor ctor = type::get<ctor_misc_test>().get_constructor();
-    CHECK(ctor.get_declaring_type() == type::get<ctor_misc_test>());
+    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    REQUIRE(ctor_list.size() >= 6);
 
-    ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
-    CHECK(ctor.get_declaring_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[0].get_declaring_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[3].get_declaring_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[4].get_declaring_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[5].get_declaring_type() == type::get<ctor_misc_test>());
 
     //negative test
     CHECK(type::get_by_name("").get_constructor().get_declaring_type().is_valid() == false);
