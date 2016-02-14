@@ -53,6 +53,7 @@ TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
 
         CHECK(c.is_valid() == false);
         CHECK(c.is_dynamic() == false);
+        CHECK(c.get_rank_type(0).is_valid() == false);
         CHECK(c.get_rank() == 0);
         CHECK(c.get_type().is_valid() == false);
         CHECK(c.get_size() == 0);

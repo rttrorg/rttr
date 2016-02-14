@@ -132,10 +132,22 @@ TEST_CASE("property - class - get/set - bind_as_ptr - readonly function", "[prop
 {
     property_member_policy obj;
     type prop_type = type::get(obj);
-    property p7_as_ptr = prop_type.get_property("p1_as_ptr");
-    REQUIRE(bool(p7_as_ptr) == true);
-    REQUIRE(p7_as_ptr.is_readonly() == true);
-    REQUIRE(p7_as_ptr.get_type() == type::get<const std::string*>());
+    property prop = prop_type.get_property("p1_as_ptr");
+    REQUIRE(bool(prop) == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<const std::string*>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+
+    // invoke
+    CHECK(prop.set_value(obj, std::string("text")) == false);
+    CHECK(prop.get_value(obj).is_type<const std::string*>() == true);
+
+    // negative invoke
+    CHECK(prop.get_value(23).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -144,10 +156,23 @@ TEST_CASE("property - class - get/set - bind_as_ptr - function", "[property]")
 {
     property_member_policy obj;
     type prop_type = type::get(obj);
-    property p7_as_ptr = prop_type.get_property("p2_as_ptr");
-    REQUIRE(bool(p7_as_ptr) == true);
-    REQUIRE(p7_as_ptr.is_readonly() == false);
-    REQUIRE(p7_as_ptr.get_type() == type::get<const std::string*>());
+    property prop = prop_type.get_property("p2_as_ptr");
+    REQUIRE(bool(prop) == true);
+
+     // metadata
+    CHECK(prop.is_readonly() == false);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<const std::string*>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+
+    // invoke
+    const std::string t("text");
+    CHECK(prop.set_value(obj, &t) == true);
+    CHECK(prop.get_value(obj).is_type<const std::string*>() == true);
+
+    // negative invoke
+    CHECK(prop.get_value(23).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
