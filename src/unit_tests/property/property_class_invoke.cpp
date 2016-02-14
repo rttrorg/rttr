@@ -94,13 +94,17 @@ RTTR_REGISTRATION
         .property("p1",    &property_invoke::_p1)
         .property("p2",    &property_invoke::_p2)
         .property("p3",    &property_invoke::get_text, &property_invoke::set_text)
-        .property_readonly("p4",     &property_invoke::_p4)
-        .property_readonly("p5",     &property_invoke::_p3)
+        .property_readonly("p4",     &property_invoke::_p4) ( metadata("Description", "Some Text") )
+        .property_readonly("p5",     &property_invoke::_p3) ( metadata("Description", "Some Text") )
         .property("p6",    &singleton_property)
-        .property_readonly("p7",     &get_value)
+        .property_readonly("p7",     &get_value) ( metadata("Description", "Some Text") )
         .property_readonly("p8",    std::function<int()>([](){ return 45;}))
         .property("p9",   std::function<const string&(void)>(&get_name), std::function<void(const std::string&)>(&set_name))
-        .property("callback", &property_invoke::get_function_cb, &property_invoke::set_function_cb);
+        .property("callback", &property_invoke::get_function_cb, &property_invoke::set_function_cb)
+        .property_readonly("p10", &property_invoke::get_text)
+        (
+            metadata("Description", "Some Text")
+        )
         ;
 }
 
@@ -128,6 +132,7 @@ TEST_CASE("property - class - get/set - variable", "[property]")
     CHECK(prop.get_value(obj).get_value<int>() == 42);
 
     // negative invoke
+    CHECK(prop.set_value(obj, "test") == false);
     CHECK(prop.get_value(23).is_valid() == false);
 }
 
@@ -177,49 +182,6 @@ TEST_CASE("property - class - get/set - function", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("property - class - get/set - readonly", "[property]")
-{
-    property_invoke obj;
-    type prop_type = type::get(obj);
-
-    property prop = prop_type.get_property("p4");
-    REQUIRE(bool(prop) == true);
-
-    // metadata
-    CHECK(prop.is_readonly() == true);
-    CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
-    CHECK(prop.get_type() == type::get<int>());
-    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
-
-    // invoke
-    CHECK(prop.set_value(obj, 23) == false);
-    CHECK(prop.get_value(obj).is_type<int>() == true);
-    CHECK(prop.get_value(obj).get_value<int>() == 12);
-
-    // negative invoke
-    CHECK(prop.get_value(23).is_valid() == false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("property - class - get/set - readonly - static", "[property]")
-{
-    property_invoke obj;
-    type prop_type = type::get(obj);
-
-    property prop = prop_type.get_property("p5");
-
-    bool ret = prop.set_value(obj, 23);
-    CHECK(ret == false);
-
-    variant var = prop.get_value(obj);
-    CHECK(var.is_type<int>() == true);
-    CHECK(var.get_value<int>() == 12);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 TEST_CASE("property - class - get/set - global variable", "[property]")
 {
     property_invoke obj;
@@ -234,42 +196,6 @@ TEST_CASE("property - class - get/set - global variable", "[property]")
     variant var = prop.get_value(obj);
     CHECK(var.is_type<float>() == true);
     CHECK(var.get_value<float>() == 23.0f);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("property - class - get/set - readonly - global function", "[property]")
-{
-    property_invoke obj;
-    type prop_type = type::get(obj);
-
-    property prop = prop_type.get_property("p7");
-    CHECK(prop.is_static() == true);
-
-    bool ret = prop.set_value(obj, 23);
-    CHECK(ret == false);
-
-    variant var = prop.get_value(obj);
-    CHECK(var.is_type<int>() == true);
-    CHECK(var.get_value<int>() == 512);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("property - class - get/set - readonly - std::function", "[property]")
-{
-    property_invoke obj;
-    type prop_type = type::get(obj);
-
-    property prop = prop_type.get_property("p8");
-    CHECK(prop.is_static() == true);
-
-    bool ret = prop.set_value(obj, 23);
-    CHECK(ret == false);
-
-    variant var = prop.get_value(obj);
-    CHECK(var.is_type<int>() == true);
-    CHECK(var.get_value<int>() == 45);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -307,6 +233,128 @@ TEST_CASE("property - class - get/set - function pointer", "[property]")
     variant var = prop.get_value(obj);
     CHECK(var.is_type<func_ptr>() == true);
     CHECK(var.get_value<func_ptr>() == cb);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class - read only - member object", "[property]")
+{
+    property_invoke obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p4");
+    REQUIRE(bool(prop) == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<int>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    CHECK(prop.set_value(obj, 23) == false);
+    CHECK(prop.get_value(obj).is_type<int>() == true);
+    CHECK(prop.get_value(obj).get_value<int>() == 12);
+
+    // negative invoke
+    CHECK(prop.get_value(23).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class - read only - member function", "[property]")
+{
+    property_invoke obj;
+    type prop_type = type::get(obj);
+    obj.set_text("Text");
+
+    property prop = prop_type.get_property("p10");
+    REQUIRE(bool(prop) == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<std::string>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    CHECK(prop.set_value(obj, 23) == false);
+    CHECK(prop.get_value(obj).is_type<std::string>() == true);
+    CHECK(prop.get_value(obj).get_value<std::string>() == "Text");
+
+    // negative invoke
+    CHECK(prop.get_value(23).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class - read only - static member", "[property]")
+{
+    property_invoke obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p5");
+
+    REQUIRE(bool(prop) == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == true);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<int>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    CHECK(prop.set_value(obj, 23) == false);
+    REQUIRE(prop.get_value(instance()).is_type<int>() == true);
+    CHECK(prop.get_value(instance()).get_value<int>() == 12);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class - read only - global function", "[property]")
+{
+    property_invoke obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p7");
+    REQUIRE(bool(prop) == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == true);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<int>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    CHECK(prop.set_value(instance(), 23) == false);
+    CHECK(prop.get_value(instance()).is_type<int>() == true);
+    CHECK(prop.get_value(instance()).get_value<int>() == 512);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class - read only - std::function", "[property]")
+{
+    property_invoke obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p8");
+    CHECK(prop.is_static() == true);
+
+    bool ret = prop.set_value(obj, 23);
+    CHECK(ret == false);
+
+    variant var = prop.get_value(obj);
+    CHECK(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == 45);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

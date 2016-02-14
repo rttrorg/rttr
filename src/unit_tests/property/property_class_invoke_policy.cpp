@@ -65,19 +65,23 @@ RTTR_REGISTRATION
      registration::class_<property_member_policy>("property_member_policy")
         .property("array", &property_member_policy::_array)
         (
-            policy::prop::bind_as_ptr
+            policy::prop::bind_as_ptr,
+            metadata("Description", "Some Text")
         )
         .property("raw_array", &property_member_policy::_other_array)
         (
-            policy::prop::bind_as_ptr
+            policy::prop::bind_as_ptr,
+            metadata("Description", "Some Text")
         )
         .property_readonly("p1_as_ptr", &property_member_policy::get_text)
         (
-            policy::prop::bind_as_ptr
+            policy::prop::bind_as_ptr,
+            metadata("Description", "Some Text")
         )
         .property("p2_as_ptr", &property_member_policy::get_text, &property_member_policy::set_text)
         (
-            policy::prop::bind_as_ptr
+            policy::prop::bind_as_ptr,
+            metadata("Description", "Some Text")
         )
         ;
 }
@@ -141,6 +145,7 @@ TEST_CASE("property - class - get/set - bind_as_ptr - readonly function", "[prop
     CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<const std::string*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
 
     // invoke
     CHECK(prop.set_value(obj, std::string("text")) == false);
@@ -165,6 +170,7 @@ TEST_CASE("property - class - get/set - bind_as_ptr - function", "[property]")
     CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<const std::string*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
 
     // invoke
     const std::string t("text");
@@ -172,6 +178,7 @@ TEST_CASE("property - class - get/set - bind_as_ptr - function", "[property]")
     CHECK(prop.get_value(obj).is_type<const std::string*>() == true);
 
     // negative invoke
+    CHECK(prop.set_value(obj, "invalid") == false);
     CHECK(prop.get_value(23).is_valid() == false);
 }
 
