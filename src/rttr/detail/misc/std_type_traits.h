@@ -245,6 +245,9 @@ using enable_if_t = typename std::enable_if<B, T>::type;
 template<typename T>
 using decay_t = typename std::decay<T>::type;
 
+template<typename T>
+using add_const_t = typename std::add_const<T>::type;
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail

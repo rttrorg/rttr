@@ -193,13 +193,13 @@ TEST_CASE("property - class function - read only - bind as ptr", "[property]")
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
     auto e = prop.get_type().get_name();
-    CHECK(prop.get_type() == type::get<int*>());
+    CHECK(prop.get_type() == type::get<const int*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
     // invoke
-    REQUIRE(prop.get_value(obj).is_type<int*>() == true);
-    CHECK(*prop.get_value(obj).get_value<int*>() == 12);
+    REQUIRE(prop.get_value(obj).is_type<const int*>() == true);
+    CHECK(*prop.get_value(obj).get_value<const int*>() == 12);
 
     // invalid invoke
     CHECK(prop.set_value(obj, 23) == false);

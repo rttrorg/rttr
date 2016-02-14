@@ -195,6 +195,7 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;
+    using policy_type   = add_pointer_t<add_const_t<remove_reference_t<return_type>>>;
 
     public:
         property_wrapper(Getter get,
@@ -209,7 +210,7 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
         access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
+        type get_type()     const   { return type::get<policy_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
@@ -222,7 +223,7 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
         variant get_value(instance& object) const
         {
             if (class_type* ptr = object.try_convert<class_type>())
-                return variant(&(ptr->*m_getter)());
+                return variant(const_cast<policy_type>(&(ptr->*m_getter)()));
             else
                 return variant();
         }
