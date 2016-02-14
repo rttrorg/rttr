@@ -33,138 +33,130 @@
 
 #include <catch/catch.hpp>
 
-struct property_member_policy
-{
-    property_member_policy()
-    {
-        _array.resize(1000);
-        for (int i = 0; i < 100; ++i)
-            _other_array[i] = i;
-    }
+using namespace rttr;
+using namespace std;
 
-    virtual ~property_member_policy() {}
+using func_ptr = void(*)(int);
+struct property_member_func_test
+{
+    property_member_func_test() : m_int_value(12)
+    {
+    }
 
     const std::string& get_text() const { return m_text; }
     void set_text(const std::string& text) { m_text = text; }
 
-    std::vector<int>    _array;
-    int                 _other_array[100];
+    int get_int_value() { return m_int_value; }
 
-    std::string m_text;
+    int& get_int_ref() { return m_int_value; }
+
+    void set_function_cb(func_ptr cb) { m_funcPtr = cb; }
+    func_ptr get_function_cb() const { return m_funcPtr; }
+
+    std::string     m_text;
+    int             m_int_value;
+    func_ptr        m_funcPtr;
+
+    RTTR_REGISTRATION_FRIEND;
 };
 
-using namespace rttr;
-using namespace std;
+static void my_callback(int)
+{
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_REGISTRATION
 {
-    using namespace rttr;
-
-     registration::class_<property_member_policy>("property_member_policy")
-        .property("array", &property_member_policy::_array)
+    registration::class_<property_member_func_test>("property_member_func_test")
+        .property("p1", &property_member_func_test::get_text, &property_member_func_test::set_text)
         (
-            policy::prop::bind_as_ptr,
             metadata("Description", "Some Text")
         )
-        .property("raw_array", &property_member_policy::_other_array)
+        .property_readonly("p2", &property_member_func_test::get_int_value)
         (
-            policy::prop::bind_as_ptr,
             metadata("Description", "Some Text")
         )
-        .property_readonly("p1_as_ptr", &property_member_policy::get_text)
+        .property("p3", &property_member_func_test::get_text, &property_member_func_test::set_text)
         (
-            policy::prop::bind_as_ptr,
-            metadata("Description", "Some Text")
+            metadata("Description", "Some Text"),
+            policy::prop::bind_as_ptr
         )
-        .property("p2_as_ptr", &property_member_policy::get_text, &property_member_policy::set_text)
+        .property_readonly("p4", &property_member_func_test::get_int_ref)
         (
-            policy::prop::bind_as_ptr,
-            metadata("Description", "Some Text")
+            metadata("Description", "Some Text"),
+            policy::prop::bind_as_ptr
         )
         ;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("property - class - get/set - bind_as_ptr - array", "[property]")
+TEST_CASE("property - class function", "[property]")
 {
-    property_member_policy obj;
+    property_member_func_test obj;
     type prop_type = type::get(obj);
-    property array_prop = prop_type.get_property("array");
+    REQUIRE(prop_type.is_valid() == true);
 
-    REQUIRE(array_prop.is_array() == true);
-    variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
-    variant_array_view vec_array = array_obj.create_array_view();
-    REQUIRE(vec_array.is_valid() == true);
-    REQUIRE(array_obj.is_type<std::vector<int>*>() == true);
-    REQUIRE(array_obj.get_value<std::vector<int>*>() == &obj._array);
+    property prop = prop_type.get_property("p1");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == false);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<std::string>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // valid invoke
+    CHECK(prop.set_value(obj, std::string("New Text")) == true);
+    CHECK(prop.get_value(obj).is_type<std::string>() == true);
+    CHECK(prop.get_value(obj).get_value<std::string>() == "New Text");
+
+    // invalid invoke
+    CHECK(prop.set_value(obj, 42) == false);
+    CHECK(prop.set_value(instance(), 42) == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("property - class - get/set - bind_as_ptr - raw_array", "[property]")
+TEST_CASE("property - class function - read only", "[property]")
 {
-    property_member_policy obj;
+    property_member_func_test obj;
     type prop_type = type::get(obj);
 
-    property array_prop = prop_type.get_property("raw_array");
-    REQUIRE(array_prop.is_array() == true);
-    variant array_obj = array_prop.get_value(obj); // the array is returned by pointer
-    variant_array_view other_array = array_obj.create_array_view();
-    REQUIRE(other_array.is_valid() == true);
-
-    variant ret = other_array.get_value(23);
-    REQUIRE(ret.is_type<int>() == true);
-    REQUIRE(ret.get_value<int>() == 23);
-
-    for (std::size_t i = 0; i < other_array.get_size(); ++i)
-        other_array.set_value(i, static_cast<int>(i * 2));
-
-    // did we really set the value?
-    for (std::size_t i = 0; i < other_array.get_size(); ++i)
-        REQUIRE(obj._other_array[i] == i * 2);
-
-    bool wasSet = array_prop.set_value(obj, array_obj);
-    REQUIRE(wasSet == true);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("property - class - get/set - bind_as_ptr - readonly function", "[property]")
-{
-    property_member_policy obj;
-    type prop_type = type::get(obj);
-    property prop = prop_type.get_property("p1_as_ptr");
-    REQUIRE(bool(prop) == true);
+    property prop = prop_type.get_property("p2");
+    REQUIRE(prop.is_valid() == true);
 
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
-    CHECK(prop.get_type() == type::get<const std::string*>());
+    CHECK(prop.get_type() == type::get<int>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
     // invoke
-    CHECK(prop.set_value(obj, std::string("text")) == false);
-    CHECK(prop.get_value(obj).is_type<const std::string*>() == true);
+    CHECK(prop.get_value(obj).is_type<int>() == true);
+    CHECK(prop.get_value(obj).get_value<int>() == 12);
 
-    // negative invoke
+    // invalid invoke
+    CHECK(prop.set_value(obj, 23) == false);
     CHECK(prop.get_value(23).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("property - class - get/set - bind_as_ptr - function", "[property]")
+TEST_CASE("property - class function - bind as ptr", "[property]")
 {
-    property_member_policy obj;
+    property_member_func_test obj;
     type prop_type = type::get(obj);
-    property prop = prop_type.get_property("p2_as_ptr");
-    REQUIRE(bool(prop) == true);
 
-     // metadata
+    property prop = prop_type.get_property("p3");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
@@ -172,13 +164,43 @@ TEST_CASE("property - class - get/set - bind_as_ptr - function", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
-    // invoke
-    const std::string t("text");
-    CHECK(prop.set_value(obj, &t) == true);
+    // valid invoke
+    const std::string text("Hello World");
+    CHECK(prop.set_value(obj, &text) == true);
     CHECK(prop.get_value(obj).is_type<const std::string*>() == true);
+    CHECK(*prop.get_value(obj).get_value<const std::string*>() == "Hello World");
 
-    // negative invoke
-    CHECK(prop.set_value(obj, "invalid") == false);
+    // invalid invoke
+    CHECK(prop.set_value(obj, 42) == false);
+    CHECK(prop.set_value(instance(), 42) == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class function - read only - bind as ptr", "[property]")
+{
+    property_member_func_test obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p4");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    auto e = prop.get_type().get_name();
+    CHECK(prop.get_type() == type::get<int*>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    REQUIRE(prop.get_value(obj).is_type<int*>() == true);
+    CHECK(*prop.get_value(obj).get_value<int*>() == 12);
+
+    // invalid invoke
+    CHECK(prop.set_value(obj, 23) == false);
+    CHECK(prop.set_value("wrong instance", 23) == false);
     CHECK(prop.get_value(23).is_valid() == false);
 }
 

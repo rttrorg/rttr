@@ -37,11 +37,11 @@ set(SOURCE_FILES main.cpp
                  property/property_access_level_test.cpp
                  property/property_misc_test.cpp
                  property/property_class_inheritance.cpp
-                 property/property_class_invoke.cpp
-                 property/property_class_invoke_policy.cpp
                  property/property_class_invoke_wrapper.cpp
-                 property/property_global_invoke.cpp
-                 property/property_global_invoke_policy.cpp
+                 property/property_member_function.cpp
+                 property/property_member_object.cpp
+                 property/property_global_function.cpp
+                 property/property_global_object.cpp
                  type/test_type.cpp
                  type/test_type_names.cpp
                  type/type_prop_meth_invoke.cpp

@@ -122,7 +122,7 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
 
         access_levels get_access_level() const { return Acc_Level; }
         bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return true; }
+        bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<C*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
 

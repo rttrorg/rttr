@@ -186,8 +186,6 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
             m_accessor(get)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
-
-            metadata_handler<Metadata_Count>::set_metadata(std::move(metadata_list));
         }
 
         access_levels get_access_level() const { return Acc_Level; }
