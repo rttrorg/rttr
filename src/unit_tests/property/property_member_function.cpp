@@ -87,6 +87,7 @@ RTTR_REGISTRATION
             metadata("Description", "Some Text"),
             policy::prop::bind_as_ptr
         )
+        .property("callback", &property_member_func_test::get_function_cb, &property_member_func_test::set_function_cb)
         ;
 }
 
@@ -117,6 +118,7 @@ TEST_CASE("property - class function", "[property]")
     // invalid invoke
     CHECK(prop.set_value(obj, 42) == false);
     CHECK(prop.set_value(instance(), 42) == false);
+    CHECK(prop.get_value(34).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +175,7 @@ TEST_CASE("property - class function - bind as ptr", "[property]")
     // invalid invoke
     CHECK(prop.set_value(obj, 42) == false);
     CHECK(prop.set_value(instance(), 42) == false);
+    CHECK(prop.get_value(34).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +205,24 @@ TEST_CASE("property - class function - read only - bind as ptr", "[property]")
     CHECK(prop.set_value(obj, 23) == false);
     CHECK(prop.set_value("wrong instance", 23) == false);
     CHECK(prop.get_value(23).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class function - function pointer", "[property]")
+{
+    property_member_func_test obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("callback");
+
+    auto cb = &my_callback;
+    bool ret = prop.set_value(obj, cb);
+    CHECK(ret == true);
+
+    variant var = prop.get_value(obj);
+    CHECK(var.is_type<func_ptr>() == true);
+    CHECK(var.get_value<func_ptr>() == cb);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

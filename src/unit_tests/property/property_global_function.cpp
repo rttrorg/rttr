@@ -77,6 +77,7 @@ RTTR_REGISTRATION
             metadata("Description", "Some Text"),
             policy::prop::bind_as_ptr
         )
+        .property_readonly("global_func_5", std::function<int()>([](){ return 45;}))
         ;
 }
 
@@ -173,6 +174,21 @@ TEST_CASE("property - global function - read only - bind as ptr", "[property]")
 
     // invalid invoke
     CHECK(prop.set_value(instance(), 23) == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global function - read only - std::function", "[property]")
+{
+    property prop = type::get_global_property("global_func_5");
+    REQUIRE(prop.is_valid() == true);
+
+    CHECK(prop.is_static() == true);
+    CHECK(prop.set_value(instance(), 23) == false);
+
+    variant var = prop.get_value(instance());
+    CHECK(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == 45);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

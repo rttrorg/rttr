@@ -172,6 +172,7 @@ TEST_CASE("property - class object - bind as ptr", "[property]")
     // invalid invoke
     CHECK(prop.set_value(obj, "test") == false);
     CHECK(prop.set_value(34, "test") == false);
+    CHECK(prop.get_value(34).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -205,6 +206,7 @@ TEST_CASE("property - class object - read only - bind as ptr", "[property]")
     // invalid invoke
     CHECK(prop.set_value(obj, "test") == false);
     CHECK(prop.set_value(34, "test") == false);
+    CHECK(prop.get_value(34).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
