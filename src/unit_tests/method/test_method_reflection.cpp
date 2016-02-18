@@ -97,7 +97,7 @@ RTTR_REGISTRATION
         (
             metadata(E_MetaData::SCRIPTABLE, false)
         )
-        .method("method_10", std::function<int(double, bool)>([](double, bool)->int{ return 42;}))
+        .method("method_10", [](double, bool)->int{ return 42;})
         .method("method_raw_array", &method_test::method_raw_array)
         .method("method_default",   &method_test::method_default_arg)
         .method("method_6_ret_ptr", &method_test::method_6)

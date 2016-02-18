@@ -77,7 +77,7 @@ RTTR_REGISTRATION
             metadata("Description", "Some Text"),
             policy::prop::bind_as_ptr
         )
-        .property_readonly("global_func_5", std::function<int()>([](){ return 45;}))
+        .property_readonly("global_func_5", [](){ return 45;})
         ;
 }
 

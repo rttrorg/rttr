@@ -55,17 +55,6 @@ namespace detail
         using signature = T;
     };
 
-    template<typename T>
-    struct get_std_function_signature
-    {
-        using type = T;
-    };
-
-    template<typename T>
-    struct get_std_function_signature<std::function<T>>
-    {
-        using type = T;
-    };
 
     /////////////////////////////////////////////////////////////////////////////////////
     template<typename T>
@@ -75,74 +64,68 @@ namespace detail
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename... Args>
-    struct function_args
+    template <typename T>
+    struct is_callable
     {
-        using arg_types = std::tuple<Args...>;
+        typedef char yes_type[1];
+        typedef char no_type[2];
+
+        template <typename Q>
+        static yes_type& check(decltype(&Q::operator())*);
+
+        template <typename Q>
+        static no_type& check(...);
+
+        static const bool value = sizeof(check<T>(0))==sizeof(yes_type);
     };
-
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    struct function_traits_func_ptr;
 
     template<typename R, typename... Args>
-    struct function_traits_func_ptr<R (*)(Args...)> : function_args<Args...>
+    struct is_callable<R (*)(Args...)> : std::true_type {};
+
+    template<typename R, typename... Args>
+    struct is_callable<R (&)(Args...)> : std::true_type {};
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template <typename T>
+    struct function_signature : function_signature< decltype(&T::operator()) > {};
+
+    template<typename R, typename... Args>
+    struct function_signature<R (Args...)>
     {
         static const size_t arg_count = sizeof...(Args);
-        using return_type = R;
+
+        using return_type   = R;
+        using arg_types     = std::tuple<Args...>;
     };
+
+    template<typename R, typename... Args>
+    struct function_signature<R (*)(Args...)> : function_signature<R (Args...)> { };
+
+    template<typename R, typename... Args>
+    struct function_signature<R (&)(Args...)> : function_signature<R (Args...)> { };
+
+    template<typename R, typename C, typename... Args>
+    struct function_signature<R (C::*)(Args...)> : function_signature<R (Args...)> { using class_type = C; };
+
+    template<typename R, typename C, typename... Args>
+    struct function_signature<R (C::*)(Args...) const> : function_signature<R (Args...)> { using class_type = C; };
+
+    template<typename R, typename C, typename... Args>
+    struct function_signature<R (C::*)(Args...) volatile> : function_signature<R (Args...)> { using class_type = C; };
+
+    template<typename R, typename C, typename... Args>
+    struct function_signature<R (C::*)(Args...) const volatile> : function_signature<R (Args...)> {using class_type = C; };
+
+    template<typename T>
+    struct function_signature<std::function<T>> : function_signature<T> {};
 
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    struct function_traits_mem_ptr;
-
-    template<typename R, typename C, typename... Args>
-    struct function_traits_mem_ptr<R (C::*)(Args...)> : function_args<Args...>
-    {
-        static const size_t arg_count = sizeof...(Args);
-        using return_type   = R;
-        using class_type    = C;
-    };
-
-    template<typename R, typename C, typename... Args>
-    struct function_traits_mem_ptr<R (C::*)(Args...) const> : function_args<Args...>
-    {
-        static const size_t arg_count = sizeof...(Args);
-        using return_type   = R;
-        using class_type    = C;
-    };
-
-    template<typename R, typename C, typename... Args>
-    struct function_traits_mem_ptr<R (C::*)(Args...) const volatile> : function_args<Args...>
-    {
-        static const size_t arg_count = sizeof...(Args);
-        using return_type   = R;
-        using class_type    = C;
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    struct function_traits : conditional_t< std::is_member_function_pointer< T >::value,
-                                            function_traits_mem_ptr< T >,
-                                            conditional_t< std::is_function< T >::value,
-                                                           function_traits_func_ptr< add_pointer_t< T > >,
-                                                           conditional_t< is_std_function< T >::value,
-                                                                          function_traits_func_ptr< add_pointer_t< typename get_std_function_signature< T >::type > >,
-                                                                          function_traits_func_ptr< T >
-                                                                        >
-                                                         >
-                                          >
-    {
-    };
+    using function_traits = function_signature<T>;
 
     /////////////////////////////////////////////////////////////////////////////////////
     // use it like e.g:

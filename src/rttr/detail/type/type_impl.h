@@ -309,7 +309,7 @@ struct type_getter<void>
 
 /*!
  * Explicit specializations for function types;
- * because we cannot implement the check whether a type is completly defined for functions
+ * because we cannot implement the check whether a type is completely defined for functions
  */
 template <typename T>
 struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
