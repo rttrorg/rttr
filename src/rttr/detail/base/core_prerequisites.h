@@ -35,6 +35,7 @@ namespace rttr
 
 #define RTTR_PLATFORM_WINDOWS 1
 #define RTTR_PLATFORM_LINUX 2
+#define RTTR_PLATFORM_APPLE 3
 
 #define RTTR_COMPILER_MSVC 1
 #define RTTR_COMPILER_GNUC 2
@@ -51,6 +52,8 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #   define RTTR_PLATFORM RTTR_PLATFORM_WINDOWS
+#elif defined( __APPLE_CC__)
+#   define RTTR_PLATFORM RTTR_PLATFORM_APPLE
 #else
 #   define RTTR_PLATFORM RTTR_PLATFORM_LINUX
 #endif
@@ -148,7 +151,7 @@ namespace rttr
 #   endif
 #
 #   if RTTR_COMP_VER <= 1800
-#       define BOOST_NO_CXX11_NOEXCEPT
+#       define RTTR_NO_CXX11_NOEXCEPT
 #   endif
 #endif
 
@@ -160,7 +163,7 @@ namespace rttr
 #   define RTTR_CONSTEXPR_OR_CONST constexpr
 #endif
 
-#ifdef BOOST_NO_CXX11_NOEXCEPT
+#ifdef RTTR_NO_CXX11_NOEXCEPT
 #   define RTTR_NOEXCEPT
 #   define RTTR_NOEXCEPT_OR_NOTHROW throw()
 #else

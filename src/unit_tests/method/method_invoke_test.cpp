@@ -64,6 +64,8 @@ RTTR_REGISTRATION
         .method("func_5", &method_invoke_test::func_5)
         .method("func_6", &method_invoke_test::func_6)
         .method("func_7", &method_invoke_test::func_7)
+        .method("func_8", std::function<int(void)>([](){ return 42; }))
+        .method("func_9", [](int value){ return (value == 23); })
         ;
 }
 
@@ -73,7 +75,7 @@ TEST_CASE("method - invoke", "[method]")
 {
     type t = type::get<method_invoke_test>();
     const auto meth_list = t.get_methods();
-    REQUIRE(meth_list.size() == 8);
+    REQUIRE(meth_list.size() >= 8);
 
     method_invoke_test obj;
     CHECK(meth_list[0].invoke(obj).is_valid() == true);
@@ -140,7 +142,7 @@ TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]")
 {
     type t = type::get<method_invoke_test>();
     const auto meth_list = t.get_methods();
-    REQUIRE(meth_list.size() == 8);
+    REQUIRE(meth_list.size() >= 8);
 
     method_invoke_test obj;
     CHECK(meth_list[0].invoke(obj, 1).is_valid() == false);
@@ -166,6 +168,26 @@ TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]")
 
     CHECK(meth_list[7].invoke_variadic(obj, {1, 2, 3, 4, 5, 6}).is_valid() == false);
     CHECK(obj.m_invoked[7] == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - invoke - std::function", "[method]")
+{
+    type t = type::get<method_invoke_test>();
+    variant var = t.invoke("func_8", instance(), {});
+    CHECK(var == 42);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - invoke - lambda", "[method]")
+{
+    type t = type::get<method_invoke_test>();
+    auto param_infos = t.get_method("func_9").get_parameter_infos();
+    CHECK(param_infos.size() == 1);
+    variant var = t.invoke("func_9", instance(), {23});
+    CHECK(var == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
