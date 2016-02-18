@@ -65,8 +65,8 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template <typename T>
-    struct is_callable
+    template<typename T>
+    struct is_callable_impl
     {
         typedef char yes_type[1];
         typedef char no_type[2];
@@ -81,19 +81,26 @@ namespace detail
     };
 
     template<typename R, typename... Args>
-    struct is_callable<R (*)(Args...)> : std::true_type {};
+    struct is_callable_impl<R (*)(Args...)> : std::true_type {};
 
     template<typename R, typename... Args>
-    struct is_callable<R (&)(Args...)> : std::true_type {};
+    struct is_callable_impl<R (&)(Args...)> : std::true_type {};
+
+    /*!
+     * \brief Returns true whether the given type T is callable as function.
+     *        i.e. func(...); That can be free function, lambdas or function objects.
+     */
+    template<typename T>
+    using is_callable = std::integral_constant<bool, is_callable_impl<T>::value>;
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
 
     template <typename T>
-    struct function_signature : function_signature< decltype(&T::operator()) > {};
+    struct function_traits : function_traits< decltype(&T::operator()) > {};
 
     template<typename R, typename... Args>
-    struct function_signature<R (Args...)>
+    struct function_traits<R (Args...)>
     {
         static const size_t arg_count = sizeof...(Args);
 
@@ -102,30 +109,25 @@ namespace detail
     };
 
     template<typename R, typename... Args>
-    struct function_signature<R (*)(Args...)> : function_signature<R (Args...)> { };
+    struct function_traits<R (*)(Args...)> : function_traits<R (Args...)> { };
 
     template<typename R, typename... Args>
-    struct function_signature<R (&)(Args...)> : function_signature<R (Args...)> { };
+    struct function_traits<R (&)(Args...)> : function_traits<R (Args...)> { };
 
     template<typename R, typename C, typename... Args>
-    struct function_signature<R (C::*)(Args...)> : function_signature<R (Args...)> { using class_type = C; };
+    struct function_traits<R (C::*)(Args...)> : function_traits<R (Args...)> { using class_type = C; };
 
     template<typename R, typename C, typename... Args>
-    struct function_signature<R (C::*)(Args...) const> : function_signature<R (Args...)> { using class_type = C; };
+    struct function_traits<R (C::*)(Args...) const> : function_traits<R (Args...)> { using class_type = C; };
 
     template<typename R, typename C, typename... Args>
-    struct function_signature<R (C::*)(Args...) volatile> : function_signature<R (Args...)> { using class_type = C; };
+    struct function_traits<R (C::*)(Args...) volatile> : function_traits<R (Args...)> { using class_type = C; };
 
     template<typename R, typename C, typename... Args>
-    struct function_signature<R (C::*)(Args...) const volatile> : function_signature<R (Args...)> {using class_type = C; };
+    struct function_traits<R (C::*)(Args...) const volatile> : function_traits<R (Args...)> {using class_type = C; };
 
     template<typename T>
-    struct function_signature<std::function<T>> : function_signature<T> {};
-
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    using function_traits = function_signature<T>;
+    struct function_traits<std::function<T>> : function_traits<T> {};
 
     /////////////////////////////////////////////////////////////////////////////////////
     // use it like e.g:
