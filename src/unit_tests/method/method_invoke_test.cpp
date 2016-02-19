@@ -64,8 +64,8 @@ RTTR_REGISTRATION
         .method("func_5", &method_invoke_test::func_5)
         .method("func_6", &method_invoke_test::func_6)
         .method("func_7", &method_invoke_test::func_7)
-        .method("func_8", std::function<int(void)>([](){ return 42; }))
-        .method("func_9", [](int value){ return (value == 23); })
+        .method("func_8", std::function<int(int)>([](int value){ return value; }))
+        .method("func_9", [](int value){ return value; })
         ;
 }
 
@@ -175,8 +175,9 @@ TEST_CASE("method - invoke - NEGATIVE - invalid arg count", "[method]")
 TEST_CASE("method - invoke - std::function", "[method]")
 {
     type t = type::get<method_invoke_test>();
-    variant var = t.invoke("func_8", instance(), {});
-    CHECK(var == 42);
+    variant var = t.invoke("func_8", instance(), {42});
+    REQUIRE(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == 42);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +188,8 @@ TEST_CASE("method - invoke - lambda", "[method]")
     auto param_infos = t.get_method("func_9").get_parameter_infos();
     CHECK(param_infos.size() == 1);
     variant var = t.invoke("func_9", instance(), {23});
-    CHECK(var == true);
+    REQUIRE(var.is_type<int>() == true);
+    CHECK(var.get_value<int>() == 23);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
