@@ -35,7 +35,18 @@ env:
     - BUILD_DOCU=false
     - secure: "k1o939GwFc0AJY8cCprAeF9OYUs00Ad+ggrhzxtw4GLdjn0CYGnqrftHtkJ5WySDXj7rnEL4qur1oO19OeVGufhLQTV0+yian8meYppk7rlPIOOl6ygltTxMxNgvmkqCsHC1J1l+7vMEJUm1MunWedCnORWySoK2pZ89nAiMmzY/fjpsOKR8vpXQw5BTZPR775lYZyzbm8/ZY8eATd4EJGH+4YH/sTzYFa9SL2J/ieWR+SvALNLos7x6Civ0Nl6LXx5hXMenpSUpAbu7wBm6KDoL6vGHYa7oKrnJ5BAqOP4poNXF000riy3TENSO1sf+dGQJO8O2IQwe352VKw+paQ4s0SGe5lWAmn2hexU+dZ7rNO0LwA+bdt8XGIXZo2lvdHgsO2Ymj/wPLrqYHGwBgGceBilyD7ZAcKQ/OvHmvkHCytMSVhftcllsOZFwDen/5FliNTRI+Cs68pZUiT2PgT44t/8i5X3F1o8FlV9T+wDsPdH909g/pOFt4U3N8aGxst9bmrQvYAhVmPKtuxjz7ycBfsOTxON9HfTQFEGv3KCREdN8lzi/J9FBCFTtIwHbBKvEeaXrZ3oHSa9UoVG5VQtw14aBdzs7K2MrEYMxg4LCfSHe8ecYbRg1LM9uSdK5dcn/A9wLKEdFmU/pvbl3ryaF4KpL7w0fvNMC/k6o5tc="
     - secure: "1ogFHnhUroT3nA1HxyXN5/Hoek6LcTazRPTGpYjKAge8To/x614D6R9j2yu0EDOZalolq0VeOONnHLnss6aPGeMvvHH1rvoKTDQsFjsm1fB6qLRr/qpZXs+G4mxStarxrXr5487hEkPP10fEi/PSOx8Gme6Kny+tXHxDzP04ljcZYVvxWfkb+cQBCnYupbHk4hzfKRmPYcUn6lCPyOGIzwsHQQI/LubmkiU+wQ0zcLLsTZSThk+zt6FlxYWykZGL24yrqmoXRszx8dR14cWPzvkxVeEOe3OY9mNix1Z7ki2eVeEk8m7d70yPmV5p8F2/nPGC7kUXTvPrAL62CcE5moHubijJwKXJM6nBQJYCPGygnvRnWxnoqO/9JpDuds4Cv+tbJMgo2ViLPsYk3BgMnYo4z+p4JViN9P4/jzbhsVtWd4rnXmPt9j4FkED+Eyt8BUzXFdTAPpuzwZSvmYzzR8MdZE/telCAcWUoiS35IQcWJ0UmPpNZfR1Lll0cWQ+dTmjNETJvwognuaTAexL7m0uMhX6KQIZfap2H0w+CIua7+jl6eb9iyvXv9vZZEUCH2kTWnYXqBmDGRHG3tEp97o5+yWQm1qjweLvKAMRirdkSaZEL0lrsJ8mBS6Y+PQwAQxlu+P3pFEJ6uU3fJrKyciuWnVDZKyddIrJEZorXjOA="
+    - secure: "xfVMmggjvX6BQwe2jIvlvKKYjzWcqd/2WJavNFUBX9qJqRY5mY5xrKm4CTuV6y42CHg4zv0JdM0wUsb4muN7lJgaJy36a3snjVzPNzT0gqyAkB/TZpfLXPowwyNPvADKPaZs3uxrqxAvcbmULB3KKuQ/QraEgSWPiru5eLNpYiZyvPtFyWWLjDvxTbZfU6o7BrTX5KYDKC9V3eOC0wD55itaIgS7hqDa7jIKud7vkJhqC1z9N4cHUZXB43HGR31TgnH0PqvbBXyq2p0PkyLnPa//FnBR3xNfxxpMxCJLvLH17z4KuFMucIF7LRswo9JyPKjV7kCKLJOGGo7AqeV+Fh5LmVKKv9/lqVL/A9HJfVi4UIrmvdNQ14SQqEBxeJubs/t78hPQjOLhLE0COfEO9vN+n8C9lnK/S5uR71EEcFY8cUKtmds58OgjNpw9ZARI23GbKUmm16xinKy3mTYBiG80c4oZbrFkLItSTsH0+xDg9jHTptzRo6xW/bv9mfCM63yxouEUMI+mF6KmknOKIVif8KW2thMDM/+IDE8+5uqz5jV9ks5ysJKyi8i2HSdeWJ8cktjEfkoLAr79D9O9xHSvmnzpXO6I7piVrdfgeESrOuE9h3xkNZRQ2CyO8mFZjcQ9p9evpNWi/dloRi9bjfa2CQv6g++MAiJfDISuMDU="
 
+addons:
+  coverity_scan:
+    project:
+      name: "rttrorg/rttr"
+      description: "Build submitted via Travis CI"
+    notification_email: info@rttr.org
+    build_command_prepend: "./cmake; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
+    
 matrix:
   include:
     - os: osx
@@ -118,7 +129,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
-     
+
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
