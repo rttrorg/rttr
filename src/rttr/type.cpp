@@ -276,6 +276,18 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type type::get_derived_type(void* ptr, const type& source_type)
+{
+    if (ptr == nullptr)
+        return type();
+
+    type::type_id source_raw_id     = (*g_raw_type_list)[source_type.m_id];
+    const detail::derived_info info = (*g_get_derived_info_func_list)[source_raw_id](ptr);
+    return info.m_type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant type::create_variant(const argument& data) const
 {
     return (*g_variant_create_func_list)[m_id](data);

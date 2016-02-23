@@ -41,37 +41,103 @@ class argument;
 /*!
  * The \ref instance class is used for forwarding the instance of an object to invoke a \ref property or \ref method.
  *
- * \remark This class should never be explicitly instantiated.
+ * \remark The \ref instance class will internally hold a reference to the object. It will not perform any copy operation on it.
+ *         So make sure you will not hold an \ref instance, while the underlying object is already destroyed.
  */
 class RTTR_API instance
 {
-    template<typename T>
-    using decay_instance_t = detail::enable_if_t<!std::is_same<instance, T>::value &&
-                                                 !std::is_same<variant, T>::value &&
-                                                 !std::is_same<variant_array_view, T>::value, T>;
+    template<typename T, typename Tp = detail::decay_t<T>>
+    using decay_instance_t = detail::enable_if_t<!std::is_same<instance, Tp>::value &&
+                                                 !std::is_same<variant, Tp>::value &&
+                                                 !std::is_same<variant_array_view, Tp>::value, T>;
 
 public:
+    /*!
+     * \brief Creates an invalid instance object.
+     *
+     * Use this constructor, when you need to invoke a property or method where no instance is required.
+     */
     RTTR_INLINE instance();
 
+    /*!
+     * \brief Creates an instance object from a \ref variant object.
+     */
     RTTR_INLINE instance(variant& var);
 
+    /*!
+     * \brief Creates an instance object from a \ref variant object.
+     */
+    RTTR_INLINE instance(const variant& var);
+
+    /*!
+     * \brief Copy constructor for an instance.
+     */
     RTTR_INLINE instance(const instance& other);
 
-    RTTR_INLINE instance(instance&& other);
-
-    template<typename T, typename Tp = decay_instance_t<T>>
-    RTTR_INLINE instance(const T& data);
-
+    /*!
+     * \brief Creates an instance object from type \p T.
+     *
+     * \remark Internally, the instance class will hold a reference to the address of the given object \p data.
+     */
     template<typename T, typename Tp = decay_instance_t<T>>
     RTTR_INLINE instance(T& data);
 
+    /*!
+     * \brief This function will try to convert the underlying instance to the given type \p Target_Type*.
+     *        When the conversion succeeds, a valid pointer will be returned. Otherwise a nullptr.
+     */
     template<typename Target_Type>
     RTTR_INLINE Target_Type* try_convert() const;
 
+    /*!
+     * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
+     */
     RTTR_INLINE bool is_valid() const;
+
+    /*!
+     * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
+     */
     explicit operator bool() const;
 
+    /*!
+     * \brief Returns the type of the internally hold instance.
+     */
     RTTR_INLINE type get_type() const;
+
+    /*!
+     * \brief Returns an \ref instance object for the wrapped instance.
+     *
+     * \code{.cpp}
+     *   std::shared_ptr<foo> f;
+     *   instance obj = f;
+     *
+     *   obj.get_type() == type::get<std::shared_ptr<foo>>();       // yields to true
+     *   obj.get_wrapped_instance().get_type() == type::get<foo>(); // yields to true
+     * \endcode
+     *
+     * \remark When the current instance is not a \ref type::is_wrapper() "wrapper type",
+     *         an \ref instance::is_valid() "invalid" instance will be returned.
+     *
+     * \return An instance object from the wrapped type.
+     */
+    RTTR_INLINE instance get_wrapped_instance() const;
+
+    /*!
+     * \brief Returns the most derived type of the hold instance.
+     *
+     * \code{.cpp}
+     *   struct base { RTTR_ENABLE() };
+     *   struct derived : base { RTTR_ENABLE(base) };
+     *   //...
+     *   derived d;
+     *   base& b = d;
+     *   instance obj = b;
+     *
+     *   obj.get_type() == type::get<base>();               // yields to true
+     *   obj.get_derived_type() == type::get<derived>();    // yields to true
+     * \endcode
+     */
+    RTTR_INLINE type get_derived_type() const;
 
 private:
     instance& operator=(const instance& other);

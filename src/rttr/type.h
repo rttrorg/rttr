@@ -758,6 +758,13 @@ class RTTR_API type
         static void* apply_offset(void* ptr, const type& source_type, const type& target_type);
 
         /*!
+         * \brief This function returns the most derived type for the given object \p ptr of type \p source_type.
+         *
+         * \return Returns the most derived type for the given instance \p ptr.
+         */
+        static type get_derived_type(void* ptr, const type& source_type);
+
+        /*!
          * \brief When for the current type instance a converter function to type \p target_type was registered,
          *        then this function returns a valid pointer to a type_converter_base object.
          *        Otherwise this function returns a nullptr.

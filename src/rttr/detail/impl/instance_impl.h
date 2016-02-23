@@ -53,6 +53,13 @@ RTTR_INLINE instance::instance(variant& var)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_INLINE instance::instance(const variant& var)
+:   m_data_container(var.get_data_address_container())
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_INLINE instance::instance(const instance& other)
 :   m_data_container(other.m_data_container)
 {
@@ -60,28 +67,10 @@ RTTR_INLINE instance::instance(const instance& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance(instance&& other)
-:   m_data_container(other.m_data_container)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp>
-RTTR_INLINE instance::instance(const T& data)
-:   m_data_container(detail::data_address_container{
-                     rttr::type::get< detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
-                     detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
-{
-    static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T, typename Tp>
 RTTR_INLINE instance::instance(T& data)
 :   m_data_container(detail::data_address_container{
-                     rttr::type::get<detail::raw_type_t<T> >(), rttr::type::get<detail::wrapper_address_return_type_t<T>>(),
+                     rttr::type::get<T>(), rttr::type::get<detail::wrapper_mapper_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
 {
     static_assert(!std::is_same<argument, T>::value, "Don't use the instance class for forwarding an argument!");
@@ -111,6 +100,26 @@ RTTR_INLINE instance::operator bool() const { return (m_data_container.m_data_ad
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type instance::get_type() const { return m_data_container.m_type; }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+ RTTR_INLINE instance instance::get_wrapped_instance() const
+ {
+     instance obj;
+     if (m_data_container.m_data_address != m_data_container.m_data_address_wrapped_type)
+     {
+        obj.m_data_container.m_data_address = m_data_container.m_data_address_wrapped_type;
+        obj.m_data_container.m_type = m_data_container.m_wrapped_type;
+     }
+     return obj;
+ }
+
+ /////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE type instance::get_derived_type() const
+{
+    return type::get_derived_type(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

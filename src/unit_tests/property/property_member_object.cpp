@@ -36,6 +36,8 @@
 using namespace rttr;
 using namespace std;
 
+static int g_invalid_instance = 0;
+
 using func_ptr = void(*)(int);
 struct property_member_obj_test
 {
@@ -111,7 +113,7 @@ TEST_CASE("property - class object", "[property]")
 
     // invalid invoke
     CHECK(prop.set_value(obj, "test") == false);
-    CHECK(prop.get_value(23).is_valid() == false);
+    CHECK(prop.get_value(g_invalid_instance).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -171,8 +173,8 @@ TEST_CASE("property - class object - bind as ptr", "[property]")
 
     // invalid invoke
     CHECK(prop.set_value(obj, "test") == false);
-    CHECK(prop.set_value(34, "test") == false);
-    CHECK(prop.get_value(34).is_valid() == false);
+    CHECK(prop.set_value(g_invalid_instance, "test") == false);
+    CHECK(prop.get_value(g_invalid_instance).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -205,8 +207,8 @@ TEST_CASE("property - class object - read only - bind as ptr", "[property]")
 
     // invalid invoke
     CHECK(prop.set_value(obj, "test") == false);
-    CHECK(prop.set_value(34, "test") == false);
-    CHECK(prop.get_value(34).is_valid() == false);
+    CHECK(prop.set_value(g_invalid_instance, "test") == false);
+    CHECK(prop.get_value(g_invalid_instance).is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

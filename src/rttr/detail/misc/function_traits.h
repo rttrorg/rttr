@@ -44,20 +44,6 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    struct is_std_function : std::false_type
-    {
-        using signature = T;
-    };
-
-    template<typename T>
-    struct is_std_function<std::function<T>> : std::true_type
-    {
-        using signature = T;
-    };
-
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    template<typename T>
     struct is_function_ptr : std::integral_constant<bool, std::is_pointer<T>::value &&
                                                           std::is_function<::rttr::detail::remove_pointer_t<T>>::value>
     {
