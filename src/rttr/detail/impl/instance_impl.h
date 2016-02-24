@@ -53,13 +53,6 @@ RTTR_INLINE instance::instance(variant& var)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance(const variant& var)
-:   m_data_container(var.get_data_address_container())
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 RTTR_INLINE instance::instance(const instance& other)
 :   m_data_container(other.m_data_container)
 {

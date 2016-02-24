@@ -41,8 +41,8 @@ class argument;
 /*!
  * The \ref instance class is used for forwarding the instance of an object to invoke a \ref property or \ref method.
  *
- * \remark The \ref instance class will internally hold a reference to the object. It will not perform any copy operation on it.
- *         So make sure you will not hold an \ref instance, while the underlying object is already destroyed.
+ * \remark The \ref instance class will internally hold a reference to the object. It will not perform any copy operation on the data itself.
+ *         Make sure you don't hold an \ref instance, while the underlying object is already destroyed. Otherwise it will lead to undefined behavior.
  */
 class RTTR_API instance
 {
@@ -53,7 +53,7 @@ class RTTR_API instance
 
 public:
     /*!
-     * \brief Creates an invalid instance object.
+     * \brief Creates an \ref instance::is_valid() "invalid" instance object.
      *
      * Use this constructor, when you need to invoke a property or method where no instance is required.
      */
@@ -63,11 +63,6 @@ public:
      * \brief Creates an instance object from a \ref variant object.
      */
     RTTR_INLINE instance(variant& var);
-
-    /*!
-     * \brief Creates an instance object from a \ref variant object.
-     */
-    RTTR_INLINE instance(const variant& var);
 
     /*!
      * \brief Copy constructor for an instance.
@@ -85,28 +80,39 @@ public:
     /*!
      * \brief This function will try to convert the underlying instance to the given type \p Target_Type*.
      *        When the conversion succeeds, a valid pointer will be returned. Otherwise a nullptr.
+     *
+     * \return A pointer to the instance of \p Target_Type, when the conversion succeeds, otherwise a nullptr.
      */
     template<typename Target_Type>
     RTTR_INLINE Target_Type* try_convert() const;
 
     /*!
      * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
+     *
+     * \return True when a reference is stored, otherwise false.
      */
     RTTR_INLINE bool is_valid() const;
 
     /*!
      * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
+     *
+     * \return True when a reference is stored, otherwise false.
      */
     explicit operator bool() const;
 
     /*!
      * \brief Returns the type of the internally hold instance.
+     *
+     * \remark When no reference is stored, an \ref type::is_valid() "invalid"  \ref type object will be returned.
+     *
+     * \return Type object of stored reference.
      */
     RTTR_INLINE type get_type() const;
 
     /*!
      * \brief Returns an \ref instance object for the wrapped instance.
      *
+     * See following example code:
      * \code{.cpp}
      *   std::shared_ptr<foo> f;
      *   instance obj = f;
@@ -118,16 +124,18 @@ public:
      * \remark When the current instance is not a \ref type::is_wrapper() "wrapper type",
      *         an \ref instance::is_valid() "invalid" instance will be returned.
      *
-     * \return An instance object from the wrapped type.
+     * \return An \ref instance object from the wrapped type.
      */
     RTTR_INLINE instance get_wrapped_instance() const;
 
     /*!
      * \brief Returns the most derived type of the hold instance.
      *
+     * See following example code:
      * \code{.cpp}
      *   struct base { RTTR_ENABLE() };
-     *   struct derived : base { RTTR_ENABLE(base) };
+     *   struct middle : base { RTTR_ENABLE(base) };
+     *   struct derived : middle { RTTR_ENABLE(middle) };
      *   //...
      *   derived d;
      *   base& b = d;
