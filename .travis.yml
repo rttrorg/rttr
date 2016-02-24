@@ -54,9 +54,9 @@ matrix:
           echo "current branch: ${TRAVIS_BRANCH}"
           if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
             echo "Upload documentation..."
-            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mirror -R ${TRAVIS_BUILD_DIR}/build/doc_website/master doc_tmp"
-            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
-            lftp -c "open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mirror -R ${TRAVIS_BUILD_DIR}/build/doc_website/master doc_tmp"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
           fi
       env: BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
       
