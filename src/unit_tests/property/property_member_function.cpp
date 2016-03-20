@@ -223,7 +223,7 @@ TEST_CASE("property - class function - function pointer", "[property]")
     CHECK(ret == true);
 
     variant var = prop.get_value(obj);
-    CHECK(var.is_type<func_ptr>() == true);
+    REQUIRE(var.is_type<func_ptr>() == true);
     CHECK(var.get_value<func_ptr>() == cb);
 }
 

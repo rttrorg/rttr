@@ -38,6 +38,20 @@ using namespace std;
 namespace rttr
 {
 
+namespace detail
+{
+property create_property(const property_wrapper_base* wrapper)
+{
+    return property(wrapper);
+}
+
+void destroy_property(property& prop)
+{
+    delete prop.m_wrapper;
+}
+
+} // end namespace detail;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property::property(const detail::property_wrapper_base* wrapper)

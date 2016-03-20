@@ -30,11 +30,16 @@
 
 #include "rttr/type.h"
 #include "rttr/detail/metadata/metadata.h"
+#include "rttr/property.h"
+#include "rttr/method.h"
+#include "rttr/array_range.h"
+#include "rttr/detail/misc/flat_map.h"
 
 #include <vector>
 #include <string>
 #include <memory>
 #include <functional>
+#include <unordered_map>
 
 #define RTTR_MAX_TYPE_COUNT 32767
 #define RTTR_MAX_INHERIT_TYPES_COUNT 50
@@ -94,13 +99,11 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        const property_wrapper_base* get_class_property(const type& t, const char* name) const;
-        std::vector<const property_wrapper_base*> get_all_class_properties(const type& t) const;
-        uint16_t get_class_property_count(const type& t) const;
+        property get_class_property(const type& t, const char* name) const;
+        property_range get_property_range(const type& t) const;
 
-        const property_wrapper_base* get_global_property(const char* name) const;
-        std::vector<const property_wrapper_base*> get_all_global_properties() const;
-        uint16_t get_global_property_count(const type& t) const;
+        property get_global_property(const char* name) const;
+        property_range get_global_properties() const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -162,6 +165,7 @@ class RTTR_LOCAL type_database
 
     private:
         type_database();
+        ~type_database();
 
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, const char* name);
@@ -183,6 +187,14 @@ class RTTR_LOCAL type_database
 
             return hash;
         }
+
+        struct hash_char
+        {
+            RTTR_INLINE size_t operator()(const char* text) const
+            {
+                return generate_hash(text);
+            }
+        };
 
         using rttr_cast_func        = void*(*)(void*);
         using get_derived_info_func = derived_info(*)(void*);
@@ -211,23 +223,25 @@ class RTTR_LOCAL type_database
             };
         };
 
-        template<typename T>
+        template<typename T, typename Wrapper_Type>
         struct class_member
         {
-            class_member(type::type_id id) : m_class_id(id), m_register_index(0), m_name_hash(0) {}
-            class_member(type::type_id id, hash_type hash_value) : m_class_id(id), m_register_index(0), m_name_hash(hash_value) {}
             class_member(type::type_id id, uint16_t register_index, hash_type hash_value, std::unique_ptr<T> data)
-            :   m_class_id(id), m_register_index(register_index), m_name_hash(hash_value), m_data(move(data)) {}
+            :   m_class_id(id), m_register_index(register_index), m_name_hash(hash_value), m_data(move(data)), m_wrapper(create_method(data.get())) {}
 
-            class_member(class_member<T>&& other) : m_class_id(other.m_class_id), m_register_index(other.m_register_index),
-                                                    m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)) {}
+            class_member(type::type_id id) : m_class_id(id), m_register_index(0), m_name_hash(0), m_wrapper(create_method(static_cast<T*>(nullptr))) {}
+            class_member(type::type_id id, hash_type hash_value) : m_class_id(id), m_register_index(0), m_name_hash(hash_value), m_wrapper(create_method(static_cast<T*>(nullptr))) {}
 
-            class_member<T>& operator = (class_member<T>&& other)
+            class_member(class_member<T, Wrapper_Type>&& other) : m_class_id(other.m_class_id), m_register_index(other.m_register_index),
+                                                    m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)), m_wrapper(other.m_wrapper) {}
+
+            class_member<T, Wrapper_Type>& operator = (class_member<T, Wrapper_Type>&& other)
             {
                 m_class_id = other.m_class_id;
                 m_register_index = other.m_register_index;
                 m_name_hash = other.m_name_hash;
                 m_data = std::move(other.m_data);
+                m_wrapper = other.m_wrapper;
 
                 other.m_class_id = 0;
                 other.m_register_index = 0;
@@ -237,20 +251,20 @@ class RTTR_LOCAL type_database
 
             struct order
             {
-                RTTR_INLINE bool operator () (const class_member<T>& _left, const class_member<T>& _right)  const
+                RTTR_INLINE bool operator () (const class_member<T, Wrapper_Type>& _left, const class_member<T, Wrapper_Type>& _right)  const
                 {
+                    // The order is the following, first type id, then registration index, then name hash
                     if (_left.m_class_id < _right.m_class_id)
                         return true;
                     else if (_left.m_class_id > _right.m_class_id)
                         return false;
-                    // because the search for a name is a common use case,
-                    // we sort it first after the hash of the name and than after m_register_index
-                    if (_left.m_name_hash < _right.m_name_hash)
-                        return true;
-                    else if (_left.m_name_hash > _right.m_name_hash)
-                        return false;
 
                     if (_left.m_register_index < _right.m_register_index)
+                        return true;
+                    else if (_left.m_register_index > _right.m_register_index)
+                        return false;
+
+                    if (_left.m_name_hash < _right.m_name_hash)
                         return true;
 
                     return false;
@@ -261,6 +275,7 @@ class RTTR_LOCAL type_database
             uint16_t            m_register_index;
             hash_type           m_name_hash;
             std::unique_ptr<T>  m_data;
+            Wrapper_Type        m_wrapper;
         };
 
         template<typename T>
@@ -364,11 +379,14 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
-        std::vector<global_member<property_wrapper_base>>           m_global_property_list;
         std::vector<global_member<method_wrapper_base>>             m_global_method_list;
+        flat_map<const char*, property, hash_char>                  m_global_properties;
 
-        std::vector<class_member<property_wrapper_base>>            m_class_property_list;
-        std::vector<class_member<method_wrapper_base>>              m_class_method_list;
+        std::vector<class_member<method_wrapper_base, method>>      m_class_method_list;
+
+        std::unordered_map<type, std::vector<property>>             m_type_property_map;
+
+        std::unordered_map<type, std::vector<property>>             m_class_property_map;
 
         std::vector<type_data<constructor_wrapper_base>>            m_constructor_list;
         std::vector<type_data<destructor_wrapper_base>>             m_destructor_list;

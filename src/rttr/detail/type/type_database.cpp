@@ -43,6 +43,7 @@
 
 using namespace std;
 
+
 namespace rttr
 {
 namespace detail
@@ -111,10 +112,57 @@ type_database::type_database()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type_database::~type_database()
+{
+    for(auto& prop : m_global_properties.value_data())
+        detail::destroy_property(prop);
+
+    for(auto& item : m_type_property_map)
+        for(auto& prop : item.second)
+        detail::destroy_property(prop);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type_database& type_database::instance()
 {
     static type_database obj;
     return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static void update_class_list(const type& t,
+                              const std::unordered_map<type, std::vector<property>>& type_map,
+                              std::unordered_map<type, std::vector<property>>& class_map)
+{
+    // update type "t" with all properties from base classes
+    const auto& type_list_itr = type_map.find(t);
+    auto& all_prop_list = class_map[t];
+    all_prop_list.reserve(all_prop_list.size() + 1);
+    all_prop_list.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
+
+    for (const auto& base_type : t.get_base_classes())
+    {
+        auto ret = type_map.find(base_type);
+        if (ret != type_map.end())
+        {
+            auto& base_propery_list = ret->second;
+            all_prop_list.reserve(all_prop_list.size() + base_propery_list.size());
+            all_prop_list.insert(all_prop_list.end(), base_propery_list.begin(), base_propery_list.end());
+        }
+    }
+    // insert own properties
+    if (type_list_itr != type_map.end())
+    {
+        all_prop_list.reserve(all_prop_list.size() + type_list_itr->second.size());
+        all_prop_list.insert(all_prop_list.end(), type_list_itr->second.begin(), type_list_itr->second.end());
+    }
+
+    // update derived types
+    for (const auto& derived_type : t.get_derived_classes())
+        update_class_list<T>(t, type_map, class_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -125,135 +173,79 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
         return;
 
     const auto name = prop->get_name();
+
     if (t.is_class())
     {
         if (get_class_property(t, name))
             return;
+
+        auto& type_prop_list = m_type_property_map[t];
+        type_prop_list.emplace_back(create_property(prop.release()));
+
+        update_class_list<property>(t, m_type_property_map, m_class_property_map);
     }
     else
     {
         if (get_global_property(name))
             return;
+
+        property p = create_property(prop.release());
+        m_global_properties.insert(std::move(name), std::move(p));
     }
-    const auto name_hash = generate_hash(name);
-    if (t.is_class())
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+property type_database::get_class_property(const type& t, const char* name) const
+{
+    const auto ret = m_type_property_map.find(t);
+    if (ret != m_type_property_map.end())
     {
-        m_class_property_list.push_back({t.get_id(), get_class_property_count(t), name_hash, move(prop)});
-        std::sort(m_class_property_list.begin(), m_class_property_list.end(), class_member<property_wrapper_base>::order());
+        const auto& vec = ret->second;
+        auto prop_ret = std::find_if(vec.begin(), vec.end(),
+        [name](const property& prop)
+        {
+            return (prop.get_name() == name);
+        });
+        if (prop_ret != vec.end())
+            return *prop_ret;
     }
-    else
+
+    return detail::create_property();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+property_range type_database::get_property_range(const type& t) const
+{
+    const auto ret = m_class_property_map.find(t);
+    if (ret != m_class_property_map.end())
     {
-        m_global_property_list.push_back({name_hash, move(prop)});
-        std::sort(m_global_property_list.begin(), m_global_property_list.end(), global_member<property_wrapper_base>::order());
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-const property_wrapper_base* type_database::get_class_property(const type& t, const char* name) const
-{
-    using vec_value_type = class_member<property_wrapper_base>;
-    const auto name_hash = generate_hash(name);
-    const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(),
-                                vec_value_type{raw_type.get_id(), name_hash},
-                                vec_value_type::order());
-    for (; itr != m_class_property_list.cend(); ++itr)
-    {
-        auto& item = *itr;
-        if (item.m_class_id != raw_type.get_id())
-            break;
-
-        if (item.m_name_hash != name_hash)
-            break;
-
-        if (std::strcmp(item.m_data->get_name(), name) == 0)
-            return item.m_data.get();
+        auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
+        if (!vec.empty())
+            return create_array_range<property>(vec.data(), vec.data() + vec.size());
     }
 
-    return nullptr;
+    return create_array_range<property, detail::no_predicate>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<const property_wrapper_base*> type_database::get_all_class_properties(const type& t) const
+property type_database::get_global_property(const char* name) const
 {
-    using member_type = property_wrapper_base;
-    using vec_value_type = class_member<member_type>;
+    const auto ret = m_global_properties.find(name);
+    if (ret != m_global_properties.end())
+        return *ret;
 
-    const auto raw_type = t.get_raw_type();
-    auto itr = std::lower_bound(m_class_property_list.cbegin(), m_class_property_list.cend(),
-                                vec_value_type{raw_type.get_id()}, vec_value_type::order());
-
-    using sort_item = std::pair<uint16_t, member_type*>;
-    std::vector<sort_item> sorted_vec;
-    for (; itr != m_class_property_list.cend(); ++itr)
-    {
-        const auto& item = *itr;
-        if (item.m_class_id != raw_type.get_id())
-            break;
-
-        sorted_vec.push_back({item.m_register_index, item.m_data.get()});
-    }
-
-    std::sort(sorted_vec.begin(), sorted_vec.end(), [](const sort_item& left, const sort_item& right)
-                                                    { return left.first < right.first; });
-
-    std::vector<const member_type*> result;
-    result.reserve(sorted_vec.size());
-    for (const auto& item : sorted_vec)
-        result.push_back(item.second);
-
-    return result;
+    return detail::create_property(static_cast<property_wrapper_base*>(nullptr));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::get_class_property_count(const type& t) const
+property_range type_database::get_global_properties() const
 {
-    return static_cast<uint16_t>(get_all_class_properties(t).size());
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-const property_wrapper_base* type_database::get_global_property(const char* name) const
-{
-    using vec_value_type = global_member<property_wrapper_base>;
-    const auto name_hash = generate_hash(name);
-    auto itr = std::lower_bound(m_global_property_list.cbegin(), m_global_property_list.cend(),
-                                vec_value_type{name_hash}, vec_value_type::order());
-    for (; itr != m_global_property_list.cend(); ++itr)
-    {
-        auto& item = *itr;
-        if (item.m_name_hash != name_hash)
-            break;
-
-        if (std::strcmp(item.m_data->get_name(), name) == 0)
-            return item.m_data.get();
-    }
-
-    return nullptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<const property_wrapper_base*> type_database::get_all_global_properties() const
-{
-    std::vector<const property_wrapper_base*> result;
-    result.reserve(m_global_property_list.size());
-
-    for (const auto& item : as_const(m_global_property_list))
-        result.push_back(item.m_data.get());
-
-    return result;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-uint16_t type_database::get_global_property_count(const type& t) const
-{
-    return static_cast<uint16_t>(m_global_property_list.size());
+    auto& vec = const_cast<type_database*>(this)->m_global_properties.value_data();
+    return create_array_range<property>(vec.data(), vec.data() + vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -273,32 +265,31 @@ static std::vector<type> convert_param_list(const vector<parameter_info>& param_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_method(const type& t, std::unique_ptr<method_wrapper_base> method)
+void type_database::register_method(const type& t, std::unique_ptr<method_wrapper_base> meth)
 {
     if (!t.is_valid())
         return;
 
-    const auto name = method->get_name();
+    const auto name = meth->get_name();
     if (t.is_class())
     {
-        if (get_class_method(t, name, convert_param_list(method->get_parameter_infos())))
+        if (get_class_method(t, name, convert_param_list(meth->get_parameter_infos())))
             return;
     }
     else
     {
-        if (get_global_method(name, convert_param_list(method->get_parameter_infos())))
+        if (get_global_method(name, convert_param_list(meth->get_parameter_infos())))
             return;
     }
     const auto name_hash = generate_hash(name);
     if (t.is_class())
     {
-        auto foo = get_class_method_count(t);
-        m_class_method_list.push_back({t.get_id(), get_class_method_count(t), name_hash, move(method)});
-        std::sort(m_class_method_list.begin(), m_class_method_list.end(), class_member<method_wrapper_base>::order());
+        m_class_method_list.push_back({t.get_id(), get_class_method_count(t), name_hash, move(meth)});
+        std::sort(m_class_method_list.begin(), m_class_method_list.end(), class_member<method_wrapper_base, method>::order());
     }
     else
     {
-        m_global_method_list.push_back({name_hash, move(method)});
+        m_global_method_list.push_back({name_hash, move(meth)});
         std::sort(m_global_method_list.begin(), m_global_method_list.end(), global_member<method_wrapper_base>::order());
     }
 }
@@ -307,7 +298,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 const method_wrapper_base* type_database::get_class_method(const type& t, const char* name) const
 {
-    using vec_value_type = class_member<method_wrapper_base>;
+    using vec_value_type = class_member<method_wrapper_base, method>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
     auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
@@ -320,7 +311,7 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
             break;
 
         if (item.m_name_hash != name_hash)
-            break;
+            continue;
 
         if (std::strcmp(item.m_data->get_name(), name) == 0)
             return item.m_data.get();
@@ -385,7 +376,7 @@ struct compare_with_defaults
 template<typename Container, typename Compare_Type>
 const method_wrapper_base* type_database::get_class_method(const type& t, const char* name, const Container& container) const
 {
-    using vec_value_type = class_member<method_wrapper_base>;
+    using vec_value_type = class_member<method_wrapper_base, method>;
     const auto name_hash = generate_hash(name);
     const auto raw_type = t.get_raw_type();
     auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
@@ -398,7 +389,7 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
             break;
 
         if (item.m_name_hash != name_hash)
-            break;
+            continue;
 
         if (std::strcmp(item.m_data->get_name(), name) != 0)
             continue;
@@ -430,31 +421,21 @@ const method_wrapper_base* type_database::get_class_method(const type& t, const 
 std::vector<const method_wrapper_base*> type_database::get_all_class_methods(const type& t) const
 {
     using member_type = method_wrapper_base;
-    using vec_value_type = class_member<member_type>;
+    using vec_value_type = class_member<member_type, method>;
 
     const auto raw_type = t.get_raw_type();
     auto itr = std::lower_bound(m_class_method_list.cbegin(), m_class_method_list.cend(),
                                 vec_value_type{raw_type.get_id()}, vec_value_type::order());
 
-    using sort_item = std::pair<uint16_t, member_type*>;
-    std::vector<sort_item> sorted_vec;
+    std::vector<const member_type*> result;
     for (; itr != m_class_method_list.cend(); ++itr)
     {
         const auto& item = *itr;
         if (item.m_class_id != raw_type.get_id())
             break;
 
-        sorted_vec.push_back({item.m_register_index, item.m_data.get()});
+        result.push_back(item.m_data.get());
     }
-
-    std::sort(sorted_vec.begin(), sorted_vec.end(), [](const sort_item& left, const sort_item& right)
-                                                    { return left.first < right.first; });
-
-    std::vector<const member_type*> result;
-    result.reserve(sorted_vec.size());
-    for (const auto& item : sorted_vec)
-        result.push_back(item.second);
-
     return result;
 }
 

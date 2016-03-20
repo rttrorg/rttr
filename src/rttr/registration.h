@@ -753,7 +753,7 @@ RTTR_REGISTRATION
  * \remark Do not instantiate this class directly!
 */
 template<typename...T>
-class registration::bind : public base_class
+class registration::bind : public detail::base_class
 {
     public:
         /*!

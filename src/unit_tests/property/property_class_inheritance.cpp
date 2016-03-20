@@ -130,7 +130,7 @@ RTTR_REGISTRATION
 TEST_CASE("property - class - inheritance - order", "[property]")
 {
     type t = type::get<ns_property::bottom>();
-    auto props = t.get_properties();
+    std::vector<property> props(t.get_properties().begin(), t.get_properties().end());
     REQUIRE(props.size() == 6);
 
     CHECK(props[0].get_name() == "p1"); // top
@@ -146,7 +146,8 @@ TEST_CASE("property - class - inheritance - order", "[property]")
 TEST_CASE("property - class - inheritance - invoke", "[property]")
 {
     type t = type::get<ns_property::bottom>();
-    auto props = t.get_properties();
+    std::vector<property> props(t.get_properties().begin(), t.get_properties().end());
+    REQUIRE(props.size() == 6);
 
     ns_property::bottom instance;
     ns_property::top& top = instance;

@@ -29,6 +29,7 @@
 #define RTTR_TYPE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/array_range.h"
 
 #include <type_traits>
 #include <vector>
@@ -544,9 +545,9 @@ class RTTR_API type
          *
          * \remark The properties are sorted after its order of registration.
          *
-         * \return A vector with properties.
+         * \return A range of properties.
          */
-        std::vector<property> get_properties() const;
+        property_range get_properties() const;
 
         /*!
          * \brief Returns a global property with the name \p name.
@@ -560,13 +561,13 @@ class RTTR_API type
         /*!
          * \brief Returns a list of all registered global properties.
          *
-         * \remark The order of the properties in the vector is undefined.
+         * \remark The order of the properties in the range is undefined.
          *         Client code should **not** depend on the order in which properties are returned,
          *         because that order varies.
          *
-         * \return A vector with properties.
+         * \return A range of properties.
          */
-        static std::vector<property> get_global_properties();
+        static property_range get_global_properties();
 
 
         /*!

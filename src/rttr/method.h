@@ -42,10 +42,13 @@ class variant;
 class type;
 class instance;
 class argument;
+class method;
 
 namespace detail
 {
     class method_wrapper_base;
+    RTTR_LOCAL method create_method(const method_wrapper_base* wrapper = nullptr);
+    RTTR_LOCAL void destroy_method(method& meth);
 }
 
 /*!
@@ -291,6 +294,9 @@ class RTTR_API method
     private:
         friend class type; // to prevent creation of this class
         method(const detail::method_wrapper_base* wrapper = nullptr);
+
+        friend method detail::create_method(const detail::method_wrapper_base* wrapper);
+        friend void detail::destroy_method(method& meth);
     private:
         const detail::method_wrapper_base* m_wrapper;
 };

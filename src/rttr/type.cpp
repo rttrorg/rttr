@@ -500,15 +500,10 @@ bool type::destroy(variant& obj) const
 
 property type::get_property(const char* name) const
 {
-    const auto& obj = detail::type_database::instance();
-
-    if (const auto prop = obj.get_class_property(get_raw_type(), name))
-        return property(prop);
-
-    for (const auto& type : get_base_classes())
+    for (const auto& prop : detail::reverse(get_properties()))
     {
-        if (const auto prop = obj.get_class_property(type.get_raw_type(), name))
-            return property(prop);
+        if (prop.get_name() == name)
+            return prop;
     }
 
     return property();
@@ -548,26 +543,9 @@ bool type::set_property_value(const char* name, argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<property> type::get_properties() const
+property_range type::get_properties() const
 {
-    const auto& obj = detail::type_database::instance();
-    vector<const detail::property_wrapper_base*> props;
-
-    for (const auto& type :get_base_classes())
-    {
-       const auto property_list = obj.get_all_class_properties(type.get_raw_type());
-       props.insert(props.end(), property_list.cbegin(), property_list.cend());
-    }
-
-    const auto vec = obj.get_all_class_properties(get_raw_type());
-    props.insert(props.end(), vec.cbegin(), vec.cend());
-
-    vector<property> result;
-    result.reserve(props.size());
-    for (const auto& prop : props)
-        result.push_back(property(prop));
-
-    return result;
+    return detail::type_database::instance().get_property_range(get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -676,16 +654,9 @@ std::vector<method> type::get_global_methods()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<property> type::get_global_properties()
+property_range type::get_global_properties()
 {
-    const auto property_list = detail::type_database::instance().get_all_global_properties();
-
-    vector<property> result;
-    result.reserve(property_list.size());
-    for (const auto& prop : property_list)
-        result.push_back(property(prop));
-
-    return result;
+    return detail::type_database::instance().get_global_properties();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

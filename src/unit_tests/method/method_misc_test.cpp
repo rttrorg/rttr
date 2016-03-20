@@ -178,7 +178,7 @@ TEST_CASE("method - get_metadata()", "[method]")
     CHECK(var.get_value<bool>() == true);
 
     var = meth.get_metadata("Text");
-    CHECK(var.is_type<std::string>() == true);
+    REQUIRE(var.is_type<std::string>() == true);
     CHECK(var.get_value<std::string>() == "Some funky description");
 }
 
@@ -188,11 +188,11 @@ TEST_CASE("method - default func - get_metadata()", "[method]")
 {
     method meth = type::get_by_name("method_misc_test").get_method("default_func");
     variant var = meth.get_metadata(E_MetaData::SCRIPTABLE);
-    CHECK(var.is_type<bool>() == true);
+    REQUIRE(var.is_type<bool>() == true);
     CHECK(var.get_value<bool>() == true);
 
     var = meth.get_metadata("Text");
-    CHECK(var.is_type<std::string>() == true);
+    REQUIRE(var.is_type<std::string>() == true);
     CHECK(var.get_value<std::string>() == "Some funky description");
 }
 

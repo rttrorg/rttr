@@ -153,9 +153,9 @@ TEST_CASE("property - class - get/set - shared_ptr with inheritance", "[property
         CHECK(ret == true);
 
         variant val = p1.get_value(obj);
-        CHECK(val.is_type<int>() == true);
+        REQUIRE(val.is_type<int>() == true);
 
-        REQUIRE(val.get_value<int>() == 2);
+        CHECK(val.get_value<int>() == 2);
         CHECK(obj.get()->p1 == 2);
     }
 

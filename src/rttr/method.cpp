@@ -35,6 +35,20 @@ using namespace std;
 namespace rttr
 {
 
+namespace detail
+{
+method create_method(const method_wrapper_base* wrapper)
+{
+    return method(wrapper);
+}
+
+void destroy_method(method& meth)
+{
+    delete meth.m_wrapper;
+}
+
+} // end namespace detail;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method::method(const detail::method_wrapper_base* wrapper)

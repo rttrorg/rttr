@@ -47,10 +47,6 @@ set(DOXYGEN_EXCLUDE_SYMBOLS   "impl* \\
                                impl::* \\
                                detail* \\
                                detail:: \\
-                               *MetaTypeInfo* \\
-                               *method_wrapper* \\
-                               *property_wrapper* \\
-                               *base_class* \\
                                ")
 
 set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\

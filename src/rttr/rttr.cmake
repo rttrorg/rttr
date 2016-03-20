@@ -28,6 +28,7 @@
 set(HEADER_FILES access_levels.h
                  argument.h
                  array_mapper.h
+                 array_range.h
                  constructor.h
                  destructor.h
                  enumeration.h
@@ -68,6 +69,7 @@ set(HEADER_FILES access_levels.h
                  detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
                  detail/impl/argument_impl.h
+                 detail/impl/array_range_impl.h
                  detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
                  detail/impl/wrapper_mapper_impl.h
@@ -86,6 +88,7 @@ set(HEADER_FILES access_levels.h
                  detail/misc/data_address_container.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/flat_map.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/parameter_info/parameter_infos.h

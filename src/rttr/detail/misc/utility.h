@@ -407,29 +407,10 @@ class reverse_move_wrapper
         T m_container;
 };
 
-
 template<class T>
-reverse_move_wrapper<T> reverse(T&& container)
+auto reverse(T&& container) -> typename std::conditional< std::is_lvalue_reference<T>::value, reverse_wrapper<T>, reverse_move_wrapper<T> >::type
 {
-    return reverse_move_wrapper<T>(std::forward<T>(container));
-}
-
-template<class T>
-const reverse_move_wrapper<const T> reverse(const T&& container)
-{
-    return reverse_move_wrapper<const T>(std::forward<const T>(container));
-}
-
-template<class T>
-reverse_wrapper<T> reverse(T& container)
-{
-     return reverse_wrapper<T>(container);
-}
-
-template<class T>
-const reverse_wrapper<const T> reverse(const T& container)
-{
-     return reverse_wrapper<const T>(container);
+    return { std::forward<T>(container) };
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

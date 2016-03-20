@@ -42,10 +42,13 @@ class type;
 class enumeration;
 class instance;
 class argument;
+class property;
 
 namespace detail
 {
     class property_wrapper_base;
+    RTTR_LOCAL property create_property(const property_wrapper_base* wrapper = nullptr);
+    RTTR_LOCAL void destroy_property(property& prop);
 }
 
 /*!
@@ -267,6 +270,9 @@ class RTTR_API property
         friend class type; // to prevent creation of this class
         //! Constructs a property from a property_wrapper_base.
         property(const detail::property_wrapper_base* wrapper = nullptr);
+
+        friend property detail::create_property(const detail::property_wrapper_base* wrapper);
+        friend void detail::destroy_property(property& prop);
     private:
         const detail::property_wrapper_base* m_wrapper;
 };

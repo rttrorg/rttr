@@ -31,6 +31,7 @@
 #include "type.h"
 #include "rttr_enable.h"
 #include "rttr_cast.h"
+#include "array_range.h"
 #include "constructor.h"
 #include "destructor.h"
 #include "method.h"
