@@ -45,7 +45,7 @@ namespace detail
 template<typename T>
 struct equal_types
 {
-    RTTR_CONSTEXPR bool operator()(const T& left, const T& right) const
+    bool operator()(const T& left, const T& right) const
     {
         return (left == right);
     }
@@ -54,7 +54,7 @@ struct equal_types
 template<>
 struct equal_types<const char*>
 {
-    RTTR_CONSTEXPR bool operator()(const char *const left, const char *const right) const
+    bool operator()(const char *const left, const char *const right) const
     {
         return (std::strcmp(left, right) == 0);
     }
