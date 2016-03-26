@@ -72,7 +72,8 @@ RTTR_REGISTRATION
 TEST_CASE("method - invoke - defaults", "[method]")
 {
     type t = type::get<method_invoke_defaults_test>();
-    const auto meth_list = t.get_methods();
+    const auto meth_range = t.get_methods();
+    std::vector<method> meth_list(meth_range.cbegin(), meth_range.cend());
     REQUIRE(meth_list.size() == 8);
 
     method_invoke_defaults_test obj;
@@ -106,7 +107,8 @@ TEST_CASE("method - invoke - defaults", "[method]")
 TEST_CASE("method - invoke - defaults - skip last value", "[method]")
 {
     type t = type::get<method_invoke_defaults_test>();
-    const auto meth_list = t.get_methods();
+    const auto meth_range = t.get_methods();
+    std::vector<method> meth_list(meth_range.cbegin(), meth_range.cend());
     REQUIRE(meth_list.size() == 8);
 
     method_invoke_defaults_test obj;

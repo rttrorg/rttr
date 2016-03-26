@@ -439,18 +439,6 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::vector<type> extract_types(const vector<argument>& args)
-{
-    std::vector<type> result;
-    result.reserve(args.size());
-    for (const auto& arg : args)
-        result.push_back(arg.get_type());
-
-    return result;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 constructor type::get_constructor(const std::vector<type>& args) const
 {
     return constructor(detail::type_database::instance().get_constructor(*this, args));
@@ -458,25 +446,17 @@ constructor type::get_constructor(const std::vector<type>& args) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<constructor> type::get_constructors() const
+constructor_range type::get_constructors() const
 {
-    const auto constructors = detail::type_database::instance().get_constructors(*this);
-    vector<constructor> result;
-    result.reserve(constructors.size());
-    for (const auto& ctor : constructors)
-        result.push_back(constructor(ctor));
-
-    return result;
+    return detail::type_database::instance().get_constructors(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant type::create(vector<argument> args) const
 {
-    if (auto ctor = detail::type_database::instance().get_constructor(*this, args))
-        return ctor->invoke_variadic(args);
-
-    return variant();
+    auto ctor = detail::type_database::instance().get_constructor(*this, args);
+    return ctor.invoke_variadic(std::move(args));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -490,23 +470,14 @@ destructor type::get_destructor() const
 
 bool type::destroy(variant& obj) const
 {
-    if (auto dtor = detail::type_database::instance().get_destructor(*this))
-        return dtor->invoke(obj);
-    else
-        return false;
+    return detail::type_database::instance().get_destructor(*this).invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property type::get_property(const char* name) const
 {
-    for (const auto& prop : detail::reverse(get_properties()))
-    {
-        if (prop.get_name() == name)
-            return prop;
-    }
-
-    return property();
+    return detail::type_database::instance().get_class_property(get_raw_type(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -545,67 +516,28 @@ bool type::set_property_value(const char* name, argument arg)
 
 property_range type::get_properties() const
 {
-    return detail::type_database::instance().get_property_range(get_raw_type());
+    return detail::type_database::instance().get_class_properties(get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method type::get_method(const char* name) const
 {
-    const auto& obj = detail::type_database::instance();
-
-    if (const auto meth = obj.get_class_method(get_raw_type(), name))
-        return method(meth);
-
-    for (const auto& type : detail::reverse(get_base_classes()))
-    {
-        if (const auto meth = obj.get_class_method(type.get_raw_type(), name))
-            return method(meth);
-    }
-
-    return method();
+    return detail::type_database::instance().get_class_method(get_raw_type(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method type::get_method(const char* name, const std::vector<type>& params) const
 {
-    const auto& obj = detail::type_database::instance();
-
-    if (const auto meth = obj.get_class_method(get_raw_type(), name, params))
-        return method(meth);
-
-    for (const auto& type : detail::reverse(get_base_classes()))
-    {
-        if (const auto meth = obj.get_class_method(type.get_raw_type(), name, params))
-            return method(meth);
-    }
-
-    return method();
+    return detail::type_database::instance().get_class_method(get_raw_type(), name, params);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<method> type::get_methods() const
+method_range type::get_methods() const
 {
-    const auto& obj = detail::type_database::instance();
-    vector<const detail::method_wrapper_base*> methods;
-
-    for (const auto& type : get_base_classes())
-    {
-       const auto method_list = obj.get_all_class_methods(type.get_raw_type());
-       methods.insert(methods.end(), method_list.cbegin(), method_list.cend());
-    }
-
-    const auto vec = obj.get_all_class_methods(get_raw_type());
-    methods.insert(methods.end(), vec.cbegin(), vec.cend());
-
-    vector<method> result;
-    result.reserve(methods.size());
-    for (const auto& meth : methods)
-        result.push_back(method(meth));
-
-    return result;
+    return detail::type_database::instance().get_class_methods(get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -619,37 +551,21 @@ property type::get_global_property(const char* name)
 
 method type::get_global_method(const char* name)
 {
-    const auto& db = detail::type_database::instance();
-    if (const auto meth = db.get_global_method(name))
-        return method(meth);
-
-    return method();
+    return detail::type_database::instance().get_global_method(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 method type::get_global_method(const char* name, const std::vector<type>& params)
 {
-    const auto& db = detail::type_database::instance();
-    if (const auto meth = db.get_global_method(name, params))
-        return method(meth);
-
-    return method();
+    return detail::type_database::instance().get_global_method(name, params);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<method> type::get_global_methods()
+method_range type::get_global_methods()
 {
-    const auto& db = detail::type_database::instance();
-    const auto methods = db.get_all_global_methods();
-
-    vector<method> result;
-    result.reserve(methods.size());
-    for (const auto& meth : methods)
-        result.push_back(method(meth));
-
-    return result;
+    return detail::type_database::instance().get_global_methods();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -670,16 +586,8 @@ enumeration type::get_enumeration() const
 
 variant type::invoke(const char* name, instance obj, std::vector<argument> args) const
 {
-    const auto& db = detail::type_database::instance();
-
-    if (const auto meth = db.get_class_method(get_raw_type(), name, args))
-        return meth->invoke_variadic(obj, args);
-
-    for (const auto& type : detail::reverse(get_base_classes()))
-    {
-        if (const auto meth = db.get_class_method(type.get_raw_type(), name, args))
-            return meth->invoke_variadic(obj, args);
-    }
+    if (auto meth = detail::type_database::instance().get_class_method(get_raw_type(), name, args))
+        return meth.invoke_variadic(obj, args);
 
     return variant();
 }
@@ -689,10 +597,7 @@ variant type::invoke(const char* name, instance obj, std::vector<argument> args)
 variant type::invoke(const char* name, std::vector<argument> args)
 {
     const auto& db = detail::type_database::instance();
-    if (const auto meth = db.get_global_method(name, args))
-        return meth->invoke_variadic(instance(), args);
-
-    return variant();
+    return db.get_global_method(name, args).invoke_variadic(instance(), args);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -84,11 +84,11 @@ struct method_test
 struct method_test_derived : method_test
 {
 
-    virtual void method_8()         { method_8_derived_called = true; }
-    void method_10(int value)       { method_10_derived_called = true;} // here we want to check if a base ptr can be converted to the middle
+    virtual void method_8()         { method_8_derived_called = true; } // new implementation from base class
+    void method_11(int value)       { method_11_derived_called = true;} // here we want to check if a base ptr can be converted to the middle
 
     bool method_8_derived_called    = false;
-    bool method_10_derived_called   = false;
+    bool method_11_derived_called   = false;
 
     RTTR_ENABLE(method_test)
 };

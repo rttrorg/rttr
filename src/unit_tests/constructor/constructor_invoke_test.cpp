@@ -220,7 +220,9 @@ TEST_CASE("constructor - invoke general", "[constructor]")
 
 TEST_CASE("constructor - invoke policy", "[constructor]")
 {
-   auto ctor_list = type::get<ctor_invoke_test>().get_constructors();
+    auto range = type::get<ctor_invoke_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() == 11);
 
     SECTION("as_object")
     {
@@ -310,7 +312,8 @@ TEST_CASE("constructor - invoke variadic", "[constructor]")
 
 TEST_CASE("constructor - invoke ctor valid", "[constructor]")
 {
-    const auto ctor_list = type::get<ctor_invoke_arg_test>().get_constructors();
+    auto range = type::get<ctor_invoke_arg_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() == 8);
 
     CHECK(ctor_list[0].invoke().is_valid() == true);
@@ -327,7 +330,8 @@ TEST_CASE("constructor - invoke ctor valid", "[constructor]")
 
 TEST_CASE("constructor - invoke func ctor valid", "[constructor]")
 {
-    const auto ctor_list = type::get<ctor_func_invoke_arg_test>().get_constructors();
+    auto range = type::get<ctor_invoke_arg_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() == 8);
 
     CHECK(ctor_list[0].invoke().is_valid() == true);

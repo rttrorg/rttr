@@ -114,7 +114,7 @@ RTTR_REGISTRATION
 
     registration::class_<method_test_derived>("method_test_derived")
         .constructor<>()
-        .method("method_10", &method_test_derived::method_10);
+        .method("method_11", &method_test_derived::method_11);
 
     registration::class_<method_test_right>("method_test_right")
         .method("method_12", &method_test_right::method_12);
@@ -279,8 +279,8 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(final_obj.method_12_right_called == true);
 
     // test the middle cast
-    t_final.get_method("method_10").invoke(up_cast_test, 45);
-    REQUIRE(final_obj.method_10_derived_called == true);
+    t_final.get_method("method_11").invoke(up_cast_test, 45);
+    REQUIRE(final_obj.method_11_derived_called == true);
 
     ////////////////////////////////////////////////////////////
     // test compare operator
@@ -367,7 +367,8 @@ TEST_CASE("Test method arrays", "[method]")
 
 TEST_CASE("Test method signature", "[method]")
 {
-    const auto methods = type::get<method_test_final>().get_methods();
+    const auto meth_range = type::get<method_test_final>().get_methods();
+    std::vector<method> methods(meth_range.cbegin(), meth_range.cend());
     REQUIRE(methods.size() == 20);
 
     REQUIRE(methods[0].get_signature() == "method_1( )");

@@ -124,7 +124,10 @@ TEST_CASE("constructor - default argument test (real ctor)", "[constructor]")
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
 
-    auto ctor_list = t.get_constructors();
+    auto range = t.get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() > 1);
+
     constructor ctor = ctor_list[0];
     using create_type = std::shared_ptr<ctor_default_arg_test>;
     // too less arguments for invoke
@@ -158,7 +161,9 @@ TEST_CASE("constructor - default argument test (func ctor)", "[constructor]")
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
 
-    auto ctor_list = t.get_constructors();
+    auto range = t.get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() > 1);
     constructor ctor = ctor_list[1];
     using create_type = std::shared_ptr<ctor_default_arg_test>;
     // too less arguments for invoke
@@ -192,7 +197,9 @@ TEST_CASE("constructor - default argument test (invoke variadic; real ctor)", "[
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
 
-    auto ctor_list = t.get_constructors();
+    auto range = t.get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() > 1);
     constructor ctor = ctor_list[0];
     using create_type = std::shared_ptr<ctor_default_arg_test>;
     // too less arguments for invoke
@@ -245,7 +252,9 @@ TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[
     type t = type::get<ctor_default_arg_test>();
     REQUIRE(t.is_valid() == true);
 
-    auto ctor_list = t.get_constructors();
+    auto range = t.get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() > 2);
     constructor ctor = ctor_list[1];
     using create_type = std::shared_ptr<ctor_default_arg_test>;
     // too less arguments for invoke
@@ -310,7 +319,8 @@ TEST_CASE("constructor - default argument via type (real ctor)", "[constructor]"
 
 TEST_CASE("constructor - invoke ctor with defaults valid", "[constructor]")
 {
-    const auto ctor_list = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    auto range = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() == 14);
 
     CHECK(ctor_list[0].invoke(1).is_valid() == true);
@@ -326,7 +336,8 @@ TEST_CASE("constructor - invoke ctor with defaults valid", "[constructor]")
 
 TEST_CASE("constructor - invoke ctor func with defaults valid", "[constructor]")
 {
-    const auto ctor_list = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    auto range = type::get<ctor_default_arg_invoke_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() == 14);
 
     CHECK(ctor_list[7].invoke(1).is_valid() == true);

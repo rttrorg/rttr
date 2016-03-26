@@ -25,73 +25,77 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/registration>
-#include <catch/catch.hpp>
+#ifndef RTTR_PARAMETER_INFOS_COMPARE_H_
+#define RTTR_PARAMETER_INFOS_COMPARE_H_
 
-using namespace rttr;
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/parameter_info.h"
+#include "rttr/argument.h"
+#include "rttr/type.h"
 
-struct ctor_test
+#include <vector>
+
+namespace rttr
 {
-    ctor_test(){}
-    ctor_test(const ctor_test& other) {}
-    ctor_test(int, double) {}
 
-    static ctor_test create_object() { return ctor_test(); }
-};
+class parameter_info;
+class type;
 
-static ctor_test global_create_object() { return ctor_test(); }
-
-RTTR_REGISTRATION
+namespace detail
 {
-    registration::class_<ctor_test>("ctor_test")
-        .constructor<>()
-        .constructor<const ctor_test&>()
-        .constructor<int, double>()
-        .constructor(&ctor_test::create_object)
-        .constructor(&global_create_object);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("constructor - retrieve", "[constructor]")
-{
-    type t = type::get<ctor_test>();
-    REQUIRE(t.is_valid() == true);
-
-    SECTION("retrieve default ctor")
-    {
-        constructor ctor = t.get_constructor();
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
-
-    SECTION("retrieve copy-ctor")
-    {
-        constructor ctor = t.get_constructor({type::get<ctor_test>()});
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
-
-    SECTION("retrieve custom ctor")
-    {
-        constructor ctor = t.get_constructor({type::get<int>(), type::get<double>()});
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
-
-    SECTION("retrieve all ctors")
-    {
-        auto range = t.get_constructors();
-        std::vector<constructor> ctor_list(range.cbegin(), range.cend());
-        REQUIRE(ctor_list.size() == 5);
-        auto ctor_name = t.get_name();
-        // check order
-        CHECK(ctor_list[0].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[1].get_signature() == ctor_name + "( ctor_test const & )");
-        CHECK(ctor_list[2].get_signature() == ctor_name + "( int, double )");
-        CHECK(ctor_list[3].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[4].get_signature() == ctor_name + "( )");
-    }
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+struct compare_with_type_list
+{
+    static RTTR_INLINE bool compare(const std::vector<parameter_info>& param_list, const std::vector<type>& arg_types)
+    {
+        const auto param_count = param_list.size();
+        if (param_count != arg_types.size())
+            return false;
+
+        for (std::size_t index = 0; index < param_count; ++index)
+        {
+            if ((param_list[index].get_type() != arg_types[index]))
+                return false;
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+struct compare_with_arg_list
+{
+    static RTTR_INLINE bool compare(const std::vector<parameter_info>& param_list, const std::vector<argument>& args)
+    {
+        const auto param_count = param_list.size();
+        const auto arg_count = args.size();
+        if (arg_count > param_count)
+            return false;
+
+        std::size_t index = 0;
+        for (; index < arg_count; ++index)
+        {
+            if ((param_list[index].get_type() != args[index].get_type()))
+                return false;
+        }
+
+        // when there are still some parameter left, check if they are default values or not
+        for (;index < param_count; ++index)
+        {
+            if (!param_list[index].has_default_value())
+                return false;
+        }
+
+        return true;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_PARAMETER_INFOS_COMPARE_H_

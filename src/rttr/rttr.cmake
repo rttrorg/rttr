@@ -81,17 +81,19 @@ set(HEADER_FILES access_levels.h
                  detail/method/method_wrapper_base.h
                  detail/misc/argument_wrapper.h
                  detail/misc/argument_extractor.h
+                 detail/misc/class_item_mapper.h
                  detail/misc/compare_equal.h
                  detail/misc/compare_equal_impl.h
                  detail/misc/compare_less.h
                  detail/misc/compare_less_impl.h
                  detail/misc/data_address_container.h
+                 detail/misc/flat_map.h                
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
-                 detail/misc/flat_map.h
                  detail/misc/std_type_traits.h
                  detail/misc/utility.h
                  detail/parameter_info/parameter_infos.h
+                 detail/parameter_info/parameter_infos_compare.h
                  detail/parameter_info/parameter_names.h
                  detail/parameter_info/parameter_info_wrapper_base.h
                  detail/parameter_info/parameter_info_wrapper.h

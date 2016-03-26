@@ -92,7 +92,8 @@ RTTR_REGISTRATION
 
 TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 {
-    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 4);
 
     CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
@@ -107,7 +108,8 @@ TEST_CASE("constructor - get_instanciated_type", "[constructor]")
 
 TEST_CASE("constructor - get_signature", "[constructor]")
 {
-    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 4);
 
     CHECK(ctor_list[0].get_signature() == "ctor_misc_test( )");
@@ -135,7 +137,8 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
 
 TEST_CASE("ctor - get_declaring_type", "[constructor]")
 {
-    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 6);
 
     CHECK(ctor_list[0].get_declaring_type() == type::get<ctor_misc_test>());
@@ -151,7 +154,8 @@ TEST_CASE("ctor - get_declaring_type", "[constructor]")
 
 TEST_CASE("constructor - get_metadata", "[constructor]")
 {
-    auto ctor_list = type::get<ctor_misc_test>().get_constructors();
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 6);
 
     SECTION("default ctor")
@@ -216,8 +220,10 @@ TEST_CASE("constructor - compare - type", "[constructor]")
 
     CHECK(ctor1 == ctor2);
 
-    const auto ctor_list = type::get<ctor_misc_test>().get_constructors();
-    REQUIRE(ctor_list.size() > 2);
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() >= 2);
+
     CHECK(ctor_list[0] != ctor_list[1]);
 }
 

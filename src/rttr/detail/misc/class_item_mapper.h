@@ -25,73 +25,57 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/registration>
-#include <catch/catch.hpp>
+#ifndef RTTR_CLASS_ITEM_MAPPER_H_
+#define RTTR_CLASS_ITEM_MAPPER_H_
 
-using namespace rttr;
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/std_type_traits.h"
 
-struct ctor_test
+#include <vector>
+#include <type_traits>
+
+namespace rttr
 {
-    ctor_test(){}
-    ctor_test(const ctor_test& other) {}
-    ctor_test(int, double) {}
 
-    static ctor_test create_object() { return ctor_test(); }
-};
+class property;
+class method;
+class constructor;
+class enumeration;
+class destructor;
 
-static ctor_test global_create_object() { return ctor_test(); }
-
-RTTR_REGISTRATION
+namespace detail
 {
-    registration::class_<ctor_test>("ctor_test")
-        .constructor<>()
-        .constructor<const ctor_test&>()
-        .constructor<int, double>()
-        .constructor(&ctor_test::create_object)
-        .constructor(&global_create_object);
-}
 
-////////////////////////////////////////////////////////////////////////////////////////
+class property_wrapper_base;
+class method_wrapper_base;
+class constructor_wrapper_base;
+class destructor_wrapper_base;
+class enumeration_wrapper_base;
 
-TEST_CASE("constructor - retrieve", "[constructor]")
-{
-    type t = type::get<ctor_test>();
-    REQUIRE(t.is_valid() == true);
+template<typename T>
+using class_item_to_wrapper_t = conditional_t< std::is_same<T, property>::value,
+                                               property_wrapper_base,
+                                               conditional_t< std::is_same<T, method>::value,
+                                                              method_wrapper_base,
+                                                              conditional_t< std::is_same<T, constructor>::value,
+                                                                             constructor_wrapper_base,
+                                                                             conditional_t< std::is_same<T, destructor>::value,
+                                                                                            destructor_wrapper_base,
+                                                                                            conditional_t< std::is_same<T, enumeration>::value,
+                                                                                                            enumeration_wrapper_base,
+                                                                                                            void>
+                                                                                            >
+                                                                            >
+                                                            >
+                                              >;
 
-    SECTION("retrieve default ctor")
-    {
-        constructor ctor = t.get_constructor();
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
 
-    SECTION("retrieve copy-ctor")
-    {
-        constructor ctor = t.get_constructor({type::get<ctor_test>()});
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
+template<typename T>
+T create_item(const class_item_to_wrapper_t<T>* wrapper = nullptr);
+template<typename T>
+void destroy_item(T& item);
 
-    SECTION("retrieve custom ctor")
-    {
-        constructor ctor = t.get_constructor({type::get<int>(), type::get<double>()});
-        CHECK(ctor.is_valid() == true);
-        CHECK(static_cast<bool>(ctor) == true);
-    }
+} // end namespace detail
+} // end namespace rttr
 
-    SECTION("retrieve all ctors")
-    {
-        auto range = t.get_constructors();
-        std::vector<constructor> ctor_list(range.cbegin(), range.cend());
-        REQUIRE(ctor_list.size() == 5);
-        auto ctor_name = t.get_name();
-        // check order
-        CHECK(ctor_list[0].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[1].get_signature() == ctor_name + "( ctor_test const & )");
-        CHECK(ctor_list[2].get_signature() == ctor_name + "( int, double )");
-        CHECK(ctor_list[3].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[4].get_signature() == ctor_name + "( )");
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+#endif // RTTR_CLASS_ITEM_MAPPER_H_

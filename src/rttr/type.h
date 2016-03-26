@@ -495,9 +495,9 @@ class RTTR_API type
         /*!
          * \brief Returns a list of all registered constructors for this type; the order is unspecified.
          *
-         * \return Returns a list of all registered constructors.
+         * \return A range of all registered constructors.
          */
-        std::vector<constructor> get_constructors() const;
+        constructor_range get_constructors() const;
 
         /*!
          * \brief Creates an instance of the current type, with the given arguments \p args for the constructor.
@@ -628,9 +628,9 @@ class RTTR_API type
          *
          * \remark The methods are sorted after its order of registration.
          *
-         * \return A vector with method objects
+         * \return A range of methods.
          */
-        std::vector<method> get_methods() const;
+        method_range get_methods() const;
 
         /*!
          * \brief Returns a global method with the name \p name.
@@ -654,13 +654,13 @@ class RTTR_API type
         /*!
          * \brief Returns a list of all registered global methods.
          *
-         * \remark The order of the methods in the vector is undefined.
+         * \remark The order of the methods in the range is undefined.
          *         Client code should **not** depend on the order in which methods are returned,
          *         because that order varies.
          *
-         * \return A vector with methods.
+         * \return A range of methods.
          */
-        static std::vector<method> get_global_methods();
+        static method_range get_global_methods();
 
 
         /*!

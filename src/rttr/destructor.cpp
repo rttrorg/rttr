@@ -33,6 +33,23 @@ using namespace std;
 namespace rttr
 {
 
+namespace detail
+{
+
+template<>
+destructor create_item(const destructor_wrapper_base* wrapper)
+{
+    return destructor(wrapper);
+}
+
+template<>
+ void destroy_item(destructor& dtor)
+ {
+     delete dtor.m_wrapper;
+ }
+
+} // end namespace detail
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor::destructor(const detail::destructor_wrapper_base* wrapper)

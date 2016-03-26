@@ -29,6 +29,7 @@
 #define RTTR_METHOD_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/class_item_mapper.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 
@@ -47,8 +48,6 @@ class method;
 namespace detail
 {
     class method_wrapper_base;
-    RTTR_LOCAL method create_method(const method_wrapper_base* wrapper = nullptr);
-    RTTR_LOCAL void destroy_method(method& meth);
 }
 
 /*!
@@ -295,8 +294,11 @@ class RTTR_API method
         friend class type; // to prevent creation of this class
         method(const detail::method_wrapper_base* wrapper = nullptr);
 
-        friend method detail::create_method(const detail::method_wrapper_base* wrapper);
-        friend void detail::destroy_method(method& meth);
+        template<typename T>
+        friend T detail::create_item(const class_item_to_wrapper_t<T>* wrapper);
+        template<typename T>
+        friend void detail::destroy_item(T& item);
+
     private:
         const detail::method_wrapper_base* m_wrapper;
 };

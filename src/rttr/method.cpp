@@ -37,15 +37,18 @@ namespace rttr
 
 namespace detail
 {
-method create_method(const method_wrapper_base* wrapper)
+
+template<>
+method create_item(const method_wrapper_base* wrapper)
 {
     return method(wrapper);
 }
 
-void destroy_method(method& meth)
-{
-    delete meth.m_wrapper;
-}
+template<>
+ void destroy_item(method& meth)
+ {
+     delete meth.m_wrapper;
+ }
 
 } // end namespace detail;
 

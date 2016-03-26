@@ -32,6 +32,9 @@
 #include "rttr/detail/metadata/metadata.h"
 #include "rttr/property.h"
 #include "rttr/method.h"
+#include "rttr/constructor.h"
+#include "rttr/destructor.h"
+#include "rttr/enumeration.h"
 #include "rttr/array_range.h"
 #include "rttr/detail/misc/flat_map.h"
 
@@ -98,52 +101,42 @@ class RTTR_LOCAL type_database
         uint16_t get_by_name(const char* name) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
-
+        property get_type_property(const type& t, const char* name) const;
         property get_class_property(const type& t, const char* name) const;
-        property_range get_property_range(const type& t) const;
+        property_range get_class_properties(const type& t) const;
 
         property get_global_property(const char* name) const;
         property_range get_global_properties() const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        const method_wrapper_base* get_class_method(const type& t, const char* name) const;
+        method get_type_method(const type& t, const char* name) const;
+        method get_type_method(const type& t, const char* name,
+                               const std::vector<type>& type_list) const;
 
-        template<typename Container, typename Compare_Type>
-        const method_wrapper_base* get_class_method(const type& t, const char* name, const Container& container) const;
+        method get_class_method(const type& t, const char* name) const;
+        method get_class_method(const type& t, const char* name,
+                                const std::vector<type>& type_list) const;
+        method get_class_method(const type& t, const char* name,
+                                const std::vector<argument>& arg_list) const;
+        method_range get_class_methods(const type& t) const;
 
-        const method_wrapper_base* get_class_method(const type& t, const char* name,
-                                                    const std::vector<type>& param_type_list) const;
-        const method_wrapper_base* get_class_method(const type& t, const char* name,
-                                                    const std::vector<argument>& arg_list) const;
 
-        std::vector<const method_wrapper_base*> get_all_class_methods(const type& t) const;
-        uint16_t get_class_method_count(const type& t) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
-
-        const method_wrapper_base* get_global_method(const char* name) const;
-        template<typename Container, typename Compare_Type>
-        const method_wrapper_base* get_global_method(const char* name, const Container& container) const;
-
-        const method_wrapper_base* get_global_method(const char* name, const std::vector<type>& arg_type_list) const;
-        const method_wrapper_base* get_global_method(const char* name, const std::vector<argument>& arg_list) const;
-        std::vector<const method_wrapper_base*> get_all_global_methods() const;
-        uint16_t get_global_method_count(const type& t) const;
+        method get_global_method(const char* name) const;
+        method get_global_method(const char* name, const std::vector<type>& type_list) const;
+        method get_global_method(const char* name, const std::vector<argument>& arg_list) const;
+        method_range get_global_methods() const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        const constructor_wrapper_base* get_constructor(const type& t) const;
-        template<typename Container, typename Comparer_Type>
-        const constructor_wrapper_base* get_constructor(const type& t, const Container& container) const;
-
-        const constructor_wrapper_base* get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
-        const constructor_wrapper_base* get_constructor(const type& t, const std::vector<argument>& arg_list) const;
-        std::vector<const constructor_wrapper_base*> get_constructors(const type& t) const;
+        constructor get_constructor(const type& t) const;
+        constructor get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
+        constructor get_constructor(const type& t, const std::vector<argument>& arg_list) const;
+        constructor_range get_constructors(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        const destructor_wrapper_base* get_destructor(const type& t) const;
+        destructor get_destructor(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,95 +216,6 @@ class RTTR_LOCAL type_database
             };
         };
 
-        template<typename T, typename Wrapper_Type>
-        struct class_member
-        {
-            class_member(type::type_id id, uint16_t register_index, hash_type hash_value, std::unique_ptr<T> data)
-            :   m_class_id(id), m_register_index(register_index), m_name_hash(hash_value), m_data(move(data)), m_wrapper(create_method(data.get())) {}
-
-            class_member(type::type_id id) : m_class_id(id), m_register_index(0), m_name_hash(0), m_wrapper(create_method(static_cast<T*>(nullptr))) {}
-            class_member(type::type_id id, hash_type hash_value) : m_class_id(id), m_register_index(0), m_name_hash(hash_value), m_wrapper(create_method(static_cast<T*>(nullptr))) {}
-
-            class_member(class_member<T, Wrapper_Type>&& other) : m_class_id(other.m_class_id), m_register_index(other.m_register_index),
-                                                    m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)), m_wrapper(other.m_wrapper) {}
-
-            class_member<T, Wrapper_Type>& operator = (class_member<T, Wrapper_Type>&& other)
-            {
-                m_class_id = other.m_class_id;
-                m_register_index = other.m_register_index;
-                m_name_hash = other.m_name_hash;
-                m_data = std::move(other.m_data);
-                m_wrapper = other.m_wrapper;
-
-                other.m_class_id = 0;
-                other.m_register_index = 0;
-                other.m_name_hash = 0;
-                return *this;
-            }
-
-            struct order
-            {
-                RTTR_INLINE bool operator () (const class_member<T, Wrapper_Type>& _left, const class_member<T, Wrapper_Type>& _right)  const
-                {
-                    // The order is the following, first type id, then registration index, then name hash
-                    if (_left.m_class_id < _right.m_class_id)
-                        return true;
-                    else if (_left.m_class_id > _right.m_class_id)
-                        return false;
-
-                    if (_left.m_register_index < _right.m_register_index)
-                        return true;
-                    else if (_left.m_register_index > _right.m_register_index)
-                        return false;
-
-                    if (_left.m_name_hash < _right.m_name_hash)
-                        return true;
-
-                    return false;
-                }
-            };
-
-            type::type_id       m_class_id;
-            uint16_t            m_register_index;
-            hash_type           m_name_hash;
-            std::unique_ptr<T>  m_data;
-            Wrapper_Type        m_wrapper;
-        };
-
-        template<typename T>
-        struct global_member
-        {
-            global_member(hash_type hash_value, std::unique_ptr<T> data) : m_name_hash(hash_value), m_data(move(data)) {}
-            global_member(hash_type hash_value) : m_name_hash(hash_value) {}
-            global_member(global_member<T>&& other) : m_name_hash(other.m_name_hash), m_data(std::move(other.m_data)) {}
-            global_member<T>& operator = (global_member<T>&& other)
-            {
-                m_name_hash = other.m_name_hash;
-                m_data = std::move(other.m_data);
-                return *this;
-            }
-
-            struct order
-            {
-                RTTR_INLINE bool operator () (const global_member<T>& _left, const global_member<T>& _right)  const
-                {
-                    return _left.m_name_hash < _right.m_name_hash;
-                }
-                RTTR_INLINE bool operator () ( const hash_type& _left, const global_member& _right ) const
-                {
-                    return _left < _right.m_name_hash;
-                }
-                RTTR_INLINE bool operator () ( const global_member& _left, const hash_type& _right ) const
-                {
-                    return _left.m_name_hash < _right;
-                }
-            };
-
-            hash_type           m_name_hash;
-            std::unique_ptr<T>  m_data;
-        };
-
-
         template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
         struct type_data
         {
@@ -379,17 +283,17 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
-        std::vector<global_member<method_wrapper_base>>             m_global_method_list;
+        flat_map<const char*, method, hash_char>                    m_global_methods;
         flat_map<const char*, property, hash_char>                  m_global_properties;
 
-        std::vector<class_member<method_wrapper_base, method>>      m_class_method_list;
-
         std::unordered_map<type, std::vector<property>>             m_type_property_map;
-
         std::unordered_map<type, std::vector<property>>             m_class_property_map;
 
-        std::vector<type_data<constructor_wrapper_base>>            m_constructor_list;
-        std::vector<type_data<destructor_wrapper_base>>             m_destructor_list;
+        std::unordered_map<type, std::vector<method>>               m_type_method_map;
+        std::unordered_map<type, std::vector<method>>               m_class_method_map;
+
+        std::unordered_map<type, std::vector<constructor>>          m_type_ctor_map;
+        std::unordered_map<type, destructor>                        m_type_dtor_map;
 
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;

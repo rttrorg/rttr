@@ -126,26 +126,29 @@ class flat_map
             return insert(std::move(value.first), std::move(value.second));
         }
 
-        bool insert(const Key&& key, Value&& value)
+        void insert(const Key&& key, Value&& value)
         {
-            if (find(key) == cend())
-            {
-                m_key_list.push_back(key_data_type{std::move(key), Hash()(key)});
-                std::stable_sort(m_key_list.begin(), m_key_list.end(), typename key_data_type::order());
+            m_key_list.push_back(key_data_type{std::move(key), Hash()(key)});
+            std::stable_sort(m_key_list.begin(), m_key_list.end(), typename key_data_type::order());
 
-                auto itr_key = find_key(key);
-                if (itr_key != m_key_list.cend())
+            auto found_key = find_key(key);
+            if (found_key != m_key_list.cend())
+            {
+                auto itr_key = found_key;
+                for (; itr_key != m_key_list.cend(); ++itr_key)
                 {
-                    const auto index = std::distance(m_key_list.cbegin(), itr_key);
-                    m_value_list.insert(m_value_list.begin() + index, value);
+                    if (Compare()(itr_key->m_key, key))
+                        found_key = itr_key;
+                    else
+                        break;
                 }
 
-                m_key_list.shrink_to_fit();
-                m_value_list.shrink_to_fit();
-                return true;
+                const auto index = std::distance(m_key_list.cbegin(), found_key);
+                m_value_list.insert(m_value_list.begin() + index, value);
             }
 
-            return false;
+            m_key_list.shrink_to_fit();
+            m_value_list.shrink_to_fit();
         }
 
         iterator find(const Key& key)

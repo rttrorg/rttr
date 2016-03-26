@@ -29,6 +29,7 @@
 #define RTTR_DESTRUCTOR_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/class_item_mapper.h"
 
 #include <string>
 
@@ -119,6 +120,12 @@ class RTTR_API destructor
     private:
         friend class type; // to prevent creation of this class
         destructor(const detail::destructor_wrapper_base* wrapper = nullptr);
+
+        template<typename T>
+        friend T detail::create_item(const class_item_to_wrapper_t<T>* wrapper);
+        template<typename T>
+        friend void detail::destroy_item(T& item);
+
     private:
         const detail::destructor_wrapper_base* m_wrapper;
 };
