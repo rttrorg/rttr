@@ -122,7 +122,7 @@ class RTTR_API destructor
         destructor(const detail::destructor_wrapper_base* wrapper = nullptr);
 
         template<typename T>
-        friend T detail::create_item(const class_item_to_wrapper_t<T>* wrapper);
+        friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
         template<typename T>
         friend void detail::destroy_item(T& item);
 
