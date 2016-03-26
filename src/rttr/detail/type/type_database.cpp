@@ -598,11 +598,12 @@ constructor_range type_database::get_constructors(const type& t) const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
 void type_database::register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor)
 {
-    auto d = detail::create_item<destructor>(dtor.release());
-    m_type_dtor_map.insert(std::make_pair(t, d));
+    auto d = detail::create_item<destructor>(dtor.get());
+    const auto ret = m_type_dtor_map.insert(std::make_pair(t, d));
+    if (ret.second)
+        dtor.release();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
