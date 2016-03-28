@@ -444,7 +444,7 @@ class RTTR_API type
         bool is_derived_from() const;
 
         /*!
-         * \brief Returns a list of all base classes of this type.
+         * \brief Returns a range of all base classes of this type.
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
          *         inside the class declaration, otherwise the returned information of this function
@@ -452,21 +452,21 @@ class RTTR_API type
          *         inside RTTR_ENABLE. E.g. RTTR_ENABLE(A1, A2) => A1 will be for A2 in the list.
          *         Accordingly the root (or parent or base) class is always the first type in the list.
          *
-         * \return A list of type objects.
+         * \return A range of types.
          */
-        std::vector<type> get_base_classes() const;
+        type_range get_base_classes() const;
 
         /*!
-         * \brief Returns a list of all derived classes of this type.
+         * \brief Returns a range of all derived classes of this type.
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
          *         inside the class declaration, otherwise the returned information of this function
          *         is **not correct**. The order of this list depends on the declaration order of classes
          *         inside RTTR_ENABLE. E.g. RTTR_ENABLE(A1, A2) => A1 will be for A2 in the list.
          *
-         * \return A list of type objects.
+         * \return A range of type objects.
          */
-        std::vector<type> get_derived_classes() const;
+        type_range get_derived_classes() const;
 
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////

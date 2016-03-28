@@ -257,9 +257,10 @@ TEST_CASE("Test rttr::type - Virtual Inheritance", "[type]")
 TEST_CASE("type - get_base_classes()", "[type]")
 {
     DiamondBottom d;
-    const auto base_list = type::get(d).get_base_classes();
-    REQUIRE(base_list.size() == 3);
+    const auto base_list_range = type::get(d).get_base_classes();
+    REQUIRE(base_list_range.size() == 3);
 
+    std::vector<type> base_list(base_list_range.cbegin(), base_list_range.cend());
     REQUIRE(base_list[0] == type::get<DiamondTop>());
     REQUIRE(base_list[1] == type::get<DiamondLeft>());
     REQUIRE(base_list[2] == type::get<DiamondRight>());

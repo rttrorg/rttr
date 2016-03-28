@@ -970,18 +970,18 @@ void type_database::register_base_class_info(const type& src_type, const type& r
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                           { return left.m_base_type.get_id() < right.m_base_type.get_id(); });
     const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_type.get_id();
-    m_base_class_list.resize(std::max(m_base_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT));
+    m_base_class_list.resize(std::max(m_base_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT), detail::get_invalid_type());
     m_conversion_list.resize(std::max(m_conversion_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT));
     std::size_t index = 0;
     // here we store for a type X all its base classes
     for (const auto& type : base_classes)
     {
-        m_base_class_list[row + index] = type.m_base_type.get_id();
-        m_conversion_list[row + index] = type.m_rttr_cast_func;
+        m_base_class_list[row + index] = type.m_base_type;
+        m_conversion_list[row + index]  = type.m_rttr_cast_func;
         ++index;
     }
 
-    m_derived_class_list.resize(std::max(m_derived_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT));
+    m_derived_class_list.resize(std::max(m_derived_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT), detail::get_invalid_type());
     const auto id = src_type.get_id();
     // here we store for a type Y all its derived classes
     for (const auto& type : base_classes)
@@ -989,9 +989,9 @@ void type_database::register_base_class_info(const type& src_type, const type& r
         const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
         for (std::size_t i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
         {
-            if (m_derived_class_list[row + i] == type::m_invalid_id)
+            if (m_derived_class_list[row + i].get_id() == type::m_invalid_id)
             {
-                m_derived_class_list[row + i] = id;
+                m_derived_class_list[row + i] = src_type;
                 break;
             }
 

@@ -66,6 +66,7 @@ RTTR_DECL_DB_TYPE(m_custom_names, g_custom_names)
 RTTR_DECL_DB_TYPE(m_orig_name_to_id, g_orig_name_to_id)
 RTTR_DECL_DB_TYPE(m_custom_name_to_id, g_custom_name_to_id)
 
+
 RTTR_DECL_DB_TYPE(m_base_class_list, g_base_class_list)
 RTTR_DECL_DB_TYPE(m_derived_class_list, g_derived_class_list)
 RTTR_DECL_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
@@ -238,7 +239,7 @@ bool type::is_derived_from(const type& other) const
     const int row = RTTR_MAX_INHERIT_TYPES_COUNT * source_raw_id;
     for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
     {
-        const type::type_id currId = (*g_base_class_list)[row + i];
+        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
         if (currId == target_raw_id)
             return true;
         if (currId == type::m_invalid_id)
@@ -265,7 +266,7 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
     const int row = RTTR_MAX_INHERIT_TYPES_COUNT * source_raw_id;
     for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
     {
-        const type::type_id currId = (*g_base_class_list)[row + i];
+        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
         if (currId == target_raw_id)
             return (*g_conversion_list)[row + i](info.m_ptr);
         if (currId == type::m_invalid_id)
@@ -295,40 +296,43 @@ variant type::create_variant(const argument& data) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<type> type::get_base_classes() const
+type_range type::get_base_classes() const
 {
+    std::size_t end_index = 0;
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
-    vector<type> result;
     const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
+
     for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
     {
-        const type::type_id currId = (*g_base_class_list)[row + i];
-        if (currId != type::m_invalid_id)
-            result.push_back(currId);
-        else
+        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
+        if (currId == type::m_invalid_id)
+        {
+            end_index = i;
             break;
+        }
     }
 
-    return result;
+    return detail::create_array_range<type>(&(*g_base_class_list)[row], &(*g_base_class_list)[row] + end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<type> type::get_derived_classes() const
+type_range type::get_derived_classes() const
 {
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
-    vector<type> result;
+    std::size_t end_index = 0;
     const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
     for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
     {
-        const type::type_id currId = (*g_derived_class_list)[row + i];
-        if (currId != type::m_invalid_id)
-            result.push_back(currId);
-        else
+        const type::type_id currId = (*g_derived_class_list)[row + i].get_id();
+        if (currId == type::m_invalid_id)
+        {
+            end_index = i;
             break;
+        }
     }
 
-    return result;
+    return detail::create_array_range<type>(&(*g_derived_class_list)[row], &(*g_derived_class_list)[row] + end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

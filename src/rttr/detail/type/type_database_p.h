@@ -261,8 +261,8 @@ class RTTR_LOCAL type_database
         std::vector<name_to_id>                                     m_orig_name_to_id;      //!< This is a sorted vector which contains hash values of the names in \p m_orig_names
         std::vector<name_to_id>                                     m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
 
-        std::vector<type::type_id>                                  m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
-        std::vector<type::type_id>                                  m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
+        std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
+        std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
         std::vector<get_derived_info_func>                          m_get_derived_info_func_list;
         std::vector<rttr_cast_func>                                 m_conversion_list;      //!< This list contains for every type a conversion function to its base classes
 
