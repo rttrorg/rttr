@@ -312,13 +312,13 @@ class RTTR_API type
         static type get_by_name(const char* name);
 
         /*!
-         * \brief Returns a list of all registered type objects.
+         * \brief Returns a range of all registered type objects.
          *
          * \remark The order of the type object is unspecified.
          *
-         * \return A vector of type objects.
+         * \return A range of type objects.
          */
-        static std::vector<type> get_types();
+        static type_range get_types();
 
         /*!
          * \brief Returns the size in bytes of the object representation of the current type (i.e. `sizeof(T)`).

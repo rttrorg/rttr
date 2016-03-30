@@ -255,6 +255,7 @@ class RTTR_LOCAL type_database
         static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<type_data<T>>& vec);
 
         type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
+        std::vector<type>                                           m_type_list;            //!< The list of all types.
         std::vector<const char*>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
         std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
                                                                                             //!< and also custom names, provided during manual register (e.g. class_)

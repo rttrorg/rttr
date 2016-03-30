@@ -70,6 +70,7 @@ type_database::type_database()
     m_variant_create_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_type_size.reserve(RTTR_DEFAULT_TYPE_COUNT);
+    m_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_is_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_enum_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
@@ -99,6 +100,7 @@ type_database::type_database()
     m_variant_create_func_list.push_back(nullptr);
 
     m_type_size.push_back(0);
+    m_type_list.push_back(0);
 
     m_is_class_list.push_back(false);
     m_is_enum_list.push_back(false);
@@ -942,6 +944,7 @@ bool type_database::register_name(const char* name, const type& array_raw_type, 
     m_custom_names.emplace_back(std::move(custom_name));
 
     id = m_type_id_counter;
+    m_type_list.emplace_back(type(id));
 
     return false;
 }

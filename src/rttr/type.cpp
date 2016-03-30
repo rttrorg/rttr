@@ -78,6 +78,7 @@ RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
 RTTR_DECL_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
 RTTR_DECL_DB_TYPE(m_type_size, g_type_size)
+RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
 
 RTTR_DECL_DB_TYPE(m_is_class_list, g_is_class_list)
 RTTR_DECL_DB_TYPE(m_is_enum_list, g_is_enum_list)
@@ -118,6 +119,7 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
     RTTR_SET_DB_TYPE(m_type_size, g_type_size)
+    RTTR_SET_DB_TYPE(m_type_list, g_type_list)
 
     RTTR_SET_DB_TYPE(m_is_class_list, g_is_class_list)
     RTTR_SET_DB_TYPE(m_is_enum_list, g_is_enum_list)
@@ -422,16 +424,9 @@ type type::get_raw_array_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<type> type::get_types()
+type_range type::get_types()
 {
-    std::vector<type> result;
-    result.reserve(g_orig_names->size() - 1); // we ignore the invalid type
-    for (std::size_t id = 1; id < g_orig_names->size(); ++id)
-    {
-        result.push_back(type(static_cast<type::type_id>(id)));
-    }
-
-    return result;
+    return detail::create_array_range<type>(&(*g_type_list)[1], &(*g_type_list)[1] + g_type_list->size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
