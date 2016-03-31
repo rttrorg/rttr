@@ -108,13 +108,30 @@ convert_to_parameter_info_list_impl(index_sequence<Indices...>, const parameter_
      return std::vector<parameter_info>{create_param_info(std::get<Indices>(param_infos.m_param_infos))...};
  };
 
-
 template<typename...T>
 static RTTR_INLINE std::vector<parameter_info>
 convert_to_parameter_info_list(const parameter_infos<T...>& param_infos)
  {
      return convert_to_parameter_info_list_impl(make_index_sequence<sizeof...(T)>(), param_infos);
 
+ };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<std::size_t... Indices, typename...T>
+static RTTR_INLINE std::array<parameter_info, sizeof...(T)>
+create_paramter_info_array_impl(index_sequence<Indices...>, const parameter_infos<T...>& param_infos)
+ {
+     return {create_param_info(std::get<Indices>(param_infos.m_param_infos))...};
+ };
+
+template<typename...T>
+static RTTR_INLINE std::array<parameter_info, sizeof...(T)>
+create_paramter_info_array(const parameter_infos<T...>& param_infos)
+ {
+     return create_paramter_info_array_impl(make_index_sequence<sizeof...(T)>(), param_infos);
  };
 
 /////////////////////////////////////////////////////////////////////////////////////////

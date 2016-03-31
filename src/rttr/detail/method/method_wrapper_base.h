@@ -32,6 +32,7 @@
 #include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
+#include "rttr/array_range.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 
@@ -71,7 +72,7 @@ class RTTR_API method_wrapper_base
         virtual bool is_static() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
-        virtual std::vector<parameter_info> get_parameter_infos() const = 0;
+        virtual parameter_info_range get_parameter_infos() const = 0;
         virtual variant get_metadata(const variant& key) const = 0;
 
         virtual variant invoke(instance& object) const = 0;

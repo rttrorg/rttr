@@ -40,6 +40,8 @@ class method;
 class constructor;
 class enumeration;
 class type;
+class parameter_info;
+
 template<typename T, typename Predicate>
 class array_range;
 
@@ -604,6 +606,12 @@ using enumeration_range = array_range<enumeration>;
  *
  */
 using type_range = array_range<type>;
+
+/*!
+ * \brief A range of parameter infos.
+ *
+ */
+using parameter_info_range = array_range<parameter_info>;
 
 
 } // end namespace rttr

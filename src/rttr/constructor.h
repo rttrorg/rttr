@@ -32,6 +32,7 @@
 
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
+#include "rttr/array_range.h"
 
 #include <string>
 #include <vector>
@@ -135,11 +136,11 @@ class RTTR_API constructor
         std::string get_signature() const;
 
         /*!
-         * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the constructor.
+         * \brief Returns an ordered range of \ref parameter_info objects, which matches the signature of the constructor.
          *
-         * \return A list of parameter_info objects of the constructor signature.
+         * \return A range of parameter_info objects of the constructor signature.
          */
-        std::vector<parameter_info> get_parameter_infos() const;
+        parameter_info_range get_parameter_infos() const;
 
         /*!
          * \brief Returns the meta data for the given key \p key.

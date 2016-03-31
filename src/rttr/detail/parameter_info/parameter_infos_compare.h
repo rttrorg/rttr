@@ -32,6 +32,7 @@
 #include "rttr/parameter_info.h"
 #include "rttr/argument.h"
 #include "rttr/type.h"
+#include "rttr/array_range.h"
 
 #include <vector>
 
@@ -48,15 +49,17 @@ namespace detail
 
 struct compare_with_type_list
 {
-    static RTTR_INLINE bool compare(const std::vector<parameter_info>& param_list, const std::vector<type>& arg_types)
+    static RTTR_INLINE bool compare(const parameter_info_range& param_list, const std::vector<type>& arg_types)
     {
         const auto param_count = param_list.size();
         if (param_count != arg_types.size())
             return false;
 
-        for (std::size_t index = 0; index < param_count; ++index)
+        auto itr = param_list.begin();
+        std::size_t index = 0;
+        for (;itr != param_list.end(); ++itr, ++index)
         {
-            if ((param_list[index].get_type() != arg_types[index]))
+            if ((itr->get_type() != arg_types[index]))
                 return false;
         }
 
@@ -68,24 +71,25 @@ struct compare_with_type_list
 
 struct compare_with_arg_list
 {
-    static RTTR_INLINE bool compare(const std::vector<parameter_info>& param_list, const std::vector<argument>& args)
+    static RTTR_INLINE bool compare(const parameter_info_range& param_list, const std::vector<argument>& args)
     {
         const auto param_count = param_list.size();
         const auto arg_count = args.size();
         if (arg_count > param_count)
             return false;
 
+        auto itr = param_list.begin();
         std::size_t index = 0;
-        for (; index < arg_count; ++index)
+        for (; index < arg_count; ++itr, ++index)
         {
-            if ((param_list[index].get_type() != args[index].get_type()))
+            if ((itr->get_type() != args[index].get_type()))
                 return false;
         }
 
         // when there are still some parameter left, check if they are default values or not
-        for (;index < param_count; ++index)
+        for (;itr != param_list.end(); ++itr)
         {
-            if (!param_list[index].has_default_value())
+            if (!itr->has_default_value())
                 return false;
         }
 

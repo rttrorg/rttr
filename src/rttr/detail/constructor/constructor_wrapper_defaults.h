@@ -70,7 +70,8 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
                             default_args<Def_Args...> default_args,
                             parameter_infos<Param_Args...> param_infos)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
-            m_def_args(std::move(default_args)), m_param_infos(std::move(param_infos))
+            m_def_args(std::move(default_args)), m_param_infos(std::move(param_infos)),
+            m_param_info_list(create_paramter_info_array(m_param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
         }
@@ -88,7 +89,8 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
         std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos); }
+        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                              const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const
@@ -132,6 +134,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
     private:
         default_args<Def_Args...> m_def_args;
         parameter_infos<Param_Args...> m_param_infos;
+        std::array<parameter_info, sizeof...(Param_Args)> m_param_info_list;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +158,8 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
                             parameter_infos<Param_Args...> param_infos)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_creator_func(creator_func),
-            m_def_args(std::move(default_args)), m_param_infos(std::move(param_infos))
+            m_def_args(std::move(default_args)), m_param_infos(std::move(param_infos)),
+            m_param_info_list(create_paramter_info_array(m_param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
         }
@@ -165,7 +169,8 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();          }
-        std::vector<parameter_info> get_parameter_infos()   const { return convert_to_parameter_info_list(m_param_infos);       }
+        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                              const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const
@@ -208,6 +213,160 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
          F  m_creator_func;
          default_args<Def_Args...> m_def_args;
          parameter_infos<Param_Args...> m_param_infos;
+         std::array<parameter_info, sizeof...(Param_Args)> m_param_info_list;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Class_Type, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count, typename... Def_Args, typename... Ctor_Args>
+class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Count, default_args<Def_Args...>, parameter_infos<>, Ctor_Args...>
+:   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
+{
+        using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
+        using instanciated_type = typename invoker_class::return_type;
+        using invoke_with_defaults = invoke_defaults_helper<invoker_class, type_list<Ctor_Args...>>;
+
+    public:
+        constructor_wrapper(std::array<metadata, Metadata_Count> metadata_list,
+                            default_args<Def_Args...> default_args,
+                            parameter_infos<> param_infos)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_def_args(std::move(default_args))
+        {
+        }
+
+        type get_instanciated_type()    const { return type::get<instanciated_type>(); }
+        type get_declaring_type()       const { return type::get<typename raw_type<Class_Type>::type>(); }
+        access_levels get_access_level() const { return Acc_Level; }
+
+        RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type) const { return {std::is_reference<Ctor_Args>::value...}; }
+        RTTR_INLINE std::vector<bool> get_is_reference_impl(std::false_type) const { return {}; }
+
+        RTTR_INLINE std::vector<bool> get_is_const_impl(std::true_type) const { return {std::is_const<typename std::remove_reference<Ctor_Args>::type>::value...}; }
+        RTTR_INLINE std::vector<bool> get_is_const_impl(std::false_type) const { return {}; }
+
+        std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
+        std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
+
+        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(); }
+        variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+
+        variant invoke() const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args);
+        }
+
+        variant invoke(argument& arg1) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1);
+        }
+        variant invoke(argument& arg1, argument& arg2) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
+        {
+            return invoke_with_defaults::invoke(m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
+        }
+
+        variant invoke_variadic(std::vector<argument>& args) const
+        {
+            if (args.size() <= sizeof...(Ctor_Args))
+                return invoke_variadic_helper<invoke_with_defaults, index_sequence_for<Ctor_Args...>>::invoke(args, m_def_args.m_args);
+            else
+                return variant();
+        }
+
+    private:
+        default_args<Def_Args...> m_def_args;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ClassType, access_levels Acc_Level, typename Policy,
+         std::size_t Metadata_Count, typename... Def_Args, typename F>
+class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
+                          Metadata_Count, default_args<Def_Args...>, parameter_infos<>, F>
+:   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
+{
+    using instanciated_type = typename function_traits<F>::return_type;
+    using method_type = typename detail::method_type<F>::type;
+    using arg_index_sequence = make_index_sequence< function_traits<F>::arg_count >;
+    using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;
+    using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
+
+    public:
+        constructor_wrapper(F creator_func,
+                            std::array<metadata, Metadata_Count> metadata_list,
+                            default_args<Def_Args...> default_args,
+                            parameter_infos<> param_infos)
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+            m_creator_func(creator_func),
+            m_def_args(std::move(default_args))
+        {
+        }
+
+        access_levels get_access_level()                    const { return Acc_Level;                                           }
+        type get_instanciated_type()                        const { return type::get<instanciated_type>();                      }
+        type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>();     }
+        std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();      }
+        std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();          }
+        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>();                }
+        variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+
+        variant invoke() const
+        {
+           return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args);
+        }
+        variant invoke(argument& arg1) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1);
+        }
+        variant invoke(argument& arg1, argument& arg2) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4, arg5);
+        }
+        variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4, argument& arg5, argument& arg6) const
+        {
+            return invoke_with_defaults::invoke(m_creator_func, instance(), m_def_args.m_args, arg1, arg2, arg3, arg4, arg5, arg6);
+        }
+        variant invoke_variadic(std::vector<argument>& args) const
+        {
+            if (args.size() <= function_traits<F>::arg_count)
+                return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_creator_func, instance(), m_def_args.m_args);
+            else
+                return variant();
+        }
+
+    private:
+         F  m_creator_func;
+         default_args<Def_Args...> m_def_args;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

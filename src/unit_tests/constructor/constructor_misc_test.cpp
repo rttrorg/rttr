@@ -130,7 +130,7 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
 
     ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
     REQUIRE(ctor.get_parameter_infos().size() == 1);
-    CHECK(ctor.get_parameter_infos()[0].get_type() == type::get<int>());
+    CHECK(ctor.get_parameter_infos().begin()->get_type() == type::get<int>());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

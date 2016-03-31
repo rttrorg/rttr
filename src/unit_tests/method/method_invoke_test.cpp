@@ -77,7 +77,6 @@ TEST_CASE("method - invoke", "[method]")
     const auto meth_range = t.get_methods();
     std::vector<method> meth_list(meth_range.cbegin(), meth_range.cend());
     REQUIRE(meth_list.size() >= 8);
-
     method_invoke_test obj;
     CHECK(meth_list[0].invoke(obj).is_valid() == true);
     CHECK(obj.m_invoked[0] == true);

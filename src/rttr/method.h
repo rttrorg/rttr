@@ -32,6 +32,7 @@
 #include "rttr/detail/misc/class_item_mapper.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
+#include "rttr/array_range.h"
 
 #include <string>
 #include <vector>
@@ -177,11 +178,11 @@ class RTTR_API method
         type get_declaring_type() const;
 
         /*!
-         * \brief Returns an ordered list of \ref parameter_info objects, which matches the signature of the method.
+         * \brief Returns an ordered range of \ref parameter_info objects, which matches the signature of the method.
          *
-         * \return A list of parameter_info objects of the method signature.
+         * \return A range of parameter_info objects of the method signature.
          */
-        std::vector<parameter_info> get_parameter_infos() const;
+        parameter_info_range get_parameter_infos() const;
 
         /*!
          * \brief Returns the signature of this method as readable string.

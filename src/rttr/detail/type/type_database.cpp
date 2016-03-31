@@ -291,7 +291,7 @@ property_range type_database::get_global_properties() const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::vector<type> convert_param_list(const vector<parameter_info>& param_list)
+static std::vector<type> convert_param_list(const parameter_info_range& param_list)
 {
     std::vector<type> result;
     result.reserve(param_list.size());

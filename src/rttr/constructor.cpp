@@ -118,12 +118,12 @@ string constructor::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<parameter_info> constructor::get_parameter_infos() const
+parameter_info_range constructor::get_parameter_infos() const
 {
     if (is_valid())
         return m_wrapper->get_parameter_infos();
     else
-        return std::vector<parameter_info>();
+        return detail::create_array_range<parameter_info>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
