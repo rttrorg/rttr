@@ -262,10 +262,10 @@ property_range type_database::get_class_properties(const type& t) const
     {
         auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
         if (!vec.empty())
-            return create_array_range<property>(vec.data(), vec.data() + vec.size());
+            return property_range(vec.data(), vec.data() + vec.size());
     }
 
-    return create_array_range<property, detail::no_predicate>();
+    return property_range();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ property type_database::get_global_property(const char* name) const
 property_range type_database::get_global_properties() const
 {
     auto& vec = const_cast<type_database*>(this)->m_global_properties.value_data();
-    return create_array_range<property>(vec.data(), vec.data() + vec.size());
+    return property_range(vec.data(), vec.data() + vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -416,10 +416,10 @@ method_range type_database::get_class_methods(const type& t) const
     {
         auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
         if (!vec.empty())
-            return create_array_range<method>(vec.data(), vec.data() + vec.size());
+            return method_range(vec.data(), vec.data() + vec.size());
     }
 
-    return create_array_range<method, detail::no_predicate>();
+    return method_range();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ method type_database::get_global_method(const char* name, const std::vector<argu
 method_range type_database::get_global_methods() const
 {
     auto& vec = const_cast<type_database*>(this)->m_global_methods.value_data();
-    return create_array_range<method>(vec.data(), vec.data() + vec.size());
+    return method_range(vec.data(), vec.data() + vec.size());
 }
 
 
@@ -590,10 +590,10 @@ constructor_range type_database::get_constructors(const type& t) const
     {
         auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
         if (!vec.empty())
-            return create_array_range<constructor>(vec.data(), vec.data() + vec.size());
+            return constructor_range(vec.data(), vec.data() + vec.size());
     }
 
-    return create_array_range<constructor, detail::no_predicate>();
+    return constructor_range();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

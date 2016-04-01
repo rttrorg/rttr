@@ -314,7 +314,7 @@ type_range type::get_base_classes() const
         }
     }
 
-    return detail::create_array_range<type>(&(*g_base_class_list)[row], &(*g_base_class_list)[row] + end_index);
+    return type_range(&(*g_base_class_list)[row], &(*g_base_class_list)[row] + end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ type_range type::get_derived_classes() const
         }
     }
 
-    return detail::create_array_range<type>(&(*g_derived_class_list)[row], &(*g_derived_class_list)[row] + end_index);
+    return type_range(&(*g_derived_class_list)[row], &(*g_derived_class_list)[row] + end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -426,7 +426,7 @@ type type::get_raw_array_type() const
 
 type_range type::get_types()
 {
-    return detail::create_array_range<type>(&(*g_type_list)[1], &(*g_type_list)[1] + g_type_list->size() - 1);
+    return type_range(&(*g_type_list)[1], &(*g_type_list)[1] + g_type_list->size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

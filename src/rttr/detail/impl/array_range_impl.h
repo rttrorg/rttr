@@ -435,7 +435,7 @@ array_range<T, Predicate>::array_reverse_iterator<DataType>::operator++(int inde
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_range(bounds_type begin, bounds_type end)
+RTTR_INLINE array_range<T, detail::no_predicate>::array_range(bounds_type begin, bounds_type end, const detail::no_predicate&)
 :   m_begin(begin),
     m_end(end)
 {
@@ -735,40 +735,7 @@ array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::operator
     return old_itr;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-
-namespace detail
-{
-
 /////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Predicate>
-RTTR_INLINE array_range<T, Predicate> create_array_range_with_predicate(T* const begin, T* const end, const Predicate& pred)
-{
-    return array_range<T, Predicate>(begin, end, pred);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE array_range<T, no_predicate> create_array_range(T* const begin, T* const end)
-{
-    return array_range<T, no_predicate>(begin, end);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Predicate>
-RTTR_INLINE array_range<T, Predicate> create_array_range()
-{
-    return array_range<T, Predicate>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace detail
 
 } // end namespace rttr
 

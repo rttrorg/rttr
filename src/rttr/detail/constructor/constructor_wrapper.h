@@ -98,8 +98,8 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         std::vector<bool> get_is_reference()    const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const()        const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                              const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
+        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
 
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -196,8 +196,8 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
-        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                              const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
+        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                const_cast<decltype(m_param_info_list)&>(m_param_info_list).data() + m_param_info_list.size()); }
 
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -273,7 +273,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         std::vector<bool> get_is_reference()    const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const()        const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        parameter_info_range get_parameter_infos()  const { return create_array_range<parameter_info>(); }
+        parameter_info_range get_parameter_infos()  const { return parameter_info_range(); }
         variant get_metadata(const variant& key)    const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         template<typename... TArgs>
@@ -364,7 +364,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
-        parameter_info_range get_parameter_infos()          const { return create_array_range<parameter_info>(); }
+        parameter_info_range get_parameter_infos()          const { return parameter_info_range(); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const

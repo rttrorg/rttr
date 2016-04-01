@@ -61,15 +61,6 @@ namespace detail
         predicate_func m_func;
     };
 
-    template<typename T>
-    array_range<T, detail::no_predicate> create_array_range(T* const begin, T* const end);
-
-    template<typename T, typename Predicate = no_predicate>
-    array_range<T, Predicate> create_array_range();
-
-    template<typename T, typename Predicate = default_predicate<T>>
-    array_range<T, Predicate> create_array_range_with_predicate(T* const begin, T* const end, const Predicate& pred = Predicate());
-
 } // end namespace detail
 
 
@@ -90,6 +81,8 @@ class array_range
     using bounds_type = T*;
 
 public:
+    array_range();
+    array_range(bounds_type begin, bounds_type end, const Predicate& pred = Predicate());
 
 #ifndef DOXYGEN
     /*!
@@ -308,20 +301,11 @@ public:
     bool empty() const;
 
 private:
-
-    array_range();
-    array_range(bounds_type begin, bounds_type end, const Predicate& pred);
-
     template<typename DataType>
     void next(array_iterator<DataType>& itr) const;
 
     template<typename DataType>
     void prev(array_reverse_iterator<DataType>& itr) const;
-
-    template<typename U, typename P>
-    friend array_range<U, P> detail::create_array_range();
-    template<typename U, typename P>
-    friend array_range<U, P> detail::create_array_range_with_predicate(U* const begin, U* const end, const P& pred);
 
 private:
     bounds_type const   m_begin;
@@ -342,6 +326,8 @@ class array_range<T, detail::no_predicate>
     using bounds_type = T*;
 
 public:
+    array_range();
+    array_range(bounds_type begin, bounds_type end, const detail::no_predicate& pred = detail::no_predicate());
 
 #ifndef DOXYGEN
     /*!
@@ -555,16 +541,6 @@ public:
      * \return `True` if this range is empty, otherwise `false`.
      */
     bool empty() const;
-
-private:
-
-    array_range();
-    array_range(bounds_type begin, bounds_type end);
-
-    template<typename U>
-    friend array_range<U> detail::create_array_range(U* const, U* const);
-    template<typename U, typename P>
-    friend array_range<U, P> detail::create_array_range();
 
 private:
     bounds_type const   m_begin;

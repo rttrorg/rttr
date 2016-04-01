@@ -131,7 +131,7 @@ parameter_info_range method::get_parameter_infos() const
     if (is_valid())
         return m_wrapper->get_parameter_infos();
     else
-        return detail::create_array_range<parameter_info>();
+        return parameter_info_range();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
