@@ -43,11 +43,6 @@ class parameter_info;
 namespace detail
 {
     class parameter_info_wrapper_base;
-    template<typename...T>
-    struct parameter_infos;
-    template<typename...T>
-    static std::vector<parameter_info> convert_to_parameter_info_list(const parameter_infos<T...>&);
-
     template<typename T>
     static parameter_info create_param_info(const T&);
 }
@@ -164,9 +159,6 @@ class RTTR_API parameter_info
         bool operator!=(const parameter_info& other) const;
 
     private:
-        template<typename... T>
-        friend std::vector<parameter_info> detail::convert_to_parameter_info_list(const detail::parameter_infos<T...>&);
-
         template<typename T>
         friend parameter_info detail::create_param_info(const T&);
 

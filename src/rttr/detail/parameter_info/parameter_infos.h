@@ -102,36 +102,21 @@ parameter_info create_param_info(const T& data)
 }
 
 template<std::size_t... Indices, typename...T>
-static RTTR_INLINE std::vector<parameter_info>
-convert_to_parameter_info_list_impl(index_sequence<Indices...>, const parameter_infos<T...>& param_infos)
- {
-     return std::vector<parameter_info>{create_param_info(std::get<Indices>(param_infos.m_param_infos))...};
- };
-
-template<typename...T>
-static RTTR_INLINE std::vector<parameter_info>
-convert_to_parameter_info_list(const parameter_infos<T...>& param_infos)
- {
-     return convert_to_parameter_info_list_impl(make_index_sequence<sizeof...(T)>(), param_infos);
-
- };
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<std::size_t... Indices, typename...T>
 static RTTR_INLINE std::array<parameter_info, sizeof...(T)>
 create_paramter_info_array_impl(index_sequence<Indices...>, const parameter_infos<T...>& param_infos)
  {
      return {create_param_info(std::get<Indices>(param_infos.m_param_infos))...};
  };
 
-template<typename...T>
-static RTTR_INLINE std::array<parameter_info, sizeof...(T)>
+// MSVC 2015 cannot handle sizeof...(),
+// I retrieve a fatal error C1001: An internal error has occurred in the compiler.
+// (compiler file 'msc1.cpp', line 1421)
+// MSVC 2013 can handle it...
+template<typename...T, std::size_t Size = sizeof...(T)>
+static RTTR_INLINE std::array<parameter_info, Size>
 create_paramter_info_array(const parameter_infos<T...>& param_infos)
  {
-     return create_paramter_info_array_impl(make_index_sequence<sizeof...(T)>(), param_infos);
+     return create_paramter_info_array_impl(make_index_sequence<Size>(), param_infos);
  };
 
 /////////////////////////////////////////////////////////////////////////////////////////
