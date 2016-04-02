@@ -77,12 +77,24 @@ namespace detail
 template<typename T, typename Predicate = detail::no_predicate>
 class array_range
 {
+public:
     using value_type = T;
     using bounds_type = T*;
+    using size_type = std::size_t;
 
-public:
+    /*!
+     * \brief Default constructor. Constructs an empty array_range.
+     */
     array_range();
-    array_range(bounds_type begin, bounds_type end, const Predicate& pred = Predicate());
+
+    /*!
+     * \brief Constructs an array range starting from \p begin to \p end [begin, end).
+     *
+     * \param begin Marks the start of the range. Is included of the range.
+     * \param size The number of elements to include in the range.
+     * \param pred Determines whether an element in the range fulfills the condition of the predicate.
+     */
+    array_range(bounds_type begin, size_type size, const Predicate& pred = Predicate());
 
 #ifndef DOXYGEN
     /*!
@@ -322,12 +334,24 @@ private:
 template<typename T>
 class array_range<T, detail::no_predicate>
 {
+public:
     using value_type = T;
     using bounds_type = T*;
+    using size_type = std::size_t;
 
-public:
+    /*!
+     * \brief Default constructor. Constructs an empty array_range.
+     */
     array_range();
-    array_range(bounds_type begin, bounds_type end, const detail::no_predicate& pred = detail::no_predicate());
+
+    /*!
+     * \brief Constructs an array range starting from \p begin to \p end [begin, end).
+     *
+     * \param begin Marks the start of the range. Is included of the range.
+     * \param size The number of elements to include in the range.
+     * \param pred Determines whether an element in the range fulfills the condition of the predicate.
+     */
+    array_range(bounds_type begin, size_type size, const detail::no_predicate& pred = detail::no_predicate());
 
 #ifndef DOXYGEN
     /*!

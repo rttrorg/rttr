@@ -255,14 +255,14 @@ property type_database::get_type_property(const type& t, const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_class_properties(const type& t) const
+property_range type_database::get_class_properties(const type& t)
 {
     const auto ret = m_class_property_map.find(t);
     if (ret != m_class_property_map.end())
     {
-        auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
+        auto& vec = ret->second;
         if (!vec.empty())
-            return property_range(vec.data(), vec.data() + vec.size());
+            return property_range(vec.data(), vec.size());
     }
 
     return property_range();
@@ -281,10 +281,10 @@ property type_database::get_global_property(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_global_properties() const
+property_range type_database::get_global_properties()
 {
-    auto& vec = const_cast<type_database*>(this)->m_global_properties.value_data();
-    return property_range(vec.data(), vec.data() + vec.size());
+    auto& vec = m_global_properties.value_data();
+    return property_range(vec.data(), vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -409,14 +409,14 @@ method type_database::get_class_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_class_methods(const type& t) const
+method_range type_database::get_class_methods(const type& t)
 {
     const auto ret = m_class_method_map.find(t);
     if (ret != m_class_method_map.end())
     {
-        auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
+        auto& vec = ret->second;
         if (!vec.empty())
-            return method_range(vec.data(), vec.data() + vec.size());
+            return method_range(vec.data(), vec.size());
     }
 
     return method_range();
@@ -475,10 +475,10 @@ method type_database::get_global_method(const char* name, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_global_methods() const
+method_range type_database::get_global_methods()
 {
-    auto& vec = const_cast<type_database*>(this)->m_global_methods.value_data();
-    return method_range(vec.data(), vec.data() + vec.size());
+    auto& vec = m_global_methods.value_data();
+    return method_range(vec.data(), vec.size());
 }
 
 
@@ -583,14 +583,14 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_range type_database::get_constructors(const type& t) const
+constructor_range type_database::get_constructors(const type& t)
 {
     const auto ret = m_type_ctor_map.find(t);
     if (ret != m_type_ctor_map.end())
     {
-        auto& vec = const_cast<remove_const_t<decltype(ret->second)>&>(ret->second);
+        auto& vec = ret->second;
         if (!vec.empty())
-            return constructor_range(vec.data(), vec.data() + vec.size());
+            return constructor_range(vec.data(), vec.size());
     }
 
     return constructor_range();

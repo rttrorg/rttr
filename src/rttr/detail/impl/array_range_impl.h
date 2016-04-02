@@ -37,9 +37,9 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE array_range<T, Predicate>::array_range(bounds_type begin, bounds_type end, const Predicate& pred)
+RTTR_INLINE array_range<T, Predicate>::array_range(bounds_type begin, size_type size, const Predicate& pred)
 :   m_begin(begin),
-    m_end(end),
+    m_end(begin + size),
     m_pred(pred)
 {
 }
@@ -435,9 +435,9 @@ array_range<T, Predicate>::array_reverse_iterator<DataType>::operator++(int inde
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_range(bounds_type begin, bounds_type end, const detail::no_predicate&)
+RTTR_INLINE array_range<T, detail::no_predicate>::array_range(bounds_type begin, size_type size, const detail::no_predicate&)
 :   m_begin(begin),
-    m_end(end)
+    m_end(begin + size)
 {
 }
 

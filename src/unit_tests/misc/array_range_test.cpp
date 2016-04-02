@@ -54,7 +54,7 @@ TEST_CASE("array_range<T> - empty", "[property]")
 TEST_CASE("array_range<T> - size", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    auto range = array_range<int>(&list[0], &list[0] + 5);
+    auto range = array_range<int>(&list[0], 5);
     CHECK(range.size() == 5);
 }
 
@@ -63,7 +63,7 @@ TEST_CASE("array_range<T> - size", "[property]")
 TEST_CASE("array_range<T> - begin()", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    auto range = array_range<int>(&list[0], &list[0] + 5);
+    auto range = array_range<int>(&list[0], 5);
     int index = 0;
     for (auto& i : range)
     {
@@ -78,7 +78,7 @@ TEST_CASE("array_range<T> - begin()", "[property]")
 TEST_CASE("array_range<T> - begin() const", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    const auto range = array_range<int>(&list[0], &list[0] + 5);
+    const auto range = array_range<int>(&list[0], 5);
     auto& value_begin = (*range.begin());
     static_assert(std::is_same<const int&, decltype(value_begin)>::value, "value should be const!");
     static_assert(std::is_same<decltype(range.begin()), decltype(range.end())>::value, "begin and end should not be different iterator types!");
@@ -97,7 +97,7 @@ TEST_CASE("array_range<T> - begin() const", "[property]")
 TEST_CASE("array_range<T> - cbegin()", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    auto range = array_range<int>(&list[0], &list[0] + 5);
+    auto range = array_range<int>(&list[0], 5);
     auto& value_begin = (*range.cbegin());
     static_assert(std::is_same<const int&, decltype(value_begin)>::value, "value should be const!");
     static_assert(std::is_same<decltype(range.rbegin()), decltype(range.rend())>::value, "begin and end should not be different iterator types!");
@@ -116,7 +116,7 @@ TEST_CASE("array_range<T> - cbegin()", "[property]")
 TEST_CASE("array_range<T> - rbegin()", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    auto range = array_range<int>(&list[0], &list[0] + 5);
+    auto range = array_range<int>(&list[0], 5);
     auto& value_begin = (*range.rbegin());
     static_assert(std::is_same<int&, decltype(value_begin)>::value, "value should be non const!");
     static_assert(std::is_same<decltype(range.rbegin()), decltype(range.rend())>::value, "begin and end should not be different iterator types!");
@@ -135,7 +135,7 @@ TEST_CASE("array_range<T> - rbegin()", "[property]")
 TEST_CASE("array_range<T> - rbegin() const", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    const auto range = array_range<int>(&list[0], &list[0] + 5);
+    const auto range = array_range<int>(&list[0], 5);
     auto& value_begin = (*range.rbegin());
     static_assert(std::is_same<const int&, decltype(value_begin)>::value, "value should be const!");
     static_assert(std::is_same<decltype(range.rbegin()), decltype(range.rend())>::value, "begin and end should not be different iterator types!");
@@ -153,7 +153,7 @@ TEST_CASE("array_range<T> - rbegin() const", "[property]")
 TEST_CASE("array_range<T> - crbegin()", "[property]")
 {
     int list[5] = {1, 2, 3, 4, 5};
-    auto range = array_range<int>(&list[0], &list[0] + 5);
+    auto range = array_range<int>(&list[0], 5);
     auto& value_begin = (*range.crbegin());
     static_assert(std::is_same<const int&, decltype(value_begin)>::value, "value should be const!");
     static_assert(std::is_same<decltype(range.rbegin()), decltype(range.rend())>::value, "begin and end should not be different iterator types!");

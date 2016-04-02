@@ -493,7 +493,7 @@ class RTTR_API type
         constructor get_constructor(const std::vector<type>& params = std::vector<type>() ) const;
 
         /*!
-         * \brief Returns a list of all registered constructors for this type; the order is unspecified.
+         * \brief Returns a range of all registered constructors for this type; the order is unspecified.
          *
          * \return A range of all registered constructors.
          */
@@ -540,7 +540,7 @@ class RTTR_API type
         property get_property(const char* name) const;
 
         /*!
-         * \brief Returns a list of all registered properties for this type and
+         * \brief Returns a range of all registered properties for this type and
          *        all its base classes.
          *
          * \remark The properties are sorted after its order of registration.
@@ -559,7 +559,7 @@ class RTTR_API type
         static property get_global_property(const char* name);
 
         /*!
-         * \brief Returns a list of all registered global properties.
+         * \brief Returns a range of all registered global properties.
          *
          * \remark The order of the properties in the range is undefined.
          *         Client code should **not** depend on the order in which properties are returned,
@@ -623,7 +623,7 @@ class RTTR_API type
         method get_method(const char* name, const std::vector<type>& params) const;
 
         /*!
-         * \brief Returns a list of all registered methods for this type and
+         * \brief Returns a range of all registered methods for this type and
          *        all its base classes.
          *
          * \remark The methods are sorted after its order of registration.
@@ -652,7 +652,7 @@ class RTTR_API type
         static method get_global_method(const char* name, const std::vector<type>& params);
 
         /*!
-         * \brief Returns a list of all registered global methods.
+         * \brief Returns a range of all registered global methods.
          *
          * \remark The order of the methods in the range is undefined.
          *         Client code should **not** depend on the order in which methods are returned,

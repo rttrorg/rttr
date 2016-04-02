@@ -103,10 +103,10 @@ class RTTR_LOCAL type_database
         /////////////////////////////////////////////////////////////////////////////////////
         property get_type_property(const type& t, const char* name) const;
         property get_class_property(const type& t, const char* name) const;
-        property_range get_class_properties(const type& t) const;
+        property_range get_class_properties(const type& t);
 
         property get_global_property(const char* name) const;
-        property_range get_global_properties() const;
+        property_range get_global_properties();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,20 +119,20 @@ class RTTR_LOCAL type_database
                                 const std::vector<type>& type_list) const;
         method get_class_method(const type& t, const char* name,
                                 const std::vector<argument>& arg_list) const;
-        method_range get_class_methods(const type& t) const;
+        method_range get_class_methods(const type& t);
 
 
         method get_global_method(const char* name) const;
         method get_global_method(const char* name, const std::vector<type>& type_list) const;
         method get_global_method(const char* name, const std::vector<argument>& arg_list) const;
-        method_range get_global_methods() const;
+        method_range get_global_methods();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
         constructor get_constructor(const type& t) const;
         constructor get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
         constructor get_constructor(const type& t, const std::vector<argument>& arg_list) const;
-        constructor_range get_constructors(const type& t) const;
+        constructor_range get_constructors(const type& t);
 
         /////////////////////////////////////////////////////////////////////////////////////
 
