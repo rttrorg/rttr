@@ -185,7 +185,7 @@ static void update_class_list(const type& t,
 
     // update derived types
     for (const auto& derived_type : t.get_derived_classes())
-        update_class_list<T>(t, type_map, class_map);
+        update_class_list<T>(derived_type, type_map, class_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
