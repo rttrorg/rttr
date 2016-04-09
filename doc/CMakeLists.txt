@@ -42,6 +42,11 @@ set(DOXYGEN_CUSTOM_HTML_DIR   "rttr-${RTTR_VERSION_MAJOR}-${RTTR_VERSION_MINOR}-
 set(DOXYGEN_PREDEFINED        "DOXYGEN \\
                                RTTR_INLINE= \\
                                RTTR_API= \\
+                               RTTR_NOEXCEPT=noexcept \\
+                               RTTR_CONSTEXPR=constexpr \\
+                               RTTR_CXX14_CONSTEXPR=constexpr \\
+                               RTTR_STATIC_CONSTEXPR=static constexpr \\
+                               RTTR_NOEXCEPT_OR_NOTHROW=throw() \\
                                ")
 set(DOXYGEN_EXCLUDE_SYMBOLS   "impl* \\
                                impl::* \\

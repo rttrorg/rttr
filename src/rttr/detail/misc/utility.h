@@ -535,6 +535,24 @@ static RTTR_INLINE std::shared_ptr<T> create_if_empty(const std::shared_ptr<T>& 
     return (obj.get() ? obj : std::make_shared<T>());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Generates a hash value for continuous sequence of char's
+ */
+RTTR_INLINE static std::size_t generate_hash(const char* text, std::size_t length)
+{
+    const std::size_t  magic_prime = static_cast<std::size_t>(0x01000193);
+    std::size_t               hash = static_cast<std::size_t>(0xcbf29ce4);
+
+    for (std::size_t i = 0; i < length; ++i)
+      hash = (hash ^ text[i]) * magic_prime;
+
+    return hash;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

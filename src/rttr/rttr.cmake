@@ -39,6 +39,7 @@ set(HEADER_FILES access_levels.h
                  parameter_info.h
                  registration
                  registration.h
+                 string_view.h
                  rttr_cast.h
                  rttr_enable.h
                  type
@@ -72,6 +73,7 @@ set(HEADER_FILES access_levels.h
                  detail/impl/array_range_impl.h
                  detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
+                 detail/impl/string_view_impl.h
                  detail/impl/wrapper_mapper_impl.h
                  detail/metadata/metadata.h
                  detail/metadata/metadata_handler.h
