@@ -191,7 +191,7 @@ static void update_class_list(const type& t,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static T get_class_item(const type& t, const char* name,
+static T get_class_item(const type& t, string_view name,
                         const std::unordered_map<type, std::vector<T>>& item_map)
 {
     const auto ret = item_map.find(t);
@@ -332,21 +332,21 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_type_method(const type& t, const char* name) const
+method type_database::get_type_method(const type& t, string_view name) const
 {
     return get_class_item<method>(t, name, m_type_method_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_class_method(const type& t, const char* name) const
+method type_database::get_class_method(const type& t, string_view name) const
 {
     return get_class_item<method>(t, name, m_class_method_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_type_method(const type& t, const char* name,
+method type_database::get_type_method(const type& t, string_view name,
                                       const std::vector<type>& type_list) const
 {
     const auto ret = m_type_method_map.find(t);
@@ -367,7 +367,7 @@ method type_database::get_type_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_class_method(const type& t, const char* name,
+method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<type>& type_list) const
 {
     const auto ret = m_class_method_map.find(t);
@@ -388,7 +388,7 @@ method type_database::get_class_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_class_method(const type& t, const char* name,
+method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<argument>& arg_list) const
 {
     const auto ret = m_class_method_map.find(t);
@@ -424,7 +424,7 @@ method_range type_database::get_class_methods(const type& t)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name) const
+method type_database::get_global_method(string_view name) const
 {
     const auto ret = m_global_methods.find(name);
     if (ret != m_global_methods.end())
@@ -435,7 +435,7 @@ method type_database::get_global_method(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name, const std::vector<type>& type_list) const
+method type_database::get_global_method(string_view name, const std::vector<type>& type_list) const
 {
     auto itr = m_global_methods.find(name);
     while (itr != m_global_methods.end())
@@ -455,7 +455,7 @@ method type_database::get_global_method(const char* name, const std::vector<type
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name, const std::vector<argument>& arg_list) const
+method type_database::get_global_method(string_view name, const std::vector<argument>& arg_list) const
 {
     auto itr = m_global_methods.find(name);
     while (itr != m_global_methods.end())

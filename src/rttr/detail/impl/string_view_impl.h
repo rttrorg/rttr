@@ -29,6 +29,7 @@
 #ifndef RTTR_STRING_VIEW_IMPL_H_
 #define RTTR_STRING_VIEW_IMPL_H_
 
+#include "rttr/detail/misc/utility.h"
 
 namespace rttr
 {

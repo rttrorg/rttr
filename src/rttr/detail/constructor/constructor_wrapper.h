@@ -83,6 +83,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_param_infos(std::move(param_infos)),
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
+            init();
         }
 
         access_levels get_access_level()    const { return Acc_Level; }
@@ -189,6 +190,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             m_creator_func(creator_func), m_param_infos(std::move(param_infos)),
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
+            init();
         }
 
         access_levels get_access_level()                    const { return Acc_Level; }
@@ -258,6 +260,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
                             parameter_infos<> param_infos)
         :   metadata_handler<Metadata_Count>(std::move(metadata_list))
         {
+            init();
         }
 
         access_levels get_access_level()    const { return Acc_Level; }
@@ -357,6 +360,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_creator_func(creator_func)
         {
+            init();
         }
 
         access_levels get_access_level()                    const { return Acc_Level; }

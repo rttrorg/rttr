@@ -51,24 +51,43 @@ constructor_wrapper_base::~constructor_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string constructor_wrapper_base::get_signature() const
+void constructor_wrapper_base::init()
 {
+    create_signature_string();
+    get_instanciated_type();
+    get_parameter_infos();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+string_view constructor_wrapper_base::get_signature() const
+{
+    return m_signature_view;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void constructor_wrapper_base::create_signature_string()
+{
+    if (!m_signature.empty())
+        return;
+
     auto param_info_list = get_parameter_infos();
-    string result = get_instanciated_type().get_raw_type().get_name() + "( ";
+    m_signature = get_instanciated_type().get_raw_type().get_name() + "( ";
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
     for (const auto& param : param_info_list)
     {
-        result += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        m_signature += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
         if (param.get_index() < param_info_list.size() - 1)
-            result += ", ";
+            m_signature += ", ";
     }
     if (param_info_list.empty())
-        result += ")";
+        m_signature += ")";
     else
-        result += " )";
+        m_signature += " )";
 
-    return result;
+    m_signature_view = m_signature;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,7 @@
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
@@ -138,7 +139,7 @@ class RTTR_API method
          *
          * \return Name of the method.
          */
-        std::string get_name() const;
+        string_view get_name() const;
 
         /*!
          * \brief Returns the access level with which this method was
@@ -189,7 +190,7 @@ class RTTR_API method
          *
          * \return The signature as readable string.
          */
-        std::string get_signature() const;
+        string_view get_signature() const;
 
         /*!
          * \brief Returns the meta data for the given key \p key.

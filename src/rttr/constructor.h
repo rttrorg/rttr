@@ -33,6 +33,7 @@
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
@@ -133,7 +134,7 @@ class RTTR_API constructor
          *
          * \return The signature as readable string.
          */
-        std::string get_signature() const;
+        string_view get_signature() const;
 
         /*!
          * \brief Returns an ordered range of \ref parameter_info objects, which matches the signature of the constructor.

@@ -51,6 +51,7 @@ struct equal_types
     }
 };
 
+
 template<>
 struct equal_types<const char*>
 {
@@ -88,7 +89,7 @@ struct key_data
  * \brief The flat_map class implements a simple map based on std::vector instead of a binary tree.
  *
  */
-template<typename Key, typename Value, class Hash = std::size_t, typename Compare = equal_types<Key>>
+template<typename Key, typename Value, class Hash = std::hash<Key>, typename Compare = equal_types<Key>>
 class flat_map
 {
     public:

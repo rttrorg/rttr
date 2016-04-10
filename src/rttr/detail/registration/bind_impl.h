@@ -149,10 +149,6 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
                                                                          Ctor_Args...>>(std::array<detail::metadata, 0>(),
                                                                                         param_info_t());
 
-            // register the type with the following call:
-            m_ctor->get_instanciated_type();
-            m_ctor->get_parameter_infos();
-
             auto wrapper = detail::make_rref(std::move(m_ctor));
             auto reg_func = [wrapper]()
             {
@@ -302,9 +298,6 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
             using namespace detail;
             if (!m_ctor.get())
                 m_ctor = create_default_constructor(m_func);
-
-            m_ctor->get_instanciated_type();
-            m_ctor->get_parameter_infos();
 
             auto wrapper = detail::make_rref(std::move(m_ctor));
             auto reg_func = [wrapper]()
@@ -614,7 +607,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
 {
     private:
         template<typename Acc_Func>
-        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_default_method(Acc_Func func)
+        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_default_method(string_view name, Acc_Func func)
         {
             using namespace detail;
             using param_info_t =  decltype(create_param_infos<type_list<F>>());
@@ -623,11 +616,11 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                                                       default_invoke,
                                                       default_args<>,
                                                       param_info_t,
-                                                      0>>(func, std::array<detail::metadata, 0>(), param_info_t());
+                                                      0>>(name, type::get<Class_Type>(), func, std::array<detail::metadata, 0>(), param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
-        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_custom_method(Acc_Func func, Args&&...args)
+        static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_custom_method(string_view name, Acc_Func func, Args&&...args)
         {
             using namespace detail;
 
@@ -656,7 +649,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             using policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
             using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
             auto meth = create_method_wrapper<policy,
-                                              metadata_count::value>(func,
+                                              metadata_count::value>(name, func,
                                                                      std::move(get_metadata(std::forward<Args>(args)...)),
                                                                      std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
                                                                      std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)) );
@@ -665,7 +658,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
 
         template<typename Policy, std::size_t Metadata_Count, typename...TArgs, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
-        create_method_wrapper(F func,
+        create_method_wrapper(string_view name, F func,
                               std::array<detail::metadata, Metadata_Count> metadata_list,
                               detail::default_args<TArgs...> def_args,
                               detail::parameter_infos<Param_Args...> param_infos)
@@ -675,7 +668,9 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                                                               Policy,
                                                               detail::default_args<TArgs...>,
                                                               detail::parameter_infos<Param_Args...>,
-                                                              Metadata_Count>>(func,
+                                                              Metadata_Count>>(name,
+                                                                               type::get<Class_Type>(),
+                                                                               func,
                                                                                std::move(metadata_list),
                                                                                std::move(def_args),
                                                                                std::move(param_infos));
@@ -683,7 +678,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
 
         template<typename Policy, std::size_t Metadata_Count, typename...Param_Args>
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base>
-        create_method_wrapper(F func,
+        create_method_wrapper(string_view name, F func,
                               std::array<detail::metadata, Metadata_Count> metadata_list,
                               detail::default_args<> def_args,
                               detail::parameter_infos<Param_Args...> param_infos)
@@ -693,13 +688,15 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                                                               Policy,
                                                               detail::default_args<>,
                                                               detail::parameter_infos<Param_Args...>,
-                                                              Metadata_Count>>(func,
+                                                              Metadata_Count>>(name,
+                                                                               type::get<Class_Type>(),
+                                                                               func,
                                                                                std::move(metadata_list),
                                                                                std::move(param_infos));
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, F f)
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, F f)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_func(f)
         {
             m_reg_exec->add_registration_func(this);
@@ -709,13 +706,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
         {
             using namespace detail;
             if (!m_meth.get())
-                m_meth = create_default_method(m_func);
-
-            m_meth->set_name(m_name);
-            m_meth->set_declaring_type(type::get<Class_Type>());
-            // register the underlying type with the following call:
-            m_meth->get_return_type();
-            m_meth->get_parameter_infos();
+                m_meth = create_default_method(m_name, m_func);
 
             auto wrapper = detail::make_rref(std::move(m_meth));
             auto reg_func = [wrapper]()
@@ -729,13 +720,13 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
-            m_meth = create_custom_method(m_func, std::forward<Args>(args)...);
+            m_meth = create_custom_method(m_name, m_func, std::forward<Args>(args)...);
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
 
     private:
         std::shared_ptr<detail::registration_executer> m_reg_exec;
-        const char* m_name;
+        string_view m_name;
         F           m_func;
         std::unique_ptr<detail::method_wrapper_base> m_meth;
 };

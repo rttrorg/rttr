@@ -36,6 +36,8 @@
 #include "rttr/destructor.h"
 #include "rttr/enumeration.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
+
 #include "rttr/detail/misc/flat_map.h"
 
 #include <vector>
@@ -110,21 +112,21 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method get_type_method(const type& t, const char* name) const;
-        method get_type_method(const type& t, const char* name,
+        method get_type_method(const type& t, string_view name) const;
+        method get_type_method(const type& t, string_view name,
                                const std::vector<type>& type_list) const;
 
-        method get_class_method(const type& t, const char* name) const;
-        method get_class_method(const type& t, const char* name,
+        method get_class_method(const type& t, string_view name) const;
+        method get_class_method(const type& t, string_view name,
                                 const std::vector<type>& type_list) const;
-        method get_class_method(const type& t, const char* name,
+        method get_class_method(const type& t, string_view name,
                                 const std::vector<argument>& arg_list) const;
         method_range get_class_methods(const type& t);
 
 
-        method get_global_method(const char* name) const;
-        method get_global_method(const char* name, const std::vector<type>& type_list) const;
-        method get_global_method(const char* name, const std::vector<argument>& arg_list) const;
+        method get_global_method(string_view name) const;
+        method get_global_method(string_view name, const std::vector<type>& type_list) const;
+        method get_global_method(string_view name, const std::vector<argument>& arg_list) const;
         method_range get_global_methods();
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +286,7 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
-        flat_map<const char*, method, hash_char>                    m_global_methods;
+        flat_map<string_view, method>                               m_global_methods;
         flat_map<const char*, property, hash_char>                  m_global_properties;
 
         std::unordered_map<type, std::vector<property>>             m_type_property_map;

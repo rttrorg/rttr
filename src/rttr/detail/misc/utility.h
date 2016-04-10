@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/detail/misc/std_type_traits.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 #include <cstddef>
 #include <memory>
