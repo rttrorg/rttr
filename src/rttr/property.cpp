@@ -139,12 +139,12 @@ bool property::is_array() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string property::get_name() const
+string_view property::get_name() const
 {
     if (is_valid())
         return m_wrapper->get_name();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

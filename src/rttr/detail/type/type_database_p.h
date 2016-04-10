@@ -103,11 +103,11 @@ class RTTR_LOCAL type_database
         uint16_t get_by_name(const char* name) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
-        property get_type_property(const type& t, const char* name) const;
-        property get_class_property(const type& t, const char* name) const;
+        property get_type_property(const type& t, string_view name) const;
+        property get_class_property(const type& t, string_view name) const;
         property_range get_class_properties(const type& t);
 
-        property get_global_property(const char* name) const;
+        property get_global_property(string_view name) const;
         property_range get_global_properties();
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -182,14 +182,6 @@ class RTTR_LOCAL type_database
 
             return hash;
         }
-
-        struct hash_char
-        {
-            RTTR_INLINE size_t operator()(const char* text) const
-            {
-                return generate_hash(text);
-            }
-        };
 
         using rttr_cast_func        = void*(*)(void*);
         using get_derived_info_func = derived_info(*)(void*);
@@ -287,7 +279,7 @@ class RTTR_LOCAL type_database
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
         flat_map<string_view, method>                               m_global_methods;
-        flat_map<const char*, property, hash_char>                  m_global_properties;
+        flat_map<string_view, property>                             m_global_properties;
 
         std::unordered_map<type, std::vector<property>>             m_type_property_map;
         std::unordered_map<type, std::vector<property>>             m_class_property_map;

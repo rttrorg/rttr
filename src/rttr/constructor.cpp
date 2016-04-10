@@ -113,7 +113,7 @@ string_view constructor::get_signature() const
     if (is_valid())
         return m_wrapper->get_signature();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

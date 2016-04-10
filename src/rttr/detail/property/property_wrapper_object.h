@@ -36,10 +36,13 @@ template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
 class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(pointer)
         {
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -79,9 +82,12 @@ template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
 class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -114,10 +120,14 @@ template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
 class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -157,9 +167,12 @@ template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
 class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(C* pointer, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }

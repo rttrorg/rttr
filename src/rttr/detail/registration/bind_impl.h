@@ -340,7 +340,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
 
         template<typename Acc>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base> create_default_property(Acc acc)
+        std::unique_ptr<detail::property_wrapper_base> create_default_property(string_view name, Acc acc)
         {
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
@@ -349,12 +349,13 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
                                                         void,
                                                         detail::map_access_level_to_enum<acc_level>::value,
                                                         default_getter_policy, default_setter_policy,
-                                                        0>>(acc, std::array<detail::metadata, 0>());
+                                                        0>>(name, type::get<Class_Type>(), acc, std::array<detail::metadata, 0>());
         }
 
         template<typename Acc, std::size_t Metadata_Count, typename... Args>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc acc,
+        std::unique_ptr<detail::property_wrapper_base> create_custom_property(string_view name,
+                                                                              Acc acc,
                                                                               std::array<detail::metadata, Metadata_Count> metadata_list,
                                                                               Args&&...args)
         {
@@ -378,12 +379,12 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
                                                              void,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
-                                                             Metadata_Count>>(acc, std::move(metadata_list));
+                                                             Metadata_Count>>(name, type::get<Class_Type>(), acc, std::move(metadata_list));
             return std::move(prop);
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A acc)
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A acc)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc)
         {
             m_reg_exec->add_registration_func(this);
@@ -393,12 +394,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
         {
             using namespace detail;
             if (!m_prop.get())
-                m_prop = create_default_property(m_acc);
-
-            m_prop->set_name(m_name);
-            m_prop->set_declaring_type(type::get<Class_Type>());
-            // register the underlying type with the following call:
-            m_prop->get_type();
+                m_prop = create_default_property(m_name, m_acc);
 
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
@@ -412,13 +408,13 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
-            m_prop = create_custom_property(m_acc, std::move(get_metadata(std::forward<Args>(args)...)), std::forward<Args>(args)...);
+            m_prop = create_custom_property(m_name, m_acc, std::move(get_metadata(std::forward<Args>(args)...)), std::forward<Args>(args)...);
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
 
     private:
         std::shared_ptr<detail::registration_executer> m_reg_exec;
-        const char* m_name;
+        string_view m_name;
         A           m_acc;
         std::unique_ptr<detail::property_wrapper_base> m_prop;
 
@@ -435,19 +431,22 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
 
         template<typename Acc1, typename Acc2>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base> create_default_property(Acc1 getter, Acc2 setter)
+        std::unique_ptr<detail::property_wrapper_base> create_default_property(string_view name,
+                                                                               Acc1 getter, Acc2 setter)
         {
             using namespace detail;
             using acc_type = typename property_type<A1>::type;
             return detail::make_unique<property_wrapper<acc_type,
                                                         Acc1, Acc2,
                                                         detail::map_access_level_to_enum<acc_level>::value,
-                                                        default_getter_policy, default_setter_policy, 0>>(getter, setter, std::array<detail::metadata, 0>());
+                                                        default_getter_policy, default_setter_policy, 0>>(name, type::get<Class_Type>(),
+                                                                                                          getter, setter, std::array<detail::metadata, 0>());
         }
 
         template<typename Acc1, typename Acc2, std::size_t Metadata_Count, typename... Args>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base> create_custom_property(Acc1 getter, Acc2 setter,
+        std::unique_ptr<detail::property_wrapper_base> create_custom_property(string_view name,
+                                                                              Acc1 getter, Acc2 setter,
                                                                               std::array<detail::metadata, Metadata_Count> metadata_list,
                                                                               Args&&...args)
         {
@@ -468,12 +467,13 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
                                                              Acc1, Acc2,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
-                                                             Metadata_Count>>(getter, setter, std::move(metadata_list));
+                                                             Metadata_Count>>(name, type::get<Class_Type>(),
+                                                                              getter, setter, std::move(metadata_list));
             return std::move(prop);
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A1 getter, A2 setter)
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A1 getter, A2 setter)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_getter(getter), m_setter(setter)
         {
             m_reg_exec->add_registration_func(this);
@@ -483,12 +483,8 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
         {
             using namespace detail;
             if (!m_prop.get())
-                m_prop = create_default_property(m_getter, m_setter);
+                m_prop = create_default_property(m_name, m_getter, m_setter);
 
-            m_prop->set_name(m_name);
-            m_prop->set_declaring_type(type::get<Class_Type>());
-            // register the underlying type with the following call:
-            m_prop->get_type();
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -500,14 +496,15 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
-            m_prop = create_custom_property(m_getter, m_setter,
+            m_prop = create_custom_property(m_name,
+                                            m_getter, m_setter,
                                             std::move(get_metadata(std::forward<Args>(args)...)), std::forward<Args>(args)...);
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
 
     private:
         std::shared_ptr<detail::registration_executer> m_reg_exec;
-        const char* m_name;
+        string_view m_name;
         A1          m_getter;
         A2          m_setter;
         std::unique_ptr<detail::property_wrapper_base> m_prop;
@@ -524,18 +521,20 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
 
         template<typename Acc>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base> create_default_property(Acc acc)
+        std::unique_ptr<detail::property_wrapper_base> create_default_property(string_view name, Acc acc)
         {
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
             return detail::make_unique<property_wrapper<acc_type, A, void,
                                                         detail::map_access_level_to_enum<acc_level>::value,
-                                                        default_getter_policy, default_setter_policy, 0>>(acc, std::array<detail::metadata, 0>());
+                                                        default_getter_policy, default_setter_policy, 0>>(name, type::get<Class_Type>(),
+                                                                                                          acc, std::array<detail::metadata, 0>());
         }
 
         template<typename Acc, std::size_t Metadata_Count, typename... Args>
         static RTTR_INLINE
-        std::unique_ptr<detail::property_wrapper_base>  create_custom_property(Acc acc,
+        std::unique_ptr<detail::property_wrapper_base>  create_custom_property(string_view name,
+                                                                               Acc acc,
                                                                                std::array<detail::metadata,
                                                                                Metadata_Count> metadata_list,
                                                                                Args&&...args)
@@ -555,13 +554,14 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
 
             auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void,
                                                              detail::map_access_level_to_enum<acc_level>::value,
-                                                             getter_policy, default_setter_policy, Metadata_Count>>(acc, std::move(metadata_list));
+                                                             getter_policy, default_setter_policy, Metadata_Count>>(name, type::get<Class_Type>(),
+                                                                                                                    acc, std::move(metadata_list));
 
             return std::move(prop);
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name, A acc)
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A acc)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc)
         {
             m_reg_exec->add_registration_func(this);
@@ -571,12 +571,8 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
         {
             using namespace detail;
             if (!m_prop.get())
-                m_prop = create_default_property(m_acc);
+                m_prop = create_default_property(m_name, m_acc);
 
-            m_prop->set_name(m_name);
-            m_prop->set_declaring_type(type::get<Class_Type>());
-            // register the underlying type with the following call:
-            m_prop->get_type();
             auto wrapper = detail::make_rref(std::move(m_prop));
             auto reg_func = [wrapper]()
             {
@@ -588,14 +584,14 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
         template<typename... Args>
         registration_derived_t<Class_Type> operator()(Args&&... args)
         {
-            m_prop = create_custom_property(m_acc,
+            m_prop = create_custom_property(m_name, m_acc,
                                             std::move(get_metadata(std::forward<Args>(args)...)),
                                             std::forward<Args>(args)...);
             return registration_derived_t<Class_Type>(m_reg_exec);
         }
     private:
         std::shared_ptr<detail::registration_executer> m_reg_exec;
-        const char* m_name;
+        string_view m_name;
         A           m_acc;
         std::unique_ptr<detail::property_wrapper_base> m_prop;
 };

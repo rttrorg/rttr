@@ -241,14 +241,14 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_class_property(const type& t, const char* name) const
+property type_database::get_class_property(const type& t, string_view name) const
 {
     return get_class_item<property>(t, name, m_class_property_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_type_property(const type& t, const char* name) const
+property type_database::get_type_property(const type& t, string_view name) const
 {
     return get_class_item<property>(t, name, m_type_property_map);
 }
@@ -270,7 +270,7 @@ property_range type_database::get_class_properties(const type& t)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_global_property(const char* name) const
+property type_database::get_global_property(string_view name) const
 {
     const auto ret = m_global_properties.find(name);
     if (ret != m_global_properties.end())
