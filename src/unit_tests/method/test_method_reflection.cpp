@@ -372,10 +372,10 @@ TEST_CASE("Test method signature", "[method]")
     std::vector<method> methods(meth_range.cbegin(), meth_range.cend());
     REQUIRE(methods.size() == 20);
 
-    REQUIRE(methods[0].get_signature() == "method_1( )");
-    REQUIRE(methods[3].get_signature() == "method_4( " + type::get<std::string>().get_name() + " & )");
-    REQUIRE(methods[4].get_signature() == "method_5( double* )");
-    REQUIRE(methods[5].get_signature() == "method_5( int, double )");
+    REQUIRE(methods[0].get_signature() ==  "method_1( )");
+    REQUIRE(methods[3].get_signature() ==  std::string("method_4( ") + type::get<std::string>().get_name() + " & )");
+    REQUIRE(methods[4].get_signature() ==  "method_5( double* )");
+    REQUIRE(methods[5].get_signature() ==  "method_5( int, double )");
     REQUIRE(methods[19].get_signature() == "method_13( )");
 }
 

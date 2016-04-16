@@ -324,23 +324,23 @@ RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator==(basic_string_view<CharT, Traits
  */
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(basic_string_view<CharT, Traits> lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                 basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(const char* lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                 basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(basic_string_view<CharT, Traits> lhs,
-                                           const char* rhs) RTTR_NOEXCEPT;
+                                                 const char* rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(const std::basic_string<CharT, Traits>& lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                 basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(basic_string_view<CharT, Traits> lhs,
-                                           const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
+                                                 const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -398,7 +398,7 @@ RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator>=(const std::basic_string<CharT, 
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator>=(basic_string_view<CharT, Traits> lhs,
-                                           const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
+                                                 const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -440,23 +440,41 @@ RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator>(basic_string_view<CharT, Traits>
  */
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(basic_string_view<CharT, Traits> lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(const char* lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(basic_string_view<CharT, Traits> lhs,
-                                           const char* rhs) RTTR_NOEXCEPT;
+                                                const char* rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(const std::basic_string<CharT, Traits>& lhs,
-                                           basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
+                                                basic_string_view<CharT, Traits> rhs) RTTR_NOEXCEPT;
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(basic_string_view<CharT, Traits> lhs,
-                                           const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
+                                                const std::basic_string<CharT, Traits>& rhs) RTTR_NOEXCEPT;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(basic_string_view<CharT, Traits> lhs,
+                                                       const std::basic_string<CharT, Traits>& rhs);
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(const std::basic_string<CharT, Traits>& lhs,
+                                                       basic_string_view<CharT, Traits> rhs);
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(basic_string_view<CharT, Traits> lhs,
+                                                       std::basic_string<CharT, Traits>&& rhs);
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(std::basic_string<CharT, Traits>&& lhs,
+                                                       basic_string_view<CharT, Traits> rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

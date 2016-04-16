@@ -122,9 +122,9 @@ class flat_map
             return m_value_list.cend();
         }
 
-        bool insert(value_type&& value)
+        void insert(value_type&& value)
         {
-            return insert(std::move(value.first), std::move(value.second));
+            insert(std::move(value.first), std::move(value.second));
         }
 
         void insert(const Key&& key, Value&& value)
@@ -168,6 +168,21 @@ class flat_map
                 return (m_value_list.cbegin() + std::distance(m_key_list.cbegin(), itr));
             else
                 return (m_value_list.cend());
+        }
+
+        void erase(const Key& key)
+        {
+            const auto itr = find_key(key);
+            if (itr != m_key_list.end())
+            {
+                auto value_itr = m_value_list.cbegin() + std::distance(m_key_list.cbegin(), itr);
+                if (value_itr != m_value_list.cend())
+                {
+                    m_key_list.erase(itr);
+                    m_value_list.erase(value_itr);
+                }
+            }
+
         }
 
         std::vector<Value>& value_data()

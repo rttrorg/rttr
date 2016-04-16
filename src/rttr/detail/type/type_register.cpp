@@ -79,9 +79,9 @@ void type_register::enumeration(const type& t, std::unique_ptr<detail::enumerati
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::custom_name(const type& t, std::string custom_name)
+void type_register::custom_name(const type& t, string_view custom_name)
 {
-    type_database::instance().register_custom_name(t, move(custom_name));
+    type_database::instance().register_custom_name(t, custom_name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_register::type_reg(const char* name,
+uint16_t type_register::type_reg(string_view name,
                                  const type& raw_type,
                                  const type& wrapped_type,
                                  const type& array_raw_type,

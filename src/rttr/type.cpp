@@ -136,12 +136,12 @@ void type::init_globals()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type::get_name() const
+string_view type::get_name() const
 {
     if (is_valid())
         return (*g_custom_names)[m_id];
 
-    return std::string();
+    return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -201,9 +201,9 @@ void move_pointer_and_ref_to_type(std::string& type_name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type::normalize_orig_name(const char* name)
+std::string type::normalize_orig_name(string_view name)
 {
-    std::string normalized_name(name, strlen(name) - detail::skip_size_at_end);
+    std::string normalized_name = name.to_string();
 
     move_pointer_and_ref_to_type(normalized_name);
     return normalized_name;
@@ -601,7 +601,7 @@ variant type::invoke(const char* name, std::vector<argument> args)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_by_name(const char* name)
+type type::get_by_name(string_view name)
 {
     return detail::type_database::instance().get_by_name(name);
 }

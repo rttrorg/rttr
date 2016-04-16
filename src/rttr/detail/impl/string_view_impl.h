@@ -582,6 +582,36 @@ RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator<(basic_string_view<CharT, Traits>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(basic_string_view<CharT, Traits> lhs,
+                                                       const std::basic_string<CharT, Traits>& rhs)
+{
+    return (lhs.to_string() + rhs);
+}
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(const std::basic_string<CharT, Traits>& lhs,
+                                                       basic_string_view<CharT, Traits> rhs)
+{
+    return (lhs + rhs.to_string());
+}
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(basic_string_view<CharT, Traits> lhs,
+                                                       std::basic_string<CharT, Traits>&& rhs)
+{
+    return std::move(rhs.insert(0, lhs.data(), lhs.size()));
+}
+
+template<typename CharT, typename Traits>
+RTTR_INLINE std::basic_string<CharT, Traits> operator+(std::basic_string<CharT, Traits>&& lhs,
+                                                       basic_string_view<CharT, Traits> rhs)
+{
+    return std::move(lhs.append(rhs.data(), rhs.size()));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 namespace detail
 {
 

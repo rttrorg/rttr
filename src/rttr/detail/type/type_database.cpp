@@ -57,8 +57,6 @@ type_database::type_database()
 {
     m_orig_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_custom_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_orig_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_custom_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_base_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_derived_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
@@ -86,8 +84,8 @@ type_database::type_database()
     // The following inserts are done, because we use the type_id directly
     // as index for the vector to access the following type information
     // type_id 0 is the invalid type, therfore we have to fill some dummy data
-    m_orig_names.push_back("!invalid_type!");
-    m_custom_names.push_back(m_orig_names[0]);
+    m_orig_names.emplace_back("!invalid_type!");
+    m_custom_names.emplace_back(m_orig_names[0]);
 
     m_base_class_list.push_back(0);
     m_derived_class_list.push_back(0);
@@ -639,26 +637,32 @@ const enumeration_wrapper_base* type_database::get_enumeration(const type& t) co
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_custom_name(const type& t, std::string custom_name)
+void type_database::register_custom_name(const type& t, string_view custom_name)
 {
     if (!t.is_valid())
         return;
 
     // TO DO normalize names
-    m_custom_names[t.get_id()] = std::move(custom_name);
-    const auto& custom_ref = m_custom_names[t.get_id()];
+    string_view orig_name = m_custom_names[t.get_id()];
+    m_custom_name_to_id.erase(orig_name);
+
+    m_custom_names[t.get_id()] = custom_name.to_string();
+    m_custom_name_to_id.insert(std::make_pair(string_view(m_custom_names[t.get_id()]), t.get_id()));
     std::string raw_name = type::normalize_orig_name(m_orig_names[t.get_id()]);
-    for (auto& name_to_id : m_custom_name_to_id)
+    const auto& t_name = m_custom_names[t.get_id()];
+
+    auto tmp_id_list = m_custom_name_to_id.value_data();
+    for (const auto& id : tmp_id_list)
     {
-        const auto& id = name_to_id.m_id;
         if (m_array_raw_type_list[id] == t.get_id())
         {
-            m_custom_names[id] = derive_name(m_custom_names[id], raw_name, custom_ref);
-            name_to_id.m_hash_value = generate_hash(m_custom_names[id]);
+            string_view orig_name_derived = m_custom_names[id];
+            m_custom_name_to_id.erase(orig_name_derived);
+
+            m_custom_names[id] = derive_name(m_custom_names[id], raw_name, t_name);
+            m_custom_name_to_id.insert(std::make_pair(string_view(m_custom_names[id]), id));
         }
     }
-
-    std::sort(m_custom_name_to_id.begin(), m_custom_name_to_id.end(), name_to_id::order_by_name());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -898,7 +902,7 @@ std::string type_database::derive_name(const std::string& src_name, const std::s
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_database::derive_name(const type& array_raw_type, const char* name)
+std::string type_database::derive_name(const type& array_raw_type, string_view name)
 {
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
@@ -913,35 +917,23 @@ std::string type_database::derive_name(const type& array_raw_type, const char* n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(const char* name, const type& array_raw_type, uint16_t& id)
+bool type_database::register_name(string_view name, const type& array_raw_type, uint16_t& id)
 {
     using namespace detail;
 
-    const auto hash_value = generate_hash(name);
-    // check if the name was already registered, then return with the already stored id
-    auto itr = std::lower_bound(m_orig_name_to_id.cbegin(), m_orig_name_to_id.cend(), hash_value, name_to_id::order_by_name());
-    for (; itr != m_orig_name_to_id.end(); ++itr)
+    auto ret = m_orig_name_to_id.find(name);
+    if (ret != m_orig_name_to_id.end())
     {
-        auto& item = *itr;
-        if (item.m_hash_value != hash_value)
-            break;
-
-        if (std::strcmp(m_orig_names[item.m_id], name) == 0)
-        {
-            id = static_cast<type::type_id>(item.m_id);
-            return true;
-        }
+        id = *ret;
+        return true;
     }
 
-    m_orig_name_to_id.emplace_back(name_to_id{++m_type_id_counter, hash_value});
-    std::sort( m_orig_name_to_id.begin(), m_orig_name_to_id.end(), name_to_id::order_by_name());
+    m_orig_name_to_id.insert(std::make_pair(name, ++m_type_id_counter));
     m_orig_names.push_back(name);
 
     auto custom_name = derive_name(array_raw_type, name);
-    // TO DO hash normalized name (i.e. without spaces)
-    m_custom_name_to_id.emplace_back(name_to_id{m_type_id_counter, generate_hash(custom_name)});
-    std::sort(m_custom_name_to_id.begin(), m_custom_name_to_id.end(), name_to_id::order_by_name());
     m_custom_names.emplace_back(std::move(custom_name));
+    m_custom_name_to_id.insert(std::make_pair(string_view(m_custom_names.back()), m_type_id_counter));
 
     id = m_type_id_counter;
     m_type_list.emplace_back(type(id));
@@ -1006,7 +998,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::register_type(const char* name,
+uint16_t type_database::register_type(string_view name,
                                       const type& raw_type,
                                       const type& wrapped_type,
                                       const type& array_raw_type,
@@ -1064,24 +1056,12 @@ uint16_t type_database::register_type(const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::get_by_name(const char* name) const
+uint16_t type_database::get_by_name(string_view name) const
 {
-    // TO DO normalize name
-    const auto hash_value = generate_hash(name);
-    auto itr = std::lower_bound(m_custom_name_to_id.cbegin(), m_custom_name_to_id.cend(), hash_value,
-                                name_to_id::order_by_name());
-    for (; itr != m_custom_name_to_id.cend(); ++itr)
-    {
-        auto& item = *itr;
+    auto ret = m_custom_name_to_id.find(name);
+    if (ret != m_custom_name_to_id.end())
+        return *ret;
 
-        if (item.m_hash_value != hash_value)
-            break;
-
-        if (m_custom_names[item.m_id].compare(name) == 0)
-            return item.m_id;
-    }
-
-    // TO DO not 100% fine, should use type::type_id or not as return value?
     return type::m_invalid_id;
 }
 

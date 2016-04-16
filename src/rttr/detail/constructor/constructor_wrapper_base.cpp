@@ -73,7 +73,7 @@ void constructor_wrapper_base::create_signature_string()
         return;
 
     auto param_info_list = get_parameter_infos();
-    m_signature = get_instanciated_type().get_raw_type().get_name() + "( ";
+    m_signature = get_instanciated_type().get_raw_type().get_name().to_string() + "( ";
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
     for (const auto& param : param_info_list)

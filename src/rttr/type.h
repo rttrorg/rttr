@@ -230,7 +230,7 @@ class RTTR_API type
          *
          * \return The type name.
          */
-        std::string get_name() const;
+        string_view get_name() const;
 
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
@@ -309,7 +309,7 @@ class RTTR_API type
          *
          * \return \ref type object with the name \p name.
          */
-        static type get_by_name(const char* name);
+        static type get_by_name(string_view name);
 
         /*!
          * \brief Returns a range of all registered type objects.
@@ -802,7 +802,7 @@ class RTTR_API type
          *
          * \return A normalized string of the given original type name.
          */
-        static std::string normalize_orig_name(const char* name);
+        static std::string normalize_orig_name(string_view name);
 
         /*!
          * \brief Initialize all the global variables needed to retrieve the type informations.
