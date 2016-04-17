@@ -26,7 +26,6 @@
 *************************************************************************************/
 
 #include "rttr/detail/property/property_wrapper_base.h"
-#include "rttr/detail/type/type_database_p.h"
 
 namespace rttr
 {

@@ -26,8 +26,8 @@
 *************************************************************************************/
 
 #include "rttr/detail/type/type_register.h"
-#include "rttr/detail/type/type_database_p.h"
 
+#include "rttr/detail/type/type_database_p.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/destructor/destructor_wrapper_base.h"
 #include "rttr/detail/enumeration/enumeration_wrapper_base.h"

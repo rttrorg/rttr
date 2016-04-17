@@ -178,6 +178,32 @@ struct remove_last_index_impl<index_sequence<First, I...>>
 template<typename T>
 using remove_last_index = typename remove_last_index_impl<T>::type;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//template<typename T, std::size_t Index>
+//using type_identity = T;
+
+//
+template<typename T, std::size_t Index>
+struct type_identity
+{
+    using type = T;
+};
+
+template<typename T, std::size_t N, typename Indices = make_index_sequence<N>>
+struct create_type_list;
+
+template<typename T, std::size_t N, std::size_t... Indices>
+struct create_type_list<T, N, index_sequence<Indices...>>
+{
+    using type = type_list<typename type_identity<T, Indices>::type...>;
+};
+
+// creates a type list with type T, N times in it
+// e.g. create_type_list_t<int, 3> => type_list<int, int, int>
+template<typename T, std::size_t N>
+using create_type_list_t = typename create_type_list<T, N>::type;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,6 @@
 *************************************************************************************/
 
 #include "rttr/detail/method/method_wrapper_base.h"
-#include "rttr/detail/type/type_database_p.h"
 #include "rttr/argument.h"
 #include "rttr/instance.h"
 

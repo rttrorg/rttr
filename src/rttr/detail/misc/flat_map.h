@@ -98,6 +98,7 @@ class flat_map
         using iterator = typename std::vector<Value>::iterator;
         using const_iterator = typename std::vector<Value>::const_iterator;
         using const_iterator_key = typename std::vector<key_data_type>::const_iterator;
+        using iterator_key = typename std::vector<key_data_type>::iterator;
         using hash_type = std::size_t;
 
 
@@ -132,7 +133,7 @@ class flat_map
             m_key_list.push_back(key_data_type{std::move(key), Hash()(key)});
             std::stable_sort(m_key_list.begin(), m_key_list.end(), typename key_data_type::order());
 
-            auto found_key = find_key(key);
+            auto found_key = find_key_const(key);
             if (found_key != m_key_list.cend())
             {
                 auto itr_key = found_key;
@@ -154,7 +155,7 @@ class flat_map
 
         iterator find(const Key& key)
         {
-            const auto itr = find_key(key);
+            const auto itr = find_key_const(key);
             if (itr != m_key_list.end())
                 return (m_value_list.begin() + std::distance(m_key_list.cbegin(), itr));
             else
@@ -163,16 +164,32 @@ class flat_map
 
         const_iterator find(const Key& key) const
         {
-            const auto itr = find_key(key);
+            const auto itr = find_key_const(key);
             if (itr != m_key_list.end())
                 return (m_value_list.cbegin() + std::distance(m_key_list.cbegin(), itr));
             else
                 return (m_value_list.cend());
         }
-
+// older versions of gcc stl, have no support for const_iterator in std::vector<T>::erase(const_iterator)
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900
         void erase(const Key& key)
         {
-            const auto itr = find_key(key);
+            iterator_key itr = find_key(key);
+            if (itr != m_key_list.end())
+            {
+                auto value_itr = m_value_list.begin() + std::distance(m_key_list.begin(), itr);
+                if (value_itr != m_value_list.end())
+                {
+                    m_key_list.erase(itr);
+                    m_value_list.erase(value_itr);
+                }
+            }
+
+        }
+#else
+        void erase(const Key& key)
+        {
+            const_iterator_key itr = find_key_const(key);
             if (itr != m_key_list.end())
             {
                 auto value_itr = m_value_list.cbegin() + std::distance(m_key_list.cbegin(), itr);
@@ -184,6 +201,7 @@ class flat_map
             }
 
         }
+#endif
 
         std::vector<Value>& value_data()
         {
@@ -191,13 +209,32 @@ class flat_map
         }
 
     private:
-        const_iterator_key find_key(const Key& key) const
+
+        const_iterator_key find_key_const(const Key& key) const
         {
             const auto hash_value = Hash()(key);
-            auto itr = std::lower_bound(m_key_list.cbegin(), m_key_list.cend(),
+            auto itr = std::lower_bound(m_key_list.begin(), m_key_list.end(),
                                         hash_value,
                                         typename key_data_type::order());
-            for (; itr != m_key_list.cend(); ++itr)
+            for (; itr != m_key_list.end(); ++itr)
+            {
+                auto& item = *itr;
+                if (item.m_hash_value != hash_value)
+                    break;
+
+                if (Compare()(item.m_key, key))
+                    return itr;
+            }
+            return m_key_list.end();
+        }
+
+        iterator_key find_key(const Key& key)
+        {
+            const auto hash_value = Hash()(key);
+            auto itr = std::lower_bound(m_key_list.begin(), m_key_list.end(),
+                                        hash_value,
+                                        typename key_data_type::order());
+            for (; itr != m_key_list.end(); ++itr)
             {
                 auto& item = *itr;
                 if (item.m_hash_value != hash_value)

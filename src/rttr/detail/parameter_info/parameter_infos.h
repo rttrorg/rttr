@@ -193,7 +193,7 @@ static RTTR_INLINE
 param_info_creater_t<Acc_Args, has_param_name, Def_List>
 create_param_infos_and_store_names(index_sequence<Indices...>, Param_Names& names)
 {
-    return param_info_creater_t<Acc_Args, has_param_name, Def_List>{std::get<Indices>(names.m_param_names)...};
+    return param_info_creater_t<Acc_Args, has_param_name, Def_List>{string_view(std::get<Indices>(names.m_param_names))...};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -188,28 +188,6 @@ class RTTR_LOCAL type_database
 
     public:
 
-        struct name_to_id
-        {
-            type::type_id   m_id;
-            hash_type       m_hash_value;
-
-            struct order_by_name
-            {
-                RTTR_INLINE bool operator () ( const name_to_id& _left, const name_to_id& _right )  const
-                {
-                    return _left.m_hash_value < _right.m_hash_value;
-                }
-                RTTR_INLINE bool operator () ( const hash_type& _left, const name_to_id& _right ) const
-                {
-                    return _left < _right.m_hash_value;
-                }
-                RTTR_INLINE bool operator () ( const name_to_id& _left, const hash_type& _right ) const
-                {
-                    return _left.m_hash_value < _right;
-                }
-            };
-        };
-
         template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
         struct type_data
         {
