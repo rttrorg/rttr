@@ -89,7 +89,8 @@ set(HEADER_FILES access_levels.h
                  detail/misc/compare_less.h
                  detail/misc/compare_less_impl.h
                  detail/misc/data_address_container.h
-                 detail/misc/flat_map.h                
+                 detail/misc/flat_map.h
+                 detail/misc/flat_multimap.h
                  detail/misc/function_traits.h
                  detail/misc/misc_type_traits.h
                  detail/misc/std_type_traits.h

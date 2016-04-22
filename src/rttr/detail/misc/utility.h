@@ -579,6 +579,31 @@ RTTR_INLINE static std::size_t generate_hash(const char* text, std::size_t lengt
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// custom has functor, to make sure that "std::string" and "rttr::string_view" uses the same hashing algorithm
+template <typename T>
+class hash;
+
+template <>
+class hash<std::string>
+{
+public:
+    size_t operator()(const std::string& text) const
+    {
+        return generate_hash(text.data(), text.length());
+    }
+};
+
+template <>
+class hash<string_view>
+{
+public:
+    size_t operator()(const string_view& text) const
+    {
+        return generate_hash(text.data(), text.length());
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

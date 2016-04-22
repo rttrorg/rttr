@@ -39,6 +39,7 @@
 #include "rttr/string_view.h"
 
 #include "rttr/detail/misc/flat_map.h"
+#include "rttr/detail/misc/flat_multimap.h"
 
 #include <vector>
 #include <string>
@@ -233,7 +234,7 @@ class RTTR_LOCAL type_database
         std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
                                                                                             //!< and also custom names, provided during manual register (e.g. class_)
         flat_map<string_view, type::type_id>                        m_orig_name_to_id;      //!< This is a sorted vector which contains hash values of the names in \p m_orig_names
-        flat_map<string_view, type::type_id>                        m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
+        flat_map<std::string, type::type_id, hash>                  m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
 
         std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
         std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
@@ -257,8 +258,8 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
-        flat_map<string_view, method>                               m_global_methods;
-        flat_map<string_view, property>                             m_global_properties;
+        flat_multimap<string_view, method>                          m_global_methods;
+        flat_multimap<string_view, property>                        m_global_properties;
 
         std::unordered_map<type, std::vector<property>>             m_type_property_map;
         std::unordered_map<type, std::vector<property>>             m_class_property_map;
