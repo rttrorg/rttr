@@ -38,6 +38,7 @@
 #include <type_traits>
 #include <utility>
 #include <algorithm>
+#include <string>
 
 namespace rttr
 {
@@ -588,16 +589,6 @@ class hash<std::string>
 {
 public:
     size_t operator()(const std::string& text) const
-    {
-        return generate_hash(text.data(), text.length());
-    }
-};
-
-template <>
-class hash<string_view>
-{
-public:
-    size_t operator()(const string_view& text) const
     {
         return generate_hash(text.data(), text.length());
     }

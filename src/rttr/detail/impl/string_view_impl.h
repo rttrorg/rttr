@@ -673,6 +673,20 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+namespace detail
+{
+
+template <>
+class hash<string_view>
+{
+public:
+    size_t operator()(const string_view& text) const
+    {
+        return generate_hash(text.data(), text.length());
+    }
+};
+
+} // end namespace detail
 } // end namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
