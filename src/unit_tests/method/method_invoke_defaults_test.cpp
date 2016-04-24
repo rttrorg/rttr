@@ -55,7 +55,7 @@ struct method_invoke_defaults_test
 
 RTTR_REGISTRATION
 {
-    registration::class_<method_invoke_defaults_test>("method_invoke_test")
+    registration::class_<method_invoke_defaults_test>("method_invoke_defaults_test")
         .method("func_0", &method_invoke_defaults_test::func_0)
         .method("func_1", &method_invoke_defaults_test::func_1) ( default_arguments(1) )
         .method("func_2", &method_invoke_defaults_test::func_2) ( default_arguments(1, 2) )

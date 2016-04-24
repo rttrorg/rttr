@@ -35,7 +35,7 @@
 #include "rttr/array_range.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
-
+#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
@@ -58,15 +58,12 @@ namespace detail
 class RTTR_API method_wrapper_base
 {
     public:
-        method_wrapper_base();
+        method_wrapper_base(string_view name, type declaring_type);
         virtual ~method_wrapper_base();
 
-        void set_name(const char* name);
-        const char* get_name() const;
-        void set_declaring_type(type declaring_type);
+        string_view get_name() const;
         type get_declaring_type() const;
-        std::string get_signature() const;
-
+        virtual string_view get_signature() const;
         virtual access_levels get_access_level() const = 0;
         virtual type get_return_type() const = 0;
         virtual bool is_static() const = 0;
@@ -87,10 +84,16 @@ class RTTR_API method_wrapper_base
                                argument& arg4, argument& arg5, argument& arg6) const = 0;
 
         virtual variant invoke_variadic(const instance& object, std::vector<argument>& args) const = 0;
+    protected:
+        void init();
+    private:
+        void create_signature_string();
 
     private:
-        const char* m_name;
+        string_view m_name;
+        string_view m_signature_view;
         type        m_declaring_type;
+        std::string m_signature;
 };
 
 } // end namespace detail

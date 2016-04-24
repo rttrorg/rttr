@@ -60,13 +60,13 @@ class RTTR_API enumeration_wrapper_base
 
         virtual type get_type() const = 0;
 
-        virtual std::vector<std::string> get_names() const = 0;
+        virtual array_range<const string_view> get_names() const = 0;
 
-        virtual std::vector<variant> get_values() const = 0;
+        virtual array_range<const variant> get_values() const = 0;
 
-        virtual std::string value_to_name(argument& value) const = 0;
+        virtual string_view value_to_name(argument& value) const = 0;
 
-        virtual variant name_to_value(const std::string& name) const = 0;
+        virtual variant name_to_value(string_view name) const = 0;
 
         void set_declaring_type(type declaring_type);
 

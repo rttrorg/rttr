@@ -136,12 +136,12 @@ void type::init_globals()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type::get_name() const
+string_view type::get_name() const
 {
     if (is_valid())
         return (*g_custom_names)[m_id];
 
-    return std::string();
+    return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -201,9 +201,9 @@ void move_pointer_and_ref_to_type(std::string& type_name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type::normalize_orig_name(const char* name)
+std::string type::normalize_orig_name(string_view name)
 {
-    std::string normalized_name(name, strlen(name) - detail::skip_size_at_end);
+    std::string normalized_name = name.to_string();
 
     move_pointer_and_ref_to_type(normalized_name);
     return normalized_name;
@@ -474,14 +474,14 @@ bool type::destroy(variant& obj) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_property(const char* name) const
+property type::get_property(string_view name) const
 {
     return detail::type_database::instance().get_class_property(get_raw_type(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_property_value(const char* name, instance obj) const
+variant type::get_property_value(string_view name, instance obj) const
 {
     const auto prop = get_property(name);
     return prop.get_value(obj);
@@ -489,7 +489,7 @@ variant type::get_property_value(const char* name, instance obj) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::get_property_value(const char* name)
+variant type::get_property_value(string_view name)
 {
     const auto prop = get_global_property(name);
     return prop.get_value(instance());
@@ -497,7 +497,7 @@ variant type::get_property_value(const char* name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const char* name, instance obj, argument arg) const
+bool type::set_property_value(string_view name, instance obj, argument arg) const
 {
     const auto prop = get_property(name);
     return prop.set_value(obj, arg);
@@ -505,7 +505,7 @@ bool type::set_property_value(const char* name, instance obj, argument arg) cons
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::set_property_value(const char* name, argument arg)
+bool type::set_property_value(string_view name, argument arg)
 {
     const auto prop = get_global_property(name);
     return prop.set_value(instance(), arg);
@@ -520,14 +520,14 @@ property_range type::get_properties() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(const char* name) const
+method type::get_method(string_view name) const
 {
     return detail::type_database::instance().get_class_method(get_raw_type(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(const char* name, const std::vector<type>& params) const
+method type::get_method(string_view name, const std::vector<type>& params) const
 {
     return detail::type_database::instance().get_class_method(get_raw_type(), name, params);
 }
@@ -541,21 +541,21 @@ method_range type::get_methods() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_global_property(const char* name)
+property type::get_global_property(string_view name)
 {
     return property(detail::type_database::instance().get_global_property(name));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(const char* name)
+method type::get_global_method(string_view name)
 {
     return detail::type_database::instance().get_global_method(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(const char* name, const std::vector<type>& params)
+method type::get_global_method(string_view name, const std::vector<type>& params)
 {
     return detail::type_database::instance().get_global_method(name, params);
 }
@@ -583,7 +583,7 @@ enumeration type::get_enumeration() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const char* name, instance obj, std::vector<argument> args) const
+variant type::invoke(string_view name, instance obj, std::vector<argument> args) const
 {
     if (auto meth = detail::type_database::instance().get_class_method(get_raw_type(), name, args))
         return meth.invoke_variadic(obj, args);
@@ -593,7 +593,7 @@ variant type::invoke(const char* name, instance obj, std::vector<argument> args)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::invoke(const char* name, std::vector<argument> args)
+variant type::invoke(string_view name, std::vector<argument> args)
 {
     const auto& db = detail::type_database::instance();
     return db.get_global_method(name, args).invoke_variadic(instance(), args);
@@ -601,7 +601,7 @@ variant type::invoke(const char* name, std::vector<argument> args)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_by_name(const char* name)
+type type::get_by_name(string_view name)
 {
     return detail::type_database::instance().get_by_name(name);
 }

@@ -31,8 +31,6 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/class_item_mapper.h"
 
-#include <string>
-
 namespace rttr
 {
 

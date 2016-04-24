@@ -42,7 +42,7 @@ class RTTR_API parameter_info_wrapper_base
         parameter_info_wrapper_base();
         virtual ~parameter_info_wrapper_base();
 
-        virtual std::string get_name() const = 0;
+        virtual string_view get_name() const = 0;
         virtual type get_type() const = 0;
         virtual bool has_default_value() const = 0;
         virtual variant get_default_value() const = 0;

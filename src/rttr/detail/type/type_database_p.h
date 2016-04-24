@@ -36,7 +36,10 @@
 #include "rttr/destructor.h"
 #include "rttr/enumeration.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
+
 #include "rttr/detail/misc/flat_map.h"
+#include "rttr/detail/misc/flat_multimap.h"
 
 #include <vector>
 #include <string>
@@ -75,12 +78,12 @@ class RTTR_LOCAL type_database
         void register_constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
         void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
         void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
-        void register_custom_name(const type& t, std::string );
+        void register_custom_name(const type& t, string_view name );
         void register_metadata( const type& t, std::vector<metadata> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
-        uint16_t register_type(const char* name,
+        uint16_t register_type(string_view name,
                                const type& raw_type,
                                const type& wrapped_type,
                                const type& array_raw_type,
@@ -98,33 +101,33 @@ class RTTR_LOCAL type_database
                                bool is_member_function_pointer,
                                std::size_t pointer_dimension);
 
-        uint16_t get_by_name(const char* name) const;
+        uint16_t get_by_name(string_view name) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
-        property get_type_property(const type& t, const char* name) const;
-        property get_class_property(const type& t, const char* name) const;
+        property get_type_property(const type& t, string_view name) const;
+        property get_class_property(const type& t, string_view name) const;
         property_range get_class_properties(const type& t);
 
-        property get_global_property(const char* name) const;
+        property get_global_property(string_view name) const;
         property_range get_global_properties();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        method get_type_method(const type& t, const char* name) const;
-        method get_type_method(const type& t, const char* name,
+        method get_type_method(const type& t, string_view name) const;
+        method get_type_method(const type& t, string_view name,
                                const std::vector<type>& type_list) const;
 
-        method get_class_method(const type& t, const char* name) const;
-        method get_class_method(const type& t, const char* name,
+        method get_class_method(const type& t, string_view name) const;
+        method get_class_method(const type& t, string_view name,
                                 const std::vector<type>& type_list) const;
-        method get_class_method(const type& t, const char* name,
+        method get_class_method(const type& t, string_view name,
                                 const std::vector<argument>& arg_list) const;
         method_range get_class_methods(const type& t);
 
 
-        method get_global_method(const char* name) const;
-        method get_global_method(const char* name, const std::vector<type>& type_list) const;
-        method get_global_method(const char* name, const std::vector<argument>& arg_list) const;
+        method get_global_method(string_view name) const;
+        method get_global_method(string_view name, const std::vector<type>& type_list) const;
+        method get_global_method(string_view name, const std::vector<argument>& arg_list) const;
         method_range get_global_methods();
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -161,9 +164,9 @@ class RTTR_LOCAL type_database
         ~type_database();
 
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
-        std::string derive_name(const type& array_raw_type, const char* name);
+        std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
-        bool register_name(const char* name, const type& array_raw_type, uint16_t& id);
+        bool register_name(string_view name, const type& array_raw_type, uint16_t& id);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
@@ -181,40 +184,10 @@ class RTTR_LOCAL type_database
             return hash;
         }
 
-        struct hash_char
-        {
-            RTTR_INLINE size_t operator()(const char* text) const
-            {
-                return generate_hash(text);
-            }
-        };
-
         using rttr_cast_func        = void*(*)(void*);
         using get_derived_info_func = derived_info(*)(void*);
 
     public:
-
-        struct name_to_id
-        {
-            type::type_id   m_id;
-            hash_type       m_hash_value;
-
-            struct order_by_name
-            {
-                RTTR_INLINE bool operator () ( const name_to_id& _left, const name_to_id& _right )  const
-                {
-                    return _left.m_hash_value < _right.m_hash_value;
-                }
-                RTTR_INLINE bool operator () ( const hash_type& _left, const name_to_id& _right ) const
-                {
-                    return _left < _right.m_hash_value;
-                }
-                RTTR_INLINE bool operator () ( const name_to_id& _left, const hash_type& _right ) const
-                {
-                    return _left.m_hash_value < _right;
-                }
-            };
-        };
 
         template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
         struct type_data
@@ -256,11 +229,12 @@ class RTTR_LOCAL type_database
 
         type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
         std::vector<type>                                           m_type_list;            //!< The list of all types.
-        std::vector<const char*>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
+
+        std::vector<string_view>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
         std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
                                                                                             //!< and also custom names, provided during manual register (e.g. class_)
-        std::vector<name_to_id>                                     m_orig_name_to_id;      //!< This is a sorted vector which contains hash values of the names in \p m_orig_names
-        std::vector<name_to_id>                                     m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
+        flat_map<string_view, type::type_id>                        m_orig_name_to_id;      //!< This is a sorted vector which contains hash values of the names in \p m_orig_names
+        flat_map<std::string, type::type_id, hash>                  m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
 
         std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
         std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
@@ -284,8 +258,8 @@ class RTTR_LOCAL type_database
         std::vector<bool>                                           m_is_member_function_pointer_list;
         std::vector<std::size_t>                                    m_pointer_dim_list;
 
-        flat_map<const char*, method, hash_char>                    m_global_methods;
-        flat_map<const char*, property, hash_char>                  m_global_properties;
+        flat_multimap<string_view, method>                          m_global_methods;
+        flat_multimap<string_view, property>                        m_global_properties;
 
         std::unordered_map<type, std::vector<property>>             m_type_property_map;
         std::unordered_map<type, std::vector<property>>             m_class_property_map;

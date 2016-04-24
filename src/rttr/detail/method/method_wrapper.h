@@ -61,14 +61,18 @@ template<typename F, access_levels Acc_Level, typename Policy, typename... Param
 class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        method_wrapper(F func_acc,
+        method_wrapper(string_view name,
+                       type declaring_type,
+                       F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        parameter_infos<Param_Args...> param_infos)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   method_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_param_infos(std::move(param_infos)),
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
+            init();
         }
 
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
@@ -131,17 +135,21 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
     using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
 
     public:
-        method_wrapper(F func_acc,
+        method_wrapper(string_view name,
+                       type declaring_type,
+                       F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        default_args<Default_Args...> default_args,
                        parameter_infos<Param_Args...> param_infos)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   method_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_def_args(std::move(default_args)),
             m_param_infos(std::move(param_infos)),
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
+            init();
         }
 
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
@@ -203,12 +211,16 @@ template<typename F, access_levels Acc_Level, typename Policy, std::size_t Metad
 class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        method_wrapper(F func_acc,
+        method_wrapper(string_view name,
+                       type declaring_type,
+                       F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        parameter_infos<> param_infos)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   method_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc)
         {
+            init();
         }
 
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
@@ -268,15 +280,18 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
     using invoke_with_defaults = invoke_defaults_helper<invoker_class, F>;
 
     public:
-        method_wrapper(F func_acc,
+        method_wrapper(string_view name,
+                       type declaring_type,
+                       F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        default_args<Default_Args...> default_args,
                        parameter_infos<> param_infos)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   method_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_def_args(std::move(default_args))
-
         {
+            init();
         }
 
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }

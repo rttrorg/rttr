@@ -33,6 +33,7 @@
 #include "rttr/detail/enumeration/enum_data.h"
 #include "rttr/argument.h"
 #include "rttr/variant.h"
+#include "rttr/string_view.h"
 
 #include <utility>
 #include <type_traits>
@@ -48,56 +49,62 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
     public:
         enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data,
                             std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
-            m_enum_data_list(std::move(data))
+        :   metadata_handler<Metadata_Count>(std::move(metadata_list))
         {
+            int index = 0;
+            for (const auto& item : data)
+            {
+                 m_enum_names[index]    = item.get_name();
+                 m_enum_values[index]   = item.get_value();
+                 m_enum_variant_values[index] = item.get_value();
+                 ++index;
+            }
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
 
         type get_type() const { return type::get<Enum_Type>(); }
         type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
-        std::vector<std::string> get_names() const
+        array_range<const string_view> get_names() const
         {
-            std::vector<std::string> result;
-            for (const auto& item : m_enum_data_list)
-                result.push_back(item.get_name());
-
-            return result;
+            return array_range<const string_view>(m_enum_names.data(), N);
         }
 
-        std::vector<variant> get_values() const
+        array_range<const variant> get_values() const
         {
-            std::vector<variant> result;
-            for (const auto& item : m_enum_data_list)
-                result.push_back(item.get_value());
-
-            return result;
+            return array_range<const variant>(m_enum_variant_values.data(), N);
         }
 
-        std::string value_to_name(argument& value) const
+        string_view value_to_name(argument& value) const
         {
             if (!value.is_type<Enum_Type>() &&
                 !value.is_type<typename std::underlying_type<Enum_Type>::type>())
             {
-                return std::string();
+                return string_view();
             }
 
             const Enum_Type enum_value = value.get_value<Enum_Type>();
-            for (const auto& item : m_enum_data_list)
+            int index = 0;
+            for (const auto& item : m_enum_values)
             {
-                if (item.get_value() == enum_value)
-                    return item.get_name();
+                if (item == enum_value)
+                    return m_enum_names[index];
+
+                ++index;
             }
-            return std::string();
+
+            return string_view();
         }
 
-        variant name_to_value(const std::string& name) const
+        variant name_to_value(string_view name) const
         {
-            for (const auto& item : m_enum_data_list)
+            int index = 0;
+            for (const auto& item : m_enum_names)
             {
-                if (item.get_name() == name)
-                    return item.get_value();
+                if (item == name)
+                    return m_enum_values[index];
+
+                ++index;
             }
             return variant();
         }
@@ -105,7 +112,9 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
     private:
-        std::array< enum_data<Enum_Type>, N > m_enum_data_list;
+        std::array< string_view, N >    m_enum_names;
+        std::array< Enum_Type, N >      m_enum_values;
+        std::array< variant, N >        m_enum_variant_values;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

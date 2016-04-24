@@ -29,6 +29,7 @@
 #define RTTR_PARAMETER_INFO_WRAPPER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+
 #include "rttr/detail/parameter_info/parameter_info_wrapper_base.h"
 #include "rttr/parameter_info.h"
 
@@ -48,12 +49,12 @@ template<typename Param_Type, std::size_t Param_Index, typename Default_Type>
 class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, Default_Type>: public parameter_info_wrapper_base
 {
     public:
-        parameter_info_wrapper(const char* name)
+        parameter_info_wrapper(string_view name)
         :   m_default_value(nullptr), m_name(name)
         {
         }
 
-        std::string get_name() const        { return std::string(m_name); }
+        string_view get_name() const        { return m_name; }
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return true; }
         variant get_default_value() const   { return variant(*m_default_value); }
@@ -61,7 +62,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, Default_Ty
         uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
     private:
         const Default_Type* m_default_value;
-        const char*         m_name;
+        string_view         m_name;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +76,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, Default_Typ
         {
         }
 
-        std::string get_name() const        { return std::string(); }
+        string_view get_name() const        { return string_view(); }
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return true; }
         variant get_default_value() const   { return variant(*m_default_value); }
@@ -93,18 +94,18 @@ template<typename Param_Type, std::size_t Param_Index>
 class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, void> : public parameter_info_wrapper_base
 {
     public:
-        parameter_info_wrapper(const char* name)
+        parameter_info_wrapper(string_view name)
         :   m_name(name)
         {
         }
 
-        std::string get_name() const        { return std::string(m_name); }
+        string_view get_name() const        { return m_name; }
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return false; }
         variant get_default_value() const   { return variant(); }
         uint32_t get_index() const          { return static_cast<uint32_t>(Param_Index); }
     private:
-        const char* m_name;
+        string_view m_name;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +116,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, void> : pub
     public:
         parameter_info_wrapper() {}
 
-        std::string get_name() const        { return std::string(); }
+        string_view get_name() const        { return string_view(); }
         type get_type() const               { return type::get<Param_Type>(); }
         bool has_default_value() const      { return false; }
         variant get_default_value() const   { return variant(); }

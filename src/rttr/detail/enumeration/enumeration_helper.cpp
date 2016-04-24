@@ -36,14 +36,14 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string get_enumeration_name(const argument& arg)
+string_view get_enumeration_name(const argument& arg)
 {
     return arg.get_type().get_enumeration().value_to_name(arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool to_enumeration(const std::string& from, argument& to)
+bool to_enumeration(string_view from, argument& to)
 {
     auto& var_ref = to.get_value<std::reference_wrapper<variant>>();
     variant& var = var_ref.get();

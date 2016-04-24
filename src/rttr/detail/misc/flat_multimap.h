@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_FLAT_MAP_H_
-#define RTTR_FLAT_MAP_H_
+#ifndef RTTR_FLAT_MULTIMAP_H_
+#define RTTR_FLAT_MULTIMAP_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
@@ -43,11 +43,11 @@ namespace detail
 {
 
 /*!
- * \brief The flat_map class implements a simple map based on std::vector instead of a binary tree.
+ * \brief The \ref flat_multimap class implements a simple multimap based on std::vector instead of a binary tree.
  *
  */
 template<typename Key, typename Value, template<class> class Hash = std::hash, typename Compare = std::equal_to<Key>>
-class flat_map
+class flat_multimap
 {
     template<typename Hash_Type = std::size_t>
     struct key_data
@@ -82,7 +82,7 @@ class flat_map
         using hash_type = std::size_t;
 
 
-        flat_map() {}
+        flat_multimap() {}
 
     private:
         using has_type = Hash<Key>;
@@ -110,37 +110,24 @@ class flat_map
 
         void insert(const Key&& key, Value&& value)
         {
-            if (find(key) != end())
-                return;
-
             m_key_list.push_back(key_data_type{std::move(key), has_type()(key)});
             std::stable_sort(m_key_list.begin(), m_key_list.end(), typename key_data_type::order());
 
             auto found_key = find_key_const(key);
             if (found_key != m_key_list.cend())
             {
+                auto itr_key = found_key;
+                for (; itr_key != m_key_list.cend(); ++itr_key)
+                {
+                    if (Compare()(itr_key->m_key, key))
+                        found_key = itr_key;
+                    else
+                        break;
+                }
+
                 const auto index = std::distance(m_key_list.cbegin(), found_key);
                 m_value_list.insert(m_value_list.begin() + index, value);
             }
-        }
-
-        template<typename T>
-        const_iterator find(const T& key) const
-        {
-            const auto hash_value = Hash<T>()(key);
-            auto itr = std::lower_bound(m_key_list.begin(), m_key_list.end(),
-                                        hash_value,
-                                        typename key_data_type::order());
-            for (; itr != m_key_list.end(); ++itr)
-            {
-                auto& item = *itr;
-                if (item.m_hash_value != hash_value)
-                    break;
-
-                if (item.m_key == key)
-                    return (m_value_list.cbegin() + std::distance(m_key_list.cbegin(), itr));;
-            }
-            return m_value_list.cend();
         }
 
         iterator find(const Key& key)
@@ -193,12 +180,6 @@ class flat_map
         }
 #endif
 
-        void clear()
-        {
-            m_key_list.clear();
-            m_value_list.clear();
-        }
-
         std::vector<Value>& value_data()
         {
             return m_value_list;
@@ -250,4 +231,4 @@ class flat_map
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_FLAT_MAP_H_
+#endif // RTTR_FLAT_MULTIMAP_H_

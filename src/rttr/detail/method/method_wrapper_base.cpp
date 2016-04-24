@@ -26,7 +26,6 @@
 *************************************************************************************/
 
 #include "rttr/detail/method/method_wrapper_base.h"
-#include "rttr/detail/type/type_database_p.h"
 #include "rttr/argument.h"
 #include "rttr/instance.h"
 
@@ -42,9 +41,9 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base::method_wrapper_base()
-:   m_name(nullptr),
-    m_declaring_type(get_invalid_type())
+method_wrapper_base::method_wrapper_base(string_view name, type declaring_type)
+:   m_name(name),
+    m_declaring_type(declaring_type)
 {
 }
 
@@ -56,23 +55,19 @@ method_wrapper_base::~method_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void method_wrapper_base::set_name(const char* name)
+void method_wrapper_base::init()
 {
-    m_name = name;
+    create_signature_string();
+    // register the underlying type with the following calls:
+    get_return_type();
+    get_parameter_infos();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const char* method_wrapper_base::get_name() const
+string_view method_wrapper_base::get_name() const
 {
     return m_name;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void method_wrapper_base::set_declaring_type(type declaring_type)
-{
-    m_declaring_type = declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -84,24 +79,34 @@ type method_wrapper_base::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string method_wrapper_base::get_signature() const
+string_view method_wrapper_base::get_signature() const
 {
+    return m_signature_view;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method_wrapper_base::create_signature_string()
+{
+    if (!m_signature.empty())
+        return;
+
     const auto param_list = get_parameter_infos();
-    string result = std::string(get_name()) + "( ";
+    m_signature = std::string(get_name()) + "( ";
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
     for (const auto& param : param_list)
     {
-        result += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        m_signature += param.get_type().get_name().to_string() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
         if (param.get_index() < param_list.size() - 1)
-            result += ", ";
+            m_signature += ", ";
     }
     if (param_list.empty())
-        result += ")";
+        m_signature += ")";
     else
-        result += " )";
+        m_signature += " )";
 
-    return result;
+    m_signature_view = m_signature;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

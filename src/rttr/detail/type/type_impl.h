@@ -166,8 +166,7 @@ RTTR_INLINE static type get_invalid_type() { return type(); }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template <std::size_t N>
-RTTR_INLINE static const char* extract_type_signature(const char (&signature)[N])
+RTTR_INLINE static const char* extract_type_signature(const char* signature) RTTR_NOEXCEPT
 {
 //    static_assert(N > skip_size_at_begin + skip_size_at_end, "RTTR is misconfigured for your compiler.")
     return &signature[rttr::detail::skip_size_at_begin];
@@ -176,7 +175,7 @@ RTTR_INLINE static const char* extract_type_signature(const char (&signature)[N]
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE static const char* f()
+RTTR_INLINE static const char* f() RTTR_NOEXCEPT
 {
     return extract_type_signature(
     #if RTTR_COMPILER == RTTR_COMPILER_MSVC
@@ -189,6 +188,21 @@ RTTR_INLINE static const char* f()
         #error "Don't know how the extract type signatur for this compiler! Abort! Abort!"
     #endif
                                    );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE static std::size_t get_size(const char* s) RTTR_NOEXCEPT
+{
+    return ( std::char_traits<char>::length(s) - rttr::detail::skip_size_at_end);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE static string_view get_unique_name() RTTR_NOEXCEPT
+{
+    return string_view(f<T>(), get_size(f<T>()));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +266,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg(f<T>(),
+        static const type val = type_register::type_reg(get_unique_name<T>(),
                                                         raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
@@ -284,7 +298,7 @@ struct type_getter<void>
 {
     static type get_type()
     {
-        static const type val = type_register::type_reg(f<void>(),
+        static const type val = type_register::type_reg(get_unique_name<void>(),
                                                         raw_type_info<void>::get_type(),
                                                         wrapper_type_info<void>::get_type(),
                                                         array_raw_type<void>::get_type(),
@@ -316,7 +330,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type()
     {
-        static const type val = type_register::type_reg(f<T>(),
+        static const type val = type_register::type_reg(get_unique_name<T>(),
                                                         raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),

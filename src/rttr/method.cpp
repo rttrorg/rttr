@@ -76,12 +76,12 @@ method::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string method::get_name() const
+string_view method::get_name() const
 {
     if (is_valid())
         return m_wrapper->get_name();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -136,12 +136,12 @@ parameter_info_range method::get_parameter_infos() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string method::get_signature() const
+string_view method::get_signature() const
 {
     if (is_valid())
         return m_wrapper->get_signature();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

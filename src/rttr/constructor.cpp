@@ -108,12 +108,12 @@ type constructor::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string constructor::get_signature() const
+string_view constructor::get_signature() const
 {
     if (is_valid())
         return m_wrapper->get_signature();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

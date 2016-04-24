@@ -40,7 +40,7 @@ using namespace std;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - empty", "[property]")
+TEST_CASE("array_range<T> - empty", "[array_range]")
 {
     auto range = type_range();
 
@@ -51,7 +51,7 @@ TEST_CASE("array_range<T> - empty", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - size", "[property]")
+TEST_CASE("array_range<T> - size", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     auto range = array_range<int>(&list[0], 5);
@@ -75,7 +75,7 @@ TEST_CASE("array_range<T> - begin()", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - begin() const", "[property]")
+TEST_CASE("array_range<T> - begin() const", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     const auto range = array_range<int>(&list[0], 5);
@@ -94,7 +94,7 @@ TEST_CASE("array_range<T> - begin() const", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - cbegin()", "[property]")
+TEST_CASE("array_range<T> - cbegin()", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     auto range = array_range<int>(&list[0], 5);
@@ -113,7 +113,7 @@ TEST_CASE("array_range<T> - cbegin()", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - rbegin()", "[property]")
+TEST_CASE("array_range<T> - rbegin()", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     auto range = array_range<int>(&list[0], 5);
@@ -132,7 +132,7 @@ TEST_CASE("array_range<T> - rbegin()", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - rbegin() const", "[property]")
+TEST_CASE("array_range<T> - rbegin() const", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     const auto range = array_range<int>(&list[0], 5);
@@ -150,7 +150,7 @@ TEST_CASE("array_range<T> - rbegin() const", "[property]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("array_range<T> - crbegin()", "[property]")
+TEST_CASE("array_range<T> - crbegin()", "[array_range]")
 {
     int list[5] = {1, 2, 3, 4, 5};
     auto range = array_range<int>(&list[0], 5);

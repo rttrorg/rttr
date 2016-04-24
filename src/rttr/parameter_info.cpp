@@ -64,7 +64,7 @@ variant parameter_info::get_default_value() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string parameter_info::get_name() const
+string_view parameter_info::get_name() const
 {
     return m_wrapper->get_name();
 }

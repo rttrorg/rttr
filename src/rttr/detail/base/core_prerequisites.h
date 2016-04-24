@@ -146,14 +146,31 @@ namespace rttr
 
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-#       define RTTR_NO_CXX11_CONSTEXPR
+#   if RTTR_COMP_VER <= 190023026
+#       define RTTR_NO_CXX11_NOEXCEPT
 #   endif
-#
-#   if RTTR_COMP_VER <= 1800
+#   if !defined(__cpp_constexpr) || (__cpp_constexpr < 201304)
+#       define RTTR_NO_CXX11_CONSTEXPR
+#       define RTTR_NO_CXX14_CONSTEXPR
+#   endif
+#endif
+
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC
+#   if !defined(__cpp_constexpr) || (__cpp_constexpr < 201304)
+#       define RTTR_NO_CXX14_CONSTEXPR
+#   endif
+#endif
+
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   if !__has_feature(__cxx_generic_lambdas__) || !__has_feature(__cxx_relaxed_constexpr__)
+#       define RTTR_NO_CXX14_CONSTEXPR
+#   endif
+#   if !__has_feature(cxx_noexcept)
 #       define RTTR_NO_CXX11_NOEXCEPT
 #   endif
 #endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(RTTR_NO_CXX11_CONSTEXPR)
 #   define RTTR_CONSTEXPR
@@ -161,6 +178,13 @@ namespace rttr
 #else
 #   define RTTR_CONSTEXPR constexpr
 #   define RTTR_CONSTEXPR_OR_CONST constexpr
+#endif
+
+
+#if defined(RTTR_NO_CXX14_CONSTEXPR)
+#   define RTTR_CXX14_CONSTEXPR
+#else
+#   define RTTR_CXX14_CONSTEXPR constexpr
 #endif
 
 #ifdef RTTR_NO_CXX11_NOEXCEPT
