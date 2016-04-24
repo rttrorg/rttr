@@ -318,7 +318,7 @@ class RTTR_API type
          *
          * \return A range of type objects.
          */
-        static type_range get_types();
+        static array_range<type> get_types();
 
         /*!
          * \brief Returns the size in bytes of the object representation of the current type (i.e. `sizeof(T)`).
@@ -454,7 +454,7 @@ class RTTR_API type
          *
          * \return A range of types.
          */
-        type_range get_base_classes() const;
+        array_range<type> get_base_classes() const;
 
         /*!
          * \brief Returns a range of all derived classes of this type.
@@ -466,7 +466,7 @@ class RTTR_API type
          *
          * \return A range of type objects.
          */
-        type_range get_derived_classes() const;
+        array_range<type> get_derived_classes() const;
 
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -497,7 +497,7 @@ class RTTR_API type
          *
          * \return A range of all registered constructors.
          */
-        constructor_range get_constructors() const;
+        array_range<constructor> get_constructors() const;
 
         /*!
          * \brief Creates an instance of the current type, with the given arguments \p args for the constructor.
@@ -547,7 +547,7 @@ class RTTR_API type
          *
          * \return A range of properties.
          */
-        property_range get_properties() const;
+        array_range<property> get_properties() const;
 
         /*!
          * \brief Returns a global property with the name \p name.
@@ -567,7 +567,7 @@ class RTTR_API type
          *
          * \return A range of properties.
          */
-        static property_range get_global_properties();
+        static array_range<property> get_global_properties();
 
 
         /*!
@@ -630,7 +630,7 @@ class RTTR_API type
          *
          * \return A range of methods.
          */
-        method_range get_methods() const;
+        array_range<method> get_methods() const;
 
         /*!
          * \brief Returns a global method with the name \p name.
@@ -660,7 +660,7 @@ class RTTR_API type
          *
          * \return A range of methods.
          */
-        static method_range get_global_methods();
+        static array_range<method> get_global_methods();
 
 
         /*!

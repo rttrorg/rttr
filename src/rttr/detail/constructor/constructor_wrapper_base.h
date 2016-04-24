@@ -65,7 +65,7 @@ class RTTR_API constructor_wrapper_base
         virtual type get_instanciated_type() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
-        virtual parameter_info_range get_parameter_infos() const = 0;
+        virtual array_range<parameter_info> get_parameter_infos() const = 0;
         virtual variant get_metadata(const variant& key) const = 0;
 
         virtual variant invoke() const = 0;

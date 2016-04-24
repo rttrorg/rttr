@@ -37,7 +37,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE array_range<T, Predicate>::array_range(bounds_type begin, size_type size, const Predicate& pred)
+RTTR_INLINE array_range<T, Predicate>::array_range(const T* begin, size_type size, const Predicate& pred)
 :   m_begin(begin),
     m_end(begin + size),
     m_pred(pred)
@@ -56,9 +56,9 @@ RTTR_INLINE array_range<T, Predicate>::array_range()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE typename array_range<T, Predicate>::iterator array_range<T, Predicate>::begin()
+RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin()
 {
-    iterator itr(m_begin, this);
+    const_iterator itr(m_begin, this);
     if (m_pred(*itr))
         return itr;
 
@@ -70,7 +70,7 @@ RTTR_INLINE typename array_range<T, Predicate>::iterator array_range<T, Predicat
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE typename array_range<T, Predicate>::iterator array_range<T, Predicate>::end()
+RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::end()
 {
     return {m_end, this};
 }
@@ -122,7 +122,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE typename array_range<T, Predicate>::reverse_iterator array_range<T, Predicate>::rbegin()
+RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rbegin()
 {
     if (m_begin == m_end)
     {
@@ -130,7 +130,7 @@ RTTR_INLINE typename array_range<T, Predicate>::reverse_iterator array_range<T, 
     }
     else
     {
-        reverse_iterator itr(m_end - 1, this);
+        const_reverse_iterator itr(m_end - 1, this);
         if (m_pred(*itr))
             return itr;
 
@@ -143,9 +143,9 @@ RTTR_INLINE typename array_range<T, Predicate>::reverse_iterator array_range<T, 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
-RTTR_INLINE typename array_range<T, Predicate>::reverse_iterator array_range<T, Predicate>::rend()
+RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rend()
 {
-    return (m_begin == m_end ? reverse_iterator{nullptr, this} : reverse_iterator{m_begin - 1, this});
+    return (m_begin == m_end ? const_reverse_iterator{nullptr, this} : const_reverse_iterator{m_begin - 1, this});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -427,311 +427,6 @@ array_range<T, Predicate>::array_reverse_iterator<DataType>::operator++(int inde
 {
     auto old_itr = *this;
     this->m_range->prev(*this);
-    return old_itr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_range(bounds_type begin, size_type size, const detail::no_predicate&)
-:   m_begin(begin),
-    m_end(begin + size)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_range()
-:   m_begin(nullptr),
-    m_end(nullptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::iterator array_range<T, detail::no_predicate>::begin()
-{
-    return {m_begin};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::iterator array_range<T, detail::no_predicate>::end()
-{
-    return {m_end};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_iterator array_range<T, detail::no_predicate>::begin() const
-{
-    return {m_begin};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_iterator array_range<T, detail::no_predicate>::end() const
-{
-    return {m_end};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_iterator array_range<T, detail::no_predicate>::cbegin() const
-{
-    return {m_begin};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_iterator array_range<T, detail::no_predicate>::cend() const
-{
-    return {m_end};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::reverse_iterator array_range<T, detail::no_predicate>::rbegin()
-{
-    return (m_begin == m_end ? reverse_iterator{nullptr} : reverse_iterator{m_end - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::reverse_iterator array_range<T, detail::no_predicate>::rend()
-{
-    return (m_begin == m_end ? reverse_iterator{nullptr} : reverse_iterator{m_begin - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_reverse_iterator array_range<T, detail::no_predicate>::rbegin() const
-{
-    return (m_begin == m_end ? const_reverse_iterator{nullptr} : const_reverse_iterator{m_end - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_reverse_iterator array_range<T, detail::no_predicate>::rend() const
-{
-    return (m_begin == m_end ? const_reverse_iterator{nullptr} : const_reverse_iterator{m_begin - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_reverse_iterator array_range<T, detail::no_predicate>::crbegin() const
-{
-    return (m_begin == m_end ? const_reverse_iterator{nullptr} : const_reverse_iterator{m_end - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::const_reverse_iterator array_range<T, detail::no_predicate>::crend() const
-{
-    return (m_begin == m_end ? const_reverse_iterator{nullptr} : const_reverse_iterator{m_begin - 1});
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE size_t array_range<T, detail::no_predicate>::size() const
-{
-    return (m_end - m_begin);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE bool array_range<T, detail::no_predicate>::empty() const
-{
-    return (m_begin == nullptr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE
-array_range<T, detail::no_predicate>::array_iterator_base<DataType>::array_iterator_base()
-:   m_ptr(nullptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE
-array_range<T, detail::no_predicate>::array_iterator_base<DataType>::array_iterator_base(typename array_iterator_base<DataType>::pointer ptr)
-:   m_ptr(ptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_iterator_base<DataType>::reference
-array_range<T, detail::no_predicate>::array_iterator_base<DataType>::operator*()
-{
-    return *m_ptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_iterator_base<DataType>::pointer
-array_range<T, detail::no_predicate>::array_iterator_base<DataType>::operator->()
-{
-    return m_ptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE bool array_range<T, detail::no_predicate>::array_iterator_base<DataType>::operator==(const self_type& rhs) const
-{
-    return (m_ptr == rhs.m_ptr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE bool array_range<T, detail::no_predicate>::array_iterator_base<DataType>::operator!=(const self_type& rhs) const
-{
-    return (m_ptr != rhs.m_ptr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_iterator_base<DataType>::self_type&
-array_range<T, detail::no_predicate>::array_iterator_base<DataType>::operator=(const self_type& other)
-{
-    m_ptr = other.m_ptr;
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_iterator<DataType>::array_iterator()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_iterator<DataType>::array_iterator(const array_iterator<DataType>& other)
-:   array_iterator_base<DataType>(other.m_ptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_iterator<DataType>::array_iterator(typename array_iterator_base<DataType>::pointer ptr)
-:   array_iterator_base<DataType>(ptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_iterator<DataType>::self_type&
-array_range<T, detail::no_predicate>::array_iterator<DataType>::operator++()
-{
-    ++this->m_ptr;
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_iterator<DataType>::self_type
-array_range<T, detail::no_predicate>::array_iterator<DataType>::operator++(int index)
-{
-    auto old_itr = *this;
-    ++this->m_ptr;
-    return old_itr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::array_reverse_iterator()
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::array_reverse_iterator(const array_reverse_iterator<DataType>& other)
-:   array_iterator_base<DataType>(other.m_ptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::array_reverse_iterator(typename array_iterator_base<DataType>::pointer ptr)
-:   array_iterator_base<DataType>(ptr)
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_reverse_iterator<DataType>::self_type&
-array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::operator++()
-{
-    --this->m_ptr;
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, detail::no_predicate>::template array_reverse_iterator<DataType>::self_type
-array_range<T, detail::no_predicate>::array_reverse_iterator<DataType>::operator++(int index)
-{
-    auto old_itr = *this;
-    --this->m_ptr;
     return old_itr;
 }
 

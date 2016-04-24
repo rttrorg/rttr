@@ -253,17 +253,17 @@ property type_database::get_type_property(const type& t, string_view name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_class_properties(const type& t)
+array_range<property> type_database::get_class_properties(const type& t)
 {
     const auto ret = m_class_property_map.find(t);
     if (ret != m_class_property_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return property_range(vec.data(), vec.size());
+            return array_range<property>(vec.data(), vec.size());
     }
 
-    return property_range();
+    return array_range<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -279,17 +279,17 @@ property type_database::get_global_property(string_view name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_global_properties()
+array_range<property> type_database::get_global_properties()
 {
     auto& vec = m_global_properties.value_data();
-    return property_range(vec.data(), vec.size());
+    return array_range<property>(vec.data(), vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::vector<type> convert_param_list(const parameter_info_range& param_list)
+static std::vector<type> convert_param_list(const array_range<parameter_info>& param_list)
 {
     std::vector<type> result;
     result.reserve(param_list.size());
@@ -407,17 +407,17 @@ method type_database::get_class_method(const type& t, string_view name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_class_methods(const type& t)
+array_range<method> type_database::get_class_methods(const type& t)
 {
     const auto ret = m_class_method_map.find(t);
     if (ret != m_class_method_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return method_range(vec.data(), vec.size());
+            return array_range<method>(vec.data(), vec.size());
     }
 
-    return method_range();
+    return array_range<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -473,10 +473,10 @@ method type_database::get_global_method(string_view name, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_global_methods()
+array_range<method> type_database::get_global_methods()
 {
     auto& vec = m_global_methods.value_data();
-    return method_range(vec.data(), vec.size());
+    return array_range<method>(vec.data(), vec.size());
 }
 
 
@@ -578,17 +578,17 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_range type_database::get_constructors(const type& t)
+array_range<constructor> type_database::get_constructors(const type& t)
 {
     const auto ret = m_type_ctor_map.find(t);
     if (ret != m_type_ctor_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return constructor_range(vec.data(), vec.size());
+            return array_range<constructor>(vec.data(), vec.size());
     }
 
-    return constructor_range();
+    return array_range<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -65,14 +65,14 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
         type get_type() const { return type::get<Enum_Type>(); }
         type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
-        array_range<const string_view> get_names() const
+        array_range<string_view> get_names() const
         {
-            return array_range<const string_view>(m_enum_names.data(), N);
+            return array_range<string_view>(m_enum_names.data(), N);
         }
 
-        array_range<const variant> get_values() const
+        array_range<variant> get_values() const
         {
-            return array_range<const variant>(m_enum_variant_values.data(), N);
+            return array_range<variant>(m_enum_variant_values.data(), N);
         }
 
         string_view value_to_name(argument& value) const

@@ -110,22 +110,22 @@ variant enumeration::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<const string_view> enumeration::get_names() const
+array_range<string_view> enumeration::get_names() const
 {
     if (is_valid())
         return m_wrapper->get_names();
     else
-        return array_range<const string_view>();
+        return array_range<string_view>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<const variant> enumeration::get_values() const
+array_range<variant> enumeration::get_values() const
 {
     if (is_valid())
         return m_wrapper->get_values();
     else
-        return array_range<const variant>();
+        return array_range<variant>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

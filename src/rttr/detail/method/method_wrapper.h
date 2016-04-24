@@ -80,8 +80,8 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
         access_levels get_access_level()                    const { return Acc_Level; }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                m_param_info_list.size()); }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                       m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke(instance& object) const
@@ -157,8 +157,8 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
         access_levels get_access_level()                    const { return Acc_Level; }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                m_param_info_list.size()); }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
+                                                                                                       m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke(instance& object) const
@@ -227,8 +227,8 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<>, Me
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
-        access_levels get_access_level()                    const { return Acc_Level; }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(); }
+        access_levels get_access_level()                    const { return Acc_Level;                                       }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>();                   }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke(instance& object) const
@@ -298,8 +298,8 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();      }
-        access_levels get_access_level()                    const { return Acc_Level; }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(); }
+        access_levels get_access_level()                    const { return Acc_Level;                                       }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>();                   }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke(instance& object) const

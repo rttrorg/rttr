@@ -118,12 +118,12 @@ string_view constructor::get_signature() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-parameter_info_range constructor::get_parameter_infos() const
+array_range<parameter_info> constructor::get_parameter_infos() const
 {
     if (is_valid())
         return m_wrapper->get_parameter_infos();
     else
-        return parameter_info_range();
+        return array_range<parameter_info>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

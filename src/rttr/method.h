@@ -183,7 +183,7 @@ class RTTR_API method
          *
          * \return A range of parameter_info objects of the method signature.
          */
-        parameter_info_range get_parameter_infos() const;
+        array_range<parameter_info> get_parameter_infos() const;
 
         /*!
          * \brief Returns the signature of this method as readable string.

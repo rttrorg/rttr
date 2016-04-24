@@ -298,7 +298,7 @@ variant type::create_variant(const argument& data) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type_range type::get_base_classes() const
+array_range<type> type::get_base_classes() const
 {
     std::size_t end_index = 0;
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
@@ -314,12 +314,12 @@ type_range type::get_base_classes() const
         }
     }
 
-    return type_range(&(*g_base_class_list)[row], end_index);
+    return array_range<type>(&(*g_base_class_list)[row], end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type_range type::get_derived_classes() const
+array_range<type> type::get_derived_classes() const
 {
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
     std::size_t end_index = 0;
@@ -334,7 +334,7 @@ type_range type::get_derived_classes() const
         }
     }
 
-    return type_range(&(*g_derived_class_list)[row], end_index);
+    return array_range<type>(&(*g_derived_class_list)[row], end_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -424,9 +424,9 @@ type type::get_raw_array_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type_range type::get_types()
+array_range<type> type::get_types()
 {
-    return type_range(&(*g_type_list)[1], g_type_list->size() - 1);
+    return array_range<type>(&(*g_type_list)[1], g_type_list->size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ constructor type::get_constructor(const std::vector<type>& args) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_range type::get_constructors() const
+array_range<constructor> type::get_constructors() const
 {
     return detail::type_database::instance().get_constructors(*this);
 }
@@ -513,7 +513,7 @@ bool type::set_property_value(string_view name, argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type::get_properties() const
+array_range<property> type::get_properties() const
 {
     return detail::type_database::instance().get_class_properties(get_raw_type());
 }
@@ -534,7 +534,7 @@ method type::get_method(string_view name, const std::vector<type>& params) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type::get_methods() const
+array_range<method> type::get_methods() const
 {
     return detail::type_database::instance().get_class_methods(get_raw_type());
 }
@@ -562,14 +562,14 @@ method type::get_global_method(string_view name, const std::vector<type>& params
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type::get_global_methods()
+array_range<method> type::get_global_methods()
 {
     return detail::type_database::instance().get_global_methods();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type::get_global_properties()
+array_range<property> type::get_global_properties()
 {
     return detail::type_database::instance().get_global_properties();
 }

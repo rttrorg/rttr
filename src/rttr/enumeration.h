@@ -164,7 +164,7 @@ class RTTR_API enumeration
          *
          * \return A range of enumeration names.
          */
-        array_range<const string_view> get_names() const;
+        array_range<string_view> get_names() const;
 
 
          /*!
@@ -174,7 +174,7 @@ class RTTR_API enumeration
          *
          * \return A range of enumeration values.
          */
-        array_range<const variant> get_values() const;
+        array_range<variant> get_values() const;
 
         /*!
          * \brief Returns the string_view that is used as the name of the given enumeration \p value,

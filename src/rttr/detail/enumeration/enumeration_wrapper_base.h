@@ -60,9 +60,9 @@ class RTTR_API enumeration_wrapper_base
 
         virtual type get_type() const = 0;
 
-        virtual array_range<const string_view> get_names() const = 0;
+        virtual array_range<string_view> get_names() const = 0;
 
-        virtual array_range<const variant> get_values() const = 0;
+        virtual array_range<variant> get_values() const = 0;
 
         virtual string_view value_to_name(argument& value) const = 0;
 
