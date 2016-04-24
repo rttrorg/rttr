@@ -762,7 +762,7 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
         }
 
     public:
-        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, const char* name)
+        bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_declared_type(detail::get_invalid_type())
         {
             using namespace detail;

@@ -61,7 +61,7 @@ RTTR_INLINE detail::metadata metadata(variant key, variant value)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum_Type>
-RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value)
+RTTR_INLINE detail::enum_data<Enum_Type> value(string_view name, Enum_Type value)
 {
     return detail::enum_data<Enum_Type>(name, value);
 }
@@ -91,12 +91,9 @@ RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(T
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type>
-registration::class_<Class_Type>::class_(const char* name)
+registration::class_<Class_Type>::class_(string_view name)
 {
-    auto t = type::get<Class_Type>();
-
-    if (name != nullptr)
-        detail::type_register::custom_name(t, name);
+    detail::type_register::custom_name(type::get<Class_Type>(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +152,7 @@ registration::bind<detail::ctor_func, Class_Type, F, acc_level> registration::cl
 
 template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop, Class_Type, A, acc_level> registration::class_<Class_Type>::property(const char* name, A acc, acc_level level)
+registration::bind<detail::prop, Class_Type, A, acc_level> registration::class_<Class_Type>::property(string_view name, A acc, acc_level level)
 {
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
@@ -169,7 +166,7 @@ registration::bind<detail::prop, Class_Type, A, acc_level> registration::class_<
 
 template<typename Class_Type>
 template<typename A, typename acc_level, typename Tp>
-registration::bind<detail::prop_readonly, Class_Type, A, acc_level> registration::class_<Class_Type>::property_readonly(const char* name, A acc, acc_level level)
+registration::bind<detail::prop_readonly, Class_Type, A, acc_level> registration::class_<Class_Type>::property_readonly(string_view name, A acc, acc_level level)
 {
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
@@ -184,7 +181,7 @@ registration::bind<detail::prop_readonly, Class_Type, A, acc_level> registration
 
 template<typename Class_Type>
 template<typename A1, typename A2,  typename Tp, typename acc_level>
-registration::bind<detail::prop, Class_Type, A1, A2, acc_level> registration::class_<Class_Type>::property(const char* name, A1 getter, A2 setter, acc_level level)
+registration::bind<detail::prop, Class_Type, A1, A2, acc_level> registration::class_<Class_Type>::property(string_view name, A1 getter, A2 setter, acc_level level)
 {
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
@@ -204,7 +201,7 @@ registration::bind<detail::prop, Class_Type, A1, A2, acc_level> registration::cl
 
 template<typename Class_Type>
 template<typename F, typename acc_level>
-registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<Class_Type>::method(const char* name, F f, acc_level level)
+registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<Class_Type>::method(string_view name, F f, acc_level level)
 {
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
@@ -217,7 +214,7 @@ registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<
 
 template<typename Class_Type>
 template<typename Enum_Type>
-registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Class_Type>::enumeration(const char* name)
+registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Class_Type>::enumeration(string_view name)
 {
     using namespace detail;
     static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please call this method with an enum type!");
@@ -230,7 +227,7 @@ registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Cl
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop, void, A, detail::public_access> registration::property(const char* name, A acc)
+registration::bind<detail::prop, void, A, detail::public_access> registration::property(string_view name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value, "No valid property accessor provided!");
@@ -240,7 +237,7 @@ registration::bind<detail::prop, void, A, detail::public_access> registration::p
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop_readonly, void, A, detail::public_access> registration::property_readonly(const char* name, A acc)
+registration::bind<detail::prop_readonly, void, A, detail::public_access> registration::property_readonly(string_view name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value || is_callable<A>::value,
@@ -252,7 +249,7 @@ registration::bind<detail::prop_readonly, void, A, detail::public_access> regist
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A1, typename A2>
-registration::bind<detail::prop, void, A1, A2, detail::public_access> registration::property(const char* name, A1 getter, A2 setter)
+registration::bind<detail::prop, void, A1, A2, detail::public_access> registration::property(string_view name, A1 getter, A2 setter)
 {
     using namespace detail;
     static_assert(is_callable<A1>::value || is_callable<A2>::value,
@@ -264,7 +261,7 @@ registration::bind<detail::prop, void, A1, A2, detail::public_access> registrati
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F>
-registration::bind<detail::meth, void, F, detail::public_access> registration::method(const char* name, F f)
+registration::bind<detail::meth, void, F, detail::public_access> registration::method(string_view name, F f)
 {
     using namespace detail;
     static_assert(is_callable<F>::value, "No valid property accessor provided!");
@@ -274,7 +271,7 @@ registration::bind<detail::meth, void, F, detail::public_access> registration::m
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum_Type>
-registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(const char* name)
+registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(string_view name)
 {
     using namespace detail;
     static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please call this method with an enum type!");

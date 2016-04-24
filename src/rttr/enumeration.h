@@ -59,7 +59,7 @@ namespace detail
  * ----------------
  * An \ref enumeration is described by it's declared name (\ref get_name()), it's enumerator names (\ref get_names())
  * and it's corresponding constant values (\ref get_values()).
- * The name is represented as std::string and the values are stored as the underlying enum value.
+ * The name is represented as \ref string_view and the values are stored as the underlying enum value.
  * When the \ref enumeration was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
  * The conversion functions \ref name_to_value(), \ref value_to_name() allow conversion between the value representation of an enumeration and its literal representation.
@@ -87,7 +87,7 @@ namespace detail
   if (enum_align)
   {
      MyStruct::E_Alignment enum_value = MyStruct::AlignLeft;
-     std::string name = enum_align.value_to_name(enum_value);
+     string_view name = enum_align.value_to_name(enum_value);
      std::cout << name; // prints "AlignLeft"
 
      variant var = enum_align.name_to_value("AlignJustify");

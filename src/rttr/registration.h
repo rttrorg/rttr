@@ -135,7 +135,7 @@ public:
              * \param name The name of the class as string literal. Can be retrieved later via type::get_name().
              *
              */
-            class_(const char* name);
+            class_(string_view name);
             ~class_();
 
 
@@ -193,7 +193,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_levels_list>::value>::type>
-            bind<detail::prop, Class_Type, A, acc_level> property(const char* name, A acc, acc_level level = acc_level());
+            bind<detail::prop, Class_Type, A, acc_level> property(string_view name, A acc, acc_level level = acc_level());
 
             /*!
              * \brief Register a read only property to this class.
@@ -211,7 +211,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_levels_list>::value>::type>
-            bind<detail::prop_readonly, Class_Type, A, acc_level> property_readonly(const char* name, A acc, acc_level level = acc_level());
+            bind<detail::prop_readonly, Class_Type, A, acc_level> property_readonly(string_view name, A acc, acc_level level = acc_level());
 
             /*!
              * \brief Register a property to this class.
@@ -231,7 +231,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename A1, typename A2, typename Tp = typename std::enable_if<!detail::contains<A2, detail::access_levels_list>::value>::type, typename acc_level = detail::public_access>
-            bind<detail::prop, Class_Type, A1, A2, acc_level> property(const char* name, A1 getter, A2 setter, acc_level level = acc_level());
+            bind<detail::prop, Class_Type, A1, A2, acc_level> property(string_view name, A1 getter, A2 setter, acc_level level = acc_level());
 
 
             /*!
@@ -249,7 +249,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename F, typename acc_level = detail::public_access>
-            bind<detail::meth, Class_Type, F, acc_level> method(const char* name, F f, acc_level level = acc_level());
+            bind<detail::meth, Class_Type, F, acc_level> method(string_view name, F f, acc_level level = acc_level());
 
 
             /*!
@@ -262,7 +262,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename Enum_Type>
-            bind<detail::enum_, Class_Type, Enum_Type> enumeration(const char* name);
+            bind<detail::enum_, Class_Type, Enum_Type> enumeration(string_view name);
         private:
             class_(const std::shared_ptr<detail::registration_executer>& reg_exec);
             class_(const class_& other);
@@ -282,13 +282,13 @@ public:
      * \remark The name of the property has to be unique, otherwise it will not be registered.
      *
      * \see property, type::get_global_property(),
-     *                \ref type::get_property_value(const char*) "type::get_property_value()",
-     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
+     *                \ref type::get_property_value(string_view) "type::get_property_value()",
+     *                \ref type::set_property_value(string_view, argument) "type::set_property_value"
      *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A>
-    static bind<detail::prop, void, A, detail::public_access> property(const char* name, A acc);
+    static bind<detail::prop, void, A, detail::public_access> property(string_view name, A acc);
 
     /*!
      * \brief Register a global read only property.
@@ -300,13 +300,13 @@ public:
      * \remark The name of the property has to be unique, otherwise it will not be registered.
      *
      * \see property, type::get_global_property(),
-     *                \ref type::get_property_value(const char*) "type::get_property_value()",
-     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
+     *                \ref type::get_property_value(string_view) "type::get_property_value()",
+     *                \ref type::set_property_value(string_view, argument) "type::set_property_value"
      *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A>
-    static bind<detail::prop_readonly, void, A, detail::public_access> property_readonly(const char* name, A acc);
+    static bind<detail::prop_readonly, void, A, detail::public_access> property_readonly(string_view name, A acc);
 
     /*!
      * \brief Register a property to this class.
@@ -318,13 +318,13 @@ public:
      * \remark The name of the property has to be unique, otherwise it will not be registered.
      *
      * \see property, type::get_global_property(),
-     *                \ref type::get_property_value(const char*) "type::get_property_value()",
-     *                \ref type::set_property_value(const char*, argument) "type::set_property_value"
+     *                \ref type::get_property_value(string_view) "type::get_property_value()",
+     *                \ref type::set_property_value(string_view, argument) "type::set_property_value"
      *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A1, typename A2>
-    static bind<detail::prop, void, A1, A2, detail::public_access> property(const char* name, A1 getter, A2 setter);
+    static bind<detail::prop, void, A1, A2, detail::public_access> property(string_view name, A1 getter, A2 setter);
 
     /*!
      * \brief Register a method to this class.
@@ -335,12 +335,12 @@ public:
      * \remark The method name does *not* have to be unique.
      *
      * \see method, type::get_global_method(),
-     *              \ref type::invoke(const char*, std::vector<argument>) "type::invoke()"
+     *              \ref type::invoke(string_view, std::vector<argument>) "type::invoke()"
      *
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename F>
-    static bind<detail::meth, void, F, detail::public_access> method(const char* name, F f);
+    static bind<detail::meth, void, F, detail::public_access> method(string_view name, F f);
 
     /*!
      * \brief Register a global enumeration of type \p Enum_Type
@@ -354,7 +354,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename Enum_Type>
-    static bind<detail::enum_, void, Enum_Type> enumeration(const char* name);
+    static bind<detail::enum_, void, Enum_Type> enumeration(string_view name);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -627,7 +627,7 @@ RTTR_INLINE detail::metadata metadata(variant key, variant value);
  * \see \ref registration::enumeration
  */
 template<typename Enum_Type>
-RTTR_INLINE detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
+RTTR_INLINE detail::enum_data<Enum_Type> value(string_view, Enum_Type value);
 
 /*!
  * The \ref default_arguments function should be used add default arguments,

@@ -54,7 +54,7 @@ RTTR_CONSTEXPR basic_string_view<CharT, Traits>::basic_string_view(const basic_s
 
 template<typename CharT, typename Traits>
 RTTR_CONSTEXPR basic_string_view<CharT, Traits>::basic_string_view(const CharT* str)
-:   m_data(str), m_size(traits_type::length(str))
+:   m_data(str), m_size(str ? traits_type::length(str) : 0)
 {
 }
 
@@ -369,7 +369,7 @@ RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(const char* lhs,
 
 template<typename CharT, typename Traits>
 RTTR_INLINE RTTR_CXX14_CONSTEXPR bool operator!=(basic_string_view<CharT, Traits> lhs,
-                                           const char* rhs) RTTR_NOEXCEPT
+                                                 const char* rhs) RTTR_NOEXCEPT
 {
     return (lhs != basic_string_view<CharT, Traits>(rhs));
 }
