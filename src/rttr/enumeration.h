@@ -30,6 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/type.h"
+#include "rttr/string_view.h"
 
 #include <memory>
 #include <string>
@@ -120,7 +121,7 @@ class RTTR_API enumeration
          *
          * \return Name of the \ref enumeration.
          */
-        std::string get_name() const;
+        string_view get_name() const;
 
         /*!
          * \brief Returns the underlying type (int, unsigned int, etc.) of this \ref enumeration.
@@ -159,36 +160,36 @@ class RTTR_API enumeration
         /*!
          * \brief Returns all enum names registered for this enumeration.
          *
-         * \remark When the enumeration is invalid then an empty vector is returned.
+         * \remark When the enumeration is invalid then an empty range is returned.
          *
-         * \return A vector of enumeration names.
+         * \return A range of enumeration names.
          */
-        std::vector<std::string> get_names() const;
+        array_range<const string_view> get_names() const;
 
 
          /*!
          * \brief Returns all enum values registered for this enumeration.
          *
-         * \remark When the enumeration is invalid then an empty vector is returned.
+         * \remark When the enumeration is invalid then an empty range is returned.
          *
-         * \return A vector of enumeration values.
+         * \return A range of enumeration values.
          */
-        std::vector<variant> get_values() const;
+        array_range<const variant> get_values() const;
 
         /*!
-         * \brief Returns the string that is used as the name of the given enumeration \p value,
-         *        or an empty string if the \p value is not defined.
+         * \brief Returns the string_view that is used as the name of the given enumeration \p value,
+         *        or an empty string_view if the \p value is not defined.
          *
-         * \return A std::string object, containing the name for the given value.
+         * \return A string_view object, containing the name for the given value.
          */
-        std::string value_to_name(argument value) const;
+        string_view value_to_name(argument value) const;
 
         /*!
-         * \brief Returns the value of the given enumeration name, or an empty variant if the name is not defined.
+         * \brief Returns the value of the given enumeration \p name, or an empty variant if the name is not defined.
          *
-         * \return A variant object, containing the value for the given name.
+         * \return A variant object, containing the value for the given \p name.
          */
-        variant name_to_value(const std::string& name) const;
+        variant name_to_value(string_view name) const;
 
         /*!
          * \brief Returns true if this enumeration is the same like the \p other.

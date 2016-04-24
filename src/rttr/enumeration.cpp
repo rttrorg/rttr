@@ -60,6 +60,16 @@ enumeration::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+string_view enumeration::get_name() const
+{
+    if (m_wrapper)
+        return m_wrapper->get_type().get_name();
+    else
+        return string_view();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type enumeration::get_underlying_type() const
 {
     if (is_valid())
@@ -100,37 +110,37 @@ variant enumeration::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<string> enumeration::get_names() const
+array_range<const string_view> enumeration::get_names() const
 {
     if (is_valid())
         return m_wrapper->get_names();
     else
-        return vector<string>();
+        return array_range<const string_view>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-vector<variant> enumeration::get_values() const
+array_range<const variant> enumeration::get_values() const
 {
     if (is_valid())
         return m_wrapper->get_values();
     else
-        return vector<variant>();
+        return array_range<const variant>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string enumeration::value_to_name(argument value) const
+string_view enumeration::value_to_name(argument value) const
 {
     if (is_valid())
         return m_wrapper->value_to_name(value);
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration::name_to_value(const std::string& name) const
+variant enumeration::name_to_value(string_view name) const
 {
     if (is_valid())
         return m_wrapper->name_to_value(name);

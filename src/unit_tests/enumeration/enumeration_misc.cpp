@@ -114,6 +114,18 @@ TEST_CASE("enumeration - is_valid()", "[enumeration]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("enumeration - get_name()", "[enumeration]")
+{
+    enumeration e = type::get_by_name("weekday").get_enumeration();
+    CHECK(e.get_name() == "weekday");
+
+    // negative
+    e = type::get_by_name("weekday_unknown").get_enumeration();
+    CHECK(e.get_name() == "");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("enumeration - get_underlying_type()", "[enumeration]")
 {
     enumeration e = type::get_by_name("weekday").get_enumeration();
@@ -157,7 +169,7 @@ TEST_CASE("enumeration - get_declaring_type()", "[enumeration]")
 TEST_CASE("enumeration - get_names()", "[enumeration]")
 {
     enumeration e = type::get_by_name("weekday").get_enumeration();
-    auto name_list = e.get_names();
+    std::vector<std::string> name_list(e.get_names().begin(), e.get_names().end());
     REQUIRE(name_list.size() == 7);
     CHECK(name_list[0] == "Monday");
     CHECK(name_list[1] == "Tuesday");
@@ -169,8 +181,7 @@ TEST_CASE("enumeration - get_names()", "[enumeration]")
 
     // negative
     e = type::get_by_name("weekday_unknown").get_enumeration();
-    name_list = e.get_names();
-    CHECK(name_list.size() == 0);
+    CHECK(e.get_names().size() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -178,12 +189,12 @@ TEST_CASE("enumeration - get_names()", "[enumeration]")
 TEST_CASE("enumeration - get_values()", "[enumeration]")
 {
     enumeration e = type::get_by_name("weekday").get_enumeration();
-    auto value_list = e.get_values();
+    std::vector<variant> value_list(e.get_values().begin(), e.get_values().end());
     REQUIRE(value_list.size() == 7);
 
     for (auto& var : value_list)
     {
-        REQUIRE(value_list[0].is_type<weekday>() == true);
+        REQUIRE(var.is_type<weekday>() == true);
     }
 
     CHECK(value_list[0].get_value<weekday>() == weekday::monday);
@@ -196,8 +207,7 @@ TEST_CASE("enumeration - get_values()", "[enumeration]")
 
     // negative
     e = type::get_by_name("weekday_unknown").get_enumeration();
-    value_list = e.get_values();
-    CHECK(value_list.size() == 0);
+    CHECK(e.get_values().size() == 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
