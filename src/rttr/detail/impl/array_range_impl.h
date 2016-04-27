@@ -30,6 +30,8 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/property.h"
+#include "rttr/type.h"
+#include <memory>
 
 namespace rttr
 {
@@ -431,6 +433,23 @@ array_range<T, Predicate>::array_reverse_iterator<DataType>::operator++(int inde
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+namespace detail
+{
+
+template<typename T>
+struct default_predicate
+{
+    RTTR_FORCE_INLINE default_predicate() {}
+    RTTR_FORCE_INLINE default_predicate(std::function<bool(const T&)> func) : m_func(std::move(func)) {}
+    RTTR_FORCE_INLINE bool operator()(const T& obj) const { return (m_func ? m_func(obj) : true); }
+    std::function<bool(const T&)> m_func;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
 
 } // end namespace rttr
 

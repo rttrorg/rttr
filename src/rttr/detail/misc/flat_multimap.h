@@ -126,7 +126,7 @@ class flat_multimap
                 }
 
                 const auto index = std::distance(m_key_list.cbegin(), found_key);
-                m_value_list.insert(m_value_list.begin() + index, value);
+                m_value_list.insert(m_value_list.begin() + index, std::move(value));
             }
         }
 
@@ -180,7 +180,7 @@ class flat_multimap
         }
 #endif
 
-        std::vector<Value>& value_data()
+        const std::vector<Value>& value_data() const
         {
             return m_value_list;
         }

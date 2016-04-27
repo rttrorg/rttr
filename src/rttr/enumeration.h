@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/type.h"
 #include "rttr/string_view.h"
+#include "rttr/detail/misc/class_item_mapper.h"
 
 #include <memory>
 #include <string>
@@ -209,6 +210,9 @@ class RTTR_API enumeration
         friend class type; // to prevent creation of this class
         //! Constructs a valid MetaProperty from a PropertyContainerBase.
         enumeration(const detail::enumeration_wrapper_base* wrapper = nullptr);
+
+        template<typename T>
+        friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
     private:
         const detail::enumeration_wrapper_base* m_wrapper;
 };

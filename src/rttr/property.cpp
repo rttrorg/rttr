@@ -47,12 +47,6 @@ property create_item(const property_wrapper_base* wrapper)
     return property(wrapper);
 }
 
-template<>
- void destroy_item(property& prop)
- {
-     delete prop.m_wrapper;
- }
-
 } // end namespace detail;
 
 /////////////////////////////////////////////////////////////////////////////////////////

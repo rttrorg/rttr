@@ -36,6 +36,17 @@ using namespace std;
 namespace rttr
 {
 
+namespace detail
+{
+
+template<>
+enumeration create_item(const enumeration_wrapper_base* wrapper)
+{
+    return enumeration(wrapper);
+}
+
+} // end namespace detail
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper)

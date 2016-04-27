@@ -45,12 +45,6 @@ constructor create_item(const constructor_wrapper_base* wrapper)
     return constructor(wrapper);
 }
 
-template<>
- void destroy_item(constructor& ctor)
- {
-     delete ctor.m_wrapper;
- }
-
 } // end namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////

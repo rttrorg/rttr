@@ -106,7 +106,7 @@ class RTTR_LOCAL type_database
         /////////////////////////////////////////////////////////////////////////////////////
         property get_type_property(const type& t, string_view name) const;
         property get_class_property(const type& t, string_view name) const;
-        array_range<property> get_class_properties(const type& t);
+        array_range<property> get_class_properties(const type& t) const;
 
         property get_global_property(string_view name) const;
         array_range<property> get_global_properties();
@@ -232,9 +232,9 @@ class RTTR_LOCAL type_database
 
         std::vector<string_view>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
         std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
-                                                                                            //!< and also custom names, provided during manual register (e.g. class_)
-        flat_map<string_view, type::type_id>                        m_orig_name_to_id;      //!< This is a sorted vector which contains hash values of the names in \p m_orig_names
-        flat_map<std::string, type::type_id, hash>                  m_custom_name_to_id;    //!< This is a sorted vector which contains hash values of the names in \p m_custom_names
+
+        flat_map<string_view, type::type_id>                        m_orig_name_to_id;
+        flat_map<std::string, type::type_id, hash>                  m_custom_name_to_id;
 
         std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
         std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
@@ -261,12 +261,13 @@ class RTTR_LOCAL type_database
         flat_multimap<string_view, method>                          m_global_methods;
         flat_multimap<string_view, property>                        m_global_properties;
 
-        std::unordered_map<type, std::vector<property>>             m_type_property_map;
+        std::vector<std::unique_ptr<property_wrapper_base> >        m_property_list;
+        std::vector<std::unique_ptr<method_wrapper_base> >          m_method_list;
+        std::vector<std::unique_ptr<constructor_wrapper_base> >     m_constructor_list;
+        std::vector<std::unique_ptr<destructor_wrapper_base> >      m_destructor_list;
+
         std::unordered_map<type, std::vector<property>>             m_class_property_map;
-
-        std::unordered_map<type, std::vector<method>>               m_type_method_map;
         std::unordered_map<type, std::vector<method>>               m_class_method_map;
-
         std::unordered_map<type, std::vector<constructor>>          m_type_ctor_map;
         std::unordered_map<type, destructor>                        m_type_dtor_map;
 

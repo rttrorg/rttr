@@ -39,25 +39,12 @@ class property;
 class method;
 class constructor;
 class enumeration;
-class type;
 class parameter_info;
-
-template<typename T, typename Predicate>
-class array_range;
 
 namespace detail
 {
-    template<typename T>
-    struct default_predicate
-    {
-        using predicate_func = bool(*)(const T&);
-
-        RTTR_FORCE_INLINE default_predicate() : m_func([](const T&){ return true; }) {}
-        RTTR_FORCE_INLINE default_predicate(const predicate_func& func) : m_func(func) {}
-        RTTR_FORCE_INLINE bool operator()(const T& obj) const  { return m_func(obj); }
-
-        predicate_func m_func;
-    };
+template<typename T>
+struct default_predicate;
 
 } // end namespace detail
 

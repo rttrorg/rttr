@@ -120,7 +120,7 @@ class flat_map
             if (found_key != m_key_list.cend())
             {
                 const auto index = std::distance(m_key_list.cbegin(), found_key);
-                m_value_list.insert(m_value_list.begin() + index, value);
+                m_value_list.insert(m_value_list.begin() + index, std::move(value));
             }
         }
 
@@ -199,7 +199,7 @@ class flat_map
             m_value_list.clear();
         }
 
-        std::vector<Value>& value_data()
+        const std::vector<Value>& value_data() const
         {
             return m_value_list;
         }

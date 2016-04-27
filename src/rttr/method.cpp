@@ -44,12 +44,6 @@ method create_item(const method_wrapper_base* wrapper)
     return method(wrapper);
 }
 
-template<>
- void destroy_item(method& meth)
- {
-     delete meth.m_wrapper;
- }
-
 } // end namespace detail;
 
 /////////////////////////////////////////////////////////////////////////////////////////

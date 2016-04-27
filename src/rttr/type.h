@@ -29,6 +29,7 @@
 #define RTTR_TYPE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/string_view.h"
 #include "rttr/array_range.h"
 
 #include <type_traits>

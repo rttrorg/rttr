@@ -72,8 +72,6 @@ using class_item_to_wrapper_t = conditional_t< std::is_same<T, property>::value,
 
 template<typename T>
 T create_item(const class_item_to_wrapper_t<T>* wrapper = nullptr);
-template<typename T>
-void destroy_item(T& item);
 
 } // end namespace detail
 } // end namespace rttr
