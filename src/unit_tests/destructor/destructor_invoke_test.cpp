@@ -64,8 +64,10 @@ TEST_CASE("destructor - invoke", "[destructor]")
         CHECK(static_cast<bool>(dtor) == true);
 
         CHECK(dtor.invoke(var) == true);
-
         CHECK(var.is_valid() == false);
+
+        // check that bot dtors are the same
+        CHECK(type::get<dtor_invoke_test>().get_destructor() == type::get<dtor_invoke_test*>().get_destructor());
     }
 
     SECTION("Invoke negative")
