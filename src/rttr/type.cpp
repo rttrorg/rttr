@@ -462,14 +462,14 @@ variant type::create(vector<argument> args) const
 
 destructor type::get_destructor() const
 {
-    return destructor(detail::type_database::instance().get_destructor(*this));
+    return destructor(detail::type_database::instance().get_destructor(get_raw_type()));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type::destroy(variant& obj) const
 {
-    return detail::type_database::instance().get_destructor(*this).invoke(obj);
+    return detail::type_database::instance().get_destructor(get_raw_type()).invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

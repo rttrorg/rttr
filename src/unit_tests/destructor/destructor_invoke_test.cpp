@@ -53,15 +53,16 @@ TEST_CASE("destructor - invoke", "[destructor]")
     type t = type::get<dtor_invoke_test>();
     REQUIRE(t.is_valid() == true);
 
-    destructor dtor = t.get_destructor();
-    CHECK(dtor.is_valid() == true);
-    CHECK(static_cast<bool>(dtor) == true);
-
     SECTION("Invoke positive")
     {
         variant var = t.create();
 
         CHECK(var.is_valid() == true);
+
+        destructor dtor = var.get_type().get_destructor();
+        CHECK(dtor.is_valid() == true);
+        CHECK(static_cast<bool>(dtor) == true);
+
         CHECK(dtor.invoke(var) == true);
 
         CHECK(var.is_valid() == false);
@@ -71,6 +72,7 @@ TEST_CASE("destructor - invoke", "[destructor]")
     {
         variant var;
         CHECK(var.is_valid() == false);
+
         destructor dtor_invalid = type::get_by_name("").get_destructor();
         REQUIRE(dtor_invalid.is_valid() == false);
 
@@ -78,8 +80,18 @@ TEST_CASE("destructor - invoke", "[destructor]")
         CHECK(dtor_invalid.invoke(var) == false);
 
         // cannot invoke destructor, because given type is invalid
-        CHECK(dtor.invoke(var) == false);
+        CHECK(type::get<dtor_invoke_test>().get_destructor().invoke(var) == false);
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("destructor - via type", "[destructor]")
+{
+    variant var = type::get<dtor_invoke_test>().create();
+    REQUIRE(var.get_type() == type::get<dtor_invoke_test*>());
+    CHECK(var.get_type().destroy(var) == true);
+    CHECK(var.is_valid() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
