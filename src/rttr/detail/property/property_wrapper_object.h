@@ -50,7 +50,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
-
+	bool is_pointer()   const   { return std::is_pointer<C>::value; }
+	
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
@@ -95,7 +96,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<C>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
-
+	bool is_pointer()   const   { return std::is_pointer<C>::value; }
+	
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
@@ -135,6 +137,7 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<C*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+        bool is_pointer()   const   { return std::is_pointer<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -180,6 +183,7 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<C>::type*>(); }
         bool is_array()     const   { return detail::is_array<C>::value; }
+        bool is_pointer()   const   { return std::is_pointer<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 

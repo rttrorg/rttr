@@ -58,6 +58,7 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+        bool is_pointer()   const   { return std::is_pointer<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -107,6 +108,7 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+        bool is_pointer()   const   { return std::is_pointer<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -160,7 +162,8 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
-
+        bool is_pointer()   const   { return std::is_pointer<return_type>::value; }
+        
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         bool set_value(instance& object, argument& arg) const
@@ -209,6 +212,7 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
+        bool is_pointer()   const   { return std::is_pointer<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 

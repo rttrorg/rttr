@@ -189,6 +189,16 @@ class RTTR_API property
          */
         bool is_array() const;
 
+	
+        /*!
+         * \brief Returns true if the underlying property is a \ref pointer.
+         *
+         * \remark When the property is not valid, this function will return false.
+         *
+         * \return True if this is a \ref pointer type, otherwise false.
+         */
+        bool is_pointer() const;
+	
         /*!
          * \brief Returns the name of this property.
          *

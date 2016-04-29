@@ -133,6 +133,16 @@ bool property::is_array() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool property::is_pointer() const
+{
+    if (is_valid())
+        return m_wrapper->is_pointer();
+    else
+        return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 string_view property::get_name() const
 {
     if (is_valid())
