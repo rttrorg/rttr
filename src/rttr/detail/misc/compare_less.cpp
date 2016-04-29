@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/detail/misc/compare_less.h"
+
 #include "rttr/detail/type/type_database_p.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"

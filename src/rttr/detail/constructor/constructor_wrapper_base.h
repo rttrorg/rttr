@@ -33,6 +33,7 @@
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
@@ -59,13 +60,12 @@ class RTTR_API constructor_wrapper_base
 
         virtual ~constructor_wrapper_base();
         virtual type get_declaring_type() const = 0;
-        std::string get_signature() const;
-
+        string_view get_signature() const;
         virtual access_levels get_access_level() const = 0;
         virtual type get_instanciated_type() const = 0;
         virtual std::vector<bool> get_is_reference() const = 0;
         virtual std::vector<bool> get_is_const() const = 0;
-        virtual parameter_info_range get_parameter_infos() const = 0;
+        virtual array_range<parameter_info> get_parameter_infos() const = 0;
         virtual variant get_metadata(const variant& key) const = 0;
 
         virtual variant invoke() const = 0;
@@ -79,6 +79,13 @@ class RTTR_API constructor_wrapper_base
                                argument& arg5, argument& arg6) const = 0;
 
         virtual variant invoke_variadic(std::vector<argument>& args) const = 0;
+    protected:
+        void init();
+    private:
+        void create_signature_string();
+    private:
+        string_view m_signature_view;
+        std::string m_signature;
 };
 
 } // end namespace detail

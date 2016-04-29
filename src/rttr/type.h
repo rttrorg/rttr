@@ -29,6 +29,7 @@
 #define RTTR_TYPE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/string_view.h"
 #include "rttr/array_range.h"
 
 #include <type_traits>
@@ -87,7 +88,7 @@ static type get_invalid_type();
  *      type::get<int>() == type::get<bool>(); // yields to false
  * \endcode
  *
- * ### type::get_by_name(const char*) ###
+ * ### type::get_by_name(string_view) ###
  *
  * This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.
  *
@@ -230,7 +231,7 @@ class RTTR_API type
          *
          * \return The type name.
          */
-        std::string get_name() const;
+        string_view get_name() const;
 
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
@@ -309,7 +310,7 @@ class RTTR_API type
          *
          * \return \ref type object with the name \p name.
          */
-        static type get_by_name(const char* name);
+        static type get_by_name(string_view name);
 
         /*!
          * \brief Returns a range of all registered type objects.
@@ -318,7 +319,7 @@ class RTTR_API type
          *
          * \return A range of type objects.
          */
-        static type_range get_types();
+        static array_range<type> get_types();
 
         /*!
          * \brief Returns the size in bytes of the object representation of the current type (i.e. `sizeof(T)`).
@@ -454,7 +455,7 @@ class RTTR_API type
          *
          * \return A range of types.
          */
-        type_range get_base_classes() const;
+        array_range<type> get_base_classes() const;
 
         /*!
          * \brief Returns a range of all derived classes of this type.
@@ -466,7 +467,7 @@ class RTTR_API type
          *
          * \return A range of type objects.
          */
-        type_range get_derived_classes() const;
+        array_range<type> get_derived_classes() const;
 
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -497,7 +498,7 @@ class RTTR_API type
          *
          * \return A range of all registered constructors.
          */
-        constructor_range get_constructors() const;
+        array_range<constructor> get_constructors() const;
 
         /*!
          * \brief Creates an instance of the current type, with the given arguments \p args for the constructor.
@@ -537,7 +538,7 @@ class RTTR_API type
          *
          * \return A property with name \p name.
          */
-        property get_property(const char* name) const;
+        property get_property(string_view name) const;
 
         /*!
          * \brief Returns a range of all registered properties for this type and
@@ -547,7 +548,7 @@ class RTTR_API type
          *
          * \return A range of properties.
          */
-        property_range get_properties() const;
+        array_range<property> get_properties() const;
 
         /*!
          * \brief Returns a global property with the name \p name.
@@ -556,7 +557,7 @@ class RTTR_API type
          *
          * \return A property with name \p name.
          */
-        static property get_global_property(const char* name);
+        static property get_global_property(string_view name);
 
         /*!
          * \brief Returns a range of all registered global properties.
@@ -567,7 +568,7 @@ class RTTR_API type
          *
          * \return A range of properties.
          */
-        static property_range get_global_properties();
+        static array_range<property> get_global_properties();
 
 
         /*!
@@ -577,14 +578,14 @@ class RTTR_API type
          *
          * \return A variant containing the value of the property.
          */
-        variant get_property_value(const char* name, instance obj) const;
+        variant get_property_value(string_view name, instance obj) const;
 
         /*!
          * \brief Returns the property value of property named \p name.
          *
          * \return A variant containing the value of the property.
          */
-        static variant get_property_value(const char* name);
+        static variant get_property_value(string_view name);
 
         /*!
          * \brief This function will set the given value \p arg to a property named \p name to the instance \p obj.
@@ -593,14 +594,14 @@ class RTTR_API type
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        bool set_property_value(const char* name, instance obj, argument arg) const;
+        bool set_property_value(string_view name, instance obj, argument arg) const;
 
         /*!
          * \brief This function will set the given value \p arg to a property named \p name.
          *
          * \return A bool value, which is true, when the value could be set, otherwise false.
          */
-        static bool set_property_value(const char* name, argument arg);
+        static bool set_property_value(string_view name, argument arg);
 
 
         /*!
@@ -610,7 +611,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        method get_method(const char* name) const;
+        method get_method(string_view name) const;
 
         /*!
          * \brief Returns a method with the name \p name which match the given parameter list \p params.
@@ -620,7 +621,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        method get_method(const char* name, const std::vector<type>& params) const;
+        method get_method(string_view name, const std::vector<type>& params) const;
 
         /*!
          * \brief Returns a range of all registered methods for this type and
@@ -630,7 +631,7 @@ class RTTR_API type
          *
          * \return A range of methods.
          */
-        method_range get_methods() const;
+        array_range<method> get_methods() const;
 
         /*!
          * \brief Returns a global method with the name \p name.
@@ -639,7 +640,7 @@ class RTTR_API type
          *
          * \return A method with name \p name.
          */
-        static method get_global_method(const char* name);
+        static method get_global_method(string_view name);
 
         /*!
          * \brief Returns a global method with the name \p name which match the given parameter list \p params.
@@ -649,7 +650,7 @@ class RTTR_API type
          *
          * \return A method with name \p name and parameter signature \p params.
          */
-        static method get_global_method(const char* name, const std::vector<type>& params);
+        static method get_global_method(string_view name, const std::vector<type>& params);
 
         /*!
          * \brief Returns a range of all registered global methods.
@@ -660,7 +661,7 @@ class RTTR_API type
          *
          * \return A range of methods.
          */
-        static method_range get_global_methods();
+        static array_range<method> get_global_methods();
 
 
         /*!
@@ -674,7 +675,7 @@ class RTTR_API type
          * \return A variant object containing the possible return value,
          *         otherwise when it is a void function an empty but valid variant object.
          */
-        variant invoke(const char* name, instance obj, std::vector<argument> args) const;
+        variant invoke(string_view name, instance obj, std::vector<argument> args) const;
 
         /*!
          * \brief Invokes a global method named \p name with the specified argument \p args.
@@ -683,7 +684,7 @@ class RTTR_API type
          *         otherwise when it is a void function an empty but valid variant object.
          *         Methods with registered \ref default_arguments will be honored.
          */
-        static variant invoke(const char* name, std::vector<argument> args);
+        static variant invoke(string_view name, std::vector<argument> args);
 
         /*!
          * \brief Register a converter func `F`, which will be used internally by the
@@ -802,7 +803,7 @@ class RTTR_API type
          *
          * \return A normalized string of the given original type name.
          */
-        static std::string normalize_orig_name(const char* name);
+        static std::string normalize_orig_name(string_view name);
 
         /*!
          * \brief Initialize all the global variables needed to retrieve the type informations.

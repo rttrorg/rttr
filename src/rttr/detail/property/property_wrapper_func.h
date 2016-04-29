@@ -39,14 +39,18 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_wrapper(Getter get, Setter set,
+        property_wrapper(string_view name, type declaring_type,
+                         Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-function with exactly one argument.");
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -87,11 +91,15 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
     using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_wrapper(Getter get, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         Getter get, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-function without arguments.");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -129,9 +137,11 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_wrapper(Getter get, Setter set,
+        property_wrapper(string_view name, type declaring_type,
+                         Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-function with a reference as return value!");
@@ -141,6 +151,8 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-function with exactly one argument.");
 
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -181,11 +193,15 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:
-        property_wrapper(Getter get, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         Getter get, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
             static_assert(std::is_reference<return_type>::value, "Please provide a function with a reference as return value!");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }

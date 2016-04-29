@@ -35,6 +35,7 @@ set(HEADER_FILES test_classes.h
 set(SOURCE_FILES main.cpp
                  misc/test_misc.cpp
                  misc/array_range_test.cpp
+                 misc/string_view_test.cpp
                  property/property_access_level_test.cpp
                  property/property_misc_test.cpp
                  property/property_class_inheritance.cpp

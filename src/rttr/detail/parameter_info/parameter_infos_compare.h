@@ -49,7 +49,7 @@ namespace detail
 
 struct compare_with_type_list
 {
-    static RTTR_INLINE bool compare(const parameter_info_range& param_list, const std::vector<type>& arg_types)
+    static RTTR_INLINE bool compare(const array_range<parameter_info>& param_list, const std::vector<type>& arg_types)
     {
         const auto param_count = param_list.size();
         if (param_count != arg_types.size())
@@ -71,7 +71,7 @@ struct compare_with_type_list
 
 struct compare_with_arg_list
 {
-    static RTTR_INLINE bool compare(const parameter_info_range& param_list, const std::vector<argument>& args)
+    static RTTR_INLINE bool compare(const array_range<parameter_info>& param_list, const std::vector<argument>& args)
     {
         const auto param_count = param_list.size();
         const auto arg_count = args.size();

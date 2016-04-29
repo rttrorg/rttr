@@ -31,12 +31,14 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/detail/misc/std_type_traits.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 #include <cstddef>
 #include <memory>
 #include <type_traits>
 #include <utility>
 #include <algorithm>
+#include <string>
 
 namespace rttr
 {
@@ -177,6 +179,32 @@ struct remove_last_index_impl<index_sequence<First, I...>>
 template<typename T>
 using remove_last_index = typename remove_last_index_impl<T>::type;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//template<typename T, std::size_t Index>
+//using type_identity = T;
+
+//
+template<typename T, std::size_t Index>
+struct type_identity
+{
+    using type = T;
+};
+
+template<typename T, std::size_t N, typename Indices = make_index_sequence<N>>
+struct create_type_list;
+
+template<typename T, std::size_t N, std::size_t... Indices>
+struct create_type_list<T, N, index_sequence<Indices...>>
+{
+    using type = type_list<typename type_identity<T, Indices>::type...>;
+};
+
+// creates a type list with type T, N times in it
+// e.g. create_type_list_t<int, 3> => type_list<int, int, int>
+template<typename T, std::size_t N>
+using create_type_list_t = typename create_type_list<T, N>::type;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -534,6 +562,39 @@ static RTTR_INLINE std::shared_ptr<T> create_if_empty(const std::shared_ptr<T>& 
 {
     return (obj.get() ? obj : std::make_shared<T>());
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Generates a hash value for continuous sequence of char's
+ */
+RTTR_INLINE static std::size_t generate_hash(const char* text, std::size_t length)
+{
+    const std::size_t  magic_prime = static_cast<std::size_t>(0x01000193);
+    std::size_t               hash = static_cast<std::size_t>(0xcbf29ce4);
+
+    for (std::size_t i = 0; i < length; ++i)
+      hash = (hash ^ text[i]) * magic_prime;
+
+    return hash;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// custom has functor, to make sure that "std::string" and "rttr::string_view" uses the same hashing algorithm
+template <typename T>
+class hash;
+
+template <>
+class hash<std::string>
+{
+public:
+    size_t operator()(const std::string& text) const
+    {
+        return generate_hash(text.data(), text.length());
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

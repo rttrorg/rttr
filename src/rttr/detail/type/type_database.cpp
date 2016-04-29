@@ -57,8 +57,6 @@ type_database::type_database()
 {
     m_orig_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_custom_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_orig_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_custom_name_to_id.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_base_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_derived_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
@@ -86,8 +84,8 @@ type_database::type_database()
     // The following inserts are done, because we use the type_id directly
     // as index for the vector to access the following type information
     // type_id 0 is the invalid type, therfore we have to fill some dummy data
-    m_orig_names.push_back("!invalid_type!");
-    m_custom_names.push_back(m_orig_names[0]);
+    m_orig_names.emplace_back("!invalid_type!");
+    m_custom_names.emplace_back(m_orig_names[0]);
 
     m_base_class_list.push_back(0);
     m_derived_class_list.push_back(0);
@@ -117,32 +115,6 @@ type_database::type_database()
 
 type_database::~type_database()
 {
-    for(auto& prop : m_global_properties.value_data())
-        detail::destroy_item<property>(prop);
-
-    for(auto& item : m_type_property_map)
-    {
-        for(auto& prop : item.second)
-            detail::destroy_item<property>(prop);
-    }
-
-    for(auto& meth : m_global_methods.value_data())
-        detail::destroy_item<method>(meth);
-
-    for(auto& item : m_type_method_map)
-    {
-        for(auto& prop : item.second)
-            detail::destroy_item<method>(prop);
-    }
-
-    for(auto& item : m_type_ctor_map)
-    {
-        for(auto& ctor : item.second)
-            detail::destroy_item<constructor>(ctor);
-    }
-
-    for(auto& itr : m_type_dtor_map)
-        detail::destroy_item<destructor>(itr.second);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -156,42 +128,55 @@ type_database& type_database::instance()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static void update_class_list(const type& t,
-                              const std::unordered_map<type, std::vector<T>>& type_map,
-                              std::unordered_map<type, std::vector<T>>& class_map)
+static array_range<T> get_items_for_type(const type& t,
+                                         const std::unordered_map<type, std::vector<T>>& class_map)
 {
-    // update type "t" with all items from the base classes
-    const auto& type_list_itr = type_map.find(t);
-    auto& all_items_list = class_map[t];
-    all_items_list.reserve(all_items_list.size() + 1);
-    all_items_list.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
-
-    for (const auto& base_type : t.get_base_classes())
+    const auto ret = class_map.find(t);
+    if (ret != class_map.end())
     {
-        auto ret = type_map.find(base_type);
-        if (ret != type_map.end())
-        {
-            auto& base_propery_list = ret->second;
-            all_items_list.reserve(all_items_list.size() + base_propery_list.size());
-            all_items_list.insert(all_items_list.end(), base_propery_list.begin(), base_propery_list.end());
-        }
-    }
-    // insert own class items
-    if (type_list_itr != type_map.end())
-    {
-        all_items_list.reserve(all_items_list.size() + type_list_itr->second.size());
-        all_items_list.insert(all_items_list.end(), type_list_itr->second.begin(), type_list_itr->second.end());
+        auto& vec = ret->second;
+        return array_range<T>(vec.data(), vec.size(),
+                              default_predicate<T>([t](const T& item) { return (item.get_declaring_type() == t); }) );
     }
 
-    // update derived types
-    for (const auto& derived_type : t.get_derived_classes())
-        update_class_list<T>(derived_type, type_map, class_map);
+    return array_range<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static T get_class_item(const type& t, const char* name,
+static void update_class_list(const type& t,
+                               std::unordered_map<type, std::vector<T>>& class_map)
+{
+    // update type "t" with all items from the base classes
+    auto& all_items_list = class_map[t];
+    auto item_range = get_items_for_type<T>(t, class_map);
+    std::vector<T> item_vec(item_range.begin(), item_range.end());
+    all_items_list.reserve(all_items_list.size() + 1);
+    all_items_list.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
+    for (const auto& base_type : t.get_base_classes())
+    {
+        auto base_item_range = get_items_for_type<T>(base_type, class_map);
+        if (base_item_range.empty())
+            continue;
+
+        all_items_list.reserve(all_items_list.size() + base_item_range.size());
+        all_items_list.insert(all_items_list.end(), base_item_range.begin(), base_item_range.end());
+    }
+
+    // insert own class items
+    all_items_list.reserve(all_items_list.size() + item_vec.size());
+    all_items_list.insert(all_items_list.end(), item_vec.begin(), item_vec.end());
+
+    // update derived types
+    for (const auto& derived_type : t.get_derived_classes())
+        update_class_list<T>(derived_type, class_map);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static T get_class_item(const type& t, string_view name,
                         const std::unordered_map<type, std::vector<T>>& item_map)
 {
     const auto ret = item_map.find(t);
@@ -224,53 +209,59 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
         if (get_type_property(t, name))
             return;
 
-        auto& type_prop_list = m_type_property_map[t];
-        type_prop_list.emplace_back(detail::create_item<property>(prop.release()));
-
-        update_class_list<property>(t, m_type_property_map, m_class_property_map);
+        m_class_property_map[t].emplace_back(detail::create_item<property>(prop.get()));
+        m_property_list.push_back(std::move(prop));
+        update_class_list<property>(t, m_class_property_map);
     }
     else
     {
         if (get_global_property(name))
             return;
 
-        property p = detail::create_item<property>(prop.release());
+        property p = detail::create_item<property>(prop.get());
         m_global_properties.insert(std::move(name), std::move(p));
+        m_property_list.push_back(std::move(prop));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_class_property(const type& t, const char* name) const
+property type_database::get_class_property(const type& t, string_view name) const
 {
     return get_class_item<property>(t, name, m_class_property_map);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_type_property(const type& t, const char* name) const
+property type_database::get_type_property(const type& t, string_view name) const
 {
-    return get_class_item<property>(t, name, m_type_property_map);
+    for (const auto& prop : get_items_for_type<property>(t, m_class_property_map))
+    {
+        if (prop.get_name() == name)
+            return prop;
+    }
+
+    return create_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_class_properties(const type& t)
+array_range<property> type_database::get_class_properties(const type& t) const
 {
     const auto ret = m_class_property_map.find(t);
     if (ret != m_class_property_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return property_range(vec.data(), vec.size());
+            return array_range<property>(vec.data(), vec.size());
     }
 
-    return property_range();
+    return array_range<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type_database::get_global_property(const char* name) const
+property type_database::get_global_property(string_view name) const
 {
     const auto ret = m_global_properties.find(name);
     if (ret != m_global_properties.end())
@@ -281,17 +272,17 @@ property type_database::get_global_property(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_range type_database::get_global_properties()
+array_range<property> type_database::get_global_properties()
 {
     auto& vec = m_global_properties.value_data();
-    return property_range(vec.data(), vec.size());
+    return array_range<property>(vec.data(), vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static std::vector<type> convert_param_list(const parameter_info_range& param_list)
+static std::vector<type> convert_param_list(const array_range<parameter_info>& param_list)
 {
     std::vector<type> result;
     result.reserve(param_list.size());
@@ -315,50 +306,30 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
         if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
             return;
 
-        auto& type_meth_list = m_type_method_map[t];
-        type_meth_list.emplace_back(detail::create_item<method>(meth.release()));
-
-        update_class_list<method>(t, m_type_method_map, m_class_method_map);
+        m_class_method_map[t].emplace_back(detail::create_item<method>(meth.get()));
+        m_method_list.push_back(std::move(meth));
+        update_class_list<method>(t, m_class_method_map);
     }
     else
     {
         if (get_global_method(name, convert_param_list(meth->get_parameter_infos())))
             return;
 
-        method m = detail::create_item<method>(meth.release());
+        method m = detail::create_item<method>(meth.get());
         m_global_methods.insert(std::move(name), std::move(m));
+        m_method_list.push_back(std::move(meth));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_type_method(const type& t, const char* name) const
+method type_database::get_type_method(const type& t, string_view name) const
 {
-    return get_class_item<method>(t, name, m_type_method_map);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-method type_database::get_class_method(const type& t, const char* name) const
-{
-    return get_class_item<method>(t, name, m_class_method_map);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-method type_database::get_type_method(const type& t, const char* name,
-                                      const std::vector<type>& type_list) const
-{
-    const auto ret = m_type_method_map.find(t);
-    if (ret != m_type_method_map.end())
+    for (const auto& meth : get_items_for_type<method>(t, m_class_method_map))
     {
-        for (const auto& meth : ret->second)
+        if (meth.get_name() == name)
         {
-            if ( meth.get_name() == name &&
-                 detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
-            {
-                return meth;
-            }
+            return meth;
         }
     }
 
@@ -367,7 +338,31 @@ method type_database::get_type_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_class_method(const type& t, const char* name,
+method type_database::get_class_method(const type& t, string_view name) const
+{
+    return get_class_item<method>(t, name, m_class_method_map);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+method type_database::get_type_method(const type& t, string_view name,
+                                      const std::vector<type>& type_list) const
+{
+    for (const auto& meth : get_items_for_type<method>(t, m_class_method_map))
+    {
+        if (meth.get_name() == name &&
+            detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
+        {
+            return meth;
+        }
+    }
+
+    return detail::create_item<method>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<type>& type_list) const
 {
     const auto ret = m_class_method_map.find(t);
@@ -388,7 +383,7 @@ method type_database::get_class_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_class_method(const type& t, const char* name,
+method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<argument>& arg_list) const
 {
     const auto ret = m_class_method_map.find(t);
@@ -409,22 +404,22 @@ method type_database::get_class_method(const type& t, const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_class_methods(const type& t)
+array_range<method> type_database::get_class_methods(const type& t)
 {
     const auto ret = m_class_method_map.find(t);
     if (ret != m_class_method_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return method_range(vec.data(), vec.size());
+            return array_range<method>(vec.data(), vec.size());
     }
 
-    return method_range();
+    return array_range<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name) const
+method type_database::get_global_method(string_view name) const
 {
     const auto ret = m_global_methods.find(name);
     if (ret != m_global_methods.end())
@@ -435,7 +430,7 @@ method type_database::get_global_method(const char* name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name, const std::vector<type>& type_list) const
+method type_database::get_global_method(string_view name, const std::vector<type>& type_list) const
 {
     auto itr = m_global_methods.find(name);
     while (itr != m_global_methods.end())
@@ -455,7 +450,7 @@ method type_database::get_global_method(const char* name, const std::vector<type
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_database::get_global_method(const char* name, const std::vector<argument>& arg_list) const
+method type_database::get_global_method(string_view name, const std::vector<argument>& arg_list) const
 {
     auto itr = m_global_methods.find(name);
     while (itr != m_global_methods.end())
@@ -475,10 +470,10 @@ method type_database::get_global_method(const char* name, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_range type_database::get_global_methods()
+array_range<method> type_database::get_global_methods()
 {
     auto& vec = m_global_methods.value_data();
-    return method_range(vec.data(), vec.size());
+    return array_range<method>(vec.data(), vec.size());
 }
 
 
@@ -526,10 +521,8 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
         return;
 
     // TO DO you cannot create constructor with the same argument type
-    //if (get_constructor(t, convert_param_list(ctor->get_parameter_infos())))
-      //  return;
-
-    m_type_ctor_map[t].emplace_back(detail::create_item<constructor>(ctor.release()));
+    m_type_ctor_map[t].emplace_back(detail::create_item<constructor>(ctor.get()));
+    m_constructor_list.push_back(std::move(ctor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -583,17 +576,17 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_range type_database::get_constructors(const type& t)
+array_range<constructor> type_database::get_constructors(const type& t)
 {
     const auto ret = m_type_ctor_map.find(t);
     if (ret != m_type_ctor_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return constructor_range(vec.data(), vec.size());
+            return array_range<constructor>(vec.data(), vec.size());
     }
 
-    return constructor_range();
+    return array_range<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -605,7 +598,7 @@ void type_database::register_destructor(const type& t, std::unique_ptr<destructo
     auto d = detail::create_item<destructor>(dtor.get());
     const auto ret = m_type_dtor_map.insert(std::make_pair(t, d));
     if (ret.second)
-        dtor.release();
+        m_destructor_list.push_back(std::move(dtor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -639,26 +632,32 @@ const enumeration_wrapper_base* type_database::get_enumeration(const type& t) co
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_custom_name(const type& t, std::string custom_name)
+void type_database::register_custom_name(const type& t, string_view custom_name)
 {
     if (!t.is_valid())
         return;
 
     // TO DO normalize names
-    m_custom_names[t.get_id()] = std::move(custom_name);
-    const auto& custom_ref = m_custom_names[t.get_id()];
+    const auto& orig_name = m_custom_names[t.get_id()];
+    m_custom_name_to_id.erase(orig_name);
+
+    m_custom_names[t.get_id()] = custom_name.to_string();
+    m_custom_name_to_id.insert(std::make_pair(m_custom_names[t.get_id()], t.get_id()));
     std::string raw_name = type::normalize_orig_name(m_orig_names[t.get_id()]);
-    for (auto& name_to_id : m_custom_name_to_id)
+    const auto& t_name = m_custom_names[t.get_id()];
+
+    auto tmp_id_list = m_custom_name_to_id.value_data();
+    for (const auto& id : tmp_id_list)
     {
-        const auto& id = name_to_id.m_id;
         if (m_array_raw_type_list[id] == t.get_id())
         {
-            m_custom_names[id] = derive_name(m_custom_names[id], raw_name, custom_ref);
-            name_to_id.m_hash_value = generate_hash(m_custom_names[id]);
+            const auto& orig_name_derived = m_custom_names[id];
+            m_custom_name_to_id.erase(orig_name_derived);
+
+            m_custom_names[id] = derive_name(m_custom_names[id], raw_name, t_name);
+            m_custom_name_to_id.insert(std::make_pair(m_custom_names[id], id));
         }
     }
-
-    std::sort(m_custom_name_to_id.begin(), m_custom_name_to_id.end(), name_to_id::order_by_name());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -898,13 +897,13 @@ std::string type_database::derive_name(const std::string& src_name, const std::s
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_database::derive_name(const type& array_raw_type, const char* name)
+std::string type_database::derive_name(const type& array_raw_type, string_view name)
 {
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
 
     type::type_id raw_id = array_raw_type.get_id();
-    const auto custom_name = m_custom_names[raw_id];
+    const auto& custom_name = m_custom_names[raw_id];
     std::string raw_name_orig = type::normalize_orig_name(m_orig_names[raw_id]);
 
     const std::string src_name_orig = type::normalize_orig_name(name);
@@ -913,35 +912,23 @@ std::string type_database::derive_name(const type& array_raw_type, const char* n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(const char* name, const type& array_raw_type, uint16_t& id)
+bool type_database::register_name(string_view name, const type& array_raw_type, uint16_t& id)
 {
     using namespace detail;
 
-    const auto hash_value = generate_hash(name);
-    // check if the name was already registered, then return with the already stored id
-    auto itr = std::lower_bound(m_orig_name_to_id.cbegin(), m_orig_name_to_id.cend(), hash_value, name_to_id::order_by_name());
-    for (; itr != m_orig_name_to_id.end(); ++itr)
+    auto ret = m_orig_name_to_id.find(name);
+    if (ret != m_orig_name_to_id.end())
     {
-        auto& item = *itr;
-        if (item.m_hash_value != hash_value)
-            break;
-
-        if (std::strcmp(m_orig_names[item.m_id], name) == 0)
-        {
-            id = static_cast<type::type_id>(item.m_id);
-            return true;
-        }
+        id = *ret;
+        return true;
     }
 
-    m_orig_name_to_id.emplace_back(name_to_id{++m_type_id_counter, hash_value});
-    std::sort( m_orig_name_to_id.begin(), m_orig_name_to_id.end(), name_to_id::order_by_name());
+    m_orig_name_to_id.insert(std::make_pair(name, ++m_type_id_counter));
     m_orig_names.push_back(name);
 
     auto custom_name = derive_name(array_raw_type, name);
-    // TO DO hash normalized name (i.e. without spaces)
-    m_custom_name_to_id.emplace_back(name_to_id{m_type_id_counter, generate_hash(custom_name)});
-    std::sort(m_custom_name_to_id.begin(), m_custom_name_to_id.end(), name_to_id::order_by_name());
     m_custom_names.emplace_back(std::move(custom_name));
+    m_custom_name_to_id.insert(std::make_pair(m_custom_names.back(), m_type_id_counter));
 
     id = m_type_id_counter;
     m_type_list.emplace_back(type(id));
@@ -1006,7 +993,7 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::register_type(const char* name,
+uint16_t type_database::register_type(string_view name,
                                       const type& raw_type,
                                       const type& wrapped_type,
                                       const type& array_raw_type,
@@ -1064,24 +1051,12 @@ uint16_t type_database::register_type(const char* name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::get_by_name(const char* name) const
+uint16_t type_database::get_by_name(string_view name) const
 {
-    // TO DO normalize name
-    const auto hash_value = generate_hash(name);
-    auto itr = std::lower_bound(m_custom_name_to_id.cbegin(), m_custom_name_to_id.cend(), hash_value,
-                                name_to_id::order_by_name());
-    for (; itr != m_custom_name_to_id.cend(); ++itr)
-    {
-        auto& item = *itr;
+    auto ret = m_custom_name_to_id.find(name);
+    if (ret != m_custom_name_to_id.end())
+        return *ret;
 
-        if (item.m_hash_value != hash_value)
-            break;
-
-        if (m_custom_names[item.m_id].compare(name) == 0)
-            return item.m_id;
-    }
-
-    // TO DO not 100% fine, should use type::type_id or not as return value?
     return type::m_invalid_id;
 }
 

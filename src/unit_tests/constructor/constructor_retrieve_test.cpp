@@ -86,11 +86,11 @@ TEST_CASE("constructor - retrieve", "[constructor]")
         REQUIRE(ctor_list.size() == 5);
         auto ctor_name = t.get_name();
         // check order
-        CHECK(ctor_list[0].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[1].get_signature() == ctor_name + "( ctor_test const & )");
-        CHECK(ctor_list[2].get_signature() == ctor_name + "( int, double )");
-        CHECK(ctor_list[3].get_signature() == ctor_name + "( )");
-        CHECK(ctor_list[4].get_signature() == ctor_name + "( )");
+        CHECK(ctor_list[0].get_signature() == std::string(ctor_name) + "( )");
+        CHECK(ctor_list[1].get_signature() == std::string(ctor_name) + "( ctor_test const & )");
+        CHECK(ctor_list[2].get_signature() == std::string(ctor_name) + "( int, double )");
+        CHECK(ctor_list[3].get_signature() == std::string(ctor_name) + "( )");
+        CHECK(ctor_list[4].get_signature() == std::string(ctor_name) + "( )");
     }
 }
 

@@ -39,27 +39,12 @@ class property;
 class method;
 class constructor;
 class enumeration;
-class type;
 class parameter_info;
-
-template<typename T, typename Predicate>
-class array_range;
 
 namespace detail
 {
-    struct no_predicate {};
-
-    template<typename T>
-    struct default_predicate
-    {
-        using predicate_func = bool(*)(const T&);
-
-        RTTR_FORCE_INLINE default_predicate() : m_func([](const T&){ return true; }) {}
-        RTTR_FORCE_INLINE default_predicate(const predicate_func& func) : m_func(func) {}
-        RTTR_FORCE_INLINE bool operator()(const T& obj) const  { return m_func(obj); }
-
-        predicate_func m_func;
-    };
+template<typename T>
+struct default_predicate;
 
 } // end namespace detail
 
@@ -74,7 +59,7 @@ namespace detail
  *         its iterators and the range itself will be invalidated.
  */
 
-template<typename T, typename Predicate = detail::no_predicate>
+template<typename T, typename Predicate = detail::default_predicate<T>>
 class array_range
 {
 public:
@@ -94,7 +79,7 @@ public:
      * \param size The number of elements to include in the range.
      * \param pred Determines whether an element in the range fulfills the condition of the predicate.
      */
-    array_range(bounds_type begin, size_type size, const Predicate& pred = Predicate());
+    array_range(const T* begin, size_type size, const Predicate& pred = Predicate());
 
 #ifndef DOXYGEN
     /*!
@@ -188,7 +173,7 @@ public:
      *
      * \return Iterator to the first element.
      */
-    iterator begin();
+    const_iterator begin();
 
     /*!
      * \brief Returns an iterator to the element following the last element of the range.
@@ -198,7 +183,7 @@ public:
      *
      * \return Iterator to the element following the last element.
      */
-    iterator end();
+    const_iterator end();
 
     /*!
      * \brief Returns a constant iterator to the first element of the range.
@@ -246,7 +231,7 @@ public:
      *
      * \return Reverse iterator to the first element.
      */
-    reverse_iterator rbegin();
+    const_reverse_iterator rbegin();
 
     /*!
      * \brief Returns a reverse iterator to the element following the last element of the reversed range.
@@ -256,7 +241,7 @@ public:
      *
      * \return Reverse iterator to the element following the last element.
      */
-    reverse_iterator rend();
+    const_reverse_iterator rend();
 
     /*!
      * \brief Returns a constant reverse iterator to the first element of the reversed range.
@@ -320,299 +305,12 @@ private:
     void prev(array_reverse_iterator<DataType>& itr) const;
 
 private:
-    bounds_type const   m_begin;
-    bounds_type const   m_end;
+    const T* const   m_begin;
+    const T* const   m_end;
     const Predicate     m_pred;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-#ifndef DOXYGEN
-
-template<typename T>
-class array_range<T, detail::no_predicate>
-{
-public:
-    using value_type = T;
-    using bounds_type = T*;
-    using size_type = std::size_t;
-
-    /*!
-     * \brief Default constructor. Constructs an empty array_range.
-     */
-    array_range();
-
-    /*!
-     * \brief Constructs an array range starting from \p begin to \p end [begin, end).
-     *
-     * \param begin Marks the start of the range. Is included of the range.
-     * \param size The number of elements to include in the range.
-     * \param pred Determines whether an element in the range fulfills the condition of the predicate.
-     */
-    array_range(bounds_type begin, size_type size, const detail::no_predicate& pred = detail::no_predicate());
-
-#ifndef DOXYGEN
-    /*!
-     * The base class for all item forward iterators.
-     */
-    template<typename DataType>
-    class array_iterator_base
-    {
-        public:
-            using self_type = array_iterator_base<DataType>;
-            using value_type = DataType;
-            using reference = DataType&;
-            using pointer = DataType*;
-            using iterator_category = std::forward_iterator_tag;
-            using difference_type = std::ptrdiff_t;
-
-            reference operator*();
-            pointer operator->();
-            bool operator==(const self_type& rhs) const;
-            bool operator!=(const self_type& rhs) const;
-
-            array_iterator_base& operator=(const self_type& other);
-
-        protected:
-            friend class array_range<T>;
-            array_iterator_base();
-            array_iterator_base(pointer ptr);
-
-            pointer m_ptr;
-    };
-
-    /*!
-     * A forward iterator for items of type \p DataType.
-     */
-    template<typename DataType>
-    class array_iterator : public array_iterator_base<DataType>
-    {
-        public:
-            using self_type = array_iterator<DataType>;
-
-            array_iterator();
-            array_iterator(const array_iterator<DataType>& other);
-
-
-            self_type& operator++();
-            self_type operator++(int index);
-
-        private:
-            array_iterator(typename array_iterator_base<DataType>::pointer ptr);
-            friend class array_range<T>;
-    };
-
-    /*!
-     * A forward reverse iterator for items of type \p DataType.
-     */
-    template<typename DataType>
-    class array_reverse_iterator : public array_iterator_base<DataType>
-    {
-        public:
-            using self_type = array_reverse_iterator<DataType>;
-
-            array_reverse_iterator();
-            array_reverse_iterator(const array_reverse_iterator<DataType>& other);
-
-            self_type& operator++();
-            self_type operator++(int index);
-
-        private:
-            array_reverse_iterator(typename array_iterator_base<DataType>::pointer ptr);
-            friend class array_range<T>;
-    };
-#endif
-
-    //! A forward iterator.
-    using iterator = array_iterator<T>;
-    //! A constant forward iterator.
-    using const_iterator = array_iterator<const T>;
-
-    //! A forward iterator that reverses the direction.
-    using reverse_iterator = array_reverse_iterator<T>;
-    //! A constant forward iterator that reverses the direction.
-    using const_reverse_iterator = array_reverse_iterator<const T>;
-
-    /*!
-     * \brief Returns an iterator to the first element of the range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref end().
-     *
-     * \return Iterator to the first element.
-     */
-    iterator begin();
-
-    /*!
-     * \brief Returns an iterator to the element following the last element of the range.
-     *
-     * \remark This element acts as placeholder, attempting to access it results in **undefined behavior**.
-     *         If the range is empty, the returned iterator will be equal to \ref begin().
-     *
-     * \return Iterator to the element following the last element.
-     */
-    iterator end();
-
-    /*!
-     * \brief Returns a constant iterator to the first element of the range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref end().
-     *
-     * \return Constant iterator to the first element.
-     */
-    const_iterator begin() const;
-
-    /*!
-     * \brief Returns a constant iterator to the element following the last element of the range.
-     *
-     * \remark This element acts as placeholder, attempting to access it results in **undefined behavior**.
-     *         If the range is empty, the returned iterator will be equal to \ref begin().
-     *
-     * \return Constant iterator to the element following the last element.
-     */
-    const_iterator end() const;
-
-     /*!
-     * \brief Returns a constant iterator to the first element of the  range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref end().
-     *
-     * \return Constant iterator to the first element.
-     */
-    const_iterator cbegin() const;
-
-    /*!
-     * \brief Returns a constant iterator to the element following the last element of the range.
-     *
-     * \remark This element acts as placeholder, attempting to access it results in **undefined behavior**.
-     *         If the range is empty, the returned iterator will be equal to \ref begin().
-     *
-     * \return Constant iterator to the element following the last element.
-     */
-    const_iterator cend() const;
-
-    /*!
-     * \brief Returns a reverse iterator to the first element of the reversed range.
-     *        It corresponds to the last element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rend().
-     *
-     * \return Reverse iterator to the first element.
-     */
-    reverse_iterator rbegin();
-
-    /*!
-     * \brief Returns a reverse iterator to the element following the last element of the reversed range.
-     *        It corresponds to the element preceding the first element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rbegin().
-     *
-     * \return Reverse iterator to the element following the last element.
-     */
-    reverse_iterator rend();
-
-    /*!
-     * \brief Returns a constant reverse iterator to the first element of the reversed range.
-     *        It corresponds to the last element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rend().
-     *
-     * \return Constant reverse iterator to the first element.
-     */
-    const_reverse_iterator rbegin() const;
-
-    /*!
-     * \brief Returns a constant reverse iterator to the element following the last element of the reversed range.
-     *        It corresponds to the element preceding the first element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rbegin().
-     *
-     * \return Constant reverse iterator to the element following the last element.
-     */
-    const_reverse_iterator rend() const;
-
-    /*!
-     * \brief Returns a constant reverse iterator to the first element of the reversed range.
-     *        It corresponds to the last element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rend().
-     *
-     * \return Constant reverse iterator to the first element.
-     */
-    const_reverse_iterator crbegin() const;
-
-    /*!
-     * \brief Returns a constant reverse iterator to the element following the last element of the reversed range.
-     *        It corresponds to the element preceding the first element of the non-reversed range.
-     *
-     * \remark If the range is empty, the returned iterator will be equal to \ref rbegin().
-     *
-     * \return Constant reverse iterator to the element following the last element.
-     */
-    const_reverse_iterator crend() const;
-
-    /*!
-     * \brief Returns the number of elements in the range.
-     *
-     * \return The number of elements in the range.
-     */
-    size_t size() const;
-
-    /*!
-     * \brief Checks if the range has no elements, i.e. whether `begin() == end()`.
-     *
-     * \return `True` if this range is empty, otherwise `false`.
-     */
-    bool empty() const;
-
-private:
-    bounds_type const   m_begin;
-    bounds_type const   m_end;
-};
-#endif
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * \brief A range of properties.
- *
- */
-using property_range = array_range<property>;
-
-/*!
- * \brief A range of methods.
- *
- */
-using method_range = array_range<method>;
-
-/*!
- * \brief A range of constructors.
- *
- */
-using constructor_range = array_range<constructor>;
-
-/*!
- * \brief A range of enumerations.
- *
- */
-using enumeration_range = array_range<enumeration>;
-
-/*!
- * \brief A range of types.
- *
- */
-using type_range = array_range<type>;
-
-/*!
- * \brief A range of parameter infos.
- *
- */
-using parameter_info_range = array_range<parameter_info>;
-
 
 } // end namespace rttr
 

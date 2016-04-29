@@ -37,10 +37,13 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(accessor acc, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -82,10 +85,13 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(accessor acc, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -122,11 +128,15 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(accessor acc, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
+        property_wrapper(string_view name, type declaring_type,
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
@@ -171,10 +181,14 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(accessor acc, std::array<metadata, Metadata_Count> metadata_list)
-        :   metadata_handler<Metadata_Count>(std::move(metadata_list)), m_acc(acc)
+        property_wrapper(string_view name, type declaring_type,
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
+
+            init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }

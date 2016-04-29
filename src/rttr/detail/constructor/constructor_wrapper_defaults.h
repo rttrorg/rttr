@@ -74,6 +74,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
+            init();
         }
 
         type get_instanciated_type()    const { return type::get<instanciated_type>(); }
@@ -89,8 +90,8 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
         std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                m_param_info_list.size()); }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>(m_param_info_list.data(),
+                                                                                                       m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const
@@ -162,6 +163,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             m_param_info_list(create_paramter_info_array(m_param_infos))
         {
             store_default_args_in_param_infos(m_param_infos, m_def_args);
+            init();
         }
 
         access_levels get_access_level()                    const { return Acc_Level; }
@@ -169,8 +171,8 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();          }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(const_cast<decltype(m_param_info_list)&>(m_param_info_list).data(),
-                                                                                                m_param_info_list.size()); }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>(m_param_info_list.data(),
+                                                                                                       m_param_info_list.size()); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const
@@ -235,6 +237,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
         :   metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_def_args(std::move(default_args))
         {
+            init();
         }
 
         type get_instanciated_type()    const { return type::get<instanciated_type>(); }
@@ -250,7 +253,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
         std::vector<bool> get_is_reference() const { return get_is_reference_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
         std::vector<bool> get_is_const() const { return get_is_const_impl(std::integral_constant<bool, sizeof...(Ctor_Args) != 0>()); }
 
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range(); }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>(); }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const
@@ -318,6 +321,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             m_creator_func(creator_func),
             m_def_args(std::move(default_args))
         {
+            init();
         }
 
         access_levels get_access_level()                    const { return Acc_Level;                                           }
@@ -325,7 +329,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>();     }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()                    const { return method_accessor<F, Policy>::get_is_const();          }
-        parameter_info_range get_parameter_infos()          const { return parameter_info_range();                              }
+        array_range<parameter_info> get_parameter_infos()   const { return array_range<parameter_info>();                       }
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         variant invoke() const

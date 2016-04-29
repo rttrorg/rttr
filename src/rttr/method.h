@@ -33,6 +33,7 @@
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"
+#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
@@ -138,7 +139,7 @@ class RTTR_API method
          *
          * \return Name of the method.
          */
-        std::string get_name() const;
+        string_view get_name() const;
 
         /*!
          * \brief Returns the access level with which this method was
@@ -182,14 +183,14 @@ class RTTR_API method
          *
          * \return A range of parameter_info objects of the method signature.
          */
-        parameter_info_range get_parameter_infos() const;
+        array_range<parameter_info> get_parameter_infos() const;
 
         /*!
          * \brief Returns the signature of this method as readable string.
          *
          * \return The signature as readable string.
          */
-        std::string get_signature() const;
+        string_view get_signature() const;
 
         /*!
          * \brief Returns the meta data for the given key \p key.
@@ -297,8 +298,6 @@ class RTTR_API method
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
-        template<typename T>
-        friend void detail::destroy_item(T& item);
 
     private:
         const detail::method_wrapper_base* m_wrapper;

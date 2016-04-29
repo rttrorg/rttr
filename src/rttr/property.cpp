@@ -47,12 +47,6 @@ property create_item(const property_wrapper_base* wrapper)
     return property(wrapper);
 }
 
-template<>
- void destroy_item(property& prop)
- {
-     delete prop.m_wrapper;
- }
-
 } // end namespace detail;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -139,12 +133,12 @@ bool property::is_array() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string property::get_name() const
+string_view property::get_name() const
 {
     if (is_valid())
         return m_wrapper->get_name();
     else
-        return string();
+        return string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
