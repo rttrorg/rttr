@@ -80,6 +80,9 @@ class RTTR_API property_wrapper_base
         //! Returns true when the underlying property is an array type.
         virtual bool is_array() const = 0;
 
+	 //! Returns true when the underlying property is a pointer type.
+        virtual bool is_pointer() const = 0;
+	
         //! Sets this property of the given instance \p instance to the value of the argument \p argument.
         virtual bool set_value(instance& object, argument& arg) const = 0;
 

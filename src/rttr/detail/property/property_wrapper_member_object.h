@@ -51,6 +51,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
+        bool is_pointer()   const   { return std::is_pointer<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -99,6 +100,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
+        bool is_pointer()   const   { return std::is_pointer<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -144,6 +146,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A*>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
+        bool is_pointer()   const   { return std::is_pointer<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -196,6 +199,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }
         bool is_array()     const   { return detail::is_array<A>::value; }
+        bool is_pointer()   const   { return std::is_pointer<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
