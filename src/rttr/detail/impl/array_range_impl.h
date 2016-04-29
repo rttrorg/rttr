@@ -60,6 +60,10 @@ RTTR_INLINE array_range<T, Predicate>::array_range()
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin()
 {
+    if (empty())
+    {
+        return {nullptr, this};
+    }
     const_iterator itr(m_begin, this);
     if (m_pred(*itr))
         return itr;
@@ -82,6 +86,10 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin() const
 {
+    if (empty())
+    {
+        return {nullptr, this};
+    }
     const_iterator itr(m_begin, this);
     if (m_pred(*itr))
         return itr;
@@ -104,6 +112,10 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::cbegin() const
 {
+    if (empty())
+    {
+        return {nullptr, this};
+    }
     const_iterator itr(m_begin, this);
     if (m_pred(*itr))
         return itr;
