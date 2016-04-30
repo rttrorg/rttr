@@ -93,7 +93,11 @@ template<typename Class_Type, typename acc_level, typename...Ctor_Args>
 class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : public registration::class_<Class_Type>
 {
     private:
-        using default_create_policy = detail::as_object;
+        // this 'as_std_shared_ptr' policy has been selected, because:
+        // * it has automatic memory management; should not leak anything
+        // * we can copy the object inside the variant, without invoking the copy constructor (could be disabled by user)
+        // REMARK: For the default constructor registration will always be code instantiated, when copying is disabled, we get a compile error
+        using default_create_policy = detail::as_std_shared_ptr;
 
         // this additional wrapper function is needed, because of not triggered static_assert in func: 'operator()(Args&&... args)'
         // when we create the object directly inside the operator function, seems to be a bug in MSVC

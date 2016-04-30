@@ -90,8 +90,9 @@ struct constructor_invoker<ctor_type, as_std_shared_ptr, type_list<Class_Type, C
     template<typename... TArgs>
     static RTTR_FORCE_INLINE variant invoke(TArgs&&...args)
     {
+        // we cannot use std::make_shared<T> here because, otherwise we cannot instantiate, constructors which are declared as protected or private
         if (check_all_true(args. template is_type<Ctor_Args>()...))
-            return variant(std::make_shared<Class_Type>(args. template get_value<Ctor_Args>()...));
+            return variant(std::shared_ptr<Class_Type>(new Class_Type(args. template get_value<Ctor_Args>()...)));
         else
             return variant();
     }

@@ -45,8 +45,17 @@ RTTR_REGISTRATION
 {
     registration::class_<ctor_test>("ctor_test")
         .constructor<>()
+        (
+            policy::ctor::as_object
+        )
         .constructor<const ctor_test&>()
+        (
+            policy::ctor::as_object
+        )
         .constructor<int, double>()
+        (
+            policy::ctor::as_object
+        )
         .constructor(&ctor_test::create_object)
         .constructor(&global_create_object);
 }

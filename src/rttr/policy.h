@@ -204,8 +204,8 @@ struct RTTR_API policy
          *
          * That means the object is \ref type::is_wrapper() "wrapped" into a *std::shared_ptr<T>*.
          * The wrapped object is destroyed and its memory deallocated when either of the following happens:
-         * - the last remaining variant object (which contains the *shared_ptr* owning the object is destroyed.
-         * - the last remaining variant owning the *shared_ptr* is assigned another object.
+         * - the last remaining variant owning the *shared_ptr* is destroyed
+         * - the last remaining variant owning the *shared_ptr* is assigned another data or variant
          *
          * The object is destroyed using the default deleter of *std::shared_ptr*.
          *
