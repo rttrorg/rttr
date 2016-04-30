@@ -84,7 +84,7 @@ type::get<D>() == type::get<const D*>(); // yields false
 
 Any `top level` cv-qualifier of the given type `T` will be removed.
 
-rttr::type::get_by_name(const char*)
+rttr::type::get_by_name(string_view)
 ------------------------------------
 
 This function just expects the name of the type. This is useful when you know only the name of the type and cannot include the type itself into the source code.

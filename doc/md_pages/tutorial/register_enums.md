@@ -7,7 +7,7 @@ It has following synopsis:
 
 ~~~~{.cpp}
     template<typename Enum_Type>
-    registration rttr::registration::enumeration( const char* name );
+    registration rttr::registration::enumeration( string_view name );
 ~~~~
 
 - `name` the declared name of this enum
@@ -41,10 +41,10 @@ Then you call for every enumerator you want to add, the function @ref rttr::valu
 It has following synopsis:
 ~~~~{.cpp}
     template<typename Enum_Type>
-    detail::enum_data<Enum_Type> value(const char* name, Enum_Type value);
+    detail::enum_data<Enum_Type> value(string_view name, Enum_Type value);
 ~~~~
 
-The *name* is a `const char*` and the *value* is the enum value.
+The *name* is a `string_view` and the *value* is the enum value.
 
 The class @ref rttr::enumeration "enumeration" contains several meta information about an enum with conversion 
 functions between the value representation and its literal representation.

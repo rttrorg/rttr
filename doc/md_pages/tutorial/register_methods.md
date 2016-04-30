@@ -5,7 +5,7 @@ As already mentioned to register global methods to RTTR use the function \ref rt
 It has following synopsis:
 ~~~~{.cpp}
     template<typename F>
-    rttr::registration::bind rttr::registration::method( const char* name, F function);
+    rttr::registration::bind rttr::registration::method(string_view name, F function);
 ~~~~
 - `name` is the name of the function
 - `F` is the function pointer or std::function your want to register
@@ -51,8 +51,8 @@ It is possible the chain multiple registration calls, because of the temporary r
 Invoke of methods
 -----------------
 Invoking a method with RTTR can be done in two ways:
-- calling @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" from the [type](@ref rttr::type) class.
-- retrieving first a @ref rttr::method "method" object from @ref rttr::type::get_global_method(const char*, const std::vector< type >&) "type::get_global_method()" and then calling invoke
+- calling @ref rttr::type::invoke(string_view, std::vector< argument >) "type::invoke()" from the [type](@ref rttr::type) class.
+- retrieving first a @ref rttr::method "method" object from @ref rttr::type::get_global_method(string_view, const std::vector< type >&) "type::get_global_method()" and then calling invoke
 
 The first option needs less typing, but it is slower when you need to invoke the function several times.
 For the second option you need more code to write, but it invokes the method faster.
@@ -80,7 +80,7 @@ int main()
 }
 ~~~~
 
-The @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" function will internally try 
+The @ref rttr::type::invoke(string_view, std::vector< argument >) "type::invoke()" function will internally try 
 to find a function based on the given name and the given types of the arguments. 
 So finding the correct function when overloaded function are registered is automatically done.
 Notice that you have to provide the arguments as a vector pack. Therefore an initializer list is quite handy to reduce typing.
@@ -88,12 +88,12 @@ The argument must match 100%, there is at the moment no conversion done. That me
 value the function will **not** be called. The arguments will not be copied, instead they will be wrapped in an internal class and forwarded to the 
 underlying function pointer. This class is called `argument` do **not** create this class on your own. The class will implicit wrap your argument value.
 
-The return value of @ref rttr::type::invoke(const char*, std::vector< argument >) "type::invoke()" is a @ref rttr::variant "variant" object.
+The return value of @ref rttr::type::invoke(string_view, std::vector< argument >) "type::invoke()" is a @ref rttr::variant "variant" object.
 It indicates whether the function was called or not. RTTR does **not** use the exception mechanism of C++, therefore you have to check the return values when you are interested
 in a successful call. The @ref rttr::variant object @ref rttr::variant::is_valid "is valid" when it was successfully called. 
 When the function has a return value, then this value is also contained in the variant object.
 
-When you prefer to hold a handle to the function use the getter @ref rttr::type::get_global_method(const char*, const std::vector< type >&) "type::get_global_method()"
+When you prefer to hold a handle to the function use the getter @ref rttr::type::get_global_method(string_view, const std::vector< type >&) "type::get_global_method()"
 to retrieve a @ref rttr::method "method" object. This has the advantage that you do not need to search for the function every time you want to invoke it.
 Additionally this class provides @ref rttr::method::invoke "functions" to invoke a function without the need to create a vector of arguments.
 The method object is lightweight and can be simply copied around different locations. The object stays valid till end of the `main()` function.
