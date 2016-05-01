@@ -41,6 +41,14 @@ struct ctor_misc_test
     int m_value;
 };
 
+struct not_copyable_ctor
+{
+    not_copyable_ctor(){}
+
+    private:
+        not_copyable_ctor(const not_copyable_ctor&);
+};
+
 enum class E_MetaData
 {
     SCRIPTABLE  = 0,
@@ -77,6 +85,7 @@ RTTR_REGISTRATION
         )
         .constructor<int>()
         (
+            policy::ctor::as_object,
             default_arguments(23),
             metadata(E_MetaData::SCRIPTABLE, true)
         )
@@ -86,6 +95,19 @@ RTTR_REGISTRATION
             metadata(E_MetaData::SCRIPTABLE, true)
         )
         ;
+
+   registration::class_<not_copyable_ctor>("not_copyable_ctor")
+        .constructor<>();
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("constructor - default ctor binding type", "[constructor]")
+{
+    variant var = type::get<not_copyable_ctor>().create();
+
+    CHECK(var.get_type() == type::get<std::shared_ptr<not_copyable_ctor>>());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
