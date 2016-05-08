@@ -260,8 +260,11 @@ template<typename DataType>
 RTTR_INLINE void array_range<T, Predicate>::next(array_iterator<DataType>& itr) const
 {
     ++itr.m_ptr;
-    if (itr.m_ptr != m_end && !m_pred(*itr.m_ptr))
-        next(itr);
+    while(itr.m_ptr != m_end && !m_pred(*itr.m_ptr))
+    {
+        ++itr.m_ptr;
+    }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -271,9 +274,10 @@ template<typename DataType>
 RTTR_INLINE void array_range<T, Predicate>::prev(array_reverse_iterator<DataType>& itr) const
 {
     --itr.m_ptr;
-
-    if (itr.m_ptr != (m_begin - 1) && !m_pred(*itr.m_ptr))
-        prev(itr);
+    while(itr.m_ptr != (m_begin - 1) && !m_pred(*itr.m_ptr))
+    {
+        --itr.m_ptr;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

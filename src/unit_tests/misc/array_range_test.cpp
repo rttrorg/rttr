@@ -25,7 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/registration>
+#include <rttr/type>
 
 #include <iostream>
 #include <memory>

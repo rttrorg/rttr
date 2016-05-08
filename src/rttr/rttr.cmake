@@ -32,6 +32,7 @@ set(HEADER_FILES access_levels.h
                  constructor.h
                  destructor.h
                  enumeration.h
+                 enum_flags.h
                  instance.h
                  method.h
                  policy.h
@@ -71,6 +72,7 @@ set(HEADER_FILES access_levels.h
                  detail/enumeration/enum_data.h
                  detail/impl/argument_impl.h
                  detail/impl/array_range_impl.h
+                 detail/impl/enum_flags_impl.h
                  detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
                  detail/impl/string_view_impl.h
