@@ -37,6 +37,7 @@
 #include "rttr/enumeration.h"
 #include "rttr/array_range.h"
 #include "rttr/string_view.h"
+#include "rttr/filter_item.h"
 
 #include "rttr/detail/misc/flat_map.h"
 #include "rttr/detail/misc/flat_multimap.h"
@@ -107,6 +108,7 @@ class RTTR_LOCAL type_database
         property get_type_property(const type& t, string_view name) const;
         property get_class_property(const type& t, string_view name) const;
         array_range<property> get_class_properties(const type& t) const;
+        array_range<property> get_class_properties(const type& t, filter_items filter) const;
 
         property get_global_property(string_view name) const;
         array_range<property> get_global_properties();

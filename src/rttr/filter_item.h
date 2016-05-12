@@ -1,0 +1,75 @@
+/************************************************************************************
+*                                                                                   *
+*   Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     *
+*                                                                                   *
+*   This file is part of RTTR (Run Time Type Reflection)                            *
+*   License: MIT License                                                            *
+*                                                                                   *
+*   Permission is hereby granted, free of charge, to any person obtaining           *
+*   a copy of this software and associated documentation files (the "Software"),    *
+*   to deal in the Software without restriction, including without limitation       *
+*   the rights to use, copy, modify, merge, publish, distribute, sublicense,        *
+*   and/or sell copies of the Software, and to permit persons to whom the           *
+*   Software is furnished to do so, subject to the following conditions:            *
+*                                                                                   *
+*   The above copyright notice and this permission notice shall be included in      *
+*   all copies or substantial portions of the Software.                             *
+*                                                                                   *
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      *
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        *
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     *
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          *
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   *
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   *
+*   SOFTWARE.                                                                       *
+*                                                                                   *
+*************************************************************************************/
+
+#ifndef RTTR_FILTER_ITEM_H_
+#define RTTR_FILTER_ITEM_H_
+
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/enum_flags.h"
+
+namespace rttr
+{
+
+/*!
+ * The \ref filter_item enum is used to search for members in \ref type "types".
+ */
+enum class filter_item
+{
+    /*!
+     * \brief Includes all members which needs an instance to be invoked in the search.
+     */
+    instance_item = 1,
+
+    /*!
+     * \brief Includes all static members in the search.
+     *        Static members doesn't need any instance for invoking.
+     */
+    static_item = 2,
+
+    /*!
+     * \brief Includes all public declared members in the search.
+     */
+    public_access = 4,
+
+    /*!
+     * \brief Includes all non public (private or protected) members in the search.
+     */
+    non_public_access = 8,
+
+    /*!
+     * \brief Returns all members declared for the current type;
+     *        inherited members are not returned.
+     */
+    declared_only = 16
+};
+
+RTTR_DECLARE_FLAGS(filter_items, filter_item)
+RTTR_DECLARE_ENUM_FLAGS_OPERATORS(filter_items)
+
+} // end namespace rttr
+
+#endif // RTTR_FILTER_ITEM_H_

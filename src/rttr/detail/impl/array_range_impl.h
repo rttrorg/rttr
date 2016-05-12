@@ -60,7 +60,7 @@ RTTR_INLINE array_range<T, Predicate>::array_range()
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin()
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -89,7 +89,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin() const
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -118,7 +118,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::cbegin() const
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -147,7 +147,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Pr
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rbegin()
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -168,7 +168,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rend()
 {
-    return (empty() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
+    return (empty_() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rbegin() const
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -197,7 +197,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rend() const
 {
-    return (empty() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
+    return (empty_() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +205,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::crbegin() const
 {
-    if (empty())
+    if (empty_())
     {
         return {m_end, this};
     }
@@ -226,7 +226,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::crend() const
 {
-    return (empty() ? const_reverse_iterator{m_end, this} : const_reverse_iterator{m_begin - 1, this});
+    return (empty_() ? const_reverse_iterator{m_end, this} : const_reverse_iterator{m_begin - 1, this});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -238,8 +238,10 @@ RTTR_INLINE size_t array_range<T, Predicate>::size() const
     const_iterator itr{m_begin, this};
     while(itr != cend())
     {
-        ++itr;
-        ++result;
+        if (m_pred(*itr.m_ptr))
+            ++result;
+
+        ++itr.m_ptr;
     }
 
     return result;
@@ -249,6 +251,27 @@ RTTR_INLINE size_t array_range<T, Predicate>::size() const
 
 template<typename T, typename Predicate>
 RTTR_INLINE bool array_range<T, Predicate>::empty() const
+{
+    if (m_begin == m_end)
+        return true;
+
+    const_iterator itr{m_begin, this};
+    if (m_pred(*itr))
+        return false;
+
+    ++itr.m_ptr;
+    while(itr.m_ptr != m_end && !m_pred(*itr.m_ptr))
+    {
+        ++itr.m_ptr;
+    }
+
+    return (itr == cend());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
+RTTR_INLINE bool array_range<T, Predicate>::empty_() const
 {
     return (m_begin == m_end);
 }

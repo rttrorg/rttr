@@ -520,6 +520,13 @@ array_range<property> type::get_properties() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+array_range<property> type::get_properties(filter_items filter) const
+{
+    return detail::type_database::instance().get_class_properties(get_raw_type(), filter);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 method type::get_method(string_view name) const
 {
     return detail::type_database::instance().get_class_method(get_raw_type(), name);

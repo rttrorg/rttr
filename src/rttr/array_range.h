@@ -286,12 +286,22 @@ public:
     /*!
      * \brief Returns the number of elements in the range.
      *
+     * \remark Every element will be checked against the condition of the used predicate.
+     *         Only elements which fulfill the condition of predicate will be included in the counter.
+     *         That means, in order to determine the size of the range, the underlying algorithm needs to iterate
+     *         through the whole range. So don't call it to often. It's better to cache the result in a temporary variable.
+     *
      * \return The number of elements in the range.
      */
     size_t size() const;
 
     /*!
      * \brief Checks if the range has no elements, i.e. whether `begin() == end()`.
+     *
+     * \remark Every element will be checked against the condition of the used predicate.
+     *         Only when every element doe not fulfill the condition of predicate, the range is declared empty.
+     *         That means, in order to check for emptiness, the underlying algorithm needs to iterate
+     *         through the whole range. So don't call it to often. It's better to cache the result in a temporary variable.
      *
      * \return `True` if this range is empty, otherwise `false`.
      */
@@ -303,6 +313,8 @@ private:
 
     template<typename DataType>
     void prev(array_reverse_iterator<DataType>& itr) const;
+
+    bool empty_() const;
 
 private:
     const T* const   m_begin;

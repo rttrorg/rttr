@@ -33,6 +33,7 @@ set(HEADER_FILES access_levels.h
                  destructor.h
                  enumeration.h
                  enum_flags.h
+                 filter_item.h
                  instance.h
                  method.h
                  policy.h

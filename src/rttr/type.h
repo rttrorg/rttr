@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/string_view.h"
 #include "rttr/array_range.h"
+#include "rttr/filter_item.h"
 
 #include <type_traits>
 #include <vector>
@@ -541,7 +542,7 @@ class RTTR_API type
         property get_property(string_view name) const;
 
         /*!
-         * \brief Returns a range of all registered properties for this type and
+         * \brief Returns a range of all registered *public* properties for this type and
          *        all its base classes.
          *
          * \remark The properties are sorted after its order of registration.
@@ -549,6 +550,16 @@ class RTTR_API type
          * \return A range of properties.
          */
         array_range<property> get_properties() const;
+
+        /*!
+         * \brief Returns a range of all registered properties for this type,
+         *        based on the given \p filter.
+         *
+         * \remark The properties are sorted after its order of registration.
+         *
+         * \return A range of properties.
+         */
+        array_range<property> get_properties(filter_items filter) const;
 
         /*!
          * \brief Returns a global property with the name \p name.
