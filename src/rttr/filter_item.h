@@ -35,7 +35,14 @@ namespace rttr
 {
 
 /*!
- * The \ref filter_item enum is used to search for members in \ref type "types".
+ * The \ref filter_item enum is used to filter the search for certain members in \ref type "types".
+ *
+ * Combine the enum value together with the bitwise OR operator.
+ *
+ * \remark In order to get a return, you must specify **filter_item::instance_item** or **filter_item::static_item**
+ *         along with an accessor **filter_item::public_access** or **filter_item::non_public_access**.
+ *
+ * \see \ref type::get_properties(filter_items) const
  */
 enum class filter_item
 {
@@ -51,7 +58,7 @@ enum class filter_item
     static_item = 2,
 
     /*!
-     * \brief Includes all public declared members in the search.
+     * \brief Includes all public specified members in the search.
      */
     public_access = 4,
 

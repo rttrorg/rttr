@@ -545,7 +545,9 @@ class RTTR_API type
          * \brief Returns a range of all registered *public* properties for this type and
          *        all its base classes.
          *
-         * \remark The properties are sorted after its order of registration.
+         * \remark In order to retrieve *private* properties, use \ref type::get_properties(filter_items) const
+         *         with following filter combination `filter_item::instance_item | filter_item::static_item | filter_item::public_access`
+         *         The properties are sorted after its order of registration.
          *
          * \return A range of properties.
          */
@@ -554,6 +556,51 @@ class RTTR_API type
         /*!
          * \brief Returns a range of all registered properties for this type,
          *        based on the given \p filter.
+         *
+         * Combine the enum values inside \ref filter_item with the OR operator to return a certain range of properties.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * #include <rttr/registration>
+         *
+         * struct base { int p1, p2; RTTR_ENABLE() };
+         * struct derived : base { int p3; static const int p4 = 23; RTTR_ENABLE(base) };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     rttr::registration::class_<base>("base")
+         *         .property("p1", &base::p1)
+         *         .property("p2", &base::p2, rttr::registration::private_access);
+         *
+         *     rttr::registration::class_<derived>("derived")
+         *         .property("p3", &derived::p3)
+         *         .property_readonly("p4", &derived::p4, rttr::registration::private_access);
+         * }
+         *
+         * int main()
+         * {
+         *     type t = rttr::type::get<derived>();
+         *     for (auto& prop : t.get_properties())
+         *         std::cout << prop.get_name() << ", "; // prints "p1, p3,"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& prop : t.get_properties(filter_item::instance_item | filter_item::non_public_access))
+         *         std::cout << prop.get_name() << std::endl; // prints "p2"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& prop : t.get_properties(filter_item::static_item | filter_item::non_public_access))
+         *         std::cout << prop.get_name() << std::endl; // prints "p4"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& prop : t.get_properties(filter_item::instance_item | filter_item::public_access | filter_item::declared_only))
+         *         std::cout << prop.get_name() << std::endl; // prints "p3"
+         *
+         *     return 0;
+         * }
+         * \endcode
          *
          * \remark The properties are sorted after its order of registration.
          *
