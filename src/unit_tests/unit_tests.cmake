@@ -66,6 +66,7 @@ set(SOURCE_FILES main.cpp
                  method/method_misc_test.cpp
                  method/method_invoke_test.cpp
                  method/method_param_info_test.cpp
+                 method/method_query_test.cpp
                  variant/variant_assign_test.cpp
                  variant/variant_conv_test.cpp
                  variant/variant_ctor_test.cpp

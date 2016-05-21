@@ -253,11 +253,13 @@ array_range<property> type_database::get_class_properties(const type& t) const
     {
         auto& vec = ret->second;
         if (!vec.empty())
+        {
             return array_range<property>(vec.data(), vec.size(),
                                          default_predicate<property>([](const property& prop)
                                          {
                                              return (prop.get_access_level() == access_levels::public_access);
                                          }) );
+        }
     }
 
     return array_range<property>();
@@ -280,6 +282,35 @@ static bool is_valid_filter_item(filter_items filter)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_items filter)
+{
+    bool result = true;
+    auto e = item.get_name();
+    if (filter.test_flag(filter_item::public_access))
+        result &= (item.get_access_level() == access_levels::public_access);
+
+    if (filter.test_flag(filter_item::non_public_access))
+    {
+        const auto access_level = item.get_access_level();
+        result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
+    }
+
+    if (filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
+        result &= true;
+    else if (filter.test_flag(filter_item::instance_item) && !filter.test_flag(filter_item::static_item))
+        result &= !item.is_static();
+    else if (!filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
+        result &= item.is_static();
+
+    if (filter.test_flag(filter_item::declared_only))
+        result &= (item.get_declaring_type() == t);
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 array_range<property> type_database::get_class_properties(const type& t, filter_items filter) const
 {
     const auto ret = m_class_property_map.find(t);
@@ -293,28 +324,7 @@ array_range<property> type_database::get_class_properties(const type& t, filter_
                                          default_predicate<property>([](const property& prop){ return false; }) :
                                          default_predicate<property>([filter, t](const property& prop)
                                          {
-                                             bool result = true;
-
-                                             if (filter.test_flag(filter_item::public_access))
-                                                 result &= (prop.get_access_level() == access_levels::public_access);
-
-                                             if (filter.test_flag(filter_item::non_public_access))
-                                             {
-                                                 const auto access_level = prop.get_access_level();
-                                                 result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
-                                             }
-
-                                             if (filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
-                                                 result &= true;
-                                             else if (filter.test_flag(filter_item::instance_item) && !filter.test_flag(filter_item::static_item))
-                                                 result &= !prop.is_static();
-                                             else if (!filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
-                                                 result &= prop.is_static();
-
-                                             if (filter.test_flag(filter_item::declared_only))
-                                                 result &= (prop.get_declaring_type() == t);
-
-                                             return result;
+                                             return filter_member_item<property>(prop, t, filter);
                                          }));
         }
     }
@@ -467,14 +477,43 @@ method type_database::get_class_method(const type& t, string_view name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<method> type_database::get_class_methods(const type& t)
+array_range<method> type_database::get_class_methods(const type& t) const
 {
     const auto ret = m_class_method_map.find(t);
     if (ret != m_class_method_map.end())
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return array_range<method>(vec.data(), vec.size());
+        {
+            return array_range<method>(vec.data(), vec.size(),
+                                       default_predicate<method>([](const method& meth)
+                                       {
+                                           return (meth.get_access_level() == access_levels::public_access);
+                                       }) );
+        }
+    }
+
+    return array_range<method>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<method> type_database::get_class_methods(const type& t, filter_items filter) const
+{
+    const auto ret = m_class_method_map.find(t);
+    if (ret != m_class_method_map.end())
+    {
+        auto& vec = ret->second;
+        if (!vec.empty())
+        {
+            return array_range<method>(vec.data(), vec.size(),
+                                       !is_valid_filter_item(filter) ?
+                                       default_predicate<method>([](const method& meth){ return false; }) :
+                                       default_predicate<method>([filter, t](const method& meth)
+                                       {
+                                           return filter_member_item<method>(meth, t, filter);
+                                       }));
+        }
     }
 
     return array_range<method>();

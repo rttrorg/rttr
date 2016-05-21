@@ -124,7 +124,8 @@ class RTTR_LOCAL type_database
                                 const std::vector<type>& type_list) const;
         method get_class_method(const type& t, string_view name,
                                 const std::vector<argument>& arg_list) const;
-        array_range<method> get_class_methods(const type& t);
+        array_range<method> get_class_methods(const type& t) const;
+        array_range<method> get_class_methods(const type& t, filter_items filter) const;
 
 
         method get_global_method(string_view name) const;

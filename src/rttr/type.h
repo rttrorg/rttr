@@ -555,7 +555,7 @@ class RTTR_API type
 
         /*!
          * \brief Returns a range of all registered properties for this type,
-         *        based on the given \p filter.
+         *        based on the given \p filter. The base classes are included in the search.
          *
          * Combine the enum values inside \ref filter_item with the OR operator to return a certain range of properties.
          *
@@ -690,6 +690,61 @@ class RTTR_API type
          * \return A range of methods.
          */
         array_range<method> get_methods() const;
+
+        /*!
+         * \brief Returns a range of all registered methods for this type,
+         *        based on the given \p filter. The base classes are included in the search.
+         *
+         * Combine the enum values inside \ref filter_item with the OR operator to return a certain range of methods.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * #include <rttr/registration>
+         *
+         * struct base { void func_1() {} void func_2() {} RTTR_ENABLE() };
+         * struct derived : base { void func_3() {} static void func_4() {} RTTR_ENABLE(base) };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     rttr::registration::class_<base>("base")
+         *         .method("func_1", &base::func_1)
+         *         .method("func_2", &base::func_2, rttr::registration::private_access);
+         *
+         *     rttr::registration::class_<derived>("derived")
+         *         .method("func_3", &derived::func_3)
+         *         .method("func_4", &derived::func_4, rttr::registration::private_access);
+         * }
+         *
+         * int main()
+         * {
+         *     type t = rttr::type::get<derived>();
+         *     for (auto& meth : t.get_methods())
+         *         std::cout << meth.get_name() << ", "; // prints "func_1, func_3,"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& meth : t.get_methods(filter_item::instance_item | filter_item::non_public_access))
+         *         std::cout << meth.get_name() << std::endl; // prints "func_2"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& meth : t.get_methods(filter_item::static_item | filter_item::non_public_access))
+         *         std::cout << meth.get_name() << std::endl; // prints "func_4"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& meth : t.get_methods(filter_item::instance_item | filter_item::public_access | filter_item::declared_only))
+         *         std::cout << meth.get_name() << std::endl; // prints "func_3"
+         *
+         *     return 0;
+         * }
+         * \endcode
+         *
+         * \remark The methods are sorted after its order of registration.
+         *
+         * \return A range of methods.
+         */
+        array_range<method> get_methods(filter_items filter) const;
 
         /*!
          * \brief Returns a global method with the name \p name.

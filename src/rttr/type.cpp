@@ -548,6 +548,13 @@ array_range<method> type::get_methods() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+array_range<method> type::get_methods(filter_items filter) const
+{
+    return detail::type_database::instance().get_class_methods(get_raw_type(), filter);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 property type::get_global_property(string_view name)
 {
     return property(detail::type_database::instance().get_global_property(name));
