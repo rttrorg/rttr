@@ -71,7 +71,7 @@ RTTR_REGISTRATION
     registration::class_<method_query_test_derived>("method_query_test_derived")
         .method("derived", &method_query_test_derived::func_3)
         .method("derived-private", &method_query_test_derived::func_3, registration::private_access)
-        .method("derived-protected", &method_query_test_derived::func_3,registration::protected_access)
+        .method("derived-protected", &method_query_test_derived::func_3, registration::protected_access)
         .method("derived-static", &method_query_test_derived::func_4)
         .method("derived-static-protected", &method_query_test_derived::func_4, registration::protected_access)
         ;
