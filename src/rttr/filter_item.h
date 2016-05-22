@@ -47,7 +47,7 @@ namespace rttr
 enum class filter_item
 {
     /*!
-     * \brief Includes all members which needs an instance to be invoked in the search.
+     * \brief Includes all members in the search, which needs an instance to be invoked.
      */
     instance_item = 1,
 
@@ -59,11 +59,15 @@ enum class filter_item
 
     /*!
      * \brief Includes all public specified members in the search.
+     *
+     * \see access_levels
      */
     public_access = 4,
 
     /*!
-     * \brief Includes all non public (private or protected) members in the search.
+     * \brief Includes all non public (*private* or *protected*) members in the search.
+     *
+     * \see access_levels
      */
     non_public_access = 8,
 

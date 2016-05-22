@@ -546,7 +546,7 @@ class RTTR_API type
          *        all its base classes.
          *
          * \remark In order to retrieve *private* properties, use \ref type::get_properties(filter_items) const
-         *         with following filter combination `filter_item::instance_item | filter_item::static_item | filter_item::public_access`
+         *         with following filter combination `filter_item::instance_item | filter_item::static_item | filter_item::non_public_access`
          *         The properties are sorted after its order of registration.
          *
          * \return A range of properties.
@@ -682,10 +682,12 @@ class RTTR_API type
         method get_method(string_view name, const std::vector<type>& params) const;
 
         /*!
-         * \brief Returns a range of all registered methods for this type and
+         * \brief Returns a range of all registered *public* methods for this type and
          *        all its base classes.
          *
-         * \remark The methods are sorted after its order of registration.
+         * \remark In order to retrieve *private* methods, use \ref type::get_methods(filter_items) const
+         *         with following filter combination `filter_item::instance_item | filter_item::static_item | filter_item::non_public_access`
+         *         The methods are sorted after its order of registration.
          *
          * \return A range of methods.
          */
