@@ -166,10 +166,64 @@ TEST_CASE("method - get_methods(filter_items)", "[method]")
         CHECK(meths[1].get_name() == "derived-static-protected");
     }
 
-
-    SECTION("instance_item | public_access | filter_item::declared_only")
+    SECTION("instance_item | static_item | public_access")
     {
-        auto range = t.get_methods(filter_item::instance_item | filter_item::public_access | filter_item::declared_only);
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::public_access);
+        REQUIRE(range.size() == 4);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 4);
+
+        CHECK(meths[0].get_name() == "base");
+        CHECK(meths[1].get_name() == "base-static");
+        CHECK(meths[2].get_name() == "derived");
+        CHECK(meths[3].get_name() == "derived-static");
+    }
+
+    SECTION("instance_item | static_item | non_public_access")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::non_public_access);
+        REQUIRE(range.size() == 6);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 6);
+
+        CHECK(meths[0].get_name() == "base-private");
+        CHECK(meths[1].get_name() == "base-protected");
+        CHECK(meths[2].get_name() == "base-static-protected");
+        CHECK(meths[3].get_name() == "derived-private");
+        CHECK(meths[4].get_name() == "derived-protected");
+        CHECK(meths[5].get_name() == "derived-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | non_public_access")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::public_access | filter_item::non_public_access);
+        REQUIRE(range.size() == 10);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 10);
+
+        CHECK(meths[0].get_name() == "base");
+        CHECK(meths[1].get_name() == "base-private");
+        CHECK(meths[2].get_name() == "base-protected");
+        CHECK(meths[3].get_name() == "base-static");
+        CHECK(meths[4].get_name() == "base-static-protected");
+
+        CHECK(meths[5].get_name() == "derived");
+        CHECK(meths[6].get_name() == "derived-private");
+        CHECK(meths[7].get_name() == "derived-protected");
+        CHECK(meths[8].get_name() == "derived-static");
+        CHECK(meths[9].get_name() == "derived-static-protected");
+    }
+
+    SECTION("instance_item | public_access | declared_only")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::public_access |
+                                   filter_item::declared_only);
         REQUIRE(range.size() == 1);
 
         std::vector<method> meths(range.begin(), range.end());
@@ -178,9 +232,10 @@ TEST_CASE("method - get_methods(filter_items)", "[method]")
         CHECK(meths[0].get_name() == "derived");
     }
 
-    SECTION("static_item | public_access | filter_item::declared_only")
+    SECTION("static_item | public_access | declared_only")
     {
-        auto range = t.get_methods(filter_item::static_item | filter_item::public_access | filter_item::declared_only);
+        auto range = t.get_methods(filter_item::static_item | filter_item::public_access |
+                                   filter_item::declared_only);
         REQUIRE(range.size() == 1);
 
         std::vector<method> meths(range.begin(), range.end());
@@ -189,9 +244,10 @@ TEST_CASE("method - get_methods(filter_items)", "[method]")
         CHECK(meths[0].get_name() == "derived-static");
     }
 
-    SECTION("instance_item | non_public_access | filter_item::declared_only")
+    SECTION("instance_item | non_public_access | declared_only")
     {
-        auto range = t.get_methods(filter_item::instance_item | filter_item::non_public_access | filter_item::declared_only);
+        auto range = t.get_methods(filter_item::instance_item | filter_item::non_public_access |
+                                   filter_item::declared_only);
         REQUIRE(range.size() == 2);
 
         std::vector<method> meths(range.begin(), range.end());
@@ -201,15 +257,60 @@ TEST_CASE("method - get_methods(filter_items)", "[method]")
         CHECK(meths[1].get_name() == "derived-protected");
     }
 
-    SECTION("static_item | non_public_access | filter_item::declared_only")
+    SECTION("static_item | non_public_access | declared_only")
     {
-        auto range = t.get_methods(filter_item::static_item | filter_item::non_public_access | filter_item::declared_only);
+        auto range = t.get_methods(filter_item::static_item | filter_item::non_public_access |
+                                   filter_item::declared_only);
         REQUIRE(range.size() == 1);
 
         std::vector<method> meths(range.begin(), range.end());
         REQUIRE(meths.size() == 1);
 
         CHECK(meths[0].get_name() == "derived-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | declared_only")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::public_access | filter_item::declared_only);
+        REQUIRE(range.size() == 2);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 2);
+
+        CHECK(meths[0].get_name() == "derived");
+        CHECK(meths[1].get_name() == "derived-static");
+    }
+
+    SECTION("instance_item | static_item | non_public_access | declared_only")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::non_public_access | filter_item::declared_only);
+        REQUIRE(range.size() == 3);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 3);
+
+        CHECK(meths[0].get_name() == "derived-private");
+        CHECK(meths[1].get_name() == "derived-protected");
+        CHECK(meths[2].get_name() == "derived-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | non_public_access | declared_only")
+    {
+        auto range = t.get_methods(filter_item::instance_item | filter_item::static_item |
+                                   filter_item::public_access | filter_item::non_public_access |
+                                   filter_item::declared_only);
+        REQUIRE(range.size() == 5);
+
+        std::vector<method> meths(range.begin(), range.end());
+        REQUIRE(meths.size() == 5);
+
+        CHECK(meths[0].get_name() == "derived");
+        CHECK(meths[1].get_name() == "derived-private");
+        CHECK(meths[2].get_name() == "derived-protected");
+        CHECK(meths[3].get_name() == "derived-static");
+        CHECK(meths[4].get_name() == "derived-static-protected");
     }
 }
 

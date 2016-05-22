@@ -286,11 +286,16 @@ template<typename T>
 static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_items filter)
 {
     bool result = true;
-    auto e = item.get_name();
-    if (filter.test_flag(filter_item::public_access))
-        result &= (item.get_access_level() == access_levels::public_access);
 
-    if (filter.test_flag(filter_item::non_public_access))
+    if (filter.test_flag(filter_item::public_access) && filter.test_flag(filter_item::non_public_access))
+    {
+        result &= true;
+    }
+    else if (filter.test_flag(filter_item::public_access))
+    {
+        result &= (item.get_access_level() == access_levels::public_access);
+    }
+    else if (filter.test_flag(filter_item::non_public_access))
     {
         const auto access_level = item.get_access_level();
         result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
@@ -311,6 +316,24 @@ static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+static RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
+{
+    if (!is_valid_filter_item(filter))
+    {
+        return {[](const T&){ return false; }};
+    }
+    else
+    {
+        return {[filter, t](const T& item)
+        {
+            return filter_member_item<T>(item, t, filter);
+        }};
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 array_range<property> type_database::get_class_properties(const type& t, filter_items filter) const
 {
     const auto ret = m_class_property_map.find(t);
@@ -318,15 +341,7 @@ array_range<property> type_database::get_class_properties(const type& t, filter_
     {
         auto& vec = ret->second;
         if (!vec.empty())
-        {
-            return array_range<property>(vec.data(), vec.size(),
-                                         !is_valid_filter_item(filter) ?
-                                         default_predicate<property>([](const property& prop){ return false; }) :
-                                         default_predicate<property>([filter, t](const property& prop)
-                                         {
-                                             return filter_member_item<property>(prop, t, filter);
-                                         }));
-        }
+            return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(t, filter));
     }
 
     return array_range<property>();
@@ -505,15 +520,7 @@ array_range<method> type_database::get_class_methods(const type& t, filter_items
     {
         auto& vec = ret->second;
         if (!vec.empty())
-        {
-            return array_range<method>(vec.data(), vec.size(),
-                                       !is_valid_filter_item(filter) ?
-                                       default_predicate<method>([](const method& meth){ return false; }) :
-                                       default_predicate<method>([filter, t](const method& meth)
-                                       {
-                                           return filter_member_item<method>(meth, t, filter);
-                                       }));
-        }
+            return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
     }
 
     return array_range<method>();

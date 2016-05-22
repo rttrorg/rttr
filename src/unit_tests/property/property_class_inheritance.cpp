@@ -260,6 +260,101 @@ TEST_CASE("property - class - query", "[property]")
         CHECK(props[4].get_name() == "bottom-static-protected");
     }
 
+    SECTION("instance_item | static_item | public_access")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::public_access);
+        REQUIRE(range.size() == 10);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 10);
+
+        CHECK(props[0].get_name() == "top");
+        CHECK(props[1].get_name() == "top-static");
+
+        CHECK(props[2].get_name() == "left");
+        CHECK(props[3].get_name() == "left-static");
+
+        CHECK(props[4].get_name() == "right");
+        CHECK(props[5].get_name() == "right-static");
+
+        CHECK(props[6].get_name() == "right_2");
+        CHECK(props[7].get_name() == "right_2-static");
+
+        CHECK(props[8].get_name() == "bottom");
+        CHECK(props[9].get_name() == "bottom-static");
+    }
+
+    SECTION("instance_item | static_item | non_public_access")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::non_public_access);
+        REQUIRE(range.size() == 15);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 15);
+
+        CHECK(props[0].get_name() == "top-private");
+        CHECK(props[1].get_name() == "top-protected");
+        CHECK(props[2].get_name() == "top-static-protected");
+
+        CHECK(props[3].get_name() == "left-private");
+        CHECK(props[4].get_name() == "left-protected");
+        CHECK(props[5].get_name() == "left-static-protected");
+
+        CHECK(props[6].get_name() == "right-private");
+        CHECK(props[7].get_name() == "right-protected");
+        CHECK(props[8].get_name() == "right-static-protected");
+
+        CHECK(props[9].get_name()  == "right_2-private");
+        CHECK(props[10].get_name() == "right_2-protected");
+        CHECK(props[11].get_name() == "right_2-static-protected");
+
+        CHECK(props[12].get_name() == "bottom-private");
+        CHECK(props[13].get_name() == "bottom-protected");
+        CHECK(props[14].get_name() == "bottom-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | non_public_access")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::public_access | filter_item::non_public_access);
+        REQUIRE(range.size() == 25);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 25);
+
+        CHECK(props[0].get_name() == "top");
+        CHECK(props[1].get_name() == "top-private");
+        CHECK(props[2].get_name() == "top-protected");
+        CHECK(props[3].get_name() == "top-static");
+        CHECK(props[4].get_name() == "top-static-protected");
+
+        CHECK(props[5].get_name() == "left");
+        CHECK(props[6].get_name() == "left-private");
+        CHECK(props[7].get_name() == "left-protected");
+        CHECK(props[8].get_name() == "left-static");
+        CHECK(props[9].get_name() == "left-static-protected");
+
+        CHECK(props[10].get_name() == "right");
+        CHECK(props[11].get_name() == "right-private");
+        CHECK(props[12].get_name() == "right-protected");
+        CHECK(props[13].get_name() == "right-static");
+        CHECK(props[14].get_name() == "right-static-protected");
+
+        CHECK(props[15].get_name() == "right_2");
+        CHECK(props[16].get_name() == "right_2-private");
+        CHECK(props[17].get_name() == "right_2-protected");
+        CHECK(props[18].get_name() == "right_2-static");
+        CHECK(props[19].get_name() == "right_2-static-protected");
+
+        CHECK(props[20].get_name() == "bottom");
+        CHECK(props[21].get_name() == "bottom-private");
+        CHECK(props[22].get_name() == "bottom-protected");
+        CHECK(props[23].get_name() == "bottom-static");
+        CHECK(props[24].get_name() == "bottom-static-protected");
+    }
+
     SECTION("instance_item | public_access | filter_item::declared_only")
     {
         auto range = t.get_properties(filter_item::instance_item | filter_item::public_access | filter_item::declared_only);
@@ -303,6 +398,50 @@ TEST_CASE("property - class - query", "[property]")
         REQUIRE(props.size() == 1);
 
         CHECK(props[0].get_name() == "bottom-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | declared_only")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::public_access | filter_item::declared_only);
+        REQUIRE(range.size() == 2);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 2);
+
+        CHECK(props[0].get_name() == "bottom");
+        CHECK(props[1].get_name() == "bottom-static");
+    }
+
+    SECTION("instance_item | static_item | non_public_access | declared_only")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::non_public_access | filter_item::declared_only);
+        REQUIRE(range.size() == 3);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 3);
+
+        CHECK(props[0].get_name() == "bottom-private");
+        CHECK(props[1].get_name() == "bottom-protected");
+        CHECK(props[2].get_name() == "bottom-static-protected");
+    }
+
+    SECTION("instance_item | static_item | public_access | non_public_access | declared_only")
+    {
+        auto range = t.get_properties(filter_item::instance_item | filter_item::static_item |
+                                      filter_item::public_access | filter_item::non_public_access |
+                                      filter_item::declared_only);
+        REQUIRE(range.size() == 5);
+
+        std::vector<property> props(range.begin(), range.end());
+        REQUIRE(props.size() == 5);
+
+        CHECK(props[0].get_name() == "bottom");
+        CHECK(props[1].get_name() == "bottom-private");
+        CHECK(props[2].get_name() == "bottom-protected");
+        CHECK(props[3].get_name() == "bottom-static");
+        CHECK(props[4].get_name() == "bottom-static-protected");
     }
 }
 
