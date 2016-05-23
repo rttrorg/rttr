@@ -139,6 +139,7 @@ class RTTR_LOCAL type_database
         constructor get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
         constructor get_constructor(const type& t, const std::vector<argument>& arg_list) const;
         array_range<constructor> get_constructors(const type& t);
+        array_range<constructor> get_constructors(const type& t, filter_items filter) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 

@@ -56,6 +56,7 @@ set(SOURCE_FILES main.cpp
                  constructor/constructor_retrieve_test.cpp
                  constructor/constructor_invoke_test.cpp
                  constructor/constructor_misc_test.cpp
+                 constructor/constructor_query_test.cpp
                  enumeration/enumeration_conversion.cpp
                  enumeration/enumeration_misc.cpp
                  instance/instance_test.cpp

@@ -452,6 +452,13 @@ array_range<constructor> type::get_constructors() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+array_range<constructor> type::get_constructors(filter_items filter) const
+{
+    return detail::type_database::instance().get_constructors(*this, filter);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant type::create(vector<argument> args) const
 {
     auto ctor = detail::type_database::instance().get_constructor(*this, args);

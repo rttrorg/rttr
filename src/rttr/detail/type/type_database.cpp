@@ -692,7 +692,60 @@ array_range<constructor> type_database::get_constructors(const type& t)
     {
         auto& vec = ret->second;
         if (!vec.empty())
-            return array_range<constructor>(vec.data(), vec.size());
+            return array_range<constructor>(vec.data(), vec.size(),
+                                            default_predicate<constructor>([](const constructor& ctor)
+                                            {
+                                                return (ctor.get_access_level() == access_levels::public_access);
+                                            }) );
+    }
+
+    return array_range<constructor>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+static RTTR_FORCE_INLINE default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
+{
+    if (!is_valid_filter_item(filter))
+    {
+        return {[](const constructor&){ return false; }};
+    }
+    else
+    {
+        return {[filter](const constructor& item)
+        {
+            bool result = true;
+
+            if (filter.test_flag(filter_item::public_access) && filter.test_flag(filter_item::non_public_access))
+            {
+                result &= true;
+            }
+            else if (filter.test_flag(filter_item::public_access))
+            {
+                result &= (item.get_access_level() == access_levels::public_access);
+            }
+            else if (filter.test_flag(filter_item::non_public_access))
+            {
+                const auto access_level = item.get_access_level();
+                result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
+            }
+
+            return result;
+        }};
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<constructor> type_database::get_constructors(const type& t, filter_items filter) const
+{
+    const auto ret = m_type_ctor_map.find(t);
+    if (ret != m_type_ctor_map.end())
+    {
+        auto& vec = ret->second;
+        if (!vec.empty())
+            return array_range<constructor>(vec.data(), vec.size(), get_filter_predicate<constructor>(t, filter));
     }
 
     return array_range<constructor>();

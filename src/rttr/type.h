@@ -495,11 +495,66 @@ class RTTR_API type
         constructor get_constructor(const std::vector<type>& params = std::vector<type>() ) const;
 
         /*!
-         * \brief Returns a range of all registered constructors for this type; the order is unspecified.
+         * \brief Returns a range of all registered *public* constructors for this type.
          *
-         * \return A range of all registered constructors.
+         * \remark In order to retrieve *private* constructors, use \ref type::get_constructors(filter_items) const
+         *         with following filter combination `filter_item::instance_item | filter_item::static_item | filter_item::non_public_access`
+         *         The constructors are sorted after its order of registration.
+         *
+         * \return A range of constructors.
          */
         array_range<constructor> get_constructors() const;
+
+        /*!
+         * \brief Returns a range of all registered constructors for this type,
+         *        based on the given \p filter. The base classes are **not** included in the search.
+         *
+         * Combine the enum values inside \ref filter_item with the OR operator to return a certain range of constructors.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * #include <rttr/registration>
+         *
+         * struct my_struct { my_struct() {} my_struct(int) {} my_struct(bool) {} RTTR_ENABLE() };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *     rttr::registration::class_<my_struct>("my_struct")
+         *         .constructor<>() ( policy::ctor::as_object )
+         *         .constructor<bool>(registration::protected_access) ( policy::ctor::as_object )
+         *         .constructor<int>() ( policy::ctor::as_object );
+         * }
+         *
+         * int main()
+         * {
+         *     type t = rttr::type::get<my_struct>();
+         *     for (auto& ctor : t.get_constructors())
+         *         std::cout << ctor.get_signature() << ", "; // prints "my_struct( ), my_struct( int ),"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& ctor : t.get_constructors(filter_item::instance_item | filter_item::non_public_access))
+         *         std::cout << ctor.get_signature() << ", "; // prints "my_struct( bool ),"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& ctor : t.get_constructors(filter_item::static_item | filter_item::non_public_access))
+         *         std::cout << ctor.get_signature() << ", "; // prints "my_struct( bool ),"
+         *
+         *     std::cout << std::endl;
+         *
+         *     for (auto& ctor : t.get_constructors(filter_item::instance_item | filter_item::public_access | filter_item::declared_only))
+         *         std::cout << ctor.get_signature() << std::endl; // prints "my_struct( ), my_struct( int ),"
+         *
+         *     return 0;
+         * }
+         * \endcode
+         *
+         * \remark The properties are sorted after its order of registration.
+         *
+         * \return A range of properties.
+         */
+        array_range<constructor> get_constructors(filter_items filter) const;
 
         /*!
          * \brief Creates an instance of the current type, with the given arguments \p args for the constructor.
@@ -586,17 +641,17 @@ class RTTR_API type
          *     std::cout << std::endl;
          *
          *     for (auto& prop : t.get_properties(filter_item::instance_item | filter_item::non_public_access))
-         *         std::cout << prop.get_name() << std::endl; // prints "p2"
+         *         std::cout << meth.get_name() << ", "; // prints "p2,"
          *
          *     std::cout << std::endl;
          *
          *     for (auto& prop : t.get_properties(filter_item::static_item | filter_item::non_public_access))
-         *         std::cout << prop.get_name() << std::endl; // prints "p4"
+         *         std::cout << meth.get_name() << ", "; // prints "p4,"
          *
          *     std::cout << std::endl;
          *
          *     for (auto& prop : t.get_properties(filter_item::instance_item | filter_item::public_access | filter_item::declared_only))
-         *         std::cout << prop.get_name() << std::endl; // prints "p3"
+         *         std::cout << meth.get_name() << ", "; // prints "p3"
          *
          *     return 0;
          * }
@@ -726,17 +781,17 @@ class RTTR_API type
          *     std::cout << std::endl;
          *
          *     for (auto& meth : t.get_methods(filter_item::instance_item | filter_item::non_public_access))
-         *         std::cout << meth.get_name() << std::endl; // prints "func_2"
+         *         std::cout << meth.get_name() << ", "; // prints "func_2,"
          *
          *     std::cout << std::endl;
          *
          *     for (auto& meth : t.get_methods(filter_item::static_item | filter_item::non_public_access))
-         *         std::cout << meth.get_name() << std::endl; // prints "func_4"
+         *         std::cout << meth.get_name() << ", "; // prints "func_4,"
          *
          *     std::cout << std::endl;
          *
          *     for (auto& meth : t.get_methods(filter_item::instance_item | filter_item::public_access | filter_item::declared_only))
-         *         std::cout << meth.get_name() << std::endl; // prints "func_3"
+         *         std::cout << meth.get_name() << ", "; // prints "func_3,"
          *
          *     return 0;
          * }
