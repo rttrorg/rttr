@@ -317,7 +317,7 @@ static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
+RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
 {
     if (!is_valid_filter_item(filter))
     {
@@ -705,7 +705,7 @@ array_range<constructor> type_database::get_constructors(const type& t)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<>
-static RTTR_FORCE_INLINE default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
+RTTR_FORCE_INLINE default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
 {
     if (!is_valid_filter_item(filter))
     {
