@@ -59,6 +59,9 @@ struct default_args<>
     std::tuple<> m_args;
 };
 
+struct constructor_type {};
+struct function_type {};
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // a helper class to store two default list, the user provided, with std::nullptr_t
 // and the function signature:
@@ -108,31 +111,31 @@ struct find_default_args_impl<type_list<>, Default_Arg_List>
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * This helper struct is needed to call `find_default_args` with a function signature,
+ * This helper struct is needed to call `find_default_args_t` with a function signature,
  * or a constructor signature (a list of arguments), i.e. I have only one interface to invoke.
  *
  * This avoid code distinction in `has_default_types`or `get_default_args`.
  */
-template<typename Default_Arg_List, typename T, typename Enable = void>
+template<typename Default_Arg_List, typename T, typename Acc_Type, typename Enable = void>
 struct find_default_args_helper;
 
 // is function
-template<typename Default_Arg_List, typename T>
-struct find_default_args_helper<Default_Arg_List, type_list<T>, enable_if_t<is_function<T>::value>>
+template<typename Default_Arg_List, typename T, typename Acc_Type>
+struct find_default_args_helper<Default_Arg_List, type_list<T>, Acc_Type, enable_if_t< std::is_same<Acc_Type, function_type>::value >>
 :   find_default_args_impl< as_type_list_t< typename function_traits<T>::arg_types >, Default_Arg_List>
 {
 };
 
 // is ctor with one argument
 template<typename Default_Arg_List, typename T>
-struct find_default_args_helper<Default_Arg_List, type_list<T>, enable_if_t<!is_function<T>::value>>
+struct find_default_args_helper<Default_Arg_List, type_list<T>, constructor_type, enable_if_t< is_one_argument<T>::value >>
 :   find_default_args_impl<type_list<T>, Default_Arg_List>
 {
 };
 
 // is ctor with zero or more then one argument
 template<typename Default_Arg_List, typename...TArgs>
-struct find_default_args_helper<Default_Arg_List, type_list<TArgs...>, enable_if_t< is_not_one_argument<TArgs...>::value >>
+struct find_default_args_helper<Default_Arg_List, type_list<TArgs...>, constructor_type, enable_if_t< !is_one_argument<TArgs...>::value >>
 :   find_default_args_impl<type_list<TArgs...>, Default_Arg_List>
 {
 };
@@ -151,8 +154,8 @@ struct find_default_args_helper<Default_Arg_List, type_list<TArgs...>, enable_if
  * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<double>            will return:    default_args<double>
  * ctor_list => <bool, int, double>;    Default_Arg_List => default_args<int>               will return:    default_args<> (cannot be called; right most argument is missing)
  */
-template<typename Default_Arg_List, typename Acc_Args>
-using find_default_args = typename find_default_args_helper<Default_Arg_List, Acc_Args>::type;
+template<typename Default_Arg_List, typename Acc_Args, typename Acc_Type>
+using find_default_args_t = typename find_default_args_helper<Default_Arg_List, Acc_Args, Acc_Type>::type;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +201,7 @@ using get_default_args_t = typename get_default_args_impl< type_list< TArgs... >
 template<typename...Args>
 using has_default_args = std::integral_constant<bool, !std::is_same<get_default_args_t<Args...>, default_args<>>::value>;
 
-template<typename T1, typename T2>
+template<typename T1, typename T2, typename Acc_Type>
 struct has_default_types;
 
 
@@ -207,16 +210,16 @@ struct has_default_types;
  * that can be used to invoke the signature \p Acc_Args;
  * Otherwise to 'std::false_type'
  */
-template<typename Acc_Args, typename... TArgs>
-struct has_default_types<Acc_Args, type_list<TArgs...>>
-:   std::integral_constant<bool, !std::is_same<find_default_args<get_default_args_t<TArgs...>, Acc_Args>, empty_defaults>::value>
+template<typename Acc_Args, typename Acc_Type, typename... TArgs>
+struct has_default_types<Acc_Args, type_list<TArgs...>, Acc_Type>
+:   std::integral_constant<bool, !std::is_same<find_default_args_t<get_default_args_t<TArgs...>, Acc_Args, Acc_Type>, empty_defaults>::value>
 {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename... TArgs>
-using default_types_t = find_default_args<get_default_args_t<TArgs...>, Acc_Args>;
+template<typename Acc_Args, typename Acc_Type, typename... TArgs>
+using default_types_t = find_default_args_t<get_default_args_t<TArgs...>, Acc_Args, Acc_Type>;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +232,7 @@ using count_default_args = count_if<is_def_type, raw_type_t<TArgs>... >;
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
+template<typename Acc_Args, typename Acc_Type, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, Acc_Args, Acc_Type> >
 static RTTR_INLINE
 enable_if_t< std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func>
 get_default_args(Args&&... arg)
@@ -239,7 +242,7 @@ get_default_args(Args&&... arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename Acc_Args, typename... Args, typename Default_Type = find_default_args<get_default_args_t<Args...>, Acc_Args> >
+template<typename Acc_Args, typename Acc_Type, typename... Args, typename Default_Type = find_default_args_t<get_default_args_t<Args...>, Acc_Args, Acc_Type> >
 static RTTR_INLINE
 enable_if_t< !std::is_same<Default_Type, empty_defaults>::value, typename Default_Type::default_types_func>
 get_default_args(Args&&... arg)

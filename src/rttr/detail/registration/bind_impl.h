@@ -143,7 +143,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
         ~bind()
         {
             using namespace detail;
-            using param_info_t = decltype(create_param_infos<type_list<Ctor_Args...>>());
+            using param_info_t = decltype(create_param_infos<type_list<Ctor_Args...>, constructor_type>());
             if (!m_ctor.get())
                 m_ctor = detail::make_unique<detail::constructor_wrapper<Class_Type, class_ctor,
                                                                          detail::map_access_level_to_enum<acc_level>::value, default_create_policy,
@@ -170,7 +170,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
             using policy_types_found = typename find_types<constructor_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
-            using has_valid_default_types = has_default_types<type_list<Ctor_Args...>, type_list<Args...>>;
+            using has_valid_default_types = has_default_types<type_list<Ctor_Args...>, type_list<Args...>, constructor_type>;
             static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given constructor. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
@@ -194,8 +194,8 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
             using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
             using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
             m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_metadata(std::forward<Args>(args)...)),
-                                                                   std::move(get_default_args<type_list<Ctor_Args...>>(std::forward<Args>(args)...)),
-                                                                   std::move(create_param_infos<type_list<Ctor_Args...>>(std::forward<Args>(args)...)));
+                                                                   std::move(get_default_args<type_list<Ctor_Args...>, constructor_type>(std::forward<Args>(args)...)),
+                                                                   std::move(create_param_infos<type_list<Ctor_Args...>, constructor_type>(std::forward<Args>(args)...)));
             return registration::class_<Class_Type>(m_reg_exec);
         }
 
@@ -256,7 +256,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base> create_default_constructor(Acc_Func func)
         {
             using namespace detail;
-            using param_info_t = decltype(create_param_infos<type_list<Acc_Func>>());
+            using param_info_t = decltype(create_param_infos<type_list<Acc_Func>, function_type>());
             return detail::make_unique<constructor_wrapper<Class_Type, return_func,
                                        detail::map_access_level_to_enum<acc_level>::value,
                                        default_invoke,
@@ -269,7 +269,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
         static RTTR_INLINE std::unique_ptr<detail::constructor_wrapper_base> create_custom_constructor(Acc_Func func, Args&&...args)
         {
             using namespace detail;
-            using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>>;
+            using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>, function_type>;
             static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given constructor. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
@@ -286,8 +286,8 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level> : public r
 
             auto ctor = create_constructor_wrapper(func,
                                                    std::move(get_metadata(std::forward<Args>(args)...)),
-                                                   std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
-                                                   std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)));
+                                                   std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
+                                                   std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)));
             return std::move(ctor);
         }
     public:
@@ -610,7 +610,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
         static RTTR_INLINE std::unique_ptr<detail::method_wrapper_base> create_default_method(string_view name, Acc_Func func)
         {
             using namespace detail;
-            using param_info_t =  decltype(create_param_infos<type_list<F>>());
+            using param_info_t =  decltype(create_param_infos<type_list<F>, function_type>());
             return detail::make_unique<method_wrapper<Acc_Func,
                                                       map_access_level_to_enum<acc_level>::value,
                                                       default_invoke,
@@ -627,7 +627,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             using policy_types_found = typename find_types<method_policy_list, as_type_list_t<raw_type_t<Args>...>>::type;
             static_assert(!has_double_types<policy_types_found>::value, "There are multiple policies of the same type forwarded, that is not allowed!");
 
-            using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>>;
+            using has_valid_default_types = has_default_types<type_list<Acc_Func>, type_list<Args...>, function_type>;
             static_assert( (has_default_args<Args...>::value && has_valid_default_types::value) || !has_default_args<Args...>::value,
                            "The provided default arguments, cannot be used with the given method. Please check the provided argument types."
                            "The given arguments must match the signature from the starting position to the right most argument.");
@@ -651,8 +651,8 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             auto meth = create_method_wrapper<policy,
                                               metadata_count::value>(name, func,
                                                                      std::move(get_metadata(std::forward<Args>(args)...)),
-                                                                     std::move(get_default_args<type_list<Acc_Func>>(std::forward<Args>(args)...)),
-                                                                     std::move(create_param_infos<type_list<F>>(std::forward<Args>(args)...)) );
+                                                                     std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
+                                                                     std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)) );
             return std::move(meth);
         }
 

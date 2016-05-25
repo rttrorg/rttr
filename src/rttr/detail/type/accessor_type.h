@@ -65,7 +65,7 @@ namespace detail
                                           member_func_ptr,
                                           conditional_t< std::is_member_object_pointer<T>::value,
                                                          member_object_ptr,
-                                                         conditional_t< is_callable<T>::value,
+                                                         conditional_t< is_functor<T>::value,
                                                                         function_ptr,
                                                                         conditional_t< std::is_pointer<T>::value,
                                                                                        object_ptr,
@@ -107,7 +107,7 @@ namespace detail
                                                       void_member_func,
                                                       return_member_func
                                                      >,
-                                       conditional_t< is_callable<T>::value,
+                                       conditional_t< is_functor<T>::value,
                                                       conditional_t< is_void_func<T>::value,
                                                                      void_func,
                                                                      return_func

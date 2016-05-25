@@ -866,6 +866,9 @@ namespace detail
     struct is_not_one_argument : std::integral_constant<bool, (sizeof...(TArgs) != 1)> {};
 
     template<typename...TArgs>
+    struct is_one_argument : std::integral_constant<bool, (sizeof...(TArgs) == 1)> {};
+
+    template<typename...TArgs>
     struct is_empty_args : std::integral_constant<bool, (sizeof...(TArgs) == 0)> {};
 
     /////////////////////////////////////////////////////////////////////////////////////////

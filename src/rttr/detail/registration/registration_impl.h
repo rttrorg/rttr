@@ -139,7 +139,7 @@ template<typename F, typename acc_level, typename Tp>
 registration::bind<detail::ctor_func, Class_Type, F, acc_level> registration::class_<Class_Type>::constructor(F func, acc_level level)
 {
     using namespace detail;
-    static_assert(is_callable<F>::value,
+    static_assert(is_functor<F>::value,
                   "No valid accessor for invoking the constructor provided!");
 
     static_assert(std::is_same<return_func, typename method_type<F>::type>::value,
@@ -171,7 +171,7 @@ registration::bind<detail::prop_readonly, Class_Type, A, acc_level> registration
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_pointer<A>::value ||
-                  std::is_member_object_pointer<A>::value || std::is_member_function_pointer<A>::value || is_callable<A>::value,
+                  std::is_member_object_pointer<A>::value || std::is_member_function_pointer<A>::value || is_functor<A>::value,
                   "No valid property accessor provided!");
 
     return {create_if_empty(m_reg_exec), name, acc};
@@ -186,7 +186,7 @@ registration::bind<detail::prop, Class_Type, A1, A2, acc_level> registration::cl
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
     static_assert(std::is_member_function_pointer<A1>::value || std::is_member_function_pointer<A2>::value ||
-                  is_callable<A1>::value || is_callable<A2>::value, "No valid property accessor provided!");
+                  is_functor<A1>::value || is_functor<A2>::value, "No valid property accessor provided!");
 
     static_assert(function_traits<A1>::arg_count == 0, "Invalid number of arguments, please provide as first accessor a getter-member-function without arguments.");
     static_assert(function_traits<A2>::arg_count == 1, "Invalid number of arguments, please provide as second argument a setter-member-function with exactly one argument.");
@@ -205,7 +205,7 @@ registration::bind<detail::meth, Class_Type, F, acc_level> registration::class_<
 {
     using namespace detail;
     static_assert(contains<acc_level, access_levels_list>::value, "The given type of 'level' is not a type of 'rttr::access_levels.'");
-    static_assert(std::is_member_function_pointer<F>::value || is_callable<F>::value, "No valid method accessor provided!");
+    static_assert(std::is_member_function_pointer<F>::value || is_functor<F>::value, "No valid method accessor provided!");
 
     return {create_if_empty(m_reg_exec), name, f};
 }
@@ -240,7 +240,7 @@ template<typename A>
 registration::bind<detail::prop_readonly, void, A, detail::public_access> registration::property_readonly(string_view name, A acc)
 {
     using namespace detail;
-    static_assert(std::is_pointer<A>::value || is_callable<A>::value,
+    static_assert(std::is_pointer<A>::value || is_functor<A>::value,
                  "No valid property accessor provided!");
 
     return {std::make_shared<registration_executer>(), name, acc};
@@ -252,7 +252,7 @@ template<typename A1, typename A2>
 registration::bind<detail::prop, void, A1, A2, detail::public_access> registration::property(string_view name, A1 getter, A2 setter)
 {
     using namespace detail;
-    static_assert(is_callable<A1>::value || is_callable<A2>::value,
+    static_assert(is_functor<A1>::value || is_functor<A2>::value,
                   "No valid property accessor provided!");
 
     return {std::make_shared<registration_executer>(), name, getter, setter};
@@ -264,7 +264,7 @@ template<typename F>
 registration::bind<detail::meth, void, F, detail::public_access> registration::method(string_view name, F f)
 {
     using namespace detail;
-    static_assert(is_callable<F>::value, "No valid property accessor provided!");
+    static_assert(is_functor<F>::value, "No valid property accessor provided!");
     return {std::make_shared<registration_executer>(), name, f};
 }
 

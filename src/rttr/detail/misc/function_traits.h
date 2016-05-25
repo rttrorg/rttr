@@ -50,34 +50,43 @@ namespace detail
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    struct is_callable_impl
+    // snippet provided by K-ballo
+    struct helper
     {
-        typedef char yes_type[1];
-        typedef char no_type[2];
-
-        template <typename Q>
-        static yes_type& check(decltype(&Q::operator())*);
-
-        template <typename Q>
-        static no_type& check(...);
-
-        static const bool value = sizeof(check<T>(0))==sizeof(yes_type);
+        void operator()(...);
     };
 
-    template<typename R, typename... Args>
-    struct is_callable_impl<R (*)(Args...)> : std::true_type {};
+    template <typename T>
+    struct helper_composed: T, helper
+    {};
 
-    template<typename R, typename... Args>
-    struct is_callable_impl<R (&)(Args...)> : std::true_type {};
+    template <void (helper::*) (...)>
+    struct member_function_holder
+    {};
+
+    template <typename T, typename Ambiguous = member_function_holder<&helper::operator()> >
+    struct is_functor_impl : std::true_type
+    {};
+
+    template <typename T>
+    struct is_functor_impl<T, member_function_holder<&helper_composed<T>::operator()> > : std::false_type
+    {};
 
     /*!
-     * \brief Returns true whether the given type T is callable as function.
+     * \brief Returns true whether the given type T is a functor.
      *        i.e. func(...); That can be free function, lambdas or function objects.
      */
-    template<typename T>
-    using is_callable = std::integral_constant<bool, is_callable_impl<T>::value>;
+    template <typename T>
+    struct is_functor : conditional_t<std::is_class<T>::value,
+                                      is_functor_impl<T>,
+                                      std::false_type>
+    {};
+
+    template<typename R, typename... Args>
+    struct is_functor<R (*)(Args...)> : std::true_type {};
+
+    template<typename R, typename... Args>
+    struct is_functor<R (&)(Args...)> : std::true_type {};
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +152,7 @@ namespace detail
     template<typename F>
     using is_function = std::integral_constant<bool, std::is_member_function_pointer<F>::value ||
                                                      std::is_function<F>::value ||
-                                                     is_callable<F>::value
+                                                     is_functor<F>::value
                                               >;
 
     /////////////////////////////////////////////////////////////////////////////////////
