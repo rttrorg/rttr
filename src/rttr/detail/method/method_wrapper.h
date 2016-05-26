@@ -75,6 +75,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
             init();
         }
 
+        bool is_valid()                                     const { return true;                                            }
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
@@ -152,6 +153,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
             init();
         }
 
+        bool is_valid()                                     const { return true;                                            }
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
@@ -223,6 +225,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<>, Me
             init();
         }
 
+        bool is_valid()                                     const { return true;                                            }
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }
@@ -294,6 +297,7 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
             init();
         }
 
+        bool is_valid()                                     const { return true;                                            }
         bool is_static()                                    const { return method_accessor<F, Policy>::is_static();         }
         type get_return_type()                              const { return method_accessor<F, Policy>::get_return_type();   }
         std::vector<bool> get_is_reference()                const { return method_accessor<F, Policy>::get_is_reference();  }

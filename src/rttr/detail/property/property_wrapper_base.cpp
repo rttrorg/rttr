@@ -99,7 +99,7 @@ bool property_wrapper_base::is_static() const
 
 type property_wrapper_base::get_type() const
 {
-    return detail::get_invalid_type();
+    return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
