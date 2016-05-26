@@ -36,10 +36,12 @@ namespace rttr
 namespace detail
 {
 
+static const destructor_wrapper_base invalid_wrapper;
+
 template<>
 destructor create_item(const destructor_wrapper_base* wrapper)
 {
-    return destructor(wrapper);
+    return destructor(wrapper ? wrapper : &invalid_wrapper);
 }
 
 } // end namespace detail
@@ -56,34 +58,28 @@ destructor::destructor(const detail::destructor_wrapper_base* wrapper)
 
 bool destructor::is_valid() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor::operator bool() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type destructor::get_destructed_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_destructed_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_destructed_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool destructor::invoke(variant& obj) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(obj);
-    else
-        return false;
+    return m_wrapper->invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

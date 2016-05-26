@@ -51,8 +51,9 @@ class RTTR_API destructor_wrapper_base
     public:
         virtual ~destructor_wrapper_base();
 
-        virtual type get_destructed_type() const = 0;
-        virtual bool invoke(variant& obj) const = 0;
+        virtual bool is_valid() const;
+        virtual type get_destructed_type() const;
+        virtual bool invoke(variant& obj) const;
 };
 
 } // end namespace detail

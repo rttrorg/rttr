@@ -43,6 +43,8 @@ class destructor_wrapper : public destructor_wrapper_base
     public:
         type get_destructed_type() const { return type::get<ClassType*>(); }
 
+        bool is_valid() const { return true; }
+
         bool invoke(variant& obj) const
         {
             if (obj.is_type<ClassType*>())
