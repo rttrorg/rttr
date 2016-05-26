@@ -146,7 +146,7 @@ static array_range<T> get_items_for_type(const type& t,
 
 template<typename T>
 static void update_class_list(const type& t,
-                               std::unordered_map<type, std::vector<T>>& class_map)
+                              std::unordered_map<type, std::vector<T>>& class_map)
 {
     // update type "t" with all items from the base classes
     auto& all_items_list = class_map[t];

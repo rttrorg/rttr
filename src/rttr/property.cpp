@@ -40,11 +40,12 @@ namespace rttr
 
 namespace detail
 {
+static const detail::property_wrapper_base empty(string_view(), detail::get_invalid_type());
 
 template<>
 property create_item(const property_wrapper_base* wrapper)
 {
-    return property(wrapper);
+    return property(wrapper ? wrapper : &empty);
 }
 
 } // end namespace detail;
@@ -54,141 +55,104 @@ property create_item(const property_wrapper_base* wrapper)
 property::property(const detail::property_wrapper_base* wrapper)
 :   m_wrapper(wrapper)
 {
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::is_valid() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property::operator bool() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 access_levels property::get_access_level() const
 {
-    if (is_valid())
-        return m_wrapper->get_access_level();
-    else
-        return access_levels::public_access;
+    return m_wrapper->get_access_level();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::is_readonly() const
 {
-    if (is_valid())
-        return m_wrapper->is_readonly();
-    else
-        return false;
+    return m_wrapper->is_readonly();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::is_static() const
 {
-    if (is_valid())
-        return m_wrapper->is_static();
-    else
-        return false;
+    return m_wrapper->is_static();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::is_enumeration() const
 {
-    if (is_valid())
-        return m_wrapper->get_type().is_enumeration();
-    else
-        return false;
+    return m_wrapper->get_type().is_enumeration();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration property::get_enumeration() const
 {
-    if (is_valid())
-        return m_wrapper->get_type().get_enumeration();
-    else
-        return detail::get_invalid_type().get_enumeration();
+    return m_wrapper->get_type().get_enumeration();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::is_array() const
 {
-    if (is_valid())
-        return m_wrapper->is_array();
-    else
-        return false;
+    return m_wrapper->is_array();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 string_view property::get_name() const
 {
-    if (is_valid())
-        return m_wrapper->get_name();
-    else
-        return string_view();
+    return m_wrapper->get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type property::get_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type property::get_declaring_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_declaring_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_declaring_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool property::set_value(instance object, argument arg) const
 {
-    if (is_valid())
-        return m_wrapper->set_value(object, arg);
-    else
-        return false;
+    return m_wrapper->set_value(object, arg);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant property::get_value(instance object) const
 {
-    if (is_valid())
-        return m_wrapper->get_value(object);
-    else
-        return variant();
+    return m_wrapper->get_value(object);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant property::get_metadata(const variant& key) const
 {
-    if (is_valid())
-        return m_wrapper->get_metadata(key);
-    else
-        return variant();
+    return m_wrapper->get_metadata(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

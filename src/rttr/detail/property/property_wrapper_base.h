@@ -44,7 +44,7 @@ class argument;
 namespace detail
 {
 /*!
- * Abstract class for an instance of a Property.
+ * Base class for an instance of a Property.
  *
  * This is the base class for all properties of the system.
  * It provide the basic mechanism for getting all meta data of a property,
@@ -57,34 +57,28 @@ class RTTR_API property_wrapper_base
 
         virtual ~property_wrapper_base();
 
-        //! returns the name of this property.
-        string_view get_name() const;
-
-        virtual access_levels get_access_level() const = 0;
-
-        //! Returns true whether this is a constant property, otherwise false.
-        virtual bool is_readonly() const = 0;
-
-        //! Returns true whether this is a static property, otherwise false.
-        virtual bool is_static() const = 0;
-
-        //! Returns the type of the underlying property.
-        virtual type get_type() const = 0;
-
-        //! Returns the class that declares this property.
         type get_declaring_type() const;
 
-        //! Retrieve the stored metadata for this property
-        virtual variant get_metadata(const variant& key) const = 0;
+        string_view get_name() const;
 
-        //! Returns true when the underlying property is an array type.
-        virtual bool is_array() const = 0;
+        virtual bool is_valid() const;
 
-        //! Sets this property of the given instance \p instance to the value of the argument \p argument.
-        virtual bool set_value(instance& object, argument& arg) const = 0;
+        virtual access_levels get_access_level() const;
 
-        //! Returns the value of this property from the given instance \p instance.
-        virtual variant get_value(instance& object) const = 0;
+        virtual bool is_readonly() const;
+
+        virtual bool is_static() const;
+
+        virtual type get_type() const;
+
+        virtual variant get_metadata(const variant& key) const;
+
+        virtual bool is_array() const;
+
+        virtual bool set_value(instance& object, argument& arg) const;
+
+        virtual variant get_value(instance& object) const;
+
     protected:
         void init();
 

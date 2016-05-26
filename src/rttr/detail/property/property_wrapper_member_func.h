@@ -50,12 +50,12 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
             static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
-            
+
             init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
-
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<return_type>(); }
@@ -105,12 +105,13 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
             m_getter(get)
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
-            
+
             init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
-        bool is_readonly()  const   { return true; }
+        bool is_valid()     const   { return true;  }
+        bool is_readonly()  const   { return true;  }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<return_type>(); }
         bool is_array()     const   { return detail::is_array<return_type>::value; }
@@ -160,11 +161,12 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
 
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
             static_assert(std::is_reference<arg_type>::value, "Please provide a setter-member-function with a reference as return value!");
-            
+
             init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
@@ -219,11 +221,12 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(std::is_reference<return_type>::value, "Please provide a getter-member-function with a reference as return value!");
-            
+
             init();
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<policy_type>(); }

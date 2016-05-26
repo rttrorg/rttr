@@ -54,6 +54,7 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
@@ -103,6 +104,7 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<return_type>(); }
@@ -156,6 +158,7 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::remove_reference<return_type>::type*>(); }
@@ -205,6 +208,7 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return true; }
         type get_type()     const   { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }

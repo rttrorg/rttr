@@ -47,6 +47,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
@@ -95,6 +96,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A>(); }
@@ -140,6 +142,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return false; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<A*>(); }
@@ -192,6 +195,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
         }
 
         access_levels get_access_level() const { return Acc_Level; }
+        bool is_valid()     const   { return true;  }
         bool is_readonly()  const   { return true; }
         bool is_static()    const   { return false; }
         type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }
