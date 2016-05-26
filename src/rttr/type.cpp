@@ -599,7 +599,7 @@ array_range<property> type::get_global_properties()
 
 enumeration type::get_enumeration() const
 {
-    return enumeration(detail::type_database::instance().get_enumeration(*this));
+    return detail::type_database::instance().get_enumeration(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

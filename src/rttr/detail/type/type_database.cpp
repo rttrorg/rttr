@@ -785,9 +785,9 @@ void type_database::register_enumeration(const type& t, std::unique_ptr<enumerat
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const enumeration_wrapper_base* type_database::get_enumeration(const type& t) const
+enumeration type_database::get_enumeration(const type& t) const
 {
-    return get_item_by_type(t, m_enumeration_list);
+    return create_item<enumeration>(get_item_by_type(t, m_enumeration_list));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

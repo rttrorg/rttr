@@ -38,11 +38,12 @@ namespace rttr
 
 namespace detail
 {
+static const enumeration_wrapper_base invalid_item;
 
 template<>
 enumeration create_item(const enumeration_wrapper_base* wrapper)
 {
-    return enumeration(wrapper);
+    return enumeration(wrapper ? wrapper : &invalid_item);
 }
 
 } // end namespace detail
@@ -59,104 +60,77 @@ enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper)
 
 bool enumeration::is_valid() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 enumeration::operator bool() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 string_view enumeration::get_name() const
 {
-    if (m_wrapper)
-        return m_wrapper->get_type().get_name();
-    else
-        return string_view();
+    return m_wrapper->get_type().get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type enumeration::get_underlying_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_underlying_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_underlying_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type enumeration::get_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type enumeration::get_declaring_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_declaring_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_declaring_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant enumeration::get_metadata(const variant& key) const
 {
-    if (is_valid())
-        return m_wrapper->get_metadata(key);
-    else
-        return variant();
+    return m_wrapper->get_metadata(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<string_view> enumeration::get_names() const
 {
-    if (is_valid())
-        return m_wrapper->get_names();
-    else
-        return array_range<string_view>();
+    return m_wrapper->get_names();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<variant> enumeration::get_values() const
 {
-    if (is_valid())
-        return m_wrapper->get_values();
-    else
-        return array_range<variant>();
+    return m_wrapper->get_values();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 string_view enumeration::value_to_name(argument value) const
 {
-    if (is_valid())
-        return m_wrapper->value_to_name(value);
-    else
-        return string_view();
+    return m_wrapper->value_to_name(value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant enumeration::name_to_value(string_view name) const
 {
-    if (is_valid())
-        return m_wrapper->name_to_value(name);
-    else
-        return variant();
+    return m_wrapper->name_to_value(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

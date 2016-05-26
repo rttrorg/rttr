@@ -207,7 +207,6 @@ class RTTR_API enumeration
         bool operator!=(const enumeration& other) const;
 
     private:
-        friend class type; // to prevent creation of this class
         //! Constructs a valid MetaProperty from a PropertyContainerBase.
         enumeration(const detail::enumeration_wrapper_base* wrapper = nullptr);
 

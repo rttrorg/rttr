@@ -62,6 +62,7 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
 
+        bool is_valid() const { return true; }
         type get_type() const { return type::get<Enum_Type>(); }
         type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
