@@ -86,6 +86,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
             init();
         }
 
+        bool is_valid()                     const { return true; }
         access_levels get_access_level()    const { return Acc_Level; }
         type get_instanciated_type()        const { return type::get<instanciated_type>(); }
         type get_declaring_type()           const { return type::get<typename raw_type<Class_Type>::type>(); }
@@ -193,6 +194,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             init();
         }
 
+        bool is_valid()                                     const { return true; }
         access_levels get_access_level()                    const { return Acc_Level; }
         type get_instanciated_type()                        const { return type::get<instanciated_type>();                  }
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }
@@ -263,6 +265,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
             init();
         }
 
+        bool is_valid()                     const { return true; }
         access_levels get_access_level()    const { return Acc_Level; }
         type get_instanciated_type()        const { return type::get<instanciated_type>(); }
         type get_declaring_type()           const { return type::get<typename raw_type<Class_Type>::type>(); }
@@ -363,6 +366,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             init();
         }
 
+        bool is_valid()                                     const { return true; }
         access_levels get_access_level()                    const { return Acc_Level; }
         type get_instanciated_type()                        const { return type::get<instanciated_type>();                  }
         type get_declaring_type()                           const { return type::get<typename raw_type<ClassType>::type>(); }

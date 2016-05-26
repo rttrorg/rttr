@@ -57,28 +57,29 @@ class RTTR_API constructor_wrapper_base
 {
     public:
         constructor_wrapper_base();
-
         virtual ~constructor_wrapper_base();
-        virtual type get_declaring_type() const = 0;
         string_view get_signature() const;
-        virtual access_levels get_access_level() const = 0;
-        virtual type get_instanciated_type() const = 0;
-        virtual std::vector<bool> get_is_reference() const = 0;
-        virtual std::vector<bool> get_is_const() const = 0;
-        virtual array_range<parameter_info> get_parameter_infos() const = 0;
-        virtual variant get_metadata(const variant& key) const = 0;
 
-        virtual variant invoke() const = 0;
-        virtual variant invoke(argument& arg1) const = 0;
-        virtual variant invoke(argument& arg1, argument& arg2) const = 0;
-        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3) const = 0;
-        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const = 0;
-        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
-                               argument& arg5) const = 0;
-        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
-                               argument& arg5, argument& arg6) const = 0;
+        virtual bool is_valid() const;
+        virtual type get_declaring_type() const;
+        virtual access_levels get_access_level() const;
+        virtual type get_instanciated_type() const;
+        virtual std::vector<bool> get_is_reference() const;
+        virtual std::vector<bool> get_is_const() const;
+        virtual array_range<parameter_info> get_parameter_infos() const;
+        virtual variant get_metadata(const variant& key) const;
 
-        virtual variant invoke_variadic(std::vector<argument>& args) const = 0;
+        virtual variant invoke() const;
+        virtual variant invoke(argument& arg1) const;
+        virtual variant invoke(argument& arg1, argument& arg2) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                               argument& arg5) const;
+        virtual variant invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                               argument& arg5, argument& arg6) const;
+
+        virtual variant invoke_variadic(std::vector<argument>& args) const;
     protected:
         void init();
     private:

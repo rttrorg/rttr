@@ -39,10 +39,12 @@ namespace rttr
 namespace detail
 {
 
+static const constructor_wrapper_base invalid_wrapper;
+
 template<>
 constructor create_item(const constructor_wrapper_base* wrapper)
 {
-    return constructor(wrapper);
+    return constructor(wrapper ? wrapper : &invalid_wrapper);
 }
 
 } // end namespace detail
@@ -59,44 +61,35 @@ constructor::constructor(const detail::constructor_wrapper_base* wrapper)
 
 bool constructor::is_valid() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 constructor::operator bool() const
 {
-    return (m_wrapper ? true : false);
+    return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 access_levels constructor::get_access_level() const
 {
-    if (is_valid())
-        return m_wrapper->get_access_level();
-    else
-        return access_levels::public_access;
+    return m_wrapper->get_access_level();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type constructor::get_instanciated_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_instanciated_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_instanciated_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type constructor::get_declaring_type() const
 {
-    if (is_valid())
-        return m_wrapper->get_declaring_type();
-    else
-        return detail::get_invalid_type();
+    return m_wrapper->get_declaring_type();
 }
 
 
@@ -104,80 +97,56 @@ type constructor::get_declaring_type() const
 
 string_view constructor::get_signature() const
 {
-    if (is_valid())
-        return m_wrapper->get_signature();
-    else
-        return string_view();
+    return m_wrapper->get_signature();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<parameter_info> constructor::get_parameter_infos() const
 {
-    if (is_valid())
-        return m_wrapper->get_parameter_infos();
-    else
-        return array_range<parameter_info>();
+    return m_wrapper->get_parameter_infos();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::get_metadata(const variant& key) const
 {
-    if (is_valid())
-        return m_wrapper->get_metadata(key);
-    else
-        return variant();
+    return m_wrapper->get_metadata(key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke() const
 {
-    if (is_valid())
-        return m_wrapper->invoke();
-    else
-        return variant();
+    return m_wrapper->invoke();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke(argument arg1) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke(argument arg1, argument arg2) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1, arg2);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1, arg2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke(argument arg1, argument arg2, argument arg3) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1, arg2, arg3);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1, arg2, arg3);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1, arg2, arg3, arg4);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1, arg2, arg3, arg4);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -185,10 +154,7 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3, argumen
 variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4,
                             argument arg5) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -196,20 +162,14 @@ variant constructor::invoke(argument arg1, argument arg2, argument arg3, argumen
 variant constructor::invoke(argument arg1, argument arg2, argument arg3, argument arg4,
                             argument arg5, argument arg6) const
 {
-    if (is_valid())
-        return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
-    else
-        return variant();
+    return m_wrapper->invoke(arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant constructor::invoke_variadic(std::vector<argument> args) const
 {
-    if (is_valid())
-        return m_wrapper->invoke_variadic(args);
-    else
-        return variant();
+    return m_wrapper->invoke_variadic(args);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

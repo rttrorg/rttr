@@ -72,6 +72,9 @@ void constructor_wrapper_base::create_signature_string()
     if (!m_signature.empty())
         return;
 
+    if (!get_instanciated_type())
+        return;
+
     auto param_info_list = get_parameter_infos();
     m_signature = get_instanciated_type().get_raw_type().get_name().to_string() + "( ";
     auto ref_list = get_is_reference();
@@ -88,6 +91,120 @@ void constructor_wrapper_base::create_signature_string()
         m_signature += " )";
 
     m_signature_view = m_signature;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool constructor_wrapper_base::is_valid() const
+{
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type constructor_wrapper_base::get_declaring_type() const
+{
+    return get_invalid_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+access_levels constructor_wrapper_base::get_access_level() const
+{
+    return access_levels::public_access;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type constructor_wrapper_base::get_instanciated_type() const
+{
+    return get_invalid_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<bool> constructor_wrapper_base::get_is_reference() const
+{
+    return std::vector<bool>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<bool> constructor_wrapper_base::get_is_const() const
+{
+    return std::vector<bool>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<parameter_info> constructor_wrapper_base::get_parameter_infos() const
+{
+    return array_range<parameter_info>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::get_metadata(const variant& key) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke() const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                                         argument& arg5) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke(argument& arg1, argument& arg2, argument& arg3, argument& arg4,
+                                         argument& arg5, argument& arg6) const
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant constructor_wrapper_base::invoke_variadic(std::vector<argument>& args) const
+{
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

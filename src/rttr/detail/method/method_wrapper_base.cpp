@@ -91,6 +91,9 @@ void method_wrapper_base::create_signature_string()
     if (!m_signature.empty())
         return;
 
+    if (get_name().empty())
+        return;
+
     const auto param_list = get_parameter_infos();
     m_signature = std::string(get_name()) + "( ";
     auto ref_list = get_is_reference();
