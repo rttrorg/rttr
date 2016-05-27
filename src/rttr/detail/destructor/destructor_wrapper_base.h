@@ -49,6 +49,7 @@ namespace detail
 class RTTR_API destructor_wrapper_base
 {
     public:
+        destructor_wrapper_base();
         virtual ~destructor_wrapper_base();
 
         virtual bool is_valid() const;
