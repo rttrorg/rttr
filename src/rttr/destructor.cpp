@@ -36,12 +36,17 @@ namespace rttr
 namespace detail
 {
 
-static const destructor_wrapper_base invalid_wrapper;
-
 template<>
 destructor create_item(const destructor_wrapper_base* wrapper)
 {
-    return destructor(wrapper ? wrapper : &invalid_wrapper);
+    return destructor(wrapper);
+}
+
+template<>
+destructor create_invalid_item()
+{
+    static const destructor_wrapper_base invalid_wrapper;
+    return destructor(&invalid_wrapper);
 }
 
 } // end namespace detail

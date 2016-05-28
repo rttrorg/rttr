@@ -116,11 +116,12 @@ class RTTR_API destructor
         bool operator!=(const destructor& other) const;
 
     private:
-        friend class type; // to prevent creation of this class
-        destructor(const detail::destructor_wrapper_base* wrapper = nullptr);
+        destructor(const detail::destructor_wrapper_base* wrapper);
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
+        template<typename T>
+        friend T detail::create_invalid_item();
 
     private:
         const detail::destructor_wrapper_base* m_wrapper;

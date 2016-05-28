@@ -40,12 +40,18 @@ namespace rttr
 
 namespace detail
 {
-static const detail::property_wrapper_base empty(string_view(), detail::get_invalid_type());
 
 template<>
 property create_item(const property_wrapper_base* wrapper)
 {
-    return property(wrapper ? wrapper : &empty);
+    return property(wrapper);
+}
+
+template<>
+property create_invalid_item()
+{
+    static const detail::property_wrapper_base invalid_wrapper(string_view(), detail::get_invalid_type());
+    return property(&invalid_wrapper);
 }
 
 } // end namespace detail;

@@ -266,12 +266,13 @@ class RTTR_API property
         bool operator!=(const property& other) const;
 
     private:
-        friend class type; // to prevent creation of this class
         //! Constructs a property from a property_wrapper_base.
-        property(const detail::property_wrapper_base* wrapper = nullptr);
+        property(const detail::property_wrapper_base* wrapper);
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
+        template<typename T>
+        friend T detail::create_invalid_item();
 
     private:
         const detail::property_wrapper_base* m_wrapper;

@@ -37,12 +37,18 @@ namespace rttr
 
 namespace detail
 {
-static const method_wrapper_base invalid_method(string_view(), detail::get_invalid_type());
 
 template<>
 method create_item(const method_wrapper_base* wrapper)
 {
-    return method(wrapper ? wrapper : &invalid_method);
+    return method(wrapper);
+}
+
+template<>
+method create_invalid_item()
+{
+    static const method_wrapper_base invalid_wrapper(string_view(), detail::get_invalid_type());
+    return method(&invalid_wrapper);
 }
 
 } // end namespace detail;

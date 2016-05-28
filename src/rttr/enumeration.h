@@ -207,11 +207,12 @@ class RTTR_API enumeration
         bool operator!=(const enumeration& other) const;
 
     private:
-        //! Constructs a valid MetaProperty from a PropertyContainerBase.
-        enumeration(const detail::enumeration_wrapper_base* wrapper = nullptr);
+        enumeration(const detail::enumeration_wrapper_base* wrapper);
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
+        template<typename T>
+        friend T detail::create_invalid_item();
     private:
         const detail::enumeration_wrapper_base* m_wrapper;
 };

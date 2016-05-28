@@ -39,12 +39,17 @@ namespace rttr
 namespace detail
 {
 
-static const constructor_wrapper_base invalid_wrapper;
-
 template<>
 constructor create_item(const constructor_wrapper_base* wrapper)
 {
-    return constructor(wrapper ? wrapper : &invalid_wrapper);
+    return constructor(wrapper);
+}
+
+template<>
+constructor create_invalid_item()
+{
+    static const constructor_wrapper_base invalid_wrapper;
+    return constructor(&invalid_wrapper);
 }
 
 } // end namespace detail

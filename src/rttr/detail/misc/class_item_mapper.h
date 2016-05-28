@@ -71,7 +71,10 @@ using class_item_to_wrapper_t = conditional_t< std::is_same<T, property>::value,
 
 
 template<typename T>
-T create_item(const class_item_to_wrapper_t<T>* wrapper = nullptr);
+T create_item(const class_item_to_wrapper_t<T>* wrapper);
+
+template<typename T>
+T create_invalid_item();
 
 } // end namespace detail
 } // end namespace rttr

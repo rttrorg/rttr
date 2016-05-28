@@ -38,12 +38,17 @@ namespace rttr
 
 namespace detail
 {
-static const enumeration_wrapper_base invalid_item;
-
 template<>
 enumeration create_item(const enumeration_wrapper_base* wrapper)
 {
-    return enumeration(wrapper ? wrapper : &invalid_item);
+    return enumeration(wrapper);
+}
+
+template<>
+enumeration create_invalid_item()
+{
+    static const enumeration_wrapper_base invalid_wrapper;
+    return enumeration(&invalid_wrapper);
 }
 
 } // end namespace detail

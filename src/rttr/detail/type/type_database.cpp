@@ -192,7 +192,7 @@ static T get_class_item(const type& t, string_view name,
             return *ret;
     }
 
-    return detail::create_item<T>();
+    return detail::create_invalid_item<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ property type_database::get_type_property(const type& t, string_view name) const
             return prop;
     }
 
-    return create_item<property>();
+    return create_invalid_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -355,7 +355,7 @@ property type_database::get_global_property(string_view name) const
     if (ret != m_global_properties.end())
         return *ret;
 
-    return detail::create_item<property>();
+    return detail::create_invalid_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -421,7 +421,7 @@ method type_database::get_type_method(const type& t, string_view name) const
         }
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ method type_database::get_type_method(const type& t, string_view name,
         }
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -466,7 +466,7 @@ method type_database::get_class_method(const type& t, string_view name,
         }
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ method type_database::get_class_method(const type& t, string_view name,
         }
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -534,7 +534,7 @@ method type_database::get_global_method(string_view name) const
     if (ret != m_global_methods.end())
         return *ret;
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -554,7 +554,7 @@ method type_database::get_global_method(string_view name, const std::vector<type
         ++itr;
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -574,7 +574,7 @@ method type_database::get_global_method(string_view name, const std::vector<argu
         ++itr;
     }
 
-    return detail::create_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -646,7 +646,7 @@ constructor type_database::get_constructor(const type& t) const
             return vec.front();
     }
 
-    return create_item<constructor>();
+    return create_invalid_item<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -663,7 +663,7 @@ constructor type_database::get_constructor(const type& t, const std::vector<type
         }
     }
 
-    return create_item<constructor>();
+    return create_invalid_item<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -680,7 +680,7 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
         }
     }
 
-    return create_item<constructor>();
+    return create_invalid_item<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -771,7 +771,7 @@ destructor type_database::get_destructor(const type& t) const
     if (ret != m_type_dtor_map.end())
         return ret->second;
     else
-        return create_item<destructor>();
+        return create_invalid_item<destructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -787,7 +787,10 @@ void type_database::register_enumeration(const type& t, std::unique_ptr<enumerat
 
 enumeration type_database::get_enumeration(const type& t) const
 {
-    return create_item<enumeration>(get_item_by_type(t, m_enumeration_list));
+    if (auto item = get_item_by_type(t, m_enumeration_list))
+        return create_item<enumeration>(item);
+    else
+        return create_invalid_item<enumeration>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
