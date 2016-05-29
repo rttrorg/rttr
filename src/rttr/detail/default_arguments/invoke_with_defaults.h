@@ -70,7 +70,7 @@ private:
     invoke_with_defaults_helper(const F& func_ptr, const instance& obj, index_sequence<Def_Idx...>,
                                 const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
-        static const std::size_t arg_count = sizeof...(Def_Idx) + sizeof...(TArgs);
+        static RTTR_CONSTEXPR_OR_CONST std::size_t arg_count = sizeof...(Def_Idx) + sizeof...(TArgs);
         return Invoker_Class::invoke(func_ptr, obj, args..., argument(std::get<Def_Idx>(def_args))...);
     }
 
@@ -81,10 +81,10 @@ public:
     enable_if_t< are_args_and_defaults_in_valid_range<F, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const F& func_ptr, const instance& obj, const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
-        static const std::size_t arg_count = function_traits<F>::arg_count;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t arg_count = function_traits<F>::arg_count;
         // here we calculate the integer sequence for retrieving the data from the tuple,
         // this depends on the number of arguments provided by the caller
-        static const std::size_t start_index = sizeof...(TArgs) + sizeof...(Def_Types) - arg_count;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t start_index = sizeof...(TArgs) + sizeof...(Def_Types) - arg_count;
         using idx_seq = typename erase_sequence_till<index_sequence_for<Def_Types...>, start_index>::type;
         return invoke_with_defaults_helper(func_ptr, obj, idx_seq(), def_args, args...);
     }
@@ -123,10 +123,10 @@ public:
     enable_if_t< are_args_and_defaults_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
-        static const std::size_t arg_count = sizeof...(Ctor_Args);
+        static RTTR_CONSTEXPR_OR_CONST std::size_t arg_count = sizeof...(Ctor_Args);
         // here we calculate the integer sequence for retrieving the data from the tuple,
         // this depends on the number of arguments provided by the caller
-        static const std::size_t start_index = sizeof...(TArgs) + sizeof...(Def_Types) - arg_count;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t start_index = sizeof...(TArgs) + sizeof...(Def_Types) - arg_count;
         using idx_seq = typename erase_sequence_till<index_sequence_for<Def_Types...>, start_index>::type;
         return invoke_with_defaults_extract(idx_seq(), def_args, args...);
     }
@@ -157,7 +157,7 @@ struct invoke_variadic_helper<Invoker_Class, index_sequence<Arg_Idx...>>
     template<typename... Args>
     static RTTR_FORCE_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
     {
-        static const std::size_t Arg_Count = sizeof...(Arg_Idx);
+        static RTTR_CONSTEXPR_OR_CONST std::size_t Arg_Count = sizeof...(Arg_Idx);
         if (arg_list.size() == Arg_Count)
             return Invoker_Class::invoke(args..., arg_list[Arg_Idx]...);
         else

@@ -125,7 +125,7 @@ struct does_argument_count_match : std::integral_constant<bool, (sizeof...(TArgs
 template<typename F, typename Policy>
 struct method_accessor
 {
-    static const std::size_t arg_count = function_traits<F>::arg_count;
+    static RTTR_CONSTEXPR_OR_CONST std::size_t arg_count = function_traits<F>::arg_count;
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence< arg_count >;
     using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;

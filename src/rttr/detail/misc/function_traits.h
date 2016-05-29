@@ -97,7 +97,7 @@ namespace detail
     template<typename R, typename... Args>
     struct function_traits<R (Args...)>
     {
-        static const size_t arg_count = sizeof...(Args);
+        static RTTR_CONSTEXPR_OR_CONST size_t arg_count = sizeof...(Args);
 
         using return_type   = R;
         using arg_types     = std::tuple<Args...>;

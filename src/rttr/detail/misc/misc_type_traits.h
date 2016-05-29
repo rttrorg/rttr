@@ -169,7 +169,7 @@ namespace detail
         static NoType& f(...);
 
     public:
-        static const bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
     };
 
     /*!
@@ -205,7 +205,7 @@ namespace detail
         static NoType& f(...);
 
     public:
-        static const bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
     };
 
     /*!
@@ -241,7 +241,7 @@ namespace detail
         static NoType& f(...);
 
     public:
-        static const bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(f<typename raw_type<T>::type>(0)) == sizeof(YesType));
     };
 
     /*!
@@ -458,7 +458,7 @@ namespace detail
         template <typename U> static YesType& check(...);
 
 
-        static const bool value = (sizeof(check<array_mapper<T> >(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<array_mapper<T> >(0)) == sizeof(YesType));
     };
 
     template<typename T>
@@ -532,7 +532,7 @@ namespace detail
     template<typename T, typename Enable = void>
     struct pointer_count_impl
     {
-        static const std::size_t size = 0;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t size = 0;
     };
 
     template<typename T>
@@ -540,7 +540,7 @@ namespace detail
                                              !is_function_ptr<T>::value &&
                                              !std::is_member_pointer<T>::value>>
     {
-        static const std::size_t size = pointer_count_impl<remove_pointer_t<T> >::size + 1;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t size = pointer_count_impl<remove_pointer_t<T> >::size + 1;
     };
 
     template<typename T>
@@ -686,19 +686,19 @@ namespace detail
     template<typename T>
     struct count_type_impl<T, type_list<>>
     {
-        static const std::size_t value = 0;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = 0;
     };
 
     template<typename T, typename... Tail>
     struct count_type_impl<T, type_list<T, Tail...>>
     {
-        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value + 1;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = count_type_impl<T, type_list<Tail...>>::value + 1;
     };
 
     template<typename T, typename U, typename... Tail>
     struct count_type_impl<T, type_list<U, Tail...>>
     {
-        static const std::size_t value = count_type_impl<T, type_list<Tail...>>::value;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = count_type_impl<T, type_list<Tail...>>::value;
     };
 
     template<typename T, typename Type_List>
@@ -794,19 +794,19 @@ namespace detail
     template<template<class> class Condition>
     struct count_if_impl<Condition, type_list<>>
     {
-        static const std::size_t value = 0;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = 0;
     };
 
     template<template<class> class Condition, typename T, typename...TArgs>
     struct count_if_impl<Condition, type_list<T, TArgs...>, enable_if_t<Condition<T>::value>>
     {
-        static const std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value + 1;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value + 1;
     };
 
     template<template<class> class Condition, typename T, typename...TArgs>
     struct count_if_impl<Condition, type_list<T, TArgs...>, enable_if_t<!Condition<T>::value>>
     {
-        static const std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value;
+        static RTTR_CONSTEXPR_OR_CONST std::size_t value = count_if_impl<Condition, type_list<TArgs...>>::value;
     };
 
     template<template<class> class Condition, typename...TArgs>

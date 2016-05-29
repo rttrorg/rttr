@@ -749,8 +749,8 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
         {
             using namespace detail;
 
-            static const std::size_t enum_count = count_type<enum_data<Enum_Type>, type_list<raw_type_t<Args>...>>::value;
-            static const std::size_t global_enum_count = count_if<is_enum_data, raw_type_t<Args>...>::value;
+            static RTTR_CONSTEXPR_OR_CONST std::size_t enum_count = count_type<enum_data<Enum_Type>, type_list<raw_type_t<Args>...>>::value;
+            static RTTR_CONSTEXPR_OR_CONST std::size_t global_enum_count = count_if<is_enum_data, raw_type_t<Args>...>::value;
 
             static_assert(enum_count == global_enum_count, "Invalid 'value' pair for enumeration type provided, please specify values only for enums of type 'Enum_Type'.");
 

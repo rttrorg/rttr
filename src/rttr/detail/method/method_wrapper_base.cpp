@@ -31,8 +31,8 @@
 
 using namespace std;
 
-static const char* is_ref_list[] = {"", " &"};
-static const char* is_const_list[] = {"", " const"};
+static RTTR_CONSTEXPR const char* is_ref_list[] = {"", " &"};
+static RTTR_CONSTEXPR const char* is_const_list[] = {"", " const"};
 
 namespace rttr
 {
