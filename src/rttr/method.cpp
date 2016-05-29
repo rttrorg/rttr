@@ -55,7 +55,7 @@ method create_invalid_item()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method::method(const detail::method_wrapper_base* wrapper)
+method::method(const detail::method_wrapper_base* wrapper) RTTR_NOEXCEPT
 :   m_wrapper(wrapper)
 {
 
@@ -63,63 +63,63 @@ method::method(const detail::method_wrapper_base* wrapper)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method::is_valid() const
+bool method::is_valid() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method::operator bool() const
+method::operator bool() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method::get_name() const
+string_view method::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels method::get_access_level() const
+access_levels method::get_access_level() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_access_level();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method::is_static() const
+bool method::is_static() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_static();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type method::get_return_type() const
+type method::get_return_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_return_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type method::get_declaring_type() const
+type method::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_declaring_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<parameter_info> method::get_parameter_infos() const
+array_range<parameter_info> method::get_parameter_infos() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_parameter_infos();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method::get_signature() const
+string_view method::get_signature() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_signature();
 }
@@ -191,14 +191,14 @@ variant method::invoke_variadic(instance object, std::vector<argument> args) con
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method::operator==(const method& other) const
+bool method::operator==(const method& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method::operator!=(const method& other) const
+bool method::operator!=(const method& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
 }

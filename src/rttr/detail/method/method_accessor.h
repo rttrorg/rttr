@@ -45,12 +45,12 @@ struct method_accessor_impl;
 template<typename F, std::size_t... ArgCount>
 struct method_accessor_impl<F, index_sequence<ArgCount...>, std::true_type>
 {
-    static std::vector<bool> get_is_reference()
+    static std::vector<bool> get_is_reference() RTTR_NOEXCEPT
     {
         return { std::is_reference<typename param_types<F, ArgCount>::type>::value... };
     }
 
-    static std::vector<bool> get_is_const()
+    static std::vector<bool> get_is_const() RTTR_NOEXCEPT
     {
         return { std::is_const<typename std::remove_reference<typename param_types<F, ArgCount>::type>::type>::value... };
     }
@@ -61,12 +61,12 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::true_type>
 template<typename F, std::size_t... ArgCount>
 struct method_accessor_impl<F, index_sequence<ArgCount...>, std::false_type>
 {
-    static std::vector<bool> get_is_reference()
+    static std::vector<bool> get_is_reference() RTTR_NOEXCEPT
     {
         return std::vector<bool>();
     }
 
-    static std::vector<bool> get_is_const()
+    static std::vector<bool> get_is_const() RTTR_NOEXCEPT
     {
         return std::vector<bool>();
     }
@@ -77,19 +77,19 @@ struct method_accessor_impl<F, index_sequence<ArgCount...>, std::false_type>
 template<typename MethodType>
 struct method_accessor_helper_is_static
 {
-    static bool is_static() { return true; }
+    static bool is_static() RTTR_NOEXCEPT { return true; }
 };
 
 template<>
 struct method_accessor_helper_is_static<return_member_func>
 {
-    static bool is_static() { return false; }
+    static bool is_static() RTTR_NOEXCEPT { return false; }
 };
 
 template<>
 struct method_accessor_helper_is_static<void_member_func>
 {
-    static bool is_static() { return false; }
+    static bool is_static() RTTR_NOEXCEPT { return false; }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -97,20 +97,20 @@ struct method_accessor_helper_is_static<void_member_func>
 template<typename F, typename Policy>
 struct method_accessor_helper_return_type
 {
-    static type get_return_type() { return type::get<typename function_traits<F>::return_type>(); }
+    static type get_return_type() RTTR_NOEXCEPT { return type::get<typename function_traits<F>::return_type>(); }
 };
 
 template<typename F>
 struct method_accessor_helper_return_type<F, return_as_ptr>
 {
     using return_type = typename function_traits<F>::return_type;
-    static type get_return_type() { return type::get<typename std::remove_reference<return_type>::type*>(); }
+    static type get_return_type() RTTR_NOEXCEPT { return type::get<typename std::remove_reference<return_type>::type*>(); }
 };
 
 template<typename F>
 struct method_accessor_helper_return_type<F, discard_return>
 {
-    static type get_return_type() { return type::get<void>(); }
+    static type get_return_type() RTTR_NOEXCEPT { return type::get<void>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ struct method_accessor
     using arg_index_sequence = make_index_sequence< arg_count >;
     using invoker_class = method_invoker<F, Policy, method_type, arg_index_sequence>;
 
-    static bool is_static()
+    static bool is_static() RTTR_NOEXCEPT
     {
         using method_type = typename detail::method_type<F>::type;
         return method_accessor_helper_is_static<method_type>::is_static();
@@ -138,14 +138,14 @@ struct method_accessor
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static type get_return_type()
+    static type get_return_type() RTTR_NOEXCEPT
     {
         return method_accessor_helper_return_type<F, Policy>::get_return_type();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static std::vector<bool> get_is_reference()
+    static std::vector<bool> get_is_reference() RTTR_NOEXCEPT
     {
         using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
         return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_reference();
@@ -153,7 +153,7 @@ struct method_accessor
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static std::vector<bool> get_is_const()
+    static std::vector<bool> get_is_const() RTTR_NOEXCEPT
     {
         using has_arguments         = typename std::integral_constant<bool, arg_count != 0>::type;
         return method_accessor_impl<F, make_index_sequence<arg_count>, has_arguments>::get_is_const();

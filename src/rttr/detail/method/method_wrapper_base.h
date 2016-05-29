@@ -58,20 +58,20 @@ namespace detail
 class RTTR_API method_wrapper_base
 {
     public:
-        method_wrapper_base(string_view name, type declaring_type);
+        method_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT;
         virtual ~method_wrapper_base();
 
-        string_view get_name() const;
-        type get_declaring_type() const;
+        string_view get_name() const RTTR_NOEXCEPT;
+        type get_declaring_type() const RTTR_NOEXCEPT;
 
-        virtual bool is_valid() const;
-        virtual string_view get_signature() const;
-        virtual access_levels get_access_level() const;
-        virtual type get_return_type() const;
-        virtual bool is_static() const;
-        virtual std::vector<bool> get_is_reference() const;
-        virtual std::vector<bool> get_is_const() const;
-        virtual array_range<parameter_info> get_parameter_infos() const;
+        virtual bool is_valid() const RTTR_NOEXCEPT;
+        virtual string_view get_signature() const RTTR_NOEXCEPT;
+        virtual access_levels get_access_level() const RTTR_NOEXCEPT;
+        virtual type get_return_type() const RTTR_NOEXCEPT;
+        virtual bool is_static() const RTTR_NOEXCEPT;
+        virtual std::vector<bool> get_is_reference() const RTTR_NOEXCEPT;
+        virtual std::vector<bool> get_is_const() const RTTR_NOEXCEPT;
+        virtual array_range<parameter_info> get_parameter_infos() const RTTR_NOEXCEPT;
         virtual variant get_metadata(const variant& key) const;
 
         virtual variant invoke(instance& object) const;
@@ -87,9 +87,9 @@ class RTTR_API method_wrapper_base
 
         virtual variant invoke_variadic(const instance& object, std::vector<argument>& args) const;
     protected:
-        void init();
+        void init() RTTR_NOEXCEPT;
     private:
-        void create_signature_string();
+        void create_signature_string() RTTR_NOEXCEPT;
 
     private:
         string_view m_name;

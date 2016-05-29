@@ -41,7 +41,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base::method_wrapper_base(string_view name, type declaring_type)
+method_wrapper_base::method_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT
 :   m_name(name),
     m_declaring_type(declaring_type)
 {
@@ -55,7 +55,7 @@ method_wrapper_base::~method_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void method_wrapper_base::init()
+void method_wrapper_base::init() RTTR_NOEXCEPT
 {
     create_signature_string();
     // register the underlying type with the following calls:
@@ -65,28 +65,28 @@ void method_wrapper_base::init()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method_wrapper_base::get_name() const
+string_view method_wrapper_base::get_name() const RTTR_NOEXCEPT
 {
     return m_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type method_wrapper_base::get_declaring_type() const
+type method_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method_wrapper_base::get_signature() const
+string_view method_wrapper_base::get_signature() const RTTR_NOEXCEPT
 {
     return m_signature_view;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void method_wrapper_base::create_signature_string()
+void method_wrapper_base::create_signature_string() RTTR_NOEXCEPT
 {
     if (!m_signature.empty())
         return;
@@ -114,49 +114,49 @@ void method_wrapper_base::create_signature_string()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method_wrapper_base::is_valid() const
+bool method_wrapper_base::is_valid() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels method_wrapper_base::get_access_level() const
+access_levels method_wrapper_base::get_access_level() const RTTR_NOEXCEPT
 {
     return access_levels::public_access;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type method_wrapper_base::get_return_type() const
+type method_wrapper_base::get_return_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool method_wrapper_base::is_static() const
+bool method_wrapper_base::is_static() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> method_wrapper_base::get_is_reference() const
+std::vector<bool> method_wrapper_base::get_is_reference() const RTTR_NOEXCEPT
 {
     return std::vector<bool>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> method_wrapper_base::get_is_const() const
+std::vector<bool> method_wrapper_base::get_is_const() const RTTR_NOEXCEPT
 {
     return std::vector<bool>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<parameter_info> method_wrapper_base::get_parameter_infos() const
+array_range<parameter_info> method_wrapper_base::get_parameter_infos() const RTTR_NOEXCEPT
 {
     return array_range<parameter_info>();
 }
