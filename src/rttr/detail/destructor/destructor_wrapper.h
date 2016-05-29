@@ -41,11 +41,11 @@ template<typename ClassType>
 class destructor_wrapper : public destructor_wrapper_base
 {
     public:
-        type get_destructed_type() const { return type::get<ClassType*>(); }
+        type get_destructed_type() const RTTR_NOEXCEPT { return type::get<ClassType*>(); }
 
-        bool is_valid() const { return true; }
+        bool is_valid() const RTTR_NOEXCEPT { return true; }
 
-        bool invoke(variant& obj) const
+        bool invoke(variant& obj) const RTTR_NOEXCEPT
         {
             if (obj.is_type<ClassType*>())
             {

@@ -49,12 +49,12 @@ namespace detail
 class RTTR_API destructor_wrapper_base
 {
     public:
-        destructor_wrapper_base();
+        destructor_wrapper_base() RTTR_NOEXCEPT;
         virtual ~destructor_wrapper_base();
 
-        virtual bool is_valid() const;
-        virtual type get_destructed_type() const;
-        virtual bool invoke(variant& obj) const;
+        virtual bool is_valid() const RTTR_NOEXCEPT;
+        virtual type get_destructed_type() const RTTR_NOEXCEPT;
+        virtual bool invoke(variant& obj) const RTTR_NOEXCEPT;
 };
 
 } // end namespace detail

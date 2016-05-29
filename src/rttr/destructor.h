@@ -75,21 +75,21 @@ class RTTR_API destructor
          *
          * \return Returns true when the destructor is valid; otherwise false.
          */
-        bool is_valid() const;
+        bool is_valid() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Convenience function to check if this destructor is valid or not.
          *
          * \return True if this destructor is valid, otherwise false.
          */
-        explicit operator bool() const;
+        explicit operator bool() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the rttr::type for which this destructor can delete objects.
          *
          * \return The type of this destructor.
          */
-        type get_destructed_type() const;
+        type get_destructed_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Destroys the contained object in the variant \p obj.
@@ -99,24 +99,24 @@ class RTTR_API destructor
          *
          * \return True if the destructor of the object could be invoked, otherwise false.
          */
-        bool invoke(variant& obj) const;
+        bool invoke(variant& obj) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this destructor is the same like the \p other.
          *
          * \return True if both destructors are equal, otherwise false.
          */
-        bool operator==(const destructor& other) const;
+        bool operator==(const destructor& other) const RTTR_NOEXCEPT;
 
         /*!
          * Returns true if this destructor is the not the same like the \p other.
          *
          * \return True if both destructors are different, otherwise false.
          */
-        bool operator!=(const destructor& other) const;
+        bool operator!=(const destructor& other) const RTTR_NOEXCEPT;
 
     private:
-        destructor(const detail::destructor_wrapper_base* wrapper);
+        destructor(const detail::destructor_wrapper_base* wrapper) RTTR_NOEXCEPT;
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
