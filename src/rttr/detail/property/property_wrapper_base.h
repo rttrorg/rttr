@@ -53,34 +53,34 @@ namespace detail
 class RTTR_API property_wrapper_base
 {
     public:
-        property_wrapper_base(string_view name, type declaring_type);
+        property_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT;
 
         virtual ~property_wrapper_base();
 
-        type get_declaring_type() const;
+        type get_declaring_type() const RTTR_NOEXCEPT;
 
-        string_view get_name() const;
+        string_view get_name() const RTTR_NOEXCEPT;
 
-        virtual bool is_valid() const;
+        virtual bool is_valid() const RTTR_NOEXCEPT;
 
-        virtual access_levels get_access_level() const;
+        virtual access_levels get_access_level() const RTTR_NOEXCEPT;
 
-        virtual bool is_readonly() const;
+        virtual bool is_readonly() const RTTR_NOEXCEPT;
 
-        virtual bool is_static() const;
+        virtual bool is_static() const RTTR_NOEXCEPT;
 
-        virtual type get_type() const;
+        virtual type get_type() const RTTR_NOEXCEPT;
 
         virtual variant get_metadata(const variant& key) const;
 
-        virtual bool is_array() const;
+        virtual bool is_array() const RTTR_NOEXCEPT;
 
         virtual bool set_value(instance& object, argument& arg) const;
 
         virtual variant get_value(instance& object) const;
 
     protected:
-        void init();
+        void init() RTTR_NOEXCEPT;
 
     private:
         string_view m_name;

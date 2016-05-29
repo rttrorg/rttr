@@ -58,84 +58,84 @@ property create_invalid_item()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property::property(const detail::property_wrapper_base* wrapper)
+property::property(const detail::property_wrapper_base* wrapper) RTTR_NOEXCEPT
 :   m_wrapper(wrapper)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_valid() const
+bool property::is_valid() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property::operator bool() const
+property::operator bool() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels property::get_access_level() const
+access_levels property::get_access_level() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_access_level();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_readonly() const
+bool property::is_readonly() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_readonly();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_static() const
+bool property::is_static() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_static();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_enumeration() const
+bool property::is_enumeration() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type().is_enumeration();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration property::get_enumeration() const
+enumeration property::get_enumeration() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type().get_enumeration();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_array() const
+bool property::is_array() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_array();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view property::get_name() const
+string_view property::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type property::get_type() const
+type property::get_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type property::get_declaring_type() const
+type property::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_declaring_type();
 }
@@ -163,14 +163,14 @@ variant property::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::operator==(const property& other) const
+bool property::operator==(const property& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::operator!=(const property& other) const
+bool property::operator!=(const property& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
 }

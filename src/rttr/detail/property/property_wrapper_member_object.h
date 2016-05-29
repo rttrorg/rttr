@@ -38,7 +38,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
     using accessor = A (C::*);
     public:
         property_wrapper(string_view name, type declaring_type,
-                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, declaring_type),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
@@ -46,12 +46,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
             init();
         }
 
-        access_levels get_access_level() const { return Acc_Level; }
-        bool is_valid()     const   { return true;  }
-        bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<A>(); }
-        bool is_array()     const   { return detail::is_array<A>::value; }
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return false; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get<A>(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -87,7 +87,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
     using accessor = A (C::*);
     public:
         property_wrapper(string_view name, type declaring_type,
-                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, declaring_type),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
@@ -95,12 +95,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
             init();
         }
 
-        access_levels get_access_level() const { return Acc_Level; }
-        bool is_valid()     const   { return true;  }
-        bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<A>(); }
-        bool is_array()     const   { return detail::is_array<A>::value; }
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return false; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get<A>(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -131,7 +131,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
     using accessor = A (C::*);
     public:
         property_wrapper(string_view name, type declaring_type,
-                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, declaring_type),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
@@ -141,12 +141,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
             init();
         }
 
-        access_levels get_access_level() const { return Acc_Level; }
-        bool is_valid()     const   { return true;  }
-        bool is_readonly()  const   { return false; }
-        bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<A*>(); }
-        bool is_array()     const   { return detail::is_array<A>::value; }
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return false; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get<A*>(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -185,7 +185,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
     using accessor = A (C::*);
     public:
         property_wrapper(string_view name, type declaring_type,
-                         accessor acc, std::array<metadata, Metadata_Count> metadata_list)
+                         accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, declaring_type),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_acc(acc)
         {
@@ -194,12 +194,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
             init();
         }
 
-        access_levels get_access_level() const { return Acc_Level; }
-        bool is_valid()     const   { return true;  }
-        bool is_readonly()  const   { return true; }
-        bool is_static()    const   { return false; }
-        type get_type()     const   { return type::get<typename std::add_const<A>::type*>(); }
-        bool is_array()     const   { return detail::is_array<A>::value; }
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return false; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get<typename std::add_const<A>::type*>(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<A>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 

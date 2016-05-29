@@ -34,7 +34,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base::property_wrapper_base(string_view name, type declaring_type)
+property_wrapper_base::property_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT
 :   m_name(name),
     m_declaring_type(declaring_type)
 {
@@ -48,56 +48,56 @@ property_wrapper_base::~property_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void property_wrapper_base::init()
+void property_wrapper_base::init() RTTR_NOEXCEPT
 {
     get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property_wrapper_base::is_valid() const
+bool property_wrapper_base::is_valid() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view property_wrapper_base::get_name() const
+string_view property_wrapper_base::get_name() const RTTR_NOEXCEPT
 {
     return m_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type property_wrapper_base::get_declaring_type() const
+type property_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels property_wrapper_base::get_access_level() const
+access_levels property_wrapper_base::get_access_level() const RTTR_NOEXCEPT
 {
     return access_levels::public_access;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property_wrapper_base::is_readonly() const
+bool property_wrapper_base::is_readonly() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property_wrapper_base::is_static() const
+bool property_wrapper_base::is_static() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type property_wrapper_base::get_type() const
+type property_wrapper_base::get_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
@@ -111,7 +111,7 @@ variant property_wrapper_base::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property_wrapper_base::is_array() const
+bool property_wrapper_base::is_array() const RTTR_NOEXCEPT
 {
     return false;
 }
