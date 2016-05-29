@@ -93,14 +93,14 @@ class RTTR_API constructor
          *
          * \return True if this constructor is valid, otherwise false.
          */
-        bool is_valid() const;
+        bool is_valid() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Convenience function to check if this constructor is valid or not.
          *
          * \return True if this constructor is valid, otherwise false.
          */
-        explicit operator bool() const;
+        explicit operator bool() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns access level with which this constructor was
@@ -110,14 +110,14 @@ class RTTR_API constructor
          *
          * \return \ref access_levels of the method.
          */
-        access_levels get_access_level() const;
+        access_levels get_access_level() const RTTR_NOEXCEPT;
 
         /*!
          * Returns the type object of the instantiated type.
          *
          * \return The instantiated type.
          */
-        type get_instanciated_type() const;
+        type get_instanciated_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the \ref type of the class or struct that declares this \ref constructor.
@@ -127,21 +127,21 @@ class RTTR_API constructor
          *
          * \return \ref type "Type" of the declaring class/struct for this enumeration.
          */
-        type get_declaring_type() const;
+        type get_declaring_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the signature of this constructor as readable string.
          *
          * \return The signature as readable string.
          */
-        string_view get_signature() const;
+        string_view get_signature() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns an ordered range of \ref parameter_info objects, which matches the signature of the constructor.
          *
          * \return A range of parameter_info objects of the constructor signature.
          */
-        array_range<parameter_info> get_parameter_infos() const;
+        array_range<parameter_info> get_parameter_infos() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the meta data for the given key \p key.
@@ -250,17 +250,17 @@ class RTTR_API constructor
          *
          * \return True if both constructors are equal, otherwise false.
          */
-        bool operator==(const constructor& other) const;
+        bool operator==(const constructor& other) const RTTR_NOEXCEPT;
 
         /*!
          * Returns true if this constructor is the not the same like the \p other.
          *
          * \return True if both constructors are different, otherwise false.
          */
-        bool operator!=(const constructor& other) const;
+        bool operator!=(const constructor& other) const RTTR_NOEXCEPT;
 
     private:
-        constructor(const detail::constructor_wrapper_base* wrapper = nullptr);
+        constructor(const detail::constructor_wrapper_base* wrapper) RTTR_NOEXCEPT;
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);

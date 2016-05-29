@@ -36,9 +36,10 @@ namespace rttr
 {
 namespace detail
 {
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor_wrapper_base::constructor_wrapper_base()
+constructor_wrapper_base::constructor_wrapper_base() RTTR_NOEXCEPT
 {
 
 }
@@ -51,7 +52,7 @@ constructor_wrapper_base::~constructor_wrapper_base()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void constructor_wrapper_base::init()
+void constructor_wrapper_base::init() RTTR_NOEXCEPT
 {
     create_signature_string();
     get_instanciated_type();
@@ -60,14 +61,14 @@ void constructor_wrapper_base::init()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view constructor_wrapper_base::get_signature() const
+string_view constructor_wrapper_base::get_signature() const RTTR_NOEXCEPT
 {
     return m_signature_view;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void constructor_wrapper_base::create_signature_string()
+void constructor_wrapper_base::create_signature_string() RTTR_NOEXCEPT
 {
     if (!m_signature.empty())
         return;
@@ -95,49 +96,49 @@ void constructor_wrapper_base::create_signature_string()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool constructor_wrapper_base::is_valid() const
+bool constructor_wrapper_base::is_valid() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type constructor_wrapper_base::get_declaring_type() const
+type constructor_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels constructor_wrapper_base::get_access_level() const
+access_levels constructor_wrapper_base::get_access_level() const RTTR_NOEXCEPT
 {
     return access_levels::public_access;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type constructor_wrapper_base::get_instanciated_type() const
+type constructor_wrapper_base::get_instanciated_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> constructor_wrapper_base::get_is_reference() const
+std::vector<bool> constructor_wrapper_base::get_is_reference() const RTTR_NOEXCEPT
 {
     return std::vector<bool>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<bool> constructor_wrapper_base::get_is_const() const
+std::vector<bool> constructor_wrapper_base::get_is_const() const RTTR_NOEXCEPT
 {
     return std::vector<bool>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<parameter_info> constructor_wrapper_base::get_parameter_infos() const
+array_range<parameter_info> constructor_wrapper_base::get_parameter_infos() const RTTR_NOEXCEPT
 {
     return array_range<parameter_info>();
 }

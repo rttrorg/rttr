@@ -56,7 +56,7 @@ constructor create_invalid_item()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor::constructor(const detail::constructor_wrapper_base* wrapper)
+constructor::constructor(const detail::constructor_wrapper_base* wrapper) RTTR_NOEXCEPT
 :   m_wrapper(wrapper)
 {
 
@@ -64,35 +64,35 @@ constructor::constructor(const detail::constructor_wrapper_base* wrapper)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool constructor::is_valid() const
+bool constructor::is_valid() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor::operator bool() const
+constructor::operator bool() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-access_levels constructor::get_access_level() const
+access_levels constructor::get_access_level() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_access_level();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type constructor::get_instanciated_type() const
+type constructor::get_instanciated_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_instanciated_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type constructor::get_declaring_type() const
+type constructor::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_declaring_type();
 }
@@ -100,14 +100,14 @@ type constructor::get_declaring_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view constructor::get_signature() const
+string_view constructor::get_signature() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_signature();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<parameter_info> constructor::get_parameter_infos() const
+array_range<parameter_info> constructor::get_parameter_infos() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_parameter_infos();
 }
@@ -179,14 +179,14 @@ variant constructor::invoke_variadic(std::vector<argument> args) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool constructor::operator==(const constructor& other) const
+bool constructor::operator==(const constructor& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool constructor::operator!=(const constructor& other) const
+bool constructor::operator!=(const constructor& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
 }

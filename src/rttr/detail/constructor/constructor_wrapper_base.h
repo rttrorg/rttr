@@ -56,17 +56,17 @@ namespace detail
 class RTTR_API constructor_wrapper_base
 {
     public:
-        constructor_wrapper_base();
+        constructor_wrapper_base() RTTR_NOEXCEPT;
         virtual ~constructor_wrapper_base();
-        string_view get_signature() const;
+        string_view get_signature() const RTTR_NOEXCEPT;
 
-        virtual bool is_valid() const;
-        virtual type get_declaring_type() const;
-        virtual access_levels get_access_level() const;
-        virtual type get_instanciated_type() const;
-        virtual std::vector<bool> get_is_reference() const;
-        virtual std::vector<bool> get_is_const() const;
-        virtual array_range<parameter_info> get_parameter_infos() const;
+        virtual bool is_valid() const RTTR_NOEXCEPT;
+        virtual type get_declaring_type() const RTTR_NOEXCEPT;
+        virtual access_levels get_access_level() const RTTR_NOEXCEPT;
+        virtual type get_instanciated_type() const RTTR_NOEXCEPT;
+        virtual std::vector<bool> get_is_reference() const RTTR_NOEXCEPT;
+        virtual std::vector<bool> get_is_const() const RTTR_NOEXCEPT;
+        virtual array_range<parameter_info> get_parameter_infos() const RTTR_NOEXCEPT;
         virtual variant get_metadata(const variant& key) const;
 
         virtual variant invoke() const;
@@ -81,9 +81,9 @@ class RTTR_API constructor_wrapper_base
 
         virtual variant invoke_variadic(std::vector<argument>& args) const;
     protected:
-        void init();
+        void init() RTTR_NOEXCEPT;
     private:
-        void create_signature_string();
+        void create_signature_string() RTTR_NOEXCEPT;
     private:
         string_view m_signature_view;
         std::string m_signature;
