@@ -55,7 +55,7 @@ enumeration create_invalid_item()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper)
+enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper) RTTR_NOEXCEPT
 :   m_wrapper(wrapper)
 {
 
@@ -63,42 +63,42 @@ enumeration::enumeration(const detail::enumeration_wrapper_base* wrapper)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool enumeration::is_valid() const
+bool enumeration::is_valid() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration::operator bool() const
+enumeration::operator bool() const RTTR_NOEXCEPT
 {
     return m_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view enumeration::get_name() const
+string_view enumeration::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type().get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_underlying_type() const
+type enumeration::get_underlying_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_underlying_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_type() const
+type enumeration::get_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration::get_declaring_type() const
+type enumeration::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_declaring_type();
 }
@@ -112,14 +112,14 @@ variant enumeration::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<string_view> enumeration::get_names() const
+array_range<string_view> enumeration::get_names() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_names();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<variant> enumeration::get_values() const
+array_range<variant> enumeration::get_values() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_values();
 }
@@ -140,14 +140,14 @@ variant enumeration::name_to_value(string_view name) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool enumeration::operator==(const enumeration& other) const
+bool enumeration::operator==(const enumeration& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool enumeration::operator!=(const enumeration& other) const
+bool enumeration::operator!=(const enumeration& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
 }

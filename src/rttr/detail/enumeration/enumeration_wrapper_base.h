@@ -53,26 +53,26 @@ namespace detail
 class RTTR_API enumeration_wrapper_base
 {
     public:
-        enumeration_wrapper_base();
+        enumeration_wrapper_base() RTTR_NOEXCEPT;
         virtual ~enumeration_wrapper_base();
 
-        type get_declaring_type() const;
+        type get_declaring_type() const RTTR_NOEXCEPT;
 
-        virtual bool is_valid() const;
+        virtual bool is_valid() const RTTR_NOEXCEPT;
 
-        virtual type get_underlying_type() const;
+        virtual type get_underlying_type() const RTTR_NOEXCEPT;
 
-        virtual type get_type() const;
+        virtual type get_type() const RTTR_NOEXCEPT;
 
-        virtual array_range<string_view> get_names() const;
+        virtual array_range<string_view> get_names() const RTTR_NOEXCEPT;
 
-        virtual array_range<variant> get_values() const;
+        virtual array_range<variant> get_values() const RTTR_NOEXCEPT;
 
         virtual string_view value_to_name(argument& value) const;
 
         virtual variant name_to_value(string_view name) const;
 
-        void set_declaring_type(type declaring_type);
+        void set_declaring_type(type declaring_type) RTTR_NOEXCEPT;
 
         virtual variant get_metadata(const variant& key) const;
     private:

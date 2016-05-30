@@ -48,7 +48,7 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
 {
     public:
         enumeration_wrapper(std::array< enum_data<Enum_Type>, N > data,
-                            std::array<metadata, Metadata_Count> metadata_list)
+                            std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   metadata_handler<Metadata_Count>(std::move(metadata_list))
         {
             int index = 0;
@@ -62,16 +62,16 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
             static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please create an instance of this class only for enum types!");
         }
 
-        bool is_valid() const { return true; }
-        type get_type() const { return type::get<Enum_Type>(); }
-        type get_underlying_type() const { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
+        bool is_valid() const RTTR_NOEXCEPT { return true; }
+        type get_type() const RTTR_NOEXCEPT { return type::get<Enum_Type>(); }
+        type get_underlying_type() const RTTR_NOEXCEPT { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
-        array_range<string_view> get_names() const
+        array_range<string_view> get_names() const RTTR_NOEXCEPT
         {
             return array_range<string_view>(m_enum_names.data(), N);
         }
 
-        array_range<variant> get_values() const
+        array_range<variant> get_values() const RTTR_NOEXCEPT
         {
             return array_range<variant>(m_enum_variant_values.data(), N);
         }

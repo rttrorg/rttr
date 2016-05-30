@@ -35,62 +35,62 @@ namespace detail
 {
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration_wrapper_base::enumeration_wrapper_base()
+enumeration_wrapper_base::enumeration_wrapper_base() RTTR_NOEXCEPT
 :   m_declaring_type(get_invalid_type())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration_wrapper_base::~enumeration_wrapper_base()
+enumeration_wrapper_base::~enumeration_wrapper_base() RTTR_NOEXCEPT
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void enumeration_wrapper_base::set_declaring_type(type declaring_type)
+void enumeration_wrapper_base::set_declaring_type(type declaring_type) RTTR_NOEXCEPT
 {
     m_declaring_type = declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration_wrapper_base::get_declaring_type() const
+type enumeration_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
 {
     return m_declaring_type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool enumeration_wrapper_base::is_valid() const
+bool enumeration_wrapper_base::is_valid() const RTTR_NOEXCEPT
 {
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration_wrapper_base::get_underlying_type() const
+type enumeration_wrapper_base::get_underlying_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type enumeration_wrapper_base::get_type() const
+type enumeration_wrapper_base::get_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<string_view> enumeration_wrapper_base::get_names() const
+array_range<string_view> enumeration_wrapper_base::get_names() const RTTR_NOEXCEPT
 {
     return array_range<string_view>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<variant> enumeration_wrapper_base::get_values() const
+array_range<variant> enumeration_wrapper_base::get_values() const RTTR_NOEXCEPT
 {
     return array_range<variant>();
 }
