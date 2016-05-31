@@ -35,7 +35,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-parameter_info_wrapper_base::parameter_info_wrapper_base()
+parameter_info_wrapper_base::parameter_info_wrapper_base() RTTR_NOEXCEPT
 {
 }
 

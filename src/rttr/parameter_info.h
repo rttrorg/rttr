@@ -113,14 +113,14 @@ class RTTR_API parameter_info
          *
          * \return Parameter type.
          */
-        type get_type() const;
+        type get_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true when this parameter has a default value; otherwise false.
          *
          * \return Bool to indicate that this parameter has a default value.
          */
-        bool has_default_value() const;
+        bool has_default_value() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the default value as \ref variant for this parameter;
@@ -128,7 +128,7 @@ class RTTR_API parameter_info
          *
          * \return Default value as variant.
          */
-        variant get_default_value() const;
+        variant get_default_value() const RTTR_NOEXCEPT;
 
          /*!
          * \brief Returns the name of this parameter.
@@ -137,34 +137,34 @@ class RTTR_API parameter_info
          *
          * \return The name of the parameter.
          */
-        string_view get_name() const;
+        string_view get_name() const RTTR_NOEXCEPT;
 
          /*!
          * \brief Returns the zero-based position of the parameter in the formal parameter list.
          *
          * \return An integer representing the position this parameter occupies in the parameter list.
          */
-        uint32_t get_index() const;
+        uint32_t get_index() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.
          *
          * \return True if both properties are equal, otherwise false.
          */
-        bool operator==(const parameter_info& other) const;
+        bool operator==(const parameter_info& other) const RTTR_NOEXCEPT;
 
         /*!
          * Returns true if this property is the not the same like the \p other.
          *
          * \return True if both properties are different, otherwise false.
          */
-        bool operator!=(const parameter_info& other) const;
+        bool operator!=(const parameter_info& other) const RTTR_NOEXCEPT;
 
     private:
         template<typename T>
         friend parameter_info detail::create_param_info(const T&);
 
-        parameter_info(const detail::parameter_info_wrapper_base* wrapper = nullptr);
+        parameter_info(const detail::parameter_info_wrapper_base* wrapper = nullptr) RTTR_NOEXCEPT;
     private:
         const detail::parameter_info_wrapper_base* m_wrapper;
 };

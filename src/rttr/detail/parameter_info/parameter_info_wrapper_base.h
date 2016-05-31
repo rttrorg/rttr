@@ -39,14 +39,14 @@ namespace detail
 class RTTR_API parameter_info_wrapper_base
 {
     public:
-        parameter_info_wrapper_base();
+        parameter_info_wrapper_base() RTTR_NOEXCEPT;
         virtual ~parameter_info_wrapper_base();
 
-        virtual string_view get_name() const = 0;
-        virtual type get_type() const = 0;
-        virtual bool has_default_value() const = 0;
-        virtual variant get_default_value() const = 0;
-        virtual uint32_t get_index() const = 0;
+        virtual string_view get_name() const RTTR_NOEXCEPT = 0;
+        virtual type get_type() const RTTR_NOEXCEPT = 0;
+        virtual bool has_default_value() const RTTR_NOEXCEPT = 0;
+        virtual variant get_default_value() const RTTR_NOEXCEPT = 0;
+        virtual uint32_t get_index() const RTTR_NOEXCEPT = 0;
 };
 
 } // end namespace detail

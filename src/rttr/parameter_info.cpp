@@ -35,7 +35,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-parameter_info::parameter_info(const detail::parameter_info_wrapper_base* wrapper)
+parameter_info::parameter_info(const detail::parameter_info_wrapper_base* wrapper) RTTR_NOEXCEPT
 :   m_wrapper(wrapper)
 {
 
@@ -43,49 +43,49 @@ parameter_info::parameter_info(const detail::parameter_info_wrapper_base* wrappe
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type parameter_info::get_type() const
+type parameter_info::get_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool parameter_info::has_default_value() const
+bool parameter_info::has_default_value() const RTTR_NOEXCEPT
 {
     return m_wrapper->has_default_value();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant parameter_info::get_default_value() const
+variant parameter_info::get_default_value() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_default_value();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view parameter_info::get_name() const
+string_view parameter_info::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint32_t parameter_info::get_index() const
+uint32_t parameter_info::get_index() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_index();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool parameter_info::operator==(const parameter_info& other) const
+bool parameter_info::operator==(const parameter_info& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool parameter_info::operator!=(const parameter_info& other) const
+bool parameter_info::operator!=(const parameter_info& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
 }
