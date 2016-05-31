@@ -164,7 +164,7 @@ class RTTR_API parameter_info
         template<typename T>
         friend parameter_info detail::create_param_info(const T&);
 
-        parameter_info(const detail::parameter_info_wrapper_base* wrapper = nullptr) RTTR_NOEXCEPT;
+        parameter_info(const detail::parameter_info_wrapper_base* wrapper) RTTR_NOEXCEPT;
     private:
         const detail::parameter_info_wrapper_base* m_wrapper;
 };

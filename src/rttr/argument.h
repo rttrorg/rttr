@@ -68,36 +68,36 @@ class RTTR_API argument
 
 public:
 
-    RTTR_INLINE argument();
-    RTTR_INLINE argument(argument&& arg);
-    RTTR_INLINE argument(const argument& other);
-    RTTR_INLINE argument(variant& var);
-    RTTR_INLINE argument(const variant& var);
+    RTTR_INLINE argument() RTTR_NOEXCEPT;
+    RTTR_INLINE argument(argument&& arg) RTTR_NOEXCEPT;
+    RTTR_INLINE argument(const argument& other) RTTR_NOEXCEPT;
+    RTTR_INLINE argument(variant& var) RTTR_NOEXCEPT;
+    RTTR_INLINE argument(const variant& var) RTTR_NOEXCEPT;
 
     template<typename T, typename Tp = decay_arg_t<T>>
-    RTTR_INLINE argument(const T& data);
+    RTTR_INLINE argument(const T& data) RTTR_NOEXCEPT;
     template<typename T, typename Tp = decay_arg_t<T>>
-    RTTR_INLINE argument(T& data);
+    RTTR_INLINE argument(T& data) RTTR_NOEXCEPT;
 
-    RTTR_INLINE argument& operator=(const argument& other);
+    RTTR_INLINE argument& operator=(const argument& other) RTTR_NOEXCEPT;
 
-    RTTR_INLINE type get_type() const;
+    RTTR_INLINE type get_type() const RTTR_NOEXCEPT;
 #ifdef DOXYGEN
     template<typename T>
-    RTTR_INLINE bool is_type() const;
+    RTTR_INLINE bool is_type() const RTTR_NOEXCEPT;
 
     template<typename T>
-    RTTR_INLINE T& get_value() const;
+    RTTR_INLINE T& get_value() const RTTR_NOEXCEPT;
 #else
     template<typename T>
-    RTTR_INLINE ptr_type<T> is_type() const;
+    RTTR_INLINE ptr_type<T> is_type() const RTTR_NOEXCEPT;
     template<typename T>
-    RTTR_INLINE non_ptr_type<T> is_type() const;
+    RTTR_INLINE non_ptr_type<T> is_type() const RTTR_NOEXCEPT;
 
     template<typename T>
-    RTTR_INLINE arg_value_t<T>& get_value() const;
+    RTTR_INLINE arg_value_t<T>& get_value() const RTTR_NOEXCEPT;
     template<typename T>
-    RTTR_INLINE arg_rvalue_t<T> && get_value() const;
+    RTTR_INLINE arg_rvalue_t<T> && get_value() const RTTR_NOEXCEPT;
 #endif
 
 private:
