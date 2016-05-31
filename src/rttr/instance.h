@@ -57,17 +57,17 @@ public:
      *
      * Use this constructor, when you need to invoke a property or method where no instance is required.
      */
-    RTTR_INLINE instance();
+    RTTR_INLINE instance() RTTR_NOEXCEPT;
 
     /*!
      * \brief Creates an instance object from a \ref variant object.
      */
-    RTTR_INLINE instance(variant& var);
+    RTTR_INLINE instance(variant& var) RTTR_NOEXCEPT;
 
     /*!
      * \brief Copy constructor for an instance.
      */
-    RTTR_INLINE instance(const instance& other);
+    RTTR_INLINE instance(const instance& other) RTTR_NOEXCEPT;
 
     /*!
      * \brief Creates an instance object from type \p T.
@@ -75,7 +75,7 @@ public:
      * \remark Internally, the instance class will hold a reference to the address of the given object \p data.
      */
     template<typename T, typename Tp = decay_instance_t<T>>
-    RTTR_INLINE instance(T& data);
+    RTTR_INLINE instance(T& data) RTTR_NOEXCEPT;
 
     /*!
      * \brief This function will try to convert the underlying instance to the given type \p Target_Type*.
@@ -84,21 +84,21 @@ public:
      * \return A pointer to the instance of \p Target_Type, when the conversion succeeds, otherwise a nullptr.
      */
     template<typename Target_Type>
-    RTTR_INLINE Target_Type* try_convert() const;
+    RTTR_INLINE Target_Type* try_convert() const RTTR_NOEXCEPT;
 
     /*!
      * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
      *
      * \return True when a reference is stored, otherwise false.
      */
-    RTTR_INLINE bool is_valid() const;
+    RTTR_INLINE bool is_valid() const RTTR_NOEXCEPT;
 
     /*!
      * \brief Returns true when the instance class contains a reference to an object. Otherwise false.
      *
      * \return True when a reference is stored, otherwise false.
      */
-    explicit operator bool() const;
+    explicit operator bool() const RTTR_NOEXCEPT;
 
     /*!
      * \brief Returns the type of the internally hold instance.
@@ -107,7 +107,7 @@ public:
      *
      * \return Type object of stored reference.
      */
-    RTTR_INLINE type get_type() const;
+    RTTR_INLINE type get_type() const RTTR_NOEXCEPT;
 
     /*!
      * \brief Returns an \ref instance object for the wrapped instance.
@@ -126,7 +126,7 @@ public:
      *
      * \return An \ref instance object from the wrapped type.
      */
-    RTTR_INLINE instance get_wrapped_instance() const;
+    RTTR_INLINE instance get_wrapped_instance() const RTTR_NOEXCEPT;
 
     /*!
      * \brief Returns the most derived type of the hold instance.
@@ -145,10 +145,10 @@ public:
      *   obj.get_derived_type() == type::get<derived>();    // yields to true
      * \endcode
      */
-    RTTR_INLINE type get_derived_type() const;
+    RTTR_INLINE type get_derived_type() const RTTR_NOEXCEPT;
 
 private:
-    instance& operator=(const instance& other);
+    instance& operator=(const instance& other) RTTR_NOEXCEPT;
 
     detail::data_address_container m_data_container;
 };

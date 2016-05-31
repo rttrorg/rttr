@@ -38,7 +38,7 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance()
+RTTR_INLINE instance::instance() RTTR_NOEXCEPT
 :   m_data_container(detail::data_address_container{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr})
 {
 
@@ -46,14 +46,14 @@ RTTR_INLINE instance::instance()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance(variant& var)
+RTTR_INLINE instance::instance(variant& var) RTTR_NOEXCEPT
 :   m_data_container(var.get_data_address_container())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance(const instance& other)
+RTTR_INLINE instance::instance(const instance& other) RTTR_NOEXCEPT
 :   m_data_container(other.m_data_container)
 {
 }
@@ -61,7 +61,7 @@ RTTR_INLINE instance::instance(const instance& other)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Tp>
-RTTR_INLINE instance::instance(T& data)
+RTTR_INLINE instance::instance(T& data) RTTR_NOEXCEPT
 :   m_data_container(detail::data_address_container{
                      rttr::type::get<T>(), rttr::type::get<detail::wrapper_mapper_t<T>>(),
                      detail::as_void_ptr(detail::raw_addressof(data)), detail::as_void_ptr(detail::wrapped_raw_addressof(data))})
@@ -72,7 +72,7 @@ RTTR_INLINE instance::instance(T& data)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Target_Type>
-RTTR_INLINE Target_Type* instance::try_convert() const
+RTTR_INLINE Target_Type* instance::try_convert() const RTTR_NOEXCEPT
 {
     Target_Type* target = static_cast<Target_Type*>(type::apply_offset(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type, type::get<Target_Type>()));
 
@@ -84,19 +84,19 @@ RTTR_INLINE Target_Type* instance::try_convert() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool instance::is_valid() const { return (m_data_container.m_data_address != nullptr); }
+RTTR_INLINE bool instance::is_valid() const RTTR_NOEXCEPT { return (m_data_container.m_data_address != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::operator bool() const { return (m_data_container.m_data_address != nullptr); }
+RTTR_INLINE instance::operator bool() const RTTR_NOEXCEPT { return (m_data_container.m_data_address != nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type instance::get_type() const { return m_data_container.m_type; }
+RTTR_INLINE type instance::get_type() const RTTR_NOEXCEPT { return m_data_container.m_type; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
- RTTR_INLINE instance instance::get_wrapped_instance() const
+ RTTR_INLINE instance instance::get_wrapped_instance() const RTTR_NOEXCEPT
  {
      instance obj;
      if (m_data_container.m_data_address != m_data_container.m_data_address_wrapped_type)
@@ -109,7 +109,7 @@ RTTR_INLINE type instance::get_type() const { return m_data_container.m_type; }
 
  /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type instance::get_derived_type() const
+RTTR_INLINE type instance::get_derived_type() const RTTR_NOEXCEPT
 {
     return type::get_derived_type(const_cast<instance*>(this)->m_data_container.m_data_address, m_data_container.m_type);
 }
