@@ -142,29 +142,29 @@ class RTTR_API variant_array_view
          *
          * \see is_valid()
          */
-        variant_array_view();
+        variant_array_view() RTTR_NOEXCEPT;
 
         /*!
          * \brief Constructs a copy of the given variant_array_view \p other.
          */
-        variant_array_view(const variant_array_view& other);
+        variant_array_view(const variant_array_view& other) RTTR_NOEXCEPT;
 
         /*!
          * \brief Constructs a new variant_array_view via move constructor.
          */
-        variant_array_view(variant_array_view&& other);
+        variant_array_view(variant_array_view&& other) RTTR_NOEXCEPT;
 
         /*!
          * \brief Destroys the variant_array_view and the contained data.
          */
-        ~variant_array_view();
+        ~variant_array_view() RTTR_NOEXCEPT;
 
         /*!
          * \brief Assigns the value of the \a other variant_array_view to this variant_array_view.
          *
          * \return A reference to the variant_array_view with the new data.
          */
-        variant_array_view& operator=(const variant_array_view& other);
+        variant_array_view& operator=(const variant_array_view& other) RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this variant_array_view is valid, that means the object is holding some data.
@@ -172,7 +172,7 @@ class RTTR_API variant_array_view
          *
          * \return True if this array is valid, otherwise false.
          */
-        bool is_valid() const;
+        bool is_valid() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Convenience function to check if this \ref variant_array_view is valid or not.
@@ -181,12 +181,12 @@ class RTTR_API variant_array_view
          *
          * \return True if this \ref variant_array_view is valid, otherwise false.
          */
-        explicit operator bool() const;
+        explicit operator bool() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Swaps this variant_array_view with the \a other variant_array_view.
          */
-        void swap(variant_array_view& other);
+        void swap(variant_array_view& other) RTTR_NOEXCEPT;
 
 
         /*!
@@ -198,7 +198,7 @@ class RTTR_API variant_array_view
          *
          * \return A boolean flag which indicates whether this array is dynamic or not.
          */
-        bool is_dynamic() const;
+        bool is_dynamic() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Gets the rank (number of dimensions) of the array.
@@ -211,7 +211,7 @@ class RTTR_API variant_array_view
          *
          * \return Returns the rank of the array.
          */
-        std::size_t get_rank() const;
+        std::size_t get_rank() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Gets the type of the given rank index.
@@ -224,7 +224,7 @@ class RTTR_API variant_array_view
          *
          * \return The rank type at the given dimension \p index.
          */
-        type get_rank_type(std::size_t index) const;
+        type get_rank_type(std::size_t index) const RTTR_NOEXCEPT;
 
        /*!
          * \brief Returns the \ref type object of this array.
@@ -233,14 +233,14 @@ class RTTR_API variant_array_view
          *
          * \return \ref type "Type" of the array.
          */
-        type get_type() const;
+        type get_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the size of the first dimension from the array.
          *
          * \return The size of the array.
          */
-        std::size_t get_size() const;
+        std::size_t get_size() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the size of the array at the second dimension
@@ -248,7 +248,7 @@ class RTTR_API variant_array_view
          *
          * \return The size of the array.
          */
-        std::size_t get_size(std::size_t index_1) const;
+        std::size_t get_size(std::size_t index_1) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the size of the array at the third dimension at index \p index_2,
@@ -256,7 +256,7 @@ class RTTR_API variant_array_view
          *
          * \return The size of the array.
          */
-        std::size_t get_size(std::size_t index_1, std::size_t index_2) const;
+        std::size_t get_size(std::size_t index_1, std::size_t index_2) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the size from of the array at the specified indices in list \p index_list.
@@ -264,7 +264,7 @@ class RTTR_API variant_array_view
          *
          * \return The size of the array.
          */
-        std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const;
+        std::size_t get_size_variadic(const std::vector<std::size_t>& index_list) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Sets the size of the array at the first dimension to \p new_size.

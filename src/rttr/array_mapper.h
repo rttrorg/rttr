@@ -82,12 +82,12 @@ struct invalid_array_type {};
  *    using raw_type = typename array_mapper<T>::raw_type;
  *    using sub_type = T;
  *
- *    static bool is_dynamic()
+ *    static bool is_dynamic() noexcept
  *    {
  *        return true;
  *    }
  *
- *    static std::size_t get_size(const std::vector<T>& arr)
+ *    static std::size_t get_size(const std::vector<T>& arr) noexcept
  *    {
  *        return arr.size();
  *    }
@@ -141,11 +141,11 @@ struct array_mapper
     using raw_type = typename array_mapper<T>::raw_type;
     using sub_type = T;
 
-    static bool is_dynamic()
+    static bool is_dynamic() noexcept
     {
     }
 
-    static std::size_t get_size(const array_type&)
+    static std::size_t get_size(const array_type&) noexcept
     {
     }
 

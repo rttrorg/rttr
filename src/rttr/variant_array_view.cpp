@@ -37,70 +37,70 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::is_valid() const
+bool variant_array_view::is_valid() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant_array_view::operator bool() const
+variant_array_view::operator bool() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_array_view::is_dynamic() const
+bool variant_array_view::is_dynamic() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->is_dynamic();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-size_t variant_array_view::get_rank() const
+size_t variant_array_view::get_rank() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_rank();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type variant_array_view::get_rank_type(std::size_t index) const
+type variant_array_view::get_rank_type(std::size_t index) const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_rank_type(index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type variant_array_view::get_type() const
+type variant_array_view::get_type() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array_view::get_size() const
+std::size_t variant_array_view::get_size() const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_size();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array_view::get_size(std::size_t index_1) const
+std::size_t variant_array_view::get_size(std::size_t index_1) const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_size(index_1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array_view::get_size(std::size_t index_1, std::size_t index_2) const
+std::size_t variant_array_view::get_size(std::size_t index_1, std::size_t index_2) const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_size(index_1, index_2);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_array_view::get_size_variadic(const std::vector<std::size_t>& index_list) const
+std::size_t variant_array_view::get_size_variadic(const std::vector<std::size_t>& index_list) const RTTR_NOEXCEPT
 {
     return m_array_wrapper->get_size_variadic(index_list);
 }

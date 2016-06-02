@@ -38,14 +38,14 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view::variant_array_view()
+RTTR_INLINE variant_array_view::variant_array_view() RTTR_NOEXCEPT
 :    m_array_wrapper(detail::make_unique<detail::array_wrapper_base>())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& other)
+RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& other) RTTR_NOEXCEPT
 :   m_array_wrapper(std::move(other.m_array_wrapper->clone()))
 {
 
@@ -53,7 +53,7 @@ RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& oth
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view::variant_array_view(variant_array_view&& other)
+RTTR_INLINE variant_array_view::variant_array_view(variant_array_view&& other) RTTR_NOEXCEPT
 :   m_array_wrapper(std::move(other.m_array_wrapper))
 {
 
@@ -61,20 +61,20 @@ RTTR_INLINE variant_array_view::variant_array_view(variant_array_view&& other)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view::~variant_array_view()
+RTTR_INLINE variant_array_view::~variant_array_view() RTTR_NOEXCEPT
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE void variant_array_view::swap(variant_array_view& other)
+RTTR_INLINE void variant_array_view::swap(variant_array_view& other) RTTR_NOEXCEPT
 {
     std::swap(m_array_wrapper, other.m_array_wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view& variant_array_view::operator=(const variant_array_view& other)
+RTTR_INLINE variant_array_view& variant_array_view::operator=(const variant_array_view& other) RTTR_NOEXCEPT
 {
     variant_array_view(other).swap(*this);
     return *this;
