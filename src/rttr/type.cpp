@@ -278,7 +278,7 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
- 
+
 type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
 {
     if (ptr == nullptr)
