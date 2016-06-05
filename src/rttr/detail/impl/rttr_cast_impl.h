@@ -37,7 +37,7 @@ namespace rttr
 {
 
 template<typename Target_Type, typename Source_Type>
-RTTR_INLINE Target_Type rttr_cast(Source_Type object)
+RTTR_INLINE Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT
 {
     static_assert(detail::pointer_count<Target_Type>::value == 1, "Return type must be a pointer");
     static_assert(detail::pointer_count<Target_Type>::value == 1, "Argument type must be a pointer");

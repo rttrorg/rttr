@@ -128,7 +128,7 @@ class RTTR_API parameter_info
          *
          * \return Default value as variant.
          */
-        variant get_default_value() const RTTR_NOEXCEPT;
+        variant get_default_value() const;
 
          /*!
          * \brief Returns the name of this parameter.

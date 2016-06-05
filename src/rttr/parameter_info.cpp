@@ -57,7 +57,7 @@ bool parameter_info::has_default_value() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant parameter_info::get_default_value() const RTTR_NOEXCEPT
+variant parameter_info::get_default_value() const
 {
     return m_wrapper->get_default_value();
 }

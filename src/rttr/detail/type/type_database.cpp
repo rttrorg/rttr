@@ -1174,7 +1174,7 @@ uint16_t type_database::register_type(string_view name,
                                       bool is_function_pointer,
                                       bool is_member_object_pointer,
                                       bool is_member_function_pointer,
-                                      std::size_t pointer_dimension)
+                                      std::size_t pointer_dimension) RTTR_NOEXCEPT
 {
     type::init_globals();
 

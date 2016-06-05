@@ -136,7 +136,7 @@ void type::init_globals()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view type::get_name() const
+string_view type::get_name() const RTTR_NOEXCEPT
 {
     if (is_valid())
         return (*g_custom_names)[m_id];
@@ -211,7 +211,7 @@ std::string type::normalize_orig_name(string_view name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_raw_type() const
+type type::get_raw_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
         return type((*g_raw_type_list)[m_id]);
@@ -221,7 +221,7 @@ type type::get_raw_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_wrapped_type() const
+type type::get_wrapped_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
         return type((*g_wrapped_type_list)[m_id]);
@@ -231,7 +231,7 @@ type type::get_wrapped_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_derived_from(const type& other) const
+bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 {
     const type::type_id source_raw_id = (*g_raw_type_list)[m_id];
     const type::type_id target_raw_id = (*g_raw_type_list)[other.m_id];
@@ -252,7 +252,7 @@ bool type::is_derived_from(const type& other) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void* type::apply_offset(void* ptr, const type& source_type, const type& target_type)
+void* type::apply_offset(void* ptr, const type& source_type, const type& target_type) RTTR_NOEXCEPT
 {
     type::type_id source_raw_id        = (*g_raw_type_list)[source_type.m_id];
     const type::type_id target_raw_id  = (*g_raw_type_list)[target_type.m_id];
@@ -278,8 +278,8 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-type type::get_derived_type(void* ptr, const type& source_type)
+ 
+type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
 {
     if (ptr == nullptr)
         return type();
@@ -298,7 +298,7 @@ variant type::create_variant(const argument& data) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<type> type::get_base_classes() const
+array_range<type> type::get_base_classes() const RTTR_NOEXCEPT
 {
     std::size_t end_index = 0;
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
@@ -319,7 +319,7 @@ array_range<type> type::get_base_classes() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<type> type::get_derived_classes() const
+array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 {
     const type::type_id raw_id = (*g_raw_type_list)[m_id];
     std::size_t end_index = 0;
@@ -339,28 +339,28 @@ array_range<type> type::get_derived_classes() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t type::get_sizeof() const
+std::size_t type::get_sizeof() const RTTR_NOEXCEPT
 {
     return (*g_type_size)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_class() const
+bool type::is_class() const RTTR_NOEXCEPT
 {
     return (*g_is_class_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_enumeration() const
+bool type::is_enumeration() const RTTR_NOEXCEPT
 {
     return (*g_is_enum_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_wrapper() const
+bool type::is_wrapper() const RTTR_NOEXCEPT
 {
     return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
 }
@@ -368,63 +368,63 @@ bool type::is_wrapper() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_array() const
+bool type::is_array() const RTTR_NOEXCEPT
 {
     return (*g_is_array_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_pointer() const
+bool type::is_pointer() const RTTR_NOEXCEPT
 {
     return (*g_is_pointer_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_arithmetic() const
+bool type::is_arithmetic() const RTTR_NOEXCEPT
 {
     return (*g_is_arithmetic_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_function_pointer() const
+bool type::is_function_pointer() const RTTR_NOEXCEPT
 {
     return (*g_is_function_pointer_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_member_object_pointer() const
+bool type::is_member_object_pointer() const RTTR_NOEXCEPT
 {
     return (*g_is_member_object_pointer_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_member_function_pointer() const
+bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 {
     return (*g_is_member_function_pointer_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t type::get_pointer_dimension() const
+std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 {
     return (*g_pointer_dim_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_raw_array_type() const
+type type::get_raw_array_type() const RTTR_NOEXCEPT
 {
     return (*g_array_raw_type_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<type> type::get_types()
+array_range<type> type::get_types() RTTR_NOEXCEPT
 {
     return array_range<type>(&(*g_type_list)[1], g_type_list->size() - 1);
 }
@@ -438,21 +438,21 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor type::get_constructor(const std::vector<type>& args) const
+constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEXCEPT
 {
     return constructor(detail::type_database::instance().get_constructor(*this, args));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<constructor> type::get_constructors() const
+array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_constructors(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<constructor> type::get_constructors(filter_items filter) const
+array_range<constructor> type::get_constructors(filter_items filter) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_constructors(*this, filter);
 }
@@ -467,21 +467,21 @@ variant type::create(vector<argument> args) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor type::get_destructor() const
+destructor type::get_destructor() const RTTR_NOEXCEPT
 {
     return destructor(detail::type_database::instance().get_destructor(get_raw_type()));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::destroy(variant& obj) const
+bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_destructor(get_raw_type()).invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_property(string_view name) const
+property type::get_property(string_view name) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_property(get_raw_type(), name);
 }
@@ -520,84 +520,84 @@ bool type::set_property_value(string_view name, argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<property> type::get_properties() const
+array_range<property> type::get_properties() const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_properties(get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<property> type::get_properties(filter_items filter) const
+array_range<property> type::get_properties(filter_items filter) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_properties(get_raw_type(), filter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(string_view name) const
+method type::get_method(string_view name) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_method(get_raw_type(), name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_method(string_view name, const std::vector<type>& params) const
+method type::get_method(string_view name, const std::vector<type>& params) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_method(get_raw_type(), name, params);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<method> type::get_methods() const
+array_range<method> type::get_methods() const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_methods(get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<method> type::get_methods(filter_items filter) const
+array_range<method> type::get_methods(filter_items filter) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_class_methods(get_raw_type(), filter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_global_property(string_view name)
+property type::get_global_property(string_view name) RTTR_NOEXCEPT
 {
     return property(detail::type_database::instance().get_global_property(name));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(string_view name)
+method type::get_global_method(string_view name) RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_global_method(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type::get_global_method(string_view name, const std::vector<type>& params)
+method type::get_global_method(string_view name, const std::vector<type>& params) RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_global_method(name, params);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<method> type::get_global_methods()
+array_range<method> type::get_global_methods() RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_global_methods();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<property> type::get_global_properties()
+array_range<property> type::get_global_properties() RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_global_properties();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-enumeration type::get_enumeration() const
+enumeration type::get_enumeration() const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_enumeration(*this);
 }
@@ -622,14 +622,14 @@ variant type::invoke(string_view name, std::vector<argument> args)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type::get_by_name(string_view name)
+type type::get_by_name(string_view name) RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_by_name(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const detail::type_converter_base* type::get_type_converter(const type& target_type) const
+const detail::type_converter_base* type::get_type_converter(const type& target_type) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_converter(*this, target_type);
 }

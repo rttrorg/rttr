@@ -44,28 +44,28 @@ namespace rttr
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type()
+RTTR_INLINE type::type() RTTR_NOEXCEPT
 :   m_id(m_invalid_id)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type(type::type_id id)
+RTTR_INLINE type::type(type::type_id id) RTTR_NOEXCEPT
 :   m_id(id)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type(const type& other)
+RTTR_INLINE type::type(const type& other) RTTR_NOEXCEPT
 :   m_id(other.m_id)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type& type::operator=(const type& other)
+RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 {
     m_id = other.m_id;
     return *this;
@@ -73,63 +73,63 @@ RTTR_INLINE type& type::operator=(const type& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator<(const type& other) const
+RTTR_INLINE bool type::operator<(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id < other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator>(const type& other) const
+RTTR_INLINE bool type::operator>(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id > other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator>=(const type& other) const
+RTTR_INLINE bool type::operator>=(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id >= other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator<=(const type& other) const
+RTTR_INLINE bool type::operator<=(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id <= other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator==(const type& other) const
+RTTR_INLINE bool type::operator==(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id == other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::operator!=(const type& other) const
+RTTR_INLINE bool type::operator!=(const type& other) const RTTR_NOEXCEPT
 {
     return (m_id != other.m_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type_id type::get_id() const
+RTTR_INLINE type::type_id type::get_id() const RTTR_NOEXCEPT
 {
     return m_id;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE bool type::is_valid() const
+RTTR_INLINE bool type::is_valid() const RTTR_NOEXCEPT
 {
     return (m_id != 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::operator bool() const
+RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 {
     return (m_id != 0);
 }
@@ -162,7 +162,7 @@ namespace detail                                                            \
 namespace detail
 {
 
-RTTR_INLINE static type get_invalid_type() { return type(); }
+RTTR_INLINE static type get_invalid_type() RTTR_NOEXCEPT { return type(); }
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -210,7 +210,7 @@ RTTR_INLINE static string_view get_unique_name() RTTR_NOEXCEPT
 template<typename T, bool = std::is_same<T, typename raw_type<T>::type >::value>
 struct raw_type_info
 {
-    static RTTR_INLINE type get_type() { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ struct raw_type_info
 template<typename T>
 struct raw_type_info<T, false>
 {
-    static RTTR_INLINE type get_type() { return type::get<typename raw_type<T>::type>(); }
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_type<T>::type>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ struct raw_type_info<T, false>
 template<typename T, bool = is_wrapper<T>::value>
 struct wrapper_type_info
 {
-    static RTTR_INLINE type get_type() { return type::get<typename wrapper_mapper<T>::wrapped_type>(); }
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename wrapper_mapper<T>::wrapped_type>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ struct wrapper_type_info
 template<typename T>
 struct wrapper_type_info<T, false>
 {
-    static RTTR_INLINE type get_type() { return get_invalid_type(); }
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ struct wrapper_type_info<T, false>
 template<typename T, bool = std::is_same<T, typename raw_array_type<T>::type >::value>
 struct array_raw_type
 {
-    static RTTR_INLINE type get_type() { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ struct array_raw_type
 template<typename T>
 struct array_raw_type<T, false>
 {
-    static RTTR_INLINE type get_type() { return type::get<typename raw_array_type<T>::type>(); }
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_array_type<T>::type>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ struct array_raw_type<T, false>
 template <typename T, typename Enable>
 struct type_getter
 {
-    static type get_type()
+    static type get_type() RTTR_NOEXCEPT
     {
         // when you get an error here, then the type was not completely defined
         // (a forward declaration is not enough because base_classes will not be found)
@@ -296,7 +296,7 @@ struct type_getter
 template <>
 struct type_getter<void>
 {
-    static type get_type()
+    static type get_type() RTTR_NOEXCEPT
     {
         static const type val = type_register::type_reg(get_unique_name<void>(),
                                                         raw_type_info<void>::get_type(),
@@ -328,7 +328,7 @@ struct type_getter<void>
 template <typename T>
 struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
-    static type get_type()
+    static type get_type() RTTR_NOEXCEPT
     {
         static const type val = type_register::type_reg(get_unique_name<T>(),
                                                         raw_type_info<T>::get_type(),
@@ -356,7 +356,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_INLINE type get_type_from_instance(const T*)
+static RTTR_INLINE type get_type_from_instance(const T*) RTTR_NOEXCEPT
 {
     return detail::type_getter<T>::get_type();
 }
@@ -370,7 +370,7 @@ struct type_from_instance;
 template<typename T>
 struct type_from_instance<T, false> // the typeInfo function is not available
 {
-    static RTTR_INLINE type get(T&&)
+    static RTTR_INLINE type get(T&&) RTTR_NOEXCEPT
     {
         return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
     }
@@ -382,7 +382,7 @@ struct type_from_instance<T, false> // the typeInfo function is not available
 template<typename T>
 struct type_from_instance<T, true>
 {
-    static RTTR_INLINE type get(T&& object)
+    static RTTR_INLINE type get(T&& object) RTTR_NOEXCEPT
     {
         return object.get_type();
     }
@@ -400,7 +400,7 @@ struct type_converter;
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE type type::get()
+RTTR_INLINE type type::get() RTTR_NOEXCEPT
 {
     return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
 }
@@ -408,7 +408,7 @@ RTTR_INLINE type type::get()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE type type::get(T&& object)
+RTTR_INLINE type type::get(T&& object) RTTR_NOEXCEPT
 {
     using remove_ref = typename std::remove_reference<T>::type;
     return detail::type_from_instance<T, detail::has_get_type_func<T>::value && !std::is_pointer<remove_ref>::value>::get(std::forward<T>(object));
@@ -417,7 +417,7 @@ RTTR_INLINE type type::get(T&& object)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE bool type::is_derived_from() const
+RTTR_INLINE bool type::is_derived_from() const RTTR_NOEXCEPT
 {
     return is_derived_from(type::get<T>());
 }

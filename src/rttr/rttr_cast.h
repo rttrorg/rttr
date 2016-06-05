@@ -44,7 +44,7 @@ namespace rttr
  * \return A pointer of type \p Target_Type
  */
 template<typename Target_Type, typename Source_Type>
-Target_Type rttr_cast(Source_Type object);
+Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT;
 
 }
 

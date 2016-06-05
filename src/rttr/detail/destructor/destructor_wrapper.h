@@ -49,6 +49,9 @@ class destructor_wrapper : public destructor_wrapper_base
         {
             if (obj.is_type<ClassType*>())
             {
+                // although an exception can occur when calling 'delete',
+                // nobody should throw an exception in destructor, so we don't catch the exception
+                // and just terminate the application
                 delete obj.get_value<ClassType*>();
                 obj = variant();
                 return true;
