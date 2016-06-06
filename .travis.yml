@@ -81,8 +81,8 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
-          packages: ['clang-3.7']
-      env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+          packages: ['clang']
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: osx
       osx_image: xcode7
