@@ -80,7 +80,7 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
+          sources: ['ubuntu-toolchain-r-test']
           packages: ['clang']
       env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
