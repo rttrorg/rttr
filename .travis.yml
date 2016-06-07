@@ -80,9 +80,9 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['clang']
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
+          packages: ['clang-3.7']
+      env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: osx
       osx_image: xcode7
@@ -118,7 +118,9 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
-     
+  allow_failures:
+    - env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
