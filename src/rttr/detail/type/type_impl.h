@@ -38,6 +38,8 @@
 #include "rttr/detail/misc/utility.h"
 #include "rttr/wrapper_mapper.h"
 #include "rttr/detail/type/type_comparator.h"
+#include "rttr/detail/type/type_data.h"
+#include "rttr/detail/type/type_name.h"
 
 namespace rttr
 {
@@ -45,21 +47,24 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type() RTTR_NOEXCEPT
-:   m_id(m_invalid_id)
+:   m_id(m_invalid_id),
+    m_type_data_funcs(&detail::get_invalid_type_data())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type(type::type_id id) RTTR_NOEXCEPT
-:   m_id(id)
+RTTR_INLINE type::type(type::type_id id, const detail::type_data_funcs* data) RTTR_NOEXCEPT
+:   m_id(id),
+    m_type_data_funcs(data)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type(const type& other) RTTR_NOEXCEPT
-:   m_id(other.m_id)
+:   m_id(other.m_id),
+    m_type_data_funcs(other.m_type_data_funcs)
 {
 }
 
@@ -68,6 +73,7 @@ RTTR_INLINE type::type(const type& other) RTTR_NOEXCEPT
 RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 {
     m_id = other.m_id;
+    m_type_data_funcs = other.m_type_data_funcs;
     return *this;
 }
 
@@ -134,76 +140,22 @@ RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
     return (m_id != 0);
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(begin_skip, end_skip)      \
-namespace detail                                                            \
-{                                                                           \
-    RTTR_STATIC_CONSTEXPR std::size_t skip_size_at_begin = begin_skip;      \
-    RTTR_STATIC_CONSTEXPR std::size_t skip_size_at_end   = end_skip;        \
+RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
+{
+    return m_type_data_funcs->is_enum();
 }
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC
-    // sizeof("const char *__cdecl rttr::detail::f<"), sizeof(">(void)")
-    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(36, 7)
-#elif RTTR_COMPILER == RTTR_COMPILER_GNUC
-    // sizeof("const char* rttr::detail::f() [with T = "), sizeof("]")
-    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(40, 1)
-#elif RTTR_COMPILER == RTTR_COMPILER_CLANG
-    // sizeof("const char* rttr::detail::f() [T = "), sizeof("]")
-    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(35, 1)
-#else
-#   error "This compiler does not supported extracting a function signature via preprocessor!"
-#endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 namespace detail
 {
 
 RTTR_INLINE static type get_invalid_type() RTTR_NOEXCEPT { return type(); }
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE static const char* extract_type_signature(const char* signature) RTTR_NOEXCEPT
-{
-//    static_assert(N > skip_size_at_begin + skip_size_at_end, "RTTR is misconfigured for your compiler.")
-    return &signature[rttr::detail::skip_size_at_begin];
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE static const char* f() RTTR_NOEXCEPT
-{
-    return extract_type_signature(
-    #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-                                                            __FUNCSIG__
-    #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
-                                                            __PRETTY_FUNCTION__
-    #elif RTTR_COMPILER == RTTR_COMPILER_CLANG
-                                                            __PRETTY_FUNCTION__
-    #else
-        #error "Don't know how the extract type signatur for this compiler! Abort! Abort!"
-    #endif
-                                   );
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE static std::size_t get_size(const char* s) RTTR_NOEXCEPT
-{
-    return ( std::char_traits<char>::length(s) - rttr::detail::skip_size_at_end);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE static string_view get_unique_name() RTTR_NOEXCEPT
-{
-    return string_view(f<T>(), get_size(f<T>()));
-}
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -266,7 +218,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg(get_unique_name<T>(),
+        static const type val = type_register::type_reg(get_type_name<T>(),
                                                         raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
@@ -282,7 +234,8 @@ struct type_getter
                                                         is_function_ptr<T>::value,
                                                         std::is_member_object_pointer<T>::value,
                                                         std::is_member_function_pointer<T>::value,
-                                                        pointer_count<T>::value);
+                                                        pointer_count<T>::value,
+                                                        get_type_data<T>());
         return val;
     }
 };
@@ -298,7 +251,7 @@ struct type_getter<void>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(get_unique_name<void>(),
+        static const type val = type_register::type_reg(get_type_name<void>(),
                                                         raw_type_info<void>::get_type(),
                                                         wrapper_type_info<void>::get_type(),
                                                         array_raw_type<void>::get_type(),
@@ -314,7 +267,8 @@ struct type_getter<void>
                                                         false,
                                                         false,
                                                         false,
-                                                        0);
+                                                        0,
+                                                        get_type_data<void>());
         return val;
     }
 };
@@ -330,7 +284,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(get_unique_name<T>(),
+        static const type val = type_register::type_reg(get_type_name<T>(),
                                                         raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
@@ -346,7 +300,8 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
                                                         is_function_ptr<T>::value,
                                                         std::is_member_object_pointer<T>::value,
                                                         std::is_member_function_pointer<T>::value,
-                                                        pointer_count<T>::value);
+                                                        pointer_count<T>::value,
+                                                        get_type_data<T>());
         return val;
     }
 };

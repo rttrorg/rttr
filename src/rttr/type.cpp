@@ -214,7 +214,7 @@ std::string type::normalize_orig_name(string_view name)
 type type::get_raw_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
-        return type((*g_raw_type_list)[m_id]);
+        return type((*g_raw_type_list)[m_id], nullptr);
     else
         return type();
 }
@@ -224,7 +224,7 @@ type type::get_raw_type() const RTTR_NOEXCEPT
 type type::get_wrapped_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
-        return type((*g_wrapped_type_list)[m_id]);
+        return type((*g_wrapped_type_list)[m_id], nullptr);
     else
         return type();
 }
@@ -353,13 +353,6 @@ bool type::is_class() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_enumeration() const RTTR_NOEXCEPT
-{
-    return (*g_is_enum_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool type::is_wrapper() const RTTR_NOEXCEPT
 {
     return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
@@ -419,7 +412,7 @@ std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 
 type type::get_raw_array_type() const RTTR_NOEXCEPT
 {
-    return (*g_array_raw_type_list)[m_id];
+    return type((*g_array_raw_type_list)[m_id], nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -624,7 +617,7 @@ variant type::invoke(string_view name, std::vector<argument> args)
 
 type type::get_by_name(string_view name) RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_by_name(name);
+    return type(detail::type_database::instance().get_by_name(name), nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

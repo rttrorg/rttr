@@ -80,25 +80,24 @@ type_database::type_database()
     m_is_member_function_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_pointer_dim_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
-
     // The following inserts are done, because we use the type_id directly
     // as index for the vector to access the following type information
     // type_id 0 is the invalid type, therfore we have to fill some dummy data
     m_orig_names.emplace_back("!invalid_type!");
     m_custom_names.emplace_back(m_orig_names[0]);
 
-    m_base_class_list.push_back(0);
-    m_derived_class_list.push_back(0);
-    m_conversion_list.push_back(0);
+    m_base_class_list.emplace_back(type(0, nullptr));
+    m_derived_class_list.emplace_back(type(0, nullptr));
+    m_conversion_list.emplace_back(nullptr);
     m_get_derived_info_func_list.push_back(nullptr);
 
-    m_raw_type_list.push_back(0);
-    m_wrapped_type_list.push_back(0);
-    m_array_raw_type_list.push_back(0);
+    m_raw_type_list.emplace_back(0);
+    m_wrapped_type_list.emplace_back(0);
+    m_array_raw_type_list.emplace_back(0);
     m_variant_create_func_list.push_back(nullptr);
 
     m_type_size.push_back(0);
-    m_type_list.push_back(0);
+    m_type_list.emplace_back(type(0, nullptr));
 
     m_is_class_list.push_back(false);
     m_is_enum_list.push_back(false);
@@ -109,6 +108,8 @@ type_database::type_database()
     m_is_member_object_pointer_list.push_back(false);
     m_is_member_function_pointer_list.push_back(false);
     m_pointer_dim_list.push_back(0);
+
+    m_type_data_func_list.push_back(&get_invalid_type_data());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1077,7 +1078,8 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(string_view name, const type& array_raw_type, uint16_t& id)
+bool type_database::register_name(string_view name, const type& array_raw_type, uint16_t& id,
+                                  const type_data_funcs& info)
 {
     using namespace detail;
 
@@ -1096,7 +1098,7 @@ bool type_database::register_name(string_view name, const type& array_raw_type, 
     m_custom_name_to_id.insert(std::make_pair(m_custom_names.back(), m_type_id_counter));
 
     id = m_type_id_counter;
-    m_type_list.emplace_back(type(id));
+    m_type_list.emplace_back(type(id, &info));
 
     return false;
 }
@@ -1155,26 +1157,34 @@ void type_database::register_base_class_info(const type& src_type, const type& r
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<const type_data_funcs*>& type_database::get_type_data_func()
+{
+    return m_type_data_func_list;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::register_type(string_view name,
-                                      const type& raw_type,
-                                      const type& wrapped_type,
-                                      const type& array_raw_type,
-                                      vector<base_class_info> base_classes,
-                                      get_derived_func derived_func_ptr,
-                                      variant_create_func var_func_ptr,
-                                      std::size_t type_size,
-                                      bool is_class,
-                                      bool is_enum,
-                                      bool is_array,
-                                      bool is_pointer,
-                                      bool is_arithmetic,
-                                      bool is_function_pointer,
-                                      bool is_member_object_pointer,
-                                      bool is_member_function_pointer,
-                                      std::size_t pointer_dimension) RTTR_NOEXCEPT
+type type_database::register_type(string_view name,
+                                  const type& raw_type,
+                                  const type& wrapped_type,
+                                  const type& array_raw_type,
+                                  vector<base_class_info> base_classes,
+                                  get_derived_func derived_func_ptr,
+                                  variant_create_func var_func_ptr,
+                                  std::size_t type_size,
+                                  bool is_class,
+                                  bool is_enum,
+                                  bool is_array,
+                                  bool is_pointer,
+                                  bool is_arithmetic,
+                                  bool is_function_pointer,
+                                  bool is_member_object_pointer,
+                                  bool is_member_function_pointer,
+                                  std::size_t pointer_dimension,
+                                  const type_data_funcs& info) RTTR_NOEXCEPT
 {
     type::init_globals();
 
@@ -1182,9 +1192,9 @@ uint16_t type_database::register_type(string_view name,
 
     using namespace detail;
     uint16_t id = 0;
-    const bool isAlreadyRegistered = register_name(name, array_raw_type, id);
+    const bool isAlreadyRegistered = register_name(name, array_raw_type, id, info);
     if (isAlreadyRegistered)
-        return id;
+        return type(id, m_type_data_func_list[id]);
 
     // to do check: why return an invalid type anyway?
     const type::type_id raw_id = ((raw_type.get_id() == 0) ? id : raw_type.get_id());
@@ -1207,11 +1217,12 @@ uint16_t type_database::register_type(string_view name,
     m_is_member_object_pointer_list.push_back(is_member_object_pointer);
     m_is_member_function_pointer_list.push_back(is_member_function_pointer);
     m_pointer_dim_list.push_back(pointer_dimension);
+    m_type_data_func_list.push_back(&info);
 
     // has to be done as last step
-    register_base_class_info(id, type(raw_id), std::move(base_classes));
+    register_base_class_info(type(id, nullptr), type(raw_id, nullptr), std::move(base_classes));
 
-    return id;
+    return type(id, m_type_data_func_list[id]);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

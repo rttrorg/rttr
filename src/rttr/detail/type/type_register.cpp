@@ -107,29 +107,31 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_register::type_reg(string_view name,
-                                 const type& raw_type,
-                                 const type& wrapped_type,
-                                 const type& array_raw_type,
-                                 vector<base_class_info> base_classes,
-                                 get_derived_func derived_func_ptr,
-                                 variant_create_func var_func_ptr,
-                                 std::size_t type_size,
-                                 bool is_class,
-                                 bool is_enum,
-                                 bool is_array,
-                                 bool is_pointer,
-                                 bool is_arithmetic,
-                                 bool is_function_pointer,
-                                 bool is_member_object_pointer,
-                                 bool is_member_function_pointer,
-                                 std::size_t pointer_dimension) RTTR_NOEXCEPT
+type type_register::type_reg(string_view name,
+                             const type& raw_type,
+                             const type& wrapped_type,
+                             const type& array_raw_type,
+                             vector<base_class_info> base_classes,
+                             get_derived_func derived_func_ptr,
+                             variant_create_func var_func_ptr,
+                             std::size_t type_size,
+                             bool is_class,
+                             bool is_enum,
+                             bool is_array,
+                             bool is_pointer,
+                             bool is_arithmetic,
+                             bool is_function_pointer,
+                             bool is_member_object_pointer,
+                             bool is_member_function_pointer,
+                             std::size_t pointer_dimension,
+                             const type_data_funcs& info) RTTR_NOEXCEPT
 {
     return type_database::instance().register_type(name, raw_type, wrapped_type, array_raw_type, move(base_classes),
                                                    derived_func_ptr, var_func_ptr,
                                                    type_size,
                                                    is_class, is_enum, is_array, is_pointer, is_arithmetic,
-                                                   is_function_pointer, is_member_object_pointer, is_member_function_pointer, pointer_dimension);
+                                                   is_function_pointer, is_member_object_pointer, is_member_function_pointer, pointer_dimension,
+                                                   info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -66,6 +66,8 @@ template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
+
+struct type_data_funcs;
 } // end namespace detail
 
 /*!
@@ -341,7 +343,7 @@ class RTTR_API type
          *
          * \return True if the type is an enumeration, otherwise false.
          */
-        bool is_enumeration() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_enumeration() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the enumerator if this type is an enum type;
@@ -917,7 +919,7 @@ class RTTR_API type
          *
          * \param id The unique id of the data type.
          */
-        RTTR_INLINE type(type_id id) RTTR_NOEXCEPT;
+        RTTR_INLINE type(type_id id, const detail::type_data_funcs* data) RTTR_NOEXCEPT;
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type
@@ -1002,6 +1004,7 @@ class RTTR_API type
 
     private:
         type_id  m_id;
+        const detail::type_data_funcs* m_type_data_funcs;
         static const type_id m_invalid_id = 0;
 };
 

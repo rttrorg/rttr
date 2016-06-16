@@ -40,6 +40,8 @@ class type;
 namespace detail
 {
 class destructor_wrapper_base;
+template<>
+RTTR_API destructor create_invalid_item();
 }
 
 /*!

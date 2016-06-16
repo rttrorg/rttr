@@ -41,6 +41,7 @@
 
 #include "rttr/detail/misc/flat_map.h"
 #include "rttr/detail/misc/flat_multimap.h"
+#include "rttr/detail/type/type_data.h"
 
 #include <vector>
 #include <string>
@@ -84,23 +85,24 @@ class RTTR_LOCAL type_database
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
-        uint16_t register_type(string_view name,
-                               const type& raw_type,
-                               const type& wrapped_type,
-                               const type& array_raw_type,
-                               std::vector<base_class_info> base_classes,
-                               get_derived_func derived_func_ptr,
-                               variant_create_func var_func_ptr,
-                               std::size_t type_size,
-                               bool is_class,
-                               bool is_enum,
-                               bool is_array,
-                               bool is_pointer,
-                               bool is_arithmetic,
-                               bool is_function_pointer,
-                               bool is_member_object_pointer,
-                               bool is_member_function_pointer,
-                               std::size_t pointer_dimension) RTTR_NOEXCEPT;
+        type register_type(string_view name,
+                           const type& raw_type,
+                           const type& wrapped_type,
+                           const type& array_raw_type,
+                           std::vector<base_class_info> base_classes,
+                           get_derived_func derived_func_ptr,
+                           variant_create_func var_func_ptr,
+                           std::size_t type_size,
+                           bool is_class,
+                           bool is_enum,
+                           bool is_array,
+                           bool is_pointer,
+                           bool is_arithmetic,
+                           bool is_function_pointer,
+                           bool is_member_object_pointer,
+                           bool is_member_function_pointer,
+                           std::size_t pointer_dimension,
+                           const type_data_funcs& info) RTTR_NOEXCEPT;
 
         uint16_t get_by_name(string_view name) const;
 
@@ -161,6 +163,8 @@ class RTTR_LOCAL type_database
 
         enumeration get_enumeration(const type& t) const;
 
+        std::vector<const type_data_funcs*>& get_type_data_func();
+
         /////////////////////////////////////////////////////////////////////////////////////
 
     private:
@@ -170,7 +174,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
-        bool register_name(string_view name, const type& array_raw_type, uint16_t& id);
+        bool register_name(string_view name, const type& array_raw_type, uint16_t& id, const type_data_funcs& info);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
@@ -226,6 +230,8 @@ class RTTR_LOCAL type_database
             Data_Type       m_data;
         };
 
+        friend class type;
+
         template<typename T>
         static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<type_data<T>>& vec);
         template<typename T>
@@ -279,6 +285,7 @@ class RTTR_LOCAL type_database
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
         std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
         std::vector<type_data<std::vector<metadata>>>               m_metadata_type_list;
+        std::vector<const type_data_funcs*>                         m_type_data_func_list;
 };
 
 } // end namespace detail

@@ -124,8 +124,10 @@ set(HEADER_FILES access_levels.h
                  detail/type/type_converter.h
                  detail/type/type_comparator.h
                  detail/type/type_database_p.h
+                 detail/type/type_data.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
+                 detail/type/type_name.h
                  detail/variant/variant_compare.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
