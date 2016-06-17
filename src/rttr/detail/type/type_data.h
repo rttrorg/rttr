@@ -89,7 +89,7 @@ struct type_data
 {
     static std::string& get_name() RTTR_NOEXCEPT
     {
-        static std::string name = get_type_name();
+        static std::string name(get_type_name());
         return name;
     }
 
