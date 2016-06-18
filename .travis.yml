@@ -89,8 +89,8 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'linux-libc-dev:i386']
-          packages: ['g++-4.8-multilib']
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
       env: LLVM_VERSION=3.7.1 ARCH=x86 CONF=Release UNIT_TESTS=true
 
     - os: linux
