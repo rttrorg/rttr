@@ -54,7 +54,7 @@ class RTTR_API enumeration_wrapper_base
 {
     public:
         enumeration_wrapper_base() RTTR_NOEXCEPT;
-        virtual ~enumeration_wrapper_base();
+        virtual ~enumeration_wrapper_base() RTTR_NOEXCEPT;
 
         type get_declaring_type() const RTTR_NOEXCEPT;
 

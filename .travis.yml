@@ -59,7 +59,7 @@ matrix:
             lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
           fi
       env: BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
-      
+
     - os: linux
       compiler: gcc
       addons:
@@ -67,7 +67,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=true
-      
+
     - os: linux
       compiler: gcc
       addons:
@@ -75,7 +75,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
+
+    # this config fails at the moment because of disabled APT on llvm
     - os: linux
       compiler: clang
       addons:
@@ -83,6 +84,27 @@ matrix:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
           packages: ['clang-3.7']
       env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'linux-libc-dev:i386']
+          packages: ['g++-4.8-multilib']
+      env: LLVM_VERSION=3.7.1 ARCH=x86 CONF=Release UNIT_TESTS=true
+
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib']
+      env: LLVM_VERSION=3.7.1 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+
+    - os: osx
+      osx_image: xcode7
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
       
     - os: osx
       osx_image: xcode7
@@ -128,7 +150,11 @@ before_install:
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/3rd_party"
   - cd ${DEPS_DIR}
-  
+  #######################################################################################
+  # Setup default versions
+  #######################################################################################
+  - if [[ "${LLVM_VERSION}" == "default" ]]; then LLVM_VERSION=3.7.0; fi
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   #######################################################################################
   # Install recent CMake
   #######################################################################################
@@ -153,6 +179,47 @@ install:
   # Install vera++
   #######################################################################################
   - if [[ "${CHECK_FORMATTING}" == "true" ]]; then brew install vera++; fi
+
+  #######################################################################################
+  # Install Clang
+  #######################################################################################
+  - |
+    if [[ "${LLVM_VERSION}" != "" ]]; then
+      CLANG_URL="http://llvm.org/releases/${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz"
+      mkdir clang && travis_retry wget --quiet -O - ${CLANG_URL} | tar --strip-components=1 -xJ -C clang
+      export PATH=${DEPS_DIR}/clang/bin:${PATH}
+      ls ${DEPS_DIR}/clang/bin
+      export CXX=${DEPS_DIR}/clang/bin/clang++
+      export CC=${DEPS_DIR}/clang/bin/clang
+    fi
+
+  #######################################################################################
+  # Install libc++ and libc++abi (on Linux only; Xcode uses libc++ by default)
+  #######################################################################################
+  - |
+    if [[ "${LLVM_VERSION}" != "" && "${STDLIB}" != "libstdc++" ]]; then
+      if [[ "${LLVM_VERSION}" != "trunk" ]]; then
+        LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
+        LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
+        LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
+        TAR_FLAGS="-xJ"
+      else
+        LLVM_URL="https://github.com/llvm-mirror/llvm/archive/master.tar.gz"
+        LIBCXX_URL="https://github.com/llvm-mirror/libcxx/archive/master.tar.gz"
+        LIBCXXABI_URL="https://github.com/llvm-mirror/libcxxabi/archive/master.tar.gz"
+        TAR_FLAGS="-xz"
+      fi
+      mkdir -p llvm llvm/build llvm/projects/libcxx llvm/projects/libcxxabi
+      travis_retry wget --quiet -O - ${LLVM_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm
+      travis_retry wget --quiet -O - ${LIBCXX_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm/projects/libcxx
+      travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm/projects/libcxxabi
+      (cd llvm/build && cmake .. -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm/install -DCMAKE_CXX_COMPILER=clang++)
+      (cd llvm/build/projects/libcxx && make install -j2)
+      (cd llvm/build/projects/libcxxabi && make install -j2)
+      export CXXFLAGS="-isystem ${DEPS_DIR}/llvm/install/include/c++/v1"
+      export LDFLAGS="-L ${DEPS_DIR}/llvm/install/lib -l c++ -l c++abi"
+      export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/install/lib"
+    fi
     
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
