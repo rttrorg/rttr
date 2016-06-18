@@ -213,7 +213,11 @@ install:
       travis_retry wget --quiet -O - ${LLVM_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm
       travis_retry wget --quiet -O - ${LIBCXX_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm/projects/libcxx
       travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 ${TAR_FLAGS} -C llvm/projects/libcxxabi
-      (cd llvm/build && cmake .. -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm/install -DCMAKE_CXX_COMPILER=clang++)
+      eval "ARCH_FLAGS=\${ARCH_FLAGS_${ARCH}}" 
+      (cd llvm/build && cmake .. 
+      -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm/install 
+      -DCMAKE_CXX_COMPILER=clang++
+      -DCMAKE_CXX_FLAGS="$ARCH_FLAGS")
       (cd llvm/build/projects/libcxx && make install -j2)
       (cd llvm/build/projects/libcxxabi && make install -j2)
       export CXXFLAGS="-isystem ${DEPS_DIR}/llvm/install/include/c++/v1"
