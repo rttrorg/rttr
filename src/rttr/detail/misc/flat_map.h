@@ -36,6 +36,7 @@
 #include <utility>
 #include <functional>
 #include <algorithm>
+#include <ciso646> // _LIBCPP_VERSION
 
 namespace rttr
 {
@@ -160,8 +161,16 @@ class flat_map
             else
                 return (m_value_list.cend());
         }
+#ifdef _LIBCPP_VERSION
+#   if _LIBCPP_VERSION <= 3700
+#       define RTTR_NO_CXX11_CONST_EREASE_SUPPORT_IN_STL 1
+#   endif
+#elif (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900)
+#   define RTTR_NO_CXX11_CONST_EREASE_SUPPORT_IN_STL 1
+#endif
+
 // older versions of gcc stl, have no support for const_iterator in std::vector<T>::erase(const_iterator)
-#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900
+#if RTTR_NO_CXX11_CONST_EREASE_SUPPORT_IN_STL
         void erase(const Key& key)
         {
             iterator_key itr = find_key(key);
