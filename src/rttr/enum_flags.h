@@ -120,7 +120,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(int mask) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(int mask) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `AND` operation with \p mask
@@ -128,7 +128,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(uint32_t mask) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(uint32_t mask) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `AND` operation with \p mask
@@ -136,7 +136,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(Enum mask) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator&=(Enum mask) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `OR` operation with \p f
@@ -144,7 +144,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator|=(enum_flags f) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator|=(enum_flags f) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `OR` operation with \p f
@@ -152,7 +152,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator|=(Enum f) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator|=(Enum f) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `XOR` operation with \p f
@@ -160,7 +160,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator^=(enum_flags f) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator^=(enum_flags f) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `XOR` operation with \p f
@@ -168,7 +168,7 @@ class enum_flags
          *
          * \return A reference to this object.
          */
-        RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator^=(Enum f) RTTR_NOEXCEPT;
+        RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags& operator^=(Enum f) RTTR_NOEXCEPT;
 
         /*!
          * \brief Performs a bitwise `XOR` operation with \p f
