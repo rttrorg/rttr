@@ -78,7 +78,7 @@ RTTR_CONSTEXPR RTTR_INLINE enum_flags<Enum>::enum_flags(detail::enum_flag f) RTT
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(int mask) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(int mask) RTTR_NOEXCEPT
 {
     m_value &= mask;
     return *this;
@@ -87,7 +87,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(uint32_t mask) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(uint32_t mask) RTTR_NOEXCEPT
 {
     m_value &= mask;
     return *this;
@@ -96,7 +96,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(Enum mask) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator&=(Enum mask) RTTR_NOEXCEPT
 {
     m_value &= static_cast<enum_type>(mask);
     return *this;
@@ -105,7 +105,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator|=(enum_flags f) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator|=(enum_flags f) RTTR_NOEXCEPT
 {
     m_value |= f.m_value;
     return *this;
@@ -114,7 +114,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator|=(Enum f) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator|=(Enum f) RTTR_NOEXCEPT
 {
     m_value |= static_cast<enum_type>(f);
     return *this;
@@ -123,7 +123,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator^=(enum_flags f) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator^=(enum_flags f) RTTR_NOEXCEPT
 {
     m_value ^= f.m_value;
     return *this;
@@ -132,7 +132,7 @@ RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum>
-RTTR_NO_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator^=(Enum f) RTTR_NOEXCEPT
+RTTR_CXX14_CONSTEXPR RTTR_INLINE enum_flags<Enum>& enum_flags<Enum>::operator^=(Enum f) RTTR_NOEXCEPT
 {
     m_value ^= static_cast<enum_type>(f);
     return *this;
