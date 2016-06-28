@@ -60,13 +60,6 @@ namespace rttr
 
 #define RTTR_DECL_DB_TYPE(member, variable) static decltype(std::declval<detail::type_database>().member) * variable = nullptr;
 
-RTTR_DECL_DB_TYPE(m_orig_names, g_orig_names)
-RTTR_DECL_DB_TYPE(m_custom_names, g_custom_names)
-
-RTTR_DECL_DB_TYPE(m_orig_name_to_id, g_orig_name_to_id)
-RTTR_DECL_DB_TYPE(m_custom_name_to_id, g_custom_name_to_id)
-
-
 RTTR_DECL_DB_TYPE(m_base_class_list, g_base_class_list)
 RTTR_DECL_DB_TYPE(m_derived_class_list, g_derived_class_list)
 RTTR_DECL_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
@@ -102,12 +95,6 @@ void type::init_globals()
     auto& db = detail::type_database::instance();
     #define RTTR_SET_DB_TYPE(member, variable) variable = &db.member;
 
-    RTTR_SET_DB_TYPE(m_orig_names, g_orig_names)
-    RTTR_SET_DB_TYPE(m_custom_names, g_custom_names)
-
-    RTTR_SET_DB_TYPE(m_orig_name_to_id, g_orig_name_to_id)
-    RTTR_SET_DB_TYPE(m_custom_name_to_id, g_custom_name_to_id)
-
     RTTR_SET_DB_TYPE(m_base_class_list, g_base_class_list)
     RTTR_SET_DB_TYPE(m_derived_class_list, g_derived_class_list)
     RTTR_SET_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
@@ -132,26 +119,6 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_pointer_dim_list, g_pointer_dim_list)
 
     initialized = true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-string_view type::get_name() const RTTR_NOEXCEPT
-{
-    if (is_valid())
-        return (*g_custom_names)[m_id];
-
-    return string_view();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::string type::get_full_name() const
-{
-    if (is_valid())
-       return normalize_orig_name((*g_orig_names)[m_id]);
-
-    return std::string();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +181,7 @@ std::string type::normalize_orig_name(string_view name)
 type type::get_raw_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
-        return type((*g_raw_type_list)[m_id], nullptr);
+        return type((*g_raw_type_list)[m_id], &m_type_data_funcs->get_raw_type());
     else
         return type();
 }
@@ -224,7 +191,7 @@ type type::get_raw_type() const RTTR_NOEXCEPT
 type type::get_wrapped_type() const RTTR_NOEXCEPT
 {
     if (is_valid())
-        return type((*g_wrapped_type_list)[m_id], nullptr);
+        return type((*g_wrapped_type_list)[m_id], &m_type_data_funcs->get_wrapped_type());
     else
         return type();
 }
@@ -412,7 +379,7 @@ std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 
 type type::get_raw_array_type() const RTTR_NOEXCEPT
 {
-    return type((*g_array_raw_type_list)[m_id], nullptr);
+    return type((*g_array_raw_type_list)[m_id], &m_type_data_funcs->get_array_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -617,7 +584,7 @@ variant type::invoke(string_view name, std::vector<argument> args)
 
 type type::get_by_name(string_view name) RTTR_NOEXCEPT
 {
-    return type(detail::type_database::instance().get_by_name(name), nullptr);
+    return detail::type_database::instance().get_by_name(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

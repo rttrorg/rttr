@@ -55,9 +55,6 @@ namespace detail
 type_database::type_database()
 :   m_type_id_counter(0)
 {
-    m_orig_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_custom_names.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
     m_base_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_derived_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
     m_conversion_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
@@ -79,12 +76,6 @@ type_database::type_database()
     m_is_member_object_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_is_member_function_pointer_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_pointer_dim_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
-    // The following inserts are done, because we use the type_id directly
-    // as index for the vector to access the following type information
-    // type_id 0 is the invalid type, therfore we have to fill some dummy data
-    m_orig_names.emplace_back("!invalid_type!");
-    m_custom_names.emplace_back(m_orig_names[0]);
 
     m_base_class_list.emplace_back(type(0, nullptr));
     m_derived_class_list.emplace_back(type(0, nullptr));
@@ -803,25 +794,24 @@ void type_database::register_custom_name(const type& t, string_view custom_name)
     if (!t.is_valid())
         return;
 
-    // TO DO normalize names
-    const auto& orig_name = m_custom_names[t.get_id()];
+    const auto& orig_name = t.m_type_data_funcs->get_name();
     m_custom_name_to_id.erase(orig_name);
 
-    m_custom_names[t.get_id()] = custom_name.to_string();
-    m_custom_name_to_id.insert(std::make_pair(m_custom_names[t.get_id()], t.get_id()));
-    std::string raw_name = type::normalize_orig_name(m_orig_names[t.get_id()]);
-    const auto& t_name = m_custom_names[t.get_id()];
+    t.m_type_data_funcs->get_name() = custom_name.to_string();
+    m_custom_name_to_id.insert(std::make_pair(t.m_type_data_funcs->get_name(), t));
+    std::string raw_name = type::normalize_orig_name(t.m_type_data_funcs->get_type_name());
+    const auto& t_name = t.m_type_data_funcs->get_name();
 
-    auto tmp_id_list = m_custom_name_to_id.value_data();
-    for (const auto& id : tmp_id_list)
+    auto tmp_type_list = m_custom_name_to_id.value_data();
+    for (auto& tt : tmp_type_list)
     {
-        if (m_array_raw_type_list[id] == t.get_id())
+        if (tt.get_raw_array_type() == t)
         {
-            const auto& orig_name_derived = m_custom_names[id];
+            const auto& orig_name_derived = tt.m_type_data_funcs->get_name();
             m_custom_name_to_id.erase(orig_name_derived);
 
-            m_custom_names[id] = derive_name(m_custom_names[id], raw_name, t_name);
-            m_custom_name_to_id.insert(std::make_pair(m_custom_names[id], id));
+            tt.m_type_data_funcs->get_name() = derive_name(orig_name_derived, raw_name, t_name);
+            m_custom_name_to_id.insert(std::make_pair(tt.m_type_data_funcs->get_name(), tt));
         }
     }
 }
@@ -1068,9 +1058,8 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
 
-    type::type_id raw_id = array_raw_type.get_id();
-    const auto& custom_name = m_custom_names[raw_id];
-    std::string raw_name_orig = type::normalize_orig_name(m_orig_names[raw_id]);
+    const auto& custom_name = array_raw_type.m_type_data_funcs->get_name();
+    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data_funcs->get_type_name());
 
     const std::string src_name_orig = type::normalize_orig_name(name);
     return derive_name(src_name_orig, raw_name_orig, custom_name);
@@ -1086,16 +1075,15 @@ bool type_database::register_name(string_view name, const type& array_raw_type, 
     auto ret = m_orig_name_to_id.find(name);
     if (ret != m_orig_name_to_id.end())
     {
-        id = *ret;
+        id = (*ret).get_id();
         return true;
     }
 
-    m_orig_name_to_id.insert(std::make_pair(name, ++m_type_id_counter));
-    m_orig_names.push_back(name);
+    m_orig_name_to_id.insert(std::make_pair(name, type(++m_type_id_counter, &info)));
 
-    auto custom_name = derive_name(array_raw_type, name);
-    m_custom_names.emplace_back(std::move(custom_name));
-    m_custom_name_to_id.insert(std::make_pair(m_custom_names.back(), m_type_id_counter));
+    info.get_name() = derive_name(array_raw_type, name);
+
+    m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(m_type_id_counter, &info)));
 
     id = m_type_id_counter;
     m_type_list.emplace_back(type(id, &info));
@@ -1227,13 +1215,13 @@ type type_database::register_type(string_view name,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-uint16_t type_database::get_by_name(string_view name) const
+type type_database::get_by_name(string_view name) const
 {
     auto ret = m_custom_name_to_id.find(name);
     if (ret != m_custom_name_to_id.end())
-        return *ret;
+        return (*ret);
 
-    return type::m_invalid_id;
+    return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

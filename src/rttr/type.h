@@ -234,7 +234,7 @@ class RTTR_API type
          *
          * \return The type name.
          */
-        string_view get_name() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE string_view get_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
@@ -968,7 +968,7 @@ class RTTR_API type
          *
          * \return The full type name.
          */
-        std::string get_full_name() const;
+        RTTR_FORCE_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a normalized string of the given compiler depended type name.

@@ -104,7 +104,7 @@ class RTTR_LOCAL type_database
                            std::size_t pointer_dimension,
                            const type_data_funcs& info) RTTR_NOEXCEPT;
 
-        uint16_t get_by_name(string_view name) const;
+        type get_by_name(string_view name) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
         property get_type_property(const type& t, string_view name) const;
@@ -240,11 +240,8 @@ class RTTR_LOCAL type_database
         type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
         std::vector<type>                                           m_type_list;            //!< The list of all types.
 
-        std::vector<string_view>                                    m_orig_names;           //!< Contains all the raw names provied by 'type::register_type'; The type id is the index in this container
-        std::vector<std::string>                                    m_custom_names;         //!< Contains all the names of m_orig_names, but the names are cleaned up (garbage strings are removed)
-
-        flat_map<string_view, type::type_id>                        m_orig_name_to_id;
-        flat_map<std::string, type::type_id, hash>                  m_custom_name_to_id;
+        flat_map<string_view, type>                                 m_orig_name_to_id;
+        flat_map<std::string, type, hash>                           m_custom_name_to_id;
 
         std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
         std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)

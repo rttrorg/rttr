@@ -142,6 +142,20 @@ RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_FORCE_INLINE string_view type::get_name() const RTTR_NOEXCEPT
+{
+    return m_type_data_funcs->get_name();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
+{
+    return m_type_data_funcs->get_type_name();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
 {
     return m_type_data_funcs->is_enum();
