@@ -70,10 +70,7 @@ RTTR_DECL_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
 RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
 RTTR_DECL_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
-RTTR_DECL_DB_TYPE(m_type_size, g_type_size)
 RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
-
-RTTR_DECL_DB_TYPE(m_pointer_dim_list, g_pointer_dim_list)
 
 // because everything is initialized at static initialization time the call to
 // register_type can be made from another translation unit before global statics
@@ -97,10 +94,7 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
     RTTR_SET_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
-    RTTR_SET_DB_TYPE(m_type_size, g_type_size)
     RTTR_SET_DB_TYPE(m_type_list, g_type_list)
-
-    RTTR_SET_DB_TYPE(m_pointer_dim_list, g_pointer_dim_list)
 
     initialized = true;
 }
@@ -290,23 +284,9 @@ array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t type::get_sizeof() const RTTR_NOEXCEPT
-{
-    return (*g_type_size)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool type::is_wrapper() const RTTR_NOEXCEPT
 {
     return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
-{
-    return (*g_pointer_dim_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

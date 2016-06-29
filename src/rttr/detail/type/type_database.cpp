@@ -64,10 +64,7 @@ type_database::type_database()
     m_array_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_variant_create_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
-    m_type_size.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
-    m_pointer_dim_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_base_class_list.emplace_back(type(0, nullptr));
     m_derived_class_list.emplace_back(type(0, nullptr));
@@ -79,10 +76,7 @@ type_database::type_database()
     m_array_raw_type_list.emplace_back(0);
     m_variant_create_func_list.push_back(nullptr);
 
-    m_type_size.push_back(0);
     m_type_list.emplace_back(type(0, nullptr));
-
-    m_pointer_dim_list.push_back(0);
 
     m_type_data_func_list.push_back(&get_invalid_type_data());
 }
@@ -1146,8 +1140,6 @@ type type_database::register_type(string_view name,
                                   vector<base_class_info> base_classes,
                                   get_derived_func derived_func_ptr,
                                   variant_create_func var_func_ptr,
-                                  std::size_t type_size,
-                                  std::size_t pointer_dimension,
                                   const type_data_funcs& info) RTTR_NOEXCEPT
 {
     type::init_globals();
@@ -1170,9 +1162,6 @@ type type_database::register_type(string_view name,
     m_get_derived_info_func_list[raw_id]  = derived_func_ptr;
     m_variant_create_func_list.push_back(var_func_ptr);
 
-    m_type_size.push_back(type_size);
-
-    m_pointer_dim_list.push_back(pointer_dimension);
     m_type_data_func_list.push_back(&info);
 
     // has to be done as last step

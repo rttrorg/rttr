@@ -92,8 +92,6 @@ class RTTR_LOCAL type_database
                            std::vector<base_class_info> base_classes,
                            get_derived_func derived_func_ptr,
                            variant_create_func var_func_ptr,
-                           std::size_t type_size,
-                           std::size_t pointer_dimension,
                            const type_data_funcs& info) RTTR_NOEXCEPT;
 
         type get_by_name(string_view name) const;
@@ -244,10 +242,6 @@ class RTTR_LOCAL type_database
         std::vector<type::type_id>                                  m_wrapped_type_list;
         std::vector<type::type_id>                                  m_array_raw_type_list;
         std::vector<variant_create_func>                            m_variant_create_func_list; //!< This list contains a function to create from an 'argument' a variant
-
-        std::vector<std::size_t>                                    m_type_size;
-
-        std::vector<std::size_t>                                    m_pointer_dim_list;
 
         flat_multimap<string_view, method>                          m_global_methods;
         flat_multimap<string_view, property>                        m_global_properties;

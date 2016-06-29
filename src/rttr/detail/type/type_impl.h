@@ -156,6 +156,20 @@ RTTR_FORCE_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_FORCE_INLINE std::size_t type::get_sizeof() const RTTR_NOEXCEPT
+{
+    return m_type_data_funcs->get_sizeof();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
+{
+    return m_type_data_funcs->get_pointer_dimension();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_FORCE_INLINE bool type::is_class() const RTTR_NOEXCEPT
 {
     return m_type_data_funcs->is_class();
@@ -287,8 +301,6 @@ struct type_getter
                                                         std::move(base_classes<T>::get_types()),
                                                         get_most_derived_info_func<T>(),
                                                         &create_variant_func<T>::create_variant,
-                                                        sizeof(T),
-                                                        pointer_count<T>::value,
                                                         get_type_data<T>());
         return val;
     }
@@ -312,8 +324,6 @@ struct type_getter<void>
                                                         std::vector<base_class_info>(),
                                                         get_most_derived_info_func<void>(),
                                                         nullptr,
-                                                        0,
-                                                        0,
                                                         get_type_data<void>());
         return val;
     }
@@ -337,8 +347,6 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
                                                         std::vector<detail::base_class_info>(),
                                                         get_most_derived_info_func<T>(),
                                                         &create_variant_func<T>::create_variant,
-                                                        0,
-                                                        pointer_count<T>::value,
                                                         get_type_data<T>());
         return val;
     }

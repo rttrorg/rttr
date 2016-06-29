@@ -85,6 +85,8 @@ const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT;
 const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT;
 std::string& get_name() RTTR_NOEXCEPT;
 string_view get_type_name_impl() RTTR_NOEXCEPT;
+std::size_t get_sizeof() RTTR_NOEXCEPT;
+std::size_t get_pointer_dimension() RTTR_NOEXCEPT;
 
 bool is_class() RTTR_NOEXCEPT;
 bool is_enum() RTTR_NOEXCEPT;
@@ -101,6 +103,9 @@ using get_wrapped_type_func = decltype(&get_wrapped_type);
 using get_array_raw_type_func = decltype(&get_array_raw_type);
 using get_name_func = decltype(&get_name);
 using get_type_name_func = decltype(&get_type_name_impl);
+
+using get_sizeof_func = decltype(&get_sizeof);
+using get_pointer_dimension_func = decltype(&get_pointer_dimension);
 
 using is_class_func = decltype(&is_class);
 using is_enum_func = decltype(&is_enum);
@@ -123,6 +128,9 @@ struct type_data_funcs
 
     impl::get_name_func get_name;
     impl::get_type_name_func get_type_name;
+
+    impl::get_sizeof_func get_sizeof;
+    impl::get_pointer_dimension_func get_pointer_dimension;
 
     impl::is_class_func is_class;
     impl::is_enum_func is_enum;
@@ -166,6 +174,18 @@ struct type_data
     {
         static const string_view name = ::rttr::detail::get_type_name<T>();
         return name;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    static std::size_t get_sizeof() RTTR_NOEXCEPT
+    {
+        return sizeof(T);
+    }
+
+    static std::size_t get_pointer_dimension() RTTR_NOEXCEPT
+    {
+        return pointer_count<T>::value;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -250,6 +270,20 @@ struct invalid_type_data
         return name;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
+    static std::size_t get_sizeof() RTTR_NOEXCEPT
+    {
+        return 0;
+    }
+
+    static std::size_t get_pointer_dimension() RTTR_NOEXCEPT
+    {
+        return 0;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     static bool is_class() RTTR_NOEXCEPT
     {
         return false;
@@ -305,6 +339,10 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
     static const auto instance = type_data_funcs{ &type_data<T>::get_raw_type, &type_data<T>::get_wrapped_type,
                                                   &type_data<T>::get_array_raw_type,
                                                   &type_data<T>::get_name, &type_data<T>::get_type_name,
+                                                  &conditional_t<std::is_same<T, void>::value || std::is_function<T>::value,
+                                                                 invalid_type_data,
+                                                                 type_data<T>>::get_sizeof,
+                                                  &type_data<T>::get_pointer_dimension,
                                                   &type_data<T>::is_class,
                                                   &type_data<T>::is_enum,
                                                   &type_data<T>::is_array,
@@ -324,6 +362,7 @@ RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
     static const auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &invalid_type_data::get_wrapped_type,
                                                   &invalid_type_data::get_array_raw_type,
                                                   &invalid_type_data::get_name, &invalid_type_data::get_type_name,
+                                                  &invalid_type_data::get_sizeof, &invalid_type_data::get_pointer_dimension,
                                                   &invalid_type_data::is_class,
                                                   &invalid_type_data::is_enum,
                                                   &invalid_type_data::is_array,
