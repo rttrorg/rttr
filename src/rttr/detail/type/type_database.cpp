@@ -1043,21 +1043,21 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(string_view name, const type& array_raw_type, uint16_t& id,
+bool type_database::register_name(const type& array_raw_type, uint16_t& id,
                                   const type_data_funcs& info)
 {
     using namespace detail;
 
-    auto ret = m_orig_name_to_id.find(name);
+    auto ret = m_orig_name_to_id.find(info.get_type_name());
     if (ret != m_orig_name_to_id.end())
     {
         id = (*ret).get_id();
         return true;
     }
 
-    m_orig_name_to_id.insert(std::make_pair(name, type(++m_type_id_counter, &info)));
+    m_orig_name_to_id.insert(std::make_pair(info.get_type_name(), type(++m_type_id_counter, &info)));
 
-    info.get_name() = derive_name(array_raw_type, name);
+    info.get_name() = derive_name(array_raw_type, info.get_type_name());
 
     m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(m_type_id_counter, &info)));
 
@@ -1131,8 +1131,7 @@ std::vector<const type_data_funcs*>& type_database::get_type_data_func()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_database::register_type(string_view name,
-                                  const type& raw_type,
+type type_database::register_type(const type& raw_type,
                                   const type& wrapped_type,
                                   const type& array_raw_type,
                                   vector<base_class_info> base_classes,
@@ -1145,7 +1144,7 @@ type type_database::register_type(string_view name,
 
     using namespace detail;
     uint16_t id = 0;
-    const bool isAlreadyRegistered = register_name(name, array_raw_type, id, info);
+    const bool isAlreadyRegistered = register_name(array_raw_type, id, info);
     if (isAlreadyRegistered)
         return type(id, m_type_data_func_list[id]);
 

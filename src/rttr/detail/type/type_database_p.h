@@ -85,8 +85,7 @@ class RTTR_LOCAL type_database
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
-        type register_type(string_view name,
-                           const type& raw_type,
+        type register_type(const type& raw_type,
                            const type& wrapped_type,
                            const type& array_raw_type,
                            std::vector<base_class_info> base_classes,
@@ -163,7 +162,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
-        bool register_name(string_view name, const type& array_raw_type, uint16_t& id, const type_data_funcs& info);
+        bool register_name(const type& array_raw_type, uint16_t& id, const type_data_funcs& info);
         void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;

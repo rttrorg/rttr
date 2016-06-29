@@ -301,8 +301,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg(get_type_name<T>(),
-                                                        raw_type_info<T>::get_type(),
+        static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         std::move(base_classes<T>::get_types()),
@@ -323,8 +322,7 @@ struct type_getter<void>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(get_type_name<void>(),
-                                                        raw_type_info<void>::get_type(),
+        static const type val = type_register::type_reg(raw_type_info<void>::get_type(),
                                                         wrapper_type_info<void>::get_type(),
                                                         array_raw_type<void>::get_type(),
                                                         std::vector<base_class_info>(),
@@ -345,8 +343,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(get_type_name<T>(),
-                                                        raw_type_info<T>::get_type(),
+        static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
                                                         wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         std::vector<detail::base_class_info>(),
