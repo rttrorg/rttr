@@ -288,14 +288,6 @@ struct type_getter
                                                         get_most_derived_info_func<T>(),
                                                         &create_variant_func<T>::create_variant,
                                                         sizeof(T),
-                                                        std::is_class<T>::value,
-                                                        std::is_enum<T>::value,
-                                                        is_array<T>::value,
-                                                        std::is_pointer<T>::value,
-                                                        std::is_arithmetic<T>::value,
-                                                        is_function_ptr<T>::value,
-                                                        std::is_member_object_pointer<T>::value,
-                                                        std::is_member_function_pointer<T>::value,
                                                         pointer_count<T>::value,
                                                         get_type_data<T>());
         return val;
@@ -321,14 +313,6 @@ struct type_getter<void>
                                                         get_most_derived_info_func<void>(),
                                                         nullptr,
                                                         0,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
-                                                        false,
                                                         0,
                                                         get_type_data<void>());
         return val;
@@ -354,14 +338,6 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
                                                         get_most_derived_info_func<T>(),
                                                         &create_variant_func<T>::create_variant,
                                                         0,
-                                                        std::is_class<T>::value,
-                                                        std::is_enum<T>::value,
-                                                        is_array<T>::value,
-                                                        std::is_pointer<T>::value,
-                                                        std::is_arithmetic<T>::value,
-                                                        is_function_ptr<T>::value,
-                                                        std::is_member_object_pointer<T>::value,
-                                                        std::is_member_function_pointer<T>::value,
                                                         pointer_count<T>::value,
                                                         get_type_data<T>());
         return val;
