@@ -116,6 +116,8 @@ using is_function_pointer_func = decltype(&is_function_pointer);
 using is_member_object_pointer_func = decltype(&is_member_object_pointer);
 using is_member_function_pointer_func = decltype(&is_member_function_pointer);
 
+using create_variant_func = decltype(&create_invalid_variant_policy::create_variant);
+
 } // end namespace impl
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +142,8 @@ struct type_data_funcs
     impl::is_function_pointer_func is_function_pointer;
     impl::is_member_object_pointer_func is_member_object_pointer;
     impl::is_member_function_pointer_func is_member_function_pointer;
+
+    impl::create_variant_func create_variant;
 
     class_data& (*get_class_data)();
 };
@@ -351,6 +355,8 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
                                                   &type_data<T>::is_function_pointer,
                                                   &type_data<T>::is_member_object_pointer,
                                                   &type_data<T>::is_member_function_pointer,
+
+                                                  &create_variant_func<T>::create_variant,
                                                   &type_data<T>::get_class_data };
     return instance;
 }
@@ -371,6 +377,8 @@ RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
                                                   &invalid_type_data::is_function_pointer,
                                                   &invalid_type_data::is_member_object_pointer,
                                                   &invalid_type_data::is_member_function_pointer,
+
+                                                  &create_invalid_variant_policy::create_variant,
                                                   &invalid_type_data::get_class_data };
     return instance;
 }

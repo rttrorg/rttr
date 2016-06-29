@@ -225,6 +225,13 @@ RTTR_FORCE_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE variant type::create_variant(const argument& data) const
+{
+    return m_type_data_funcs->create_variant(data);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -300,7 +307,6 @@ struct type_getter
                                                         array_raw_type<T>::get_type(),
                                                         std::move(base_classes<T>::get_types()),
                                                         get_most_derived_info_func<T>(),
-                                                        &create_variant_func<T>::create_variant,
                                                         get_type_data<T>());
         return val;
     }
@@ -323,7 +329,6 @@ struct type_getter<void>
                                                         array_raw_type<void>::get_type(),
                                                         std::vector<base_class_info>(),
                                                         get_most_derived_info_func<void>(),
-                                                        nullptr,
                                                         get_type_data<void>());
         return val;
     }
@@ -346,7 +351,6 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
                                                         array_raw_type<T>::get_type(),
                                                         std::vector<detail::base_class_info>(),
                                                         get_most_derived_info_func<T>(),
-                                                        &create_variant_func<T>::create_variant,
                                                         get_type_data<T>());
         return val;
     }

@@ -113,7 +113,6 @@ public:
                          const type& array_raw_type,
                          std::vector<base_class_info> base_classes,
                          get_derived_func derived_func_ptr,
-                         variant_create_func var_func_ptr,
                          const type_data_funcs& info) RTTR_NOEXCEPT;
 
 private:

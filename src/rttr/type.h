@@ -952,7 +952,7 @@ class RTTR_API type
          *
          * \return The pointer dimension.
          */
-        std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the raw type of an array
@@ -989,7 +989,7 @@ class RTTR_API type
         /////////////////////////////////////////////////////////////////////////////////
 
         //! Creates a variant from the given argument data.
-        variant create_variant(const argument& data) const;
+        RTTR_FORCE_INLINE variant create_variant(const argument& data) const;
 
         friend class variant;
         template<typename Target_Type, typename Source_Type>

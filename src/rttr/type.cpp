@@ -68,7 +68,6 @@ RTTR_DECL_DB_TYPE(m_conversion_list, g_conversion_list)
 RTTR_DECL_DB_TYPE(m_raw_type_list, g_raw_type_list)
 RTTR_DECL_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
 RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
-RTTR_DECL_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
 RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
 
@@ -92,7 +91,6 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_raw_type_list, g_raw_type_list)
     RTTR_SET_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
     RTTR_SET_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
-    RTTR_SET_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 
     RTTR_SET_DB_TYPE(m_type_list, g_type_list)
 
@@ -232,13 +230,6 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
     type::type_id source_raw_id     = (*g_raw_type_list)[source_type.m_id];
     const detail::derived_info info = (*g_get_derived_info_func_list)[source_raw_id](ptr);
     return info.m_type;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant type::create_variant(const argument& data) const
-{
-    return (*g_variant_create_func_list)[m_id](data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
