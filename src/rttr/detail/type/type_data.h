@@ -75,32 +75,64 @@ struct class_data
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// workaround for a c++ bug, function ptr declaration for noexcept is not supported
+// fixed in c++17 (only clang honor this)
+namespace impl
+{
 
 const type_data_funcs& get_raw_type() RTTR_NOEXCEPT;
 const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT;
 const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT;
 std::string& get_name() RTTR_NOEXCEPT;
 string_view get_type_name_impl() RTTR_NOEXCEPT;
+
+bool is_class() RTTR_NOEXCEPT;
 bool is_enum() RTTR_NOEXCEPT;
+bool is_array() RTTR_NOEXCEPT;
+bool is_pointer() RTTR_NOEXCEPT;
+bool is_arithmetic() RTTR_NOEXCEPT;
+bool is_function_pointer() RTTR_NOEXCEPT;
+bool is_member_object_pointer() RTTR_NOEXCEPT;
+bool is_member_function_pointer() RTTR_NOEXCEPT;
+
 
 using get_raw_type_func = decltype(&get_raw_type);
 using get_wrapped_type_func = decltype(&get_wrapped_type);
 using get_array_raw_type_func = decltype(&get_array_raw_type);
 using get_name_func = decltype(&get_name);
 using get_type_name_func = decltype(&get_type_name_impl);
+
+using is_class_func = decltype(&is_class);
 using is_enum_func = decltype(&is_enum);
+using is_array_func = decltype(&is_array);
+using is_pointer_func = decltype(&is_pointer);
+using is_arithmetic_func = decltype(&is_arithmetic);
+using is_function_pointer_func = decltype(&is_function_pointer);
+using is_member_object_pointer_func = decltype(&is_member_object_pointer);
+using is_member_function_pointer_func = decltype(&is_member_function_pointer);
+
+} // end namespace impl
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 struct type_data_funcs
 {
-    get_raw_type_func get_raw_type;
-    get_wrapped_type_func get_wrapped_type;
-    get_array_raw_type_func get_array_raw_type;
-    get_name_func get_name;
-    get_type_name_func get_type_name;
+    impl::get_raw_type_func get_raw_type;
+    impl::get_wrapped_type_func get_wrapped_type;
+    impl::get_array_raw_type_func get_array_raw_type;
 
-    is_enum_func is_enum;
+    impl::get_name_func get_name;
+    impl::get_type_name_func get_type_name;
+
+    impl::is_class_func is_class;
+    impl::is_enum_func is_enum;
+    impl::is_array_func is_array;
+    impl::is_pointer_func is_pointer;
+    impl::is_arithmetic_func is_arithmetic;
+    impl::is_function_pointer_func is_function_pointer;
+    impl::is_member_object_pointer_func is_member_object_pointer;
+    impl::is_member_function_pointer_func is_member_function_pointer;
+
     class_data& (*get_class_data)();
 };
 
@@ -116,7 +148,6 @@ struct type_data
 
     static const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT
     {
-        //wrapper_mapper_t
         return get_type_data<wrapper_mapper_t<T>>();
     }
 
@@ -137,10 +168,49 @@ struct type_data
         return name;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
+    static bool is_class() RTTR_NOEXCEPT
+    {
+        return std::is_class<T>();
+    }
+
     static bool is_enum() RTTR_NOEXCEPT
     {
         return std::is_enum<T>();
     }
+
+    static bool is_array() RTTR_NOEXCEPT
+    {
+        return ::rttr::detail::is_array<T>();
+    }
+
+    static bool is_pointer() RTTR_NOEXCEPT
+    {
+        return std::is_pointer<T>();
+    }
+
+    static bool is_arithmetic() RTTR_NOEXCEPT
+    {
+        return std::is_arithmetic<T>();
+    }
+
+    static bool is_function_pointer() RTTR_NOEXCEPT
+    {
+        return is_function_ptr<T>();
+    }
+
+    static bool is_member_object_pointer() RTTR_NOEXCEPT
+    {
+        return std::is_member_object_pointer<T>();
+    }
+
+    static bool is_member_function_pointer() RTTR_NOEXCEPT
+    {
+        return std::is_member_function_pointer<T>();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     static class_data& get_class_data() RTTR_NOEXCEPT
     {
@@ -180,7 +250,42 @@ struct invalid_type_data
         return name;
     }
 
+    static bool is_class() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
     static bool is_enum() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_array() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_pointer() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_arithmetic() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_function_pointer() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_member_object_pointer() RTTR_NOEXCEPT
+    {
+        return false;
+    }
+
+    static bool is_member_function_pointer() RTTR_NOEXCEPT
     {
         return false;
     }
@@ -200,7 +305,15 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
     static const auto instance = type_data_funcs{ &type_data<T>::get_raw_type, &type_data<T>::get_wrapped_type,
                                                   &type_data<T>::get_array_raw_type,
                                                   &type_data<T>::get_name, &type_data<T>::get_type_name,
-                                                  &type_data<T>::is_enum, &type_data<T>::get_class_data };
+                                                  &type_data<T>::is_class,
+                                                  &type_data<T>::is_enum,
+                                                  &type_data<T>::is_array,
+                                                  &type_data<T>::is_pointer,
+                                                  &type_data<T>::is_arithmetic,
+                                                  &type_data<T>::is_function_pointer,
+                                                  &type_data<T>::is_member_object_pointer,
+                                                  &type_data<T>::is_member_function_pointer,
+                                                  &type_data<T>::get_class_data };
     return instance;
 }
 
@@ -211,7 +324,15 @@ RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
     static const auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &invalid_type_data::get_wrapped_type,
                                                   &invalid_type_data::get_array_raw_type,
                                                   &invalid_type_data::get_name, &invalid_type_data::get_type_name,
-                                                  &invalid_type_data::is_enum, &invalid_type_data::get_class_data };
+                                                  &invalid_type_data::is_class,
+                                                  &invalid_type_data::is_enum,
+                                                  &invalid_type_data::is_array,
+                                                  &invalid_type_data::is_pointer,
+                                                  &invalid_type_data::is_arithmetic,
+                                                  &invalid_type_data::is_function_pointer,
+                                                  &invalid_type_data::is_member_object_pointer,
+                                                  &invalid_type_data::is_member_function_pointer,
+                                                  &invalid_type_data::get_class_data };
     return instance;
 }
 

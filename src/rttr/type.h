@@ -336,7 +336,7 @@ class RTTR_API type
          *
          * \return True if the type is a class, otherwise false.
          */
-        bool is_class() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_class() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an enumeration.
@@ -381,7 +381,7 @@ class RTTR_API type
          *
          * \see \ref array_mapper "array_mapper<T>"
          */
-        bool is_array() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_array() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer.
@@ -389,7 +389,7 @@ class RTTR_API type
          *
          * \return True if the type is a pointer, otherwise false.
          */
-        bool is_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an arithmetic type.
@@ -398,7 +398,7 @@ class RTTR_API type
          *
          * \return True if the type is a arithmetic type, otherwise false.
          */
-        bool is_arithmetic() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_arithmetic() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a function
@@ -406,7 +406,7 @@ class RTTR_API type
          *
          * \return True if the type is a function pointer, otherwise false.
          */
-        bool is_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member object.
@@ -414,7 +414,7 @@ class RTTR_API type
          *
          * \return True if the type is a member object pointer, otherwise false.
          */
-        bool is_member_object_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_member_object_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member function.
@@ -422,7 +422,7 @@ class RTTR_API type
          *
          * \return True if the type is a member function pointer type, otherwise false.
          */
-        bool is_member_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_member_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.

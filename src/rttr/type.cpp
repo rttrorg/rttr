@@ -73,14 +73,6 @@ RTTR_DECL_DB_TYPE(m_variant_create_func_list, g_variant_create_func_list)
 RTTR_DECL_DB_TYPE(m_type_size, g_type_size)
 RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
 
-RTTR_DECL_DB_TYPE(m_is_class_list, g_is_class_list)
-RTTR_DECL_DB_TYPE(m_is_enum_list, g_is_enum_list)
-RTTR_DECL_DB_TYPE(m_is_array_list, g_is_array_list)
-RTTR_DECL_DB_TYPE(m_is_pointer_list, g_is_pointer_list)
-RTTR_DECL_DB_TYPE(m_is_arithmetic_list, g_is_arithmetic_list)
-RTTR_DECL_DB_TYPE(m_is_function_pointer_list, g_is_function_pointer_list)
-RTTR_DECL_DB_TYPE(m_is_member_object_pointer_list, g_is_member_object_pointer_list)
-RTTR_DECL_DB_TYPE(m_is_member_function_pointer_list, g_is_member_function_pointer_list)
 RTTR_DECL_DB_TYPE(m_pointer_dim_list, g_pointer_dim_list)
 
 // because everything is initialized at static initialization time the call to
@@ -108,14 +100,6 @@ void type::init_globals()
     RTTR_SET_DB_TYPE(m_type_size, g_type_size)
     RTTR_SET_DB_TYPE(m_type_list, g_type_list)
 
-    RTTR_SET_DB_TYPE(m_is_class_list, g_is_class_list)
-    RTTR_SET_DB_TYPE(m_is_enum_list, g_is_enum_list)
-    RTTR_SET_DB_TYPE(m_is_array_list, g_is_array_list)
-    RTTR_SET_DB_TYPE(m_is_pointer_list, g_is_pointer_list)
-    RTTR_SET_DB_TYPE(m_is_arithmetic_list, g_is_arithmetic_list)
-    RTTR_SET_DB_TYPE(m_is_function_pointer_list, g_is_function_pointer_list)
-    RTTR_SET_DB_TYPE(m_is_member_object_pointer_list, g_is_member_object_pointer_list)
-    RTTR_SET_DB_TYPE(m_is_member_function_pointer_list, g_is_member_function_pointer_list)
     RTTR_SET_DB_TYPE(m_pointer_dim_list, g_pointer_dim_list)
 
     initialized = true;
@@ -313,59 +297,9 @@ std::size_t type::get_sizeof() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type::is_class() const RTTR_NOEXCEPT
-{
-    return (*g_is_class_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool type::is_wrapper() const RTTR_NOEXCEPT
 {
     return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_array() const RTTR_NOEXCEPT
-{
-    return (*g_is_array_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_pointer() const RTTR_NOEXCEPT
-{
-    return (*g_is_pointer_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_arithmetic() const RTTR_NOEXCEPT
-{
-    return (*g_is_arithmetic_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_function_pointer() const RTTR_NOEXCEPT
-{
-    return (*g_is_function_pointer_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_member_object_pointer() const RTTR_NOEXCEPT
-{
-    return (*g_is_member_object_pointer_list)[m_id];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-bool type::is_member_function_pointer() const RTTR_NOEXCEPT
-{
-    return (*g_is_member_function_pointer_list)[m_id];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
