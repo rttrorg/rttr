@@ -62,11 +62,12 @@ using get_derived_info_func = derived_info(*)(void*);
 
 struct class_data
 {
-    class_data() : m_dtor(create_invalid_item<destructor>()) {}
+    class_data(get_derived_info_func func) : m_derived_info_func(func),
+                                             m_dtor(create_invalid_item<destructor>()) {}
 
+    get_derived_info_func       m_derived_info_func;
     std::vector<type>           m_base_types;
     std::vector<type>           m_derived_types;
-    get_derived_info_func       m_derived_info_func;
     std::vector<rttr_cast_func> m_conversion_list;
     std::vector<property>       m_props;
     std::vector<method>         m_meth;
@@ -115,8 +116,9 @@ using is_arithmetic_func = decltype(&is_arithmetic);
 using is_function_pointer_func = decltype(&is_function_pointer);
 using is_member_object_pointer_func = decltype(&is_member_object_pointer);
 using is_member_function_pointer_func = decltype(&is_member_function_pointer);
-
+//
 using create_variant_func = decltype(&create_invalid_variant_policy::create_variant);
+using get_base_types_func = decltype(&base_classes<int>::get_types);
 
 } // end namespace impl
 
@@ -144,6 +146,8 @@ struct type_data_funcs
     impl::is_member_function_pointer_func is_member_function_pointer;
 
     impl::create_variant_func create_variant;
+    impl::get_base_types_func get_base_types;
+
 
     class_data& (*get_class_data)();
 };
@@ -238,7 +242,7 @@ struct type_data
 
     static class_data& get_class_data() RTTR_NOEXCEPT
     {
-        static std::unique_ptr<class_data> info = make_unique<class_data>();;
+        static std::unique_ptr<class_data> info = make_unique<class_data>(get_most_derived_info_func<T>());
         return (*info.get());
     }
 };
@@ -330,7 +334,7 @@ struct invalid_type_data
 
     static class_data& get_class_data() RTTR_NOEXCEPT
     {
-        static std::unique_ptr<class_data> info = detail::make_unique<class_data>();;
+        static std::unique_ptr<class_data> info = detail::make_unique<class_data>(nullptr);
         return (*info.get());
     }
 };
@@ -357,6 +361,7 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
                                                   &type_data<T>::is_member_function_pointer,
 
                                                   &create_variant_func<T>::create_variant,
+                                                  &base_classes<T>::get_types,
                                                   &type_data<T>::get_class_data };
     return instance;
 }
@@ -379,6 +384,7 @@ RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
                                                   &invalid_type_data::is_member_function_pointer,
 
                                                   &create_invalid_variant_policy::create_variant,
+                                                  &base_classes<void>::get_types,
                                                   &invalid_type_data::get_class_data };
     return instance;
 }

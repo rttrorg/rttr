@@ -88,8 +88,6 @@ class RTTR_LOCAL type_database
         type register_type(const type& raw_type,
                            const type& wrapped_type,
                            const type& array_raw_type,
-                           std::vector<base_class_info> base_classes,
-                           get_derived_func derived_func_ptr,
                            const type_data_funcs& info) RTTR_NOEXCEPT;
 
         type get_by_name(string_view name) const;
@@ -163,7 +161,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
         bool register_name(const type& array_raw_type, uint16_t& id, const type_data_funcs& info);
-        void register_base_class_info(const type& src_type, const type& raw_type, std::vector<base_class_info> base_classes);
+        void register_base_class_info(const type& src_type, const type& raw_type, const type_data_funcs& info);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
@@ -230,11 +228,6 @@ class RTTR_LOCAL type_database
 
         flat_map<string_view, type>                                 m_orig_name_to_id;
         flat_map<std::string, type, hash>                           m_custom_name_to_id;
-
-        std::vector<type>                                           m_base_class_list;      //!< This list contains for every type the id's of it's base classes (a.k.a. parent class)
-        std::vector<type>                                           m_derived_class_list;   //!< This list contains for every type the id's of it's derived classes (a.k.a child class)
-        std::vector<get_derived_info_func>                          m_get_derived_info_func_list;
-        std::vector<rttr_cast_func>                                 m_conversion_list;      //!< This list contains for every type a conversion function to its base classes
 
         std::vector<type::type_id>                                  m_raw_type_list;
         std::vector<type::type_id>                                  m_wrapped_type_list;

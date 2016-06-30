@@ -60,11 +60,6 @@ namespace rttr
 
 #define RTTR_DECL_DB_TYPE(member, variable) static decltype(std::declval<detail::type_database>().member) * variable = nullptr;
 
-RTTR_DECL_DB_TYPE(m_base_class_list, g_base_class_list)
-RTTR_DECL_DB_TYPE(m_derived_class_list, g_derived_class_list)
-RTTR_DECL_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
-RTTR_DECL_DB_TYPE(m_conversion_list, g_conversion_list)
-
 RTTR_DECL_DB_TYPE(m_raw_type_list, g_raw_type_list)
 RTTR_DECL_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
 RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
@@ -82,11 +77,6 @@ void type::init_globals()
 
     auto& db = detail::type_database::instance();
     #define RTTR_SET_DB_TYPE(member, variable) variable = &db.member;
-
-    RTTR_SET_DB_TYPE(m_base_class_list, g_base_class_list)
-    RTTR_SET_DB_TYPE(m_derived_class_list, g_derived_class_list)
-    RTTR_SET_DB_TYPE(m_get_derived_info_func_list, g_get_derived_info_func_list)
-    RTTR_SET_DB_TYPE(m_conversion_list, g_conversion_list)
 
     RTTR_SET_DB_TYPE(m_raw_type_list, g_raw_type_list)
     RTTR_SET_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
@@ -176,20 +166,20 @@ type type::get_wrapped_type() const RTTR_NOEXCEPT
 
 bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 {
-    const type::type_id source_raw_id = (*g_raw_type_list)[m_id];
-    const type::type_id target_raw_id = (*g_raw_type_list)[other.m_id];
-    if (source_raw_id == target_raw_id)
+    auto& src_raw_type = m_type_data_funcs->get_raw_type();
+    auto& tgt_raw_type = other.m_type_data_funcs->get_raw_type();
+
+    if (&src_raw_type == &tgt_raw_type)
         return true;
 
-    const int row = RTTR_MAX_INHERIT_TYPES_COUNT * source_raw_id;
-    for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
+    for (auto& t : src_raw_type.get_class_data().m_base_types)
     {
-        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
-        if (currId == target_raw_id)
+        if (t.m_type_data_funcs == &tgt_raw_type)
+        {
             return true;
-        if (currId == type::m_invalid_id)
-            return false;
+        }
     }
+
     return false;
 }
 
@@ -197,26 +187,27 @@ bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 
 void* type::apply_offset(void* ptr, const type& source_type, const type& target_type) RTTR_NOEXCEPT
 {
-    type::type_id source_raw_id        = (*g_raw_type_list)[source_type.m_id];
-    const type::type_id target_raw_id  = (*g_raw_type_list)[target_type.m_id];
+    auto& src_raw_type = source_type.m_type_data_funcs->get_raw_type();
+    auto& tgt_raw_type = target_type.m_type_data_funcs->get_raw_type();
 
-    if (source_raw_id == target_raw_id || ptr == nullptr)
+    if (&src_raw_type == &tgt_raw_type || ptr == nullptr)
         return ptr;
 
-    const detail::derived_info info = (*g_get_derived_info_func_list)[source_raw_id](ptr);
-    source_raw_id = (*g_raw_type_list)[info.m_type.m_id];
-    if (source_raw_id == target_raw_id)
+    const detail::derived_info info = src_raw_type.get_class_data().m_derived_info_func(ptr);
+    if (&info.m_type.m_type_data_funcs->get_raw_type() == &tgt_raw_type)
         return info.m_ptr;
 
-    const int row = RTTR_MAX_INHERIT_TYPES_COUNT * source_raw_id;
-    for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
+    auto& class_list = info.m_type.m_type_data_funcs->get_raw_type().get_class_data();
+    int i = 0;
+    for (auto& t : class_list.m_base_types)
     {
-        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
-        if (currId == target_raw_id)
-            return (*g_conversion_list)[row + i](info.m_ptr);
-        if (currId == type::m_invalid_id)
-            return nullptr;
+        if (t.m_type_data_funcs == &tgt_raw_type)
+        {
+            return class_list.m_conversion_list[i](info.m_ptr);
+        }
+        ++i;
     }
+
     return nullptr;
 }
 
@@ -227,8 +218,8 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
     if (ptr == nullptr)
         return type();
 
-    type::type_id source_raw_id     = (*g_raw_type_list)[source_type.m_id];
-    const detail::derived_info info = (*g_get_derived_info_func_list)[source_raw_id](ptr);
+    auto& src_raw_type = source_type.m_type_data_funcs->get_raw_type();
+    const detail::derived_info info = src_raw_type.get_class_data().m_derived_info_func(ptr);
     return info.m_type;
 }
 
@@ -236,41 +227,16 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
 
 array_range<type> type::get_base_classes() const RTTR_NOEXCEPT
 {
-    std::size_t end_index = 0;
-    const type::type_id raw_id = (*g_raw_type_list)[m_id];
-    const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
-
-    for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
-    {
-        const type::type_id currId = (*g_base_class_list)[row + i].get_id();
-        if (currId == type::m_invalid_id)
-        {
-            end_index = i;
-            break;
-        }
-    }
-
-    return array_range<type>(&(*g_base_class_list)[row], end_index);
+    return array_range<type>(m_type_data_funcs->get_class_data().m_base_types.data(),
+                             m_type_data_funcs->get_class_data().m_base_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 {
-    const type::type_id raw_id = (*g_raw_type_list)[m_id];
-    std::size_t end_index = 0;
-    const int row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_id;
-    for (int i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
-    {
-        const type::type_id currId = (*g_derived_class_list)[row + i].get_id();
-        if (currId == type::m_invalid_id)
-        {
-            end_index = i;
-            break;
-        }
-    }
-
-    return array_range<type>(&(*g_derived_class_list)[row], end_index);
+    return array_range<type>(m_type_data_funcs->get_class_data().m_derived_types.data(),
+                             m_type_data_funcs->get_class_data().m_derived_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

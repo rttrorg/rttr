@@ -110,12 +110,9 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 type type_register::type_reg(const type& raw_type,
                              const type& wrapped_type,
                              const type& array_raw_type,
-                             vector<base_class_info> base_classes,
-                             get_derived_func derived_func_ptr,
                              const type_data_funcs& info) RTTR_NOEXCEPT
 {
-    return type_database::instance().register_type(raw_type, wrapped_type, array_raw_type, move(base_classes),
-                                                   derived_func_ptr,
+    return type_database::instance().register_type(raw_type, wrapped_type, array_raw_type,
                                                    info);
 }
 

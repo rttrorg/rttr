@@ -33,6 +33,7 @@
 #include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/detail/property/property_wrapper.h"
 #include "rttr/detail/parameter_info/parameter_infos_compare.h"
+#include "rttr/detail/type/type_data.h"
 
 #include <unordered_map>
 #include <vector>
@@ -55,20 +56,10 @@ namespace detail
 type_database::type_database()
 :   m_type_id_counter(0)
 {
-    m_base_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
-    m_derived_class_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
-    m_conversion_list.reserve(RTTR_DEFAULT_TYPE_COUNT * RTTR_MAX_INHERIT_TYPES_COUNT);
-    m_get_derived_info_func_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
     m_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
     m_array_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
-    m_base_class_list.emplace_back(type(0, nullptr));
-    m_derived_class_list.emplace_back(type(0, nullptr));
-    m_conversion_list.emplace_back(nullptr);
-    m_get_derived_info_func_list.push_back(nullptr);
 
     m_raw_type_list.emplace_back(0);
     m_wrapped_type_list.emplace_back(0);
@@ -1069,8 +1060,11 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_base_class_info(const type& src_type, const type& raw_type, vector<base_class_info> base_classes)
+void type_database::register_base_class_info(const type& src_type, const type& raw_type,
+                                             const type_data_funcs& info)
 {
+    auto base_classes = info.get_base_types();
+
     // remove double entries; can only be happen for virtual inheritance case
     set<type> double_entries;
     for (auto itr = base_classes.rbegin(); itr != base_classes.rend();)
@@ -1090,33 +1084,21 @@ void type_database::register_base_class_info(const type& src_type, const type& r
     // followed by its derived classes, here it depends on the order of RTTR_ENABLE(CLASS)
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                           { return left.m_base_type.get_id() < right.m_base_type.get_id(); });
-    const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * raw_type.get_id();
-    m_base_class_list.resize(std::max(m_base_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT), detail::get_invalid_type());
-    m_conversion_list.resize(std::max(m_conversion_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT));
-    std::size_t index = 0;
-    // here we store for a type X all its base classes
-    for (const auto& type : base_classes)
-    {
-        m_base_class_list[row + index] = type.m_base_type;
-        m_conversion_list[row + index]  = type.m_rttr_cast_func;
-        ++index;
-    }
 
-    m_derived_class_list.resize(std::max(m_derived_class_list.size(), row + RTTR_MAX_INHERIT_TYPES_COUNT), detail::get_invalid_type());
-    const auto id = src_type.get_id();
-    // here we store for a type Y all its derived classes
-    for (const auto& type : base_classes)
-    {
-        const std::size_t row = RTTR_MAX_INHERIT_TYPES_COUNT * type.m_base_type.get_raw_type().get_id();
-        for (std::size_t i = 0; i < RTTR_MAX_INHERIT_TYPES_COUNT; ++i)
+    if (src_type.get_name() == "struct DiamondBottom")
         {
-            if (m_derived_class_list[row + i].get_id() == type::m_invalid_id)
-            {
-                m_derived_class_list[row + i] = src_type;
-                break;
-            }
-
+            int i = 0;
+            ++i;
         }
+
+    auto& class_data = info.get_class_data();
+    for (const auto& type : base_classes)
+    {
+        class_data.m_base_types.push_back(type.m_base_type);
+        class_data.m_conversion_list.push_back(type.m_rttr_cast_func);
+
+        auto r_type = type.m_base_type.get_raw_type();
+        r_type.m_type_data_funcs->get_class_data().m_derived_types.push_back(src_type);
     }
 }
 
@@ -1134,10 +1116,10 @@ std::vector<const type_data_funcs*>& type_database::get_type_data_func()
 type type_database::register_type(const type& raw_type,
                                   const type& wrapped_type,
                                   const type& array_raw_type,
-                                  vector<base_class_info> base_classes,
-                                  get_derived_func derived_func_ptr,
                                   const type_data_funcs& info) RTTR_NOEXCEPT
 {
+    // register the base types
+    info.get_base_types();
     type::init_globals();
 
     //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
@@ -1154,13 +1136,11 @@ type type_database::register_type(const type& raw_type,
     m_wrapped_type_list.push_back(wrapped_type.get_id());
 
     m_array_raw_type_list.push_back(array_raw_type.get_id() == 0 ? id : array_raw_type.get_id());
-    m_get_derived_info_func_list.resize(std::max(m_get_derived_info_func_list.size(), static_cast<std::size_t>(raw_id + 1)));
-    m_get_derived_info_func_list[raw_id]  = derived_func_ptr;
 
     m_type_data_func_list.push_back(&info);
 
     // has to be done as last step
-    register_base_class_info(type(id, nullptr), type(raw_id, nullptr), std::move(base_classes));
+    register_base_class_info(type(id, &info), type(raw_id, nullptr), info);
 
     return type(id, m_type_data_func_list[id]);
 }

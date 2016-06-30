@@ -329,7 +329,7 @@ class RTTR_API type
          *
          * \return The size of the type in bytes.
          */
-        std::size_t get_sizeof() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE std::size_t get_sizeof() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type is class; that is not an atomic type or a method.
