@@ -62,10 +62,9 @@ type_database::type_database()
     m_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
 
     m_raw_type_list.emplace_back(0);
-    m_wrapped_type_list.emplace_back(0);
     m_array_raw_type_list.emplace_back(0);
 
-    m_type_list.emplace_back(type(0, nullptr));
+    m_type_list.emplace_back(type(&get_invalid_type_data()));
 
     m_type_data_func_list.push_back(&get_invalid_type_data());
 }
@@ -1046,22 +1045,22 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
         return true;
     }
 
-    m_orig_name_to_id.insert(std::make_pair(info.get_type_name(), type(++m_type_id_counter, &info)));
+    ++m_type_id_counter;
 
+    m_orig_name_to_id.insert(std::make_pair(info.get_type_name(), type(&info)));
     info.get_name() = derive_name(array_raw_type, info.get_type_name());
-
-    m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(m_type_id_counter, &info)));
+    m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(&info)));
 
     id = m_type_id_counter;
-    m_type_list.emplace_back(type(id, &info));
+    const_cast<type_data_funcs&>(info).type_index = id;
+    m_type_list.emplace_back(type(&info));
 
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_base_class_info(const type& src_type, const type& raw_type,
-                                             const type_data_funcs& info)
+void type_database::register_base_class_info(const type_data_funcs& info)
 {
     auto base_classes = info.get_base_types();
 
@@ -1085,20 +1084,14 @@ void type_database::register_base_class_info(const type& src_type, const type& r
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                           { return left.m_base_type.get_id() < right.m_base_type.get_id(); });
 
-    if (src_type.get_name() == "struct DiamondBottom")
-        {
-            int i = 0;
-            ++i;
-        }
-
     auto& class_data = info.get_class_data();
-    for (const auto& type : base_classes)
+    for (const auto& t : base_classes)
     {
-        class_data.m_base_types.push_back(type.m_base_type);
-        class_data.m_conversion_list.push_back(type.m_rttr_cast_func);
+        class_data.m_base_types.push_back(t.m_base_type);
+        class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
-        auto r_type = type.m_base_type.get_raw_type();
-        r_type.m_type_data_funcs->get_class_data().m_derived_types.push_back(src_type);
+        auto r_type = t.m_base_type.get_raw_type();
+        r_type.m_type_data_funcs->get_class_data().m_derived_types.push_back(type(&info));
     }
 }
 
@@ -1114,7 +1107,6 @@ std::vector<const type_data_funcs*>& type_database::get_type_data_func()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type type_database::register_type(const type& raw_type,
-                                  const type& wrapped_type,
                                   const type& array_raw_type,
                                   const type_data_funcs& info) RTTR_NOEXCEPT
 {
@@ -1128,21 +1120,19 @@ type type_database::register_type(const type& raw_type,
     uint16_t id = 0;
     const bool isAlreadyRegistered = register_name(array_raw_type, id, info);
     if (isAlreadyRegistered)
-        return type(id, m_type_data_func_list[id]);
+        return type(m_type_data_func_list[id]);
 
     // to do check: why return an invalid type anyway?
     const type::type_id raw_id = ((raw_type.get_id() == 0) ? id : raw_type.get_id());
     m_raw_type_list.push_back(raw_id);
-    m_wrapped_type_list.push_back(wrapped_type.get_id());
-
     m_array_raw_type_list.push_back(array_raw_type.get_id() == 0 ? id : array_raw_type.get_id());
 
     m_type_data_func_list.push_back(&info);
 
     // has to be done as last step
-    register_base_class_info(type(id, &info), type(raw_id, nullptr), info);
+    register_base_class_info(info);
 
-    return type(id, m_type_data_func_list[id]);
+    return type(m_type_data_func_list[id]);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

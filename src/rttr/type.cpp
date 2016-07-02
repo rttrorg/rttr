@@ -61,7 +61,6 @@ namespace rttr
 #define RTTR_DECL_DB_TYPE(member, variable) static decltype(std::declval<detail::type_database>().member) * variable = nullptr;
 
 RTTR_DECL_DB_TYPE(m_raw_type_list, g_raw_type_list)
-RTTR_DECL_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
 RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
 
 RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
@@ -79,7 +78,6 @@ void type::init_globals()
     #define RTTR_SET_DB_TYPE(member, variable) variable = &db.member;
 
     RTTR_SET_DB_TYPE(m_raw_type_list, g_raw_type_list)
-    RTTR_SET_DB_TYPE(m_wrapped_type_list, g_wrapped_type_list)
     RTTR_SET_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
 
     RTTR_SET_DB_TYPE(m_type_list, g_type_list)
@@ -146,20 +144,14 @@ std::string type::normalize_orig_name(string_view name)
 
 type type::get_raw_type() const RTTR_NOEXCEPT
 {
-    if (is_valid())
-        return type((*g_raw_type_list)[m_id], &m_type_data_funcs->get_raw_type());
-    else
-        return type();
+    return type(&m_type_data_funcs->get_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type type::get_wrapped_type() const RTTR_NOEXCEPT
 {
-    if (is_valid())
-        return type((*g_wrapped_type_list)[m_id], &m_type_data_funcs->get_wrapped_type());
-    else
-        return type();
+    return m_type_data_funcs->get_wrapped_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -243,14 +235,14 @@ array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 
 bool type::is_wrapper() const RTTR_NOEXCEPT
 {
-    return ((*g_wrapped_type_list)[m_id] != type::m_invalid_id);
+    return (m_type_data_funcs->get_wrapped_type().m_type_data_funcs->type_index != type::m_invalid_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type type::get_raw_array_type() const RTTR_NOEXCEPT
 {
-    return type((*g_array_raw_type_list)[m_id], &m_type_data_funcs->get_array_raw_type());
+    return type(&m_type_data_funcs->get_array_raw_type());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

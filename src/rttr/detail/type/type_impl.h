@@ -47,24 +47,21 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type() RTTR_NOEXCEPT
-:   m_id(m_invalid_id),
-    m_type_data_funcs(&detail::get_invalid_type_data())
+:    m_type_data_funcs(&detail::get_invalid_type_data())
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type(type::type_id id, const detail::type_data_funcs* data) RTTR_NOEXCEPT
-:   m_id(id),
-    m_type_data_funcs(data)
+RTTR_INLINE type::type(const detail::type_data_funcs* data) RTTR_NOEXCEPT
+:  m_type_data_funcs(data)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type(const type& other) RTTR_NOEXCEPT
-:   m_id(other.m_id),
-    m_type_data_funcs(other.m_type_data_funcs)
+:   m_type_data_funcs(other.m_type_data_funcs)
 {
 }
 
@@ -72,7 +69,6 @@ RTTR_INLINE type::type(const type& other) RTTR_NOEXCEPT
 
 RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 {
-    m_id = other.m_id;
     m_type_data_funcs = other.m_type_data_funcs;
     return *this;
 }
@@ -81,63 +77,63 @@ RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 
 RTTR_INLINE bool type::operator<(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id < other.m_id);
+    return (m_type_data_funcs->type_index < other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id > other.m_id);
+    return (m_type_data_funcs->type_index > other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id >= other.m_id);
+    return (m_type_data_funcs->type_index >= other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator<=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id <= other.m_id);
+    return (m_type_data_funcs->type_index <= other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator==(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id == other.m_id);
+    return (m_type_data_funcs->type_index == other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator!=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_id != other.m_id);
+    return (m_type_data_funcs->type_index != other.m_type_data_funcs->type_index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type_id type::get_id() const RTTR_NOEXCEPT
 {
-    return m_id;
+    return m_type_data_funcs->type_index;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::is_valid() const RTTR_NOEXCEPT
 {
-    return (m_id != 0);
+    return (m_type_data_funcs->type_index != m_invalid_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 {
-    return (m_id != 0);
+    return (m_type_data_funcs->type_index != m_invalid_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -258,22 +254,6 @@ struct raw_type_info<T, false>
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, bool = is_wrapper<T>::value>
-struct wrapper_type_info
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename wrapper_mapper<T>::wrapped_type>(); }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct wrapper_type_info<T, false>
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
 template<typename T, bool = std::is_same<T, typename raw_array_type<T>::type >::value>
 struct array_raw_type
 {
@@ -302,7 +282,6 @@ struct type_getter
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
         static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
-                                                        wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         get_type_data<T>());
         return val;
@@ -321,7 +300,6 @@ struct type_getter<void>
     static type get_type() RTTR_NOEXCEPT
     {
         static const type val = type_register::type_reg(raw_type_info<void>::get_type(),
-                                                        wrapper_type_info<void>::get_type(),
                                                         array_raw_type<void>::get_type(),
                                                         get_type_data<void>());
         return val;
@@ -340,7 +318,6 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
     static type get_type() RTTR_NOEXCEPT
     {
         static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
-                                                        wrapper_type_info<T>::get_type(),
                                                         array_raw_type<T>::get_type(),
                                                         get_type_data<T>());
         return val;

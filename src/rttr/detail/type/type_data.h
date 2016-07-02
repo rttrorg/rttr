@@ -60,10 +60,27 @@ using get_derived_info_func = derived_info(*)(void*);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T, bool = is_wrapper<T>::value>
+struct wrapper_type_info
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<wrapper_mapper_t<T>>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct wrapper_type_info<T, false>
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 struct class_data
 {
     class_data(get_derived_info_func func) : m_derived_info_func(func),
-                                             m_dtor(create_invalid_item<destructor>()) {}
+                                             m_dtor(create_invalid_item<destructor>())
+    {}
 
     get_derived_info_func       m_derived_info_func;
     std::vector<type>           m_base_types;
@@ -100,7 +117,7 @@ bool is_member_function_pointer() RTTR_NOEXCEPT;
 
 
 using get_raw_type_func = decltype(&get_raw_type);
-using get_wrapped_type_func = decltype(&get_wrapped_type);
+using get_wrapped_type_func = decltype(&wrapper_type_info<void>::get_type);
 using get_array_raw_type_func = decltype(&get_array_raw_type);
 using get_name_func = decltype(&get_name);
 using get_type_name_func = decltype(&get_type_name_impl);
@@ -150,6 +167,7 @@ struct type_data_funcs
 
 
     class_data& (*get_class_data)();
+    uint16_t type_index;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -162,9 +180,9 @@ struct type_data
         return get_type_data<raw_type_t<T>>();
     }
 
-    static const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT
+    static type get_wrapped_type() RTTR_NOEXCEPT
     {
-        return get_type_data<wrapper_mapper_t<T>>();
+        return wrapper_type_info<T>::get_type();
     }
 
     static const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
@@ -256,9 +274,9 @@ struct invalid_type_data
         return get_invalid_type_data();
     }
 
-    static const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT
+    static type get_wrapped_type() RTTR_NOEXCEPT
     {
-        return get_invalid_type_data();
+        return get_invalid_type();
     }
 
     static const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
@@ -362,7 +380,8 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
 
                                                   &create_variant_func<T>::create_variant,
                                                   &base_classes<T>::get_types,
-                                                  &type_data<T>::get_class_data };
+                                                  &type_data<T>::get_class_data,
+                                                  0 };
     return instance;
 }
 
@@ -370,7 +389,7 @@ RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
 
 RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
 {
-    static const auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &invalid_type_data::get_wrapped_type,
+    static const auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &get_invalid_type,
                                                   &invalid_type_data::get_array_raw_type,
                                                   &invalid_type_data::get_name, &invalid_type_data::get_type_name,
                                                   &invalid_type_data::get_sizeof, &invalid_type_data::get_pointer_dimension,
@@ -385,7 +404,8 @@ RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
 
                                                   &create_invalid_variant_policy::create_variant,
                                                   &base_classes<void>::get_types,
-                                                  &invalid_type_data::get_class_data };
+                                                  &invalid_type_data::get_class_data,
+                                                  0};
     return instance;
 }
 

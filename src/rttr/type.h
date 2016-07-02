@@ -919,7 +919,7 @@ class RTTR_API type
          *
          * \param id The unique id of the data type.
          */
-        RTTR_INLINE type(type_id id, const detail::type_data_funcs* data) RTTR_NOEXCEPT;
+        RTTR_INLINE type(const detail::type_data_funcs* data) RTTR_NOEXCEPT;
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type
@@ -1003,7 +1003,6 @@ class RTTR_API type
         friend class detail::type_database;
 
     private:
-        type_id  m_id;
         const detail::type_data_funcs* m_type_data_funcs;
         static const type_id m_invalid_id = 0;
 };

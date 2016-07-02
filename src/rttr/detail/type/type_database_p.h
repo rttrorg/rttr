@@ -86,7 +86,6 @@ class RTTR_LOCAL type_database
         void register_comparator(const type& t, const type_comparator_base* comparator);
 
         type register_type(const type& raw_type,
-                           const type& wrapped_type,
                            const type& array_raw_type,
                            const type_data_funcs& info) RTTR_NOEXCEPT;
 
@@ -161,7 +160,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
         bool register_name(const type& array_raw_type, uint16_t& id, const type_data_funcs& info);
-        void register_base_class_info(const type& src_type, const type& raw_type, const type_data_funcs& info);
+        void register_base_class_info(const type_data_funcs& info);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
@@ -230,7 +229,6 @@ class RTTR_LOCAL type_database
         flat_map<std::string, type, hash>                           m_custom_name_to_id;
 
         std::vector<type::type_id>                                  m_raw_type_list;
-        std::vector<type::type_id>                                  m_wrapped_type_list;
         std::vector<type::type_id>                                  m_array_raw_type_list;
 
         flat_multimap<string_view, method>                          m_global_methods;
