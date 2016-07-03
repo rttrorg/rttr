@@ -1034,7 +1034,7 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type_database::register_name(const type& array_raw_type, uint16_t& id,
-                                  const type_data_funcs& info)
+                                  type_data_funcs& info)
 {
     using namespace detail;
 
@@ -1052,7 +1052,7 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
     m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(&info)));
 
     id = m_type_id_counter;
-    const_cast<type_data_funcs&>(info).type_index = id;
+    info.type_index = id;
     m_type_list.emplace_back(type(&info));
 
     return false;
@@ -1108,7 +1108,7 @@ std::vector<const type_data_funcs*>& type_database::get_type_data_func()
 
 type type_database::register_type(const type& raw_type,
                                   const type& array_raw_type,
-                                  const type_data_funcs& info) RTTR_NOEXCEPT
+                                  type_data_funcs& info) RTTR_NOEXCEPT
 {
     // register the base types
     info.get_base_types();

@@ -51,8 +51,8 @@ namespace detail
 struct type_data_funcs;
 
 template<typename T>
-RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT;
-RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT;
+RTTR_INLINE type_data_funcs& get_type_data() RTTR_NOEXCEPT;
+RTTR_INLINE type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT;
 
 using rttr_cast_func        = void*(*)(void*);
 using get_derived_info_func = derived_info(*)(void*);
@@ -98,9 +98,9 @@ struct class_data
 namespace impl
 {
 
-const type_data_funcs& get_raw_type() RTTR_NOEXCEPT;
-const type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT;
-const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT;
+type_data_funcs& get_raw_type() RTTR_NOEXCEPT;
+type_data_funcs& get_wrapped_type() RTTR_NOEXCEPT;
+type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT;
 std::string& get_name() RTTR_NOEXCEPT;
 string_view get_type_name_impl() RTTR_NOEXCEPT;
 std::size_t get_sizeof() RTTR_NOEXCEPT;
@@ -175,7 +175,7 @@ struct type_data_funcs
 template<typename T>
 struct type_data
 {
-    static const type_data_funcs& get_raw_type() RTTR_NOEXCEPT
+    static type_data_funcs& get_raw_type() RTTR_NOEXCEPT
     {
         return get_type_data<raw_type_t<T>>();
     }
@@ -185,7 +185,7 @@ struct type_data
         return wrapper_type_info<T>::get_type();
     }
 
-    static const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
+    static type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
     {
         return get_type_data<raw_array_type_t<T>>();
     }
@@ -269,7 +269,7 @@ struct type_data
 
 struct invalid_type_data
 {
-    static const type_data_funcs& get_raw_type() RTTR_NOEXCEPT
+    static type_data_funcs& get_raw_type() RTTR_NOEXCEPT
     {
         return get_invalid_type_data();
     }
@@ -279,7 +279,7 @@ struct invalid_type_data
         return get_invalid_type();
     }
 
-    static const type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
+    static type_data_funcs& get_array_raw_type() RTTR_NOEXCEPT
     {
         return get_invalid_type_data();
     }
@@ -360,52 +360,52 @@ struct invalid_type_data
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE const type_data_funcs& get_type_data() RTTR_NOEXCEPT
+RTTR_INLINE type_data_funcs& get_type_data() RTTR_NOEXCEPT
 {
-    static const auto instance = type_data_funcs{ &type_data<T>::get_raw_type, &type_data<T>::get_wrapped_type,
-                                                  &type_data<T>::get_array_raw_type,
-                                                  &type_data<T>::get_name, &type_data<T>::get_type_name,
-                                                  &conditional_t<std::is_same<T, void>::value || std::is_function<T>::value,
-                                                                 invalid_type_data,
-                                                                 type_data<T>>::get_sizeof,
-                                                  &type_data<T>::get_pointer_dimension,
-                                                  &type_data<T>::is_class,
-                                                  &type_data<T>::is_enum,
-                                                  &type_data<T>::is_array,
-                                                  &type_data<T>::is_pointer,
-                                                  &type_data<T>::is_arithmetic,
-                                                  &type_data<T>::is_function_pointer,
-                                                  &type_data<T>::is_member_object_pointer,
-                                                  &type_data<T>::is_member_function_pointer,
+    static auto instance = type_data_funcs{ &type_data<T>::get_raw_type, &type_data<T>::get_wrapped_type,
+                                            &type_data<T>::get_array_raw_type,
+                                            &type_data<T>::get_name, &type_data<T>::get_type_name,
+                                            &conditional_t<std::is_same<T, void>::value || std::is_function<T>::value,
+                                                           invalid_type_data,
+                                                           type_data<T>>::get_sizeof,
+                                            &type_data<T>::get_pointer_dimension,
+                                            &type_data<T>::is_class,
+                                            &type_data<T>::is_enum,
+                                            &type_data<T>::is_array,
+                                            &type_data<T>::is_pointer,
+                                            &type_data<T>::is_arithmetic,
+                                            &type_data<T>::is_function_pointer,
+                                            &type_data<T>::is_member_object_pointer,
+                                            &type_data<T>::is_member_function_pointer,
 
-                                                  &create_variant_func<T>::create_variant,
-                                                  &base_classes<T>::get_types,
-                                                  &type_data<T>::get_class_data,
-                                                  0 };
+                                            &create_variant_func<T>::create_variant,
+                                            &base_classes<T>::get_types,
+                                            &type_data<T>::get_class_data,
+                                            0 };
     return instance;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE const type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
+RTTR_INLINE type_data_funcs& get_invalid_type_data() RTTR_NOEXCEPT
 {
-    static const auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &get_invalid_type,
-                                                  &invalid_type_data::get_array_raw_type,
-                                                  &invalid_type_data::get_name, &invalid_type_data::get_type_name,
-                                                  &invalid_type_data::get_sizeof, &invalid_type_data::get_pointer_dimension,
-                                                  &invalid_type_data::is_class,
-                                                  &invalid_type_data::is_enum,
-                                                  &invalid_type_data::is_array,
-                                                  &invalid_type_data::is_pointer,
-                                                  &invalid_type_data::is_arithmetic,
-                                                  &invalid_type_data::is_function_pointer,
-                                                  &invalid_type_data::is_member_object_pointer,
-                                                  &invalid_type_data::is_member_function_pointer,
+    static auto instance = type_data_funcs{ &invalid_type_data::get_raw_type, &get_invalid_type,
+                                            &invalid_type_data::get_array_raw_type,
+                                            &invalid_type_data::get_name, &invalid_type_data::get_type_name,
+                                            &invalid_type_data::get_sizeof, &invalid_type_data::get_pointer_dimension,
+                                            &invalid_type_data::is_class,
+                                            &invalid_type_data::is_enum,
+                                            &invalid_type_data::is_array,
+                                            &invalid_type_data::is_pointer,
+                                            &invalid_type_data::is_arithmetic,
+                                            &invalid_type_data::is_function_pointer,
+                                            &invalid_type_data::is_member_object_pointer,
+                                            &invalid_type_data::is_member_function_pointer,
 
-                                                  &create_invalid_variant_policy::create_variant,
-                                                  &base_classes<void>::get_types,
-                                                  &invalid_type_data::get_class_data,
-                                                  0};
+                                            &create_invalid_variant_policy::create_variant,
+                                            &base_classes<void>::get_types,
+                                            &invalid_type_data::get_class_data,
+                                            0};
     return instance;
 }
 

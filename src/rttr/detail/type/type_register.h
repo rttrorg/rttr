@@ -109,7 +109,7 @@ public:
      */
     static type type_reg(const type& raw_type,
                          const type& array_raw_type,
-                         const type_data_funcs& info) RTTR_NOEXCEPT;
+                         type_data_funcs& info) RTTR_NOEXCEPT;
 
 private:
 
