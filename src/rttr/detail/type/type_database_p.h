@@ -228,9 +228,6 @@ class RTTR_LOCAL type_database
         flat_map<string_view, type>                                 m_orig_name_to_id;
         flat_map<std::string, type, hash>                           m_custom_name_to_id;
 
-        std::vector<type::type_id>                                  m_raw_type_list;
-        std::vector<type::type_id>                                  m_array_raw_type_list;
-
         flat_multimap<string_view, method>                          m_global_methods;
         flat_multimap<string_view, property>                        m_global_properties;
 

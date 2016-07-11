@@ -86,9 +86,9 @@ struct class_data
     std::vector<type>           m_base_types;
     std::vector<type>           m_derived_types;
     std::vector<rttr_cast_func> m_conversion_list;
-    std::vector<property>       m_props;
-    std::vector<method>         m_meth;
-    std::vector<constructor>    m_ctor;
+    std::vector<property>       m_properties;
+    std::vector<method>         m_methods;
+    std::vector<constructor>    m_ctors;
     destructor                  m_dtor;
 };
 

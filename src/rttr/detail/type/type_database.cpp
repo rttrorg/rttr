@@ -56,16 +56,8 @@ namespace detail
 type_database::type_database()
 :   m_type_id_counter(0)
 {
-    m_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-    m_array_raw_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
     m_type_list.reserve(RTTR_DEFAULT_TYPE_COUNT);
-
-    m_raw_type_list.emplace_back(0);
-    m_array_raw_type_list.emplace_back(0);
-
     m_type_list.emplace_back(type(&get_invalid_type_data()));
-
     m_type_data_func_list.push_back(&get_invalid_type_data());
 }
 
@@ -1112,20 +1104,13 @@ type type_database::register_type(const type& raw_type,
 {
     // register the base types
     info.get_base_types();
-    type::init_globals();
 
     //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
-
     using namespace detail;
     uint16_t id = 0;
     const bool isAlreadyRegistered = register_name(array_raw_type, id, info);
     if (isAlreadyRegistered)
         return type(m_type_data_func_list[id]);
-
-    // to do check: why return an invalid type anyway?
-    const type::type_id raw_id = ((raw_type.get_id() == 0) ? id : raw_type.get_id());
-    m_raw_type_list.push_back(raw_id);
-    m_array_raw_type_list.push_back(array_raw_type.get_id() == 0 ? id : array_raw_type.get_id());
 
     m_type_data_func_list.push_back(&info);
 

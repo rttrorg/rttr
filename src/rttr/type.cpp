@@ -57,36 +57,6 @@ using namespace std;
 
 namespace rttr
 {
-
-#define RTTR_DECL_DB_TYPE(member, variable) static decltype(std::declval<detail::type_database>().member) * variable = nullptr;
-
-RTTR_DECL_DB_TYPE(m_raw_type_list, g_raw_type_list)
-RTTR_DECL_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
-
-RTTR_DECL_DB_TYPE(m_type_list, g_type_list)
-
-// because everything is initialized at static initialization time the call to
-// register_type can be made from another translation unit before global statics
-// like 'g_name_list' are initialized, therefore we have to initialize the data base singleton here explicit
-void type::init_globals()
-{
-    static bool initialized = false;
-    if (initialized)
-        return;
-
-    auto& db = detail::type_database::instance();
-    #define RTTR_SET_DB_TYPE(member, variable) variable = &db.member;
-
-    RTTR_SET_DB_TYPE(m_raw_type_list, g_raw_type_list)
-    RTTR_SET_DB_TYPE(m_array_raw_type_list, g_array_raw_type_list)
-
-    RTTR_SET_DB_TYPE(m_type_list, g_type_list)
-
-    initialized = true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 namespace
 {
 
@@ -249,7 +219,8 @@ type type::get_raw_array_type() const RTTR_NOEXCEPT
 
 array_range<type> type::get_types() RTTR_NOEXCEPT
 {
-    return array_range<type>(&(*g_type_list)[1], g_type_list->size() - 1);
+    auto& type_list = detail::type_database::instance().m_type_list;
+    return array_range<type>(&type_list[1], type_list.size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
