@@ -156,6 +156,15 @@ class RTTR_LOCAL type_database
         type_database();
         ~type_database();
 
+        template<typename T>
+        static array_range<T> get_items_for_type(const type& t,
+                                                 const std::vector<T>& vec);
+
+        template<typename T>
+        static void update_class_list(const type& t, T item_ptr);
+
+        static void update_property_class_list(const type& t);
+
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered

@@ -78,71 +78,41 @@ type_database& type_database::instance()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static array_range<T> get_items_for_type(const type& t,
-                                         const std::unordered_map<type, std::vector<T>>& class_map)
+array_range<T> type_database::get_items_for_type(const type& t,
+                                                 const std::vector<T>& vec)
 {
-    const auto ret = class_map.find(t);
-    if (ret != class_map.end())
-    {
-        auto& vec = ret->second;
-        return array_range<T>(vec.data(), vec.size(),
-                              default_predicate<T>([t](const T& item) { return (item.get_declaring_type() == t); }) );
-    }
-
-    return array_range<T>();
+    return array_range<T>(vec.data(), vec.size(),
+                          default_predicate<T>([t](const T& item) { return (item.get_declaring_type() == t); }) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static void update_class_list(const type& t,
-                              std::unordered_map<type, std::vector<T>>& class_map)
+void type_database::update_class_list(const type& t, T item_ptr)
 {
     // update type "t" with all items from the base classes
-    auto& all_items_list = class_map[t];
-    auto item_range = get_items_for_type<T>(t, class_map);
-    std::vector<T> item_vec(item_range.begin(), item_range.end());
-    all_items_list.reserve(all_items_list.size() + 1);
-    all_items_list.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
+	auto& all_class_items = (t.m_type_data_funcs->get_class_data().*item_ptr);
+    auto item_range = get_items_for_type(t, t.m_type_data_funcs->get_class_data().*item_ptr);
+	detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
+	all_class_items.reserve(all_class_items.size() + 1);
+	all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
     for (const auto& base_type : t.get_base_classes())
     {
-        auto base_item_range = get_items_for_type<T>(base_type, class_map);
-        if (base_item_range.empty())
+        auto base_properties = get_items_for_type(base_type, base_type.m_type_data_funcs->get_class_data().*item_ptr);
+        if (base_properties.empty())
             continue;
 
-        all_items_list.reserve(all_items_list.size() + base_item_range.size());
-        all_items_list.insert(all_items_list.end(), base_item_range.begin(), base_item_range.end());
+		all_class_items.reserve(all_class_items.size() + base_properties.size());
+		all_class_items.insert(all_class_items.end(), base_properties.begin(), base_properties.end());
     }
 
     // insert own class items
-    all_items_list.reserve(all_items_list.size() + item_vec.size());
-    all_items_list.insert(all_items_list.end(), item_vec.begin(), item_vec.end());
+	all_class_items.reserve(all_class_items.size() + item_vec.size());
+	all_class_items.insert(all_class_items.end(), item_vec.begin(), item_vec.end());
 
     // update derived types
     for (const auto& derived_type : t.get_derived_classes())
-        update_class_list<T>(derived_type, class_map);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-static T get_class_item(const type& t, string_view name,
-                        const std::unordered_map<type, std::vector<T>>& item_map)
-{
-    const auto ret = item_map.find(t);
-    if (ret != item_map.end())
-    {
-        const auto& vec = ret->second;
-        auto ret = std::find_if(vec.cbegin(), vec.cend(),
-        [name](const T& item)
-        {
-            return (item.get_name() == name);
-        });
-        if (ret != vec.cend())
-            return *ret;
-    }
-
-    return detail::create_invalid_item<T>();
+        update_class_list<T>(derived_type, item_ptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -159,9 +129,10 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
         if (get_type_property(t, name))
             return;
 
-        m_class_property_map[t].emplace_back(detail::create_item<property>(prop.get()));
+        auto& property_list = t.m_type_data_funcs->get_class_data().m_properties;
+        property_list.emplace_back(detail::create_item<property>(prop.get()));
         m_property_list.push_back(std::move(prop));
-        update_class_list<property>(t, m_class_property_map);
+        update_class_list(t, &class_data::m_properties);
     }
     else
     {
@@ -178,14 +149,23 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
 
 property type_database::get_class_property(const type& t, string_view name) const
 {
-    return get_class_item<property>(t, name, m_class_property_map);
+    const auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+                            [name](const property& item)
+                            {
+                                return (item.get_name() == name);
+                            });
+    if (ret != vec.cend())
+        return *ret;
+
+    return detail::create_invalid_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property type_database::get_type_property(const type& t, string_view name) const
 {
-    for (const auto& prop : get_items_for_type<property>(t, m_class_property_map))
+    for (const auto& prop : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_properties))
     {
         if (prop.get_name() == name)
             return prop;
@@ -198,18 +178,14 @@ property type_database::get_type_property(const type& t, string_view name) const
 
 array_range<property> type_database::get_class_properties(const type& t) const
 {
-    const auto ret = m_class_property_map.find(t);
-    if (ret != m_class_property_map.end())
+    auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    if (!vec.empty())
     {
-        auto& vec = ret->second;
-        if (!vec.empty())
-        {
-            return array_range<property>(vec.data(), vec.size(),
-                                         default_predicate<property>([](const property& prop)
-                                         {
-                                             return (prop.get_access_level() == access_levels::public_access);
-                                         }) );
-        }
+        return array_range<property>(vec.data(), vec.size(),
+                                     default_predicate<property>([](const property& prop)
+                                     {
+                                         return (prop.get_access_level() == access_levels::public_access);
+                                     }) );
     }
 
     return array_range<property>();
@@ -286,13 +262,9 @@ RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filte
 
 array_range<property> type_database::get_class_properties(const type& t, filter_items filter) const
 {
-    const auto ret = m_class_property_map.find(t);
-    if (ret != m_class_property_map.end())
-    {
-        auto& vec = ret->second;
-        if (!vec.empty())
-            return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(t, filter));
-    }
+    auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    if (!vec.empty())
+        return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(t, filter));
 
     return array_range<property>();
 }
@@ -344,9 +316,10 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
         if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
             return;
 
-        m_class_method_map[t].emplace_back(detail::create_item<method>(meth.get()));
+		auto& method_list = t.m_type_data_funcs->get_class_data().m_methods;
+		method_list.emplace_back(detail::create_item<method>(meth.get()));
         m_method_list.push_back(std::move(meth));
-        update_class_list<method>(t, m_class_method_map);
+        update_class_list(t, &class_data::m_methods);
     }
     else
     {
@@ -363,7 +336,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 method type_database::get_type_method(const type& t, string_view name) const
 {
-    for (const auto& meth : get_items_for_type<method>(t, m_class_method_map))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_methods))
     {
         if (meth.get_name() == name)
         {
@@ -378,7 +351,16 @@ method type_database::get_type_method(const type& t, string_view name) const
 
 method type_database::get_class_method(const type& t, string_view name) const
 {
-    return get_class_item<method>(t, name, m_class_method_map);
+	const auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+	auto ret = std::find_if(vec.cbegin(), vec.cend(),
+		[name](const method& item)
+	{
+		return (item.get_name() == name);
+	});
+	if (ret != vec.cend())
+		return *ret;
+
+	return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +368,7 @@ method type_database::get_class_method(const type& t, string_view name) const
 method type_database::get_type_method(const type& t, string_view name,
                                       const std::vector<type>& type_list) const
 {
-    for (const auto& meth : get_items_for_type<method>(t, m_class_method_map))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_methods))
     {
         if (meth.get_name() == name &&
             detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
@@ -403,16 +385,12 @@ method type_database::get_type_method(const type& t, string_view name,
 method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<type>& type_list) const
 {
-    const auto ret = m_class_method_map.find(t);
-    if (ret != m_class_method_map.end())
+    for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
     {
-        for (const auto& meth : ret->second)
+        if ( meth.get_name() == name &&
+             detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
         {
-            if ( meth.get_name() == name &&
-                 detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
-            {
-                return meth;
-            }
+            return meth;
         }
     }
 
@@ -424,18 +402,14 @@ method type_database::get_class_method(const type& t, string_view name,
 method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<argument>& arg_list) const
 {
-    const auto ret = m_class_method_map.find(t);
-    if (ret != m_class_method_map.end())
-    {
-        for (const auto& meth : ret->second)
-        {
-            if ( meth.get_name() == name &&
-                 detail::compare_with_arg_list::compare(meth.get_parameter_infos(), arg_list))
-            {
-                return meth;
-            }
-        }
-    }
+	for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
+	{
+	    if ( meth.get_name() == name &&
+	         detail::compare_with_arg_list::compare(meth.get_parameter_infos(), arg_list))
+	    {
+	        return meth;
+	    }
+	}
 
     return detail::create_invalid_item<method>();
 }
@@ -444,19 +418,15 @@ method type_database::get_class_method(const type& t, string_view name,
 
 array_range<method> type_database::get_class_methods(const type& t) const
 {
-    const auto ret = m_class_method_map.find(t);
-    if (ret != m_class_method_map.end())
-    {
-        auto& vec = ret->second;
-        if (!vec.empty())
-        {
-            return array_range<method>(vec.data(), vec.size(),
-                                       default_predicate<method>([](const method& meth)
-                                       {
-                                           return (meth.get_access_level() == access_levels::public_access);
-                                       }) );
-        }
-    }
+	auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+	if (!vec.empty())
+	{
+	    return array_range<method>(vec.data(), vec.size(),
+	                               default_predicate<method>([](const method& meth)
+	                               {
+	                                   return (meth.get_access_level() == access_levels::public_access);
+	                               }) );
+	}
 
     return array_range<method>();
 }
@@ -465,13 +435,9 @@ array_range<method> type_database::get_class_methods(const type& t) const
 
 array_range<method> type_database::get_class_methods(const type& t, filter_items filter) const
 {
-    const auto ret = m_class_method_map.find(t);
-    if (ret != m_class_method_map.end())
-    {
-        auto& vec = ret->second;
-        if (!vec.empty())
-            return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
-    }
+	auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+	if (!vec.empty())
+	    return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
 
     return array_range<method>();
 }
