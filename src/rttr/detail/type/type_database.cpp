@@ -657,21 +657,20 @@ array_range<constructor> type_database::get_constructors(const type& t, filter_i
 
 void type_database::register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor)
 {
-    auto d = detail::create_item<destructor>(dtor.get());
-    const auto ret = m_type_dtor_map.insert(std::make_pair(t, d));
-    if (ret.second)
+    auto& dtor_type = t.m_type_data_funcs->get_class_data().m_dtor;
+    if (!dtor_type) // when no dtor is set at the moment
+    {
+        auto d = detail::create_item<destructor>(dtor.get());
+        dtor_type = d;
         m_destructor_list.push_back(std::move(dtor));
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor type_database::get_destructor(const type& t) const
 {
-    auto ret = m_type_dtor_map.find(t);
-    if (ret != m_type_dtor_map.end())
-        return ret->second;
-    else
-        return create_invalid_item<destructor>();
+    return t.m_type_data_funcs->get_class_data().m_dtor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
