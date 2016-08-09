@@ -241,8 +241,6 @@ class RTTR_LOCAL type_database
         std::vector<std::unique_ptr<constructor_wrapper_base> >     m_constructor_list;
         std::vector<std::unique_ptr<destructor_wrapper_base> >      m_destructor_list;
 
-        std::unordered_map<type, destructor>                        m_type_dtor_map;
-
         std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
         std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
