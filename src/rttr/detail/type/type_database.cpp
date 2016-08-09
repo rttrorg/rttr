@@ -91,24 +91,24 @@ template<typename T>
 void type_database::update_class_list(const type& t, T item_ptr)
 {
     // update type "t" with all items from the base classes
-	auto& all_class_items = (t.m_type_data_funcs->get_class_data().*item_ptr);
+    auto& all_class_items = (t.m_type_data_funcs->get_class_data().*item_ptr);
     auto item_range = get_items_for_type(t, t.m_type_data_funcs->get_class_data().*item_ptr);
-	detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
-	all_class_items.reserve(all_class_items.size() + 1);
-	all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
+    detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
+    all_class_items.reserve(all_class_items.size() + 1);
+    all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
     for (const auto& base_type : t.get_base_classes())
     {
         auto base_properties = get_items_for_type(base_type, base_type.m_type_data_funcs->get_class_data().*item_ptr);
         if (base_properties.empty())
             continue;
 
-		all_class_items.reserve(all_class_items.size() + base_properties.size());
-		all_class_items.insert(all_class_items.end(), base_properties.begin(), base_properties.end());
+        all_class_items.reserve(all_class_items.size() + base_properties.size());
+        all_class_items.insert(all_class_items.end(), base_properties.begin(), base_properties.end());
     }
 
     // insert own class items
-	all_class_items.reserve(all_class_items.size() + item_vec.size());
-	all_class_items.insert(all_class_items.end(), item_vec.begin(), item_vec.end());
+    all_class_items.reserve(all_class_items.size() + item_vec.size());
+    all_class_items.insert(all_class_items.end(), item_vec.begin(), item_vec.end());
 
     // update derived types
     for (const auto& derived_type : t.get_derived_classes())
@@ -316,8 +316,8 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
         if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
             return;
 
-		auto& method_list = t.m_type_data_funcs->get_class_data().m_methods;
-		method_list.emplace_back(detail::create_item<method>(meth.get()));
+        auto& method_list = t.m_type_data_funcs->get_class_data().m_methods;
+        method_list.emplace_back(detail::create_item<method>(meth.get()));
         m_method_list.push_back(std::move(meth));
         update_class_list(t, &class_data::m_methods);
     }
@@ -351,16 +351,16 @@ method type_database::get_type_method(const type& t, string_view name) const
 
 method type_database::get_class_method(const type& t, string_view name) const
 {
-	const auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
-	auto ret = std::find_if(vec.cbegin(), vec.cend(),
-		[name](const method& item)
-	{
-		return (item.get_name() == name);
-	});
-	if (ret != vec.cend())
-		return *ret;
+    const auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+        [name](const method& item)
+    {
+        return (item.get_name() == name);
+    });
+    if (ret != vec.cend())
+        return *ret;
 
-	return detail::create_invalid_item<method>();
+    return detail::create_invalid_item<method>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -402,14 +402,14 @@ method type_database::get_class_method(const type& t, string_view name,
 method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<argument>& arg_list) const
 {
-	for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
-	{
-	    if ( meth.get_name() == name &&
-	         detail::compare_with_arg_list::compare(meth.get_parameter_infos(), arg_list))
-	    {
-	        return meth;
-	    }
-	}
+    for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
+    {
+        if ( meth.get_name() == name &&
+             detail::compare_with_arg_list::compare(meth.get_parameter_infos(), arg_list))
+        {
+            return meth;
+        }
+    }
 
     return detail::create_invalid_item<method>();
 }
@@ -418,15 +418,15 @@ method type_database::get_class_method(const type& t, string_view name,
 
 array_range<method> type_database::get_class_methods(const type& t) const
 {
-	auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
-	if (!vec.empty())
-	{
-	    return array_range<method>(vec.data(), vec.size(),
-	                               default_predicate<method>([](const method& meth)
-	                               {
-	                                   return (meth.get_access_level() == access_levels::public_access);
-	                               }) );
-	}
+    auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    if (!vec.empty())
+    {
+        return array_range<method>(vec.data(), vec.size(),
+                                   default_predicate<method>([](const method& meth)
+                                   {
+                                       return (meth.get_access_level() == access_levels::public_access);
+                                   }) );
+    }
 
     return array_range<method>();
 }
@@ -435,9 +435,9 @@ array_range<method> type_database::get_class_methods(const type& t) const
 
 array_range<method> type_database::get_class_methods(const type& t, filter_items filter) const
 {
-	auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
-	if (!vec.empty())
-	    return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
+    auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    if (!vec.empty())
+        return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
 
     return array_range<method>();
 }
@@ -545,8 +545,8 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
     if (!t.is_valid())
         return;
 
-    // TO DO you cannot create constructor with the same argument type
-    m_type_ctor_map[t].emplace_back(detail::create_item<constructor>(ctor.get()));
+    auto& class_data = t.m_type_data_funcs->get_class_data();
+    class_data.m_ctors.emplace_back(detail::create_item<constructor>(ctor.get()));
     m_constructor_list.push_back(std::move(ctor));
 }
 
@@ -554,13 +554,9 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
 
 constructor type_database::get_constructor(const type& t) const
 {
-    auto ret = m_type_ctor_map.find(t);
-    if (ret != m_type_ctor_map.cend())
-    {
-        const auto& vec = ret->second;
-        if (!vec.empty())
-            return vec.front();
-    }
+    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    if (!ctors.empty())
+        return ctors.front();
 
     return create_invalid_item<constructor>();
 }
@@ -569,14 +565,11 @@ constructor type_database::get_constructor(const type& t) const
 
 constructor type_database::get_constructor(const type& t, const std::vector<type>& arg_type_list) const
 {
-    auto ret = m_type_ctor_map.find(t);
-    if (ret != m_type_ctor_map.cend())
+    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    for (const auto& ctor : ctors)
     {
-        for (const auto& ctor : ret->second)
-        {
-            if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), arg_type_list))
-                return ctor;
-        }
+        if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), arg_type_list))
+            return ctor;
     }
 
     return create_invalid_item<constructor>();
@@ -586,14 +579,11 @@ constructor type_database::get_constructor(const type& t, const std::vector<type
 
 constructor type_database::get_constructor(const type& t, const std::vector<argument>& arg_list) const
 {
-    auto ret = m_type_ctor_map.find(t);
-    if (ret != m_type_ctor_map.cend())
+    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    for (const auto& ctor : ctors)
     {
-        for (const auto& ctor : ret->second)
-        {
-            if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), arg_list))
-                return ctor;
-        }
+        if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), arg_list))
+            return ctor;
     }
 
     return create_invalid_item<constructor>();
@@ -603,16 +593,14 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
 
 array_range<constructor> type_database::get_constructors(const type& t)
 {
-    const auto ret = m_type_ctor_map.find(t);
-    if (ret != m_type_ctor_map.end())
+    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    if (!ctors.empty())
     {
-        auto& vec = ret->second;
-        if (!vec.empty())
-            return array_range<constructor>(vec.data(), vec.size(),
-                                            default_predicate<constructor>([](const constructor& ctor)
-                                            {
-                                                return (ctor.get_access_level() == access_levels::public_access);
-                                            }) );
+        return array_range<constructor>(ctors.data(), ctors.size(),
+                                        default_predicate<constructor>([](const constructor& ctor)
+                                        {
+                                            return (ctor.get_access_level() == access_levels::public_access);
+                                        }) );
     }
 
     return array_range<constructor>();
@@ -656,13 +644,9 @@ RTTR_FORCE_INLINE default_predicate<constructor> get_filter_predicate(const type
 
 array_range<constructor> type_database::get_constructors(const type& t, filter_items filter) const
 {
-    const auto ret = m_type_ctor_map.find(t);
-    if (ret != m_type_ctor_map.end())
-    {
-        auto& vec = ret->second;
-        if (!vec.empty())
-            return array_range<constructor>(vec.data(), vec.size(), get_filter_predicate<constructor>(t, filter));
-    }
+    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    if (!ctors.empty())
+        return array_range<constructor>(ctors.data(), ctors.size(), get_filter_predicate<constructor>(t, filter));
 
     return array_range<constructor>();
 }
