@@ -772,7 +772,8 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
             using namespace detail;
 
             m_reg_exec->add_registration_func(this);
-            type_register::custom_name(type::get<Enum_Type>(), name);
+            auto t = type::get<Enum_Type>();
+            type_register::custom_name(t, name);
 
             if (!std::is_same<Class_Type, void>::value)
                 m_declared_type = type::get<Class_Type>();

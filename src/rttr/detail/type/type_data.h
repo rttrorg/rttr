@@ -159,7 +159,7 @@ static class_data& get_invalid_type_class_data() RTTR_NOEXCEPT
 template<typename T, typename Enable = void>
 struct get_size_of
 {
-    RTTR_INLINE static std::size_t value() RTTR_CONSTEXPR
+    RTTR_INLINE RTTR_CONSTEXPR static std::size_t value()
     {
         return sizeof(T);
     }
@@ -170,7 +170,7 @@ struct get_size_of
 template<typename T>
 struct get_size_of<T, enable_if_t<std::is_same<T, void>::value || std::is_function<T>::value>>
 {
-    RTTR_INLINE static std::size_t value() RTTR_CONSTEXPR
+    RTTR_INLINE RTTR_CONSTEXPR static std::size_t value()
     {
         return 0;
     }
@@ -184,7 +184,7 @@ type_data& get_type_data() RTTR_NOEXCEPT
     static auto instance = type_data{ &get_type_data<raw_type_t<T>>(), wrapper_type_info<T>::get_type().m_type_data,
                                       &get_type_data<raw_array_type_t<T>>(),
 
-                                      ::rttr::detail::get_type_name<T>(), ::rttr::detail::get_type_name<T>(),
+                                      ::rttr::detail::get_type_name<T>().to_string(), ::rttr::detail::get_type_name<T>(),
 
                                       get_size_of<T>::value(),
                                       pointer_count<T>::value,
