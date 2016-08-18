@@ -66,10 +66,10 @@ template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
-struct type_data_funcs;
+struct type_data;
 
 template<typename T>
-type_data_funcs& get_type_data() RTTR_NOEXCEPT;
+type_data& get_type_data() RTTR_NOEXCEPT;
 } // end namespace detail
 
 /*!
@@ -921,7 +921,7 @@ class RTTR_API type
          *
          * \param id The unique id of the data type.
          */
-        RTTR_INLINE type(detail::type_data_funcs* data) RTTR_NOEXCEPT;
+        RTTR_INLINE type(detail::type_data* data) RTTR_NOEXCEPT;
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type
@@ -1005,10 +1005,10 @@ class RTTR_API type
         friend class detail::type_database;
 
         template<typename T>
-        friend detail::type_data_funcs& detail::get_type_data() RTTR_NOEXCEPT;
+        friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;
 
     private:
-        detail::type_data_funcs* m_type_data_funcs;
+        detail::type_data* m_type_data;
         static const type_id m_invalid_id = 0;
 };
 

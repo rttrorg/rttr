@@ -114,15 +114,15 @@ std::string type::normalize_orig_name(string_view name)
 
 bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 {
-    auto& src_raw_type = m_type_data_funcs->raw_type_data;
-    auto& tgt_raw_type = other.m_type_data_funcs->raw_type_data;
+    auto& src_raw_type = m_type_data->raw_type_data;
+    auto& tgt_raw_type = other.m_type_data->raw_type_data;
 
     if (src_raw_type == tgt_raw_type)
         return true;
 
     for (auto& t : src_raw_type->get_class_data().m_base_types)
     {
-        if (t.m_type_data_funcs == tgt_raw_type)
+        if (t.m_type_data == tgt_raw_type)
         {
             return true;
         }
@@ -135,21 +135,21 @@ bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 
 void* type::apply_offset(void* ptr, const type& source_type, const type& target_type) RTTR_NOEXCEPT
 {
-    auto& src_raw_type = source_type.m_type_data_funcs->raw_type_data;
-    auto& tgt_raw_type = target_type.m_type_data_funcs->raw_type_data;
+    auto& src_raw_type = source_type.m_type_data->raw_type_data;
+    auto& tgt_raw_type = target_type.m_type_data->raw_type_data;
 
     if (src_raw_type == tgt_raw_type || ptr == nullptr)
         return ptr;
 
     const detail::derived_info info = src_raw_type->get_class_data().m_derived_info_func(ptr);
-    if (info.m_type.m_type_data_funcs->raw_type_data == tgt_raw_type)
+    if (info.m_type.m_type_data->raw_type_data == tgt_raw_type)
         return info.m_ptr;
 
-    auto& class_list = info.m_type.m_type_data_funcs->raw_type_data->get_class_data();
+    auto& class_list = info.m_type.m_type_data->raw_type_data->get_class_data();
     int i = 0;
     for (auto& t : class_list.m_base_types)
     {
-        if (t.m_type_data_funcs == tgt_raw_type)
+        if (t.m_type_data == tgt_raw_type)
         {
             return class_list.m_conversion_list[i](info.m_ptr);
         }
@@ -166,7 +166,7 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
     if (ptr == nullptr)
         return type();
 
-    auto& src_raw_type = source_type.m_type_data_funcs->raw_type_data;
+    auto& src_raw_type = source_type.m_type_data->raw_type_data;
     const detail::derived_info info = src_raw_type->get_class_data().m_derived_info_func(ptr);
     return info.m_type;
 }
@@ -175,16 +175,16 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
 
 array_range<type> type::get_base_classes() const RTTR_NOEXCEPT
 {
-    return array_range<type>(m_type_data_funcs->get_class_data().m_base_types.data(),
-                             m_type_data_funcs->get_class_data().m_base_types.size());
+    return array_range<type>(m_type_data->get_class_data().m_base_types.data(),
+                             m_type_data->get_class_data().m_base_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 {
-    return array_range<type>(m_type_data_funcs->get_class_data().m_derived_types.data(),
-                             m_type_data_funcs->get_class_data().m_derived_types.size());
+    return array_range<type>(m_type_data->get_class_data().m_derived_types.data(),
+                             m_type_data->get_class_data().m_derived_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

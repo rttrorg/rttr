@@ -109,7 +109,7 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 type type_register::type_reg(const type& raw_type,
                              const type& array_raw_type,
-                             type_data_funcs& info) RTTR_NOEXCEPT
+                             type_data& info) RTTR_NOEXCEPT
 {
     return type_database::instance().register_type(raw_type, array_raw_type,
                                                    info);

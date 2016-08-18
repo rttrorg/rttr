@@ -91,14 +91,14 @@ template<typename T>
 void type_database::update_class_list(const type& t, T item_ptr)
 {
     // update type "t" with all items from the base classes
-    auto& all_class_items = (t.m_type_data_funcs->get_class_data().*item_ptr);
-    auto item_range = get_items_for_type(t, t.m_type_data_funcs->get_class_data().*item_ptr);
+    auto& all_class_items = (t.m_type_data->get_class_data().*item_ptr);
+    auto item_range = get_items_for_type(t, t.m_type_data->get_class_data().*item_ptr);
     detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
     all_class_items.reserve(all_class_items.size() + 1);
     all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
     for (const auto& base_type : t.get_base_classes())
     {
-        auto base_properties = get_items_for_type(base_type, base_type.m_type_data_funcs->get_class_data().*item_ptr);
+        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->get_class_data().*item_ptr);
         if (base_properties.empty())
             continue;
 
@@ -129,7 +129,7 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
         if (get_type_property(t, name))
             return;
 
-        auto& property_list = t.m_type_data_funcs->get_class_data().m_properties;
+        auto& property_list = t.m_type_data->get_class_data().m_properties;
         property_list.emplace_back(detail::create_item<property>(prop.get()));
         m_property_list.push_back(std::move(prop));
         update_class_list(t, &class_data::m_properties);
@@ -149,7 +149,7 @@ void type_database::register_property(const type& t, unique_ptr<property_wrapper
 
 property type_database::get_class_property(const type& t, string_view name) const
 {
-    const auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    const auto& vec = t.m_type_data->get_class_data().m_properties;
     auto ret = std::find_if(vec.cbegin(), vec.cend(),
                             [name](const property& item)
                             {
@@ -165,7 +165,7 @@ property type_database::get_class_property(const type& t, string_view name) cons
 
 property type_database::get_type_property(const type& t, string_view name) const
 {
-    for (const auto& prop : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_properties))
+    for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
     {
         if (prop.get_name() == name)
             return prop;
@@ -178,7 +178,7 @@ property type_database::get_type_property(const type& t, string_view name) const
 
 array_range<property> type_database::get_class_properties(const type& t) const
 {
-    auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    auto& vec = t.m_type_data->get_class_data().m_properties;
     if (!vec.empty())
     {
         return array_range<property>(vec.data(), vec.size(),
@@ -262,7 +262,7 @@ RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filte
 
 array_range<property> type_database::get_class_properties(const type& t, filter_items filter) const
 {
-    auto& vec = t.m_type_data_funcs->get_class_data().m_properties;
+    auto& vec = t.m_type_data->get_class_data().m_properties;
     if (!vec.empty())
         return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(t, filter));
 
@@ -316,7 +316,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
         if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
             return;
 
-        auto& method_list = t.m_type_data_funcs->get_class_data().m_methods;
+        auto& method_list = t.m_type_data->get_class_data().m_methods;
         method_list.emplace_back(detail::create_item<method>(meth.get()));
         m_method_list.push_back(std::move(meth));
         update_class_list(t, &class_data::m_methods);
@@ -336,7 +336,7 @@ void type_database::register_method(const type& t, std::unique_ptr<method_wrappe
 
 method type_database::get_type_method(const type& t, string_view name) const
 {
-    for (const auto& meth : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_methods))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
     {
         if (meth.get_name() == name)
         {
@@ -351,7 +351,7 @@ method type_database::get_type_method(const type& t, string_view name) const
 
 method type_database::get_class_method(const type& t, string_view name) const
 {
-    const auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    const auto& vec = t.m_type_data->get_class_data().m_methods;
     auto ret = std::find_if(vec.cbegin(), vec.cend(),
         [name](const method& item)
     {
@@ -368,7 +368,7 @@ method type_database::get_class_method(const type& t, string_view name) const
 method type_database::get_type_method(const type& t, string_view name,
                                       const std::vector<type>& type_list) const
 {
-    for (const auto& meth : get_items_for_type(t, t.m_type_data_funcs->get_class_data().m_methods))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
     {
         if (meth.get_name() == name &&
             detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
@@ -385,7 +385,7 @@ method type_database::get_type_method(const type& t, string_view name,
 method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<type>& type_list) const
 {
-    for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
+    for (const auto& meth : t.m_type_data->get_class_data().m_methods)
     {
         if ( meth.get_name() == name &&
              detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
@@ -402,7 +402,7 @@ method type_database::get_class_method(const type& t, string_view name,
 method type_database::get_class_method(const type& t, string_view name,
                                        const std::vector<argument>& arg_list) const
 {
-    for (const auto& meth : t.m_type_data_funcs->get_class_data().m_methods)
+    for (const auto& meth : t.m_type_data->get_class_data().m_methods)
     {
         if ( meth.get_name() == name &&
              detail::compare_with_arg_list::compare(meth.get_parameter_infos(), arg_list))
@@ -418,7 +418,7 @@ method type_database::get_class_method(const type& t, string_view name,
 
 array_range<method> type_database::get_class_methods(const type& t) const
 {
-    auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    auto& vec = t.m_type_data->get_class_data().m_methods;
     if (!vec.empty())
     {
         return array_range<method>(vec.data(), vec.size(),
@@ -435,7 +435,7 @@ array_range<method> type_database::get_class_methods(const type& t) const
 
 array_range<method> type_database::get_class_methods(const type& t, filter_items filter) const
 {
-    auto& vec = t.m_type_data_funcs->get_class_data().m_methods;
+    auto& vec = t.m_type_data->get_class_data().m_methods;
     if (!vec.empty())
         return array_range<method>(vec.data(), vec.size(), get_filter_predicate<method>(t, filter));
 
@@ -507,9 +507,9 @@ array_range<method> type_database::get_global_methods()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<type_data<T>>& vec)
+RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<data_container<T>>& vec)
 {
-    using vec_value_type = type_data<T>;
+    using vec_value_type = data_container<T>;
     const auto id = t.get_id();
     auto itr = std::lower_bound(vec.cbegin(), vec.cend(), id, typename vec_value_type::order_by_id());
     for (; itr != vec.cend(); ++itr)
@@ -528,12 +528,12 @@ RTTR_INLINE T* type_database::get_item_by_type(const type& t, const std::vector<
 
 template<typename T>
 RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_ptr<T> new_item,
-                                                   std::vector<type_data<T>>& vec)
+                                                   std::vector<data_container<T>>& vec)
 {
     if (!t.is_valid())
         return;
 
-    using data_type = type_data<T>;
+    using data_type = data_container<T>;
     vec.push_back({t.get_id(), std::move(new_item)});
     std::stable_sort(vec.begin(), vec.end(), typename data_type::order_by_id());
 }
@@ -545,7 +545,7 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
     if (!t.is_valid())
         return;
 
-    auto& class_data = t.m_type_data_funcs->get_class_data();
+    auto& class_data = t.m_type_data->get_class_data();
     class_data.m_ctors.emplace_back(detail::create_item<constructor>(ctor.get()));
     m_constructor_list.push_back(std::move(ctor));
 }
@@ -554,7 +554,7 @@ void type_database::register_constructor(const type& t, std::unique_ptr<construc
 
 constructor type_database::get_constructor(const type& t) const
 {
-    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    auto& ctors = t.m_type_data->get_class_data().m_ctors;
     if (!ctors.empty())
         return ctors.front();
 
@@ -565,7 +565,7 @@ constructor type_database::get_constructor(const type& t) const
 
 constructor type_database::get_constructor(const type& t, const std::vector<type>& arg_type_list) const
 {
-    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    auto& ctors = t.m_type_data->get_class_data().m_ctors;
     for (const auto& ctor : ctors)
     {
         if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), arg_type_list))
@@ -579,7 +579,7 @@ constructor type_database::get_constructor(const type& t, const std::vector<type
 
 constructor type_database::get_constructor(const type& t, const std::vector<argument>& arg_list) const
 {
-    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    auto& ctors = t.m_type_data->get_class_data().m_ctors;
     for (const auto& ctor : ctors)
     {
         if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), arg_list))
@@ -593,7 +593,7 @@ constructor type_database::get_constructor(const type& t, const std::vector<argu
 
 array_range<constructor> type_database::get_constructors(const type& t)
 {
-    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    auto& ctors = t.m_type_data->get_class_data().m_ctors;
     if (!ctors.empty())
     {
         return array_range<constructor>(ctors.data(), ctors.size(),
@@ -644,7 +644,7 @@ RTTR_FORCE_INLINE default_predicate<constructor> get_filter_predicate(const type
 
 array_range<constructor> type_database::get_constructors(const type& t, filter_items filter) const
 {
-    auto& ctors = t.m_type_data_funcs->get_class_data().m_ctors;
+    auto& ctors = t.m_type_data->get_class_data().m_ctors;
     if (!ctors.empty())
         return array_range<constructor>(ctors.data(), ctors.size(), get_filter_predicate<constructor>(t, filter));
 
@@ -657,7 +657,7 @@ array_range<constructor> type_database::get_constructors(const type& t, filter_i
 
 void type_database::register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor)
 {
-    auto& dtor_type = t.m_type_data_funcs->get_class_data().m_dtor;
+    auto& dtor_type = t.m_type_data->get_class_data().m_dtor;
     if (!dtor_type) // when no dtor is set at the moment
     {
         auto d = detail::create_item<destructor>(dtor.get());
@@ -670,7 +670,7 @@ void type_database::register_destructor(const type& t, std::unique_ptr<destructo
 
 destructor type_database::get_destructor(const type& t) const
 {
-    return t.m_type_data_funcs->get_class_data().m_dtor;
+    return t.m_type_data->get_class_data().m_dtor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -701,7 +701,7 @@ void type_database::register_custom_name(type& t, string_view custom_name)
     if (!t.is_valid())
         return;
 
-    auto& type_data = *t.m_type_data_funcs;
+    auto& type_data = *t.m_type_data;
 
     const auto& orig_name = type_data.name;
     m_custom_name_to_id.erase(orig_name);
@@ -709,7 +709,7 @@ void type_database::register_custom_name(type& t, string_view custom_name)
     type_data.name = custom_name.to_string();
 
     m_custom_name_to_id.insert(std::make_pair(type_data.name, t));
-    std::string raw_name = type::normalize_orig_name(t.m_type_data_funcs->type_name);
+    std::string raw_name = type::normalize_orig_name(t.m_type_data->type_name);
     const auto& t_name = type_data.name;
 
     auto tmp_type_list = m_custom_name_to_id.value_data();
@@ -717,11 +717,11 @@ void type_database::register_custom_name(type& t, string_view custom_name)
     {
         if (tt.get_raw_array_type() == t)
         {
-            const auto& orig_name_derived = tt.m_type_data_funcs->name;
+            const auto& orig_name_derived = tt.m_type_data->name;
             m_custom_name_to_id.erase(orig_name_derived);
 
-            tt.m_type_data_funcs->name = derive_name(orig_name_derived, raw_name, t_name);
-            m_custom_name_to_id.insert(std::make_pair(tt.m_type_data_funcs->name, tt));
+            tt.m_type_data->name = derive_name(orig_name_derived, raw_name, t_name);
+            m_custom_name_to_id.insert(std::make_pair(tt.m_type_data->name, tt));
         }
     }
 }
@@ -796,7 +796,7 @@ void type_database::register_converter(const type& t, std::unique_ptr<type_conve
     if (get_converter(t, converter->m_target_type))
         return;
 
-    using vec_value_type = type_data<type_converter_base>;
+    using vec_value_type = data_container<type_converter_base>;
     m_type_converter_list.push_back({t.get_id(), std::move(converter)});
     std::stable_sort(m_type_converter_list.begin(), m_type_converter_list.end(), vec_value_type::order_by_id());
 }
@@ -807,7 +807,7 @@ const type_converter_base* type_database::get_converter(const type& source_type,
 {
     const auto src_id = source_type.get_id();
     const auto target_id = target_type.get_id();
-    using vec_value_type = type_data<type_converter_base>;
+    using vec_value_type = data_container<type_converter_base>;
     auto itr = std::lower_bound(m_type_converter_list.cbegin(), m_type_converter_list.cend(),
                                 src_id, vec_value_type::order_by_id());
     for (; itr != m_type_converter_list.cend(); ++itr)
@@ -830,7 +830,7 @@ void type_database::register_comparator(const type& t, const type_comparator_bas
     if (!t.is_valid())
         return;
 
-    using data_type = type_data<const type_comparator_base*>;
+    using data_type = data_container<const type_comparator_base*>;
     m_type_comparator_list.push_back({t.get_id(), comparator});
     std::stable_sort(m_type_comparator_list.begin(), m_type_comparator_list.end(),
                      data_type::order_by_id());
@@ -840,7 +840,7 @@ void type_database::register_comparator(const type& t, const type_comparator_bas
 
 const type_comparator_base* type_database::get_comparator(const type& t) const
 {
-    using vec_value_type = type_data<const type_comparator_base*>;
+    using vec_value_type = data_container<const type_comparator_base*>;
     const auto id = t.get_id();
     auto itr = std::lower_bound(m_type_comparator_list.cbegin(), m_type_comparator_list.cend(), id,
                                 vec_value_type::order_by_id());
@@ -968,8 +968,8 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
 
-    const auto& custom_name = array_raw_type.m_type_data_funcs->name;
-    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data_funcs->type_name);
+    const auto& custom_name = array_raw_type.m_type_data->name;
+    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data->type_name);
 
     const std::string src_name_orig = type::normalize_orig_name(name);
     return derive_name(src_name_orig, raw_name_orig, custom_name);
@@ -978,7 +978,7 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type_database::register_name(const type& array_raw_type, uint16_t& id,
-                                  type_data_funcs& info)
+                                  type_data& info)
 {
     using namespace detail;
 
@@ -1004,7 +1004,7 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_base_class_info(type_data_funcs& info)
+void type_database::register_base_class_info(type_data& info)
 {
     auto base_classes = info.get_base_types();
 
@@ -1035,13 +1035,13 @@ void type_database::register_base_class_info(type_data_funcs& info)
         class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
         auto r_type = t.m_base_type.get_raw_type();
-        r_type.m_type_data_funcs->get_class_data().m_derived_types.push_back(type(&info));
+        r_type.m_type_data->get_class_data().m_derived_types.push_back(type(&info));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<type_data_funcs*>& type_database::get_type_data_func()
+std::vector<type_data*>& type_database::get_type_data_func()
 {
     return m_type_data_func_list;
 }
@@ -1052,7 +1052,7 @@ std::vector<type_data_funcs*>& type_database::get_type_data_func()
 
 type type_database::register_type(const type& raw_type,
                                   const type& array_raw_type,
-                                  type_data_funcs& info) RTTR_NOEXCEPT
+                                  type_data& info) RTTR_NOEXCEPT
 {
     // register the base types
     info.get_base_types();

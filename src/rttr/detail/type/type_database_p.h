@@ -87,7 +87,7 @@ class RTTR_LOCAL type_database
 
         type register_type(const type& raw_type,
                            const type& array_raw_type,
-                           type_data_funcs& info) RTTR_NOEXCEPT;
+                           type_data& info) RTTR_NOEXCEPT;
 
         type get_by_name(string_view name) const;
 
@@ -148,7 +148,7 @@ class RTTR_LOCAL type_database
 
         enumeration get_enumeration(const type& t) const;
 
-        std::vector<type_data_funcs*>& get_type_data_func();
+        std::vector<type_data*>& get_type_data_func();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,8 +164,8 @@ class RTTR_LOCAL type_database
         std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
-        bool register_name(const type& array_raw_type, uint16_t& id, type_data_funcs& info);
-        void register_base_class_info(type_data_funcs& info);
+        bool register_name(const type& array_raw_type, uint16_t& id, type_data& info);
+        void register_base_class_info(type_data& info);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
@@ -188,12 +188,12 @@ class RTTR_LOCAL type_database
     public:
 
         template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
-        struct type_data
+        struct data_container
         {
-            type_data(type::type_id id) : m_id(id) {}
-            type_data(type::type_id id, Data_Type data) : m_id(id), m_data(std::move(data)) {}
-            type_data(type_data<T, Data_Type>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
-            type_data<T, Data_Type>& operator = (type_data<T, Data_Type>&& other)
+            data_container(type::type_id id) : m_id(id) {}
+            data_container(type::type_id id, Data_Type data) : m_id(id), m_data(std::move(data)) {}
+            data_container(data_container<T, Data_Type>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
+            data_container<T, Data_Type>& operator = (data_container<T, Data_Type>&& other)
             {
                 m_id = other.m_id;
                 m_data = std::move(other.m_data);
@@ -202,15 +202,15 @@ class RTTR_LOCAL type_database
 
             struct order_by_id
             {
-                RTTR_INLINE bool operator () ( const type_data<T>& _left, const type_data<T>& _right )  const
+                RTTR_INLINE bool operator () ( const data_container<T>& _left, const data_container<T>& _right )  const
                 {
                     return _left.m_id < _right.m_id;
                 }
-                RTTR_INLINE bool operator () ( const type::type_id& _left, const type_data<T>& _right ) const
+                RTTR_INLINE bool operator () ( const type::type_id& _left, const data_container<T>& _right ) const
                 {
                     return _left < _right.m_id;
                 }
-                RTTR_INLINE bool operator () ( const type_data<T>& _left, const type::type_id& _right ) const
+                RTTR_INLINE bool operator () ( const data_container<T>& _left, const type::type_id& _right ) const
                 {
                     return _left.m_id < _right;
                 }
@@ -223,9 +223,9 @@ class RTTR_LOCAL type_database
         friend class type;
 
         template<typename T>
-        static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<type_data<T>>& vec);
+        static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<data_container<T>>& vec);
         template<typename T>
-        static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<type_data<T>>& vec);
+        static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<data_container<T>>& vec);
 
         type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
         std::vector<type>                                           m_type_list;            //!< The list of all types.
@@ -241,11 +241,11 @@ class RTTR_LOCAL type_database
         std::vector<std::unique_ptr<constructor_wrapper_base> >     m_constructor_list;
         std::vector<std::unique_ptr<destructor_wrapper_base> >      m_destructor_list;
 
-        std::vector<type_data<type_converter_base>>                 m_type_converter_list;  //!< This list stores all type conversion objects
-        std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
-        std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
-        std::vector<type_data<std::vector<metadata>>>               m_metadata_type_list;
-        std::vector<type_data_funcs*>                               m_type_data_func_list;
+        std::vector<data_container<type_converter_base>>            m_type_converter_list;  //!< This list stores all type conversion objects
+        std::vector<data_container<const type_comparator_base*>>    m_type_comparator_list;
+        std::vector<data_container<enumeration_wrapper_base>>       m_enumeration_list;
+        std::vector<data_container<std::vector<metadata>>>          m_metadata_type_list;
+        std::vector<type_data*>                                     m_type_data_func_list;
 };
 
 } // end namespace detail

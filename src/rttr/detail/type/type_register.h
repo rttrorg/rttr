@@ -65,7 +65,7 @@ using get_derived_func      = derived_info(*)(void*);
 template<typename T, typename Enable>
 struct type_getter;
 
-struct type_data_funcs;
+struct type_data;
 
 class metadata;
 
@@ -109,7 +109,7 @@ public:
      */
     static type type_reg(const type& raw_type,
                          const type& array_raw_type,
-                         type_data_funcs& info) RTTR_NOEXCEPT;
+                         type_data& info) RTTR_NOEXCEPT;
 
 private:
 
