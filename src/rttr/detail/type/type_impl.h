@@ -53,7 +53,7 @@ RTTR_INLINE type::type() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type::type(const detail::type_data_funcs* data) RTTR_NOEXCEPT
+RTTR_INLINE type::type(detail::type_data_funcs* data) RTTR_NOEXCEPT
 :  m_type_data_funcs(data)
 {
 }
@@ -138,87 +138,116 @@ RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_FORCE_INLINE type type::get_raw_type() const RTTR_NOEXCEPT
+{
+    return type(m_type_data_funcs->raw_type_data);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE type type::get_wrapped_type() const RTTR_NOEXCEPT
+{
+    return type(m_type_data_funcs->wrapped_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE type type::get_raw_array_type() const RTTR_NOEXCEPT
+{
+    return type(m_type_data_funcs->array_raw_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_FORCE_INLINE string_view type::get_name() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->get_name();
+    return m_type_data_funcs->name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->get_type_name();
+    return m_type_data_funcs->type_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE std::size_t type::get_sizeof() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->get_sizeof();
+    return m_type_data_funcs->get_sizeof;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->get_pointer_dimension();
+    return m_type_data_funcs->get_pointer_dimension;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_class() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_class();
+    return m_type_data_funcs->is_class;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_enum();
+    return m_type_data_funcs->is_enum;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_array() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_array();
+    return m_type_data_funcs->is_array;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_pointer();
+    return m_type_data_funcs->is_pointer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_arithmetic() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_arithmetic();
+    return m_type_data_funcs->is_arithmetic;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_function_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_function_pointer();
+    return m_type_data_funcs->is_function_pointer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_member_object_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_member_object_pointer();
+    return m_type_data_funcs->is_member_object_pointer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data_funcs->is_member_function_pointer();
+    return m_type_data_funcs->is_member_function_pointer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_FORCE_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
+{
+    return (m_type_data_funcs->wrapped_type->type_index != type::m_invalid_id);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

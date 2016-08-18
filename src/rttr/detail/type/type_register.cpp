@@ -79,7 +79,7 @@ void type_register::enumeration(const type& t, std::unique_ptr<detail::enumerati
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::custom_name(const type& t, string_view custom_name)
+void type_register::custom_name(type& t, string_view custom_name)
 {
     type_database::instance().register_custom_name(t, custom_name);
 }

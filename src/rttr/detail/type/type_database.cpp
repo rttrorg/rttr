@@ -696,29 +696,32 @@ enumeration type_database::get_enumeration(const type& t) const
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_custom_name(const type& t, string_view custom_name)
+void type_database::register_custom_name(type& t, string_view custom_name)
 {
     if (!t.is_valid())
         return;
 
-    const auto& orig_name = t.m_type_data_funcs->get_name();
+    auto& type_data = *t.m_type_data_funcs;
+
+    const auto& orig_name = type_data.name;
     m_custom_name_to_id.erase(orig_name);
 
-    t.m_type_data_funcs->get_name() = custom_name.to_string();
-    m_custom_name_to_id.insert(std::make_pair(t.m_type_data_funcs->get_name(), t));
-    std::string raw_name = type::normalize_orig_name(t.m_type_data_funcs->get_type_name());
-    const auto& t_name = t.m_type_data_funcs->get_name();
+    type_data.name = custom_name.to_string();
+
+    m_custom_name_to_id.insert(std::make_pair(type_data.name, t));
+    std::string raw_name = type::normalize_orig_name(t.m_type_data_funcs->type_name);
+    const auto& t_name = type_data.name;
 
     auto tmp_type_list = m_custom_name_to_id.value_data();
     for (auto& tt : tmp_type_list)
     {
         if (tt.get_raw_array_type() == t)
         {
-            const auto& orig_name_derived = tt.m_type_data_funcs->get_name();
+            const auto& orig_name_derived = tt.m_type_data_funcs->name;
             m_custom_name_to_id.erase(orig_name_derived);
 
-            tt.m_type_data_funcs->get_name() = derive_name(orig_name_derived, raw_name, t_name);
-            m_custom_name_to_id.insert(std::make_pair(tt.m_type_data_funcs->get_name(), tt));
+            tt.m_type_data_funcs->name = derive_name(orig_name_derived, raw_name, t_name);
+            m_custom_name_to_id.insert(std::make_pair(tt.m_type_data_funcs->name, tt));
         }
     }
 }
@@ -965,8 +968,8 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
 
-    const auto& custom_name = array_raw_type.m_type_data_funcs->get_name();
-    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data_funcs->get_type_name());
+    const auto& custom_name = array_raw_type.m_type_data_funcs->name;
+    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data_funcs->type_name);
 
     const std::string src_name_orig = type::normalize_orig_name(name);
     return derive_name(src_name_orig, raw_name_orig, custom_name);
@@ -979,7 +982,7 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
 {
     using namespace detail;
 
-    auto ret = m_orig_name_to_id.find(info.get_type_name());
+    auto ret = m_orig_name_to_id.find(info.type_name);
     if (ret != m_orig_name_to_id.end())
     {
         id = (*ret).get_id();
@@ -988,9 +991,9 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
 
     ++m_type_id_counter;
 
-    m_orig_name_to_id.insert(std::make_pair(info.get_type_name(), type(&info)));
-    info.get_name() = derive_name(array_raw_type, info.get_type_name());
-    m_custom_name_to_id.insert(std::make_pair(info.get_name(), type(&info)));
+    m_orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
+    info.name = derive_name(array_raw_type, info.type_name);
+    m_custom_name_to_id.insert(std::make_pair(info.name, type(&info)));
 
     id = m_type_id_counter;
     info.type_index = id;
@@ -1001,7 +1004,7 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_base_class_info(const type_data_funcs& info)
+void type_database::register_base_class_info(type_data_funcs& info)
 {
     auto base_classes = info.get_base_types();
 
@@ -1038,7 +1041,7 @@ void type_database::register_base_class_info(const type_data_funcs& info)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<const type_data_funcs*>& type_database::get_type_data_func()
+std::vector<type_data_funcs*>& type_database::get_type_data_func()
 {
     return m_type_data_func_list;
 }

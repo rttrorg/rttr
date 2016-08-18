@@ -80,7 +80,7 @@ class RTTR_LOCAL type_database
         void register_constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
         void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
         void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
-        void register_custom_name(const type& t, string_view name );
+        void register_custom_name(type& t, string_view name );
         void register_metadata( const type& t, std::vector<metadata> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
@@ -148,7 +148,7 @@ class RTTR_LOCAL type_database
 
         enumeration get_enumeration(const type& t) const;
 
-        std::vector<const type_data_funcs*>& get_type_data_func();
+        std::vector<type_data_funcs*>& get_type_data_func();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,7 +165,7 @@ class RTTR_LOCAL type_database
         std::string derive_name(const type& array_raw_type, string_view name);
         //! Returns true, when the name was already registered
         bool register_name(const type& array_raw_type, uint16_t& id, type_data_funcs& info);
-        void register_base_class_info(const type_data_funcs& info);
+        void register_base_class_info(type_data_funcs& info);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
@@ -245,7 +245,7 @@ class RTTR_LOCAL type_database
         std::vector<type_data<const type_comparator_base*>>         m_type_comparator_list;
         std::vector<type_data<enumeration_wrapper_base>>            m_enumeration_list;
         std::vector<type_data<std::vector<metadata>>>               m_metadata_type_list;
-        std::vector<const type_data_funcs*>                         m_type_data_func_list;
+        std::vector<type_data_funcs*>                               m_type_data_func_list;
 };
 
 } // end namespace detail

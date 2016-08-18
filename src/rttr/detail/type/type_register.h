@@ -91,7 +91,7 @@ public:
 
     static void enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
 
-    static void custom_name(const type& t, string_view name);
+    static void custom_name(type& t, string_view name);
 
     static void metadata( const type& t, std::vector<metadata> data);
 
