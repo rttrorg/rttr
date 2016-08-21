@@ -126,14 +126,14 @@ RTTR_INLINE type::type_id type::get_id() const RTTR_NOEXCEPT
 
 RTTR_INLINE bool type::is_valid() const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index != m_invalid_id);
+    return m_type_data->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index != m_invalid_id);
+    return m_type_data->is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +245,7 @@ RTTR_FORCE_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 
 RTTR_FORCE_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
 {
-    return (m_type_data->wrapped_type->type_index != type::m_invalid_id);
+    return m_type_data->wrapped_type->is_valid();
 }
 
 
@@ -265,41 +265,7 @@ namespace detail
 
 RTTR_INLINE static type get_invalid_type() RTTR_NOEXCEPT { return type(); }
 
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, bool = std::is_same<T, typename raw_type<T>::type >::value>
-struct raw_type_info
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct raw_type_info<T, false>
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_type<T>::type>(); }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, bool = std::is_same<T, typename raw_array_type<T>::type >::value>
-struct array_raw_type
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct array_raw_type<T, false>
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_array_type<T>::type>(); }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename T, typename Enable>
 struct type_getter
@@ -310,9 +276,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
-                                                        array_raw_type<T>::get_type(),
-                                                        get_type_data<T>());
+        static const type val = type_register::type_reg( get_type_data<T>() );
         return val;
     }
 };
@@ -328,9 +292,7 @@ struct type_getter<void>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(raw_type_info<void>::get_type(),
-                                                        array_raw_type<void>::get_type(),
-                                                        get_type_data<void>());
+        static const type val = type_register::type_reg( get_type_data<void>() );
         return val;
     }
 };
@@ -346,9 +308,7 @@ struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg(raw_type_info<T>::get_type(),
-                                                        array_raw_type<T>::get_type(),
-                                                        get_type_data<T>());
+        static const type val = type_register::type_reg( get_type_data<T>() );
         return val;
     }
 };

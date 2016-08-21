@@ -107,9 +107,7 @@ public:
      *
      * \return A valid type object.
      */
-    static type type_reg(const type& raw_type,
-                         const type& array_raw_type,
-                         type_data& info) RTTR_NOEXCEPT;
+    static type type_reg(type_data& info) RTTR_NOEXCEPT;
 
 private:
 

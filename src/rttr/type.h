@@ -1009,7 +1009,6 @@ class RTTR_API type
 
     private:
         detail::type_data* m_type_data;
-        static const type_id m_invalid_id = 0;
 };
 
 } // end namespace rttr

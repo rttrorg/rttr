@@ -963,13 +963,13 @@ std::string type_database::derive_name(const std::string& src_name, const std::s
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_database::derive_name(const type& array_raw_type, string_view name)
+std::string type_database::derive_name(const type_data& array_raw_type, string_view name)
 {
     if (!array_raw_type.is_valid())
         return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
 
-    const auto& custom_name = array_raw_type.m_type_data->name;
-    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.m_type_data->type_name);
+    const auto& custom_name = array_raw_type.name;
+    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.type_name);
 
     const std::string src_name_orig = type::normalize_orig_name(name);
     return derive_name(src_name_orig, raw_name_orig, custom_name);
@@ -977,8 +977,7 @@ std::string type_database::derive_name(const type& array_raw_type, string_view n
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_database::register_name(const type& array_raw_type, uint16_t& id,
-                                  type_data& info)
+bool type_database::register_name(uint16_t& id, type_data& info)
 {
     using namespace detail;
 
@@ -992,7 +991,7 @@ bool type_database::register_name(const type& array_raw_type, uint16_t& id,
     ++m_type_id_counter;
 
     m_orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
-    info.name = derive_name(array_raw_type, info.type_name);
+    info.name = derive_name(*info.array_raw_type, info.type_name);
     m_custom_name_to_id.insert(std::make_pair(info.name, type(&info)));
 
     id = m_type_id_counter;
@@ -1050,9 +1049,7 @@ std::vector<type_data*>& type_database::get_type_data_func()
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_database::register_type(const type& raw_type,
-                                  const type& array_raw_type,
-                                  type_data& info) RTTR_NOEXCEPT
+type type_database::register_type(type_data& info) RTTR_NOEXCEPT
 {
     // register the base types
     info.get_base_types();
@@ -1060,9 +1057,12 @@ type type_database::register_type(const type& raw_type,
     //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
     using namespace detail;
     uint16_t id = 0;
-    const bool isAlreadyRegistered = register_name(array_raw_type, id, info);
+    const bool isAlreadyRegistered = register_name(id, info);
     if (isAlreadyRegistered)
         return type(m_type_data_func_list[id]);
+
+    info.raw_type_data  = !info.raw_type_data->is_valid() ? &info : info.raw_type_data;
+    info.array_raw_type = !info.array_raw_type->is_valid() ? &info : info.array_raw_type;
 
     m_type_data_func_list.push_back(&info);
 

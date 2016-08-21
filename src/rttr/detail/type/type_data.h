@@ -54,6 +54,8 @@ template<typename T>
 RTTR_INLINE type_data& get_type_data() RTTR_NOEXCEPT;
 RTTR_INLINE type_data& get_invalid_type_data() RTTR_NOEXCEPT;
 
+static type get_invalid_type() RTTR_NOEXCEPT;
+
 using rttr_cast_func        = void*(*)(void*);
 using get_derived_info_func = derived_info(*)(void*);
 
@@ -133,6 +135,10 @@ struct type_data
     class_data& (*get_class_data)();
 
     uint16_t type_index;
+    static const uint16_t m_invalid_id = 0;
+
+    RTTR_FORCE_INLINE bool is_valid() const RTTR_NOEXCEPT { return (type_index != m_invalid_id); }
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -176,13 +182,47 @@ struct get_size_of<T, enable_if_t<std::is_same<T, void>::value || std::is_functi
     }
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, bool = std::is_same<T, typename raw_type<T>::type >::value>
+struct raw_type_info
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct raw_type_info<T, false>
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_type<T>::type>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, bool = std::is_same<T, typename raw_array_type<T>::type >::value>
+struct array_raw_type
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct array_raw_type<T, false>
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_array_type<T>::type>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT
 {
-    static auto instance = type_data{ &get_type_data<raw_type_t<T>>(), wrapper_type_info<T>::get_type().m_type_data,
-                                      &get_type_data<raw_array_type_t<T>>(),
+    static auto instance = type_data{ raw_type_info<T>::get_type().m_type_data, wrapper_type_info<T>::get_type().m_type_data,
+                                      array_raw_type<T>::get_type().m_type_data,
 
                                       ::rttr::detail::get_type_name<T>().to_string(), ::rttr::detail::get_type_name<T>(),
 
@@ -207,10 +247,10 @@ type_data& get_type_data() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE type_data& get_invalid_type_data() RTTR_NOEXCEPT
+static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
 {
-    static auto instance = type_data{ &get_invalid_type_data(), &get_invalid_type_data(),
-                                      &get_invalid_type_data(),
+    static auto instance = type_data{ nullptr, nullptr,
+                                      nullptr,
                                       std::string(""), string_view(),
                                       0, 0,
 
@@ -227,6 +267,19 @@ RTTR_INLINE type_data& get_invalid_type_data() RTTR_NOEXCEPT
                                       &base_classes<void>::get_types,
                                       &get_invalid_type_class_data,
                                       0};
+
+    instance.raw_type_data  = &instance;
+    instance.wrapped_type   = &instance;
+    instance.array_raw_type = &instance;
+
+    return instance;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE type_data& get_invalid_type_data() RTTR_NOEXCEPT
+{
+    static auto& instance = get_invalid_type_data_impl();
     return instance;
 }
 
