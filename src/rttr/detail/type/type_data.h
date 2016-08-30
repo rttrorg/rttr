@@ -59,23 +59,6 @@ static type get_invalid_type() RTTR_NOEXCEPT;
 using rttr_cast_func        = void*(*)(void*);
 using get_derived_info_func = derived_info(*)(void*);
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, bool = is_wrapper<T>::value>
-struct wrapper_type_info
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<wrapper_mapper_t<T>>(); }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct wrapper_type_info<T, false>
-{
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
-};
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 struct class_data
@@ -95,8 +78,7 @@ struct class_data
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// workaround for a c++ bug, function ptr declaration for noexcept is not supported
-// fixed in c++17 (only clang honor this)
+
 namespace impl
 {
 
@@ -129,8 +111,8 @@ struct type_data
     bool is_member_function_pointer;
 
     impl::create_variant_func create_variant;
-    impl::get_base_types_func get_base_types;
-
+    impl::get_base_types_func get_base_types; // this info should not be stored, its just temporarily,
+                                              // thats why we store it as function pointer
 
     class_data& (*get_class_data)();
 
@@ -212,6 +194,22 @@ template<typename T>
 struct array_raw_type<T, false>
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_array_type<T>::type>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, bool = is_wrapper<T>::value>
+struct wrapper_type_info
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<wrapper_mapper_t<T>>(); }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct wrapper_type_info<T, false>
+{
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
