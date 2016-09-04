@@ -321,13 +321,6 @@ variant type::create(vector<argument> args) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-destructor type::get_destructor() const RTTR_NOEXCEPT
-{
-    return get_raw_type().m_type_data->get_class_data().m_dtor;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 {
     return get_destructor().invoke(obj);
@@ -542,6 +535,30 @@ void type::register_constructor(const type& t, std::unique_ptr<detail::construct
     class_data.m_ctors.emplace_back(detail::create_item<constructor>(ctor.get()));
     constructor_list.push_back(std::move(ctor));
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+destructor type::get_destructor() const RTTR_NOEXCEPT
+{
+    return get_raw_type().m_type_data->get_class_data().m_dtor;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type::register_destructor(const type& t, std::unique_ptr<detail::destructor_wrapper_base> dtor)
+{
+    static std::vector<std::unique_ptr<detail::destructor_wrapper_base> > destructor_list;
+
+    auto& dtor_type = t.m_type_data->get_class_data().m_dtor;
+    if (!dtor_type) // when no dtor is set at the moment
+    {
+        auto d = detail::create_item<destructor>(dtor.get());
+        dtor_type = d;
+        destructor_list.push_back(std::move(dtor));
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

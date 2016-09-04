@@ -542,28 +542,6 @@ RTTR_INLINE void type_database::register_item_type(const type& t, std::unique_pt
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor)
-{
-    auto& dtor_type = t.m_type_data->get_class_data().m_dtor;
-    if (!dtor_type) // when no dtor is set at the moment
-    {
-        auto d = detail::create_item<destructor>(dtor.get());
-        dtor_type = d;
-        m_destructor_list.push_back(std::move(dtor));
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-destructor type_database::get_destructor(const type& t) const
-{
-    return t.m_type_data->get_class_data().m_dtor;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void type_database::register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_item)
 {
     register_item_type(t, std::move(enum_item), m_enumeration_list);

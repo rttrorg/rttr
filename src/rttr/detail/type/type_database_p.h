@@ -235,7 +235,6 @@ class RTTR_LOCAL type_database
 
         std::vector<std::unique_ptr<property_wrapper_base> >        m_property_list;
         std::vector<std::unique_ptr<method_wrapper_base> >          m_method_list;
-        std::vector<std::unique_ptr<destructor_wrapper_base> >      m_destructor_list;
 
         std::vector<data_container<type_converter_base>>            m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<data_container<const type_comparator_base*>>    m_type_comparator_list;

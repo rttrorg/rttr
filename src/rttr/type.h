@@ -69,6 +69,7 @@ struct type_getter;
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct type_data;
 class constructor_wrapper_base;
+class destructor_wrapper_base;
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT;
@@ -988,7 +989,7 @@ class RTTR_API type
         static void init_globals();
 
         static void register_constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor);
-
+        static void register_destructor(const type& t, std::unique_ptr<detail::destructor_wrapper_base> dtor);
 
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////

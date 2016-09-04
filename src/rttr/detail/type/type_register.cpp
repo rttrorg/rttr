@@ -60,7 +60,6 @@ void type_register::method(const type& t, std::unique_ptr<detail::method_wrapper
 
 void type_register::constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor)
 {
-    //type_database::instance().register_constructor(t, move(ctor));
     type::register_constructor(t, move(ctor));
 }
 
@@ -68,7 +67,7 @@ void type_register::constructor(const type& t, std::unique_ptr<detail::construct
 
 void type_register::destructor(const type& t, std::unique_ptr<detail::destructor_wrapper_base> dtor)
 {
-    type_database::instance().register_destructor(t, move(dtor));
+    type::register_destructor(t, move(dtor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
