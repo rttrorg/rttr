@@ -307,48 +307,6 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEXCEPT
-{
-    auto& ctors = m_type_data->get_class_data().m_ctors;
-    for (const auto& ctor : ctors)
-    {
-        if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), args))
-            return ctor;
-    }
-
-    return detail::create_invalid_item<constructor>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
-{
-    auto& ctors = m_type_data->get_class_data().m_ctors;
-    if (!ctors.empty())
-    {
-        return array_range<constructor>(ctors.data(), ctors.size(),
-                                        detail::default_predicate<constructor>([](const constructor& ctor)
-                                        {
-                                            return (ctor.get_access_level() == access_levels::public_access);
-                                        }) );
-    }
-
-    return array_range<constructor>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-array_range<constructor> type::get_constructors(filter_items filter) const RTTR_NOEXCEPT
-{
-    auto& ctors = m_type_data->get_class_data().m_ctors;
-    if (!ctors.empty())
-        return array_range<constructor>(ctors.data(), ctors.size(), get_filter_predicate<constructor>(*this, filter));
-
-    return array_range<constructor>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 variant type::create(vector<argument> args) const
 {
     auto& ctors = m_type_data->get_class_data().m_ctors;
@@ -528,6 +486,48 @@ type type::get_by_name(string_view name) RTTR_NOEXCEPT
 const detail::type_converter_base* type::get_type_converter(const type& target_type) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_converter(*this, target_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEXCEPT
+{
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    for (const auto& ctor : ctors)
+    {
+        if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), args))
+            return ctor;
+    }
+
+    return detail::create_invalid_item<constructor>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
+{
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    if (!ctors.empty())
+    {
+        return array_range<constructor>(ctors.data(), ctors.size(),
+                                        detail::default_predicate<constructor>([](const constructor& ctor)
+                                        {
+                                            return (ctor.get_access_level() == access_levels::public_access);
+                                        }) );
+    }
+
+    return array_range<constructor>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<constructor> type::get_constructors(filter_items filter) const RTTR_NOEXCEPT
+{
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    if (!ctors.empty())
+        return array_range<constructor>(ctors.data(), ctors.size(), get_filter_predicate<constructor>(*this, filter));
+
+    return array_range<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
