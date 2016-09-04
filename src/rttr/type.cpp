@@ -41,6 +41,7 @@
 #include "rttr/rttr_enable.h"
 
 #include "rttr/detail/type/type_database_p.h"
+#include "rttr/detail/parameter_info/parameter_infos_compare.h"
 
 #include <algorithm>
 #include <unordered_map>
@@ -96,6 +97,108 @@ void move_pointer_and_ref_to_type(std::string& type_name)
 
     const auto non_whitespace = type_name.find_last_not_of(' ');
     type_name.resize(non_whitespace + 1);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static bool is_valid_filter_item(filter_items filter)
+{
+    if ((filter.test_flag(filter_item::public_access) ||
+         filter.test_flag(filter_item::non_public_access)) &&
+        (filter.test_flag(filter_item::instance_item) ||
+        filter.test_flag(filter_item::static_item)))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_items filter)
+{
+    bool result = true;
+
+    if (filter.test_flag(filter_item::public_access) && filter.test_flag(filter_item::non_public_access))
+    {
+        result &= true;
+    }
+    else if (filter.test_flag(filter_item::public_access))
+    {
+        result &= (item.get_access_level() == access_levels::public_access);
+    }
+    else if (filter.test_flag(filter_item::non_public_access))
+    {
+        const auto access_level = item.get_access_level();
+        result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
+    }
+
+    if (filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
+        result &= true;
+    else if (filter.test_flag(filter_item::instance_item) && !filter.test_flag(filter_item::static_item))
+        result &= !item.is_static();
+    else if (!filter.test_flag(filter_item::instance_item) && filter.test_flag(filter_item::static_item))
+        result &= item.is_static();
+
+    if (filter.test_flag(filter_item::declared_only))
+        result &= (item.get_declaring_type() == t);
+
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_FORCE_INLINE detail::default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
+{
+    if (!is_valid_filter_item(filter))
+    {
+        return {[](const T&){ return false; }};
+    }
+    else
+    {
+        return {[filter, t](const T& item)
+        {
+            return filter_member_item<T>(item, t, filter);
+        }};
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+RTTR_FORCE_INLINE detail::default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
+{
+    if (!is_valid_filter_item(filter))
+    {
+        return {[](const constructor&){ return false; }};
+    }
+    else
+    {
+        return {[filter](const constructor& item)
+        {
+            bool result = true;
+
+            if (filter.test_flag(filter_item::public_access) && filter.test_flag(filter_item::non_public_access))
+            {
+                result &= true;
+            }
+            else if (filter.test_flag(filter_item::public_access))
+            {
+                result &= (item.get_access_level() == access_levels::public_access);
+            }
+            else if (filter.test_flag(filter_item::non_public_access))
+            {
+                const auto access_level = item.get_access_level();
+                result &= (access_level == access_levels::private_access || access_level == access_levels::protected_access);
+            }
+
+            return result;
+        }};
+    }
 }
 
 } // end anonymous namespace
@@ -206,43 +309,70 @@ variant type::get_metadata(const variant& key) const
 
 constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEXCEPT
 {
-    return constructor(detail::type_database::instance().get_constructor(*this, args));
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    for (const auto& ctor : ctors)
+    {
+        if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), args))
+            return ctor;
+    }
+
+    return detail::create_invalid_item<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_constructors(*this);
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    if (!ctors.empty())
+    {
+        return array_range<constructor>(ctors.data(), ctors.size(),
+                                        detail::default_predicate<constructor>([](const constructor& ctor)
+                                        {
+                                            return (ctor.get_access_level() == access_levels::public_access);
+                                        }) );
+    }
+
+    return array_range<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<constructor> type::get_constructors(filter_items filter) const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_constructors(*this, filter);
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    if (!ctors.empty())
+        return array_range<constructor>(ctors.data(), ctors.size(), get_filter_predicate<constructor>(*this, filter));
+
+    return array_range<constructor>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant type::create(vector<argument> args) const
 {
-    auto ctor = detail::type_database::instance().get_constructor(*this, args);
-    return ctor.invoke_variadic(std::move(args));
+    auto& ctors = m_type_data->get_class_data().m_ctors;
+    for (const auto& ctor : ctors)
+    {
+        if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), args))
+            return ctor.invoke_variadic(std::move(args));
+    }
+
+    return variant();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 destructor type::get_destructor() const RTTR_NOEXCEPT
 {
-    return destructor(detail::type_database::instance().get_destructor(get_raw_type()));
+    return get_raw_type().m_type_data->get_class_data().m_dtor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_destructor(get_raw_type()).invoke(obj);
+    return get_destructor().invoke(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -398,6 +528,19 @@ type type::get_by_name(string_view name) RTTR_NOEXCEPT
 const detail::type_converter_base* type::get_type_converter(const type& target_type) const RTTR_NOEXCEPT
 {
     return detail::type_database::instance().get_converter(*this, target_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type::register_constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor)
+{
+    static std::vector<std::unique_ptr<detail::constructor_wrapper_base> > constructor_list;
+    if (!t.is_valid())
+        return;
+
+    auto& class_data = t.m_type_data->get_class_data();
+    class_data.m_ctors.emplace_back(detail::create_item<constructor>(ctor.get()));
+    constructor_list.push_back(std::move(ctor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

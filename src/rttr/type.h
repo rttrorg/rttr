@@ -41,6 +41,7 @@
 
 namespace rttr
 {
+
 class variant;
 class constructor;
 class destructor;
@@ -67,6 +68,7 @@ struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct type_data;
+class constructor_wrapper_base;
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT;
@@ -984,6 +986,8 @@ class RTTR_API type
          *
          */
         static void init_globals();
+
+        static void register_constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor);
 
 
         /////////////////////////////////////////////////////////////////////////////////

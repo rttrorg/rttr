@@ -120,7 +120,6 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        constructor get_constructor(const type& t) const;
         constructor get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
         constructor get_constructor(const type& t, const std::vector<argument>& arg_list) const;
         array_range<constructor> get_constructors(const type& t);
@@ -236,7 +235,6 @@ class RTTR_LOCAL type_database
 
         std::vector<std::unique_ptr<property_wrapper_base> >        m_property_list;
         std::vector<std::unique_ptr<method_wrapper_base> >          m_method_list;
-        std::vector<std::unique_ptr<constructor_wrapper_base> >     m_constructor_list;
         std::vector<std::unique_ptr<destructor_wrapper_base> >      m_destructor_list;
 
         std::vector<data_container<type_converter_base>>            m_type_converter_list;  //!< This list stores all type conversion objects
