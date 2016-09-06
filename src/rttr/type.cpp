@@ -617,7 +617,7 @@ void type::register_destructor(const type& t, std::unique_ptr<detail::destructor
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property type::get_type_property(const type& t, string_view name) RTTR_NOEXCEPT
+property type::get_type_property(const type& t, string_view name)
 {
     for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
     {
