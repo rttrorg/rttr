@@ -75,7 +75,6 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        void register_property(const type& t, std::unique_ptr<property_wrapper_base> prop);
         void register_method(const type& t, std::unique_ptr<method_wrapper_base> meth);
         void register_constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
         void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
@@ -88,15 +87,6 @@ class RTTR_LOCAL type_database
         type register_type(type_data& info) RTTR_NOEXCEPT;
 
         type get_by_name(string_view name) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
-        property get_type_property(const type& t, string_view name) const;
-        property get_class_property(const type& t, string_view name) const;
-        array_range<property> get_class_properties(const type& t) const;
-        array_range<property> get_class_properties(const type& t, filter_items filter) const;
-
-        property get_global_property(string_view name) const;
-        array_range<property> get_global_properties();
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -231,9 +221,7 @@ class RTTR_LOCAL type_database
         flat_map<std::string, type, hash>                           m_custom_name_to_id;
 
         flat_multimap<string_view, method>                          m_global_methods;
-        flat_multimap<string_view, property>                        m_global_properties;
 
-        std::vector<std::unique_ptr<property_wrapper_base> >        m_property_list;
         std::vector<std::unique_ptr<method_wrapper_base> >          m_method_list;
 
         std::vector<data_container<type_converter_base>>            m_type_converter_list;  //!< This list stores all type conversion objects

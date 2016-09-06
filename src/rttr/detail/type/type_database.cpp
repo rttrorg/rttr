@@ -117,82 +117,6 @@ void type_database::update_class_list(const type& t, T item_ptr)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_database::register_property(const type& t, unique_ptr<property_wrapper_base> prop)
-{
-    if (!t.is_valid())
-        return;
-
-    const auto name = prop->get_name();
-
-    if (t.is_class())
-    {
-        if (get_type_property(t, name))
-            return;
-
-        auto& property_list = t.m_type_data->get_class_data().m_properties;
-        property_list.emplace_back(detail::create_item<property>(prop.get()));
-        m_property_list.push_back(std::move(prop));
-        update_class_list(t, &class_data::m_properties);
-    }
-    else
-    {
-        if (get_global_property(name))
-            return;
-
-        property p = detail::create_item<property>(prop.get());
-        m_global_properties.insert(std::move(name), std::move(p));
-        m_property_list.push_back(std::move(prop));
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-property type_database::get_class_property(const type& t, string_view name) const
-{
-    const auto& vec = t.m_type_data->get_class_data().m_properties;
-    auto ret = std::find_if(vec.cbegin(), vec.cend(),
-                            [name](const property& item)
-                            {
-                                return (item.get_name() == name);
-                            });
-    if (ret != vec.cend())
-        return *ret;
-
-    return detail::create_invalid_item<property>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-property type_database::get_type_property(const type& t, string_view name) const
-{
-    for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
-    {
-        if (prop.get_name() == name)
-            return prop;
-    }
-
-    return create_invalid_item<property>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-array_range<property> type_database::get_class_properties(const type& t) const
-{
-    auto& vec = t.m_type_data->get_class_data().m_properties;
-    if (!vec.empty())
-    {
-        return array_range<property>(vec.data(), vec.size(),
-                                     default_predicate<property>([](const property& prop)
-                                     {
-                                         return (prop.get_access_level() == access_levels::public_access);
-                                     }) );
-    }
-
-    return array_range<property>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 static bool is_valid_filter_item(filter_items filter)
 {
     if ((filter.test_flag(filter_item::public_access) ||
@@ -256,36 +180,6 @@ RTTR_FORCE_INLINE default_predicate<T> get_filter_predicate(const type& t, filte
             return filter_member_item<T>(item, t, filter);
         }};
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-array_range<property> type_database::get_class_properties(const type& t, filter_items filter) const
-{
-    auto& vec = t.m_type_data->get_class_data().m_properties;
-    if (!vec.empty())
-        return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(t, filter));
-
-    return array_range<property>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-property type_database::get_global_property(string_view name) const
-{
-    const auto ret = m_global_properties.find(name);
-    if (ret != m_global_properties.end())
-        return *ret;
-
-    return detail::create_invalid_item<property>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-array_range<property> type_database::get_global_properties()
-{
-    auto& vec = m_global_properties.value_data();
-    return array_range<property>(vec.data(), vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

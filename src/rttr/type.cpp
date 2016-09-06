@@ -152,7 +152,7 @@ static RTTR_INLINE bool filter_member_item(const T& item, const type& t, filter_
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_FORCE_INLINE detail::default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
+static detail::default_predicate<T> get_filter_predicate(const type& t, filter_items filter)
 {
     if (!is_valid_filter_item(filter))
     {
@@ -170,7 +170,7 @@ RTTR_FORCE_INLINE detail::default_predicate<T> get_filter_predicate(const type& 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<>
-RTTR_FORCE_INLINE detail::default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
+static detail::default_predicate<constructor> get_filter_predicate(const type& t, filter_items filter)
 {
     if (!is_valid_filter_item(filter))
     {
@@ -201,8 +201,36 @@ RTTR_FORCE_INLINE detail::default_predicate<constructor> get_filter_predicate(co
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static array_range<T> get_items_for_type(const type& t,
+                                         const std::vector<T>& vec)
+{
+    return array_range<T>(vec.data(), vec.size(),
+                          detail::default_predicate<T>([t](const T& item) { return (item.get_declaring_type() == t); }) );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static detail::flat_multimap<string_view, property>& get_global_property_storage()
+{
+    static detail::flat_multimap<string_view, property> props;
+    return props;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::vector<std::unique_ptr<detail::property_wrapper_base>>& get_property_storage()
+{
+    static std::vector<std::unique_ptr<detail::property_wrapper_base>> container;
+    return container;
+}
+
 } // end anonymous namespace
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 std::string type::normalize_orig_name(string_view name)
@@ -330,15 +358,23 @@ bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 
 property type::get_property(string_view name) const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_class_property(get_raw_type(), name);
+    const auto& vec = get_raw_type().m_type_data->get_class_data().m_properties;
+    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+                            [name](const property& item)
+                            {
+                                return (item.get_name() == name);
+                            });
+    if (ret != vec.cend())
+        return *ret;
+
+    return detail::create_invalid_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant type::get_property_value(string_view name, instance obj) const
 {
-    const auto prop = get_property(name);
-    return prop.get_value(obj);
+    return get_property(name).get_value(obj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -369,14 +405,28 @@ bool type::set_property_value(string_view name, argument arg)
 
 array_range<property> type::get_properties() const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_class_properties(get_raw_type());
+    auto& vec = get_raw_type().m_type_data->get_class_data().m_properties;
+    if (!vec.empty())
+    {
+        return array_range<property>(vec.data(), vec.size(),
+                                     detail::default_predicate<property>([](const property& prop)
+                                     {
+                                         return (prop.get_access_level() == access_levels::public_access);
+                                     }) );
+    }
+
+    return array_range<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<property> type::get_properties(filter_items filter) const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_class_properties(get_raw_type(), filter);
+    auto& vec = get_raw_type().m_type_data->get_class_data().m_properties;
+    if (!vec.empty())
+        return array_range<property>(vec.data(), vec.size(), get_filter_predicate<property>(*this, filter));
+
+    return array_range<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +461,12 @@ array_range<method> type::get_methods(filter_items filter) const RTTR_NOEXCEPT
 
 property type::get_global_property(string_view name) RTTR_NOEXCEPT
 {
-    return property(detail::type_database::instance().get_global_property(name));
+    auto& prop_list = get_global_property_storage();
+    const auto ret = prop_list.find(name);
+    if (ret != prop_list.end())
+        return *ret;
+
+    return detail::create_invalid_item<property>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -439,7 +494,8 @@ array_range<method> type::get_global_methods() RTTR_NOEXCEPT
 
 array_range<property> type::get_global_properties() RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_global_properties();
+    auto& vec = get_global_property_storage().value_data();
+    return array_range<property>(vec.data(), vec.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -559,6 +615,79 @@ void type::register_destructor(const type& t, std::unique_ptr<detail::destructor
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+property type::get_type_property(const type& t, string_view name) RTTR_NOEXCEPT
+{
+    for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
+    {
+        if (prop.get_name() == name)
+            return prop;
+    }
+
+    return detail::create_invalid_item<property>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void type::update_class_list(const type& t, T item_ptr)
+{
+    // update type "t" with all items from the base classes
+    auto& all_class_items = (t.m_type_data->get_class_data().*item_ptr);
+    auto item_range = get_items_for_type(t, t.m_type_data->get_class_data().*item_ptr);
+    detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
+    all_class_items.reserve(all_class_items.size() + 1);
+    all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
+    for (const auto& base_type : t.get_base_classes())
+    {
+        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->get_class_data().*item_ptr);
+        if (base_properties.empty())
+            continue;
+
+        all_class_items.reserve(all_class_items.size() + base_properties.size());
+        all_class_items.insert(all_class_items.end(), base_properties.begin(), base_properties.end());
+    }
+
+    // insert own class items
+    all_class_items.reserve(all_class_items.size() + item_vec.size());
+    all_class_items.insert(all_class_items.end(), item_vec.begin(), item_vec.end());
+
+    // update derived types
+    for (const auto& derived_type : t.get_derived_classes())
+        update_class_list<T>(derived_type, item_ptr);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type::register_property(const type& t, std::unique_ptr<detail::property_wrapper_base> prop)
+{
+    if (!t.is_valid())
+        return;
+
+    const auto name = prop->get_name();
+
+    if (t.is_class())
+    {
+        auto& property_list = t.m_type_data->get_class_data().m_properties;
+
+        if (get_type_property(t, name))
+            return;
+
+        property_list.emplace_back(detail::create_item<property>(prop.get()));
+        get_property_storage().push_back(std::move(prop));
+        update_class_list(t, &detail::class_data::m_properties);
+    }
+    else
+    {
+        if (get_global_property(name))
+            return;
+
+        property p = detail::create_item<property>(prop.get());
+        get_global_property_storage().insert(std::move(name), std::move(p));
+        get_property_storage().push_back(std::move(prop));
+    }
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

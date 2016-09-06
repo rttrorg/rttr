@@ -46,7 +46,7 @@ namespace detail
 
 void type_register::property(const type& t, unique_ptr<property_wrapper_base> prop)
 {
-   type_database::instance().register_property(t, move(prop));
+   type::register_property(t, move(prop));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
