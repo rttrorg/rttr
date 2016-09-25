@@ -62,13 +62,13 @@ struct base_class_info;
 struct type_converter_base;
 class type_register;
 class type_database;
+class type_register_private;
 
 template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct type_data;
-class constructor_wrapper_base;
 class destructor_wrapper_base;
 class property_wrapper_base;
 
@@ -735,14 +735,14 @@ class RTTR_API type
         method get_method(string_view name) const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns a method with the name \p name which match the given parameter list \p params.
+         * \brief Returns a method with the name \p name which match the given parameter type list \p type_list.
          *
-         * \remark When there exists no method with the name \p name and matching parameter list \p params,
+         * \remark When there exists no method with the name \p name and matching parameter type list \p type_list,
          *         then an invalid method is returned.
          *
          * \return A method with name \p name.
          */
-        method get_method(string_view name, const std::vector<type>& params) const RTTR_NOEXCEPT;
+        method get_method(string_view name, const std::vector<type>& type_list) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a range of all registered *public* methods for this type and
@@ -989,13 +989,6 @@ class RTTR_API type
          */
         static void init_globals();
 
-        static property get_type_property(const type& t, string_view name);
-        template<typename T>
-        static void update_class_list(const type& t, T item_ptr);
-
-        static void register_constructor(const type& t, std::unique_ptr<detail::constructor_wrapper_base> ctor);
-        static void register_destructor(const type& t, std::unique_ptr<detail::destructor_wrapper_base> dtor);
-        static void register_property(const type& t, std::unique_ptr<detail::property_wrapper_base> prop);
 
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
@@ -1014,6 +1007,7 @@ class RTTR_API type
         friend class detail::type_register;
         friend type detail::get_invalid_type() RTTR_NOEXCEPT;
         friend class detail::type_database;
+        friend class detail::type_register_private;
 
         template<typename T>
         friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;

@@ -75,9 +75,6 @@ class RTTR_LOCAL type_database
 
         /////////////////////////////////////////////////////////////////////////////////////
 
-        void register_method(const type& t, std::unique_ptr<method_wrapper_base> meth);
-        void register_constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
-        void register_destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
         void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
         void register_custom_name(type& t, string_view name );
         void register_metadata( const type& t, std::vector<metadata> data);
@@ -87,26 +84,6 @@ class RTTR_LOCAL type_database
         type register_type(type_data& info) RTTR_NOEXCEPT;
 
         type get_by_name(string_view name) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
-
-        method get_type_method(const type& t, string_view name) const;
-        method get_type_method(const type& t, string_view name,
-                               const std::vector<type>& type_list) const;
-
-        method get_class_method(const type& t, string_view name) const;
-        method get_class_method(const type& t, string_view name,
-                                const std::vector<type>& type_list) const;
-        method get_class_method(const type& t, string_view name,
-                                const std::vector<argument>& arg_list) const;
-        array_range<method> get_class_methods(const type& t) const;
-        array_range<method> get_class_methods(const type& t, filter_items filter) const;
-
-
-        method get_global_method(string_view name) const;
-        method get_global_method(string_view name, const std::vector<type>& type_list) const;
-        method get_global_method(string_view name, const std::vector<argument>& arg_list) const;
-        array_range<method> get_global_methods();
 
         /////////////////////////////////////////////////////////////////////////////////////
 

@@ -71,6 +71,7 @@ set(HEADER_FILES access_levels.h
                  detail/enumeration/enumeration_wrapper.h
                  detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
+                 detail/filter/filter_item_funcs.h
                  detail/impl/argument_impl.h
                  detail/impl/array_range_impl.h
                  detail/impl/enum_flags_impl.h
@@ -128,6 +129,7 @@ set(HEADER_FILES access_levels.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
                  detail/type/type_name.h
+                 detail/type/type_register_p.h
                  detail/variant/variant_compare.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
