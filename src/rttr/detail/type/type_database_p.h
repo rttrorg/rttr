@@ -76,25 +76,9 @@ class RTTR_LOCAL type_database
         /////////////////////////////////////////////////////////////////////////////////////
 
         void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
-        void register_custom_name(type& t, string_view name );
         void register_metadata( const type& t, std::vector<metadata> data);
         void register_converter(const type& t, std::unique_ptr<type_converter_base> converter);
         void register_comparator(const type& t, const type_comparator_base* comparator);
-
-        type register_type(type_data& info) RTTR_NOEXCEPT;
-
-        type get_by_name(string_view name) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
-
-        constructor get_constructor(const type& t, const std::vector<type>& arg_type_list) const;
-        constructor get_constructor(const type& t, const std::vector<argument>& arg_list) const;
-        array_range<constructor> get_constructors(const type& t);
-        array_range<constructor> get_constructors(const type& t, filter_items filter) const;
-
-        /////////////////////////////////////////////////////////////////////////////////////
-
-        destructor get_destructor(const type& t) const;
 
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -112,24 +96,12 @@ class RTTR_LOCAL type_database
 
         enumeration get_enumeration(const type& t) const;
 
-        std::vector<type_data*>& get_type_data_func();
-
         /////////////////////////////////////////////////////////////////////////////////////
 
     private:
         type_database();
         ~type_database();
 
-        template<typename T>
-        static array_range<T> get_items_for_type(const type& t, const std::vector<T>& vec);
-        template<typename T>
-        static void update_class_list(const type& t, T item_ptr);
-
-        std::string derive_name(const std::string& src_name, const std::string& raw_name, const std::string& custom_name);
-        std::string derive_name(const type_data& array_raw_type, string_view name);
-        //! Returns true, when the name was already registered
-        bool register_name(uint16_t& id, type_data& info);
-        void register_base_class_info(type_data& info);
         std::vector<metadata>* get_metadata_list(const type& t) const;
         variant get_metadata(const variant& key, const std::vector<metadata>& data) const;
 
@@ -191,21 +163,10 @@ class RTTR_LOCAL type_database
         template<typename T>
         static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<data_container<T>>& vec);
 
-        type::type_id                                               m_type_id_counter;      //!< The global incremented id counter, this is unique for every type.
-        std::vector<type>                                           m_type_list;            //!< The list of all types.
-
-        flat_map<string_view, type>                                 m_orig_name_to_id;
-        flat_map<std::string, type, hash>                           m_custom_name_to_id;
-
-        flat_multimap<string_view, method>                          m_global_methods;
-
-        std::vector<std::unique_ptr<method_wrapper_base> >          m_method_list;
-
         std::vector<data_container<type_converter_base>>            m_type_converter_list;  //!< This list stores all type conversion objects
         std::vector<data_container<const type_comparator_base*>>    m_type_comparator_list;
         std::vector<data_container<enumeration_wrapper_base>>       m_enumeration_list;
         std::vector<data_container<std::vector<metadata>>>          m_metadata_type_list;
-        std::vector<type_data*>                                     m_type_data_func_list;
 };
 
 } // end namespace detail

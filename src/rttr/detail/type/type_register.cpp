@@ -41,8 +41,12 @@
 #include "rttr/destructor.h"
 #include "rttr/property.h"
 #include "rttr/method.h"
+#include "rttr/detail/type/type_data.h"
 
 #include "rttr/detail/filter/filter_item_funcs.h"
+#include "rttr/detail/type/type_string_utils.h"
+
+#include <set>
 
 using namespace std;
 
@@ -50,6 +54,8 @@ namespace rttr
 {
 namespace detail
 {
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 static std::vector<type> convert_param_list(const array_range<parameter_info>& param_list);
 
@@ -92,7 +98,7 @@ void type_register::enumeration(const type& t, std::unique_ptr<enumeration_wrapp
 
 void type_register::custom_name(type& t, string_view custom_name)
 {
-    type_database::instance().register_custom_name(t, custom_name);
+    type_register_private::register_custom_name(t, custom_name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -120,13 +126,219 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 {
-    return type_database::instance().register_type(info);
+    return type_register_private::register_type(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 // Here comes the private implementation of the registration class 'type_register_private'
+
+std::vector<type_data*>& type_register_private::get_type_data_storage()
+{
+    static std::vector<type_data*> obj = {&get_invalid_type_data()};
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type>& type_register_private::get_type_storage()
+{
+    static std::vector<type> obj = {type(&get_invalid_type_data())};
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+flat_map<string_view, type>& type_register_private::get_orig_name_to_id()
+{
+    static flat_map<string_view, type> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id()
+{
+    static flat_map<std::string, type, hash> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type_register_private::register_name(uint16_t& id, type_data& info)
+{
+    using namespace detail;
+
+    auto& orig_name_to_id = get_orig_name_to_id();
+    auto ret = orig_name_to_id.find(info.type_name);
+    if (ret != orig_name_to_id.end())
+    {
+        id = (*ret).get_id();
+        return true;
+    }
+
+    static type::type_id m_type_id_counter = 0;
+    ++m_type_id_counter;
+
+    orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
+    info.name = derive_name(*info.array_raw_type, info.type_name);
+    get_custom_name_to_id().insert(std::make_pair(info.name, type(&info)));
+
+    id = m_type_id_counter;
+    info.type_index = id;
+    get_type_storage().emplace_back(type(&info));
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_base_class_info(type_data& info)
+{
+    auto base_classes = info.get_base_types();
+
+    // remove double entries; can only be happen for virtual inheritance case
+    set<type> double_entries;
+    for (auto itr = base_classes.rbegin(); itr != base_classes.rend();)
+    {
+        if (double_entries.find(itr->m_base_type) == double_entries.end())
+        {
+            double_entries.insert(itr->m_base_type);
+            ++itr;
+        }
+        else
+        {
+            itr = vector<base_class_info>::reverse_iterator(base_classes.erase((++itr).base()));
+        }
+    }
+
+    // sort the base classes after it registration index, that means the root class is always the first in the list,
+    // followed by its derived classes, here it depends on the order of RTTR_ENABLE(CLASS)
+    std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
+                                                          { return left.m_base_type.get_id() < right.m_base_type.get_id(); });
+
+    auto& class_data = info.get_class_data();
+    for (const auto& t : base_classes)
+    {
+        class_data.m_base_types.push_back(t.m_base_type);
+        class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
+
+        auto r_type = t.m_base_type.get_raw_type();
+        r_type.m_type_data->get_class_data().m_derived_types.push_back(type(&info));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
+{
+    auto& type_data_container = get_type_data_storage();
+    // register the base types
+    info.get_base_types();
+
+    //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
+    using namespace detail;
+    uint16_t id = 0;
+    const bool isAlreadyRegistered = register_name(id, info);
+    if (isAlreadyRegistered)
+        return type(type_data_container[id]);
+
+    info.raw_type_data  = !info.raw_type_data->is_valid() ? &info : info.raw_type_data;
+    info.array_raw_type = !info.array_raw_type->is_valid() ? &info : info.array_raw_type;
+
+    type_data_container.push_back(&info);
+
+    // has to be done as last step
+    register_base_class_info(info);
+
+    return type(type_data_container[id]);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string derive_name_impl(const std::string& src_name, const std::string& raw_name,
+                                    const std::string& custom_name)
+{
+    auto tmp_src_name = src_name;
+    auto tmp_raw_name = raw_name;
+
+    // We replace a custom registered name for a type for all derived types, e.g.
+    // "std::basic_string<char>" => "std::string"
+    // we want to use this also automatically for derived types like pointers, e.g.
+    // "const std::basic_string<char>*" => "const std::string*"
+    // therefore we have to replace the "raw_type" string
+    remove_whitespaces(tmp_raw_name);
+    remove_whitespaces(tmp_src_name);
+
+    const auto start_pos = tmp_src_name.find(tmp_raw_name);
+    const auto end_pos = start_pos + tmp_raw_name.length();
+    if (start_pos == std::string::npos)
+        return src_name; // nothing was found...
+
+    // remember the two parts before and after the found "raw_name"
+    const auto start_part = tmp_src_name.substr(0, start_pos);
+    const auto end_part = tmp_src_name.substr(end_pos, tmp_src_name.length());
+
+    tmp_src_name.replace(start_pos, tmp_raw_name.length(), custom_name);
+
+    if (is_space_after(src_name, start_part))
+        insert_space_after(tmp_src_name, start_part);
+
+    if (is_space_before(src_name, end_part))
+        insert_space_before(tmp_src_name, end_part);
+
+    return tmp_src_name;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string type_register_private::derive_name(const type_data& array_raw_type, string_view name)
+{
+    if (!array_raw_type.is_valid())
+        return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
+
+    const auto& custom_name = array_raw_type.name;
+    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.type_name);
+
+    const std::string src_name_orig = type::normalize_orig_name(name);
+    return derive_name_impl(src_name_orig, raw_name_orig, custom_name);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_custom_name(type& t, string_view custom_name)
+{
+    if (!t.is_valid())
+        return;
+
+    auto& type_data = *t.m_type_data;
+
+    const auto& orig_name = type_data.name;
+    auto& custom_name_to_id = get_custom_name_to_id();
+    custom_name_to_id.erase(orig_name);
+
+    type_data.name = custom_name.to_string();
+
+    custom_name_to_id.insert(std::make_pair(type_data.name, t));
+    std::string raw_name = type::normalize_orig_name(t.m_type_data->type_name);
+    const auto& t_name = type_data.name;
+
+    auto tmp_type_list = custom_name_to_id.value_data();
+    for (auto& tt : tmp_type_list)
+    {
+        if (tt.get_raw_array_type() == t)
+        {
+            const auto& orig_name_derived = tt.m_type_data->name;
+            custom_name_to_id.erase(orig_name_derived);
+
+            tt.m_type_data->name = derive_name_impl(orig_name_derived, raw_name, t_name);
+            custom_name_to_id.insert(std::make_pair(tt.m_type_data->name, tt));
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor)
 {

@@ -130,6 +130,7 @@ set(HEADER_FILES access_levels.h
                  detail/type/type_impl.h
                  detail/type/type_name.h
                  detail/type/type_register_p.h
+                 detail/type/type_string_utils.h
                  detail/variant/variant_compare.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h

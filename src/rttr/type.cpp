@@ -207,7 +207,7 @@ array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 
 array_range<type> type::get_types() RTTR_NOEXCEPT
 {
-    auto& type_list = detail::type_database::instance().m_type_list;
+    auto& type_list = detail::type_register_private::get_type_storage();
     return array_range<type>(&type_list[1], type_list.size() - 1);
 }
 
@@ -491,7 +491,12 @@ variant type::invoke(string_view name, std::vector<argument> args)
 
 type type::get_by_name(string_view name) RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_by_name(name);
+    auto& custom_name_to_id = detail::type_register_private::get_custom_name_to_id();
+    auto ret = custom_name_to_id.find(name);
+    if (ret != custom_name_to_id.end())
+        return (*ret);
+
+    return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
