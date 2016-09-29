@@ -31,6 +31,9 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/flat_multimap.h"
 #include "rttr/detail/misc/flat_map.h"
+#include "rttr/enumeration.h"
+#include "rttr/variant.h"
+#include "rttr/detail/metadata/metadata.h"
 
 #include "rttr/string_view.h"
 
@@ -54,8 +57,6 @@ class method_wrapper_base;
 class enumeration_wrapper_base;
 
 struct type_data;
-
-class metadata;
 
 /*!
  * This class contains all logic to register properties, methods etc.. for a specific type.
@@ -83,7 +84,70 @@ public:
     static flat_map<string_view, type>& get_orig_name_to_id();
     static flat_map<std::string, type, hash>& get_custom_name_to_id();
 
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
+    static void register_metadata( const type& t, std::vector<metadata> data);
+    static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+    static void comparator(const type& t, const type_comparator_base* comparator);
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static const type_converter_base* get_converter(const type& source_type, const type& target_type);
+    static const type_comparator_base* get_comparator(const type& t);
+    static variant get_metadata(const type& t, const variant& key);
+    static enumeration get_enumeration(const type& t);
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
 private:
+
+    template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
+    struct data_container
+    {
+        data_container(type::type_id id) : m_id(id) {}
+        data_container(type::type_id id, Data_Type data) : m_id(id), m_data(std::move(data)) {}
+        data_container(data_container<T, Data_Type>&& other) : m_id(other.m_id), m_data(std::move(other.m_data)) {}
+        data_container<T, Data_Type>& operator = (data_container<T, Data_Type>&& other)
+        {
+            m_id = other.m_id;
+            m_data = std::move(other.m_data);
+            return *this;
+        }
+
+        struct order_by_id
+        {
+            RTTR_INLINE bool operator () ( const data_container<T>& _left, const data_container<T>& _right )  const
+            {
+                return _left.m_id < _right.m_id;
+            }
+            RTTR_INLINE bool operator () ( const type::type_id& _left, const data_container<T>& _right ) const
+            {
+                return _left < _right.m_id;
+            }
+            RTTR_INLINE bool operator () ( const data_container<T>& _left, const type::type_id& _right ) const
+            {
+                return _left.m_id < _right;
+            }
+        };
+
+        type::type_id   m_id;
+        Data_Type       m_data;
+    };
+
+    template<typename T>
+    static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<data_container<T>>& vec);
+    template<typename T>
+    static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<data_container<T>>& vec);
+
+    static std::vector<metadata>* get_metadata_list(const type& t);
+    static variant get_metadata(const variant& key, const std::vector<metadata>& data);
+
+    static std::vector<data_container<type_converter_base>>& get_type_converter_list();
+    static std::vector<data_container<const type_comparator_base*>>& get_type_comparator_list();
+    static std::vector<data_container<enumeration_wrapper_base>>& get_enumeration_list();
+    static std::vector<data_container<std::vector<metadata>>>& get_metadata_type_list();
+
     static ::rttr::property get_type_property(const type& t, string_view name);
     static ::rttr::method get_type_method(const type& t, string_view name);
     static ::rttr::method get_type_method(const type& t, string_view name,

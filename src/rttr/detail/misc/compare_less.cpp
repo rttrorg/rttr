@@ -27,7 +27,7 @@
 
 #include "rttr/detail/misc/compare_less.h"
 
-#include "rttr/detail/type/type_database_p.h"
+#include "rttr/detail/type/type_register_p.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 
@@ -42,7 +42,7 @@ namespace detail
 
 bool compare_types_less_than(const void* lhs, const void* rhs, const type& t, int& result)
 {
-    if (auto cmp_f = type_database::instance().get_comparator(t))
+    if (auto cmp_f = type_register_private::get_comparator(t))
     {
         result = cmp_f->less_than(lhs, rhs) ? -1 : 1;
         return true;

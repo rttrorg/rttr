@@ -71,7 +71,7 @@ class metadata;
 
 /*!
  * This class contains all functions to register properties, methods etc.. for a specific type.
- * This is a static pimpl, it will just forward the data to the \ref type_database class.
+ * This is a static pimpl, it will just forward the data to the \ref type_register_private class.
  */
 class RTTR_API type_register
 {

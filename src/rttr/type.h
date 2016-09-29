@@ -61,7 +61,6 @@ struct derived_info;
 struct base_class_info;
 struct type_converter_base;
 class type_register;
-class type_database;
 class type_register_private;
 
 template<typename T, typename Enable = void>
@@ -1006,7 +1005,6 @@ class RTTR_API type
         friend class instance;
         friend class detail::type_register;
         friend type detail::get_invalid_type() RTTR_NOEXCEPT;
-        friend class detail::type_database;
         friend class detail::type_register_private;
 
         template<typename T>

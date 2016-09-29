@@ -27,7 +27,7 @@
 
 #include "rttr/detail/misc/compare_equal.h"
 
-#include "rttr/detail/type/type_database_p.h"
+#include "rttr/detail/type/type_register_p.h"
 #include "rttr/type.h"
 
 #include <cstring>
@@ -39,7 +39,7 @@ namespace detail
 
 bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
 {
-    if (auto cmp_f = type_database::instance().get_comparator(t))
+    if (auto cmp_f = type_register_private::get_comparator(t))
         return cmp_f->equal(lhs, rhs);
 
     return (std::memcmp(lhs, rhs, t.get_sizeof()) == 0);

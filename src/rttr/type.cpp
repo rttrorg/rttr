@@ -40,7 +40,6 @@
 #include "rttr/detail/property/property_wrapper.h"
 #include "rttr/rttr_enable.h"
 
-#include "rttr/detail/type/type_database_p.h"
 #include "rttr/detail/parameter_info/parameter_infos_compare.h"
 #include "rttr/detail/filter/filter_item_funcs.h"
 #include "rttr/detail/type/type_register_p.h"
@@ -215,7 +214,7 @@ array_range<type> type::get_types() RTTR_NOEXCEPT
 
 variant type::get_metadata(const variant& key) const
 {
-    return detail::type_database::instance().get_metadata(*this, key);
+    return detail::type_register_private::get_metadata(*this, key);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -444,7 +443,7 @@ array_range<property> type::get_global_properties() RTTR_NOEXCEPT
 
 enumeration type::get_enumeration() const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_enumeration(*this);
+    return detail::type_register_private::get_enumeration(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +502,7 @@ type type::get_by_name(string_view name) RTTR_NOEXCEPT
 
 const detail::type_converter_base* type::get_type_converter(const type& target_type) const RTTR_NOEXCEPT
 {
-    return detail::type_database::instance().get_converter(*this, target_type);
+    return detail::type_register_private::get_converter(*this, target_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

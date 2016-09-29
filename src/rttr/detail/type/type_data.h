@@ -111,7 +111,7 @@ struct type_data
     bool is_member_function_pointer;
 
     impl::create_variant_func create_variant;
-    impl::get_base_types_func get_base_types; // this info should not be stored, its just temporarily,
+    impl::get_base_types_func get_base_types; // FIXEM: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
 
     class_data& (*get_class_data)();

@@ -28,7 +28,6 @@
 #include "rttr/detail/type/type_register.h"
 
 #include "rttr/detail/type/type_register_p.h"
-#include "rttr/detail/type/type_database_p.h"
 
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/destructor/destructor_wrapper_base.h"
@@ -91,7 +90,7 @@ void type_register::destructor(const type& t, std::unique_ptr<destructor_wrapper
 
 void type_register::enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_item)
 {
-    type_database::instance().register_enumeration(t, move(enum_item));
+    type_register_private::register_enumeration(t, std::move(enum_item));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -105,21 +104,21 @@ void type_register::custom_name(type& t, string_view custom_name)
 
 void type_register::metadata(const type& t, std::vector< ::rttr::detail::metadata > data)
 {
-    type_database::instance().register_metadata(t, move(data));
+    type_register_private::register_metadata(t, move(data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register::converter(const type& t, std::unique_ptr<type_converter_base> converter)
 {
-     type_database::instance().register_converter(t, move(converter));
+     type_register_private::converter(t, move(converter));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register::comparator(const type& t, type_comparator_base* comparator)
 {
-    type_database::instance().register_comparator(t, comparator);
+    type_register_private::comparator(t, comparator);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +129,12 @@ type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// Here comes the private implementation of the registration class 'type_register_private'
+/////////////////////////////////////////////////////////////////////////////////////////
+// Here comes the implementation of the registration class 'type_register_private'
 
 std::vector<type_data*>& type_register_private::get_type_data_storage()
 {
@@ -161,6 +163,38 @@ flat_map<string_view, type>& type_register_private::get_orig_name_to_id()
 flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id()
 {
     static flat_map<std::string, type, hash> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<type_converter_base>>& type_register_private::get_type_converter_list()
+{
+    static std::vector<data_container<type_converter_base>> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_comparator_list()
+{
+    static std::vector<data_container<const type_comparator_base*>> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<enumeration_wrapper_base>>& type_register_private::get_enumeration_list()
+{
+    static std::vector<data_container<enumeration_wrapper_base>> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<std::vector<metadata>>>& type_register_private::get_metadata_type_list()
+{
+    static std::vector<data_container<std::vector<metadata>>> obj;
     return obj;
 }
 
@@ -566,6 +600,185 @@ void type_register_private::update_class_list(const type& t, T item_ptr)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE T* type_register_private::get_item_by_type(const type& t, const std::vector<data_container<T>>& vec)
+{
+    using vec_value_type = data_container<T>;
+    const auto id = t.get_id();
+    auto itr = std::lower_bound(vec.cbegin(), vec.cend(), id, typename vec_value_type::order_by_id());
+    for (; itr != vec.cend(); ++itr)
+    {
+        auto& item = *itr;
+        if (item.m_id == id)
+            return item.m_data.get();
+        else
+            break;
+    }
+
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE void type_register_private::register_item_type(const type& t, std::unique_ptr<T> new_item,
+                                                           std::vector<data_container<T>>& vec)
+{
+    if (!t.is_valid())
+        return;
+
+    using data_type = data_container<T>;
+    vec.push_back({t.get_id(), std::move(new_item)});
+    std::stable_sort(vec.begin(), vec.end(), typename data_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<metadata>* type_register_private::get_metadata_list(const type& t)
+{
+    return get_item_by_type(t, get_metadata_type_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_item)
+{
+    register_item_type(t, std::move(enum_item), get_enumeration_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_metadata( const type& t, std::vector<metadata> data)
+{
+    if (!t.is_valid() || data.empty())
+        return;
+
+    auto meta_vec = get_metadata_list(t);
+
+    if (!meta_vec)
+    {
+        auto new_meta_vec = detail::make_unique<std::vector<metadata>>(data.cbegin(), data.cend());
+        meta_vec = new_meta_vec.get();
+        register_item_type(t, std::move(new_meta_vec), get_metadata_type_list());
+    }
+
+    auto meta_vec_ref = *meta_vec;
+
+    // when we insert new items, we want to check first whether a item with same key exist => ignore this data
+    for (auto& new_item : data)
+    {
+        if (get_metadata(new_item,  meta_vec_ref).is_valid() == false)
+            meta_vec_ref.emplace_back(std::move(new_item));
+    }
+
+    std::sort(meta_vec_ref.begin(), meta_vec_ref.end(), metadata::order_by_key());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::converter(const type& t, std::unique_ptr<type_converter_base> converter)
+{
+    if (!t.is_valid())
+        return;
+
+    if (get_converter(t, converter->m_target_type))
+        return;
+
+    using vec_value_type = data_container<type_converter_base>;
+    auto& container = get_type_converter_list();
+    container.push_back({t.get_id(), std::move(converter)});
+    std::stable_sort(container.begin(), container.end(), vec_value_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::comparator(const type& t, const type_comparator_base* comparator)
+{
+    if (!t.is_valid())
+        return;
+
+    using data_type = data_container<const type_comparator_base*>;
+    auto& container = get_type_comparator_list();
+    container.push_back({t.get_id(), comparator});
+    std::stable_sort(container.begin(), container.end(),
+                     data_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const type_converter_base* type_register_private::get_converter(const type& source_type, const type& target_type)
+{
+    const auto src_id = source_type.get_id();
+    const auto target_id = target_type.get_id();
+    using vec_value_type = data_container<type_converter_base>;
+    auto& container = get_type_converter_list();
+    auto itr = std::lower_bound(container.cbegin(), container.cend(),
+                                src_id, vec_value_type::order_by_id());
+    for (; itr != container.cend(); ++itr)
+    {
+        auto& item = *itr;
+        if (item.m_id != src_id)
+            break; // type not found
+
+        if (item.m_data->m_target_type.get_id() == target_id)
+            return item.m_data.get();
+    }
+
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const type_comparator_base* type_register_private::get_comparator(const type& t)
+{
+    using vec_value_type = data_container<const type_comparator_base*>;
+    const auto id = t.get_id();
+    auto& container = get_type_comparator_list();
+    auto itr = std::lower_bound(container.cbegin(), container.cend(), id,
+                                vec_value_type::order_by_id());
+    if (itr != container.cend() && itr->m_id == id)
+        return itr->m_data;
+    else
+        return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+variant type_register_private::get_metadata(const type& t, const variant& key)
+{
+    auto meta_vec = get_metadata_list(t);
+    return (meta_vec ? get_metadata(key, *meta_vec) : variant());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant type_register_private::get_metadata(const variant& key, const std::vector<metadata>& data)
+{
+    auto itr = std::lower_bound(data.cbegin(), data.cend(), key, metadata::order_by_key());
+    if (itr != data.cend())
+    {
+        auto& item = *itr;
+        if (item.get_key() == key)
+            return item.get_value();
+    }
+
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+enumeration type_register_private::get_enumeration(const type& t)
+{
+    if (auto item = get_item_by_type(t, get_enumeration_list()))
+        return create_item<enumeration>(item);
+    else
+        return create_invalid_item<enumeration>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end
