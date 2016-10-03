@@ -71,6 +71,7 @@ set(HEADER_FILES access_levels.h
                  detail/enumeration/enumeration_wrapper.h
                  detail/enumeration/enumeration_wrapper_base.h
                  detail/enumeration/enum_data.h
+                 detail/filter/filter_item_funcs.h
                  detail/impl/argument_impl.h
                  detail/impl/array_range_impl.h
                  detail/impl/enum_flags_impl.h
@@ -123,9 +124,12 @@ set(HEADER_FILES access_levels.h
                  detail/type/get_derived_info_func.h
                  detail/type/type_converter.h
                  detail/type/type_comparator.h
-                 detail/type/type_database_p.h
+                 detail/type/type_data.h
                  detail/type/type_register.h
                  detail/type/type_impl.h
+                 detail/type/type_name.h
+                 detail/type/type_register_p.h
+                 detail/type/type_string_utils.h
                  detail/variant/variant_compare.h
                  detail/variant/variant_data.h
                  detail/variant/variant_data_converter.h
@@ -160,7 +164,6 @@ set(SOURCE_FILES constructor.cpp
                  detail/parameter_info/parameter_info_wrapper_base.cpp
                  detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
-                 detail/type/type_database.cpp
                  detail/type/type_register.cpp
                  detail/variant/variant_compare.cpp
                  )

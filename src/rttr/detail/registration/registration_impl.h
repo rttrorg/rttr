@@ -93,7 +93,8 @@ RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(T
 template<typename Class_Type>
 registration::class_<Class_Type>::class_(string_view name)
 {
-    detail::type_register::custom_name(type::get<Class_Type>(), name);
+    auto t = type::get<Class_Type>();
+    detail::type_register::custom_name(t, name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

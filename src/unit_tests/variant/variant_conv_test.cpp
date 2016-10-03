@@ -609,7 +609,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
         CHECK(var.convert(type::get<std::nullptr_t>()) == false);
 
         std::nullptr_t null_obj;
-        CHECK(var.convert(null_obj) == false);
+        CHECK(var.convert<std::nullptr_t>(null_obj) == false);
     }
 
     SECTION("valid conversion")
@@ -619,7 +619,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
 
         CHECK(var.can_convert(type::get<std::nullptr_t>()) == true);
         std::nullptr_t null_obj;
-        CHECK(var.convert(null_obj) == true);
+        CHECK(var.convert<std::nullptr_t>(null_obj) == true);
         CHECK(null_obj == nullptr);
 
         bool ok = false;

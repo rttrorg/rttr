@@ -41,6 +41,7 @@
 
 namespace rttr
 {
+
 class variant;
 class constructor;
 class destructor;
@@ -60,12 +61,18 @@ struct derived_info;
 struct base_class_info;
 struct type_converter_base;
 class type_register;
-class type_database;
+class type_register_private;
 
 template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
+struct type_data;
+class destructor_wrapper_base;
+class property_wrapper_base;
+
+template<typename T>
+type_data& get_type_data() RTTR_NOEXCEPT;
 } // end namespace detail
 
 /*!
@@ -232,7 +239,7 @@ class RTTR_API type
          *
          * \return The type name.
          */
-        string_view get_name() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE string_view get_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
@@ -256,7 +263,7 @@ class RTTR_API type
          *
          * \return The corresponding raw type object.
          */
-        type get_raw_type() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE type get_raw_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object which represent the wrapped type.
@@ -278,7 +285,7 @@ class RTTR_API type
          *
          * \return The type object of the wrapped type.
          */
-        type get_wrapped_type() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE type get_wrapped_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object for the given template type \a T.
@@ -327,21 +334,21 @@ class RTTR_API type
          *
          * \return The size of the type in bytes.
          */
-        std::size_t get_sizeof() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE std::size_t get_sizeof() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type is class; that is not an atomic type or a method.
          *
          * \return True if the type is a class, otherwise false.
          */
-        bool is_class() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_class() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an enumeration.
          *
          * \return True if the type is an enumeration, otherwise false.
          */
-        bool is_enumeration() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_enumeration() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the enumerator if this type is an enum type;
@@ -370,7 +377,7 @@ class RTTR_API type
          * \return True if the type is an wrapper, otherwise false.
          *
          */
-        bool is_wrapper() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_wrapper() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an array.
@@ -379,7 +386,7 @@ class RTTR_API type
          *
          * \see \ref array_mapper "array_mapper<T>"
          */
-        bool is_array() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_array() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer.
@@ -387,7 +394,7 @@ class RTTR_API type
          *
          * \return True if the type is a pointer, otherwise false.
          */
-        bool is_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an arithmetic type.
@@ -396,7 +403,7 @@ class RTTR_API type
          *
          * \return True if the type is a arithmetic type, otherwise false.
          */
-        bool is_arithmetic() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_arithmetic() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a function
@@ -404,7 +411,7 @@ class RTTR_API type
          *
          * \return True if the type is a function pointer, otherwise false.
          */
-        bool is_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member object.
@@ -412,7 +419,7 @@ class RTTR_API type
          *
          * \return True if the type is a member object pointer, otherwise false.
          */
-        bool is_member_object_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_member_object_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member function.
@@ -420,7 +427,7 @@ class RTTR_API type
          *
          * \return True if the type is a member function pointer type, otherwise false.
          */
-        bool is_member_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE bool is_member_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.
@@ -727,14 +734,14 @@ class RTTR_API type
         method get_method(string_view name) const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns a method with the name \p name which match the given parameter list \p params.
+         * \brief Returns a method with the name \p name which match the given parameter type list \p type_list.
          *
-         * \remark When there exists no method with the name \p name and matching parameter list \p params,
+         * \remark When there exists no method with the name \p name and matching parameter type list \p type_list,
          *         then an invalid method is returned.
          *
          * \return A method with name \p name.
          */
-        method get_method(string_view name, const std::vector<type>& params) const RTTR_NOEXCEPT;
+        method get_method(string_view name, const std::vector<type>& type_list) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a range of all registered *public* methods for this type and
@@ -917,7 +924,7 @@ class RTTR_API type
          *
          * \param id The unique id of the data type.
          */
-        RTTR_INLINE type(type_id id) RTTR_NOEXCEPT;
+        RTTR_INLINE type(detail::type_data* data) RTTR_NOEXCEPT;
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type
@@ -950,7 +957,7 @@ class RTTR_API type
          *
          * \return The pointer dimension.
          */
-        std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the raw type of an array
@@ -959,14 +966,14 @@ class RTTR_API type
          *
          * \return The raw array type.
          */
-        type get_raw_array_type() const RTTR_NOEXCEPT;
+        RTTR_FORCE_INLINE type get_raw_array_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the compiler depended name of the type.
          *
          * \return The full type name.
          */
-        std::string get_full_name() const;
+        RTTR_FORCE_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a normalized string of the given compiler depended type name.
@@ -987,7 +994,7 @@ class RTTR_API type
         /////////////////////////////////////////////////////////////////////////////////
 
         //! Creates a variant from the given argument data.
-        variant create_variant(const argument& data) const;
+        RTTR_FORCE_INLINE variant create_variant(const argument& data) const;
 
         friend class variant;
         template<typename Target_Type, typename Source_Type>
@@ -998,11 +1005,13 @@ class RTTR_API type
         friend class instance;
         friend class detail::type_register;
         friend type detail::get_invalid_type() RTTR_NOEXCEPT;
-        friend class detail::type_database;
+        friend class detail::type_register_private;
+
+        template<typename T>
+        friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;
 
     private:
-        type_id  m_id;
-        static const type_id m_invalid_id = 0;
+        detail::type_data* m_type_data;
 };
 
 } // end namespace rttr

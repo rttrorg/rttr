@@ -166,7 +166,7 @@ bool variant::is_array() const
 
 type variant::get_type() const
 {
-    type src_type(type::m_invalid_id);
+    type src_type = detail::get_invalid_type();
     m_policy(detail::variant_policy_operation::GET_TYPE, m_data, src_type);
     return src_type;
 }

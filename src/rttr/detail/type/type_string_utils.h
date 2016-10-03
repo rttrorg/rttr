@@ -25,101 +25,97 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_REGISTER_H_
-#define RTTR_TYPE_REGISTER_H_
+#ifndef RTTR_TYPE_STRING_UTILS_H_
+#define RTTR_TYPE_STRING_UTILS_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 
+#include <string>
+#include <cctype>
 #include "rttr/string_view.h"
 
-#include <memory>
-#include <string>
-#include <vector>
+
+/////////////////////////////////////////////////////////////////////////////////
 
 namespace rttr
 {
-class variant;
-class type;
-class argument;
-
-template<typename T>
-class class_;
-
 namespace detail
 {
 
-class constructor_wrapper_base;
-class destructor_wrapper_base;
-class enumeration_wrapper_base;
-class method_wrapper_base;
-class property_wrapper_base;
-
-struct type_converter_base;
-struct type_comparator_base;
-struct base_class_info;
-struct derived_info;
-
-using variant_create_func   = variant(*)(const argument&);
-using get_derived_func      = derived_info(*)(void*);
-
-template<typename T, typename Enable>
-struct type_getter;
-
-struct type_data;
-
-class metadata;
-
-/*!
- * This class contains all functions to register properties, methods etc.. for a specific type.
- * This is a static pimpl, it will just forward the data to the \ref type_register_private class.
- */
-class RTTR_API type_register
+RTTR_INLINE void remove_whitespaces(std::string& text)
 {
-public:
-    // no copy
-    type_register(const type_register&) = delete;
-    // no assign
-    type_register& operator=(const type_register&) = delete;
+    text.erase(std::remove_if(text.begin(), text.end(), static_cast<int(*)(int)>(&std::isspace)), text.end());
+}
 
-    static void property(const type& t, std::unique_ptr<property_wrapper_base> prop);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    static void method(const type& t, std::unique_ptr<method_wrapper_base> meth);
+RTTR_INLINE bool is_space_after(const std::string& text, const std::string& part)
+{
+    auto found_pos = text.find(part);
 
-    static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
+    if (found_pos == std::string::npos)
+        return false;
 
-    static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
+    found_pos = found_pos + part.length();
 
-    static void enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return false;
 
-    static void custom_name(type& t, string_view name);
+    return std::isspace(text[found_pos]) ? true : false;
+}
 
-    static void metadata( const type& t, std::vector<metadata> data);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-    static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+RTTR_INLINE bool is_space_before(const std::string& text, const std::string& part)
+{
+    auto found_pos = text.find_last_of(part);
 
-    static void comparator(const type& t, type_comparator_base* comparator);
+    if (found_pos == std::string::npos)
+        return false;
 
-    /*!
-     * \brief Register the type info for the given name
-     *
-     * \remark When a type with the given name is already registered,
-     *         then the type for the already registered type will be returned.
-     *
-     * \return A valid type object.
-     */
-    static type type_reg(type_data& info) RTTR_NOEXCEPT;
+    found_pos = found_pos - 1;
 
-private:
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return false;
 
-    friend class type;
-    template<typename T>
-    friend class class_;
+    return std::isspace(text[found_pos]) ? true : false;
+}
 
-    template<typename T, typename Enable>
-    friend struct detail::type_getter;
-};
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE void insert_space_after(std::string& text, const std::string& part)
+{
+    auto found_pos = text.find(part);
+
+    if (found_pos == std::string::npos)
+        return;
+
+    found_pos = found_pos + part.length();
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return;
+
+    text.insert(found_pos, " ");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE void insert_space_before(std::string& text, const std::string& part)
+{
+   auto found_pos = text.find_last_of(part);
+
+    if (found_pos == std::string::npos)
+        return;
+
+    if (found_pos == std::string::npos || found_pos > text.length())
+        return;
+
+    text.insert(found_pos, " ");
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_TYPE_REGISTER_H_
+#endif // RTTR_TYPE_NAME_H_

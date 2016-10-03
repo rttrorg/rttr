@@ -119,7 +119,7 @@ RTTR_INLINE void* variant::get_ptr() const
 
 RTTR_INLINE type variant::get_raw_type() const
 {
-    type result(type::m_invalid_id);
+    type result = detail::get_invalid_type();
     m_policy(detail::variant_policy_operation::GET_RAW_TYPE, m_data, result);
     return result;
 }
@@ -137,7 +137,7 @@ RTTR_INLINE void* variant::get_raw_ptr() const
 
 RTTR_INLINE detail::data_address_container variant::get_data_address_container() const
 {
-    detail::data_address_container result{type(type::m_invalid_id), type(type::m_invalid_id), nullptr, nullptr};
+    detail::data_address_container result{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr};
     m_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_data, result);
     return result;
 }
@@ -147,7 +147,7 @@ RTTR_INLINE detail::data_address_container variant::get_data_address_container()
 template<typename T>
 RTTR_INLINE bool variant::is_type() const
 {
-    type src_type(type::m_invalid_id);
+    type src_type = detail::get_invalid_type();
     m_policy(detail::variant_policy_operation::GET_TYPE, m_data, src_type);
     return (type::get<T>() == src_type);
 }
