@@ -413,8 +413,8 @@ RTTR_INLINE void type::register_converter_func(F func)
 template<typename T>
 void type::register_comparators()
 {
-	register_equal_comparator<T>();
-	register_less_than_comparator<T>();
+    register_equal_comparator<T>();
+    register_less_than_comparator<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

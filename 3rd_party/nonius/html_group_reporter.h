@@ -29,7 +29,7 @@ namespace nonius {
     struct collected_data
     {
          environment_estimate<fp_seconds> m_mean;
-         sample_analysis<fp_seconds>	  m_analysis;
+         sample_analysis<fp_seconds>      m_analysis;
          std::vector<fp_seconds>          m_sample_data;
     };
 

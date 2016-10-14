@@ -793,7 +793,7 @@ const type_comparator_base* type_register_private::get_less_than_comparator(cons
 
 const type_comparator_base*
 type_register_private::get_type_comparator_impl(const type& t,
-												const std::vector<type_register_private::data_container<const type_comparator_base*>>& comparator_list)
+                                                const std::vector<type_register_private::data_container<const type_comparator_base*>>& comparator_list)
  {
     using vec_value_type = data_container<const type_comparator_base*>;
     const auto id = t.get_id();
@@ -822,7 +822,7 @@ void type_register_private::less_than_comparator(const type& t, const type_compa
 /////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::register_comparator_impl(const type& t, const type_comparator_base* comparator,
-												     std::vector<data_container<const type_comparator_base*>>& comparator_list)
+                                                     std::vector<data_container<const type_comparator_base*>>& comparator_list)
 {
     if (!t.is_valid())
         return;

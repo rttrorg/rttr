@@ -273,7 +273,7 @@ struct variant_data_base_policy
                 const variant& rhs  = std::get<1>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
-				const bool is_lhs_arithmetic = std::is_arithmetic<T>::value;
+                const bool is_lhs_arithmetic = std::is_arithmetic<T>::value;
 
                 if (lhs_type == rhs_type)
                 {
@@ -281,18 +281,18 @@ struct variant_data_base_policy
                 }
                 else
                 {
-					if (is_lhs_arithmetic && rhs_type.is_arithmetic())
-					{
-						return variant_compare_equal(lhs, lhs_type, rhs, rhs_type);
-					}
-					else
-					{
-						variant var_tmp;
-						if (rhs.convert(lhs_type, var_tmp))
-							return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
-						else if (lhs.convert(rhs_type, var_tmp))
-							return (var_tmp.compare_equal(rhs));
-					}
+                    if (is_lhs_arithmetic && rhs_type.is_arithmetic())
+                    {
+                        return variant_compare_equal(lhs, lhs_type, rhs, rhs_type);
+                    }
+                    else
+                    {
+                        variant var_tmp;
+                        if (rhs.convert(lhs_type, var_tmp))
+                            return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
+                        else if (lhs.convert(rhs_type, var_tmp))
+                            return (var_tmp.compare_equal(rhs));
+                    }
                 }
 
                 return false;

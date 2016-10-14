@@ -71,7 +71,7 @@ template<typename T>
 RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
-	return compare_array_equal(lhs, rhs);
+    return compare_array_equal(lhs, rhs);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

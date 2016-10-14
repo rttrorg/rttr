@@ -48,7 +48,7 @@ struct compare_array_equal_impl
 {
     bool operator()(const ElementType &lhs, const ElementType &rhs)
     {
-		return compare_equal(lhs, rhs);
+        return compare_equal(lhs, rhs);
     }
 };
 
