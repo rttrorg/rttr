@@ -92,6 +92,10 @@ set(HEADER_FILES access_levels.h
                  detail/misc/compare_equal_impl.h
                  detail/misc/compare_less.h
                  detail/misc/compare_less_impl.h
+                 detail/misc/compare_array_equal.h
+                 detail/misc/compare_array_less.h
+                 detail/misc/compare_array_equal_impl.h
+                 detail/misc/compare_array_less_impl.h
                  detail/misc/data_address_container.h
                  detail/misc/flat_map.h
                  detail/misc/flat_multimap.h

@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/type.h"
+#include "rttr/detail/misc/compare_array_equal.h"
 
 #include <type_traits>
 #include <cstring>
@@ -49,16 +50,16 @@ RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& 
  *         otherwise this function will return false.
  */
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && !is_custom_type<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<std::is_enum<T>::value || is_comparable_type<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
-    return lhs == rhs;
+    return (lhs == rhs);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<has_equal_operator<T>::value && !std::is_array<T>::value && is_custom_type<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_types_equal(&lhs, &rhs, type::get<T>());
@@ -67,28 +68,10 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!has_equal_operator<T>::value && !std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_array_equal(lhs, rhs);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_array<T>::value && !has_equal_operator<typename array_mapper<T>::raw_type>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
+	return compare_array_equal(lhs, rhs);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

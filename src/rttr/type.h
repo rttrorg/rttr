@@ -901,7 +901,7 @@ class RTTR_API type
          *
          *   a == b;                // yields to false
          *
-         *   // register comparators for template type '<std::tuple<std::string, int>'
+         *   // register comparators for type 'std::tuple<std::string, int>'
          *   type::register_comparators<std::tuple<std::string, int>>();
          *
          *   a == b;                // yields to true
@@ -911,6 +911,63 @@ class RTTR_API type
          */
         template<typename T>
         static void register_comparators();
+
+        /*!
+         * \brief Register the equal comparison operators for template type \p T.
+         *        This requires a valid `operator==` for type \p T.
+         *
+         * The registered comparison operators will be used in the \ref variant class.
+         *
+         * See following example code:
+         *  \code{.cpp}
+         *  // two variants, same content
+         *   variant a = std::make_tuple<int, int>(42, 42);
+         *   variant b = std::make_tuple<int, int>(42, 42);
+         *
+         *   a == b;                // yields to false
+         *
+         *   // register comparators for type 'std::tuple<int, int>'
+         *   type::register_comparators<std::tuple<int, int>>();
+         *
+         *   a == b;                // yields to true
+         *  \endcode
+         *
+         * \see variant::operator==()
+         */
+        template<typename T>
+        static void register_equal_comparator();
+
+        /*!
+         * \brief Register the less than comparison operators for template type \p T.
+         *        This requires a valid `operator<` for type \p T.
+         *
+         * The registered comparison operators will be used in the \ref variant class.
+         *
+         * See following example code:
+         *  \code{.cpp}
+         *  struct my_id
+         *  {
+         *     my_id(int i) : id(i) {}
+         *     bool operator<(const foo& rhs) const { return (id < rhs.id); }
+         *
+         *     int id;
+         *  };
+         *  // two variants, same content
+         *   variant a = my_id(23);
+         *   variant b = my_id(42);
+         *
+         *   a < b;                // yields to false
+         *
+         *   // register comparators for type 'my_id'
+         *   type::register_less_than_comparator<my_id>();
+         *
+         *   a < b;                // yields to true
+         *  \endcode
+         *
+         * \see variant::operator<()
+         */
+        template<typename T>
+        static void register_less_than_comparator();
 
     private:
 

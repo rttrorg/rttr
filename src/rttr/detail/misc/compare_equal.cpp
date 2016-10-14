@@ -39,10 +39,10 @@ namespace detail
 
 bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
 {
-    if (auto cmp_f = type_register_private::get_comparator(t))
-        return cmp_f->equal(lhs, rhs);
+    if (auto cmp_f = type_register_private::get_equal_comparator(t))
+        return cmp_f->cmp(lhs, rhs);
 
-    return (std::memcmp(lhs, rhs, t.get_sizeof()) == 0);
+    return false;
 }
 
 } // end namespace detail

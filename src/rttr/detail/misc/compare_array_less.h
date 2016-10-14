@@ -25,13 +25,15 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/misc/compare_less.h"
+#ifndef RTTR_COMPARE_ARRAY_LESS_H_
+#define RTTR_COMPARE_ARRAY_LESS_H_
 
-#include "rttr/detail/type/type_register_p.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/string_view.h"
 
 #include <type_traits>
+#include <cstring>
 
 namespace rttr
 {
@@ -39,21 +41,18 @@ namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// compare whether array lhs is less than rhs
+// the comparison will go down till element wise comparison
 
-bool compare_types_less_than(const void* lhs, const void* rhs, const type& t, int& result)
-{
-    if (auto cmp_f = type_register_private::get_less_than_comparator(t))
-    {
-        result = cmp_f->cmp(lhs, rhs) ? -1 : 1;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
+template<typename ElementType, std::size_t Count>
+RTTR_INLINE bool compare_array_less(const ElementType(&lhs)[Count], const ElementType(&rhs)[Count]);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
+
+#include "rttr/detail/misc/compare_array_less_impl.h"
+
+#endif // RTTR_COMPARE_ARRAY_LESS_H_

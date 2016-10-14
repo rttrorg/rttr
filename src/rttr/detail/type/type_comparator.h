@@ -40,24 +40,22 @@ namespace detail
 
 struct RTTR_LOCAL type_comparator_base
 {
-    using equal_func = bool (*)(const void* lhs, const void* rhs);
-    using less_than_func = bool (*)(const void* lhs, const void* rhs);
+    using cmp_func = bool (*)(const void* lhs, const void* rhs);
 
-    type_comparator_base(equal_func equal_f = nullptr, less_than_func less_than_f = nullptr)
-    :   equal(equal_f), less_than(less_than_f)
+    type_comparator_base(cmp_func cmp_f = [](const void*, const void*) ->bool { return false; })
+    :   cmp(cmp_f)
     {
     }
 
-    equal_func      equal;
-    less_than_func  less_than;
+    cmp_func    cmp;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct type_comparator : type_comparator_base
+struct type_equal_comparator : type_comparator_base
 {
-    type_comparator() : type_comparator_base(equal, less_than) {}
+    type_equal_comparator() : type_comparator_base(equal) {}
 
     static bool equal(const void* lhs, const void* rhs)
     {
@@ -65,6 +63,14 @@ struct type_comparator : type_comparator_base
         const T& r = *static_cast<const T*>(rhs);
         return (l == r);
     }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct type_less_than_comparator : type_comparator_base
+{
+    type_less_than_comparator() : type_comparator_base(less_than) {}
 
     static bool less_than(const void* lhs, const void* rhs)
     {

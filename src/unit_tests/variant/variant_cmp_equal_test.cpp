@@ -223,8 +223,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
         variant a = array;
         variant b = arrays;
 
-        CHECK((a == b) == true);
-        CHECK((a != b) == false);
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
     }
 
     SECTION("type_with_no_equal_operator")
@@ -286,6 +286,7 @@ static std::string convert_to_string(const point& p, bool& ok)
 TEST_CASE("variant::operator==() - custom", "[variant]")
 {
     type::register_converter_func(convert_to_string);
+    type::register_equal_comparator<point>();
 
     SECTION("equal")
     {
@@ -334,16 +335,16 @@ TEST_CASE("variant::operator==() - custom", "[variant]")
 
 TEST_CASE("variant::operator==() - no build in == operator", "[variant]")
 {
-    SECTION("no equal operator, same types")
+    SECTION("no equal operator, same types, same values")
     {
         variant a = type_with_no_equal_operator{12};
         variant b = type_with_no_equal_operator{12};
 
-        CHECK((a == b) == true);
-        CHECK((a != b) == false);
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
     }
 
-    SECTION("no equal operator, same types")
+    SECTION("no equal operator, same types, different values")
     {
         variant a = type_with_no_equal_operator{12};
         variant b = type_with_no_equal_operator{23};
@@ -352,7 +353,7 @@ TEST_CASE("variant::operator==() - no build in == operator", "[variant]")
         CHECK((a != b) == true);
     }
 
-     SECTION("no equal operator, different types")
+     SECTION("no equal operator, different types, different values")
     {
         variant a = other_type_with_no_equal_operator{12};
         variant b = type_with_no_equal_operator{23};

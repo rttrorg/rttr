@@ -123,6 +123,20 @@ void type_register::comparator(const type& t, type_comparator_base* comparator)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_register::equal_comparator(const type& t, type_comparator_base* comparator)
+{
+    type_register_private::equal_comparator(t, comparator);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register::less_than_comparator(const type& t, type_comparator_base* comparator)
+{
+    type_register_private::less_than_comparator(t, comparator);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 {
     return type_register_private::register_type(info);
@@ -177,6 +191,22 @@ std::vector<type_register_private::data_container<type_converter_base>>& type_re
 /////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_comparator_list()
+{
+    static std::vector<data_container<const type_comparator_base*>> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_equal_comparator_list()
+{
+    static std::vector<data_container<const type_comparator_base*>> obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_less_comparator_list()
 {
     static std::vector<data_container<const type_comparator_base*>> obj;
     return obj;
@@ -743,6 +773,64 @@ const type_comparator_base* type_register_private::get_comparator(const type& t)
         return itr->m_data;
     else
         return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const type_comparator_base* type_register_private::get_equal_comparator(const type& t)
+{
+    return get_type_comparator_impl(t, get_type_equal_comparator_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const type_comparator_base* type_register_private::get_less_than_comparator(const type& t)
+{
+    return get_type_comparator_impl(t, get_type_less_comparator_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const type_comparator_base*
+type_register_private::get_type_comparator_impl(const type& t,
+												const std::vector<type_register_private::data_container<const type_comparator_base*>>& comparator_list)
+ {
+    using vec_value_type = data_container<const type_comparator_base*>;
+    const auto id = t.get_id();
+    auto itr = std::lower_bound(comparator_list.cbegin(), comparator_list.cend(), id,
+                                vec_value_type::order_by_id());
+    if (itr != comparator_list.cend() && itr->m_id == id)
+        return itr->m_data;
+    else
+        return nullptr;
+ }
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::equal_comparator(const type& t, const type_comparator_base* comparator)
+{
+    register_comparator_impl(t, comparator, get_type_equal_comparator_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::less_than_comparator(const type& t, const type_comparator_base* comparator)
+{
+    register_comparator_impl(t, comparator, get_type_less_comparator_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_comparator_impl(const type& t, const type_comparator_base* comparator,
+												     std::vector<data_container<const type_comparator_base*>>& comparator_list)
+{
+    if (!t.is_valid())
+        return;
+
+    using data_type = data_container<const type_comparator_base*>;
+    comparator_list.push_back({t.get_id(), comparator});
+    std::stable_sort(comparator_list.begin(), comparator_list.end(),
+                     data_type::order_by_id());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

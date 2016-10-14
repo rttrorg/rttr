@@ -413,9 +413,26 @@ RTTR_INLINE void type::register_converter_func(F func)
 template<typename T>
 void type::register_comparators()
 {
-    static_assert(detail::is_class_template<T>::value, "No template type provided! Please use this function only with template types, e.g. My_Custom_Type<T>.");
-    static detail::type_comparator<T> cmp;
-    detail::type_register::comparator(type::get<T>(), &cmp);
+	register_equal_comparator<T>();
+	register_less_than_comparator<T>();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void type::register_equal_comparator()
+{
+    static detail::type_equal_comparator<T> cmp;
+    detail::type_register::equal_comparator(type::get<T>(), &cmp);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void type::register_less_than_comparator()
+{
+    static detail::type_less_than_comparator<T> cmp;
+    detail::type_register::less_than_comparator(type::get<T>(), &cmp);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

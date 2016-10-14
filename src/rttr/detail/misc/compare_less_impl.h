@@ -29,6 +29,7 @@
 #define RTTR_COMPARE_LESS_IMPL_H_
 
 #include "rttr/type.h"
+#include "rttr/detail/misc/compare_array_less.h"
 #include <type_traits>
 
 namespace rttr

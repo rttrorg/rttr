@@ -90,11 +90,15 @@ public:
     static void register_metadata( const type& t, std::vector<metadata> data);
     static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
     static void comparator(const type& t, const type_comparator_base* comparator);
+    static void equal_comparator(const type& t, const type_comparator_base* comparator);
+    static void less_than_comparator(const type& t, const type_comparator_base* comparator);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
     static const type_converter_base* get_converter(const type& source_type, const type& target_type);
     static const type_comparator_base* get_comparator(const type& t);
+    static const type_comparator_base* get_equal_comparator(const type& t);
+    static const type_comparator_base* get_less_than_comparator(const type& t);
     static variant get_metadata(const type& t, const variant& key);
     static enumeration get_enumeration(const type& t);
 
@@ -145,8 +149,17 @@ private:
 
     static std::vector<data_container<type_converter_base>>& get_type_converter_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_comparator_list();
+
+    static std::vector<data_container<const type_comparator_base*>>& get_type_equal_comparator_list();
+    static std::vector<data_container<const type_comparator_base*>>& get_type_less_comparator_list();
+
     static std::vector<data_container<enumeration_wrapper_base>>& get_enumeration_list();
     static std::vector<data_container<std::vector<metadata>>>& get_metadata_type_list();
+
+    static void register_comparator_impl(const type& t, const type_comparator_base* comparator,
+                                         std::vector<data_container<const type_comparator_base*>>& comparator_list);
+    static const type_comparator_base* get_type_comparator_impl(const type& t,
+                                                                const std::vector<data_container<const type_comparator_base*>>& comparator_list);
 
     static ::rttr::property get_type_property(const type& t, string_view name);
     static ::rttr::method get_type_method(const type& t, string_view name);

@@ -25,13 +25,15 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/misc/compare_less.h"
+#ifndef RTTR_COMPARE_ARRAY_LESS_IMPL_H_
+#define RTTR_COMPARE_ARRAY_LESS_IMPL_H_
 
-#include "rttr/detail/type/type_register_p.h"
-#include "rttr/type.h"
-#include "rttr/variant.h"
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/misc/compare_equal.h"
 
 #include <type_traits>
+#include <cstring>
 
 namespace rttr
 {
@@ -40,20 +42,47 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool compare_types_less_than(const void* lhs, const void* rhs, const type& t, int& result)
+template<typename ElementType>
+struct compare_array_less_impl
 {
-    if (auto cmp_f = type_register_private::get_less_than_comparator(t))
+    int operator()(const ElementType &lhs, const ElementType &rhs)
     {
-        result = cmp_f->cmp(lhs, rhs) ? -1 : 1;
+        return (lhs < rhs ? - 1 : ((rhs < lhs) ? 1 : 0));
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType, std::size_t Count>
+struct compare_array_less_impl<ElementType[Count]>
+{
+    int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+    {
+        int flag = 0;
+        for(std::size_t i = 0; i < Count; ++i)
+        {
+            if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)
+                return flag;
+        }
+
+        return 0;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType, std::size_t Count>
+RTTR_INLINE bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+{
+    if (compare_array_less_impl<ElementType[Count]>()(lhs, rhs) == -1)
         return true;
-    }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_COMPARE_ARRAY_LESS_IMPL_H_

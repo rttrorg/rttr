@@ -99,6 +99,10 @@ public:
 
     static void comparator(const type& t, type_comparator_base* comparator);
 
+    static void equal_comparator(const type& t, type_comparator_base* comparator);
+
+    static void less_than_comparator(const type& t, type_comparator_base* comparator);
+
     /*!
      * \brief Register the type info for the given name
      *
