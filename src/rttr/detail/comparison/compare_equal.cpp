@@ -25,15 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_COMPARE_EQUAL_IMPL_H_
-#define RTTR_COMPARE_EQUAL_IMPL_H_
+#include "rttr/detail/comparison/compare_equal.h"
 
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/type/type_register_p.h"
 #include "rttr/type.h"
-#include "rttr/detail/misc/compare_array_equal.h"
 
-#include <type_traits>
 #include <cstring>
 
 namespace rttr
@@ -41,42 +37,13 @@ namespace rttr
 namespace detail
 {
 
-RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * \brief This function return the result of the expression `lhs == rhs` when the type \p T has the equal operator defined,
- *         otherwise this function will return false.
- */
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_enum<T>::value || is_comparable_type<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
+bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
 {
-    return (lhs == rhs);
+    if (auto cmp_f = type_register_private::get_equal_comparator(t))
+        return cmp_f->cmp(lhs, rhs);
+
+    return false;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
-{
-    return compare_array_equal(lhs, rhs);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
-
-#endif // RTTR_COMPARE_EQUAL_IMPL_H_

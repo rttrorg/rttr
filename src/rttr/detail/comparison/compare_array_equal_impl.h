@@ -25,11 +25,14 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/detail/misc/compare_equal.h"
+#ifndef RTTR_COMPARE_ARRAY_EQUAL_IMPL_H_
+#define RTTR_COMPARE_ARRAY_EQUAL_IMPL_H_
 
-#include "rttr/detail/type/type_register_p.h"
-#include "rttr/type.h"
+#include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/misc/misc_type_traits.h"
+#include "rttr/detail/comparison/compare_equal.h"
 
+#include <type_traits>
 #include <cstring>
 
 namespace rttr
@@ -37,13 +40,47 @@ namespace rttr
 namespace detail
 {
 
-bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
-{
-    if (auto cmp_f = type_register_private::get_equal_comparator(t))
-        return cmp_f->cmp(lhs, rhs);
+/////////////////////////////////////////////////////////////////////////////////////////
+// default impl, compares per type
 
-    return false;
+template<typename ElementType>
+struct compare_array_equal_impl
+{
+    bool operator()(const ElementType &lhs, const ElementType &rhs)
+    {
+        return compare_equal(lhs, rhs);
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType, std::size_t Count>
+struct compare_array_equal_impl<ElementType[Count]>
+{
+    bool operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+    {
+        for(std::size_t i = 0; i < Count; ++i)
+        {
+            if (!compare_array_equal_impl<ElementType>()(lhs[i], rhs[i]))
+                return false;
+        }
+
+        return true;
+    }
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType, std::size_t Count>
+RTTR_INLINE bool compare_array_equal(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+{
+    return compare_array_equal_impl<ElementType[Count]>()(lhs, rhs);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
+
+#endif // RTTR_COMPARE_ARRAY_EQUAL_IMPL_H_

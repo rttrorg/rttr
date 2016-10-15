@@ -57,6 +57,14 @@ set(HEADER_FILES access_levels.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
+                 detail/comparison/compare_array_less.h
+                 detail/comparison/compare_array_less_impl.h
+                 detail/comparison/compare_array_equal.h
+                 detail/comparison/compare_array_equal_impl.h
+                 detail/comparison/compare_equal.h
+                 detail/comparison/compare_equal_impl.h
+                 detail/comparison/compare_less.h
+                 detail/comparison/compare_less_impl.h
                  detail/constructor/constructor_invoker.h
                  detail/constructor/constructor_wrapper.h
                  detail/constructor/constructor_wrapper_defaults.h
@@ -88,15 +96,6 @@ set(HEADER_FILES access_levels.h
                  detail/misc/argument_wrapper.h
                  detail/misc/argument_extractor.h
                  detail/misc/class_item_mapper.h
-                 detail/misc/compare_equal.h
-                 detail/misc/compare_equal_impl.h
-                 detail/misc/compare_less.h
-                 detail/misc/compare_less_impl.h
-                 detail/misc/compare_array_equal.h
-                 detail/misc/compare_array_less.h
-                 detail/misc/compare_array_equal_impl.h
-                 detail/misc/compare_array_less_impl.h
-                 detail/misc/data_address_container.h
                  detail/misc/flat_map.h
                  detail/misc/flat_multimap.h
                  detail/misc/function_traits.h
@@ -156,8 +155,8 @@ set(SOURCE_FILES constructor.cpp
                  type.cpp
                  variant.cpp
                  variant_array_view.cpp
-                 detail/misc/compare_equal.cpp
-                 detail/misc/compare_less.cpp
+                 detail/comparison/compare_equal.cpp
+                 detail/comparison/compare_less.cpp
                  detail/misc/standard_types.cpp
                  detail/conversion/std_conversion_functions.cpp
                  detail/constructor/constructor_wrapper_base.cpp

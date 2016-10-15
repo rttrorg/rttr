@@ -33,8 +33,8 @@
 #include "rttr/detail/misc/argument_wrapper.h"
 #include "rttr/detail/variant_array_view/variant_array_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
-#include "rttr/detail/misc/compare_equal.h"
-#include "rttr/detail/misc/compare_less.h"
+#include "rttr/detail/comparison/compare_equal.h"
+#include "rttr/detail/comparison/compare_less.h"
 
 #include <cstdint>
 

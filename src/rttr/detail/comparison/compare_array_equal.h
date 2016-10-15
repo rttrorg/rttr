@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_COMPARE_EQUAL_H_
-#define RTTR_COMPARE_EQUAL_H_
+#ifndef RTTR_COMPARE_ARRAY_EQUAL_H_
+#define RTTR_COMPARE_ARRAY_EQUAL_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
@@ -40,40 +40,19 @@ namespace rttr
 namespace detail
 {
 
-template<typename T>
-using is_comparable_type = std::integral_constant<bool, std::is_same<T, std::string>::value ||
-                                                        std::is_same<T, string_view>::value ||
-                                                        std::is_arithmetic<T>::value ||
-                                                        std::is_same<T, std::nullptr_t>::value
-                                                 >;
-
 /////////////////////////////////////////////////////////////////////////////////////////
-
-/*!
- * \brief This function return the result of the expression `lhs == rhs` when the type \p T has the equal operator defined,
- *         otherwise this function will return false.
- */
-template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_enum<T>::value || is_comparable_type<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs);
-
 /////////////////////////////////////////////////////////////////////////////////////////
+// compare whether two arrays are the same or not
+// the comparison will go down till element wise comparison
 
-template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs);
+template<typename ElementType, std::size_t Count>
+RTTR_INLINE bool compare_array_equal(const ElementType(&lhs)[Count], const ElementType(&rhs)[Count]);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/misc/compare_equal_impl.h"
+#include "rttr/detail/comparison/compare_array_equal_impl.h"
 
-#endif // RTTR_COMPARE_EQUAL_H_
+#endif // RTTR_COMPARE_ARRAY_EQUAL_H_

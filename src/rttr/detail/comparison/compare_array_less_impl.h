@@ -25,12 +25,12 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_COMPARE_ARRAY_EQUAL_H_
-#define RTTR_COMPARE_ARRAY_EQUAL_H_
+#ifndef RTTR_COMPARE_ARRAY_LESS_IMPL_H_
+#define RTTR_COMPARE_ARRAY_LESS_IMPL_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/string_view.h"
+#include "rttr/detail/comparison/compare_equal.h"
 
 #include <type_traits>
 #include <cstring>
@@ -41,18 +41,48 @@ namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType>
+struct compare_array_less_impl
+{
+    int operator()(const ElementType &lhs, const ElementType &rhs)
+    {
+        return (lhs < rhs ? - 1 : ((rhs < lhs) ? 1 : 0));
+    }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////
-// compare whether two arrays are the same or not
-// the comparison will go down till element wise comparison
 
 template<typename ElementType, std::size_t Count>
-RTTR_INLINE bool compare_array_equal(const ElementType(&lhs)[Count], const ElementType(&rhs)[Count]);
+struct compare_array_less_impl<ElementType[Count]>
+{
+    int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+    {
+        int flag = 0;
+        for(std::size_t i = 0; i < Count; ++i)
+        {
+            if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)
+                return flag;
+        }
+
+        return 0;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementType, std::size_t Count>
+RTTR_INLINE bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
+{
+    if (compare_array_less_impl<ElementType[Count]>()(lhs, rhs) == -1)
+        return true;
+
+    return false;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#include "rttr/detail/misc/compare_array_equal_impl.h"
-
-#endif // RTTR_COMPARE_ARRAY_EQUAL_H_
+#endif // RTTR_COMPARE_ARRAY_LESS_IMPL_H_
