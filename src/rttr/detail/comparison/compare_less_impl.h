@@ -43,7 +43,7 @@ template<typename T>
 RTTR_INLINE typename std::enable_if<is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_less_than(const T& lhs, const T& rhs, int& result)
 {
-    result = (lhs < rhs) ? -1 : 1;
+    result = (lhs < rhs ? - 1 : ((rhs < lhs) ? 1 : 0));
     return true;
 }
 

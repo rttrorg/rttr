@@ -44,7 +44,7 @@ bool compare_types_less_than(const void* lhs, const void* rhs, const type& t, in
 {
     if (auto cmp_f = type_register_private::get_less_than_comparator(t))
     {
-        result = cmp_f->cmp(lhs, rhs) ? -1 : 1;
+        result = cmp_f->cmp(lhs, rhs) ? -1 : cmp_f->cmp(rhs, lhs) ? 1 : 0;
         return true;
     }
     else
