@@ -25,12 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_COMPARE_ARRAY_LESS_IMPL_H_
-#define RTTR_COMPARE_ARRAY_LESS_IMPL_H_
+#ifndef RTTR_COMPARABLE_TYPES_H_
+#define RTTR_COMPARABLE_TYPES_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/detail/comparison/compare_less.h"
+#include "rttr/string_view.h"
 
 #include <type_traits>
 #include <cstring>
@@ -42,49 +41,17 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ElementType>
-struct compare_array_less_impl
-{
-    int operator()(const ElementType &lhs, const ElementType &rhs)
-    {
-        int result = 0;
-        compare_less_than(lhs, rhs, result);
-        return result;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ElementType, std::size_t Count>
-struct compare_array_less_impl<ElementType[Count]>
-{
-    int operator()(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
-    {
-        int flag = 0;
-        for(std::size_t i = 0; i < Count; ++i)
-        {
-            if ((flag = compare_array_less_impl<ElementType>()(lhs[i], rhs[i])) != 0)
-                return flag;
-        }
-
-        return 0;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename ElementType, std::size_t Count>
-RTTR_INLINE bool compare_array_less(const ElementType (&lhs)[Count], const ElementType (&rhs)[Count])
-{
-    if (compare_array_less_impl<ElementType[Count]>()(lhs, rhs) == -1)
-        return true;
-
-    return false;
-}
+template<typename T>
+using is_comparable_type = std::integral_constant<bool, std::is_same<T, std::string>::value ||
+                                                        std::is_same<T, string_view>::value ||
+                                                        std::is_arithmetic<T>::value ||
+                                                        std::is_enum<T>::value ||
+                                                        std::is_same<T, std::nullptr_t>::value
+                                                 >;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_COMPARE_ARRAY_LESS_IMPL_H_
+#endif // RTTR_COMPARABLE_TYPES_H_

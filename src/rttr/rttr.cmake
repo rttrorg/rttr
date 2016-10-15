@@ -57,6 +57,7 @@ set(HEADER_FILES access_levels.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
+                 detail/comparison/comparable_types.h
                  detail/comparison/compare_array_less.h
                  detail/comparison/compare_array_less_impl.h
                  detail/comparison/compare_array_equal.h

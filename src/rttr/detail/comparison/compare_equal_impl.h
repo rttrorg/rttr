@@ -41,8 +41,6 @@ namespace rttr
 namespace detail
 {
 
-RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -50,7 +48,7 @@ RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& 
  *         otherwise this function will return false.
  */
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_enum<T>::value || is_comparable_type<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return (lhs == rhs);
@@ -59,7 +57,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_types_equal(&lhs, &rhs, type::get<T>());
@@ -68,7 +66,7 @@ compare_equal(const T& lhs, const T& rhs)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs)
 {
     return compare_array_equal(lhs, rhs);

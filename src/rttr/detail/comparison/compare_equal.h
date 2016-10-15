@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
-#include "rttr/string_view.h"
+#include "rttr/detail/comparison/comparable_types.h"
 
 #include <type_traits>
 #include <cstring>
@@ -40,33 +40,26 @@ namespace rttr
 namespace detail
 {
 
-template<typename T>
-using is_comparable_type = std::integral_constant<bool, std::is_same<T, std::string>::value ||
-                                                        std::is_same<T, string_view>::value ||
-                                                        std::is_arithmetic<T>::value ||
-                                                        std::is_same<T, std::nullptr_t>::value
-                                                 >;
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * \brief This function return the result of the expression `lhs == rhs` when the type \p T has the equal operator defined,
- *         otherwise this function will return false.
- */
 template<typename T>
-RTTR_INLINE typename std::enable_if<std::is_enum<T>::value || is_comparable_type<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!std::is_enum<T>::value && !is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
