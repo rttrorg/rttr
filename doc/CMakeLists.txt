@@ -41,6 +41,7 @@ set(DOXYGEN_STRIP_FROM_PATH   "${CMAKE_SOURCE_DIR}/src/rttr")
 set(DOXYGEN_CUSTOM_HTML_DIR   "rttr-${RTTR_VERSION_MAJOR}-${RTTR_VERSION_MINOR}-${RTTR_VERSION_PATCH}")
 set(DOXYGEN_PREDEFINED        "DOXYGEN \\
                                RTTR_INLINE= \\
+                               RTTR_FORCE_INLINE= \\
                                RTTR_API= \\
                                RTTR_NOEXCEPT=noexcept \\
                                RTTR_CONSTEXPR=constexpr \\
