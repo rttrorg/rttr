@@ -189,56 +189,56 @@ RTTR_FORCE_INLINE std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 
 RTTR_FORCE_INLINE bool type::is_class() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_class;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_class);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_enum;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_enum);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_array() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_array;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_array);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_pointer;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_arithmetic() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_arithmetic;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_arithmetic);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_function_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_function_pointer;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_function_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_member_object_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_member_object_pointer;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_member_object_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_FORCE_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_member_function_pointer;
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_member_function_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

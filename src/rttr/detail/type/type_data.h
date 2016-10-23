@@ -28,7 +28,6 @@
 #ifndef RTTR_TYPE_DATA_H_
 #define RTTR_TYPE_DATA_H_
 
-#include <type_traits>
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/detail/type/base_classes.h"
@@ -42,6 +41,9 @@
 #include "rttr/property.h"
 #include "rttr/constructor.h"
 #include "rttr/destructor.h"
+
+#include <type_traits>
+#include <bitset>
 
 
 namespace rttr
@@ -77,6 +79,22 @@ struct class_data
     destructor                  m_dtor;
 };
 
+enum class type_trait_infos : std::size_t
+{
+    is_class = 0,
+    is_enum,
+    is_array,
+    is_pointer,
+    is_arithmetic,
+    is_function_pointer,
+    is_member_object_pointer,
+    is_member_function_pointer,
+
+    TYPE_TRAIT_COUNT
+};
+
+ using type_traits = std::bitset<static_cast<std::size_t>(type_trait_infos::TYPE_TRAIT_COUNT)>;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 namespace impl
@@ -101,15 +119,6 @@ struct type_data
     std::size_t get_sizeof;
     std::size_t get_pointer_dimension;
 
-    bool is_class;
-    bool is_enum;
-    bool is_array;
-    bool is_pointer;
-    bool is_arithmetic;
-    bool is_function_pointer;
-    bool is_member_object_pointer;
-    bool is_member_function_pointer;
-
     impl::create_variant_func create_variant;
     impl::get_base_types_func get_base_types; // FIXEM: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
@@ -118,9 +127,11 @@ struct type_data
 
     uint16_t type_index;
     static const uint16_t m_invalid_id = 0;
-
     RTTR_FORCE_INLINE bool is_valid() const RTTR_NOEXCEPT { return (type_index != m_invalid_id); }
+    RTTR_FORCE_INLINE bool type_trait_value(type_trait_infos type_trait) const RTTR_NOEXCEPT { return m_type_traits.test(static_cast<std::size_t>(type_trait)); }
 
+
+    type_traits m_type_traits;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -216,6 +227,10 @@ struct wrapper_type_info<T, false>
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
+using type_trait_value = uint64_t;
+#define TYPE_TRAIT_TO_BITSET_VALUE(trait) (static_cast<std::uint64_t>(std::trait<T>::value) << static_cast<std::size_t>(type_trait_infos::trait))
+#define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
+
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT
 {
@@ -227,19 +242,19 @@ type_data& get_type_data() RTTR_NOEXCEPT
                                       get_size_of<T>::value(),
                                       pointer_count<T>::value,
 
-                                      std::is_class<T>(),
-                                      std::is_enum<T>(),
-                                      ::rttr::detail::is_array<T>(),
-                                      std::is_pointer<T>(),
-                                      std::is_arithmetic<T>(),
-                                      is_function_ptr<T>(),
-                                      std::is_member_object_pointer<T>(),
-                                      std::is_member_function_pointer<T>(),
-
                                       &create_variant_func<T>::create_variant,
                                       &base_classes<T>::get_types,
                                       &get_type_class_data<T>,
-                                      0 };
+                                      0,
+                                      type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_array, is_array) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_pointer) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_arithmetic) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_object_pointer) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer)}
+                                      };
     return instance;
 }
 
@@ -251,20 +266,11 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                       nullptr,
                                       std::string(""), string_view(),
                                       0, 0,
-
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-
                                       &create_invalid_variant_policy::create_variant,
                                       &base_classes<void>::get_types,
                                       &get_invalid_type_class_data,
-                                      0};
+                                      0,
+                                      type_trait_value{0}};
 
     instance.raw_type_data  = &instance;
     instance.wrapped_type   = &instance;
