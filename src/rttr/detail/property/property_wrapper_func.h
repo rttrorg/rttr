@@ -33,7 +33,8 @@
 // global function getter/setter - function pointer
 
 template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -87,7 +88,8 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
 // global function getter
 
 template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
 
@@ -133,7 +135,8 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
 // global function getter/setter
 
 template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -192,7 +195,8 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
 // global function getter
 
 template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:

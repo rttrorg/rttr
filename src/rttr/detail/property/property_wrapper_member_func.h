@@ -33,7 +33,8 @@
 // Getter/Setter - pointer to member function
 
 template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -92,7 +93,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
 // Getter - pointer to member function
 
 template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;
@@ -141,7 +143,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
 
 // Getter/Setter pointer to member function
 template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
@@ -205,7 +208,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
 // Getter - pointer to member function
 
 template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;

@@ -33,7 +33,8 @@
 // global property read write
 
 template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         property_wrapper(string_view name, type declaring_type,
@@ -80,7 +81,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
 // global property read_only
 
 template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         property_wrapper(string_view name, type declaring_type,
@@ -119,7 +121,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
 // global property read write
 
 template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         property_wrapper(string_view name, type declaring_type,
@@ -167,7 +170,8 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
 // global property read_only
 
 template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count> 
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         property_wrapper(string_view name, type declaring_type,

@@ -33,7 +33,8 @@
 // pointer to member - read write
 
 template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, set_value, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, set_value, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
@@ -82,7 +83,8 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 // pointer to member - read only (because of std::false_type)
 
 template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
@@ -126,7 +128,8 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 // pointer to member - read write
 
 template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
@@ -180,7 +183,8 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
 // pointer to member - read only
 
 template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, read_only, Metadata_Count> : public property_wrapper_base, public metadata_handler<Metadata_Count>
+class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
