@@ -303,6 +303,8 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, get_as_ref_wrapper
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
+    using policy_type = std::reference_wrapper<add_const_t<remove_reference_t<return_type>>>;
+
     public:
         property_wrapper(string_view name, type declaring_type,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
@@ -319,7 +321,7 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, get_as_ref_wrapper
         bool is_valid()     const RTTR_NOEXCEPT { return true;  }
         bool is_readonly()  const RTTR_NOEXCEPT { return true; }
         bool is_static()    const RTTR_NOEXCEPT { return true; }
-        type get_type()     const RTTR_NOEXCEPT { return type::get< std::reference_wrapper<add_const_t<remove_reference_t<return_type>>> >(); }
+        type get_type()     const RTTR_NOEXCEPT { return type::get<policy_type>(); }
         bool is_array()     const RTTR_NOEXCEPT { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }

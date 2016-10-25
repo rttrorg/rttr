@@ -90,6 +90,16 @@ RTTR_REGISTRATION
             policy::prop::bind_as_ptr
         )
         .property("callback", &property_member_func_test::get_function_cb, &property_member_func_test::set_function_cb)
+        .property("p5", &property_member_func_test::get_text, &property_member_func_test::set_text)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
+        .property_readonly("p6", &property_member_func_test::get_int_ref)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
         ;
 }
 
@@ -226,5 +236,65 @@ TEST_CASE("property - class function - function pointer", "[property]")
     REQUIRE(var.is_type<func_ptr>() == true);
     CHECK(var.get_value<func_ptr>() == cb);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class function - as_reference_wrapper", "[property]")
+{
+    property_member_func_test obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p5");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == false);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<std::reference_wrapper<const std::string>>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // valid invoke
+    const std::string text("Hello World");
+    CHECK(prop.set_value(obj, std::cref(text)) == true);
+    CHECK(prop.get_value(obj).is_type<std::reference_wrapper<const std::string>>() == true);
+    CHECK(prop.get_value(obj).get_value<std::reference_wrapper<const std::string>>().get() == "Hello World");
+
+    // invalid invoke
+    CHECK(prop.set_value(obj, 42) == false);
+    CHECK(prop.set_value(instance(), 42) == false);
+    CHECK(prop.get_value(g_invalid_instance).is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - class function - read only - as_reference_wrapper", "[property]")
+{
+    property_member_func_test obj;
+    type prop_type = type::get(obj);
+
+    property prop = prop_type.get_property("p6");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == false);
+    auto e = prop.get_type().get_name();
+    CHECK(prop.get_type() == type::get<std::reference_wrapper<const int>>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    REQUIRE(prop.get_value(obj).is_type<std::reference_wrapper<const int>>() == true);
+    CHECK(prop.get_value(obj).get_value<std::reference_wrapper<const int>>().get() == 12);
+
+    // invalid invoke
+    CHECK(prop.set_value(obj, 23) == false);
+    CHECK(prop.set_value("wrong instance", 23) == false);
+    CHECK(prop.get_value(g_invalid_instance).is_valid() == false);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
