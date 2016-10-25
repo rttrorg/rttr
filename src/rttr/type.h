@@ -1033,13 +1033,6 @@ class RTTR_API type
         RTTR_FORCE_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns a normalized string of the given compiler depended type name.
-         *
-         * \return A normalized string of the given original type name.
-         */
-        static std::string normalize_orig_name(string_view name);
-
-        /*!
          * \brief Initialize all the global variables needed to retrieve the type informations.
          *
          */

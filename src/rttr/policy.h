@@ -156,6 +156,41 @@ struct RTTR_API policy
          * \endcode
          */
         static const detail::bind_as_ptr        bind_as_ptr;
+
+        /*!
+         * The \ref as_reference_wrapper policy will bind a member object as *std::reference_wrapper* type.
+         *
+         * This can be useful when binding big data types, like arrays, to avoid copies during get/set of the property.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * using namespace rttr;
+         * struct Foo
+         * {
+         *   std::vector<int> vec;
+         * };
+         *
+         * RTTR_REGISTRATION
+         * {
+         *      registration::class_<Foo>("Foo")
+         *                   .property("vec", &Foo::vec)
+         *                   (
+         *                       policy::prop::as_reference_wrapper
+         *                   );
+         * }
+         *
+         * int main()
+         * {
+         *   Foo obj;
+         *   property prop = type::get<Foo>().get_property("vec");
+         *   variant var = prop.get_value(obj);
+         *   std::cout << var.is_type<std::reference_wrapper<std::vector<int>>>(); // prints "true"
+         *   prop.set_value(obj, var);      // not really necessary, but remark that now a std::reference_wrapper<std::vector<int>> is expected
+         *   return 0;
+         * }
+         * \endcode
+         */
+        static const detail::as_reference_wrapper        as_reference_wrapper;
     };
 
     /*!

@@ -42,6 +42,12 @@ struct return_as_ptr
 struct set_as_ptr
 {};
 
+struct set_as_ref_wrapper
+{};
+
+struct get_as_ref_wrapper
+{};
+
 struct return_as_copy
 {};
 
@@ -89,7 +95,28 @@ struct get_setter_policy<bind_as_ptr>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-using property_policy_list  = type_list<bind_as_ptr, read_only>;
+struct as_reference_wrapper
+{};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+struct get_getter_policy<as_reference_wrapper>
+{
+    using type = get_as_ref_wrapper;
+};
+
+template<>
+struct get_setter_policy<as_reference_wrapper>
+{
+    using type = set_as_ref_wrapper;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+using property_policy_list = type_list<bind_as_ptr, read_only, as_reference_wrapper>;
 
 } // end namespace detail;
 

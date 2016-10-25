@@ -78,6 +78,16 @@ RTTR_REGISTRATION
             policy::prop::bind_as_ptr
         )
         .property_readonly("global_func_5", [](){ return 45;})
+        .property_readonly("global_func_6", &get_int_value)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
+        .property("global_func_7", &get_name, &set_name)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
         ;
 }
 
@@ -189,6 +199,53 @@ TEST_CASE("property - global function - read only - std::function", "[property]"
     variant var = prop.get_value(instance());
     CHECK(var.is_type<int>() == true);
     CHECK(var.get_value<int>() == 45);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global function - read only - as_reference_wrapper", "[property]")
+{
+    property prop = type::get_global_property("global_func_6");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == true);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get<std::reference_wrapper<const int>>());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // valid invoke
+    CHECK(prop.get_value(instance()).is_type<std::reference_wrapper<const int>>() == true);
+    CHECK(prop.get_value(instance()).get_value<std::reference_wrapper<const int>>().get() == 42);
+
+    // invalid invoke
+    CHECK(prop.set_value(instance(), 23) == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global function - as_reference_wrapper", "[property]")
+{
+    property prop = type::get_global_property("global_func_7");
+    REQUIRE(prop.is_valid() == true);
+    // metadata
+    CHECK(prop.is_readonly() == false);
+    CHECK(prop.is_static() == true);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get< std::reference_wrapper<const std::string> >());
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // valid invoke
+    const std::string text("Hello World");
+    CHECK(prop.set_value(instance(), std::ref(text)) == true);
+    CHECK(prop.get_value(instance()).is_type< std::reference_wrapper<const std::string> >() == true);
+    CHECK(prop.get_value(instance()).get_value< std::reference_wrapper<const std::string> >().get() == "Hello World");
+
+    // invalid invoke
+    CHECK(prop.set_value(instance(), 42) == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

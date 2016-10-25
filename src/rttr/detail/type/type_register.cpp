@@ -246,7 +246,7 @@ bool type_register_private::register_name(uint16_t& id, type_data& info)
     ++m_type_id_counter;
 
     orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
-    info.name = derive_name(*info.array_raw_type, info.type_name);
+    info.name = derive_name(*info.wrapped_type, *info.array_raw_type, info.type_name);
     get_custom_name_to_id().insert(std::make_pair(info.name, type(&info)));
 
     id = m_type_id_counter;
@@ -321,6 +321,54 @@ type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool rotate_char_when_whitespace_before(std::string& text, std::string::size_type& pos, char c)
+{
+    auto result = text.find(c, pos);
+    if (result != std::string::npos && result > 0)
+    {
+        if (::isspace(text[result - 1]))
+        {
+            text[result - 1] = c;
+            text[result] = ' ';
+        }
+        pos = result + 1;
+        return true;
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static void move_pointer_and_ref_to_type(std::string& type_name)
+{
+    std::string::size_type pos = 0;
+    while(pos < type_name.length())
+    {
+        if (!rotate_char_when_whitespace_before(type_name, pos, '*') &&
+            !rotate_char_when_whitespace_before(type_name, pos, '&') &&
+            !rotate_char_when_whitespace_before(type_name, pos, ')'))
+        {
+            pos = std::string::npos;
+        }
+    }
+
+    const auto non_whitespace = type_name.find_last_not_of(' ');
+    type_name.resize(non_whitespace + 1);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static std::string normalize_orig_name(string_view name)
+{
+    std::string normalized_name = name.to_string();
+
+    move_pointer_and_ref_to_type(normalized_name);
+    return normalized_name;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 static std::string derive_name_impl(const std::string& src_name, const std::string& raw_name,
                                     const std::string& custom_name)
 {
@@ -357,15 +405,16 @@ static std::string derive_name_impl(const std::string& src_name, const std::stri
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_register_private::derive_name(const type_data& array_raw_type, string_view name)
+std::string type_register_private::derive_name(const type_data& wrapper_type, const type_data& array_raw_type, string_view name)
 {
     if (!array_raw_type.is_valid())
-        return type::normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
+        return normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
+
+    std::string src_name_orig = normalize_orig_name(name);
 
     const auto& custom_name = array_raw_type.name;
-    std::string raw_name_orig = type::normalize_orig_name(array_raw_type.type_name);
+    std::string raw_name_orig = normalize_orig_name(array_raw_type.type_name);
 
-    const std::string src_name_orig = type::normalize_orig_name(name);
     return derive_name_impl(src_name_orig, raw_name_orig, custom_name);
 }
 
@@ -385,7 +434,7 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
     type_data.name = custom_name.to_string();
 
     custom_name_to_id.insert(std::make_pair(type_data.name, t));
-    std::string raw_name = type::normalize_orig_name(t.m_type_data->type_name);
+    std::string raw_name = normalize_orig_name(t.m_type_data->type_name);
     const auto& t_name = type_data.name;
 
     auto tmp_type_list = custom_name_to_id.value_data();

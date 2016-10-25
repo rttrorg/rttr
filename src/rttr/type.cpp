@@ -64,45 +64,6 @@ namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool rotate_char_when_whitespace_before(std::string& text, std::string::size_type& pos, char c)
-{
-    auto result = text.find(c, pos);
-    if (result != std::string::npos && result > 0)
-    {
-        if (::isspace(text[result - 1]))
-        {
-            text[result - 1] = c;
-            text[result] = ' ';
-        }
-        pos = result + 1;
-        return true;
-    }
-
-    return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void move_pointer_and_ref_to_type(std::string& type_name)
-{
-    std::string::size_type pos = 0;
-    while(pos < type_name.length())
-    {
-        if (!rotate_char_when_whitespace_before(type_name, pos, '*') &&
-            !rotate_char_when_whitespace_before(type_name, pos, '&') &&
-            !rotate_char_when_whitespace_before(type_name, pos, ')'))
-        {
-            pos = std::string::npos;
-        }
-    }
-
-    const auto non_whitespace = type_name.find_last_not_of(' ');
-    type_name.resize(non_whitespace + 1);
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 template<typename T>
 static array_range<T> get_items_for_type(const type& t,
                                          const std::vector<T>& vec)
@@ -115,16 +76,6 @@ static array_range<T> get_items_for_type(const type& t,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::string type::normalize_orig_name(string_view name)
-{
-    std::string normalized_name = name.to_string();
-
-    move_pointer_and_ref_to_type(normalized_name);
-    return normalized_name;
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
