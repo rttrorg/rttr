@@ -43,6 +43,16 @@ struct property_accessor
     }
 };
 
+template<typename T>
+struct property_accessor<std::reference_wrapper<T>>
+{
+    static bool set_value(T& prop, argument& arg)
+    {
+        prop = arg.get_value<std::reference_wrapper<T>>().get();
+        return true;
+    }
+};
+
 template<typename T, std::size_t N>
 struct property_accessor<T[N]>
 {
