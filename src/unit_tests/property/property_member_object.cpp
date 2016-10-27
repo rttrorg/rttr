@@ -246,6 +246,13 @@ TEST_CASE("property - class object - as_reference_wrapper", "[property]")
     CHECK(value.get() == obj._p3);
     CHECK(prop.set_value(obj, value) == true);
 
+    // check array size
+    variant var = prop.get_value(obj);
+    CHECK(var.get_type().is_wrapper() == true);
+    CHECK(var.get_type().get_wrapped_type().is_array() == true);
+    auto array_view = var.create_array_view();
+    CHECK(array_view.get_size() == 1000);
+
     std::vector<int> some_vec(1, 12);
     CHECK(prop.set_value(obj, std::ref(some_vec)) == true);
     CHECK(some_vec == obj._p3);
