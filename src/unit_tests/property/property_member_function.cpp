@@ -281,7 +281,6 @@ TEST_CASE("property - class function - read only - as_reference_wrapper", "[prop
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
-    auto e = prop.get_type().get_name();
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const int>>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");

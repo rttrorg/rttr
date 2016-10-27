@@ -58,6 +58,16 @@ RTTR_REGISTRATION
             metadata("Description", "Some Text"),
             policy::prop::bind_as_ptr
         )
+        .property("global_obj_5", &g_my_array)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
+        .property_readonly("global_obj_6", &g_int_value)
+        (
+            metadata("Description", "Some Text"),
+            policy::prop::as_reference_wrapper
+        )
         ;
 }
 
@@ -159,6 +169,61 @@ TEST_CASE("property - global object - read only - bind as ptr", "[property]")
 
     // invalid invoke
     CHECK(prop.set_value(instance(), 42) == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global object - as_reference_wrapper", "[property]")
+{
+    property prop = type::get_global_property("global_obj_5");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == false);
+    CHECK(prop.is_static() == false);
+    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type() == type::get< std::reference_wrapper<std::vector<int>> >());
+    CHECK(prop.get_type().is_wrapper() == true);
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // invoke
+    REQUIRE(prop.get_value(instance()).is_type< std::reference_wrapper<std::vector<int>> >() == true);
+    auto value = prop.get_value(instance()).get_value< std::reference_wrapper<std::vector<int>> >();
+    CHECK(value.get() == g_my_array);
+    CHECK(prop.set_value(instance(), value) == true);
+
+    std::vector<int> some_vec(1, 12);
+    CHECK(prop.set_value(instance(), std::ref(some_vec)) == true);
+    CHECK(some_vec == g_my_array);
+
+    // negative invoke
+    CHECK(prop.set_value(instance(), "test") == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - global object - read only - as_reference_wrapper", "[property]")
+{
+    property prop = type::get_global_property("global_obj_6");
+    REQUIRE(prop.is_valid() == true);
+
+    // metadata
+    CHECK(prop.is_readonly() == true);
+    CHECK(prop.is_static() == true);
+    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type() == type::get< std::reference_wrapper<const int> >());
+    CHECK(prop.get_type().is_wrapper() == true);
+    CHECK(prop.get_access_level() == rttr::access_levels::public_access);
+    CHECK(prop.get_metadata("Description") == "Some Text");
+
+    // valid invoke
+    CHECK(prop.get_value(instance()).is_type< std::reference_wrapper<const int> >() == true);
+    CHECK(prop.get_value(instance()).get_value< std::reference_wrapper<const int> >().get() == 23);
+
+    // invalid invoke
+    int value = 42;
+    CHECK(prop.set_value(instance(), std::cref(value)) == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

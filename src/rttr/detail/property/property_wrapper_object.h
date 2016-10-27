@@ -205,4 +205,93 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
         C* m_accessor;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// global property read write
+
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
+{
+    public:
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
+        {
+            static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
+
+            init();
+        }
+
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return false; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper<C> >(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+
+        bool set_value(instance& object, argument& arg) const
+        {
+            if (arg.is_type<std::reference_wrapper<C>>())
+            {
+                return property_accessor<std::reference_wrapper<C>>::set_value(*m_accessor, arg);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        variant get_value(instance& object) const
+        {
+            return (variant(std::ref(*m_accessor)));
+        }
+
+    private:
+        C* m_accessor;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+// global property read_only
+
+template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+    : public property_wrapper_base, public metadata_handler<Metadata_Count>
+{
+    public:
+        property_wrapper(string_view name, type declaring_type,
+                         C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
+        :   property_wrapper_base(name, declaring_type),
+            metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
+        {
+            init();
+        }
+
+        access_levels get_access_level() const RTTR_NOEXCEPT    { return Acc_Level; }
+        bool is_valid()     const RTTR_NOEXCEPT                 { return true;  }
+        bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
+        bool is_static()    const RTTR_NOEXCEPT                 { return true; }
+        type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper< add_const_t<C>> >(); }
+        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
+
+        variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+
+        bool set_value(instance& object, argument& arg) const
+        {
+            return false;
+        }
+
+        variant get_value(instance& object) const
+        {
+            return (variant(std::cref(*m_accessor)));
+        }
+
+    private:
+        C* m_accessor;
+};
+
 #endif // RTTR_PROPERTY_WRAPPER_OBJECT_H_
