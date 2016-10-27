@@ -252,6 +252,7 @@ TEST_CASE("property - class function - as_reference_wrapper", "[property]")
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const std::string>>());
+    CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
@@ -282,6 +283,7 @@ TEST_CASE("property - class function - read only - as_reference_wrapper", "[prop
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const int>>());
+    CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
