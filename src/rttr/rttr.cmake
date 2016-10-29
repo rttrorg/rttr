@@ -97,6 +97,7 @@ set(HEADER_FILES access_levels.h
                  detail/misc/argument_wrapper.h
                  detail/misc/argument_extractor.h
                  detail/misc/class_item_mapper.h
+                 detail/misc/data_address_container.h
                  detail/misc/flat_map.h
                  detail/misc/flat_multimap.h
                  detail/misc/function_traits.h
