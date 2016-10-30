@@ -31,8 +31,11 @@
 #############################################
 
 add_subdirectory (rttr)
-add_subdirectory (unit_tests)
 
-if (${BUILD_BENCHMARKS})
+if (BUILD_UNIT_TESTS)
+    add_subdirectory (unit_tests)
+endif()
+
+if (BUILD_BENCHMARKS)
     add_subdirectory (benchmarks)
 endif()

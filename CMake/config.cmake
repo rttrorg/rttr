@@ -122,15 +122,12 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion
 )
 
-install(
-  FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-  DESTINATION
-    cmake
-  COMPONENT
-    Devel
-)
+if (BUILD_INSTALLER)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
+             DESTINATION cmake
+             COMPONENT Devel)
 
-install(FILES "${LICENSE_FILE}" "${README_FILE}"
-        DESTINATION "."
-        PERMISSIONS OWNER_READ)
+    install(FILES "${LICENSE_FILE}" "${README_FILE}"
+            DESTINATION "."
+            PERMISSIONS OWNER_READ)
+endif()

@@ -43,9 +43,9 @@ endif()
 
 add_executable(bench_method ${SRC_FILES} ${HPP_FILES})
 if (MSVC)
-  target_link_libraries(bench_method rttr_core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+  target_link_libraries(bench_method RTTR::Core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} ALIAS rttr_core)
 else()
-  target_link_libraries(bench_method rttr_core ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(bench_method RTTR::Core ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 target_include_directories(bench_method PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
@@ -56,7 +56,7 @@ endif()
 
 set_target_properties(bench_method PROPERTIES DEBUG_POSTFIX _d)
 
-add_dependencies(bench_method rttr_core)
+add_dependencies(bench_method RTTR::Core)
 
 install(TARGETS bench_method
         RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
@@ -66,9 +66,9 @@ install(TARGETS bench_method
 if (BUILD_STATIC)
     add_executable(bench_method_lib ${SRC_FILES} ${HPP_FILES})
     if (MSVC)
-      target_link_libraries(bench_method_lib rttr_core_lib ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+      target_link_libraries(bench_method_lib RTTR::Core_Lib ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
     else()
-      target_link_libraries(bench_method_lib rttr_core_lib ${CMAKE_THREAD_LIBS_INIT})
+      target_link_libraries(bench_method_lib RTTR::Core_Lib ${CMAKE_THREAD_LIBS_INIT})
     endif()
 
     target_include_directories(bench_method_lib PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
@@ -79,7 +79,7 @@ if (BUILD_STATIC)
 
     set_target_properties(bench_method_lib PROPERTIES DEBUG_POSTFIX _d)
 
-    add_dependencies(bench_method_lib rttr_core_lib)
+    add_dependencies(bench_method_lib RTTR::Core_Lib)
 
     install(TARGETS bench_method_lib
             RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
@@ -90,9 +90,9 @@ endif()
 if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     add_executable(bench_method_s ${SRC_FILES} ${HPP_FILES})
     if (MSVC)
-      target_link_libraries(bench_method_s rttr_core_s ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+      target_link_libraries(bench_method_s RTTR::Core_STL ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
     else()
-      target_link_libraries(bench_method_s rttr_core_s ${CMAKE_THREAD_LIBS_INIT})
+      target_link_libraries(bench_method_s RTTR::Core_STL ${CMAKE_THREAD_LIBS_INIT})
     endif()
 
     target_include_directories(bench_method_s PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
@@ -103,7 +103,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     set_target_properties(bench_method_s PROPERTIES DEBUG_POSTFIX _d)
 
-    add_dependencies(bench_method_s rttr_core_s)
+    add_dependencies(bench_method_s RTTR::Core_STL)
 
     if (MSVC)
         target_compile_options(bench_method_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -119,9 +119,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     if (BUILD_STATIC)
         add_executable(bench_method_lib_s ${SRC_FILES} ${HPP_FILES})
         if (MSVC)
-          target_link_libraries(bench_method_lib_s rttr_core_lib_s ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+          target_link_libraries(bench_method_lib_s RTTR::Core_Lib_STL ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
         else()
-          target_link_libraries(bench_method_lib_s rttr_core_lib_s ${CMAKE_THREAD_LIBS_INIT})
+          target_link_libraries(bench_method_lib_s RTTR::Core_Lib_STL ${CMAKE_THREAD_LIBS_INIT})
         endif()
 
         target_include_directories(bench_method_lib_s PUBLIC ${RTTR_3RD_PARTY_DIR} ${Boost_INCLUDE_DIR})
@@ -132,7 +132,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
         set_target_properties(bench_method_lib_s PROPERTIES DEBUG_POSTFIX _d)
 
-        add_dependencies(bench_method_lib_s rttr_core_lib_s)
+        add_dependencies(bench_method_lib_s RTTR::Core_Lib_STL)
 
         if (MSVC)
             target_compile_options(bench_method_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")

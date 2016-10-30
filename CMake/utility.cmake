@@ -114,6 +114,7 @@ endfunction()
 # FOLDER <= The name of the folder
 # _HEADER_FILES => The list of header files
 # _SOURCE_FILES => The list of source files
+# [OPTIONAL] 3rdArg => performs the installation of the header and source files
 ####################################################################################
 function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
   set(FULL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${FOLDER}.cmake)
@@ -162,9 +163,8 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
     endif()
     # get the name of the current directory
     getNameOfDir(CMAKE_CURRENT_SOURCE_DIR DIRNAME)
-    # we don't want to install header files which are marked as private
     if (${shouldInstall})
-      if (NOT ${FULL_HEADER_PATH} MATCHES ".*_p.h$")
+      if (NOT ${FULL_HEADER_PATH} MATCHES ".*_p.h$") # we don't want to install header files which are marked as private
         install(FILES ${FULL_HEADER_PATH} DESTINATION "include/${DIRNAME}/${REL_PATH}" PERMISSIONS OWNER_READ)
       endif()
     endif()

@@ -47,13 +47,18 @@ endif ()
 include(utility)
 
 # set up option variable for cmake
-option(BUILD_STATIC "Build RTTR as static library" FALSE)
-option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" FALSE)
-option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" TRUE)
-option(BUILD_BENCHMARKS "Enable this to build the benchmarks" TRUE)
-option(USE_PCH "Use precompiled header files for compilation" TRUE)
-option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" TRUE)
-option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" FALSE)
+option(BUILD_RTTR_DYNAMIC "Build the dynamic/shared version of RTTR library" ON)
+option(BUILD_UNIT_TESTS "Build the unit tests of RTTR" ON)
+option(BUILD_STATIC "Build RTTR as static library" OFF)
+option(BUILD_WITH_STATIC_RUNTIME_LIBS "Link against the static runtime libraries" OFF)
+option(BUILD_WITH_RTTI "Enable build with C++ runtime type information for compilation" ON)
+option(BUILD_BENCHMARKS "Enable this to build the benchmarks" ON)
+option(BUILD_DOCUMENTATION "Enable this to build the documentation" ON)
+option(BUILD_INSTALLER "Enable this to build the installer" ON)
+option(BUILD_PACKAGE "Enable this to build the installer" ON)
+option(USE_PCH "Use precompiled header files for compilation" ON)
+option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" ON)
+option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" OFF)
 
 # one precompiled headers cannot be used for multiple ninja targets
 # thats why we have to disable this option, when BUILD_STATIC or
@@ -68,12 +73,17 @@ endif()
 
 include(config)
 include(3rd_party_libs)
-include(installer)
+
+if (BUILD_PACKAGE)
+    include(installer)
+endif()
 
 # here we add our source code
 add_subdirectory(src)
 # and the documentation
-add_subdirectory(doc)
+if (BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
+endif()
 
 # here we specify the installation directory
 set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
