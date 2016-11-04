@@ -1,9 +1,4 @@
-RTTR Examples
-==============
-> Variouse examples of how to use RTTR
+JSON Serialization
+==================
 
-The following projects shows how to use RTTR in some practical examples.
-You can find more information on: <a target="_blank" href="http://www.rttr.org">www.rttr.org</a>
-
-Following examples are available:
-1. serialization/deserialization with json
+This example demonstrate the usage of RTTR in order to serialize and deserialize an object with JSON.

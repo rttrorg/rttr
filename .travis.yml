@@ -117,6 +117,14 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib']
+      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
 
     - os: osx
       osx_image: xcode7
@@ -256,6 +264,8 @@ before_script:
       -DCMAKE_CXX_FLAGS="$ARCH_FLAGS $CMAKE_ADDITIONAL_FLAGS $GCOV_FLAGS"
       -DCMAKE_C_FLAGS="$ARCH_FLAGS"
       -DBUILD_WEBSITE_DOCU=$BUILD_DOCU
+      -DBUILD_EXAMPLES=$BUILD_EXAMPLES
+      -DBUILD_BENCHMARKS=$BUILD_BENCHMARKS
       ..)
 
 script:
@@ -279,6 +289,16 @@ script:
     if [[ "${BUILD_DOCU}" == "true" ]]; then
       # Run unit tests on two cores
       (cd build && make doc_website -j2)
+    fi
+  - |
+    if [[ "${BUILD_BENCHMARKS}" == "true" ]]; then
+      # Run unit tests on two cores
+      (cd build && make bench_method -j2 && make bench_rttr_cast -j2 && make bench_variant -j2)
+    fi
+  - |
+    if [[ "${BUILD_EXAMPLES}" == "true" ]]; then
+      # Run unit tests on two cores
+      (cd build && make json_serialization -j2)
     fi
   - |
     if [[ "${VALGRIND}" == "true" ]]; then
