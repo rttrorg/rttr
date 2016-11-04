@@ -85,6 +85,7 @@ install:
   #######################################################################################
   - set BOOST_ROOT=C:\Libraries\boost_1_62_0
   - set BOOST_LIBRARYDIR=%BOOST_ROOT%\lib64-msvc-14.0
+  - dir %BOOST_ROOT%
 
 before_build:
   - ps: >-
