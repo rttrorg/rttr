@@ -54,7 +54,8 @@ if(MSVC)
     set_target_properties(bench_variant PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
 endif()
 
-set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d)
+set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d
+                                               FOLDER "Benchmarks")
 
 add_dependencies(bench_variant RTTR::Core)
 
@@ -77,7 +78,8 @@ if (BUILD_STATIC)
         set_target_properties(bench_variant_lib PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
     endif()
 
-    set_target_properties(bench_variant_lib PROPERTIES DEBUG_POSTFIX _d)
+    set_target_properties(bench_variant_lib PROPERTIES DEBUG_POSTFIX _d
+                                                       FOLDER "Benchmarks")
 
     add_dependencies(bench_variant_lib RTTR::Core_Lib)
 
@@ -101,7 +103,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         set_target_properties(bench_variant_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
     endif()
 
-    set_target_properties(bench_variant_s PROPERTIES DEBUG_POSTFIX _d)
+    set_target_properties(bench_variant_s PROPERTIES DEBUG_POSTFIX _d
+                                                     FOLDER "Benchmarks")
 
     add_dependencies(bench_variant_s RTTR::Core_STL)
 
@@ -132,7 +135,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
             set_target_properties(bench_variant_lib_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
         endif()
 
-        set_target_properties(bench_variant_lib_s PROPERTIES DEBUG_POSTFIX _d)
+        set_target_properties(bench_variant_lib_s PROPERTIES DEBUG_POSTFIX _d
+                                                             FOLDER "Benchmarks")
 
         add_dependencies(bench_variant_lib_s RTTR::Core_Lib_STL)
 

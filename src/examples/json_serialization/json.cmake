@@ -2,7 +2,7 @@
 #                                                                                  #
 #  Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     #
 #                                                                                  #
-#  This file is part of RTTR (Run Time Type Reflection)                            #
+#  This file is part of the examples of RTTR (Run Time Type Reflection)            #
 #  License: MIT License                                                            #
 #                                                                                  #
 #  Permission is hereby granted, free of charge, to any person obtaining           #
@@ -25,25 +25,10 @@
 #                                                                                  #
 ####################################################################################
 
-####################################################################################
-# Search and install 3rd party libraries
-#
-####################################################################################
+set(HEADER_FILES json_serialize.h
+                 version.rc.in
+                 )
 
-MESSAGE(STATUS ${LIBRARY_OUTPUT_DIRECTORY})
-MESSAGE(STATUS "Finding 3rd party libs...")
-MESSAGE(STATUS "===========================")
-
-# there is a the moment a problem with finding multiple versions of boost,
-# i.e. the static AND the static runtime version; that is not possible atm.
-# Because of that, the benchmarks cannot be build with the static runtime lib option enabled
-set(Boost_USE_STATIC_LIBS       ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
-set(BOOST_ALL_DYN_LINK          OFF)
-
-find_package(Boost COMPONENTS chrono system)
-find_package(Threads REQUIRED)
-
-set(RAPID_JSON ${RTTR_3RD_PARTY_DIR}/rapidjson-1.1.0)
-
-MESSAGE(STATUS "Finished finding 3rd party libs!")
+set(SOURCE_FILES main.cpp
+                 json_serialize.cpp
+                 )

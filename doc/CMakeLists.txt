@@ -126,6 +126,8 @@ add_custom_target(doc ALL
                   WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
                   COMMENT "Building documentation...")
 
+set_target_properties(doc PROPERTIES FOLDER "Documentation")
+
 install(DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}"
         DESTINATION "${DOXYGEN_DOC_INSTALL_DIR}"
         PATTERN "*.*"
@@ -154,6 +156,8 @@ if (BUILD_WEBSITE_DOCU)
                       COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE}"
                       WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
                       COMMENT "Building documentation...")
+    
+    set_target_properties(doc_website PROPERTIES FOLDER "Documentation")
 endif()
 
 #########################################################################################

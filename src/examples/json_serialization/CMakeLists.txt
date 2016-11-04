@@ -2,7 +2,7 @@
 #                                                                                  #
 #  Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>                     #
 #                                                                                  #
-#  This file is part of RTTR (Run Time Type Reflection)                            #
+#  This file is part of the examples of RTTR (Run Time Type Reflection)            #
 #  License: MIT License                                                            #
 #                                                                                  #
 #  Permission is hereby granted, free of charge, to any person obtaining           #
@@ -25,25 +25,26 @@
 #                                                                                  #
 ####################################################################################
 
-####################################################################################
-# Search and install 3rd party libraries
-#
-####################################################################################
+project(json_serialization)
 
-MESSAGE(STATUS ${LIBRARY_OUTPUT_DIRECTORY})
-MESSAGE(STATUS "Finding 3rd party libs...")
-MESSAGE(STATUS "===========================")
+message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
+message(STATUS "===========================")
 
-# there is a the moment a problem with finding multiple versions of boost,
-# i.e. the static AND the static runtime version; that is not possible atm.
-# Because of that, the benchmarks cannot be build with the static runtime lib option enabled
-set(Boost_USE_STATIC_LIBS       ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
-set(BOOST_ALL_DYN_LINK          OFF)
+generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
+                                "RTTR Examples: json serialization" "Copyright (c) 2014, 2015 - 2016 Axel Menzel <info@rttr.org>" "MIT License")
 
-find_package(Boost COMPONENTS chrono system)
-find_package(Threads REQUIRED)
+loadFolder("json" HPP_FILES SRC_FILES)
 
-set(RAPID_JSON ${RTTR_3RD_PARTY_DIR}/rapidjson-1.1.0)
+if (USE_PCH)
+  activate_precompiled_headers("pch.h" SRC_FILES)
+endif()
 
-MESSAGE(STATUS "Finished finding 3rd party libs!")
+add_executable(json_serialization ${SRC_FILES} ${HPP_FILES})
+target_link_libraries(json_serialization RTTR::Core)
+target_include_directories(json_serialization PUBLIC ${RAPID_JSON})
+set_target_properties(json_serialization PROPERTIES DEBUG_POSTFIX _d
+                                                    FOLDER "Examples")
+
+
+message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
+message(STATUS "")
