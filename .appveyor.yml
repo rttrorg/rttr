@@ -30,10 +30,6 @@ shallow_clone: true
 environment:
   matrix:
   - COMPILER: MSVC_12
-    ARCHITECTURE: x64
-    BUILD_EXAMPLES: true
-    BUILD_BENCHMARKS: true
-  - COMPILER: MSVC_12
     ARCHITECTURE: x86
     TESTS_ONLY: true
   - COMPILER: MSVC_12
@@ -48,6 +44,10 @@ environment:
   - COMPILER: MINGW_482
     ARCHITECTURE: x86
     TESTS_ONLY: true
+  - COMPILER: MSVC_14
+    ARCHITECTURE: x64
+    BUILD_EXAMPLES: true
+    BUILD_BENCHMARKS: true
   
 
 
@@ -72,19 +72,16 @@ install:
   - ninja --version
 
   #######################################################################################
-  # Install a recent CMake
+  # CMake
   #######################################################################################
-  - set CMAKE_URL="https://cmake.org/files/v3.4/cmake-3.4.1-win32-x86.zip"
-  - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
-  - 7z x cmake.zip -oC:\projects\deps\cmake > nul
-  - set PATH=C:\projects\deps\cmake\bin;%PATH%
   - cmake --version
   
   #######################################################################################
   # setup boost
   #######################################################################################
   - set BOOST_ROOT=C:\Libraries\boost_1_62_0
-  - set BOOST_LIBRARYDIR=C:\Libraries\lib64-msvc-14.0
+  - set BOOST_LIBRARYDIR=C:\Libraries\boost_1_62_0\lib64-msvc-14.0
+
 
 before_build:
   - ps: >-

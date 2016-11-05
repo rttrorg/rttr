@@ -118,14 +118,6 @@ matrix:
           packages: ['g++-4.8-multilib']
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib']
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
-
     - os: osx
       osx_image: xcode7
       compiler: clang
@@ -135,6 +127,14 @@ matrix:
       osx_image: xcode7
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'libboost-all-dev']
+      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
       compiler: gcc
