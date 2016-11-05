@@ -43,7 +43,7 @@ endif()
 
 add_executable(bench_method ${SRC_FILES} ${HPP_FILES})
 if (MSVC)
-  target_link_libraries(bench_method RTTR::Core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} ALIAS rttr_core)
+  target_link_libraries(bench_method RTTR::Core ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 else()
   target_link_libraries(bench_method RTTR::Core ${CMAKE_THREAD_LIBS_INIT})
 endif()
