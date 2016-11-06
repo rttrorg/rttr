@@ -41,7 +41,7 @@ endif()
 
 add_executable(json_serialization ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(json_serialization RTTR::Core)
-target_include_directories(json_serialization PUBLIC ${RAPID_JSON})
+target_include_directories(json_serialization PUBLIC ${RAPID_JSON_DIR})
 set_target_properties(json_serialization PROPERTIES DEBUG_POSTFIX _d
                                                     FOLDER "Examples")
 

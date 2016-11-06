@@ -42,7 +42,7 @@ endif()
 add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(unit_tests RTTR::Core)
 add_dependencies(unit_tests RTTR::Core)
-target_include_directories(unit_tests PUBLIC ${RTTR_3RD_PARTY_DIR})
+target_include_directories(unit_tests PUBLIC ${CATCH_DIR})
 set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX _d)
 
 # run tests

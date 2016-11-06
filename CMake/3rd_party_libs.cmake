@@ -49,6 +49,8 @@ endif()
 
 find_package(Threads REQUIRED)
 
-set(RAPID_JSON ${RTTR_3RD_PARTY_DIR}/rapidjson-1.1.0)
+set(RAPID_JSON_DIR ${RTTR_3RD_PARTY_DIR}/rapidjson-1.1.0)
+set(CATCH_DIR ${RTTR_3RD_PARTY_DIR}/catch-1.5.0)
+set(NONIUS_DIR ${RTTR_3RD_PARTY_DIR}/nonius-1.1.2)
 
 MESSAGE(STATUS "Finished finding 3rd party libs!")
