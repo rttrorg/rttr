@@ -221,11 +221,11 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
         variant var = 174407329551615.9;
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == 174407329551615);
+        CHECK(var.to_uint64(&ok) == 174407329551615u);
 
         CHECK(ok == true);
         REQUIRE(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 174407329551615);
+        CHECK(var.get_value<uint64_t>() == 174407329551615u);
     }
 
     SECTION("invalid conversion negative")
@@ -412,11 +412,11 @@ TEST_CASE("variant::to_uint64() - from uint64_t", "[variant]")
         variant var = uint64_t(3147483640);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        CHECK(var.to_uint64(&ok) == 3147483640);
+        CHECK(var.to_uint64(&ok) == 3147483640u);
         CHECK(ok == true);
 
         REQUIRE(var.convert(type::get<uint64_t>()) == true);
-        CHECK(var.get_value<uint64_t>() == 3147483640);
+        CHECK(var.get_value<uint64_t>() == 3147483640u);
     }
 }
 
