@@ -76,6 +76,8 @@ class RTTR_API array_wrapper_base
         virtual variant get_value(std::size_t index_1, std::size_t index_2, std::size_t index_3) const { return variant(); }
         virtual variant get_value_variadic(const std::vector<std::size_t>& index_list) const { return variant(); }
 
+        virtual variant get_value_as_ref(std::size_t index_1) const { return variant(); }
+
         virtual bool insert_value(std::size_t index_1, argument& arg) { return false; }
         virtual bool insert_value(std::size_t index_1, std::size_t index_2, argument& arg) { return false; }
         virtual bool insert_value(std::size_t index_1, std::size_t index_2, std::size_t index_3, argument& arg) { return false; }

@@ -126,7 +126,7 @@ template<typename Return_Type, typename Array_Type>
 struct get_value_from_array_impl<Return_Type, Array_Type, std::true_type>
 {
     template<typename... Indices>
-    static const Return_Type& get_value(const Array_Type& array, std::size_t index, Indices... args)
+    static Return_Type& get_value(const Array_Type& array, std::size_t index, Indices... args)
     {
         using sub_type = typename array_mapper<Array_Type>::sub_type;
         using arg_count_valid = typename std::integral_constant<bool,  sizeof...(Indices) != 0>::type;
@@ -341,6 +341,13 @@ struct array_accessor_impl<Array_Type, std::true_type>
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
+    static variant get_value_as_ref(Array_Type& obj, std::size_t index_1)
+    {
+        return variant(std::ref(array_mapper<Array_Type>::get_value(obj, index_1)));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     template<typename... Indices>
     static bool set_value(Array_Type& obj, argument& arg, Indices... indices)
     {
@@ -396,6 +403,13 @@ struct array_accessor_impl<Array_Type, std::false_type>
 
     template<typename... Indices>
     static variant get_value(const Array_Type& obj, Indices... indices)
+    {
+        return variant();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    static variant get_value_as_ref(Array_Type& obj, std::size_t index_1)
     {
         return variant();
     }
@@ -691,6 +705,16 @@ variant array_accessor<Array_Type>::get_value(const Array_Type& array, const std
         return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value>>::get_value(array, index_list);
     else
         return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Array_Type>
+variant array_accessor<Array_Type>::get_value_as_ref(Array_Type& array, std::size_t index)
+{
+    using is_rank_in_range = typename std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::type;
+    return array_accessor_impl<Array_Type, is_rank_in_range>::get_value_as_ref(array, index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

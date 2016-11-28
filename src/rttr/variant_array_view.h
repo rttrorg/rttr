@@ -343,7 +343,7 @@ class RTTR_API variant_array_view
         /*!
          * \brief Returns the value of the array in the first dimension at index \p index_1.
          *
-         * \return The value of the given array at the specified indices.
+         * \return The value of the given array at the specified index.
          */
         variant get_value(std::size_t index_1) const;
 
@@ -369,6 +369,26 @@ class RTTR_API variant_array_view
          * \return The value of the given array at the specified indices.
          */
         variant get_value_variadic(const std::vector<std::size_t>& index_list) const;
+
+        /*!
+         * \brief Returns the value of the array in the first dimension at index \p index_1
+         *        wrapped inside a std::rerference_wrapper.
+         *
+         * \code{.cpp}
+         *  std::vector<int> vec(10, 1);
+         *  vec[5] = 23;
+         *  variant var = std::ref(vec);
+         *
+         *  variant value = var.create_array_view().get_value_as_ref(5);
+         *  value.get_type() == type::get<std::reference_wrapper<int>>(); // yields to true
+         *  auto& val = value.get_wrapped_value<int>();
+         *  variant var_extr = value.extract_wrapped_value();
+         * \endcode
+         *
+         * \return The value of the given array at the specified index.
+         */
+        variant get_value_as_ref(std::size_t index_1) const;
+
 
         /*!
          * \brief Inserts the given argument \p arg into the array, in the first dimension at index \p index_1.

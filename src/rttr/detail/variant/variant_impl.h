@@ -108,6 +108,17 @@ RTTR_INLINE const T& variant::get_value() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+RTTR_INLINE const T& variant::get_wrapped_value() const
+{
+    detail::data_address_container result{detail::get_invalid_type(), detail::get_invalid_type(), nullptr, nullptr};
+    m_policy(detail::variant_policy_operation::GET_ADDRESS_CONTAINER, m_data, result);
+    using nonRef = detail::remove_cv_t<T>;
+    return *reinterpret_cast<const nonRef*>(result.m_data_address_wrapped_type);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_INLINE void* variant::get_ptr() const
 {
     void* value;

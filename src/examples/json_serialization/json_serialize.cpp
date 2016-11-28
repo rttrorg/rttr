@@ -104,48 +104,31 @@ void write_atomic_types_to_json(const type& t, const variant& var, PrettyWriter<
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static void write_array(const variant_array_view& a,
-                        const std::vector<std::size_t>& size_indices,
-                        std::vector<std::size_t>& indices, PrettyWriter<StringBuffer>& writer)
+static void write_array(const variant_array_view& a, PrettyWriter<StringBuffer>& writer)
 {
     writer.StartArray();
-    for (int i = 0; i < a.get_size_variadic(size_indices); i++)
+    for (int i = 0; i < a.get_size(); ++i)
     {
-        if (!size_indices.empty())
-            indices[size_indices.size()] = i;
-        else
-            indices[0] = i;
-
-        if (size_indices.size() + 1 < a.get_rank())
+        variant var = a.get_value_as_ref(i);
+        if (var.is_array())
         {
-            std::vector<std::size_t> new_size_indices = size_indices;
-            new_size_indices.push_back(i);
-            write_array(a, new_size_indices, indices, writer);
+            write_array(var.create_array_view(), writer);
         }
         else
         {
-            variant value = a.get_value_variadic(indices);
-            type value_type = value.get_type();
+            variant wrapped_var = var.extract_wrapped_value();
+            type value_type = wrapped_var.get_type();
             if (value_type.is_arithmetic() || value_type == type::get<std::string>() || value_type.is_enumeration())
             {
-                write_atomic_types_to_json(value_type, value, writer);
+                write_atomic_types_to_json(value_type, wrapped_var, writer);
             }
             else // object
             {
-                to_json_recursively(value, writer);
+                to_json_recursively(wrapped_var, writer);
             }
         }
     }
     writer.EndArray();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static void write_array(const variant_array_view& a, PrettyWriter<StringBuffer>& writer)
-{
-    std::vector<std::size_t> indices(a.get_rank(), 0);
-    std::vector<std::size_t> size_indices;
-    write_array(a, size_indices, indices, writer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -238,34 +221,29 @@ variant extract_basic_types(Value& json_value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void write_array_recursively(variant_array_view& var_array, Value& json_array_value,
-                             const std::vector<std::size_t>& size_indices,
-                             std::vector<std::size_t>& indices)
+void write_array_recursively(variant_array_view& var_array, Value& json_array_value)
 {
-    var_array.set_size_variadic(json_array_value.Size(), size_indices);
-    const auto rank = size_indices.size();
-    const type array_type = var_array.get_rank_type(rank + 1);
+    var_array.set_size(json_array_value.Size());
     for (SizeType i = 0; i < json_array_value.Size(); ++i)
     {
         auto& json_index_value = json_array_value[i];
-        indices[rank] = i;
         if (json_index_value.IsArray())
         {
-            std::vector<std::size_t> new_size_indices = size_indices;
-            new_size_indices.push_back(i);
-            write_array_recursively(var_array, json_index_value, new_size_indices, indices);
+            write_array_recursively(var_array.get_value_as_ref(i).create_array_view(), json_index_value);
         }
         else if (json_index_value.IsObject())
         {
-            variant var_tmp = var_array.get_value_variadic(indices);
-            fromjson_recursively(var_tmp, json_index_value);
-            var_array.set_value_variadic(indices, var_tmp);
+            variant var_tmp = var_array.get_value_as_ref(i);
+            variant wrapped_var = var_tmp.extract_wrapped_value();
+            fromjson_recursively(wrapped_var, json_index_value);
+            var_array.set_value(i, wrapped_var);
         }
         else
         {
+            const type array_type = var_array.get_rank_type(i);
             variant extracted_value = extract_basic_types(json_index_value);
             if (extracted_value.convert(array_type))
-                var_array.set_value_variadic(indices, extracted_value);
+                var_array.set_value(i, extracted_value);
         }
     }
 }
@@ -292,9 +270,7 @@ void fromjson_recursively(instance obj2, Value& json_object)
             {
                 variant var = prop.get_value(obj);
                 auto array_view = var.create_array_view();
-                std::vector<std::size_t> indices(array_view.get_rank(), 0);
-                std::vector<std::size_t> size_indices;
-                write_array_recursively(array_view, json_value, size_indices, indices);
+                write_array_recursively(array_view, json_value);
 
                 prop.set_value(obj, var);
                 break;
