@@ -126,7 +126,7 @@ template<typename Return_Type, typename Array_Type>
 struct get_value_from_array_impl<Return_Type, Array_Type, std::true_type>
 {
     template<typename... Indices>
-    static Return_Type& get_value(const Array_Type& array, std::size_t index, Indices... args)
+    static const Return_Type& get_value(const Array_Type& array, std::size_t index, Indices... args)
     {
         using sub_type = typename array_mapper<Array_Type>::sub_type;
         using arg_count_valid = typename std::integral_constant<bool,  sizeof...(Indices) != 0>::type;
