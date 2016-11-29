@@ -348,6 +348,13 @@ struct array_accessor_impl<Array_Type, std::true_type>
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
+    static variant get_value_as_ref(const Array_Type& obj, std::size_t index_1)
+    {
+        return variant(std::cref(array_mapper<Array_Type>::get_value(obj, index_1)));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     template<typename... Indices>
     static bool set_value(Array_Type& obj, argument& arg, Indices... indices)
     {
@@ -410,6 +417,13 @@ struct array_accessor_impl<Array_Type, std::false_type>
     /////////////////////////////////////////////////////////////////////////////////////////
 
     static variant get_value_as_ref(Array_Type& obj, std::size_t index_1)
+    {
+        return variant();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    static variant get_value_as_ref(const Array_Type& obj, std::size_t index_1)
     {
         return variant();
     }
@@ -713,8 +727,25 @@ variant array_accessor<Array_Type>::get_value(const Array_Type& array, const std
 template<typename Array_Type>
 variant array_accessor<Array_Type>::get_value_as_ref(Array_Type& array, std::size_t index)
 {
-    using is_rank_in_range = typename std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::type;
-    return array_accessor_impl<Array_Type, is_rank_in_range>::get_value_as_ref(array, index);
+    const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
+    const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
+
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+
+    return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Array_Type>
+variant array_accessor<Array_Type>::get_value_as_ref(const Array_Type& array, std::size_t index)
+{
+    const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
+    const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
+
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+
+    return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

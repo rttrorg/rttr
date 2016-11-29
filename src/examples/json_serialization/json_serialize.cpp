@@ -229,7 +229,8 @@ void write_array_recursively(variant_array_view& var_array, Value& json_array_va
         auto& json_index_value = json_array_value[i];
         if (json_index_value.IsArray())
         {
-            write_array_recursively(var_array.get_value_as_ref(i).create_array_view(), json_index_value);
+            auto sub_array_view = var_array.get_value_as_ref(i).create_array_view();
+            write_array_recursively(sub_array_view, json_index_value);
         }
         else if (json_index_value.IsObject())
         {
