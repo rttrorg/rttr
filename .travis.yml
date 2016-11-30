@@ -183,7 +183,7 @@ install:
   - if [[ "${COMPILER}" == "g++-4.8" ]]; then export CC=gcc-4.8; fi
   - if [[ "${ARCH}" == "x86" ]]; then export CMAKE_ARCH_FLAGS=-m32; fi
   #######################################################################################
-  # Install recent CMake
+  # Install a recent CMake (unless already installed on OS X)
   #######################################################################################
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -191,7 +191,7 @@ install:
       mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
-      brew install cmake
+      if ! brew ls --version cmake &>/dev/null; then brew install cmake; fi
     fi
   #######################################################################################
   # Install recent Doxygen
