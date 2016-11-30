@@ -39,7 +39,7 @@ env:
 matrix:
   include:
     - os: osx
-      osx_image: xcode7
+      osx_image: xcode8
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
 
@@ -119,12 +119,12 @@ matrix:
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: osx
-      osx_image: xcode7
+      osx_image: xcode7.3
       compiler: clang
       env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
       
     - os: osx
-      osx_image: xcode7
+      osx_image: xcode7.3
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
