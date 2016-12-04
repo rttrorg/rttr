@@ -440,7 +440,7 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
     auto tmp_type_list = custom_name_to_id.value_data();
     for (auto& tt : tmp_type_list)
     {
-        if (tt.get_raw_array_type() == t)
+        if (tt.get_raw_array_type() == t && tt != t)
         {
             const auto& orig_name_derived = tt.m_type_data->name;
             custom_name_to_id.erase(orig_name_derived);
