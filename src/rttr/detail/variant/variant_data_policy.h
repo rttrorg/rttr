@@ -180,7 +180,7 @@ static RTTR_INLINE is_nullptr(T& to)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = wrapper_mapper_t<T>>
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
 enable_if_t<std::is_copy_constructible<Tp>::value &&
             is_wrapper<T>::value, variant> get_wrapped_value(T& value)
 {
@@ -188,7 +188,7 @@ enable_if_t<std::is_copy_constructible<Tp>::value &&
     return variant(wrapper_mapper<raw_wrapper_type>::get(value));
 }
 
-template<typename T, typename Tp = wrapper_mapper_t<T>>
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>>>
 enable_if_t<!std::is_copy_constructible<Tp>::value ||
             !is_wrapper<T>::value, variant> get_wrapped_value(T& value)
 {

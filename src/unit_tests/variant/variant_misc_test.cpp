@@ -101,6 +101,24 @@ TEST_CASE("variant - swap", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant - get_wrapped_value", "[variant]")
+{
+    int foo = 12;
+    variant var = std::ref(foo);
+    CHECK(var.get_type().is_wrapper() == true);
+    CHECK(var.get_type() == type::get<std::reference_wrapper<int>>());
+    CHECK(var.extract_wrapped_value().is_valid() == true);
+    CHECK(var.extract_wrapped_value().get_value<int>() == 12);
+
+    auto ptr = std::make_unique<int>(24);
+    var = std::ref(ptr);
+    CHECK(var.get_type().is_wrapper() == true);
+    CHECK(*var.get_wrapped_value<std::unique_ptr<int>>().get() == 24);
+    CHECK(var.extract_wrapped_value().is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant - is_array", "[variant]")
 {
     variant a = std::vector<int>(100, 1);

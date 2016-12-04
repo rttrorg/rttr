@@ -831,6 +831,56 @@ TEST_CASE("variant_array_view::remove_value", "[variant_array_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant_array_view::get_value_as_ref", "[variant_array_view]")
+{
+    SECTION("positiv test")
+    {
+        std::vector<int> vec(50, 0);
+        int i = 0;
+        for (auto& value : vec)
+        {
+            value = ++i;
+        }
+
+        variant var = &vec;
+
+        auto array_view = var.create_array_view();
+
+        variant var_value = array_view.get_value_as_ref(0);
+        CHECK(var_value.get_type() == type::get<std::reference_wrapper<int>>());
+
+        auto& value_ref = var_value.get_wrapped_value<int>();
+        CHECK(value_ref == 1);
+
+        variant extr_var = var_value.extract_wrapped_value();
+        REQUIRE(extr_var.get_type()     == type::get<int>());
+        CHECK(extr_var.get_value<int>() == 1);
+    }
+
+    SECTION("negative test")
+    {
+        std::vector <bool> vec(50, 0);
+
+        for (auto& value : vec)
+        {
+            value = true;
+        }
+
+        variant var = &vec;
+
+        auto array_view = var.create_array_view();
+
+        variant var_value = array_view.get_value_as_ref(0);
+        CHECK(var_value.is_valid() == false);
+
+        var_value = array_view.get_value(0);
+        CHECK(var_value.is_valid() == true);
+        CHECK(var_value.get_type() == type::get<bool>());
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant_array_view::misc", "[variant_array_view]")
 {
     SECTION("check support of vector<bool>()")

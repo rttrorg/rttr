@@ -730,7 +730,15 @@ variant array_accessor<Array_Type>::get_value_as_ref(Array_Type& array, std::siz
     const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
     const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
 
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // the compiler has a bug:
+    // int foo[2];
+    // auto bar = std::ref(foo);
+    // does not compile..., so we disable the compilation for this
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference && !std::is_array<Array_Type>::value>::type;
+#else
     using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+#endif
 
     return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
 }
@@ -743,7 +751,15 @@ variant array_accessor<Array_Type>::get_value_as_ref(const Array_Type& array, st
     const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
     const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
 
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // the compiler has a bug:
+    // int foo[2];
+    // auto bar = std::ref(foo);
+    // does not compile..., so we disable the compilation for this
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference && !std::is_array<Array_Type>::value>::type;
+#else
     using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+#endif
 
     return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
 }
