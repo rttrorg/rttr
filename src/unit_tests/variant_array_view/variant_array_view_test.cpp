@@ -859,12 +859,7 @@ TEST_CASE("variant_array_view::get_value_as_ref", "[variant_array_view]")
 
     SECTION("negative test")
     {
-        std::vector <bool> vec(50, 0);
-
-        for (auto& value : vec)
-        {
-            value = true;
-        }
+        std::vector <bool> vec(50, true);
 
         variant var = &vec;
 
