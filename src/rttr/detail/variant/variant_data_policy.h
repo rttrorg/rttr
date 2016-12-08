@@ -179,17 +179,28 @@ static RTTR_INLINE is_nullptr(T& to)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // MSVC 2013 has not a full working "std::is_copy_constructible", thats why
+    // this workaround is used here
+    template<typename T>
+    using is_copyable = ::rttr::detail::is_copy_constructible<T>;
+#else
+    template<typename T>
+    using is_copyable = std::is_copy_constructible<T>;
+#endif
 
 template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
-enable_if_t<std::is_copy_constructible<Tp>::value &&
+enable_if_t<is_copyable<Tp>::value &&
             is_wrapper<T>::value, variant> get_wrapped_value(T& value)
 {
     using raw_wrapper_type = remove_cv_t<remove_reference_t<T>>;
     return variant(wrapper_mapper<raw_wrapper_type>::get(value));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>>>
-enable_if_t<!std::is_copy_constructible<Tp>::value ||
+enable_if_t<!is_copyable<Tp>::value ||
             !is_wrapper<T>::value, variant> get_wrapped_value(T& value)
 {
     return variant();
