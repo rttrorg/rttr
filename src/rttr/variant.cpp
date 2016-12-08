@@ -173,6 +173,15 @@ type variant::get_type() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+variant variant::extract_wrapped_value() const
+{
+    variant var;
+    m_policy(detail::variant_policy_operation::EXTRACT_WRAPPED_VALUE, m_data, var);
+    return var;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;

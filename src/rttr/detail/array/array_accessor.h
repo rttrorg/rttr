@@ -67,6 +67,11 @@ struct array_accessor
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
+    static variant get_value_as_ref(Array_Type& array, std::size_t index_1);
+    static variant get_value_as_ref(const Array_Type& array, std::size_t index_1);
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     template<typename... Indices>
     static bool set_value(const Array_Type&, argument&, Indices... indices);
     static bool set_value(const Array_Type&, argument&, const std::vector<std::size_t>&);

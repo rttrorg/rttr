@@ -341,6 +341,20 @@ struct array_accessor_impl<Array_Type, std::true_type>
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
+    static variant get_value_as_ref(Array_Type& obj, std::size_t index_1)
+    {
+        return variant(std::ref(array_mapper<Array_Type>::get_value(obj, index_1)));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    static variant get_value_as_ref(const Array_Type& obj, std::size_t index_1)
+    {
+        return variant(std::cref(array_mapper<Array_Type>::get_value(obj, index_1)));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     template<typename... Indices>
     static bool set_value(Array_Type& obj, argument& arg, Indices... indices)
     {
@@ -396,6 +410,20 @@ struct array_accessor_impl<Array_Type, std::false_type>
 
     template<typename... Indices>
     static variant get_value(const Array_Type& obj, Indices... indices)
+    {
+        return variant();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    static variant get_value_as_ref(Array_Type& obj, std::size_t index_1)
+    {
+        return variant();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    static variant get_value_as_ref(const Array_Type& obj, std::size_t index_1)
     {
         return variant();
     }
@@ -691,6 +719,49 @@ variant array_accessor<Array_Type>::get_value(const Array_Type& array, const std
         return array_accessor_impl<Array_Type, std::integral_constant<std::size_t, rank<Array_Type>::value>>::get_value(array, index_list);
     else
         return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Array_Type>
+variant array_accessor<Array_Type>::get_value_as_ref(Array_Type& array, std::size_t index)
+{
+    const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
+    const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // the compiler has a bug:
+    // int foo[2];
+    // auto bar = std::ref(foo);
+    // does not compile..., so we disable the compilation for this
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference && !std::is_array<Array_Type>::value>::type;
+#else
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+#endif
+
+    return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Array_Type>
+variant array_accessor<Array_Type>::get_value_as_ref(const Array_Type& array, std::size_t index)
+{
+    const bool is_rank_in_range = std::integral_constant<bool, (1 <= rank<Array_Type>::value) >::value;
+    const bool is_returning_by_reference = std::is_reference<decltype(array_mapper<Array_Type>::get_value(array, index))>::value;
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // the compiler has a bug:
+    // int foo[2];
+    // auto bar = std::ref(foo);
+    // does not compile..., so we disable the compilation for this
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference && !std::is_array<Array_Type>::value>::type;
+#else
+    using cond = typename std::integral_constant<bool, is_rank_in_range && is_returning_by_reference>::type;
+#endif
+
+    return array_accessor_impl<Array_Type, cond>::get_value_as_ref(array, index);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

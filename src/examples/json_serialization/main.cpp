@@ -29,9 +29,10 @@
 #include <string>
 #include <vector>
 #include <array>
-
 #include <iostream>
+
 #include <rttr/registration>
+
 #include "json_serialize.h"
 
 using namespace rttr;
@@ -142,6 +143,7 @@ int main(int argc, char** argv)
     std::cout << "\n############################################\n" << std::endl;
 
     std::cout << "Circle c_2:\n" << io::to_json(c_2) << std::endl;
+
     return 0;
 }
 

@@ -160,6 +160,13 @@ class array_wrapper : public array_wrapper_base
 
         /////////////////////////////////////////////////////////////////////////////////////////
 
+        variant get_value_as_ref(std::size_t index_1) const
+        {
+            return array_accessor<Array_Type>::get_value_as_ref(*m_address_data, index_1);
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+
         bool insert_value(std::size_t index_1, argument& arg)
         {
             return array_accessor<Array_Type>::insert_value(*m_address_data, arg, index_1);

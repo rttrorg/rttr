@@ -924,7 +924,17 @@ namespace detail
 
     template<typename T1, typename T2>
     using is_same_nullptr = typename is_same_nullptr_impl<T1, T2>::type;
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // workaround, because MSVC 2013 can't handle deleted copy-ctors very well; specialize for further types here
+    template<typename T>
+    struct is_copy_constructible : std::is_copy_constructible<T>{};
 
+    template<typename T>
+    struct is_copy_constructible<std::unique_ptr<T>> : std::false_type {};
+
+    /////////////////////////////////////////////////////////////////////////////////////////
 } // end namespace detail
 } // end namespace rttr
 

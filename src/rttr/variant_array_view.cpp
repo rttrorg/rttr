@@ -198,6 +198,13 @@ variant variant_array_view::get_value_variadic(const std::vector<std::size_t>& i
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+variant variant_array_view::get_value_as_ref(std::size_t index_1) const
+{
+    return m_array_wrapper->get_value_as_ref(index_1);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool variant_array_view::insert_value(std::size_t index_1, argument arg)
 {
     return m_array_wrapper->insert_value(index_1, arg);

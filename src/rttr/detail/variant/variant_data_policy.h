@@ -120,6 +120,7 @@ enum class variant_policy_operation : uint8_t
     DESTROY,
     CLONE,
     SWAP,
+    EXTRACT_WRAPPED_VALUE,
     GET_VALUE,
     GET_TYPE,
     GET_PTR,
@@ -177,6 +178,35 @@ static RTTR_INLINE is_nullptr(T& to)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    // MSVC 2013 has not a full working "std::is_copy_constructible", thats why
+    // this workaround is used here
+    template<typename T>
+    using is_copyable = ::rttr::detail::is_copy_constructible<T>;
+#else
+    template<typename T>
+    using is_copyable = std::is_copy_constructible<T>;
+#endif
+
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
+enable_if_t<is_copyable<Tp>::value &&
+            is_wrapper<T>::value, variant> get_wrapped_value(T& value)
+{
+    using raw_wrapper_type = remove_cv_t<remove_reference_t<T>>;
+    return variant(wrapper_mapper<raw_wrapper_type>::get(value));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>>>
+enable_if_t<!is_copyable<Tp>::value ||
+            !is_wrapper<T>::value, variant> get_wrapped_value(T& value)
+{
+    return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * This class represents the base implementation for variant_data policy.
@@ -205,6 +235,11 @@ struct variant_data_base_policy
             case variant_policy_operation::SWAP:
             {
                 Tp::swap(const_cast<T&>(Tp::get_value(src_data)), arg.get_value<variant_data>());
+                break;
+            }
+            case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
+            {
+                arg.get_value<variant>() = get_wrapped_value(Tp::get_value(src_data));
                 break;
             }
             case variant_policy_operation::GET_VALUE:
@@ -244,7 +279,7 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::IS_ARRAY:
             {
-                return ::rttr::detail::is_array<typename raw_type<T>::type>::value;
+                return can_create_array_container<T>::value;
             }
             case variant_policy_operation::TO_ARRAY:
             {
@@ -662,6 +697,7 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::DESTROY:
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
+            case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {
                 break;
             }
@@ -792,6 +828,10 @@ struct RTTR_API variant_data_policy_nullptr_t
             case variant_policy_operation::SWAP:
             {
                 swap(get_value(src_data), arg.get_value<variant_data>());
+                break;
+            }
+            case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
+            {
                 break;
             }
             case variant_policy_operation::GET_VALUE:
