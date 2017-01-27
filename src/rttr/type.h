@@ -281,7 +281,7 @@ class RTTR_API type
          *
          * \remark When the current type is not a wrapper type, this function will return an \ref type::is_valid "invalid type".
          *
-         * \see wrapper_mapper<T>
+         * \see \ref wrapper_mapper "wrapper_mapper<T>"
          *
          * \return The type object of the wrapped type.
          */
@@ -369,10 +369,10 @@ class RTTR_API type
          *        - \p `std::weak_ptr<T>`
          *        - \p `std::unique_ptr<T>`
          *
-         *        In order to work with custom wrapper types, its required to specialize the class \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>"
+         *        In order to work with custom wrapper types, its required to specialize the class \ref wrapper_mapper "wrapper_mapper<T>"
          *        and implement a getter function to retrieve the encapsulate type.
          *
-         * \see \ref rttr::wrapper_mapper<T> "wrapper_mapper<T>"
+         * \see \ref wrapper_mapper "wrapper_mapper<T>"
          *
          * \return True if the type is an wrapper, otherwise false.
          *
