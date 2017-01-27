@@ -600,6 +600,7 @@ struct RTTR_API variant_data_policy_empty
             case variant_policy_operation::DESTROY:
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
+            case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {
                 break;
             }
