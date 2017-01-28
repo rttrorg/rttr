@@ -43,6 +43,7 @@ namespace rttr
 {
 
 class variant_array_view;
+class variant_associative_view;
 class type;
 class variant;
 class argument;
@@ -349,6 +350,14 @@ class RTTR_API variant
         bool is_array() const;
 
         /*!
+         * \brief Returns true, when for the underlying or the \ref type::get_wrapped_type() "wrapped type"
+         *        an associative_mapper exists.
+         *
+         * \return True if the containing value is an associative container; otherwise false.
+         */
+        bool is_associative_container() const;
+
+        /*!
          * \brief Returns a reference to the containing value as type \p T.
          *
          * \code{.cpp}
@@ -530,10 +539,10 @@ class RTTR_API variant
          *
          * \code{.cpp}
          *   int obj_array[100];
-         *   variant var = obj_array;                            // copies the content of obj_array into var
-         *   variant_array_view array = var.create_array_view(); // copies the content of var to a variant_array object
-         *   auto x = array.get_size();                          // set x to 100
-         *   array.set_value(0, 42);                             // set the first index to the value 42
+         *   variant var = obj_array;                           // copies the content of obj_array into var
+         *   variant_array_view view = var.create_array_view(); // creates a view of the hold array in the variant (data is not copied!)
+         *   std::size_t x = view.get_size();                   // return number of elements x = 100
+         *   view.set_value(0, 42);                             // set the first index to the value 42
          * \endcode
          *
          * \see can_convert(), convert()
@@ -543,6 +552,39 @@ class RTTR_API variant
          * \return A variant_array_view object.
          */
         variant_array_view create_array_view() const;
+
+        /*!
+         * \brief Creates a \ref variant_associative_view from the containing value,
+         *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
+         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_associative_container() "associative container".
+         *        Otherwise a default constructed variant_associative_view will be returned.
+         *
+         * A typical example is the following:
+         *
+         * \code{.cpp}
+         *   std::map<int, std::string> my_map;
+         *   my_map.insert({1, "One"});
+         *   my_map.insert({2, "Two"});
+         *   my_map.insert({3, "Three"});
+         *
+         *   variant var = my_map;                                          // copies the content of my_map into var
+         *   variant_associative_view view = var.create_associative_view(); // creates a view of the hold container in the variant (data is not copied!)
+         *   std::size_t x = view.get_size();                               // return number of elements x = 3
+         *   for (auto& item : view)                                        // iterates over all items stored in the container
+         *   {
+         *      auto key = item.first.extract_wrapped_value().to_string();
+         *      auto value = item.second.extract_wrapped_value().to_string();
+         *      std::cout << "key: " << key << " value: " << value << std::endl;
+         *   }
+         * \endcode
+         *
+         * \see can_convert(), convert()
+         *
+         * \remark This function will return an \ref variant_associative_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no associative container.
+         *
+         * \return A variant_associative_view object.
+         */
+        variant_associative_view create_associative_view() const;
 
         /*!
          * \brief Returns the variant as a `bool` if this variant is of \ref is_type() "type" `bool`.

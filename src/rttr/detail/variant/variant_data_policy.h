@@ -32,6 +32,7 @@
 #include "rttr/detail/variant/variant_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
 #include "rttr/detail/variant_array_view/variant_array_view_creator.h"
+#include "rttr/detail/variant_associative_view/variant_associative_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
 #include "rttr/detail/comparison/compare_equal.h"
 #include "rttr/detail/comparison/compare_less.h"
@@ -128,7 +129,9 @@ enum class variant_policy_operation : uint8_t
     GET_RAW_PTR,
     GET_ADDRESS_CONTAINER,
     IS_ARRAY,
+    IS_ASSOCIATIVE_CONTAINER,
     TO_ARRAY,
+    CREATE_ASSOCIATIV_VIEW,
     IS_VALID,
     IS_NULLPTR,
     CONVERT,
@@ -281,9 +284,18 @@ struct variant_data_base_policy
             {
                 return can_create_array_container<T>::value;
             }
+            case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
+            {
+                return can_create_associative_view<T>::value;
+            }
             case variant_policy_operation::TO_ARRAY:
             {
                 arg.get_value<std::unique_ptr<array_wrapper_base>&>() = create_variant_array_view(const_cast<T&>(Tp::get_value(src_data)));
+                break;
+            }
+            case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
+            {
+                arg.get_value<variant_associative_view_private&>() = create_variant_associative_view((Tp::get_value(src_data)));
                 break;
             }
             case variant_policy_operation::CONVERT:
@@ -643,7 +655,15 @@ struct RTTR_API variant_data_policy_empty
             {
                 return false;
             }
+            case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
+            {
+                return false;
+            }
             case variant_policy_operation::TO_ARRAY:
+            {
+                break;
+            }
+            case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
                 break;
             }
@@ -740,7 +760,15 @@ struct RTTR_API variant_data_policy_void
             {
                 return false;
             }
+             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
+            {
+                return false;
+            }
             case variant_policy_operation::TO_ARRAY:
+            {
+                break;
+            }
+            case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
                 break;
             }
@@ -873,7 +901,15 @@ struct RTTR_API variant_data_policy_nullptr_t
             {
                 return false;
             }
+             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
+            {
+                return false;
+            }
             case variant_policy_operation::TO_ARRAY:
+            {
+                break;
+            }
+            case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
                 break;
             }
