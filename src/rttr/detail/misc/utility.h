@@ -374,10 +374,10 @@ auto reverse(T&& container) -> typename std::conditional< std::is_lvalue_referen
 template<typename T>
 using return_type_normal = add_pointer_t< remove_pointers_t<T> >;
 
-template<typename T>
-using raw_addressof_return_type = std::conditional< is_function_ptr< remove_pointers_except_one_t<T> >::value,
-                                                    add_pointer_t< remove_pointers_except_one_t<T> >,
-                                                    return_type_normal<T> >;
+template<typename T, typename Tp = remove_reference_t<T>>
+using raw_addressof_return_type = std::conditional< is_function_ptr< remove_pointers_except_one_t<Tp> >::value,
+                                                    add_pointer_t< remove_pointers_except_one_t<Tp> >,
+                                                    return_type_normal<Tp> >;
 
 
 template<typename T>
