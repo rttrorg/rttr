@@ -49,8 +49,6 @@ template<typename T, typename ConstType, typename Tp = typename std::conditional
                                                                                  typename T::iterator>::type>
 struct associative_container_base : detail::iterator_wrapper_associative_container<Tp>
 {
-    using is_valid = std::true_type;
-
     static void begin(void* container, detail::iterator_data& itr)
     {
         associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->begin());
@@ -157,9 +155,6 @@ struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detai
 
 namespace detail
 {
-
-template<typename T>
-using is_associative_container = typename associative_container_mapper<T, T>::is_valid;
 
 struct associative_container_empty
 {
