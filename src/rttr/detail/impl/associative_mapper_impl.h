@@ -153,6 +153,11 @@ struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detai
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+template<typename K, typename T, typename...Args>
+struct associative_container_mapper<std::unordered_multimap<K, T>, Args...> : detail::associative_container_base<std::unordered_multimap<K, T>,  Args...> {};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
 namespace detail
 {
 

@@ -110,7 +110,7 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
     }
 
 
-    SECTION("valid")
+    SECTION("valid - set")
     {
         auto set = std::set<int>({ 1, 2, 3 });
 
@@ -121,6 +121,64 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
         CHECK(var.is_associative_container() == true);
 
         var = &set;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - map")
+    {
+        auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
+
+        variant var = map;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - multiset")
+    {
+        auto multiset = std::multiset<int>{ 1, 2, 2, 3, 4 };
+
+        variant var = multiset;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - multimap")
+    {
+        auto multimap = std::multimap<int, std::string>{ { 1, "one" }, { 2, "two" },
+                                                         { 2, "two" }, { 3, "three" } };
+
+        variant var = multimap;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - unordered_set")
+    {
+        auto unordered_set = std::unordered_set<int>{ 1, 2, 2, 3, 4 };
+
+        variant var = unordered_set;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - unordered_map")
+    {
+        auto unordered_set = std::unordered_set<int>{ 1, 2, 2, 3, 4 };
+
+        variant var = unordered_set;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - unordered_multiset")
+    {
+        auto unordered_multiset = std::unordered_multiset<int>{ 1, 2, 2, 3, 4 };
+
+        variant var = unordered_multiset;
+        CHECK(var.is_associative_container() == true);
+    }
+
+    SECTION("valid - unordered_multimap")
+    {
+        auto unordered_multimap = std::unordered_multimap<int, std::string>{ { 1, "one" }, { 2, "two" },
+                                                                             { 2, "two" }, { 3, "three" } };
+
+        variant var = unordered_multimap;
         CHECK(var.is_associative_container() == true);
     }
 }
