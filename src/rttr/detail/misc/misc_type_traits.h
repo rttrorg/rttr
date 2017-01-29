@@ -32,7 +32,7 @@
 
 #include "rttr/detail/misc/function_traits.h"
 #include "rttr/array_mapper.h"
-#include "rttr/associative_mapper.h"
+
 #include "rttr/detail/misc/std_type_traits.h"
 
 
@@ -42,6 +42,9 @@
 namespace rttr
 {
 class type;
+
+template<typename...Args>
+struct associative_container_mapper;
 
 namespace detail
 {

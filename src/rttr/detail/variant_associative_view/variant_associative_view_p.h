@@ -129,8 +129,8 @@ class RTTR_LOCAL variant_associative_view_private
         }
 
     private:
-        void eequal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
-        using equality_func = decltype(&eequal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
+        static bool equal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
+        using equality_func     = decltype(&equal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
 
         using find_func         = std::size_t(*)(void *container, const void *p, void **itr);
         using get_size_func     = std::size_t(*)(void* container);
