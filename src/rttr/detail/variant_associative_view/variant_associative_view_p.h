@@ -136,7 +136,6 @@ class RTTR_LOCAL variant_associative_view_private
         using get_size_func     = std::size_t(*)(void* container);
         using begin_func        = void(*)(void* container, iterator_data& itr);
         using end_func          = void(*)(void* container, iterator_data& itr);
-        using equality_func     = bool(*)(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
         using advance_func      = void(*)(iterator_data& itr, std::size_t index);
         using create_func       = void(*)(iterator_data& itr_tgt, const iterator_data& itr_src);
         using delete_func       = void(*)(iterator_data& itr);
