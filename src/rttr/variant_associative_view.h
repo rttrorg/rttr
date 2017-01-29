@@ -57,7 +57,11 @@ namespace rttr
  * Meta Information
  * ----------------
  *
- *
+ * RTTR recognize whether a type is an associative container or not with the help of the \ref associative_container_mapper class template.
+ * This call can access different container types via one common interface.
+ * At the moment there exist specializations for following types:
+ * `std::set<Key>`, `std::map<Key, T>`, `std::multiset<Key>`, `std::multimap<Key, T>`, `std::unordered_set<Key>`,
+ * `std::unordered_map<Key, T>`, `std::unordered_multiset<Key>` and `std::unordered_multimap<Key, T>`.
  *
  * Copying and Assignment
  * ----------------------
@@ -68,7 +72,19 @@ namespace rttr
  * ----------------------
  *
  * \code{.cpp}
- *
+ *  std::map<int, std::string> my_map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
+ *  variant var = my_map;
+ *  if (var.is_associative_container())
+ *  {
+ *      variant_associative_view view = var.create_associative_view();
+ *      std::cout << view.get_size() << std::endl;      // prints: '3'
+ *      for (const auto& item : view)
+ *      {
+ *          // remark that the key and value are stored inside a 'std::reference_wrapper'
+ *          std::cout << "Key: " << item.first.extract_wrapped_value().to_string() << " ";
+ *          std::cout << "Value: " << item.second.extract_wrapped_value().to_string() << std::endl;
+ *      }
+ *  }
  * \endcode
  *
  * \see variant
@@ -79,7 +95,7 @@ class RTTR_API variant_associative_view
         class const_iterator;
 
         /*!
-         * \brief Constructs an invalid variant_map_view object.
+         * \brief Constructs an invalid variant_associative_view object.
          *
          * \see is_valid()
          */
