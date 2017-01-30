@@ -82,11 +82,28 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
 TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
 {
-    variant var = std::set<int>({1, 2, 3});
-    variant_associative_view view = var.create_associative_view();
 
-    CHECK(view.get_type() == type::get<std::set<int>>());
-    CHECK(view.get_type() == var.get_type());
+    SECTION("valid test")
+    {
+        variant var = std::set<int>({ 1, 2, 3 });
+        variant_associative_view view = var.create_associative_view();
+
+        CHECK(view.get_type() == type::get<std::set<int>>());
+        CHECK(view.get_type() == var.get_type());
+    }
+
+
+    SECTION("invalid test")
+    {
+        variant var = 23;
+        variant_associative_view view = var.create_associative_view();
+
+        CHECK(view.get_type().is_valid() == false);
+
+        var = variant();
+        view = var.create_associative_view();
+        CHECK(view.get_type().is_valid() == false);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +197,30 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
 
         variant var = unordered_multimap;
         CHECK(var.is_associative_container() == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
+{
+    auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
+    variant var = map;
+    variant_associative_view view = var.create_associative_view();
+
+    REQUIRE(view.is_valid() == true);
+
+    auto itr = view.find(1);
+
+    CHECK(itr != view.end());
+    CHECK(itr.key().extract_wrapped_value() == 1);
+    CHECK(itr.value().extract_wrapped_value() == "one");
+
+
+    SECTION("invalid test")
+    {
+        auto itr = view.find(4);
+        CHECK(itr == view.end());
     }
 }
 

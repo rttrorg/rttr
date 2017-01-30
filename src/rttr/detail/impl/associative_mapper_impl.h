@@ -63,6 +63,15 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
     {
         return (reinterpret_cast<ConstType*>(container)->size());
     }
+
+    static void find(void* container, detail::iterator_data& itr, argument& arg)
+    {
+        using key_t = typename T::key_type;
+        if (arg.get_type() == ::rttr::type::get<key_t>())
+            associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(arg.get_value<key_t>()));
+        else
+            end(container, itr);
+    }
 };
 
 } // end namespace detail
@@ -198,6 +207,10 @@ struct associative_container_empty
     static std::size_t get_size(void* container)
     {
         return 0;
+    }
+
+    static void find(void* container, detail::iterator_data& itr, argument& arg)
+    {
     }
 };
 

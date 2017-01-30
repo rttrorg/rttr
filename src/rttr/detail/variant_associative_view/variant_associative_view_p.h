@@ -55,7 +55,8 @@ class RTTR_LOCAL variant_associative_view_private
             m_delete_func(associative_container_empty::destroy),
             m_get_key_func(associative_container_empty::get_key),
             m_get_value_func(associative_container_empty::get_value),
-            m_advance_func(associative_container_empty::advance)
+            m_advance_func(associative_container_empty::advance),
+            m_find_func(associative_container_empty::find)
         {
         }
 
@@ -71,9 +72,9 @@ class RTTR_LOCAL variant_associative_view_private
             m_delete_func(associative_container_mapper<RawType, ConstType>::destroy),
             m_get_key_func(associative_container_mapper<RawType, ConstType>::get_key),
             m_get_value_func(associative_container_mapper<RawType, ConstType>::get_value),
-            m_advance_func(associative_container_mapper<RawType, ConstType>::advance)
+            m_advance_func(associative_container_mapper<RawType, ConstType>::advance),
+            m_find_func(associative_container_mapper<RawType, ConstType>::find)
         {
-
         }
 
         RTTR_INLINE variant_associative_view_private(const variant_associative_view_private& other) = default;
@@ -118,21 +119,36 @@ class RTTR_LOCAL variant_associative_view_private
             return m_equal_func(lhs_itr, rhs_itr);
         }
 
-        RTTR_INLINE std::pair<variant, variant> get_value(const iterator_data& itr) const
+        RTTR_INLINE const variant get_key(const iterator_data& itr) const
+        {
+            return m_get_key_func(itr);
+        }
+
+        RTTR_INLINE const variant get_value(const iterator_data& itr) const
+        {
+            return m_get_value_func(itr);
+        }
+
+        RTTR_INLINE const std::pair<variant, variant> get_key_value(const iterator_data& itr) const
         {
             return {m_get_key_func(itr), m_get_value_func(itr)};
         }
+
 
         RTTR_INLINE void advance(iterator_data& itr, std::size_t index) const
         {
             m_advance_func(itr, index);
         }
 
+        RTTR_INLINE void find(iterator_data& itr, argument& key)
+        {
+            m_find_func(m_container, itr, key);
+        }
+
     private:
         static bool equal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
         using equality_func     = decltype(&equal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
 
-        using find_func         = std::size_t(*)(void *container, const void *p, void **itr);
         using get_size_func     = std::size_t(*)(void* container);
         using begin_func        = void(*)(void* container, iterator_data& itr);
         using end_func          = void(*)(void* container, iterator_data& itr);
@@ -141,6 +157,7 @@ class RTTR_LOCAL variant_associative_view_private
         using delete_func       = void(*)(iterator_data& itr);
         using get_key_func      = variant (*)(const iterator_data& itr);
         using get_value_func    = variant (*)(const iterator_data& itr);
+        using find_func         = void(*)(void* container, detail::iterator_data& itr, argument& arg);
 
         type            m_type;
         void*           m_container;
@@ -153,6 +170,7 @@ class RTTR_LOCAL variant_associative_view_private
         get_key_func    m_get_key_func;
         get_value_func  m_get_value_func;
         advance_func    m_advance_func;
+        find_func       m_find_func;
 };
 
 } // end namespace detail

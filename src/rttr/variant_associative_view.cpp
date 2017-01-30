@@ -109,9 +109,13 @@ std::size_t variant_associative_view::get_size() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_associative_view::find(argument arg)
+variant_associative_view::const_iterator variant_associative_view::find(argument arg)
 {
-    return variant();
+    const_iterator itr(&m_view);
+
+    m_view.find(itr.m_itr, arg);
+
+    return itr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -195,6 +199,20 @@ void variant_associative_view::const_iterator::swap(const_iterator& other)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 const std::pair<variant, variant> variant_associative_view::const_iterator::operator*() const
+{
+    return m_view->get_key_value(m_itr);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const variant variant_associative_view::const_iterator::key() const
+{
+    return m_view->get_key(m_itr);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const variant variant_associative_view::const_iterator::value() const
 {
     return m_view->get_value(m_itr);
 }

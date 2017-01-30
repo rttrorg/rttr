@@ -169,7 +169,7 @@ class RTTR_API variant_associative_view
          *
          * \return The element with key equivalent to \p key. If no element is found an invalid variant is returned.
          */
-        variant find(argument key);
+        const_iterator find(argument key);
 
         /*!
          * \brief Removes the element (if one exists) with the key equivalent to \p key.
@@ -205,6 +205,31 @@ class RTTR_API variant_associative_view
          */
         const_iterator end();
 
+        /*!
+         * The \ref variant_associative_view::const_iterator allows iteration over an associative container in a variant.
+         * An instance can only be created by an variant_associative_view.
+         *
+         * Typical Usage
+         * ----------------------
+         *
+         * \code{.cpp}
+         *  std::map<int, std::string> my_map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
+         *  variant var = my_map;
+         *  if (var.is_associative_container())
+         *  {
+         *      variant_associative_view view = var.create_associative_view();
+         *      std::cout << view.get_size() << std::endl;      // prints: '3'
+         *      for (const auto& item : view)
+         *      {
+         *          // remark that the key and value are stored inside a 'std::reference_wrapper'
+         *          std::cout << "Key: " << item.first.extract_wrapped_value().to_string() << " ";
+         *          std::cout << "Value: " << item.second.extract_wrapped_value().to_string() << std::endl;
+         *      }
+         *  }
+         * \endcode
+         *
+         * \remark The iterator is valid as long as the variant_associative_view and it corresponding variant is valid and not modified.
+         */
         class RTTR_API const_iterator
         {
             public:
@@ -216,6 +241,8 @@ class RTTR_API variant_associative_view
                 const_iterator& operator=(const_iterator other);
 
                 const std::pair<variant, variant> operator*() const;
+                const variant key() const;
+                const variant value() const;
 
                 const_iterator &operator++();
                 const_iterator operator++(int);
