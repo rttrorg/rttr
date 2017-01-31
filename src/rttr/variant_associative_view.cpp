@@ -123,7 +123,13 @@ variant_associative_view::const_iterator variant_associative_view::find(argument
 std::pair<variant_associative_view::const_iterator, variant_associative_view::const_iterator>
 variant_associative_view::equal_range(argument key)
 {
-    return {const_iterator(&m_view), const_iterator(&m_view)};
+    const_iterator itr_begin(&m_view);
+    const_iterator itr_end(&m_view);
+
+    m_view.equal_range(key, itr_begin.m_itr, itr_end.m_itr);
+
+
+    return {itr_begin, itr_end};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

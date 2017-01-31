@@ -205,9 +205,9 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
 
 TEST_CASE("variant_associative_view::iterator operations", "[variant_associative_view]")
 {
-    auto unordered_set = std::set<int>{ 1, 2, 3, 4 };
+    auto set = std::set<int>{ 1, 2, 3, 4 };
 
-    variant var = unordered_set;
+    variant var = set;
 
     auto view = var.create_associative_view();
 
@@ -258,6 +258,55 @@ TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
     {
         auto itr = view.find(4);
         CHECK(itr == view.end());
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
+{
+    SECTION("std::set")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+
+        variant var = set;
+
+        auto view = var.create_associative_view();
+        auto range = view.equal_range(3);
+
+        for (auto itr = range.first; itr != range.second; ++itr)
+        {
+            CHECK(itr.value().extract_wrapped_value().to_int() == 3);
+        }
+    }
+
+    SECTION("std::multimap")
+    {
+        auto multimap = std::multimap<int, std::string>{ { 1, "one" }, { 2, "two1" },  { 2, "two2" },
+                                                         { 2, "two3" }, { 3, "three" } };
+
+        variant var = multimap;
+
+        auto view = var.create_associative_view();
+        auto range = view.equal_range(2);
+
+        int count = 0;
+        for (auto itr = range.first; itr != range.second; ++itr)
+        {
+            ++count;
+        }
+        REQUIRE(count == 3);
+
+        auto itr = range.first;
+        CHECK(itr.value().extract_wrapped_value().to_string() == "two1");
+        ++itr;
+        CHECK(itr.value().extract_wrapped_value().to_string() == "two2");
+        ++itr;
+        CHECK(itr.value().extract_wrapped_value().to_string() == "two3");
+
+        ++itr;
+        CHECK(itr == range.second);
+
     }
 }
 

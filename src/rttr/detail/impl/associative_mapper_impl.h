@@ -64,13 +64,30 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
         return (reinterpret_cast<ConstType*>(container)->size());
     }
 
-    static void find(void* container, detail::iterator_data& itr, argument& arg)
+    static void find(void* container, detail::iterator_data& itr, argument& key)
     {
         using key_t = typename T::key_type;
-        if (arg.get_type() == ::rttr::type::get<key_t>())
-            associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(arg.get_value<key_t>()));
+        if (key.get_type() == ::rttr::type::get<key_t>())
+            associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(key.get_value<key_t>()));
         else
             end(container, itr);
+    }
+
+    static void equal_range(void* container, argument& key,
+                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+    {
+        using key_t = typename T::key_type;
+        if (key.get_type() == ::rttr::type::get<key_t>())
+        {
+            auto ret = reinterpret_cast<ConstType*>(container)->equal_range(key.get_value<key_t>());
+            associative_container_mapper<T, ConstType>::create(itr_begin, ret.first);
+            associative_container_mapper<T, ConstType>::create(itr_end, ret.second);
+        }
+        else
+        {
+            end(container, itr_begin);
+            end(container, itr_end);
+        }
     }
 };
 
@@ -211,6 +228,11 @@ struct associative_container_empty
 
     static void find(void* container, detail::iterator_data& itr, argument& arg)
     {
+    }
+    static void equal_range(void* container, argument& key,
+                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+    {
+
     }
 };
 

@@ -56,7 +56,8 @@ class RTTR_LOCAL variant_associative_view_private
             m_get_key_func(associative_container_empty::get_key),
             m_get_value_func(associative_container_empty::get_value),
             m_advance_func(associative_container_empty::advance),
-            m_find_func(associative_container_empty::find)
+            m_find_func(associative_container_empty::find),
+            m_equal_range_func(associative_container_empty::equal_range)
         {
         }
 
@@ -73,7 +74,8 @@ class RTTR_LOCAL variant_associative_view_private
             m_get_key_func(associative_container_mapper<RawType, ConstType>::get_key),
             m_get_value_func(associative_container_mapper<RawType, ConstType>::get_value),
             m_advance_func(associative_container_mapper<RawType, ConstType>::advance),
-            m_find_func(associative_container_mapper<RawType, ConstType>::find)
+            m_find_func(associative_container_mapper<RawType, ConstType>::find),
+            m_equal_range_func(associative_container_mapper<RawType, ConstType>::equal_range)
         {
         }
 
@@ -145,6 +147,12 @@ class RTTR_LOCAL variant_associative_view_private
             m_find_func(m_container, itr, key);
         }
 
+        RTTR_INLINE void equal_range(argument& key,
+                                     iterator_data& itr_begin, detail::iterator_data& itr_end)
+        {
+            m_equal_range_func(m_container, key, itr_begin, itr_end);
+        }
+
     private:
         static bool equal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
         using equality_func     = decltype(&equal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
@@ -157,7 +165,9 @@ class RTTR_LOCAL variant_associative_view_private
         using delete_func       = void(*)(iterator_data& itr);
         using get_key_func      = variant (*)(const iterator_data& itr);
         using get_value_func    = variant (*)(const iterator_data& itr);
-        using find_func         = void(*)(void* container, detail::iterator_data& itr, argument& arg);
+        using find_func         = void(*)(void* container, detail::iterator_data& itr, argument& key);
+        using equal_range_func  = void(*)(void* container, argument& key,
+                                          detail::iterator_data& itr_begin, detail::iterator_data& itr_end);
 
         type            m_type;
         void*           m_container;
@@ -171,6 +181,7 @@ class RTTR_LOCAL variant_associative_view_private
         get_value_func  m_get_value_func;
         advance_func    m_advance_func;
         find_func       m_find_func;
+        equal_range_func m_equal_range_func;
 };
 
 } // end namespace detail

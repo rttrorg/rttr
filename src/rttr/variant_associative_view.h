@@ -181,6 +181,33 @@ class RTTR_API variant_associative_view
         /*!
          * \brief Returns a range containing all elements with the given \p key in the container.
          *
+         * Example code:
+         * \code{.cpp}
+         *	auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C"}, { 2, "D" },
+         *	                                                 { 3, "E" }, { 3, "F" } };
+         *
+         *	variant var = multimap;
+         *
+         *	auto view = var.create_associative_view();
+         *	for (int i = 1; i <= 3; ++i)
+         *	{
+         *	    std::cout << i << " =>";
+         *	    auto range = view.equal_range(i);
+         *	    for (auto itr = range.first; itr != range.second; ++itr)
+         *	    {
+         *	        std::cout << " " << itr.value().extract_wrapped_value().to_string();
+         *	    }
+         *	    std::cout << std::endl;
+         *	}
+         *\endcode
+         *
+         * Output:
+         * \code
+         *  1 => A
+         *  2 => B C D
+         *  3 => E, F
+         * \endcode
+         *
          * \return std::pair containing a pair of iterators defining the wanted range:
          *         the first pointing to the first element that is not less than \p key and
          *         the second pointing to the first element greater than \p key.
