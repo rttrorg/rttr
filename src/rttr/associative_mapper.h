@@ -71,7 +71,7 @@ namespace rttr
  * 3. `static void create(detail::iterator_data& itr_tgt, const detail::iterator& itr_src);`
  * 4. `static void create(detail::iterator_data& itr_tgt, const detail::iterator_data& itr_src);`
  * 5. `static void destroy(detail::iterator_data& itr);`
- * 6. `static void advance(detail::iterator_data& itr, std::size_t idx);`
+ * 6. `static void advance(detail::iterator_data& itr, std::ptrdiff_t idx);`
  * 7. `static bool equal(const detail::iterator_data& lhs_itr, const detail::iterator_data& rhs_itr) RTTR_NOEXCEPT;`
  * 8. `static variant get_key(const detail::iterator_data& itr);`
  * 9. `static variant get_value(const detail::iterator_data& itr);`
@@ -106,7 +106,7 @@ struct associative_container_mapper
     {
     }
 
-    static void advance(detail::iterator_data& itr, std::size_t idx)
+    static void advance(detail::iterator_data& itr, std::ptrdiff_t idx)
     {
     }
 

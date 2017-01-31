@@ -135,7 +135,7 @@ class RTTR_LOCAL variant_associative_view_private
         }
 
 
-        RTTR_INLINE void advance(iterator_data& itr, std::size_t index) const
+        RTTR_INLINE void advance(iterator_data& itr, std::ptrdiff_t index) const
         {
             m_advance_func(itr, index);
         }
@@ -152,7 +152,7 @@ class RTTR_LOCAL variant_associative_view_private
         using get_size_func     = std::size_t(*)(void* container);
         using begin_func        = void(*)(void* container, iterator_data& itr);
         using end_func          = void(*)(void* container, iterator_data& itr);
-        using advance_func      = void(*)(iterator_data& itr, std::size_t index);
+        using advance_func      = void(*)(iterator_data& itr, std::ptrdiff_t index);
         using create_func       = void(*)(iterator_data& itr_tgt, const iterator_data& itr_src);
         using delete_func       = void(*)(iterator_data& itr);
         using get_key_func      = variant (*)(const iterator_data& itr);

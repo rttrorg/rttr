@@ -124,7 +124,7 @@ template<typename Itr, typename Tp = conditional_t<can_place_in_iterator_data<It
 struct iterator_wrapper_base : Tp
 {
 
-    static void advance(iterator_data& itr, std::size_t idx)
+    static void advance(iterator_data& itr, std::ptrdiff_t idx)
     {
         std::advance(Tp::get_iterator(itr), idx);
     }

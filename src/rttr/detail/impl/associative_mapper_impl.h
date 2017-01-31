@@ -176,7 +176,7 @@ struct associative_container_empty
     {
     }
 
-    static void advance(iterator_data& itr, std::size_t idx)
+    static void advance(iterator_data& itr, std::ptrdiff_t idx)
     {
     }
 

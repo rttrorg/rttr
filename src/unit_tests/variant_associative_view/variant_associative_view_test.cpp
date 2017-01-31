@@ -200,6 +200,43 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
     }
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::iterator operations", "[variant_associative_view]")
+{
+    auto unordered_set = std::set<int>{ 1, 2, 3, 4 };
+
+    variant var = unordered_set;
+
+    auto view = var.create_associative_view();
+
+    auto itr = view.begin();
+    REQUIRE(itr != view.end());
+
+    itr++;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 2);
+    itr--;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+    ++itr;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 2);
+    --itr;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+
+    itr = view.begin();
+    itr += 2;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 3);
+    itr += 1;
+    itr -= 3;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+
+    itr = view.begin();
+    itr = itr + 3;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 4);
+    itr = itr - 3;
+    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
