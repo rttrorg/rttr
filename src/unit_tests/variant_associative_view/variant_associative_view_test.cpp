@@ -282,8 +282,8 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
 
     SECTION("std::multimap")
     {
-        auto multimap = std::multimap<int, std::string>{ { 1, "one" }, { 2, "two1" },  { 2, "two2" },
-                                                         { 2, "two3" }, { 3, "three" } };
+        auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
+                                                         { 2, "D" }, { 3, "E" } };
 
         variant var = multimap;
 
@@ -298,15 +298,79 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
         REQUIRE(count == 3);
 
         auto itr = range.first;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "two1");
+        CHECK(itr.value().extract_wrapped_value().to_string() == "B");
         ++itr;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "two2");
+        CHECK(itr.value().extract_wrapped_value().to_string() == "C");
         ++itr;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "two3");
+        CHECK(itr.value().extract_wrapped_value().to_string() == "D");
 
         ++itr;
         CHECK(itr == range.second);
 
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
+{
+    SECTION("std::set")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+        variant var = set;
+        auto view = var.create_associative_view();
+
+        CHECK(view.erase(42) == 0);
+        CHECK(view.erase(3) == 1);
+
+        CHECK(view.get_size() == 3);
+    }
+
+    SECTION("std::map")
+    {
+        auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
+                                                         { 2, "D" }, { 3, "E" } };
+        variant var = multimap;
+        auto view = var.create_associative_view();
+
+        CHECK(view.erase(42) == 0);
+
+        CHECK(view.erase(2) == 3);
+        CHECK(view.get_size() == 2);
+        CHECK(view.erase(3) == 1);
+        CHECK(view.get_size() == 1);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
+{
+    SECTION("std::set")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+        variant var = set;
+        auto view = var.create_associative_view();
+
+        CHECK(view.get_size() == 4);
+
+        view.clear();
+
+        CHECK(view.get_size() == 0);
+    }
+
+    SECTION("std::map")
+    {
+        auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
+                                                         { 2, "D" }, { 3, "E" } };
+        variant var = multimap;
+        auto view = var.create_associative_view();
+
+        CHECK(view.get_size() == 5);
+
+        view.clear();
+
+        CHECK(view.get_size() == 0);
     }
 }
 

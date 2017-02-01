@@ -44,11 +44,58 @@ namespace rttr
 namespace detail
 {
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value, void>
+associative_container_base_clear(void* container)
+{
+    reinterpret_cast<T*>(container)->clear();
+}
+
+template<typename T>
+RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value, void>
+associative_container_base_clear(void* container)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value, std::size_t>
+associative_container_base_erase(void* container, argument& key)
+{
+    using key_t = typename T::key_type;
+
+    if (key.get_type() == ::rttr::type::get<key_t>())
+    {
+        return reinterpret_cast<T*>(container)->erase(key.get_value<key_t>());
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+template<typename T>
+RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value, std::size_t>
+associative_container_base_erase(void* container, argument& key)
+{
+    return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T, typename ConstType, typename Tp = typename std::conditional<std::is_const<ConstType>::value,
                                                                                  typename T::const_iterator,
                                                                                  typename T::iterator>::type>
 struct associative_container_base : detail::iterator_wrapper_associative_container<Tp>
 {
+    using key_t = typename T::key_type;
+
     static void begin(void* container, detail::iterator_data& itr)
     {
         associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->begin());
@@ -66,7 +113,6 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
 
     static void find(void* container, detail::iterator_data& itr, argument& key)
     {
-        using key_t = typename T::key_type;
         if (key.get_type() == ::rttr::type::get<key_t>())
             associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(key.get_value<key_t>()));
         else
@@ -76,7 +122,6 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
     static void equal_range(void* container, argument& key,
                             detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
     {
-        using key_t = typename T::key_type;
         if (key.get_type() == ::rttr::type::get<key_t>())
         {
             auto ret = reinterpret_cast<ConstType*>(container)->equal_range(key.get_value<key_t>());
@@ -88,6 +133,16 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
             end(container, itr_begin);
             end(container, itr_end);
         }
+    }
+
+    static std::size_t erase(void* container, argument& key)
+    {
+        return associative_container_base_erase<ConstType>(container, key);
+    }
+
+    static void clear(void* container)
+    {
+        associative_container_base_clear<ConstType>(container);
     }
 };
 
@@ -229,6 +284,16 @@ struct associative_container_empty
     static void find(void* container, detail::iterator_data& itr, argument& arg)
     {
     }
+
+    static std::size_t erase(void* container, argument& arg)
+    {
+        return 0;
+    }
+
+    static void clear(void* container)
+    {
+    }
+
     static void equal_range(void* container, argument& key,
                             detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
     {

@@ -179,6 +179,13 @@ class RTTR_API variant_associative_view
         std::size_t erase(argument key);
 
         /*!
+         * \brief Removes all elements from the container.
+         *
+         * \remark Invalidates all references, pointers, or iterators referring to contained elements.
+         */
+        void clear();
+
+        /*!
          * \brief Returns a range containing all elements with the given \p key in the container.
          *
          * Example code:

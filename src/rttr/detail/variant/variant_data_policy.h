@@ -295,7 +295,7 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
-                arg.get_value<variant_associative_view_private&>() = create_variant_associative_view((Tp::get_value(src_data)));
+                arg.get_value<variant_associative_view_private&>() = create_variant_associative_view(const_cast<T&>(Tp::get_value(src_data)));
                 break;
             }
             case variant_policy_operation::CONVERT:
