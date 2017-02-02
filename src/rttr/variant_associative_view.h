@@ -190,22 +190,22 @@ class RTTR_API variant_associative_view
          *
          * Example code:
          * \code{.cpp}
-         *	auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C"}, { 2, "D" },
-         *	                                                 { 3, "E" }, { 3, "F" } };
+         *  auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C"}, { 2, "D" },
+         *                                                   { 3, "E" }, { 3, "F" } };
          *
-         *	variant var = multimap;
+         *  variant var = multimap;
          *
-         *	auto view = var.create_associative_view();
-         *	for (int i = 1; i <= 3; ++i)
-         *	{
-         *	    std::cout << i << " =>";
-         *	    auto range = view.equal_range(i);
-         *	    for (auto itr = range.first; itr != range.second; ++itr)
-         *	    {
-         *	        std::cout << " " << itr.value().extract_wrapped_value().to_string();
-         *	    }
-         *	    std::cout << std::endl;
-         *	}
+         *  auto view = var.create_associative_view();
+         *  for (int i = 1; i <= 3; ++i)
+         *  {
+         *      std::cout << i << " =>";
+         *      auto range = view.equal_range(i);
+         *      for (auto itr = range.first; itr != range.second; ++itr)
+         *      {
+         *          std::cout << " " << itr.value().extract_wrapped_value().to_string();
+         *      }
+         *      std::cout << std::endl;
+         *  }
          *\endcode
          *
          * Output:
