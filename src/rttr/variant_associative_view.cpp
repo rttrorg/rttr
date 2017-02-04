@@ -52,14 +52,6 @@ variant_associative_view::variant_associative_view(const variant_associative_vie
 
 /////////////////////////////////////////////////////////////////////////////////
 
-variant_associative_view::variant_associative_view(variant_associative_view&& other) RTTR_NOEXCEPT
-:   m_view(std::move(other.m_view))
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
 variant_associative_view::~variant_associative_view() RTTR_NOEXCEPT
 {
 }

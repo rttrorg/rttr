@@ -52,19 +52,21 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         CHECK(b.is_valid() == false);
 
         variant var;
-        variant_associative_view c = var.create_associative_view();
+        variant_associative_view view = var.create_associative_view();
 
-        CHECK(c.is_valid() == false);
-        CHECK(c.get_size() == 0);
-        CHECK(c.get_type().is_valid() == false);
-        CHECK(c.erase(23) == 0);
+        CHECK(view.is_valid() == false);
+        CHECK(static_cast<bool>(view) == false);
+        CHECK(view.get_size() == 0);
+        CHECK(view.get_type().is_valid() == false);
+        CHECK(view.erase(23) == 0);
    }
 
    SECTION("invalid")
    {
-       variant var = 2;
-       variant_associative_view a = var.create_associative_view();
-       CHECK(a.is_valid() == false);
+        variant var = 2;
+        variant_associative_view view = var.create_associative_view();
+        CHECK(view.is_valid() == false);
+        CHECK(static_cast<bool>(view) == true);
    }
 
    SECTION("valid")
@@ -72,10 +74,19 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         variant var = std::set<int>({1, 2, 3});
         variant_associative_view a = var.create_associative_view();
         CHECK(a.is_valid() == true);
+        CHECK(static_cast<bool>(a) == true);
 
         variant_associative_view b(a);
         CHECK(b.is_valid() == true);
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_associative_view::other ctor", "[variant_associative_view]")
+{
+    variant var = std::set<int>({1, 2, 3});
+    variant_associative_view a(var.create_associative_view());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +382,34 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         view.clear();
 
         CHECK(view.get_size() == 0);
+    }
+}
+
+TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
+{
+
+    SECTION("valid test")
+    {
+        variant var = std::set<int>({ 1, 2, 3 });
+        variant_associative_view view = var.create_associative_view();
+
+        int i = 0;
+        for (auto& item : view)
+        {
+            CHECK(item.second.extract_wrapped_value().to_int() == ++i);
+        }
+    }
+
+
+    SECTION("invalid test")
+    {
+        variant var;
+        variant_associative_view view = var.create_associative_view();
+
+        for (auto& item : view)
+        {
+            CHECK(false);
+        }
     }
 }
 

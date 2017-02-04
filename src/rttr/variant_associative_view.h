@@ -107,11 +107,6 @@ class RTTR_API variant_associative_view
         variant_associative_view(const variant_associative_view& other);
 
         /*!
-         * \brief Constructs a new variant_associative_view via move constructor.
-         */
-        variant_associative_view(variant_associative_view&& other) RTTR_NOEXCEPT;
-
-        /*!
          * \brief Destroys the variant_associative_view.
          *
          * \remark The underlying data is not destroyed.
