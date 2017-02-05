@@ -66,7 +66,7 @@ namespace rttr
  * Copying and Assignment
  * ----------------------
  * A \ref variant_associative_view object can be copied and assigned,
- * however each copy will reference the address of same underlying \ref variant value.
+ * however each copy will reference the data of same underlying \ref variant value.
  *
  * Typical Usage
  * ----------------------

@@ -269,6 +269,9 @@ TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
     {
         auto itr = view.find(4);
         CHECK(itr == view.end());
+
+        itr = view.find("invalid key");
+        CHECK(itr == view.end());
     }
 }
 
@@ -289,6 +292,18 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
         {
             CHECK(itr.value().extract_wrapped_value().to_int() == 3);
         }
+
+        // invalid equal_range search
+        range = view.equal_range(5);
+
+        CHECK(range.first == view.end());
+        CHECK(range.second == view.end());
+
+        // invalid key
+        range = view.equal_range("invalid key");
+
+        CHECK(range.first == view.end());
+        CHECK(range.second == view.end());
     }
 
     SECTION("std::multimap")
@@ -337,6 +352,16 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
         CHECK(view.get_size() == 3);
     }
 
+    SECTION("const std::set")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+        variant var = std::cref(set);
+        auto view = var.create_associative_view();
+
+        CHECK(view.erase(3) == 0);
+        CHECK(view.get_size() == 4);
+    }
+
     SECTION("std::map")
     {
         auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
@@ -368,6 +393,19 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         view.clear();
 
         CHECK(view.get_size() == 0);
+    }
+
+    SECTION("const std::set")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+        variant var = std::cref(set);
+        auto view = var.create_associative_view();
+
+        CHECK(view.get_size() == 4);
+
+        view.clear();
+
+        CHECK(view.get_size() == 4);
     }
 
     SECTION("std::map")
