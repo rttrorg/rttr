@@ -258,7 +258,7 @@ struct associative_container_empty
 
     static bool equal(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT
     {
-        return false;
+        return true;
     }
 
     static variant get_key(const iterator_data& itr)

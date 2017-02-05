@@ -66,7 +66,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         variant var = 2;
         variant_associative_view view = var.create_associative_view();
         CHECK(view.is_valid() == false);
-        CHECK(static_cast<bool>(view) == true);
+        CHECK(static_cast<bool>(view) == false);
    }
 
    SECTION("valid")
@@ -398,6 +398,12 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
         {
             CHECK(item.second.extract_wrapped_value().to_int() == ++i);
         }
+
+        auto itr_begin = view.begin();
+        if (itr_begin != view.end())
+        {
+            CHECK(itr_begin.value().extract_wrapped_value() == 1);
+        }
     }
 
 
@@ -405,6 +411,8 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
     {
         variant var;
         variant_associative_view view = var.create_associative_view();
+
+        CHECK(view.begin() == view.end());
 
         for (auto& item : view)
         {
