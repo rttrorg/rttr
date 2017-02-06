@@ -270,8 +270,8 @@ class RTTR_API variant_associative_view
                 const_iterator& operator=(const_iterator other);
 
                 const std::pair<variant, variant> operator*() const;
-                const variant key() const;
-                const variant value() const;
+                const variant get_key() const;
+                const variant get_value() const;
 
                 const_iterator &operator++();
                 const_iterator operator++(int);

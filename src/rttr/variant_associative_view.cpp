@@ -210,14 +210,14 @@ const std::pair<variant, variant> variant_associative_view::const_iterator::oper
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const variant variant_associative_view::const_iterator::key() const
+const variant variant_associative_view::const_iterator::get_key() const
 {
     return m_view->get_key(m_itr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const variant variant_associative_view::const_iterator::value() const
+const variant variant_associative_view::const_iterator::get_value() const
 {
     return m_view->get_value(m_itr);
 }

@@ -226,26 +226,26 @@ TEST_CASE("variant_associative_view::iterator operations", "[variant_associative
     REQUIRE(itr != view.end());
 
     itr++;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 2);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 2);
     itr--;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
     ++itr;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 2);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 2);
     --itr;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
 
     itr = view.begin();
     itr += 2;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 3);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 3);
     itr += 1;
     itr -= 3;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
 
     itr = view.begin();
     itr = itr + 3;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 4);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 4);
     itr = itr - 3;
-    CHECK(itr.value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -261,8 +261,8 @@ TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
     auto itr = view.find(1);
 
     CHECK(itr != view.end());
-    CHECK(itr.key().extract_wrapped_value() == 1);
-    CHECK(itr.value().extract_wrapped_value() == "one");
+    CHECK(itr.get_key().extract_wrapped_value() == 1);
+    CHECK(itr.get_value().extract_wrapped_value() == "one");
 
 
     SECTION("invalid test")
@@ -290,7 +290,7 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
 
         for (auto itr = range.first; itr != range.second; ++itr)
         {
-            CHECK(itr.value().extract_wrapped_value().to_int() == 3);
+            CHECK(itr.get_value().extract_wrapped_value().to_int() == 3);
         }
 
         // invalid equal_range search
@@ -324,11 +324,11 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
         REQUIRE(count == 3);
 
         auto itr = range.first;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "B");
+        CHECK(itr.get_value().extract_wrapped_value().to_string() == "B");
         ++itr;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "C");
+        CHECK(itr.get_value().extract_wrapped_value().to_string() == "C");
         ++itr;
-        CHECK(itr.value().extract_wrapped_value().to_string() == "D");
+        CHECK(itr.get_value().extract_wrapped_value().to_string() == "D");
 
         ++itr;
         CHECK(itr == range.second);
@@ -440,7 +440,7 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
         auto itr_begin = view.begin();
         if (itr_begin != view.end())
         {
-            CHECK(itr_begin.value().extract_wrapped_value() == 1);
+            CHECK(itr_begin.get_value().extract_wrapped_value() == 1);
         }
     }
 
