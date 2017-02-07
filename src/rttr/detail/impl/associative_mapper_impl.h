@@ -92,16 +92,16 @@ associative_container_base_erase(void* container, argument& key)
 template<typename T, typename ConstType, typename Tp = typename std::conditional<std::is_const<ConstType>::value,
                                                                                  typename T::const_iterator,
                                                                                  typename T::iterator>::type>
-struct associative_container_base : detail::iterator_wrapper_associative_container<Tp>
+struct associative_container_base : iterator_wrapper_associative_container<Tp>
 {
     using key_t = typename T::key_type;
 
-    static void begin(void* container, detail::iterator_data& itr)
+    static void begin(void* container, iterator_data& itr)
     {
         associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->begin());
     }
 
-    static void end(void* container, detail::iterator_data& itr)
+    static void end(void* container, iterator_data& itr)
     {
         associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->end());
     }
@@ -111,7 +111,7 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
         return (reinterpret_cast<ConstType*>(container)->size());
     }
 
-    static void find(void* container, detail::iterator_data& itr, argument& key)
+    static void find(void* container, iterator_data& itr, argument& key)
     {
         if (key.get_type() == ::rttr::type::get<key_t>())
             associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(key.get_value<key_t>()));
@@ -120,7 +120,7 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
     }
 
     static void equal_range(void* container, argument& key,
-                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+                            iterator_data& itr_begin, iterator_data& itr_end)
     {
         if (key.get_type() == ::rttr::type::get<key_t>())
         {
@@ -146,41 +146,34 @@ struct associative_container_base : detail::iterator_wrapper_associative_contain
     }
 };
 
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename...Args>
+struct associative_container_set_base : associative_container_base<T, Args...>
+{
+    static variant get_key(const iterator_data& itr)
+    {
+        return variant();
+    }
+
+    static variant get_value(const iterator_data& itr)
+    {
+        auto& it = associative_container_base<T,  Args...>::get_iterator(itr);
+        return variant(std::ref(*it));
+    }
+};
+
 } // end namespace detail
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::set<K>, Args...> : detail::associative_container_base<std::set<K>,  Args...>
-{
-    static variant get_key(const detail::iterator_data& itr)
-    {
-        return variant();
-    }
-
-    static variant get_value(const detail::iterator_data& itr)
-    {
-        auto& it = detail::associative_container_base<std::set<K>,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
-    }
-};
+struct associative_container_mapper<std::set<K>, Args...> : detail::associative_container_set_base<std::set<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::multiset<K>, Args...> : detail::associative_container_base<std::multiset<K>,  Args...>
-{
-    static variant get_key(const detail::iterator_data& itr)
-    {
-        return variant();
-    }
-
-    static variant get_value(const detail::iterator_data& itr)
-    {
-        auto& it = detail::associative_container_base<std::multiset<K>,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
-    }
-};
+struct associative_container_mapper<std::multiset<K>, Args...> : detail::associative_container_set_base<std::multiset<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -195,20 +188,7 @@ struct associative_container_mapper<std::multimap<K, T>, Args...> : detail::asso
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_set<K>, Args...> : detail::associative_container_base<std::unordered_set<K>,  Args...>
-{
-    static variant get_key(const detail::iterator_data& itr)
-    {
-        return variant();
-    }
-
-    static variant get_value(const detail::iterator_data& itr)
-    {
-        auto& it = detail::associative_container_base<std::unordered_set<K>,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
-    }
-};
-
+struct associative_container_mapper<std::unordered_set<K>, Args...> : detail::associative_container_set_base<std::unordered_set<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,19 +198,7 @@ struct associative_container_mapper<std::unordered_map<K, T>, Args...> : detail:
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detail::associative_container_base<std::unordered_multiset<K>,  Args...>
-{
-    static variant get_key(const detail::iterator_data& itr)
-    {
-        return variant();
-    }
-
-    static variant get_value(const detail::iterator_data& itr)
-    {
-        auto& it = detail::associative_container_base<std::unordered_multiset<K>,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
-    }
-};
+struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detail::associative_container_set_base<std::unordered_multiset<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
