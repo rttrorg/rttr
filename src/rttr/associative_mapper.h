@@ -121,6 +121,23 @@ struct associative_container_mapper
     static variant get_value(const detail::iterator_data& itr)
     {
     }
+
+     static void find(void* container, detail::iterator_data& itr, argument& key)
+    {
+    }
+
+    static void equal_range(void* container, argument& key,
+                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+    {
+    }
+
+    static std::size_t erase(void* container, argument& key)
+    {
+    }
+
+    static void clear(void* container)
+    {
+    }
 #endif
 };
 

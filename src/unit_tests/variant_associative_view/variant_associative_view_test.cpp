@@ -252,26 +252,33 @@ TEST_CASE("variant_associative_view::iterator operations", "[variant_associative
 
 TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
 {
-    auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
-    variant var = map;
-    variant_associative_view view = var.create_associative_view();
-
-    REQUIRE(view.is_valid() == true);
-
-    auto itr = view.find(1);
-
-    CHECK(itr != view.end());
-    CHECK(itr.get_key().extract_wrapped_value() == 1);
-    CHECK(itr.get_value().extract_wrapped_value() == "one");
-
-
-    SECTION("invalid test")
+    SECTION("valid test")
     {
-        auto itr = view.find(4);
+        auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
+        variant var = map;
+        variant_associative_view view = var.create_associative_view();
+
+        REQUIRE(view.is_valid() == true);
+
+        auto itr = view.find(1);
+
+        CHECK(itr != view.end());
+        CHECK(itr.get_key().extract_wrapped_value() == 1);
+        CHECK(itr.get_value().extract_wrapped_value() == "one");
+
+        // negative test
+        itr = view.find(4);
         CHECK(itr == view.end());
 
         itr = view.find("invalid key");
         CHECK(itr == view.end());
+    }
+
+    SECTION("invalid test")
+    {
+        variant var_empty;
+        auto view = var_empty.create_associative_view();
+        CHECK(view.find(2) == view.end());
     }
 }
 
@@ -332,7 +339,16 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
 
         ++itr;
         CHECK(itr == range.second);
+    }
 
+    SECTION("invalid")
+    {
+        variant var;
+        auto view = var.create_associative_view();
+        auto ret = view.equal_range(23);
+
+        CHECK(ret.first == view.end());
+        CHECK(ret.second == view.end());
     }
 }
 
@@ -376,6 +392,15 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
         CHECK(view.erase(3) == 1);
         CHECK(view.get_size() == 1);
     }
+
+    SECTION("invalid")
+    {
+        auto set = std::set<int>{ 1, 2, 3, 4 };
+        variant var = set;
+        auto view = var.create_associative_view();
+
+        CHECK(view.erase("invalid key") == 0);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -417,6 +442,15 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
 
         CHECK(view.get_size() == 5);
 
+        view.clear();
+
+        CHECK(view.get_size() == 0);
+    }
+
+    SECTION("invalid")
+    {
+        variant var;
+        auto view = var.create_associative_view();
         view.clear();
 
         CHECK(view.get_size() == 0);
