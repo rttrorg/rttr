@@ -67,7 +67,6 @@ RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value, std::size_t>
 associative_container_base_erase(void* container, argument& key)
 {
     using key_t = typename T::key_type;
-
     if (key.get_type() == ::rttr::type::get<key_t>())
     {
         return reinterpret_cast<T*>(container)->erase(key.get_value<key_t>());
@@ -84,6 +83,57 @@ associative_container_base_erase(void* container, argument& key)
 {
     return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
+associative_container_base_insert(void* container, argument& value)
+{
+    using value_t = typename T::value_type;
+    if (value.get_type() == ::rttr::type::get<value_t>())
+    {
+        return reinterpret_cast<T*>(container)->insert(value.get_value<value_t>());
+    }
+    else
+    {
+        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
+associative_container_base_insert(void* container, argument& value)
+{
+    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
+associative_container_base_insert(void* container, argument& value)
+{
+    using value_t = typename T::value_type;
+    if (value.get_type() == ::rttr::type::get<value_t>())
+    {
+        return std::make_pair(reinterpret_cast<T*>(container)->insert(value.get_value<value_t>()), true);
+    }
+    else
+    {
+        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
+    }
+}
+
+template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
+associative_container_base_insert(void* container, argument& value)
+{
+    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +193,13 @@ struct associative_container_base : iterator_wrapper_associative_container<Tp>
     static void clear(void* container)
     {
         associative_container_base_clear<ConstType>(container);
+    }
+
+    static bool insert(void* container, argument& value, iterator_data& itr)
+    {
+        auto ret = associative_container_base_insert<ConstType>(container, value);
+        associative_container_mapper<T, ConstType>::create(itr, ret.first);
+        return ret.second;
     }
 };
 
@@ -249,7 +306,7 @@ struct associative_container_empty
         return 0;
     }
 
-    static void find(void* container, detail::iterator_data& itr, argument& arg)
+    static void find(void* container, iterator_data& itr, argument& arg)
     {
     }
 
@@ -263,9 +320,14 @@ struct associative_container_empty
     }
 
     static void equal_range(void* container, argument& key,
-                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+                            iterator_data& itr_begin, iterator_data& itr_end)
     {
 
+    }
+
+    static bool insert(void* container, argument& value, iterator_data& itr)
+    {
+        return false;
     }
 };
 

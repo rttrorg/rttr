@@ -250,6 +250,64 @@ TEST_CASE("variant_associative_view::iterator operations", "[variant_associative
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
+{
+    SECTION("valid test - std::set")
+    {
+        auto set = std::set<int>();
+        variant var = set;
+        variant_associative_view view = var.create_associative_view();
+
+        REQUIRE(view.is_valid() == true);
+
+        auto ret = view.insert(1);
+        CHECK(ret.first != view.end());
+
+        CHECK(ret.first.get_key().is_valid() == false);
+        CHECK(ret.first.get_value().extract_wrapped_value().to_int() == 1);
+        CHECK(ret.second == true);
+
+        ret = view.insert(std::string("one"));
+
+        CHECK(ret.first == view.end());
+        CHECK(ret.second == false);
+    }
+
+    SECTION("valid test - std::map")
+    {
+        auto map = std::map<int, std::string>();
+        variant var = map;
+        variant_associative_view view = var.create_associative_view();
+
+        REQUIRE(view.is_valid() == true);
+
+        auto ret = view.insert(std::map<int, std::string>::value_type{1, std::string("one") });
+
+        CHECK(ret.first != view.end());
+
+        CHECK(ret.first.get_key().extract_wrapped_value().to_int() == 1);
+        CHECK(ret.first.get_value().extract_wrapped_value().to_string() == "one");
+        CHECK(ret.second == true);
+
+        ret = view.insert(std::make_pair(std::string("one"), 1));
+
+        CHECK(ret.first == view.end());
+        CHECK(ret.second == false);
+    }
+
+    SECTION("invalid test")
+    {
+        variant var_empty;
+        auto view = var_empty.create_associative_view();
+        auto ret = view.insert(2);
+
+        CHECK(ret.first == view.end());
+        CHECK(ret.second == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
 {
     SECTION("valid test")

@@ -160,6 +160,14 @@ class RTTR_API variant_associative_view
         std::size_t get_size() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Insert a value into the container.
+         *
+         * \return A pair consisting of an iterator to the inserted element (or to the element that prevented the insertion)
+         *         and a bool denoting whether the insertion took place.
+         */
+        std::pair<const_iterator, bool> insert(argument value);
+
+        /*!
          * \brief Finds an element with specific key \p key .
          *
          * \return The element with key equivalent to \p key. If no element is found an invalid variant is returned.
