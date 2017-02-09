@@ -86,7 +86,7 @@ associative_container_base_erase(void* container, argument& key)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+template<typename T, typename Tp = decltype(remove_const_t<T>().template insert(std::declval<typename T::value_type>()))>
 RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
 associative_container_base_insert(void* container, argument& value)
 {
@@ -103,7 +103,7 @@ associative_container_base_insert(void* container, argument& value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+template<typename T, typename Tp = decltype(remove_const_t<T>().template insert(std::declval<typename T::value_type>()))>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
 associative_container_base_insert(void* container, argument& value)
 {
@@ -112,7 +112,7 @@ associative_container_base_insert(void* container, argument& value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+template<typename T, typename Tp = decltype(remove_const_t<T>().template insert(std::declval<typename T::value_type>()))>
 RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
 associative_container_base_insert(void* container, argument& value)
 {
@@ -127,7 +127,7 @@ associative_container_base_insert(void* container, argument& value)
     }
 }
 
-template<typename T, typename Tp = decltype(T().insert(std::declval<typename T::value_type>()))>
+template<typename T, typename Tp = decltype(remove_const_t<T>().template insert(std::declval<typename T::value_type>()))>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && std::is_same<Tp, typename T::iterator>::value, std::pair<typename T::iterator, bool>>
 associative_container_base_insert(void* container, argument& value)
 {
