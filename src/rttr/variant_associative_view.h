@@ -143,7 +143,7 @@ class RTTR_API variant_associative_view
         void swap(variant_associative_view& other) RTTR_NOEXCEPT;
 
 
-       /*!
+        /*!
          * \brief Returns the \ref type object of this associative container.
          *
          * \remark When the view is not valid, this function will return an invalid type object.
@@ -231,7 +231,7 @@ class RTTR_API variant_associative_view
          *
          * \return Iterator to the first element .
          */
-        const_iterator begin();
+        const_iterator begin() const;
 
         /*!
          * \brief Returns an iterator to the element following the last element of the container.
@@ -240,7 +240,7 @@ class RTTR_API variant_associative_view
          *
          * \return Iterator to the element following the last element.
          */
-        const_iterator end();
+        const_iterator end() const;
 
         /*!
          * The \ref variant_associative_view::const_iterator allows iteration over an associative container in a variant.

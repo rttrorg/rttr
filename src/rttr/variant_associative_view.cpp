@@ -151,7 +151,7 @@ variant_associative_view::equal_range(argument key)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant_associative_view::const_iterator variant_associative_view::begin()
+variant_associative_view::const_iterator variant_associative_view::begin() const
 {
     const_iterator itr(&m_view);
 
@@ -162,7 +162,7 @@ variant_associative_view::const_iterator variant_associative_view::begin()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant_associative_view::const_iterator variant_associative_view::end()
+variant_associative_view::const_iterator variant_associative_view::end() const
 {
     const_iterator itr(&m_view);
 

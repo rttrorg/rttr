@@ -89,6 +89,7 @@ enum class type_trait_infos : std::size_t
     is_function_pointer,
     is_member_object_pointer,
     is_member_function_pointer,
+    is_associative_container,
 
     TYPE_TRAIT_COUNT
 };
@@ -253,7 +254,8 @@ type_data& get_type_data() RTTR_NOEXCEPT
                                                         TYPE_TRAIT_TO_BITSET_VALUE(is_arithmetic) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE(is_member_object_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer)}
+                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container)}
                                       };
     return instance;
 }
