@@ -46,6 +46,8 @@ class RTTR_LOCAL variant_associative_view_private
     public:
         variant_associative_view_private() RTTR_NOEXCEPT
         :   m_type(get_invalid_type()),
+            m_key_type(get_invalid_type()),
+            m_value_type(get_invalid_type()),
             m_container(nullptr),
             m_get_size_func(associative_container_empty::get_size),
             m_begin_func(associative_container_empty::begin),
@@ -67,6 +69,8 @@ class RTTR_LOCAL variant_associative_view_private
         template<typename T, typename RawType = raw_type_t<T>, typename ConstType = remove_pointer_t<T>>
         variant_associative_view_private(const T& container) RTTR_NOEXCEPT
         :   m_type(type::get<RawType>()),
+            m_key_type(type::get<typename associative_container_mapper<RawType, ConstType>::key_t>()),
+            m_value_type(type::get<typename associative_container_mapper<RawType, ConstType>::value_t>()),
             m_container(as_void_ptr(container)),
             m_get_size_func(associative_container_mapper<RawType, ConstType>::get_size),
             m_begin_func(associative_container_mapper<RawType, ConstType>::begin),
@@ -95,6 +99,16 @@ class RTTR_LOCAL variant_associative_view_private
         RTTR_FORCE_INLINE type get_type() const RTTR_NOEXCEPT
         {
             return m_type;
+        }
+
+        RTTR_FORCE_INLINE type get_key_type() const RTTR_NOEXCEPT
+        {
+            return m_key_type;
+        }
+
+        RTTR_FORCE_INLINE type get_value_type() const RTTR_NOEXCEPT
+        {
+            return m_value_type;
         }
 
         RTTR_FORCE_INLINE void copy(iterator_data& itr_tgt, const iterator_data& itr_src) const
@@ -194,6 +208,8 @@ class RTTR_LOCAL variant_associative_view_private
         using insert_func       = bool(*)(void* container, argument& value, detail::iterator_data& itr);
 
         type            m_type;
+        type            m_key_type;
+        type            m_value_type;
         void*           m_container;
         get_size_func   m_get_size_func;
         begin_func      m_begin_func;

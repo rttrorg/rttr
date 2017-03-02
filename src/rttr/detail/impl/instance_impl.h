@@ -46,7 +46,7 @@ RTTR_INLINE instance::instance() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE instance::instance(variant& var) RTTR_NOEXCEPT
+RTTR_INLINE instance::instance(const variant& var) RTTR_NOEXCEPT
 :   m_data_container(var.get_data_address_container())
 {
 }

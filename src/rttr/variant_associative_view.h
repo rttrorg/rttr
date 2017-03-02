@@ -153,6 +153,24 @@ class RTTR_API variant_associative_view
         type get_type() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns the \ref type from the key of this associative container.
+         *
+         * \remark When the view is not valid, this function will return an invalid type object.
+         *
+         * \return \ref type "Type" from the key of the associative container.
+         */
+        type get_key_type() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief Returns the \ref type object from the value of this associative container.
+         *
+         * \remark When the view is not valid, this function will return an invalid type object.
+         *
+         * \return \ref type "Type" from the value of the associative container.
+         */
+        type get_value_type() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns the number of elements in the associative container.
          *
          * \return The number of elements in the associative container.

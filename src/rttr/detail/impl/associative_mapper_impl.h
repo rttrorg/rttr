@@ -134,17 +134,17 @@ associative_container_base_insert(void* container, argument& value)
     return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename ConstType, typename Tp = typename std::conditional<std::is_const<ConstType>::value,
-                                                                                 typename T::const_iterator,
-                                                                                 typename T::iterator>::type>
+template<typename T, typename ConstType, typename Tp = conditional_t<std::is_const<ConstType>::value,
+                                                                     typename T::const_iterator,
+                                                                     typename T::iterator>>
 struct associative_container_base : iterator_wrapper_associative_container<Tp>
 {
     using key_t = typename T::key_type;
+    using value_t = typename associative_container_value_t<T>::type;
 
     static void begin(void* container, iterator_data& itr)
     {

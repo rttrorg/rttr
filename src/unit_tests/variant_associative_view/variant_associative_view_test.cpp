@@ -119,6 +119,36 @@ TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_associative_view]")
+{
+
+    SECTION("valid test")
+    {
+        variant var = std::set<int>({ 1, 2, 3 });
+        variant_associative_view view = var.create_associative_view();
+
+        CHECK(view.get_key_type() == type::get<int>());
+
+        var = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
+        view = var.create_associative_view();
+
+        CHECK(view.get_key_type() == type::get<int>());
+        CHECK(view.get_value_type() == type::get<std::string>());
+    }
+
+
+    SECTION("invalid test")
+    {
+        variant var = 23;
+        variant_associative_view view = var.create_associative_view();
+
+        CHECK(view.get_key_type().is_valid()    == false);
+        CHECK(view.get_value_type().is_valid()  == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant_associative_view::is_associative_container", "[variant_associative_view]")
 {
     SECTION("invalid")

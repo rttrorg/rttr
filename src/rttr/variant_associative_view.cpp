@@ -94,6 +94,20 @@ type variant_associative_view::get_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type variant_associative_view::get_key_type() const RTTR_NOEXCEPT
+{
+    return m_view.get_key_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type variant_associative_view::get_value_type() const RTTR_NOEXCEPT
+{
+    return m_view.get_value_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 std::size_t variant_associative_view::get_size() const RTTR_NOEXCEPT
 {
     return m_view.get_size();

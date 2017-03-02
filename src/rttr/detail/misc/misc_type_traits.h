@@ -487,6 +487,19 @@ namespace detail
     template<typename T>
     using is_associative_container = std::integral_constant<bool, is_associative_container_impl<remove_cv_t< remove_reference_t<T> > >::value>;
 
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template <typename T>
+    struct associative_container_value_t
+    {
+        template <typename U> static typename U::mapped_type check(typename U::mapped_type*);
+        template <typename U> static typename U::key_type check(...);
+
+        using type = decltype(check<T>(nullptr));
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
     template<typename T>
     using is_raw_array_type = ::rttr::detail::is_array<raw_type_t<T>>;
     /////////////////////////////////////////////////////////////////////////////////////
