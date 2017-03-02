@@ -62,7 +62,7 @@ public:
     /*!
      * \brief Creates an instance object from a \ref variant object.
      */
-    RTTR_INLINE instance(variant& var) RTTR_NOEXCEPT;
+    RTTR_INLINE instance(const variant& var) RTTR_NOEXCEPT;
 
     /*!
      * \brief Copy constructor for an instance.
