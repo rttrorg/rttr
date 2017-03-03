@@ -82,6 +82,8 @@ namespace rttr
  *                              detail::iterator_data& itr_begin, detail::iterator_data& itr_end);`
  * 12. `static std::size_t erase(void* container, argument& key);`
  * 13. `static void clear(void* container);`
+ * 14. `static bool insert_key(void* container, argument& key, detail::iterator_data& itr);`
+ * 15. `static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr);`
  *
  * The iterator itself is stored in the detail::iterator_data. You are free to use placement new (when the iterator has the same size as double)
  * or allocate on the iterator on the heap and store the pointer inside the detail::iterator_data.
@@ -143,6 +145,14 @@ struct associative_container_mapper
     }
 
     static void clear(void* container)
+    {
+    }
+
+    static bool insert_key(void* container, argument& key, detail::iterator_data& itr)
+    {
+    }
+
+    static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr)
     {
     }
 #endif

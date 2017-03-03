@@ -115,11 +115,22 @@ std::size_t variant_associative_view::get_size() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::pair<variant_associative_view::const_iterator, bool> variant_associative_view::insert(argument value)
+std::pair<variant_associative_view::const_iterator, bool> variant_associative_view::insert(argument key)
 {
     const_iterator itr(&m_view);
 
-    auto success = m_view.insert(value, itr.m_itr);
+    auto success = m_view.insert(key, itr.m_itr);
+
+    return {itr, success};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::pair<variant_associative_view::const_iterator, bool> variant_associative_view::insert(argument key, argument value)
+{
+    const_iterator itr(&m_view);
+
+    auto success = m_view.insert(key, value, itr.m_itr);
 
     return {itr, success};
 }

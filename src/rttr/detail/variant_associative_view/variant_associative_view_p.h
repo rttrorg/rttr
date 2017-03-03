@@ -62,7 +62,8 @@ class RTTR_LOCAL variant_associative_view_private
             m_erase_func(associative_container_empty::erase),
             m_clear_func(associative_container_empty::clear),
             m_equal_range_func(associative_container_empty::equal_range),
-            m_insert_func(associative_container_empty::insert)
+            m_insert_func_key(associative_container_empty::insert_key),
+            m_insert_func_key_value(associative_container_empty::insert_key_value)
         {
         }
 
@@ -85,7 +86,8 @@ class RTTR_LOCAL variant_associative_view_private
             m_erase_func(associative_container_mapper<RawType, ConstType>::erase),
             m_clear_func(associative_container_mapper<RawType, ConstType>::clear),
             m_equal_range_func(associative_container_mapper<RawType, ConstType>::equal_range),
-            m_insert_func(associative_container_mapper<RawType, ConstType>::insert)
+            m_insert_func_key(associative_container_mapper<RawType, ConstType>::insert_key),
+            m_insert_func_key_value(associative_container_mapper<RawType, ConstType>::insert_key_value)
         {
         }
 
@@ -183,9 +185,14 @@ class RTTR_LOCAL variant_associative_view_private
             return m_erase_func(m_container, key);
         }
 
-        RTTR_INLINE bool insert(argument& value, iterator_data& itr)
+        RTTR_INLINE bool insert(argument& key, iterator_data& itr)
         {
-            return m_insert_func(m_container, value, itr);
+            return m_insert_func_key(m_container, key, itr);
+        }
+
+        RTTR_INLINE bool insert(argument& key, argument& value, iterator_data& itr)
+        {
+            return m_insert_func_key_value(m_container, key, value, itr);
         }
 
     private:
@@ -205,7 +212,8 @@ class RTTR_LOCAL variant_associative_view_private
         using find_func         = void(*)(void* container, detail::iterator_data& itr, argument& key);
         using equal_range_func  = void(*)(void* container, argument& key,
                                           detail::iterator_data& itr_begin, detail::iterator_data& itr_end);
-        using insert_func       = bool(*)(void* container, argument& value, detail::iterator_data& itr);
+        using insert_func_key   = bool(*)(void* container, argument& key, detail::iterator_data& itr);
+        using insert_func_key_value = bool(*)(void* container, argument& key, argument& value, detail::iterator_data& itr);
 
         type            m_type;
         type            m_key_type;
@@ -224,7 +232,8 @@ class RTTR_LOCAL variant_associative_view_private
         erase_func      m_erase_func;
         clear_func      m_clear_func;
         equal_range_func m_equal_range_func;
-        insert_func     m_insert_func;
+        insert_func_key m_insert_func_key;
+        insert_func_key_value m_insert_func_key_value;
 };
 
 } // end namespace detail
