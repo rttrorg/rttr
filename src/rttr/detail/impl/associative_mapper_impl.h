@@ -307,13 +307,13 @@ struct associative_container_set_base : associative_container_base<T, Args...>
 {
     static variant get_key(const iterator_data& itr)
     {
-        return variant();
+        auto& it = associative_container_base<T,  Args...>::get_iterator(itr);
+        return variant(std::ref(*it));
     }
 
     static variant get_value(const iterator_data& itr)
     {
-        auto& it = associative_container_base<T,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
+        return variant();
     }
 };
 

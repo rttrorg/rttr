@@ -128,6 +128,7 @@ TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_ass
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.get_key_type() == type::get<int>());
+        CHECK(view.get_value_type().is_valid() == false);
 
         var = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
         view = var.create_associative_view();
@@ -256,26 +257,26 @@ TEST_CASE("variant_associative_view::iterator operations", "[variant_associative
     REQUIRE(itr != view.end());
 
     itr++;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 2);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 2);
     itr--;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 1);
     ++itr;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 2);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 2);
     --itr;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 1);
 
     itr = view.begin();
     itr += 2;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 3);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 3);
     itr += 1;
     itr -= 3;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 1);
 
     itr = view.begin();
     itr = itr + 3;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 4);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 4);
     itr = itr - 3;
-    CHECK(itr.get_value().extract_wrapped_value().to_int() == 1);
+    CHECK(itr.get_key().extract_wrapped_value().to_int() == 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -293,8 +294,8 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
         auto ret = view.insert(1);
         CHECK(ret.first != view.end());
 
-        CHECK(ret.first.get_key().is_valid() == false);
-        CHECK(ret.first.get_value().extract_wrapped_value().to_int() == 1);
+        CHECK(ret.first.get_key().extract_wrapped_value().to_int() == 1);
+        CHECK(ret.first.get_value().is_valid() == false);
         CHECK(ret.second == true);
 
         ret = view.insert(std::string("one"));
@@ -395,7 +396,7 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
 
         for (auto itr = range.first; itr != range.second; ++itr)
         {
-            CHECK(itr.get_value().extract_wrapped_value().to_int() == 3);
+            CHECK(itr.get_key().extract_wrapped_value().to_int() == 3);
         }
 
         // invalid equal_range search
@@ -566,13 +567,13 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
         int i = 0;
         for (auto& item : view)
         {
-            CHECK(item.second.extract_wrapped_value().to_int() == ++i);
+            CHECK(item.first.extract_wrapped_value().to_int() == ++i);
         }
 
         auto itr_begin = view.begin();
         if (itr_begin != view.end())
         {
-            CHECK(itr_begin.get_value().extract_wrapped_value() == 1);
+            CHECK(itr_begin.get_key().extract_wrapped_value() == 1);
         }
     }
 

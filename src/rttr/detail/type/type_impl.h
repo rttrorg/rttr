@@ -376,6 +376,14 @@ RTTR_INLINE type type::get() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<>
+RTTR_INLINE type type::get<detail::invalid_type>() RTTR_NOEXCEPT
+{
+    return detail::get_invalid_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T>
 RTTR_INLINE type type::get(T&& object) RTTR_NOEXCEPT
 {

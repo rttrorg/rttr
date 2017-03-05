@@ -67,6 +67,7 @@ template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
+struct invalid_type{};
 struct type_data;
 class destructor_wrapper_base;
 class property_wrapper_base;

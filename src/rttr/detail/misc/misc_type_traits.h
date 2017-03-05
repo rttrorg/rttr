@@ -49,6 +49,7 @@ struct associative_container_mapper;
 namespace detail
 {
     struct derived_info;
+    struct invalid_type;
 
     /////////////////////////////////////////////////////////////////////////////////////////
     // This trait will removes cv-qualifiers, pointers and reference from type T.
@@ -493,7 +494,7 @@ namespace detail
     struct associative_container_value_t
     {
         template <typename U> static typename U::mapped_type check(typename U::mapped_type*);
-        template <typename U> static typename U::key_type check(...);
+        template <typename U> static typename invalid_type check(...);
 
         using type = decltype(check<T>(nullptr));
     };
