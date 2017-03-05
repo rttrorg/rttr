@@ -494,7 +494,7 @@ namespace detail
     struct associative_container_value_t
     {
         template <typename U> static typename U::mapped_type check(typename U::mapped_type*);
-        template <typename U> static typename invalid_type check(...);
+        template <typename U> static invalid_type check(...);
 
         using type = decltype(check<T>(nullptr));
     };
