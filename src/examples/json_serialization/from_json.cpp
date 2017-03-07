@@ -46,140 +46,7 @@ namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void to_json_recursively(const instance& obj, PrettyWriter<StringBuffer>& writer);
 void fromjson_recursively(instance obj, Value& json_object);
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void write_atomic_types_to_json(const type& t, const variant& var, PrettyWriter<StringBuffer>& writer)
-{
-    if (t.is_arithmetic())
-    {
-        if (t == type::get<bool>())
-            writer.Bool(var.to_bool());
-        else if (t == type::get<char>())
-            writer.Bool(var.to_bool());
-        else if (t == type::get<int8_t>())
-            writer.Int(var.to_int8());
-        else if (t == type::get<int16_t>())
-            writer.Int(var.to_int16());
-        else if (t == type::get<int32_t>())
-            writer.Int(var.to_int32());
-        else if (t == type::get<int64_t>())
-            writer.Int64(var.to_int64());
-        else if (t == type::get<uint8_t>())
-            writer.Uint(var.to_uint8());
-        else if (t == type::get<uint16_t>())
-            writer.Uint(var.to_uint16());
-        else if (t == type::get<uint32_t>())
-            writer.Uint(var.to_uint32());
-        else if (t == type::get<uint64_t>())
-            writer.Uint64(var.to_uint64());
-        else if (t == type::get<float>())
-            writer.Double(var.to_double());
-        else if (t == type::get<double>())
-            writer.Double(var.to_double());
-    }
-    else if (t.is_enumeration())
-    {
-        bool ok = false;
-        auto result = var.to_string(&ok);
-        if (ok)
-        {
-            writer.String(var.to_string());
-            return;
-        }
-        ok = false;
-        auto value = var.to_uint64(&ok);
-        if (ok)
-            writer.Uint64(value);
-        else
-            writer.Null();
-    }
-    else if (t == type::get<std::string>())
-    {
-        writer.String(var.to_string());
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static void write_array(const variant_array_view& a, PrettyWriter<StringBuffer>& writer)
-{
-    writer.StartArray();
-    for (int i = 0; i < a.get_size(); ++i)
-    {
-        variant var = a.get_value_as_ref(i);
-        if (var.is_array())
-        {
-            write_array(var.create_array_view(), writer);
-        }
-        else
-        {
-            variant wrapped_var = var.extract_wrapped_value();
-            type value_type = wrapped_var.get_type();
-            if (value_type.is_arithmetic() || value_type == type::get<std::string>() || value_type.is_enumeration())
-            {
-                write_atomic_types_to_json(value_type, wrapped_var, writer);
-            }
-            else // object
-            {
-                to_json_recursively(wrapped_var, writer);
-            }
-        }
-    }
-    writer.EndArray();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void to_json_recursively(const instance& obj2, PrettyWriter<StringBuffer>& writer)
-{
-    writer.StartObject();
-    instance obj = obj2.get_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
-
-    auto prop_list = obj.get_derived_type().get_properties();
-    for (auto prop : prop_list)
-    {
-        if (prop.get_metadata("NO_SERIALIZE"))
-            continue;
-
-        variant prop_value = prop.get_value(obj);
-        if (!prop_value)
-            continue; // cannot serialize, because we cannot retrieve the value
-
-        const auto name = prop.get_name();
-        writer.String(name.data(), static_cast<rapidjson::SizeType>(name.length()), false);
-        type value_type = prop_value.get_type();
-        if (value_type.is_arithmetic() || value_type == type::get<std::string>() || value_type.is_enumeration())
-        {
-            write_atomic_types_to_json(value_type, prop_value, writer);
-        }
-        else if (value_type.is_array())
-        {
-            write_array(prop_value.create_array_view(), writer);
-        }
-        else
-        {
-            auto child_props = value_type.get_properties();
-            if (!child_props.empty())
-            {
-                to_json_recursively(prop_value, writer);
-            }
-            else
-            {
-                bool ok = false;
-                auto text = prop_value.to_string(&ok);
-                if (!ok)
-                    std::cerr << "cannot serialize property: " << prop.get_name() << std::endl;
-
-                writer.String(text);
-            }
-        }
-    }
-
-    writer.EndObject();
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -221,7 +88,7 @@ variant extract_basic_types(Value& json_value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void write_array_recursively(variant_array_view& var_array, Value& json_array_value)
+static void write_array_recursively(variant_array_view& var_array, Value& json_array_value)
 {
     var_array.set_size(json_array_value.Size());
     for (SizeType i = 0; i < json_array_value.Size(); ++i)
@@ -249,16 +116,68 @@ void write_array_recursively(variant_array_view& var_array, Value& json_array_va
     }
 }
 
+variant extract_value(Value::MemberIterator& itr, const type& t)
+{
+    auto& json_value = itr->value;
+    variant extracted_value = extract_basic_types(json_value);
+    const bool could_convert = extracted_value.convert(t);
+    if (!could_convert)
+    {
+        if (json_value.IsObject())
+        {
+            constructor ctor = t.get_constructor();
+            for (auto& item : t.get_constructors())
+            {
+                if (item.get_instanciated_type() == t)
+                    ctor = item;
+            }
+            extracted_value = ctor.invoke();
+            fromjson_recursively(extracted_value, json_value);
+        }
+    }
+
+    return extracted_value;
+}
+
+static void write_associative_view_recursively(variant_associative_view& view, Value& json_array_value)
+{
+    for (SizeType i = 0; i < json_array_value.Size(); ++i)
+    {
+        auto& json_index_value = json_array_value[i];
+        if (json_index_value.IsObject()) // a key-value associative view
+        {
+            Value::MemberIterator key_itr = json_index_value.FindMember("key");
+            Value::MemberIterator value_itr = json_index_value.FindMember("value");
+
+            if (key_itr != json_index_value.MemberEnd() &&
+                value_itr != json_index_value.MemberEnd())
+            {
+                auto key_var = extract_value(key_itr, view.get_key_type());
+                auto value_var = extract_value(value_itr, view.get_value_type());
+                if (key_var && value_var)
+                {
+                    view.insert(key_var, value_var);
+                }
+            }
+        }
+        else // a key-only associative view
+        {
+            variant extracted_value = extract_basic_types(json_index_value);
+            if (extracted_value && extracted_value.convert(view.get_key_type()))
+                view.insert(extracted_value);
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void fromjson_recursively(instance obj2, Value& json_object)
 {
-    instance obj = obj2.get_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+    instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
     const auto prop_list = obj.get_derived_type().get_properties();
 
     for (auto prop : prop_list)
     {
-
         Value::MemberIterator ret = json_object.FindMember(prop.get_name().data());
         if (ret == json_object.MemberEnd())
             continue;
@@ -269,9 +188,19 @@ void fromjson_recursively(instance obj2, Value& json_object)
         {
             case kArrayType:
             {
-                variant var = prop.get_value(obj);
-                auto array_view = var.create_array_view();
-                write_array_recursively(array_view, json_value);
+                variant var;
+                if (value_t.is_array())
+                {
+                    var = prop.get_value(obj);
+                    auto array_view = var.create_array_view();
+                    write_array_recursively(array_view, json_value);
+                }
+                else if (value_t.is_associative_container())
+                {
+                    var = prop.get_value(obj);
+                    auto associative_view = var.create_associative_view();
+                    write_associative_view_recursively(associative_view, json_value);
+                }
 
                 prop.set_value(obj, var);
                 break;
@@ -301,23 +230,6 @@ void fromjson_recursively(instance obj2, Value& json_object)
 
 namespace io
 {
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::string to_json(rttr::instance obj)
-{
-    if (!obj.is_valid())
-        return std::string();
-
-    StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
-
-    to_json_recursively(obj, writer);
-
-    return sb.GetString();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 bool from_json(const std::string& json, rttr::instance obj)
 {
