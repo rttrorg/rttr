@@ -102,7 +102,7 @@ associative_container_base_insert_key(void* container, argument& key)
 
 template<typename T>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::iterator, bool>>
+                                     std::pair<typename T::const_iterator, bool>>
 associative_container_base_insert_key(void* container, argument& key)
 {
     return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
@@ -148,7 +148,7 @@ associative_container_base_insert_key(void* container, argument& key)
 
 template<typename T>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::iterator, bool>>
+                                     std::pair<typename T::const_iterator, bool>>
 associative_container_base_insert_key(void* container, argument& key)
 {
     return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
@@ -198,7 +198,7 @@ associative_container_base_insert_key_value(void* container, argument& key, argu
 
 template<typename T>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::iterator, bool>>
+                                     std::pair<typename T::const_iterator, bool>>
 associative_container_base_insert_key_value(void* container, argument& key, argument& value)
 {
     return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
@@ -218,7 +218,7 @@ associative_container_base_insert_key_value(void* container, argument& key, argu
 
 template<typename T>
 RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::iterator, bool>>
+                                     std::pair<typename T::const_iterator, bool>>
 associative_container_base_insert_key_value(void* container, argument& key, argument& value)
 {
     return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
