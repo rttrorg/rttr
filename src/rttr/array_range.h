@@ -96,7 +96,7 @@ public:
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
 
-            reference operator*();
+            reference operator*() const;
             pointer operator->();
             bool operator==(const self_type& rhs) const;
             bool operator!=(const self_type& rhs) const;

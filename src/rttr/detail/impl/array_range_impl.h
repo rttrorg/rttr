@@ -332,7 +332,7 @@ array_range<T, Predicate>::array_iterator_base<DataType>::array_iterator_base(ty
 template<typename T, typename Predicate>
 template<typename DataType>
 RTTR_INLINE typename array_range<T, Predicate>::template array_iterator_base<DataType>::reference
-array_range<T, Predicate>::array_iterator_base<DataType>::operator*()
+array_range<T, Predicate>::array_iterator_base<DataType>::operator*() const
 {
     return *m_ptr;
 }
