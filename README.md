@@ -1,4 +1,9 @@
-<a target="_blank" href="https://github.com/rttrorg/rttr/releases/latest">![Version][badge.version]</a> <a target="_blank" href="https://travis-ci.org/rttrorg/rttr">![Travis status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/project/acki-m/rttr">![Appveyor status][badge.Appveyor]</a> <a target="_blank" href="https://coveralls.io/github/rttrorg/rttr">![Coverage Status][badge.Coveralls]</a> <a target="_blank" href="https://raw.githubusercontent.com/rttrorg/rttr/master/LICENSE.txt">![License][badge.license]</a>
+[![Version](https://badge.fury.io/gh/rttrorg%2Frttr.svg)](https://github.com/rttrorg/rttr/releases/latest)
+[![Travis status](https://travis-ci.org/rttrorg/rttr.svg?branch=master)](https://travis-ci.org/rttrorg/rttr)
+[![Appveyor status](https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=master)](https://ci.appveyor.com/project/acki-m/rttr)
+[![Coverage Status](https://coveralls.io/repos/rttrorg/rttr/badge.svg?branch=master&service=github)](https://coveralls.io/github/rttrorg/rttr)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9821799170644782ac8d7885d393e686)](https://www.codacy.com/app/acki-m/rttr?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rttrorg/rttr&amp;utm_campaign=Badge_Grade)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/rttrorg/rttr/master/LICENSE.txt)
 
 RTTR
 ====
@@ -92,7 +97,7 @@ Features
 Portability
 -----------
 Tested and compiled with:
-- Microsoft Visual Studio 2013 & 2015
+- Microsoft Visual Studio 2013, 2015 & 2017
 - GCC 4.8.1
 - Clang 3.7
 - MinGW 4.8.2
@@ -112,11 +117,6 @@ Get Started:
 Take a look at the [documentation][rttr.docs] or start with the [tutorial][rttr.tutorial].
 
 <!-- Links -->
-[badge.version]: https://badge.fury.io/gh/rttrorg%2Frttr.svg
-[badge.Travis]: https://travis-ci.org/rttrorg/rttr.svg?branch=master
-[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/rttrorg/rttr?svg=true&branch=master
-[badge.Coveralls]: https://coveralls.io/repos/rttrorg/rttr/badge.svg?branch=master&service=github
-[badge.License]: https://img.shields.io/badge/license-MIT-blue.svg
-[rttr.docs]: http://www.rttr.org/doc/rttr-0-9-5/classes.html
-[rttr.install]: http://www.rttr.org/doc/rttr-0-9-5/building_install_page.html
-[rttr.tutorial]: http://www.rttr.org/doc/rttr-0-9-5/tutorial_page.html
+[rttr.docs]: http://www.rttr.org/doc/master/classes.html
+[rttr.install]: http://www.rttr.org/doc/master/building_install_page.html
+[rttr.tutorial]: http://www.rttr.org/doc/master/tutorial_page.html

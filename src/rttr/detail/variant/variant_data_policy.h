@@ -289,17 +289,14 @@ struct variant_data_base_policy
             case variant_policy_operation::CONVERT:
             {
                 return Converter::convert_to(Tp::get_value(src_data), arg.get_value<argument>());
-                break;
             }
             case variant_policy_operation::IS_VALID:
             {
                 return true;
-                break;
             }
             case variant_policy_operation::IS_NULLPTR:
             {
                 return is_nullptr(Tp::get_value(src_data));
-                break;
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
@@ -331,7 +328,6 @@ struct variant_data_base_policy
                 }
 
                 return false;
-                break;
             }
             case variant_policy_operation::COMPARE_LESS:
             {
@@ -353,7 +349,6 @@ struct variant_data_base_policy
 
                 // as last try, do a string conversion
                 return (lhs.to_string() < rhs.to_string());
-                break;
             }
         }
 
@@ -650,7 +645,6 @@ struct RTTR_API variant_data_policy_empty
             case variant_policy_operation::IS_VALID:
             {
                 return false;
-                break;
             }
             case variant_policy_operation::IS_NULLPTR:
             {
@@ -751,7 +745,6 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::IS_VALID:
             {
                 return true;
-                break;
             }
             case variant_policy_operation::CONVERT:
             {
