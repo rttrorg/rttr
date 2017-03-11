@@ -70,7 +70,6 @@ private:
     invoke_with_defaults_helper(const F& func_ptr, const instance& obj, index_sequence<Def_Idx...>,
                                 const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
-        static RTTR_CONSTEXPR_OR_CONST std::size_t arg_count = sizeof...(Def_Idx) + sizeof...(TArgs);
         return Invoker_Class::invoke(func_ptr, obj, args..., argument(std::get<Def_Idx>(def_args))...);
     }
 
