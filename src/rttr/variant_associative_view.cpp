@@ -340,16 +340,16 @@ variant_associative_view::const_iterator variant_associative_view::const_iterato
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_associative_view::const_iterator::operator==(const const_iterator &self_type) const
+bool variant_associative_view::const_iterator::operator==(const const_iterator& other) const
 {
-    return m_view->equal(m_itr, self_type.m_itr);
+    return m_view->equal(m_itr, other.m_itr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_associative_view::const_iterator::operator!=(const const_iterator &self_type) const
+bool variant_associative_view::const_iterator::operator!=(const const_iterator& other) const
 {
-    return !m_view->equal(m_itr, self_type.m_itr);
+    return !m_view->equal(m_itr, other.m_itr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
