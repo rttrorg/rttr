@@ -39,7 +39,7 @@ namespace rttr
  * This class will be only used internally by RTTR via the variant_associative_view class to get access to elements of an associative container.
  * In order to use your own custom associative container type, you have to provide a specialization of this class.
  *
- * Out of the box, RTTR has specialization for following array types:
+ * Out of the box, RTTR has specialization for following associative container types:
  * - \p `std::set<Key>`
  * - \p `std::map<Key, T>`
  * - \p `std::multiset<Key>`
@@ -51,39 +51,41 @@ namespace rttr
  *
  * Custom associative container
  * -----------------------------
- * 1.
- * By default it should be enough to just provide a class specialization of your type for the class associative_container_mapper
- * and derive from `detail::associative_container_base`.
- * Because when your type follows the interface of the STL associative containers
- * <a target="_blank" href=https://en.wikipedia.org/wiki/Associative_containers>associative container</a>
- * it should be enough, you don't need to map anything. For example:
+ * 1. By default it should be enough to just provide a class specialization of your type for the class associative_container_mapper
+ *    and derive from `detail::associative_container_base`.
+ *    Because when your type follows the interface of the STL associative containers
+ *    <a target="_blank" href=https://en.wikipedia.org/wiki/Associative_containers>associative container</a>
+ *    it should be enough, you don't need to map anything. For example:
+ *    \code{.cpp}
+ *    template<typename K, typename T, typename...Args>
+ *    struct associative_container_mapper<my_custom_container<K, T>, Args...> : detail::associative_container_base<my_custom_container<K, T>, Args...>
+ *    {
+ *    };
+ *    \endcode
+ *    There is one exception for `set` like types, which store only the key, you should derive from `detail::associative_container_key_base`
+ *    \code{.cpp}
+ *    template<typename K, typename...Args>
+ *    struct associative_container_mapper<my_custom_key_container<K>, Args...> : detail::associative_container_key_base<my_custom_key_container<K>, Args...>
+ *    {
+ *    };
+ *    \endcode
  *
- * \code{.cpp}
- * template<typename K, typename T, typename...Args>
- * struct associative_container_mapper<my_custom_container<K, T>, Args...> : detail::associative_container_base<my_custom_container<K, T>, Args...>
- * {
- * };
- * \endcode
- *
- * 2. When your interface is completly different then the STL interface, you have to implement several functions:
- *
- * and following member functions:
- * 1.  `static const Itr& get_iterator(const detail::iterator_data& data);`
- * 2.  `static Itr& get_iterator(detail::iterator_data& data);`
- * 3.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator& itr_src);`
- * 4.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator_data& itr_src);`
- * 5.  `static void destroy(detail::iterator_data& itr);`
- * 6.  `static void advance(detail::iterator_data& itr, std::ptrdiff_t idx);`
- * 7.  `static bool equal(const detail::iterator_data& lhs_itr, const detail::iterator_data& rhs_itr) RTTR_NOEXCEPT;`
- * 8.  `static variant get_key(const detail::iterator_data& itr);`
- * 9.  `static variant get_value(const detail::iterator_data& itr);`
- * 10. `static void find(void* container, detail::iterator_data& itr, argument& key);`
- * 11. `static void equal_range(void* container, argument& key,
- *                              detail::iterator_data& itr_begin, detail::iterator_data& itr_end);`
- * 12. `static std::size_t erase(void* container, argument& key);`
- * 13. `static void clear(void* container);`
- * 14. `static bool insert_key(void* container, argument& key, detail::iterator_data& itr);`
- * 15. `static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr);`
+ * 2. When your interface is completly different then the STL interface, you have to implement several member functions:
+ *    1.  `static const Itr& get_iterator(const detail::iterator_data& data);`
+ *    2.  `static Itr& get_iterator(detail::iterator_data& data);`
+ *    3.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator& itr_src);`
+ *    4.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator_data& itr_src);`
+ *    5.  `static void destroy(detail::iterator_data& itr);`
+ *    6.  `static void advance(detail::iterator_data& itr, std::ptrdiff_t idx);`
+ *    7.  `static bool equal(const detail::iterator_data& lhs_itr, const detail::iterator_data& rhs_itr) RTTR_NOEXCEPT;`
+ *    8.  `static variant get_key(const detail::iterator_data& itr);`
+ *    9.  `static variant get_value(const detail::iterator_data& itr);`
+ *    10. `static void find(void* container, detail::iterator_data& itr, argument& key);`
+ *    11. `static void equal_range(void* container, argument& key, detail::iterator_data& itr_begin, detail::iterator_data& itr_end);`
+ *    12. `static std::size_t erase(void* container, argument& key);`
+ *    13. `static void clear(void* container);`
+ *    14. `static bool insert_key(void* container, argument& key, detail::iterator_data& itr);`
+ *    15. `static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr);`
  *
  * The iterator itself is stored in the detail::iterator_data. You are free to use placement new (when the iterator has the same size as double)
  * or allocate on the iterator on the heap and store the pointer inside the detail::iterator_data.

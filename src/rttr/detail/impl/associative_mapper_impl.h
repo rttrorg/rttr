@@ -303,7 +303,7 @@ struct associative_container_base : iterator_wrapper_associative_container<Tp>
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename...Args>
-struct associative_container_set_base : associative_container_base<T, Args...>
+struct associative_container_key_base : associative_container_base<T, Args...>
 {
     static variant get_key(const iterator_data& itr)
     {
@@ -322,12 +322,12 @@ struct associative_container_set_base : associative_container_base<T, Args...>
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::set<K>, Args...> : detail::associative_container_set_base<std::set<K>,  Args...> {};
+struct associative_container_mapper<std::set<K>, Args...> : detail::associative_container_key_base<std::set<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::multiset<K>, Args...> : detail::associative_container_set_base<std::multiset<K>,  Args...> {};
+struct associative_container_mapper<std::multiset<K>, Args...> : detail::associative_container_key_base<std::multiset<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -342,7 +342,7 @@ struct associative_container_mapper<std::multimap<K, T>, Args...> : detail::asso
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_set<K>, Args...> : detail::associative_container_set_base<std::unordered_set<K>,  Args...> {};
+struct associative_container_mapper<std::unordered_set<K>, Args...> : detail::associative_container_key_base<std::unordered_set<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -352,7 +352,7 @@ struct associative_container_mapper<std::unordered_map<K, T>, Args...> : detail:
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detail::associative_container_set_base<std::unordered_multiset<K>,  Args...> {};
+struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detail::associative_container_key_base<std::unordered_multiset<K>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
