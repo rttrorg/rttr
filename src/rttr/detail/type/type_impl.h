@@ -208,6 +208,13 @@ RTTR_FORCE_INLINE bool type::is_array() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_FORCE_INLINE bool type::is_associative_container() const RTTR_NOEXCEPT
+{
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_associative_container);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_FORCE_INLINE bool type::is_pointer() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_pointer);
@@ -365,6 +372,14 @@ template<typename T>
 RTTR_INLINE type type::get() RTTR_NOEXCEPT
 {
     return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+RTTR_INLINE type type::get<detail::invalid_type>() RTTR_NOEXCEPT
+{
+    return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -25,21 +25,37 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <string>
-#include <rttr/type>
+#ifndef RTTR_VARIANT_ASSOCIATIVE_CREATOR_IMPL_H_
+#define RTTR_VARIANT_ASSOCIATIVE_CREATOR_IMPL_H_
 
-namespace io
+#include "rttr/detail/variant_associative_view/variant_associative_view_p.h"
+
+namespace rttr
+{
+namespace detail
 {
 
-/*!
- * Serialize the given instance to a json encoded string.
- */
-std::string to_json(rttr::instance obj);
+/////////////////////////////////////////////////////////////////////////////////////////
 
-/*!
- * Deserialize the given json string \p json to the given instance \p obj.
- */
-bool from_json(const std::string& json, rttr::instance obj);
-
+template<typename T, typename Tp>
+enable_if_t<can_create_associative_view<Tp>::value, variant_associative_view_private>
+create_variant_associative_view(T&& value)
+{
+    return variant_associative_view_private(wrapped_raw_addressof(value));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp>
+enable_if_t<!can_create_associative_view<Tp>::value, variant_associative_view_private>
+create_variant_associative_view(T&& value)
+{
+    return variant_associative_view_private();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_VARIANT_ASSOCIATIVE_CREATOR_IMPL_H_

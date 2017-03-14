@@ -25,10 +25,12 @@
 #                                                                                  #
 ####################################################################################
 
-set(HEADER_FILES json_serialize.h
+set(HEADER_FILES to_json.h
+                 from_json.h
                  version.rc.in
                  )
 
 set(SOURCE_FILES main.cpp
-                 json_serialize.cpp
+                 to_json.cpp
+                 from_json.cpp
                  )

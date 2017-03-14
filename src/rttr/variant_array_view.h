@@ -155,7 +155,9 @@ class RTTR_API variant_array_view
         variant_array_view(variant_array_view&& other) RTTR_NOEXCEPT;
 
         /*!
-         * \brief Destroys the variant_array_view and the contained data.
+         * \brief Destroys the variant_array_view.
+         *
+         * \remark The underlying data is not destroyed.
          */
         ~variant_array_view() RTTR_NOEXCEPT;
 

@@ -29,11 +29,13 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <map>
 #include <iostream>
 
 #include <rttr/registration>
 
-#include "json_serialize.h"
+#include "to_json.h"
+#include "from_json.h"
 
 using namespace rttr;
 
@@ -62,6 +64,7 @@ struct shape
     color color_ = color::blue;
     std::string name = "";
     point2d position;
+    std::map<color, point2d> dictionary;
 
     RTTR_ENABLE()
 private:
@@ -86,7 +89,9 @@ RTTR_REGISTRATION
         .property("visible", &shape::get_visible, &shape::set_visible)
         .property("color", &shape::color_)
         .property("name", &shape::name)
-        .property("position", &shape::position);
+        .property("position", &shape::position)
+        .property("dictionary", &shape::dictionary)
+    ;
 
     rttr::registration::class_<circle>("circle")
         .property("radius", &circle::radius)
@@ -98,6 +103,7 @@ RTTR_REGISTRATION
         ;
 
     rttr::registration::class_<point2d>("point2d")
+        .constructor()(rttr::policy::ctor::as_object)
         .property("x", &point2d::x)
         .property("y", &point2d::y)
         ;
@@ -129,6 +135,8 @@ int main(int argc, char** argv)
 
         c_1.radius = 5.123;
         c_1.color_ = color::red;
+
+        c_1.dictionary = { {color::green, {1, 2} }, {color::blue, {3, 4} }, {color::red, {5, 6} } };
 
         c_1.no_serialize = 12345;
 

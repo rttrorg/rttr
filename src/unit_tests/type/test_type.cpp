@@ -407,6 +407,30 @@ TEST_CASE("Test rttr::type - Check is_array", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Test rttr::type - is_associative_container", "[type]")
+{
+    CHECK(type::get<std::set<int>>().is_associative_container()                                 == true);
+    CHECK((type::get<std::map<int, std::string>>().is_associative_container()                   == true));
+    CHECK((type::get<std::multimap<int, std::string>>().is_associative_container()              == true));
+    CHECK((type::get<std::multiset<int>>().is_associative_container()                           == true));
+
+    CHECK(type::get<std::unordered_set<int>>().is_associative_container()                       == true);
+    CHECK((type::get<std::unordered_map<int, std::string>>().is_associative_container()         == true));
+    CHECK((type::get<std::unordered_multimap<int, std::string>>().is_associative_container()    == true));
+    CHECK((type::get<std::unordered_multiset<int>>().is_associative_container()                 == true));
+
+    CHECK(type::get<int>().is_associative_container()            == false);
+    CHECK(type::get<float>().is_associative_container()          == false);
+    CHECK(type::get<int*>().is_associative_container()           == false);
+    CHECK(type::get<float*>().is_associative_container()         == false);
+    CHECK(type::get<double>().is_associative_container()         == false);
+    CHECK(type::get<char>().is_associative_container()           == false);
+    CHECK(type::get<bool>().is_associative_container()           == false);
+    CHECK(type::get<ClassSingle6A>().is_associative_container()  == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test rttr::type - Check is_wrapper", "[type]")
 {
     CHECK(type::get<std::shared_ptr<int>>().is_wrapper()        == true);

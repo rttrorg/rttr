@@ -67,6 +67,7 @@ template<typename T, typename Enable = void>
 struct type_getter;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
+struct invalid_type{};
 struct type_data;
 class destructor_wrapper_base;
 class property_wrapper_base;
@@ -387,6 +388,16 @@ class RTTR_API type
          * \see \ref array_mapper "array_mapper<T>"
          */
         RTTR_FORCE_INLINE bool is_array() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief Returns true whether the given type represents an
+         *        <a target="_blank" href=https://en.wikipedia.org/wiki/Associative_containers>associative container</a>.
+         *
+         * \return True if the type is an associative container, otherwise false.
+         *
+         * \see \ref associative_container_mapper "associative_container_mapper<T>"
+         */
+        RTTR_FORCE_INLINE bool is_associative_container() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer.

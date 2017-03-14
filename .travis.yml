@@ -143,7 +143,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
       after_success:
-        - pip install --user cpp-coveralls
+        - pip install --user urllib3[secure] cpp-coveralls
         - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
       env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
     
@@ -154,7 +154,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       after_success:
-        - pip install --user cpp-coveralls
+        - pip install --user urllib3[secure] cpp-coveralls
         - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
       
