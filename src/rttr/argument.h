@@ -55,16 +55,25 @@ class RTTR_API argument
                                             !std::is_same<variant_array_view, T>::value, T>;
 
     template<typename T>
-    using arg_value_t = detail::enable_if_t<!std::is_rvalue_reference<T>::value, T>;
+    using is_variant = std::is_same<detail::remove_cv_t<detail::remove_reference_t<T>>, variant>;
 
     template<typename T>
-    using arg_rvalue_t = detail::enable_if_t<std::is_rvalue_reference<T>::value, detail::remove_reference_t<T> >;
+    using arg_value_t = detail::enable_if_t<!std::is_rvalue_reference<T>::value && !is_variant<T>::value, T>;
+
+    template<typename T>
+    using arg_rvalue_t = detail::enable_if_t<std::is_rvalue_reference<T>::value && !is_variant<T>::value, detail::remove_reference_t<T> >;
 
     template<typename T>
     using ptr_type = detail::enable_if_t<std::is_pointer<T>::value, bool>;
 
     template<typename T>
     using non_ptr_type = detail::enable_if_t<!std::is_pointer<T>::value, bool>;
+
+    template<typename T>
+    using is_variant_t = detail::enable_if_t<is_variant<T>::value && !std::is_rvalue_reference<T>::value, T>;
+
+    template<typename T>
+    using is_variant_ref_t = detail::enable_if_t<is_variant<T>::value && std::is_rvalue_reference<T>::value, detail::remove_reference_t<T>>;
 
 public:
 
@@ -98,10 +107,16 @@ public:
     RTTR_INLINE arg_value_t<T>& get_value() const RTTR_NOEXCEPT;
     template<typename T>
     RTTR_INLINE arg_rvalue_t<T> && get_value() const RTTR_NOEXCEPT;
+
+    template<typename T>
+    RTTR_INLINE is_variant_t<T>& get_value() const RTTR_NOEXCEPT;
+    template<typename T>
+    RTTR_INLINE is_variant_ref_t<T> && get_value() const RTTR_NOEXCEPT;
 #endif
 
 private:
     const void*         m_data;
+    const variant*      m_variant;
     const rttr::type    m_type;
 };
 
