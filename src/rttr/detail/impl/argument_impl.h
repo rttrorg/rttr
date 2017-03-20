@@ -135,7 +135,7 @@ template<typename T>
 RTTR_INLINE argument::is_variant_ref_t<T>&& argument::get_value() const RTTR_NOEXCEPT
 {
     using raw_type = typename std::remove_reference<T>::type;
-    return std::move(*reinterpret_cast<raw_type*>(const_cast<variant *>(m_data)));
+    return std::move(*reinterpret_cast<raw_type*>(const_cast<variant *>(m_variant)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
