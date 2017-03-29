@@ -20,7 +20,7 @@ You can find more information on: <a target="_blank" href="http://www.rttr.org">
 How to Use
 ----------
 
-####Manual registration
+#### Manual registration
 ```cpp
 #include <rttr/registration>
 using namespace rttr;
@@ -35,7 +35,7 @@ RTTR_REGISTRATION
          .method("func", &MyStruct::func);
 }
 ```
-####Iterate over members
+#### Iterate over members
 ```cpp
 type t = type::get<MyStruct>();
 for (auto& prop : t.get_properties())
@@ -45,7 +45,7 @@ for (auto& meth : t.get_methods())
     std::cout << "name: " << meth.get_name();
 ```
 
-####Constructing types
+#### Constructing types
 ```cpp
 type t = type::get_by_name("MyStruct");
 variant var = t.create();    // will invoke the previously registered ctor
@@ -55,7 +55,7 @@ var = ctor.invoke();
 std::cout << var.get_type().get_name(); // prints 'MyStruct'
 ```
 
-####Set/get properties
+#### Set/get properties
 ```cpp
 MyStruct obj;
 
@@ -66,7 +66,7 @@ variant var_prop = prop.get_value(obj);
 std::cout << var_prop.to_int(); // prints '23'
 ```
 
-####Invoke Methods:
+#### Invoke Methods:
 ```cpp
 MyStruct obj;
 
