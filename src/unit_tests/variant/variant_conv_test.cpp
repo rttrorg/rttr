@@ -631,3 +631,43 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant test - convert from wrapped value", "[variant]")
+{
+    SECTION("Invalid conversion")
+    {
+        int obj = 42;
+        variant var = std::ref(obj);
+
+        CHECK(var.can_convert(type::get<int>()) == true);
+
+        bool ok = false;
+        int val = var.convert<int>(&ok);
+        CHECK(ok == true);
+        CHECK(val == obj);
+
+        CHECK(var.convert(type::get<int>()) == true);
+
+        int val_2;
+        CHECK(var.convert<int>(val_2) == true);
+        CHECK(val_2 == obj);
+    }
+
+    SECTION("invalid conversion")
+    {
+        int obj = 42;
+        int* obj_ptr = &obj;
+        variant var = std::ref(obj_ptr);
+
+        // cannot convert from int* to int automatically
+        CHECK(var.can_convert(type::get<int>()) == false);
+
+        bool ok = false;
+        int val = var.convert<int>(&ok);
+        CHECK(ok == false);
+
+        CHECK(var.convert(type::get<int>()) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

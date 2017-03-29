@@ -213,7 +213,8 @@ bool variant::can_convert(const type& target_type) const
     if (!is_valid())
         return false;
 
-    const type source_type = get_type();
+    type source_type = get_type();
+    source_type = (source_type.is_wrapper() && !target_type.is_wrapper()) ? source_type.get_wrapped_type() : source_type;
 
     if (source_type == target_type)
         return true;
@@ -260,6 +261,12 @@ bool variant::convert(const type& target_type, variant& target_var) const
     {
         target_var = *this;
         return true; // the current variant is already the target type, we don't need to do anything
+    }
+    else if (source_type.is_wrapper() && !target_type.is_wrapper())
+    {
+        variant var = extract_wrapped_value();
+        ok = var.convert(target_type);
+        target_var = var;
     }
     else if ((source_is_arithmetic && target_is_arithmetic) ||
             (source_is_arithmetic && target_type == string_type) ||

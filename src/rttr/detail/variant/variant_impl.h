@@ -242,7 +242,12 @@ RTTR_INLINE bool variant::convert(T& value) const
 
     const type source_type = get_type();
     const type target_type = type::get<T>();
-    if (target_type == source_type)
+    if (source_type.is_wrapper() && !target_type.is_wrapper())
+    {
+        variant var = extract_wrapped_value();
+        return var.convert<T>(value);
+    }
+    else if (target_type == source_type)
     {
         value = const_cast<variant&>(*this).get_value<T>();
         ok = true;
