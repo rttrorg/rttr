@@ -136,7 +136,8 @@ int main(int argc, char** argv)
         c_1.radius = 5.123;
         c_1.color_ = color::red;
 
-        c_1.dictionary = { {color::green, {1, 2} }, {color::blue, {3, 4} }, {color::red, {5, 6} } };
+        // additional braces are needed for a VS 2013 bug
+        c_1.dictionary = { { {color::green, {1, 2} }, {color::blue, {3, 4} }, {color::red, {5, 6} } } };
 
         c_1.no_serialize = 12345;
 
