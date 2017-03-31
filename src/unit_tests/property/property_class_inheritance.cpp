@@ -95,6 +95,17 @@ struct bottom : left, right, right_2
 
 }
 
+struct base_prop_not_registered
+{
+    base_prop_not_registered() : value(100) {}
+    int value;
+};
+
+struct derived_registered_prop : base_prop_not_registered
+{
+
+};
+
 static double g_name;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -145,6 +156,9 @@ RTTR_REGISTRATION
         .property("bottom-static", &g_name) // double property
         .property("bottom-static-protected", &g_name, registration::protected_access)
         ;
+
+    registration::class_<derived_registered_prop>("derived_registered_prop")
+        .property("value", &derived_registered_prop::value);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -472,6 +486,29 @@ TEST_CASE("property - class - inheritance - invoke", "[property]")
     // try to change the value
     bottom_prop.set_value(top, 42.0);
     CHECK(instance._p5 == 42.0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - base class not registered", "[property]")
+{
+    type t_prop = type::get<derived_registered_prop>();
+    property prop = t_prop.get_property("value");
+    derived_registered_prop obj;
+
+    auto ret = prop.set_value(obj, 23);
+
+    CHECK(ret == true);
+    CHECK(obj.value == 23);
+
+    auto base_type = type::get<base_prop_not_registered>();
+
+    CHECK(t_prop.is_derived_from(base_type) == true);
+
+    auto range = base_type.get_derived_classes();
+
+    REQUIRE(range.size() == 1);
+    CHECK(*range.begin() == t_prop);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

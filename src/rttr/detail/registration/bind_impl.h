@@ -392,6 +392,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A acc)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc)
         {
+            detail::register_accessor_class_type_when_needed<Class_Type, A>();
             m_reg_exec->add_registration_func(this);
         }
 
@@ -481,6 +482,8 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A1 getter, A2 setter)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_getter(getter), m_setter(setter)
         {
+            detail::register_accessor_class_type_when_needed<Class_Type, A1>();
+            detail::register_accessor_class_type_when_needed<Class_Type, A2>();
             m_reg_exec->add_registration_func(this);
         }
 
@@ -569,6 +572,7 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, A acc)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_acc(acc)
         {
+            detail::register_accessor_class_type_when_needed<Class_Type, A>();
             m_reg_exec->add_registration_func(this);
         }
 

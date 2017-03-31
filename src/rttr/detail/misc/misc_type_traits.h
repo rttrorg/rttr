@@ -972,6 +972,18 @@ namespace detail
     struct is_copy_constructible<std::unique_ptr<T>> : std::false_type {};
 
     /////////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    struct property_traits;
+
+    template<typename A, typename C>
+    struct property_traits<A(C::*)>
+    {
+        using class_type = C;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

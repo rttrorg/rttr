@@ -32,6 +32,7 @@
 
 #include "rttr/detail/type/base_classes.h"
 #include "rttr/detail/type/type_register.h"
+#include "rttr/detail/misc/misc_type_traits.h"
 
 #include <type_traits>
 
@@ -40,74 +41,91 @@ namespace rttr
 namespace detail
 {
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<contains<FuncClassType, typename ClassType::base_class_list>::value, void>
-register_member_func_class_type_when_needed_3()
+template<typename ClassType, typename AccClassType>
+enable_if_t<contains<AccClassType, typename ClassType::base_class_list>::value, void>
+register_member_accessor_class_type_when_needed_3()
 {
 }
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<!contains<FuncClassType, typename ClassType::base_class_list>::value, void>
-register_member_func_class_type_when_needed_3()
+template<typename ClassType, typename AccClassType>
+enable_if_t<!contains<AccClassType, typename ClassType::base_class_list>::value, void>
+register_member_accessor_class_type_when_needed_3()
 {
-    base_class_info baseClassInfo = { type::get<FuncClassType>(), &rttr_cast_impl<ClassType, FuncClassType> };
+    base_class_info baseClassInfo = { type::get<AccClassType>(), &rttr_cast_impl<ClassType, AccClassType> };
     type_register::register_base_class(type::get<ClassType>(), baseClassInfo);
 }
 
-template<typename ClassType, typename FuncClassType>
+template<typename ClassType, typename AccClassType>
 enable_if_t<has_base_class_list<ClassType>::value, void>
-register_member_func_class_type_when_needed_2()
+register_member_accessor_class_type_when_needed_2()
 {
-    register_member_func_class_type_when_needed_3<ClassType, FuncClassType>();
+    register_member_accessor_class_type_when_needed_3<ClassType, AccClassType>();
 }
 
-template<typename ClassType, typename FuncClassType>
+template<typename ClassType, typename AccClassType>
 enable_if_t<!has_base_class_list<ClassType>::value, void>
-register_member_func_class_type_when_needed_2()
+register_member_accessor_class_type_when_needed_2()
 {
-    base_class_info baseClassInfo = { type::get<FuncClassType>(), &rttr_cast_impl<ClassType, FuncClassType> };
+    base_class_info baseClassInfo = { type::get<AccClassType>(), &rttr_cast_impl<ClassType, AccClassType> };
     type_register::register_base_class(type::get<ClassType>(), baseClassInfo);
-
 }
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<std::is_base_of<FuncClassType, ClassType>::value, void>
-register_member_func_class_type_when_needed_1()
+template<typename ClassType, typename AccClassType>
+enable_if_t<std::is_base_of<AccClassType, ClassType>::value, void>
+register_member_accessor_class_type_when_needed_1()
 {
-    register_member_func_class_type_when_needed_2<ClassType, FuncClassType>();
+    register_member_accessor_class_type_when_needed_2<ClassType, AccClassType>();
 }
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<!std::is_base_of<FuncClassType, ClassType>::value, void>
-register_member_func_class_type_when_needed_1()
+template<typename ClassType, typename AccClassType>
+enable_if_t<!std::is_base_of<AccClassType, ClassType>::value, void>
+register_member_accessor_class_type_when_needed_1()
 {
 }
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<!std::is_same<ClassType, FuncClassType>::value, void>
-register_member_func_class_type_when_needed()
+template<typename ClassType, typename AccClassType>
+enable_if_t<!std::is_same<ClassType, AccClassType>::value, void>
+register_member_accessor_class_type_when_needed()
 {
-    register_member_func_class_type_when_needed_1<ClassType, FuncClassType>();
+    register_member_accessor_class_type_when_needed_1<ClassType, AccClassType>();
 }
 
-template<typename ClassType, typename FuncClassType>
-enable_if_t<std::is_same<ClassType, FuncClassType>::value, void>
-register_member_func_class_type_when_needed()
+template<typename ClassType, typename AccClassType>
+enable_if_t<std::is_same<ClassType, AccClassType>::value, void>
+register_member_accessor_class_type_when_needed()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename ClassType, typename F>
+enable_if_t<std::is_member_function_pointer<F>::value && !std::is_member_object_pointer<F>::value, void>
+register_accessor_class_type_when_needed()
+{
+    register_member_accessor_class_type_when_needed<ClassType, typename function_traits<F>::class_type>();
+}
+
+template<typename ClassType, typename F>
+enable_if_t<!std::is_member_function_pointer<F>::value && std::is_member_object_pointer<F>::value, void>
+register_accessor_class_type_when_needed()
+{
+    register_member_accessor_class_type_when_needed<ClassType, typename property_traits<F>::class_type>();
+}
+
+template<typename ClassType, typename F>
+enable_if_t<std::is_member_function_pointer<F>::value && std::is_member_object_pointer<F>::value, void>
+register_accessor_class_type_when_needed()
 {
 }
 
 template<typename ClassType, typename F>
-enable_if_t<std::is_member_function_pointer<F>::value, void>
+enable_if_t<!std::is_member_function_pointer<F>::value && !std::is_member_object_pointer<F>::value, void>
 register_accessor_class_type_when_needed()
 {
-    register_member_func_class_type_when_needed<ClassType, typename function_traits<F>::class_type>();
 }
 
-template<typename ClassType, typename F>
-enable_if_t<!std::is_member_function_pointer<F>::value, void>
-register_accessor_class_type_when_needed()
-{
-}
+/////////////////////////////////////////////////////////////////////////////////////////
+
 
 } // end namespace detail
 } // end namespace rttr
