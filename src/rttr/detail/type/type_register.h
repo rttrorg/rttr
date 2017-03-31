@@ -103,6 +103,8 @@ public:
 
     static void less_than_comparator(const type& t, type_comparator_base* comparator);
 
+    static void register_base_class(const type& derived_type, const base_class_info& base_info);
+
     /*!
      * \brief Register the type info for the given name
      *

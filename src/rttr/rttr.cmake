@@ -125,6 +125,7 @@ set(HEADER_FILES access_levels.h
                  detail/property/property_wrapper_object.h
                  detail/registration/bind_types.h
                  detail/registration/bind_impl.h
+                 detail/registration/register_base_class_from_accessor.h
                  detail/registration/registration_impl.h
                  detail/registration/registration_executer.h
                  detail/type/accessor_type.h

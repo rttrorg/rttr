@@ -64,6 +64,29 @@ std::string& get_global_string()
     return text;
 }
 
+struct base_not_registered
+{
+    bool some_method()
+    {
+        return true;
+    }
+
+    void other_method(int i)
+    {
+    }
+};
+
+struct derive_registered : base_not_registered
+{
+
+};
+
+
+struct derive_registered_with_base_class_list : base_not_registered
+{
+    RTTR_ENABLE() // but forgot the base class to insert in the macro
+};
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,10 +157,21 @@ RTTR_REGISTRATION
         (
             policy::meth::discard_return
         );
+
+    // the class 'derive_registered' has a base class 'base_not_registered'
+    // which is not registered explictely via rttr, however the base-derived relationship
+    // will be established by rttr internaly
+    registration::class_<derive_registered>("derive_registered")
+        .method("some_method", &derive_registered::some_method)
+        .method("other_method", &derive_registered::other_method)
+        ;
+
+    registration::class_<derive_registered_with_base_class_list>("derive_registered_with_base_class_list")
+        .method("some_method", &derive_registered_with_base_class_list::some_method)
+        ;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
 
 TEST_CASE("Test method", "[method]")
 {
@@ -496,6 +530,33 @@ TEST_CASE("method - invoke with variant as argument", "[method]")
 
     CHECK(ret.is_valid()    == true);
     CHECK(ret.to_bool()     == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - invoke base method, which is not registerd", "[method]")
+{
+    type t_meth = type::get<derive_registered>();
+    method meth = t_meth.get_method("some_method");
+    derive_registered obj;
+
+    auto ret = meth.invoke(obj);
+
+    CHECK(ret.is_valid()    == true);
+    CHECK(ret.to_bool()     == true);
+
+    auto base_type = type::get<base_not_registered>();
+
+    CHECK(t_meth.is_derived_from(base_type) == true);
+
+    auto derived_type = type::get<derive_registered_with_base_class_list>();
+    CHECK(derived_type.is_derived_from(base_type) == true);
+
+    auto range = base_type.get_derived_classes();
+
+    REQUIRE(range.size() == 2);
+    CHECK(*range.begin() == t_meth);
+    CHECK(*(++range.begin()) == derived_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

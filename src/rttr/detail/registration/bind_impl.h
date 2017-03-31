@@ -43,6 +43,7 @@
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/default_arguments/default_arguments.h"
+#include "rttr/detail/registration/register_base_class_from_accessor.h"
 #include "rttr/policy.h"
 #include "rttr/type.h"
 
@@ -699,6 +700,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name, F f)
         :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_name(name), m_func(f)
         {
+            detail::register_accessor_class_type_when_needed<Class_Type, F>();
             m_reg_exec->add_registration_func(this);
         }
 

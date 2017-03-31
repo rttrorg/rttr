@@ -137,6 +137,54 @@ void type_register::less_than_comparator(const type& t, type_comparator_base* co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_register::register_base_class(const type& derived_type, const base_class_info& base_info)
+{
+    auto& class_data = derived_type.m_type_data->get_class_data();
+    auto itr = std::find_if(class_data.m_base_types.begin(), class_data.m_base_types.end(),
+    [base_info](const type& t)
+    {
+        return (t == base_info.m_base_type);
+    });
+
+    if (itr != class_data.m_base_types.end()) // already registerd as base class => quit
+        return;
+
+    std::vector<std::pair<type, rttr_cast_func>> tmp_sort_vec;
+    using sorted_pair = decltype(tmp_sort_vec)::value_type;
+    if (class_data.m_base_types.size() != class_data.m_conversion_list.size())
+        return; // error!!!
+
+    int index = 0;
+    for (const auto& item : class_data.m_base_types)
+    {
+        tmp_sort_vec.emplace_back(item, class_data.m_conversion_list[index]);
+        ++index;
+    }
+
+    tmp_sort_vec.emplace_back(base_info.m_base_type, base_info.m_rttr_cast_func);
+    std::sort(tmp_sort_vec.begin(), tmp_sort_vec.end(),
+    [](const sorted_pair& left, const sorted_pair& right)
+    { return left.first.get_id() < right.first.get_id(); });
+
+    class_data.m_base_types.clear();
+    class_data.m_conversion_list.clear();
+
+    std::transform(tmp_sort_vec.begin(),
+                   tmp_sort_vec.end(),
+                   std::back_inserter(class_data.m_base_types),
+                   [](const sorted_pair& item)-> type { return item.first; });
+
+    std::transform(tmp_sort_vec.begin(),
+                   tmp_sort_vec.end(),
+                   std::back_inserter(class_data.m_conversion_list),
+                   [](const sorted_pair& item)-> rttr_cast_func { return item.second; });
+
+    auto r_type = base_info.m_base_type.get_raw_type();
+    r_type.m_type_data->get_class_data().m_derived_types.push_back(type(derived_type.m_type_data));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 {
     return type_register_private::register_type(info);
@@ -301,7 +349,6 @@ type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
     // register the base types
     info.get_base_types();
 
-    //std::lock_guard<std::mutex> lock(*g_register_type_mutex);
     using namespace detail;
     uint16_t id = 0;
     const bool isAlreadyRegistered = register_name(id, info);
