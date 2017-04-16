@@ -3,7 +3,7 @@ Register Types - Hello World  {#register_hello_world_page}
 Let's start with the traditional hello world example.
 
 ~~~~{.cpp}
-#include <rttr/registration>
+# include <rttr/registration>
 
 static void f() { std::cout << "Hello World" << std::endl; }
 using namespace rttr;

@@ -7,7 +7,7 @@ Class declaration
 Suppose you have a class called `node` which you want to introspect with RTTR.
 ~~~~{.cpp}
 // node.h
-#include <rttr/type>
+# include <rttr/type>
 
 namespace ns_3d
 {
@@ -47,7 +47,7 @@ Now comes the registration part, this is usually done in the corresponding sourc
 
 ~~~~{.cpp}
 // node.cpp
-#include <rttr/registration>
+# include <rttr/registration>
 
 RTTR_REGISTRATION
 {
@@ -85,8 +85,8 @@ Yeah, and that's it. Now you can use RTTR to retrieve this information.
 Basic usage
 -----------
 ~~~~{.cpp}
-#include <rttr/type>
-#include <iostream>
+# include <rttr/type>
+# include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 ~~~~
 Remark, that there is actual no include of `node.h`.
 See the output below:
-###Output###
+### Output ###
 
     class std::shared_ptr<class ns_3d::node>
     A New Name
@@ -164,7 +164,7 @@ Derived classes
 Suppose you create now from `node` a derived class called `mesh`.
 ~~~~{.cpp}
 // mesh.h
-#include <rttr/type>
+# include <rttr/type>
 
 class mesh : public node
 {
@@ -216,9 +216,9 @@ Remark that it is not necessary to register again the `render()` method.
 Basic Usage
 -----------
 ~~~~{.cpp}
-#include <rttr/type>
-#include <iostream>
-#include "mesh.h"
+# include <rttr/type>
+# include <iostream>
+# include "mesh.h"
 
 int main(int argc, char *argv[])
 {
@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
 ~~~~
 
 See the output below:
-###Output###
+### Output ###
 
     class std::shared_ptr<class ns_3d::node>
     ns_3d::node*
