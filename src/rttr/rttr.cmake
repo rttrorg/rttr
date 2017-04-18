@@ -149,7 +149,7 @@ set(HEADER_FILES access_levels.h
                  detail/variant_array_view/variant_array_view_creator.h
                  detail/variant_array_view/variant_array_view_creator_impl.h
                  detail/variant_array_view/variant_array_view_traits.h
-                 detail/variant_associative_view/variant_associative_view_p.h
+                 detail/variant_associative_view/variant_associative_view_private.h
                  detail/variant_associative_view/variant_associative_view_creator.h
                  detail/variant_associative_view/variant_associative_view_creator_impl.h
                 )

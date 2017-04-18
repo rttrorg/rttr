@@ -31,7 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/variant.h"
-#include "rttr/detail/variant_associative_view/variant_associative_view_p.h"
+#include "rttr/detail/variant_associative_view/variant_associative_view_private.h"
 
 #include <cstddef>
 #include <vector>

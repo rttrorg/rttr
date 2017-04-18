@@ -28,7 +28,7 @@
 #ifndef RTTR_VARIANT_ASSOCIATIVE_CREATOR_IMPL_H_
 #define RTTR_VARIANT_ASSOCIATIVE_CREATOR_IMPL_H_
 
-#include "rttr/detail/variant_associative_view/variant_associative_view_p.h"
+#include "rttr/detail/variant_associative_view/variant_associative_view_private.h"
 
 namespace rttr
 {

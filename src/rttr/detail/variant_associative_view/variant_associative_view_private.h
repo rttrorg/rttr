@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ASSOCIATIVE_VIEW_P_H_
-#define RTTR_VARIANT_ASSOCIATIVE_VIEW_P_H_
+#ifndef RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_
+#define RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_
 
 #include "rttr/variant.h"
 #include "rttr/argument.h"
