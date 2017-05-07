@@ -290,17 +290,10 @@ make_unique(Args&&...) = delete;
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template< typename T >
-RTTR_INLINE const T& as_const(T& obj) { return const_cast<T&>(obj); }
-
-template< typename T >
-RTTR_INLINE const T& as_const(const T& obj) { return obj; }
-
-template<typename T>
-RTTR_INLINE const T as_const(T&& obj)
+template <class T>
+RTTR_CONSTEXPR RTTR_INLINE add_const_t<T>& as_const(T& value) RTTR_NOEXCEPT
 {
-    static_assert(!std::is_const<T>::value, "The given obj is already const, moving a const RValue will result in a copy!");
-    return std::forward<T>(obj);
+    return value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

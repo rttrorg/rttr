@@ -63,16 +63,6 @@ struct property_accessor<T[N]>
     }
 };
 
-template<typename T>
-struct property_accessor<T*>
-{
-    static bool set_value(T* prop, argument& arg)
-    {
-        *prop = *arg.get_value<T*>();
-        return true;
-    }
-};
-
 template<typename T, std::size_t N>
 struct property_accessor<T(*)[N]>
 {
