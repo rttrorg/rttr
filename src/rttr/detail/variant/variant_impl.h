@@ -307,13 +307,26 @@ RTTR_INLINE detail::enable_if_t<!std::is_arithmetic<T>::value && !std::is_enum<T
 template<typename T>
 RTTR_INLINE detail::enable_if_t<std::is_enum<T>::value, T> variant::convert_impl(bool* ok) const
 {
-    variant var = type::get<T>();
-    auto wrapper = std::ref(var);
-    const bool could_convert = convert<std::reference_wrapper<variant>>(wrapper);
-    if (ok)
-        *ok = could_convert;
+    const auto target_type = type::get<T>();
+    if (get_type() == target_type)
+    {
+        T result;
+        const auto could_convert = convert<T>(result);
+        if (ok)
+            *ok = could_convert;
 
-    return var.get_value<T>();
+        return result;
+    }
+    else
+    {
+        variant var = type::get<T>();
+        auto wrapper = std::ref(var);
+        const auto could_convert = convert<std::reference_wrapper<variant>>(wrapper);
+        if (ok)
+            *ok = could_convert;
+
+        return var.get_value<T>();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
