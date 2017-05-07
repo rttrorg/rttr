@@ -398,6 +398,7 @@ TEST_CASE("variant::operator==() - template type - comparator registered", "[var
         CHECK((a != a) == false);
     }
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("variant::operator==() - nullptr type", "[variant]")
@@ -444,6 +445,30 @@ TEST_CASE("variant::operator==() - nullptr type", "[variant]")
         variant b = int_obj;
 
         CHECK((a == b) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant::operator==() - pointer type", "[variant]")
+{
+    SECTION("valid pointer compare")
+    {
+        int value = 23;
+        variant a = &value;
+        variant b = &value;
+
+         CHECK((a == b) == true);
+    }
+
+    SECTION("invalid pointer compare")
+    {
+        int value1 = 23;
+        int value2 = 42;
+        variant a = &value1;
+        variant b = &value2;
+
+         CHECK((a == b) == false);
     }
 }
 

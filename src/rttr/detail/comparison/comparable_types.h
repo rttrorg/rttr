@@ -46,7 +46,8 @@ using is_comparable_type = std::integral_constant<bool, std::is_same<T, std::str
                                                         std::is_same<T, string_view>::value ||
                                                         std::is_arithmetic<T>::value ||
                                                         std::is_enum<T>::value ||
-                                                        std::is_same<T, std::nullptr_t>::value
+                                                        std::is_same<T, std::nullptr_t>::value ||
+                                                        std::is_pointer<T>::value
                                                  >;
 
 /////////////////////////////////////////////////////////////////////////////////////////
