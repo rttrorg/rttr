@@ -74,7 +74,7 @@ namespace detail
  * use therefore the default ctor of \ref instance::instance() "instance()", or as shortcut use simply `{}`.
  *
  * A method will be successfully invoked when the provided instance can be converted to the \ref get_declaring_type() "declared class" type.
- * When the method has \ref get_parameter_infos "parameters" defined, then the same number of arguments must be provided and the type itself must 100% match the type of the registered function.
+ * When the method has \ref get_parameter_infos "parameters" defined, then the same number of arguments must be provided and the type itself must **100% match** the type of the registered function.
  * An automatically type conversion is **not** performed.
  *
  * The return type of \ref invoke() is \ef variant object.
@@ -207,52 +207,84 @@ class RTTR_API method
          *
          * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \return The possible return value of the method.
+         *
+         * \see get_parameter_infos()
          */
         variant invoke(instance object, argument arg1) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object, argument arg1, argument arg2) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object, argument arg1, argument arg2, argument arg3) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4) const;
 
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5) const;
@@ -260,9 +292,15 @@ class RTTR_API method
         /*!
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *
-         * \remark When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke(instance object, argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5, argument arg6) const;
@@ -271,10 +309,16 @@ class RTTR_API method
          * \brief Invokes the method represented by the current instance \p object, using the specified parameters.
          *        Use this method when the argument count is higher then six.
          *
-         * \remark Using this invoke function is slower, then specifying the arguments directly.
-         *         When it's a static method you still need to provide an instance object, use therefore the default ctor of \ref instance::instance() "instance()".
+         * \remark The given argument type has to match **exactly** the type of the underling method parameter,
+         *         otherwise the method cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         When it's a static method you still need to provide an instance object,
+         *         use therefore the default ctor of \ref instance::instance() "instance()".
+         *         Using this invoke function is slower, then specifying the arguments directly.
          *
-         * \return The type of the return type.
+         * \see get_parameter_infos()
+         *
+         * \return The possible return value of the method.
          */
         variant invoke_variadic(instance object, std::vector<argument> args) const;
 

@@ -160,6 +160,8 @@ class RTTR_API constructor
          * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
          *         not match the parameters of the underlying constructor.
          *
+         * \see get_parameter_infos()
+         *
          * \return An instance of the type \ref get_instanciated_type().
          */
         variant invoke() const;
@@ -168,8 +170,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -179,8 +184,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -190,8 +198,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -201,8 +212,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -212,8 +226,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -224,8 +241,11 @@ class RTTR_API constructor
          * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
-         * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
@@ -237,9 +257,12 @@ class RTTR_API constructor
          *        The instance will always be created on the heap and will be returned as variant object.
          *         Use this method when you need to instantiate a constructor with more then 6 parameters.
          *
-         * \remark Using this invoke function is slower, then specifying the arguments directly.
-         *         Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
-         *         not match the parameters of the underlying constructor.
+         * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
+         *         otherwise the constructor cannot be invoked and an invalid \ref variant object (see \ref variant::is_valid)
+         *         will be returned.
+         *         Using this invoke function is slower, then specifying the arguments directly.
+         *
+         * \see get_parameter_infos()
          *
          * \return An instance of the type \ref get_instanciated_type().
          */
