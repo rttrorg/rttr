@@ -87,7 +87,7 @@ class RTTR_LOCAL variant_associative_view_private
             m_clear_func(associative_container_mapper<RawType, ConstType>::clear_impl),
             m_equal_range_func(associative_container_mapper<RawType, ConstType>::equal_range_impl),
             m_insert_func_key(associative_container_mapper<RawType, ConstType>::insert_key_impl),
-            m_insert_func_key_value(associative_container_mapper<RawType, ConstType>::insert_key_value)
+            m_insert_func_key_value(associative_container_mapper<RawType, ConstType>::insert_key_value_impl)
         {
         }
 

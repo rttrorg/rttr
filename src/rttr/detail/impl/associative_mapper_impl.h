@@ -44,145 +44,6 @@ namespace rttr
 namespace detail
 {
 
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-using is_key_value_container = std::integral_constant<bool, !std::is_same<typename T::key_type, typename T::value_type>::value>;
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value && std::is_same<Tp, typename T::iterator>::value,
-                                     std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    using key_type_t = typename T::key_type;
-    if (key.get_type() == ::rttr::type::get<key_type_t>())
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->insert(key.get_value<key_type_t>()), true);
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value && !std::is_same<Tp, typename T::iterator>::value,
-                                     std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    using key_type_t = typename T::key_type;
-    if (key.get_type() == ::rttr::type::get<key_type_t>())
-    {
-        return reinterpret_cast<T*>(container)->insert(key.get_value<key_type_t>());
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value && std::is_same<Tp, typename T::iterator>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    using key_t = typename T::key_type;
-    using value_t = typename T::mapped_type;
-    if (key.get_type() == ::rttr::type::get<key_t>() &&
-        value.get_type() == ::rttr::type::get<value_t>())
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->insert(std::make_pair(key.get_value<key_t>(), value.get_value<value_t>())), true);
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value && !std::is_same<Tp, typename T::iterator>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    using key_t = typename T::key_type;
-    using value_t = typename T::mapped_type;
-    if (key.get_type() == ::rttr::type::get<key_t>() &&
-        value.get_type() == ::rttr::type::get<value_t>())
-    {
-        return reinterpret_cast<T*>(container)->insert(std::make_pair(key.get_value<key_t>(), value.get_value<value_t>()));
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -318,6 +179,36 @@ struct associative_container_wrapper : iterator_wrapper_associative_container<Tp
         return insert_key_impl_2<ConstType>(container, key, itr);
     }
 
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename T1>
+    static enable_if_t<!std::is_const<T1>::value, bool> insert_key_value_impl_2(void* container, argument& key, argument& value, iterator_data& itr)
+    {
+        if (key.get_type() == ::rttr::type::get<key_t>() &&
+            value.get_type() == ::rttr::type::get<value_t>())
+        {
+            auto ret = base_class::insert_key_value(get_container(container), key.get_value<key_t>(), value.get_value<value_t>());
+            base_class::create(itr, ret.first);
+            return ret.second;
+        }
+        else
+        {
+            end_impl(container, itr);
+            return false;
+        }
+    }
+
+    template<typename T1>
+    static enable_if_t<std::is_const<T1>::value, bool> insert_key_value_impl_2(void* container, argument& key, argument& value, iterator_data& itr)
+    {
+        end_impl(container, itr);
+        return false;
+    }
+
+    static bool insert_key_value_impl(void* container, argument& key, argument& value, iterator_data& itr)
+    {
+        return insert_key_value_impl_2<ConstType>(container, key, value, itr);
+    }
 
 };
 
@@ -371,23 +262,10 @@ struct associative_container_base : associative_container_wrapper<T, ConstType>
         return {container.end(), false};
     }
 
-#if 0
-
-    static bool insert_key(void* container, argument& key, iterator_data& itr)
+    static std::pair<itr_t, bool> insert_key_value(ConstType& container, key_t& key, value_t& value)
     {
-        auto ret = associative_container_base_insert_key<ConstType>(container, key);
-        base_class::create(itr, ret.first);
-        return ret.second;
+        return container.insert(std::make_pair(key, value));
     }
-#endif
-
-    static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
-    {
-        auto ret = associative_container_base_insert_key_value<ConstType>(container, key, value);
-        base_class::create(itr, ret.first);
-        return ret.second;
-    }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -413,6 +291,24 @@ struct associative_container_key_base : associative_container_base<T, Args...>
     static std::pair<itr_t, bool> insert_key(container_t& container, key_t& key)
     {
         return container.insert(key);
+    }
+
+    static std::pair<itr_t, bool> insert_key_value(container_t& container, key_t& key, value_t& value)
+    {
+        return {container.end(), false};
+    }
+};
+
+template<typename T, typename...Args>
+struct associative_container_base_multi : associative_container_base<T, Args...>
+{
+    using key_t = typename T::key_type;
+    using itr_t = typename associative_container_wrapper<T, Args...>::iterator;
+    using container_t = typename associative_container_wrapper<T, Args...>::container_t;
+
+    static std::pair<itr_t, bool> insert_key_value(container_t& container, key_t& key, value_t& value)
+    {
+        return {container.insert(std::make_pair(key, value)), true};
     }
 };
 
@@ -449,7 +345,7 @@ struct associative_container_mapper<std::map<K, T>, Args...> : detail::associati
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::multimap<K, T>, Args...> : detail::associative_container_base<std::multimap<K, T>,  Args...> {};
+struct associative_container_mapper<std::multimap<K, T>, Args...> : detail::associative_container_base_multi<std::multimap<K, T>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -469,7 +365,7 @@ struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detai
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::unordered_multimap<K, T>, Args...> : detail::associative_container_base<std::unordered_multimap<K, T>,  Args...> {};
+struct associative_container_mapper<std::unordered_multimap<K, T>, Args...> : detail::associative_container_base_multi<std::unordered_multimap<K, T>,  Args...> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
