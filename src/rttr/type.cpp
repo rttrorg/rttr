@@ -99,6 +99,27 @@ bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool type::is_base_of(const type& other) const RTTR_NOEXCEPT
+{
+    auto& src_raw_type = m_type_data->raw_type_data;
+    auto& tgt_raw_type = other.m_type_data->raw_type_data;
+
+    if (src_raw_type == tgt_raw_type)
+        return true;
+
+    for (auto& t : src_raw_type->get_class_data().m_derived_types)
+    {
+        if (t.m_type_data == tgt_raw_type)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void* type::apply_offset(void* ptr, const type& source_type, const type& target_type) RTTR_NOEXCEPT
 {
     auto& src_raw_type = source_type.m_type_data->raw_type_data;

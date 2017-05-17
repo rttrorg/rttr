@@ -464,6 +464,29 @@ class RTTR_API type
         bool is_derived_from() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns true if this type is the base class from the given type \p other, otherwise false.
+         *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
+         *
+         * \return Returns true if this type is a base class type from \p other, otherwise false.
+         */
+        bool is_base_of(const type& other) const RTTR_NOEXCEPT;
+
+         /*!
+         * \brief Returns true if this type is the base class from the given type \a T, otherwise false.
+         *
+         * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
+         *         inside the class declaration, otherwise the returned information of this function
+         *         is **not correct**.
+         *
+         * \return Returns true if this type is a base class type from \a T, otherwise false.
+         */
+        template<typename T>
+        bool is_base_of() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns a range of all base classes of this type.
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE

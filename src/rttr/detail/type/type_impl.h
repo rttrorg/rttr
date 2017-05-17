@@ -401,6 +401,14 @@ RTTR_INLINE bool type::is_derived_from() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+RTTR_INLINE bool type::is_base_of() const RTTR_NOEXCEPT
+{
+    return is_base_of(type::get<T>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename F>
 RTTR_INLINE void type::register_converter_func(F func)
 {

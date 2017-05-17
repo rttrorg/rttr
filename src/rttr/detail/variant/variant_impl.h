@@ -189,10 +189,24 @@ RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, cons
     if (!source_type.is_pointer())
         return false;
 
-    if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
+    auto ptr = get_raw_ptr();
+
+    if (ptr)
     {
-        to = reinterpret_cast<T>(ptr);
-        return true;
+        if (ptr = type::apply_offset(ptr, source_type, target_type))
+        {
+            to = reinterpret_cast<T>(ptr);
+            return true;
+        }
+    }
+    else // a nullptr
+    {
+        // check if a down cast is possible
+        if (source_type.is_derived_from(target_type))
+        {
+            to = reinterpret_cast<T>(ptr);
+            return true;
+        }
     }
 
     return false;

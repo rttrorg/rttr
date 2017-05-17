@@ -601,6 +601,12 @@ TEST_CASE("variant test - convert internal", "[variant]")
     CHECK(var.is_type<derived*>() == true);
     CHECK(var.get_value<derived*>() == d);
     CHECK(var.convert<base*>() == b);
+
+    derived* d2 = nullptr;
+    var = d2;
+    could_convert = false;
+    CHECK(var.convert<base*>(&could_convert) == nullptr);
+    CHECK(could_convert == true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
