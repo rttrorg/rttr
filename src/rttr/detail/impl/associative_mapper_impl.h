@@ -44,229 +44,101 @@ namespace rttr
 namespace detail
 {
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value, void>
-associative_container_base_clear(void* container)
-{
-    reinterpret_cast<T*>(container)->clear();
-}
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value, void>
-associative_container_base_clear(void* container)
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value, std::size_t>
-associative_container_base_erase(void* container, argument& key)
-{
-    using key_t = typename T::key_type;
-    if (key.get_type() == ::rttr::type::get<key_t>())
-    {
-        return reinterpret_cast<T*>(container)->erase(key.get_value<key_t>());
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value, std::size_t>
-associative_container_base_erase(void* container, argument& key)
-{
-    return 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-using is_key_value_container = std::integral_constant<bool, !std::is_same<typename T::key_type, typename T::value_type>::value>;
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value && std::is_same<Tp, typename T::iterator>::value,
-                                     std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    using key_type_t = typename T::key_type;
-    if (key.get_type() == ::rttr::type::get<key_type_t>())
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->insert(key.get_value<key_type_t>()), true);
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value && !std::is_same<Tp, typename T::iterator>::value,
-                                     std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    using key_type_t = typename T::key_type;
-    if (key.get_type() == ::rttr::type::get<key_type_t>())
-    {
-        return reinterpret_cast<T*>(container)->insert(key.get_value<key_type_t>());
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key(void* container, argument& key)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value && std::is_same<Tp, typename T::iterator>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    using key_t = typename T::key_type;
-    using value_t = typename T::mapped_type;
-    if (key.get_type() == ::rttr::type::get<key_t>() &&
-        value.get_type() == ::rttr::type::get<value_t>())
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->insert(std::make_pair(key.get_value<key_t>(), value.get_value<value_t>())), true);
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-template<typename T, typename Tp = decltype(remove_const_t<T>().insert(std::declval<typename T::value_type>()))>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && is_key_value_container<T>::value && !std::is_same<Tp, typename T::iterator>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    using key_t = typename T::key_type;
-    using value_t = typename T::mapped_type;
-    if (key.get_type() == ::rttr::type::get<key_t>() &&
-        value.get_type() == ::rttr::type::get<value_t>())
-    {
-        return reinterpret_cast<T*>(container)->insert(std::make_pair(key.get_value<key_t>(), value.get_value<value_t>()));
-    }
-    else
-    {
-        return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<!std::is_const<T>::value && !is_key_value_container<T>::value,
-                                      std::pair<typename T::iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_FORCE_INLINE static enable_if_t<std::is_const<T>::value && !is_key_value_container<T>::value,
-                                     std::pair<typename T::const_iterator, bool>>
-associative_container_base_insert_key_value(void* container, argument& key, argument& value)
-{
-    return std::make_pair(reinterpret_cast<T*>(container)->end(), false);
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename ConstType, typename Tp = conditional_t<std::is_const<ConstType>::value,
-                                                                     typename T::const_iterator,
-                                                                     typename T::iterator>>
-struct associative_container_base : iterator_wrapper_associative_container<Tp>
+                                                                     typename associative_container_mapper<T>::const_itr_t,
+                                                                     typename associative_container_mapper<T>::itr_t>>
+struct associative_container_mapper_wrapper : iterator_wrapper_base<Tp>
 {
-    using key_t = typename T::key_type;
-    using value_t = typename associative_container_value_t<T>::type;
+    using base_class    = associative_container_mapper<T>;
+    using key_t         = typename base_class::key_t;
+    using value_t       = typename base_class::value_t;
+    using itr_t         = typename base_class::itr_t;
+    using const_itr_t   = typename base_class::const_itr_t;
+    using itr_wrapper   = iterator_wrapper_base<Tp>;
+
+    static ConstType& get_container(void* container)
+    {
+        return *reinterpret_cast<ConstType*>(container);
+    }
+
+    static variant get_key(const iterator_data& itr)
+    {
+        auto& it = itr_wrapper::get_iterator(itr);
+        return variant(std::ref(base_class::get_key(it)));
+    }
+
+    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value, int> = 0>
+    static variant
+    get_value(const iterator_data& itr)
+    {
+        auto& it = itr_wrapper::get_iterator(itr);
+        return variant(std::ref(base_class::get_value(it)));
+    }
+
+    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value, int> = 0>
+    static variant
+    get_value(const iterator_data& itr)
+    {
+        return variant();
+    }
 
     static void begin(void* container, iterator_data& itr)
     {
-        associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->begin());
+        itr_wrapper::create(itr, base_class::begin(get_container(container)));
     }
 
     static void end(void* container, iterator_data& itr)
     {
-        associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->end());
+        itr_wrapper::create(itr, base_class::end(get_container(container)));
+    }
+
+    static bool is_empty(void* container)
+    {
+        return base_class::is_empty(get_container(container));
     }
 
     static std::size_t get_size(void* container)
     {
-        return (reinterpret_cast<ConstType*>(container)->size());
+        return base_class::get_size(get_container(container));
     }
 
     static void find(void* container, iterator_data& itr, argument& key)
     {
         if (key.get_type() == ::rttr::type::get<key_t>())
-            associative_container_mapper<T, ConstType>::create(itr, reinterpret_cast<ConstType*>(container)->find(key.get_value<key_t>()));
+            itr_wrapper::create(itr, base_class::find(get_container(container), key.get_value<key_t>()));
         else
             end(container, itr);
     }
+
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
+    static void clear(void* container)
+    {
+        base_class::clear(get_container(container));
+    }
+
+    template<typename..., typename C = ConstType, enable_if_t<std::is_const<C>::value, int> = 0>
+    static void clear(void* container)
+    {
+        // cannot clear a const container...
+    }
+
+    /////////////////////////////////////////////////////////////////////////
 
     static void equal_range(void* container, argument& key,
                             iterator_data& itr_begin, iterator_data& itr_end)
     {
         if (key.get_type() == ::rttr::type::get<key_t>())
         {
-            auto ret = reinterpret_cast<ConstType*>(container)->equal_range(key.get_value<key_t>());
-            associative_container_mapper<T, ConstType>::create(itr_begin, ret.first);
-            associative_container_mapper<T, ConstType>::create(itr_end, ret.second);
+            auto ret = base_class::equal_range(get_container(container), key.get_value<key_t>());
+            itr_wrapper::create(itr_begin, ret.first);
+            itr_wrapper::create(itr_end, ret.second);
         }
         else
         {
@@ -275,89 +147,307 @@ struct associative_container_base : iterator_wrapper_associative_container<Tp>
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
     static std::size_t erase(void* container, argument& key)
     {
-        return associative_container_base_erase<ConstType>(container, key);
+        if (key.get_type() == ::rttr::type::get<key_t>())
+        {
+            return base_class::erase(get_container(container), key.get_value<key_t>());
+        }
+        else
+        {
+            return 0;
+        }
     }
 
-    static void clear(void* container)
+    template<typename..., typename C = ConstType, enable_if_t<std::is_const<C>::value, int> = 0>
+    static std::size_t erase(void* container, argument& key)
     {
-        associative_container_base_clear<ConstType>(container);
+        return 0;
     }
 
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value && !std::is_const<ConstType>::value, int> = 0>
     static bool insert_key(void* container, argument& key, iterator_data& itr)
     {
-        auto ret = associative_container_base_insert_key<ConstType>(container, key);
-        associative_container_mapper<T, ConstType>::create(itr, ret.first);
-        return ret.second;
+        if (key.get_type() == ::rttr::type::get<key_t>())
+        {
+            auto ret = base_class::insert_key(get_container(container), key.get_value<key_t>());
+            itr_wrapper::create(itr, ret.first);
+            return ret.second;
+        }
+        else
+        {
+            end(container, itr);
+            return false;
+        }
     }
 
+    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value || std::is_const<ConstType>::value, int> = 0>
+    static bool insert_key(void* container, argument& key, iterator_data& itr)
+    {
+        end(container, itr);
+        return false;
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value && !std::is_const<ConstType>::value, int> = 0>
     static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
     {
-        auto ret = associative_container_base_insert_key_value<ConstType>(container, key, value);
-        associative_container_mapper<T, ConstType>::create(itr, ret.first);
-        return ret.second;
+        if (key.get_type() == ::rttr::type::get<key_t>() &&
+            value.get_type() == ::rttr::type::get<value_t>())
+        {
+            auto ret = base_class::insert_key_value(get_container(container), key.get_value<key_t>(), value.get_value<value_t>());
+            itr_wrapper::create(itr, ret.first);
+            return ret.second;
+        }
+        else
+        {
+            end(container, itr);
+            return false;
+        }
+    }
+
+    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value || std::is_const<ConstType>::value, int> = 0>
+    static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
+    {
+        end(container, itr);
+        return false;
+    }
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct associative_container_base
+{
+    using container_t   = T;
+    using key_t         = typename T::key_type;
+    using value_t       = typename associative_container_value_t<T>::type;
+    using itr_t         = typename T::iterator;
+    using const_itr_t   = typename T::const_iterator;
+
+    static const key_t& get_key(const const_itr_t& itr)
+    {
+        return itr->first;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t begin(container_t& container)
+    {
+        return container.begin();
+    }
+
+    static const_itr_t begin(const container_t& container)
+    {
+        return container.begin();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t end(container_t& container)
+    {
+        return container.end();
+    }
+
+    static const_itr_t end(const container_t& container)
+    {
+        return container.end();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t find(container_t& container, const key_t& key)
+    {
+        return container.find(key);
+    }
+
+    static const_itr_t find(const container_t& container, const key_t& key)
+    {
+        return container.find(key);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static std::pair<itr_t, itr_t> equal_range(container_t& container, const key_t& key)
+    {
+        return container.equal_range(key);
+    }
+
+    static std::pair<const_itr_t, const_itr_t> equal_range(const container_t& container, const key_t& key)
+    {
+        return container.equal_range(key);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static void clear(container_t& container)
+    {
+        container.clear();
+    }
+
+    static bool is_empty(const container_t& container)
+    {
+        return container.empty();
+    }
+
+    static std::size_t get_size(const container_t& container)
+    {
+        return container.size();
+    }
+
+    static std::size_t erase(container_t& container, const key_t& key)
+    {
+        return container.erase(key);
+    }
+
+    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
+    {
+        return {container.end(), false};
+    }
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct associative_container_map_base : associative_container_base<T>
+{
+    using container_t   = typename associative_container_base<T>::container_t;
+    using key_t         = typename associative_container_base<T>::key_t;
+    using value_t       = typename associative_container_base<T>::value_t;
+    using itr_t         = typename associative_container_base<T>::itr_t;
+    using const_itr_t   = typename associative_container_base<T>::const_itr_t;
+
+    static value_t& get_value(itr_t& itr)
+    {
+        return itr->second;
+    }
+
+    static const value_t& get_value(const const_itr_t& itr)
+    {
+        return itr->second;
+    }
+
+    static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value)
+    {
+        return container.insert(std::make_pair(key, value));
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename...Args>
-struct associative_container_key_base : associative_container_base<T, Args...>
+template<typename T>
+struct associative_container_key_base : associative_container_base<T>
 {
-    static variant get_key(const iterator_data& itr)
+    using container_t   = typename associative_container_base<T>::container_t;
+    using key_t         = typename T::key_type;
+    using value_t       = void;
+    using itr_t         = typename T::iterator;
+    using const_itr_t   = typename T::const_iterator;
+
+    static const key_t& get_key(const const_itr_t& itr)
     {
-        auto& it = associative_container_base<T,  Args...>::get_iterator(itr);
-        return variant(std::ref(*it));
+        return *itr;
     }
 
-    static variant get_value(const iterator_data& itr)
+    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
     {
-        return variant();
+        return container.insert(key);
     }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct associative_container_base_multi : associative_container_base<T>
+{
+    using container_t   = typename associative_container_base<T>::container_t;
+    using key_t         = typename T::key_type;
+    using value_t       = typename T::mapped_type;
+    using itr_t         = typename T::iterator;
+    using const_itr_t   = typename T::const_iterator;
+
+    static value_t& get_value(itr_t& itr)
+    {
+        return itr->second;
+    }
+
+    static const value_t& get_value(const const_itr_t& itr)
+    {
+        return itr->second;
+    }
+
+    static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value)
+    {
+        return {container.insert(std::make_pair(key, value)), true};
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct associative_container_key_base_multi : associative_container_key_base<T>
+{
+    using container_t   = typename associative_container_key_base<T>::container_t;
+    using key_t         = typename T::key_type;
+    using itr_t         = typename T::iterator;
+
+    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
+    {
+        return {container.insert(key), true};
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename...Args>
-struct associative_container_mapper<std::set<K>, Args...> : detail::associative_container_key_base<std::set<K>,  Args...> {};
+template<typename K>
+struct associative_container_mapper<std::set<K>> : detail::associative_container_key_base<std::set<K>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename...Args>
-struct associative_container_mapper<std::multiset<K>, Args...> : detail::associative_container_key_base<std::multiset<K>,  Args...> {};
+template<typename K>
+struct associative_container_mapper<std::multiset<K>> : detail::associative_container_key_base_multi<std::multiset<K>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::map<K, T>, Args...> : detail::associative_container_base<std::map<K, T>, Args...> { };
+template<typename K, typename T>
+struct associative_container_mapper<std::map<K, T>> : detail::associative_container_map_base<std::map<K, T>> { };
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::multimap<K, T>, Args...> : detail::associative_container_base<std::multimap<K, T>,  Args...> {};
+template<typename K, typename T>
+struct associative_container_mapper<std::multimap<K, T>> : detail::associative_container_base_multi<std::multimap<K, T>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_set<K>, Args...> : detail::associative_container_key_base<std::unordered_set<K>,  Args...> {};
+template<typename K>
+struct associative_container_mapper<std::unordered_set<K>> : detail::associative_container_key_base<std::unordered_set<K>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::unordered_map<K, T>, Args...> : detail::associative_container_base<std::unordered_map<K, T>,  Args...> {};
+template<typename K, typename T>
+struct associative_container_mapper<std::unordered_map<K, T>> : detail::associative_container_map_base<std::unordered_map<K, T>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename...Args>
-struct associative_container_mapper<std::unordered_multiset<K>, Args...> : detail::associative_container_key_base<std::unordered_multiset<K>,  Args...> {};
+template<typename K>
+struct associative_container_mapper<std::unordered_multiset<K>> : detail::associative_container_key_base_multi<std::unordered_multiset<K>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-template<typename K, typename T, typename...Args>
-struct associative_container_mapper<std::unordered_multimap<K, T>, Args...> : detail::associative_container_base<std::unordered_multimap<K, T>,  Args...> {};
+template<typename K, typename T>
+struct associative_container_mapper<std::unordered_multimap<K, T>> : detail::associative_container_base_multi<std::unordered_multimap<K, T>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -396,6 +486,11 @@ struct associative_container_empty
     static void begin(void* container, iterator_data& itr)
     {
 
+    }
+
+    static bool is_empty(void* container)
+    {
+        return true;
     }
 
     static std::size_t get_size(void* container)

@@ -43,7 +43,7 @@ namespace rttr
 {
 class type;
 
-template<typename...Args>
+template<typename T>
 struct associative_container_mapper;
 
 namespace detail
@@ -482,7 +482,7 @@ namespace detail
         template <typename U> static YesType& check(...);
 
 
-        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<associative_container_mapper<T, T> >(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<associative_container_mapper<T> >(0)) == sizeof(YesType));
     };
 
     template<typename T>
@@ -494,7 +494,7 @@ namespace detail
     struct associative_container_value_t
     {
         template <typename U> static typename U::mapped_type check(typename U::mapped_type*);
-        template <typename U> static invalid_type check(...);
+        template <typename U> static void check(...);
 
         using type = decltype(check<T>(nullptr));
     };

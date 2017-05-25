@@ -108,6 +108,13 @@ type variant_associative_view::get_value_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool variant_associative_view::is_empty() const RTTR_NOEXCEPT
+{
+    return m_view.is_empty();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 std::size_t variant_associative_view::get_size() const RTTR_NOEXCEPT
 {
     return m_view.get_size();

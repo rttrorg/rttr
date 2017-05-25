@@ -119,8 +119,8 @@ struct iterator_wrapper_big
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Itr, typename Tp = conditional_t<can_place_in_iterator_data<Itr>::value,
-                                              iterator_wrapper_small<Itr>,
-                                              iterator_wrapper_big<Itr>>>
+                                                   iterator_wrapper_small<Itr>,
+                                                   iterator_wrapper_big<Itr>>>
 struct iterator_wrapper_base : Tp
 {
 
@@ -132,11 +132,6 @@ struct iterator_wrapper_base : Tp
     static bool equal(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT
     {
         return (Tp::get_iterator(lhs_itr) == Tp::get_iterator(rhs_itr));
-    }
-
-    static variant get_value(const iterator_data& itr)
-    {
-        return variant(std::ref(*Tp::get_iterator(itr)));
     }
 };
 
