@@ -51,111 +51,244 @@ namespace rttr
  *
  * Custom associative container
  * -----------------------------
- * 1. By default it should be enough to just provide a class specialization of your type for the class associative_container_mapper
- *    and derive from `detail::associative_container_base`.
- *    Because when your type follows the interface of the STL associative containers
- *    <a target="_blank" href=https://en.wikipedia.org/wiki/Associative_containers>associative container</a>
- *    it should be enough, you don't need to map anything. For example:
- *    \code{.cpp}
- *    template<typename K, typename T, typename...Args>
- *    struct associative_container_mapper<my_custom_container<K, T>, Args...> : detail::associative_container_base<my_custom_container<K, T>, Args...>
- *    {
- *    };
- *    \endcode
- *    There is one exception for `set` like types, which store only the key, you should derive from `detail::associative_container_key_base`
- *    \code{.cpp}
- *    template<typename K, typename...Args>
- *    struct associative_container_mapper<my_custom_key_container<K>, Args...> : detail::associative_container_key_base<my_custom_key_container<K>, Args...>
- *    {
- *    };
- *    \endcode
+ * For a specialization of the class \ref rttr::associative_container_mapper<T> "associative_container_mapper<T>"
+ * you have to provide some nested alias templates:
+ * 1. `using container_t = T;`
+ * 2. `using key_t       = typename T::key_type;`
+ * 3. `using value_t     = typename T::mapped_type;` \remark When you have a key-only container, like `std::set<T>`, use as `void` as `value_t`
+ * 4. `using itr_t       = typename T::iterator;`
+ * 5. `using const_itr_t = typename T::const_iterator;`
  *
- * 2. When your interface is completly different then the STL interface, you have to implement several member functions:
- *    1.  `static const Itr& get_iterator(const detail::iterator_data& data);`
- *    2.  `static Itr& get_iterator(detail::iterator_data& data);`
- *    3.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator& itr_src);`
- *    4.  `static void create(detail::iterator_data& itr_tgt, const detail::iterator_data& itr_src);`
- *    5.  `static void destroy(detail::iterator_data& itr);`
- *    6.  `static void advance(detail::iterator_data& itr, std::ptrdiff_t idx);`
- *    7.  `static bool equal(const detail::iterator_data& lhs_itr, const detail::iterator_data& rhs_itr) RTTR_NOEXCEPT;`
- *    8.  `static variant get_key(const detail::iterator_data& itr);`
- *    9.  `static variant get_value(const detail::iterator_data& itr);`
- *    10. `static void find(void* container, detail::iterator_data& itr, argument& key);`
- *    11. `static void equal_range(void* container, argument& key, detail::iterator_data& itr_begin, detail::iterator_data& itr_end);`
- *    12. `static std::size_t erase(void* container, argument& key);`
- *    13. `static void clear(void* container);`
- *    14. `static bool insert_key(void* container, argument& key, detail::iterator_data& itr);`
- *    15. `static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr);`
+ * and following member functions:
+ * 1. `static const key_t& get_key(const const_itr_t& itr);`
+ * 2. `static value_t& get_value(itr_t& itr);`
+ * 3. `static const value_t& get_value(const const_itr_t& itr);`
+ * 4. `static itr_t begin(container_t& container);`
+ * 5. `static const_itr_t begin(const container_t& container);`
+ * 6. `static const_itr_t end(const container_t& container);`
+ * 7. `static itr_t find(container_t& container, const key_t& key);`
+ * 8. `static const_itr_t find(const container_t& container, const key_t& key);`
+ * 9. `static std::pair<itr_t, itr_t> equal_range(container_t& container, const key_t& key);`
+ * 10. `static std::pair<const_itr_t, const_itr_t> equal_range(const container_t& container, const key_t& key);`
+ * 11. `static void clear(container_t& container);`
+ * 12. `static std::size_t get_size(const container_t& container);`
+ * 13. `static std::size_t erase(container_t& container, const key_t& key);`
+ * 14. `static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key);`
+ * 15. `static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value);`
  *
- * The iterator itself is stored in the detail::iterator_data. You are free to use placement new (when the iterator has the same size as double)
- * or allocate on the iterator on the heap and store the pointer inside the detail::iterator_data.
+ * Following code example for  <a target="_blank" href=http://doc.qt.io/qt-5/qhash.html>QHash<K, T></a>
+ * illustrates how to add a specialization:
  *
+ * \code{.cpp}
+ * namespace rttr
+ * {
+ * template<typename K, typename T>
+ * struct associative_container_mapper<QHash<K, T>>
+ * {
+ *     using container_t   = QHash<K, T>;
+ *     using key_t         = typename QHash<K, T>::key_type;
+ *     using value_t       = typename QHash<K, T>::mapped_type;
+ *     using itr_t         = typename QHash<K, T>::iterator;
+ *     using const_itr_t   = typename QHash<K, T>::const_iterator;
+ *
+ *     static const key_t& get_key(const const_itr_t& itr)
+ *     {
+ *         return itr.key();
+ *     }
+ *
+ *     static value_t& get_value(itr_t& itr)
+ *     {
+ *         return itr.value();
+ *     }
+ *
+ *     static const value_t& get_value(const const_itr_t& itr)
+ *     {
+ *         return itr.value();
+ *     }
+ *
+ *     static itr_t begin(container_t& container)
+ *     {
+ *         return container.begin();
+ *     }
+ *
+ *     static const_itr_t begin(const container_t& container)
+ *     {
+ *         return container.begin();
+ *     }
+ *
+ *     static itr_t end(container_t& container)
+ *     {
+ *         return container.end();
+ *     }
+ *
+ *     static const_itr_t end(const container_t& container)
+ *     {
+ *         return container.end();
+ *     }
+ *
+ *     static itr_t find(container_t& container, key_t& key)
+ *     {
+ *         return container.find(key);
+ *     }
+ *
+ *     static const_itr_t find(const container_t& container, key_t& key)
+ *     {
+ *         return container.find(key);
+ *     }
+ *
+ *     static std::pair<itr_t, itr_t> equal_range(container_t& container, key_t& key)
+ *     {
+ *         auto ret = container.equal_range(key);
+ *         return std::make_pair(ret.first, ret.second);
+ *     }
+ *
+ *     static std::pair<const_itr_t, const_itr_t> equal_range(const container_t& container, key_t& key)
+ *     {
+ *         auto ret = container.equal_range(key);
+ *         return std::make_pair(ret.first, ret.second);
+ *     }
+ *
+ *     static void clear(container_t& container)
+ *     {
+ *         container.clear();
+ *     }
+ *
+ *     static std::size_t get_size(const container_t& container)
+ *     {
+ *         return container.size();
+ *     }
+ *
+ *     static std::size_t erase(container_t& container, key_t& key)
+ *     {
+ *         return container.remove(key);
+ *     }
+ *
+ *     static std::pair<itr_t, bool> insert_key_value(container_t& container, key_t& key, value_t& value)
+ *     {
+ *         return std::make_pair(container.insert(key, value), true);
+ *     }
+ * };
+ * } // end namespace rttr
+ * \endcode
+ *
+ * \remark
+ * Make sure you put your specialization inside the namespace `rttr`.
+ * The best place for this code, is below the declaration of your custom associative container type.
+ * When this is not possible, include your specialization code before registering your types to RTTR.
  */
-template<typename...T>
+template<typename T>
 struct associative_container_mapper
 {
 #ifndef DOXYGEN
     using is_valid = std::false_type;
 #else
-    static const Itr& get_iterator(const detail::iterator_data& data)
+    using container_t = T;
+    using key_t       = typename T::key_type;
+    using value_t     = typename T::mapped_type; //!< When you have a key only container use `void` as value type.
+                                                 //!< Then you also dont need to add a insert_key_value() function
+    using itr_t       = typename T::iterator;
+    using const_itr_t = typename T::const_iterator;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static const key_t& get_key(const const_itr_t& itr)
     {
+        return itr->first;
     }
 
-    static Itr& get_iterator(detail::iterator_data& data)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static value_t& get_value(itr_t& itr)
     {
+        return itr->second;
     }
 
-    static void create(detail::iterator_data& itr_tgt, const detail::iterator& itr_src)
+    static const value_t& get_value(const const_itr_t& itr)
     {
+        return itr->second;
     }
 
-    static void create(detail::iterator_data& itr_tgt, const detail::iterator_data& itr_src)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t begin(container_t& container)
     {
+        return container.begin();
     }
 
-    static void destroy(detail::iterator_data& itr)
+    static const_itr_t begin(const container_t& container)
     {
+        return container.begin();
     }
 
-    static void advance(detail::iterator_data& itr, std::ptrdiff_t idx)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t end(container_t& container)
     {
+        return container.end();
     }
 
-    static bool equal(const detail::iterator_data& lhs_itr, const detail::iterator_data& rhs_itr) RTTR_NOEXCEPT
+    static const_itr_t end(const container_t& container)
     {
+        return container.end();
     }
 
-    static variant get_key(const detail::iterator_data& itr)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t find(container_t& container, const key_t& key)
     {
+        return container.find(key);
     }
 
-    static variant get_value(const detail::iterator_data& itr)
+    static const_itr_t find(const container_t& container, const key_t& key)
     {
+        return container.find(key);
     }
 
-    static void find(void* container, detail::iterator_data& itr, argument& key)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static std::pair<itr_t, itr_t> equal_range(container_t& container, const key_t& key)
     {
+        return container.equal_range(key);
     }
 
-    static void equal_range(void* container, argument& key,
-                            detail::iterator_data& itr_begin, detail::iterator_data& itr_end)
+    static std::pair<const_itr_t, const_itr_t> equal_range(const container_t& container, const key_t& key)
     {
+        return container.equal_range(key);
     }
 
-    static std::size_t erase(void* container, argument& key)
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static void clear(container_t& container)
     {
+        container.clear();
     }
 
-    static void clear(void* container)
+    static std::size_t get_size(const container_t& container)
     {
+        return container.size();
     }
 
-    static bool insert_key(void* container, argument& key, detail::iterator_data& itr)
+    static std::size_t erase(container_t& container, const key_t& key)
     {
+        return container.erase(key);
     }
 
-    static bool insert_key_value(void* container, argument& key, argument& value, detail::iterator_data& itr)
+    /*!
+     * This method is only necessary, when you have a key-only container. Like `std::set<T>`.
+     * Otherwise you don't need to declare it.
+     */
+    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
     {
+        return { container.end(), false };
+    }
+
+    /*!
+     * This method is only necessary, when you have a key-value container. Like `std::map<T>`.
+     * Otherwise you don't need to declare it.
+     */
+    static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value)
+    {
+        return container.insert(std::make_pair(key, value));
     }
 #endif
 };

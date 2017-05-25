@@ -70,24 +70,26 @@ class RTTR_LOCAL variant_associative_view_private
         template<typename T, typename RawType = raw_type_t<T>, typename ConstType = remove_pointer_t<T>>
         variant_associative_view_private(const T& container) RTTR_NOEXCEPT
         :   m_type(type::get<RawType>()),
-            m_key_type(type::get<typename associative_container_mapper<RawType, ConstType>::key_t>()),
-            m_value_type(type::get<typename associative_container_mapper<RawType, ConstType>::value_t>()),
+            m_key_type(type::get<typename associative_container_mapper<RawType>::key_t>()),
+            m_value_type(type::get<conditional_t<std::is_void<typename associative_container_mapper<RawType>::value_t>::value,
+                                                invalid_type,
+                                                typename associative_container_mapper<RawType>::value_t>>()),
             m_container(as_void_ptr(container)),
-            m_get_size_func(associative_container_mapper<RawType, ConstType>::get_size_impl),
-            m_begin_func(associative_container_mapper<RawType, ConstType>::begin_impl),
-            m_end_func(associative_container_mapper<RawType, ConstType>::end_impl),
-            m_equal_func(associative_container_mapper<RawType, ConstType>::equal),
-            m_create_func(associative_container_mapper<RawType, ConstType>::create),
-            m_delete_func(associative_container_mapper<RawType, ConstType>::destroy),
-            m_get_key_func(associative_container_mapper<RawType, ConstType>::get_key),
-            m_get_value_func(associative_container_mapper<RawType, ConstType>::get_value),
-            m_advance_func(associative_container_mapper<RawType, ConstType>::advance),
-            m_find_func(associative_container_mapper<RawType, ConstType>::find_impl),
-            m_erase_func(associative_container_mapper<RawType, ConstType>::erase_impl),
-            m_clear_func(associative_container_mapper<RawType, ConstType>::clear_impl),
-            m_equal_range_func(associative_container_mapper<RawType, ConstType>::equal_range_impl),
-            m_insert_func_key(associative_container_mapper<RawType, ConstType>::insert_key_impl),
-            m_insert_func_key_value(associative_container_mapper<RawType, ConstType>::insert_key_value_impl)
+            m_get_size_func(associative_container_mapper_wrapper<RawType, ConstType>::get_size),
+            m_begin_func(associative_container_mapper_wrapper<RawType, ConstType>::begin),
+            m_end_func(associative_container_mapper_wrapper<RawType, ConstType>::end),
+            m_equal_func(associative_container_mapper_wrapper<RawType, ConstType>::equal),
+            m_create_func(associative_container_mapper_wrapper<RawType, ConstType>::create),
+            m_delete_func(associative_container_mapper_wrapper<RawType, ConstType>::destroy),
+            m_get_key_func(associative_container_mapper_wrapper<RawType, ConstType>::get_key),
+            m_get_value_func(associative_container_mapper_wrapper<RawType, ConstType>::get_value),
+            m_advance_func(associative_container_mapper_wrapper<RawType, ConstType>::advance),
+            m_find_func(associative_container_mapper_wrapper<RawType, ConstType>::find),
+            m_erase_func(associative_container_mapper_wrapper<RawType, ConstType>::erase),
+            m_clear_func(associative_container_mapper_wrapper<RawType, ConstType>::clear),
+            m_equal_range_func(associative_container_mapper_wrapper<RawType, ConstType>::equal_range),
+            m_insert_func_key(associative_container_mapper_wrapper<RawType, ConstType>::insert_key),
+            m_insert_func_key_value(associative_container_mapper_wrapper<RawType, ConstType>::insert_key_value)
         {
         }
 

@@ -292,7 +292,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
         REQUIRE(view.is_valid() == true);
 
         auto ret = view.insert(1);
-        CHECK(ret.first != view.end());
+        REQUIRE(ret.first != view.end());
 
         CHECK(ret.first.get_key().to_int() == 1);
         CHECK(ret.first.get_value().is_valid() == false);
@@ -318,7 +318,8 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
         }
 
         {
-            const std::map<int, std::string> map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
+            const std::map<int, const std::string> map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
+
             variant var = std::cref(map);
             variant_associative_view view = var.create_associative_view();
 
