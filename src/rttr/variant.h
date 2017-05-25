@@ -433,6 +433,8 @@ class RTTR_API variant
          *        Otherwise `false`.
          *
          * \return `True` if this variant can be converted to `T`; otherwise `false`.
+         *
+         * \see type::register_converter_func()
          */
         template<typename T>
         bool can_convert() const;
@@ -447,6 +449,8 @@ class RTTR_API variant
          * When the string does not contain non-numeric characters, the conversion will not succeed.
          *
          * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
+         *
+         * \see type::register_converter_func()
          */
         bool can_convert(const type& target_type) const;
 
@@ -455,22 +459,27 @@ class RTTR_API variant
          *        When the conversion was successfully the function will return `true`.
          *        When the conversion fails, then the containing variant value stays the same and the function will return `false`.
          *
-         * A variant containing a pointer to a custom type will be also converted and return `true`
-         * for this function, if a \ref rttr_cast to the type described by \p target_type would succeed.
+         * There are already certain standard type conversions implemented,
+         * e.g. `int` to `std::string`, `enum value` to `int` and so on.
+         * Additionally, a variant containing a raw pointer can be converted to a custom type,
+         * if a \ref rttr_cast to the type described by \p target_type would succeed.
          *
          * See therefore following example code:
          * \code{.cpp}
-         *  struct base { virtual ~base(){} };
-         *  struct derived : base { };
+         *  struct base { virtual ~base(){} RTTR_ENABLE() };
+         *  struct derived : base { RTTR_ENABLE(base) };
          *  derived d;
          *  variant var = static_cast<base*>(&d);           // var contains a '*base' ptr
          *  bool ret = var.convert(type::get<derived*>());  // yields to 'true'
          *  var.is_type<derived*>();                        // yields to 'true'
          * \endcode
          *
-         * \see can_convert()
+         * In order to enable a custom type conversion, a conversion function has to be registered
+         * via \ref type::register_converter_func().
          *
          * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
+         *
+         * \see can_convert(), type::register_converter_func()
          */
         bool convert(const type& target_type);
 
@@ -490,10 +499,13 @@ class RTTR_API variant
          *  }
          * \endcode
          *
+         * In order to enable a custom type conversion, a conversion function has to be registered
+         * via \ref type::register_converter_func().
+         *
          * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
          *         with the function \ref can_convert(). When the conversion fails, a default constructed value of type \p T is returned.
          *
-         * \see can_convert()
+         * \see can_convert(), type::register_converter_func()
          *
          * \return The converted value as type \p T.
          */
@@ -518,10 +530,13 @@ class RTTR_API variant
          *  }
          * \endcode
          *
+         * In order to enable a custom type conversion, a conversion function has to be registered
+         * via \ref type::register_converter_func().
+         *
          * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
          *         with the function \ref can_convert()
          *
-         * \see can_convert()
+         * \see can_convert(), type::register_converter_func()
          *
          * \return `True` if the contained data could be converted to \p value; otherwise `false`.
          */
