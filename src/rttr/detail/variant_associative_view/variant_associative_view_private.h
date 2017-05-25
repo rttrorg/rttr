@@ -49,6 +49,7 @@ class RTTR_LOCAL variant_associative_view_private
             m_key_type(get_invalid_type()),
             m_value_type(get_invalid_type()),
             m_container(nullptr),
+            m_get_is_empty_func(associative_container_empty::is_empty),
             m_get_size_func(associative_container_empty::get_size),
             m_begin_func(associative_container_empty::begin),
             m_end_func(associative_container_empty::begin),
@@ -75,6 +76,7 @@ class RTTR_LOCAL variant_associative_view_private
                                                 invalid_type,
                                                 typename associative_container_mapper<RawType>::value_t>>()),
             m_container(as_void_ptr(container)),
+            m_get_is_empty_func(associative_container_mapper_wrapper<RawType, ConstType>::is_empty),
             m_get_size_func(associative_container_mapper_wrapper<RawType, ConstType>::get_size),
             m_begin_func(associative_container_mapper_wrapper<RawType, ConstType>::begin),
             m_end_func(associative_container_mapper_wrapper<RawType, ConstType>::end),
@@ -133,6 +135,11 @@ class RTTR_LOCAL variant_associative_view_private
         RTTR_FORCE_INLINE void end(iterator_data& itr) const
         {
             m_end_func(m_container, itr);
+        }
+
+        RTTR_FORCE_INLINE bool is_empty() const RTTR_NOEXCEPT
+        {
+            return m_get_is_empty_func(m_container);
         }
 
         RTTR_FORCE_INLINE std::size_t get_size() const RTTR_NOEXCEPT
@@ -201,6 +208,7 @@ class RTTR_LOCAL variant_associative_view_private
         static bool equal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
         using equality_func     = decltype(&equal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
 
+        using get_is_empty_func = bool(*)(void* container);
         using get_size_func     = std::size_t(*)(void* container);
         using begin_func        = void(*)(void* container, iterator_data& itr);
         using end_func          = void(*)(void* container, iterator_data& itr);
@@ -217,25 +225,26 @@ class RTTR_LOCAL variant_associative_view_private
         using insert_func_key   = bool(*)(void* container, argument& key, detail::iterator_data& itr);
         using insert_func_key_value = bool(*)(void* container, argument& key, argument& value, detail::iterator_data& itr);
 
-        type            m_type;
-        type            m_key_type;
-        type            m_value_type;
-        void*           m_container;
-        get_size_func   m_get_size_func;
-        begin_func      m_begin_func;
-        end_func        m_end_func;
-        equality_func   m_equal_func;
-        create_func     m_create_func;
-        delete_func     m_delete_func;
-        get_key_func    m_get_key_func;
-        get_value_func  m_get_value_func;
-        advance_func    m_advance_func;
-        find_func       m_find_func;
-        erase_func      m_erase_func;
-        clear_func      m_clear_func;
-        equal_range_func m_equal_range_func;
-        insert_func_key m_insert_func_key;
-        insert_func_key_value m_insert_func_key_value;
+        type                    m_type;
+        type                    m_key_type;
+        type                    m_value_type;
+        void*                   m_container;
+        get_is_empty_func       m_get_is_empty_func;
+        get_size_func           m_get_size_func;
+        begin_func              m_begin_func;
+        end_func                m_end_func;
+        equality_func           m_equal_func;
+        create_func             m_create_func;
+        delete_func             m_delete_func;
+        get_key_func            m_get_key_func;
+        get_value_func          m_get_value_func;
+        advance_func            m_advance_func;
+        find_func               m_find_func;
+        erase_func              m_erase_func;
+        clear_func              m_clear_func;
+        equal_range_func        m_equal_range_func;
+        insert_func_key         m_insert_func_key;
+        insert_func_key_value   m_insert_func_key_value;
 };
 
 } // end namespace detail

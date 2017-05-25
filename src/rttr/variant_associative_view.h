@@ -124,7 +124,7 @@ class RTTR_API variant_associative_view
          * \brief Returns true if this variant_associative_view is valid, that means the object is holding some data.
          *        When the variant_associative_view doesn't hold any data it will return false.
          *
-         * \return True if this array is valid, otherwise false.
+         * \return True if this \ref variant_associative_view is valid, otherwise false.
          */
         bool is_valid() const RTTR_NOEXCEPT;
 
@@ -171,6 +171,13 @@ class RTTR_API variant_associative_view
         type get_value_type() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Checks if the container has no elements.
+         *
+         * \return `true` if container is empty, otherwise `false`.
+         */
+        bool is_empty() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns the number of elements in the associative container.
          *
          * \return The number of elements in the associative container.
@@ -196,7 +203,7 @@ class RTTR_API variant_associative_view
         /*!
          * \brief Finds an element with specific key \p key .
          *
-         * \return The element with key equivalent to \p key. If no element is found an invalid variant is returned.
+         * \return The element with key equivalent to \p key. If no element is found an invalid iterator is returned.
          */
         const_iterator find(argument key);
 

@@ -97,6 +97,11 @@ struct associative_container_mapper_wrapper : iterator_wrapper_base<Tp>
         itr_wrapper::create(itr, base_class::end(get_container(container)));
     }
 
+    static bool is_empty(void* container)
+    {
+        return base_class::is_empty(get_container(container));
+    }
+
     static std::size_t get_size(void* container)
     {
         return base_class::get_size(get_container(container));
@@ -285,6 +290,11 @@ struct associative_container_base
     static void clear(container_t& container)
     {
         container.clear();
+    }
+
+    static bool is_empty(const container_t& container)
+    {
+        return container.empty();
     }
 
     static std::size_t get_size(const container_t& container)
@@ -476,6 +486,11 @@ struct associative_container_empty
     static void begin(void* container, iterator_data& itr)
     {
 
+    }
+
+    static bool is_empty(void* container)
+    {
+        return true;
     }
 
     static std::size_t get_size(void* container)

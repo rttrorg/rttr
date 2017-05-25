@@ -56,6 +56,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
         CHECK(view.is_valid() == false);
         CHECK(static_cast<bool>(view) == false);
+        CHECK(view.is_empty() == true);
         CHECK(view.get_size() == 0);
         CHECK(view.get_type().is_valid() == false);
         CHECK(view.erase(23) == 0);
@@ -67,6 +68,8 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         variant_associative_view view = var.create_associative_view();
         CHECK(view.is_valid() == false);
         CHECK(static_cast<bool>(view) == false);
+        CHECK(view.is_empty() == true);
+        CHECK(view.get_size() == 0);
    }
 
    SECTION("valid")
@@ -75,9 +78,13 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         variant_associative_view a = var.create_associative_view();
         CHECK(a.is_valid() == true);
         CHECK(static_cast<bool>(a) == true);
+        CHECK(a.is_empty() == false);
+        CHECK(a.get_size() == 3);
 
         variant_associative_view b(a);
         CHECK(b.is_valid() == true);
+        CHECK(b.is_empty() == false);
+        CHECK(b.get_size() == 3);
    }
 }
 
@@ -241,7 +248,6 @@ TEST_CASE("variant_associative_view::is_associative_container", "[variant_associ
         CHECK(var.is_associative_container() == true);
     }
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -540,10 +546,12 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 4);
+        CHECK(view.is_empty() == false);
 
         view.clear();
 
         CHECK(view.get_size() == 0);
+        CHECK(view.is_empty() == true);
     }
 
     SECTION("const std::set")
@@ -553,10 +561,12 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 4);
+        CHECK(view.is_empty() == false);
 
         view.clear();
 
         CHECK(view.get_size() == 4);
+        CHECK(view.is_empty() == false);
     }
 
     SECTION("std::map")
@@ -567,10 +577,12 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 5);
+        CHECK(view.is_empty() == false);
 
         view.clear();
 
         CHECK(view.get_size() == 0);
+        CHECK(view.is_empty() == true);
     }
 
     SECTION("invalid")
@@ -580,6 +592,7 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
         view.clear();
 
         CHECK(view.get_size() == 0);
+        CHECK(view.is_empty() == true);
     }
 }
 
