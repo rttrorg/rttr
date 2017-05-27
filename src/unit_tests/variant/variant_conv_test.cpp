@@ -701,7 +701,8 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
         CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
         CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == false);
 
-        var = new int(42);
+        auto raw_ptr = new int(42);
+        var = raw_ptr;
 
         CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
         CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
@@ -710,6 +711,28 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
         auto result = var.convert(type::get<std::shared_ptr<int>>());
         CHECK(result == true);
         CHECK(var.get_type() == type::get<std::shared_ptr<int>>());
+        CHECK(var.get_value<std::shared_ptr<int>>().get() == raw_ptr);
+    }
+
+    SECTION("convert and return wrapper")
+    {
+        auto raw_ptr = new int(42);
+        variant var = raw_ptr;
+        bool ok = false;
+        auto ptr = var.convert<std::shared_ptr<int>>(&ok);
+        CHECK(ok == true);
+        CHECK(ptr.get() == raw_ptr);
+        CHECK(var.get_type() == type::get<int*>());
+    }
+
+    SECTION("convert to existing wrapper")
+    {
+        auto raw_ptr = new int(42);
+        variant var = raw_ptr;
+        std::shared_ptr<int> ptr;
+        CHECK(var.convert(ptr)  == true);
+        CHECK(ptr.get()         == raw_ptr);
+        CHECK(var.get_type()    == type::get<int*>());
     }
 }
 
