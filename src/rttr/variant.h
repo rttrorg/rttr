@@ -945,6 +945,9 @@ class RTTR_API variant
          */
         RTTR_INLINE bool is_nullptr() const;
 
+
+        variant create_wrapped_value(const type& wrapped_type) const;
+
     private:
         friend class argument;
         friend class instance;

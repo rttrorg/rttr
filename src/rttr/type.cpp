@@ -528,4 +528,12 @@ destructor type::get_destructor() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type::create_wrapped_value(const argument& arg, variant& var) const
+{
+    if (m_type_data->create_wrapper)
+        m_type_data->create_wrapper(arg, var);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace rttr

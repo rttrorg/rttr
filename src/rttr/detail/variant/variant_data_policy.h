@@ -122,6 +122,7 @@ enum class variant_policy_operation : uint8_t
     CLONE,
     SWAP,
     EXTRACT_WRAPPED_VALUE,
+    CREATE_WRAPPED_VALUE,
     GET_VALUE,
     GET_TYPE,
     GET_PTR,
@@ -243,6 +244,15 @@ struct variant_data_base_policy
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {
                 arg.get_value<variant>() = get_wrapped_value(Tp::get_value(src_data));
+                break;
+            }
+            case variant_policy_operation::CREATE_WRAPPED_VALUE:
+            {
+                const auto& params          = arg.get_value<std::tuple<variant&, const type&>>();
+                variant& var                = std::get<0>(params);
+                const type& wrapper_type    = std::get<1>(params);
+
+                wrapper_type.create_wrapped_value(Tp::get_value(src_data), var);
                 break;
             }
             case variant_policy_operation::GET_VALUE:
@@ -766,6 +776,10 @@ struct RTTR_API variant_data_policy_void
             {
                 break;
             }
+            case variant_policy_operation::CREATE_WRAPPED_VALUE:
+            {
+                return false;
+            }
             case variant_policy_operation::IS_NULLPTR:
             {
                 return false;
@@ -851,6 +865,10 @@ struct RTTR_API variant_data_policy_nullptr_t
             {
                 swap(get_value(src_data), arg.get_value<variant_data>());
                 break;
+            }
+            case variant_policy_operation::CREATE_WRAPPED_VALUE:
+            {
+                return false;
             }
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {

@@ -652,7 +652,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
 
 TEST_CASE("variant test - convert from wrapped value", "[variant]")
 {
-    SECTION("Invalid conversion")
+    SECTION("valid conversion")
     {
         int obj = 42;
         variant var = std::ref(obj);
@@ -685,6 +685,31 @@ TEST_CASE("variant test - convert from wrapped value", "[variant]")
         CHECK(ok == false);
 
         CHECK(var.convert(type::get<int>()) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant test - convert to wrapped value", "[variant]")
+{
+    SECTION("valid conversion")
+    {
+        int obj = 42;
+        variant var = obj;
+
+        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
+        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
+        CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == false);
+
+        var = new int(42);
+
+        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
+        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
+        CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == true);
+
+        auto result = var.convert(type::get<std::shared_ptr<int>>());
+        CHECK(result == true);
+        CHECK(var.get_type() == type::get<std::shared_ptr<int>>());
     }
 }
 

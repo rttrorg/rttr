@@ -103,6 +103,7 @@ namespace impl
 
 using create_variant_func = decltype(&create_invalid_variant_policy::create_variant);
 using get_base_types_func = decltype(&base_classes<int>::get_types);
+using create_wrapper_func = void(*)(const argument& arg, variant& var);
 
 } // end namespace impl
 
@@ -124,6 +125,7 @@ struct type_data
     impl::get_base_types_func get_base_types; // FIXEM: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
 
+    impl::create_wrapper_func create_wrapper;
     class_data& (*get_class_data)();
 
     uint16_t type_index;
@@ -225,6 +227,37 @@ struct wrapper_type_info<T, false>
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename Wrapper, typename Wrapped_Type>
+static void create_wrapper(const argument& arg, variant& var)
+{
+    if (arg.get_type() != type::get<Wrapped_Type>())
+        return;
+
+    auto& wrapped_type = arg.get_value<Wrapped_Type>();
+    var = wrapper_mapper<Wrapper>::create(wrapped_type);
+}
+
+template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
+static enable_if_t<is_wrapper<Wrapper>::value &&
+                   ::rttr::detail::is_copy_constructible<Wrapper>::value &&
+                   std::is_default_constructible<Wrapper>::value, impl::create_wrapper_func>
+get_create_wrapper_func()
+{
+    return &create_wrapper<Wrapper, Tp>;
+}
+
+
+template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
+static enable_if_t<!is_wrapper<Wrapper>::value ||
+                   !::rttr::detail::is_copy_constructible<Wrapper>::value ||
+                   !std::is_default_constructible<Wrapper>::value, impl::create_wrapper_func>
+get_create_wrapper_func()
+{
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -245,6 +278,8 @@ type_data& get_type_data() RTTR_NOEXCEPT
 
                                       &create_variant_func<T>::create_variant,
                                       &base_classes<T>::get_types,
+                                      get_create_wrapper_func<T>(),
+
                                       &get_type_class_data<T>,
                                       0,
                                       type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
@@ -270,6 +305,7 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                       0, 0,
                                       &create_invalid_variant_policy::create_variant,
                                       &base_classes<void>::get_types,
+                                      get_create_wrapper_func<void>(),
                                       &get_invalid_type_class_data,
                                       0,
                                       type_trait_value{0}};

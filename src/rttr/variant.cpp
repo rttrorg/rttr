@@ -190,6 +190,15 @@ variant variant::extract_wrapped_value() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+variant variant::create_wrapped_value(const type& wrapped_type) const
+{
+    variant var;
+    m_policy(detail::variant_policy_operation::CREATE_WRAPPED_VALUE, m_data, std::tie(var, wrapped_type));
+    return var;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;
@@ -222,6 +231,12 @@ bool variant::can_convert(const type& target_type) const
     if (source_type.get_pointer_dimension() == 1 && target_type.get_pointer_dimension() == 1)
     {
         if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
+            return true;
+    }
+
+    if (!source_type.is_wrapper() && target_type.is_wrapper())
+    {
+        if (target_type.get_wrapped_type() == source_type && target_type.m_type_data->create_wrapper)
             return true;
     }
 
@@ -261,6 +276,12 @@ bool variant::convert(const type& target_type, variant& target_var) const
     {
         target_var = *this;
         return true; // the current variant is already the target type, we don't need to do anything
+    }
+    else if (!source_type.is_wrapper() && target_type.is_wrapper() &&
+             target_type.get_wrapped_type() == source_type)
+    {
+        target_var = create_wrapped_value(target_type);
+        ok = target_var.is_valid();
     }
     else if (source_type.is_wrapper() && !target_type.is_wrapper())
     {

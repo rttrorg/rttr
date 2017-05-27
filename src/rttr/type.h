@@ -74,6 +74,9 @@ class property_wrapper_base;
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT;
+
+template<typename T, typename Tp, typename Converter>
+struct variant_data_base_policy;
 } // end namespace detail
 
 /*!
@@ -1067,10 +1070,10 @@ class RTTR_API type
         RTTR_FORCE_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Initialize all the global variables needed to retrieve the type informations.
-         *
+         * \brief Creates a wrapped value from the given argument \p arg and moves it into the
+         *        the given variant \p var.
          */
-        static void init_globals();
+        void create_wrapped_value(const argument& arg, variant& var) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////
@@ -1093,6 +1096,9 @@ class RTTR_API type
 
         template<typename T>
         friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;
+
+        template<typename T, typename Tp, typename Converter>
+        friend struct detail::variant_data_base_policy;
 
     private:
         detail::type_data* m_type_data;
