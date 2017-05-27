@@ -694,19 +694,10 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
 {
     SECTION("valid conversion")
     {
-        int obj = 42;
-        variant var = obj;
-
-        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
-        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
-        CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == false);
-
         auto raw_ptr = new int(42);
-        var = raw_ptr;
+        variant var = raw_ptr;
 
-        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
-        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
-        CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == true);
+        CHECK(var.can_convert(type::get<std::shared_ptr<int>>()) == true);
 
         auto result = var.convert(type::get<std::shared_ptr<int>>());
         CHECK(result == true);
@@ -733,6 +724,28 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
         CHECK(var.convert(ptr)  == true);
         CHECK(ptr.get()         == raw_ptr);
         CHECK(var.get_type()    == type::get<int*>());
+    }
+
+    SECTION("invalid conversion")
+    {
+        int obj = 42;
+        variant var = obj;
+
+        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
+        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
+        CHECK(var.can_convert(type::get<std::weak_ptr<int>>())          == false);
+        CHECK(var.can_convert(type::get<std::shared_ptr<int>>())        == false);
+
+        var = &obj;
+
+        CHECK(var.can_convert(type::get<std::unique_ptr<int>>())        == false);
+        CHECK(var.can_convert(type::get<std::reference_wrapper<int>>()) == false);
+        CHECK(var.can_convert(type::get<std::weak_ptr<int>>())          == false);
+        // bool is wrong wrapped type!
+        CHECK(var.can_convert(type::get<std::shared_ptr<bool>>())       == false);
+
+        auto result = var.convert(type::get<std::shared_ptr<bool>>());
+        CHECK(result == false);
     }
 }
 
