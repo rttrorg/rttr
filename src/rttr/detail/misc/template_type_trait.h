@@ -66,7 +66,7 @@ namespace detail                                                                
     struct template_type_trait<T<Args...>>                                                                                          \
     {                                                                                                                               \
         using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<value_type>()..., }; }                               \
+        static std::vector<type> get_template_arguments() { return { type::get<Args>()..., }; }                                     \
     };                                                                                                                              \
 }                                                                                                                                   \
 }
