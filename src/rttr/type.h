@@ -347,6 +347,49 @@ class RTTR_API type
          */
         RTTR_FORCE_INLINE bool is_class() const RTTR_NOEXCEPT;
 
+         /*!
+         * \brief Returns true whether the given type is an instantiation of a class template.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * template<typename T>
+         * struct foo { }; // class template
+         *
+         * struct bar { }; // NO class template
+         *
+         * type::get<foo<int>>().is_template_instantiation(); // yield to 'true'
+         * type::get<bar>().is_template_instantiation();      // yield to 'false'
+         * \endcode
+         *
+         * \return `true` if the type is a class template, otherwise `false`.
+         *
+         * \see get_template_arguments()
+         */
+        RTTR_FORCE_INLINE bool is_template_instantiation() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief Returns a list of type objects that represents the template arguments.
+         *        An empty list is returned when this type is not an instantiation of a template
+         *        or contains no template arguments at all.
+         *
+         * See following example code:
+         * \code{.cpp}
+         * template<typename...Args>
+         * struct my_class { };
+         *
+         * auto type_list = type::get<my_class<int, bool, char>>().get_template_arguments();
+         * for (const auto& t : type_list)
+         * {
+         *    std::cout << t.get_name() << " " << std::endl; // will print 'int bool char'
+         * }
+         * \endcode
+         *
+         * \return A list of nested types.
+         *
+         * \see is_template_instantiation()
+         */
+        array_range<type> get_template_arguments() const RTTR_NOEXCEPT;
+
         /*!
          * \brief Returns true whether the given type represents an enumeration.
          *

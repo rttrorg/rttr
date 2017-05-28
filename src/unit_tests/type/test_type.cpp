@@ -51,6 +51,9 @@ enum E_Alignment
     DOWN
 };
 
+template<typename...Args>
+struct my_class_template {};
+
 TEST_CASE("Test rttr::type - BasicTests", "[type]")
 {
     using namespace rttr;
@@ -488,6 +491,50 @@ TEST_CASE("Test rttr::type - Check is_member_object_pointer", "[type]")
     CHECK(type::get<void(void)>().is_member_object_pointer()        == false);
     CHECK(type::get<void*(*)()>().is_member_object_pointer()        == false);
     CHECK(type::get<int(MyClass::*)()>().is_member_object_pointer() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - Check is_template_instantiation", "[type]")
+{
+    CHECK(type::get<std::string>().is_template_instantiation()            == true);
+    CHECK(type::get<std::vector<int>>().is_template_instantiation()       == true);
+    CHECK((type::get<std::array<int, 100>>().is_template_instantiation()  == true));
+    CHECK((type::get<std::array<bool, 100>>().is_template_instantiation() == true));
+
+    CHECK(type::get<int>().is_template_instantiation()                    == false);
+    CHECK(type::get<ClassSingleBase>().is_template_instantiation()        == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - get_template_arguments()", "[type]")
+{
+    SECTION("valid test - std::string")
+    {
+        auto type_list = type::get<std::string>().get_template_arguments();
+        CHECK(type_list.size() == 3);
+    }
+
+    SECTION("valid test - std::array")
+    {
+        auto type_list = type::get<std::array<int, 100>>().get_template_arguments();
+        CHECK(type_list.size() == 2);
+        CHECK(*type_list.begin()     == type::get<int>());
+        CHECK(*(++type_list.begin()) == type::get<std::size_t>());
+    }
+
+    SECTION("valid test - custom type")
+    {
+        CHECK((type::get<my_class_template<>>().get_template_arguments().size() == 0));
+        CHECK((type::get<my_class_template<int, bool, char>>().get_template_arguments().size() == 3));
+    }
+
+    SECTION("invvalid test")
+    {
+        CHECK(type::get<int>().get_template_arguments().size()                == 0);
+        CHECK(type::get<ClassSingleBase>().get_template_arguments().size()    == 0);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

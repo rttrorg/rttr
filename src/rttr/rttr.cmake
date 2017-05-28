@@ -107,6 +107,7 @@ set(HEADER_FILES access_levels.h
 				 detail/misc/iterator_wrapper.h
                  detail/misc/misc_type_traits.h
                  detail/misc/std_type_traits.h
+                 detail/misc/template_type_trait.h
                  detail/misc/utility.h
                  detail/parameter_info/parameter_infos.h
                  detail/parameter_info/parameter_infos_compare.h

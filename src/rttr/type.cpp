@@ -184,6 +184,14 @@ array_range<type> type::get_types() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+array_range<type> type::get_template_arguments() const RTTR_NOEXCEPT
+{
+    return array_range<type>(m_type_data->get_class_data().m_nested_types.data(),
+                             m_type_data->get_class_data().m_nested_types.size());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant type::get_metadata(const variant& key) const
 {
     return detail::type_register_private::get_metadata(*this, key);

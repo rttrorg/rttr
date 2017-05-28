@@ -194,6 +194,13 @@ RTTR_FORCE_INLINE bool type::is_class() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_FORCE_INLINE bool type::is_template_instantiation() const RTTR_NOEXCEPT
+{
+    return m_type_data->type_trait_value(detail::type_trait_infos::is_template_instantiation);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_enum);

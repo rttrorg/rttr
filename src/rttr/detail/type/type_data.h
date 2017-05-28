@@ -30,6 +30,7 @@
 
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/function_traits.h"
+#include "rttr/detail/misc/template_type_trait.h"
 #include "rttr/detail/type/base_classes.h"
 #include "rttr/detail/type/get_derived_info_func.h"
 #include "rttr/detail/type/get_create_variant_func.h"
@@ -41,6 +42,7 @@
 #include "rttr/property.h"
 #include "rttr/constructor.h"
 #include "rttr/destructor.h"
+
 
 #include <type_traits>
 #include <bitset>
@@ -65,8 +67,10 @@ using get_derived_info_func = derived_info(*)(void*);
 
 struct class_data
 {
-    class_data(get_derived_info_func func) : m_derived_info_func(func),
-                                             m_dtor(create_invalid_item<destructor>())
+    class_data(get_derived_info_func func, std::vector<type> nested_types)
+    :   m_derived_info_func(func),
+        m_nested_types(nested_types),
+        m_dtor(create_invalid_item<destructor>())
     {}
 
     get_derived_info_func       m_derived_info_func;
@@ -76,6 +80,7 @@ struct class_data
     std::vector<property>       m_properties;
     std::vector<method>         m_methods;
     std::vector<constructor>    m_ctors;
+    std::vector<type>           m_nested_types;
     destructor                  m_dtor;
 };
 
@@ -90,6 +95,7 @@ enum class type_trait_infos : std::size_t
     is_member_object_pointer,
     is_member_function_pointer,
     is_associative_container,
+    is_template_instantiation,
 
     TYPE_TRAIT_COUNT
 };
@@ -122,7 +128,7 @@ struct type_data
     std::size_t get_pointer_dimension;
 
     impl::create_variant_func create_variant;
-    impl::get_base_types_func get_base_types; // FIXEM: this info should not be stored, its just temporarily,
+    impl::get_base_types_func get_base_types; // FIXME: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
 
     impl::create_wrapper_func create_wrapper;
@@ -142,7 +148,7 @@ struct type_data
 template<typename T>
 static class_data& get_type_class_data() RTTR_NOEXCEPT
 {
-    static std::unique_ptr<class_data> info = make_unique<class_data>(get_most_derived_info_func<T>());
+    static std::unique_ptr<class_data> info = detail::make_unique<class_data>(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments());
     return (*info.get());
 }
 
@@ -150,7 +156,7 @@ static class_data& get_type_class_data() RTTR_NOEXCEPT
 
 static class_data& get_invalid_type_class_data() RTTR_NOEXCEPT
 {
-    static std::unique_ptr<class_data> info = detail::make_unique<class_data>(nullptr);
+    static std::unique_ptr<class_data> info = detail::make_unique<class_data>(nullptr, std::vector<type>());
     return (*info.get());
 }
 
@@ -266,6 +272,7 @@ get_create_wrapper_func()
 using type_trait_value = uint64_t;
 #define TYPE_TRAIT_TO_BITSET_VALUE(trait) (static_cast<std::uint64_t>(std::trait<T>::value) << static_cast<std::size_t>(type_trait_infos::trait))
 #define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
+#define TYPE_TRAIT_TO_BITSET_VALUE_3(trait, check) (static_cast<std::uint64_t>(trait<T>::check::value) << static_cast<std::size_t>(type_trait_infos::check))
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT
@@ -292,7 +299,8 @@ type_data& get_type_data() RTTR_NOEXCEPT
                                                         TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE(is_member_object_pointer) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container)}
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container) |
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_3(template_type_trait, is_template_instantiation)}
                                       };
     return instance;
 }
