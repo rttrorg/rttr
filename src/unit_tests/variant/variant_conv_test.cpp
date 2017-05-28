@@ -671,6 +671,25 @@ TEST_CASE("variant test - convert from wrapped value", "[variant]")
         CHECK(val_2 == obj);
     }
 
+    SECTION("valid conversion std::shared_ptr")
+    {
+        auto raw_ptr = new int(42);
+        variant var = std::shared_ptr<int>(raw_ptr);
+
+        CHECK(var.can_convert(type::get<int*>()) == true);
+
+        bool ok = false;
+        auto val = var.convert<int*>(&ok);
+        CHECK(ok == true);
+        CHECK(val == raw_ptr);
+
+        int* val_2;
+        CHECK(var.convert<int*>(val_2) == true);
+        CHECK(val_2 == raw_ptr);
+
+        CHECK(var.convert(type::get<int*>()) == true);
+    }
+
     SECTION("invalid conversion")
     {
         int obj = 42;
@@ -697,7 +716,7 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
         auto raw_ptr = new int(42);
         variant var = raw_ptr;
 
-        CHECK(var.can_convert(type::get<std::shared_ptr<int>>()) == true);
+        REQUIRE(var.can_convert(type::get<std::shared_ptr<int>>()) == true);
 
         auto result = var.convert(type::get<std::shared_ptr<int>>());
         CHECK(result == true);
@@ -709,6 +728,10 @@ TEST_CASE("variant test - convert to wrapped value", "[variant]")
     {
         auto raw_ptr = new int(42);
         variant var = raw_ptr;
+
+
+        CHECK(var.can_convert<std::shared_ptr<int>>() == true);
+
         bool ok = false;
         auto ptr = var.convert<std::shared_ptr<int>>(&ok);
         CHECK(ok == true);

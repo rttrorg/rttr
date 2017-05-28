@@ -110,10 +110,9 @@ struct wrapper_mapper<std::weak_ptr<T>>
         return obj.lock().get();
     }
 
-    static RTTR_INLINE type create(const wrapped_type& t)
-    {
-        return type(); // empty type, weak pointer can only be created by a referencing shared_ptr
-    }
+    // there is no create method because, weak pointer can only be created by a referencing a shared_ptr.
+    // And a tmp shared_ptr which goes out of scope immediately, result always in an empty weak_ptr.
+
 };
 
 namespace detail
@@ -154,6 +153,34 @@ typename std::enable_if<!is_wrapper<T>::value, raw_addressof_return_type_t<T>>::
 {
     return raw_addressof(obj);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * Determine if the given type \a T is a wrapper and has the member method
+ * 'wrapper create(const wrapper_type&)' declared.
+ */
+template <typename T, typename Tp = typename remove_cv<typename std::remove_reference<T>::type>::type>
+class has_create_wrapper_func_impl
+{
+    using YesType = char[1];
+    using NoType  = char[2];
+
+    template <typename U, typename V, U (*)(const V&)>
+    class check { };
+
+    template <typename C>
+    static YesType& f(check<C, wrapper_mapper_t<C>, &wrapper_mapper<C>::create>*);
+
+    template <typename C>
+    static NoType& f(...);
+
+public:
+    static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(f<Tp>(0)) == sizeof(YesType));
+};
+
+template<typename T>
+using has_create_wrapper_func = std::integral_constant<bool, has_create_wrapper_func_impl<T>::value>;
 
 //////////////////////////////////////////////////////////////////////////////////////
 

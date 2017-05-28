@@ -425,6 +425,8 @@ class RTTR_API variant
          *         When you work with custom types, which are not copyable, the variant will be \ref is_valid "invalid"
          *
          * \return A variant with the wrapped value.
+         *
+         * \see type::is_wrapper()
          */
         variant extract_wrapped_value() const;
 
@@ -434,7 +436,7 @@ class RTTR_API variant
          *
          * \return `True` if this variant can be converted to `T`; otherwise `false`.
          *
-         * \see type::register_converter_func()
+         * \see convert(), type::register_converter_func()
          */
         template<typename T>
         bool can_convert() const;
@@ -450,7 +452,7 @@ class RTTR_API variant
          *
          * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
          *
-         * \see type::register_converter_func()
+         * \see convert(), type::register_converter_func()
          */
         bool can_convert(const type& target_type) const;
 
@@ -459,10 +461,12 @@ class RTTR_API variant
          *        When the conversion was successfully the function will return `true`.
          *        When the conversion fails, then the containing variant value stays the same and the function will return `false`.
          *
-         * There are already certain standard type conversions implemented,
-         * e.g. `int` to `std::string`, `enum value` to `int` and so on.
-         * Additionally, a variant containing a raw pointer can be converted to a custom type,
-         * if a \ref rttr_cast to the type described by \p target_type would succeed.
+         * There are already certain standard type conversions implemented:
+         * 1. Conversion of all arithmetic types (e.g. `double` to `int`, 'std::size_t' to 'int8_t' and so on)
+         * 2. Conversion of all arithmetic types to and from `std::string`.
+         * 3. Conversion of enum types to `std::string`, its underlying arithmetic types and vice versa.
+         * 4. Conversion of \ref rttr::wrapper_mapper<T> "wrapper classes" to wrapped types and vice versa (e.g, `std::shared_ptr<int>` to `int*`)
+         * 5. Conversion of raw pointers to its derived types, if a \ref rttr_cast to the type described by \p target_type would succeed.
          *
          * See therefore following example code:
          * \code{.cpp}
@@ -474,7 +478,7 @@ class RTTR_API variant
          *  var.is_type<derived*>();                        // yields to 'true'
          * \endcode
          *
-         * In order to enable a custom type conversion, a conversion function has to be registered
+         * Additionally, it is possible to add custom conversion function, which has to be registered
          * via \ref type::register_converter_func().
          *
          * \return `True` if this variant can be converted to \p target_type; otherwise `false`.
@@ -505,9 +509,9 @@ class RTTR_API variant
          * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
          *         with the function \ref can_convert(). When the conversion fails, a default constructed value of type \p T is returned.
          *
-         * \see can_convert(), type::register_converter_func()
-         *
          * \return The converted value as type \p T.
+         *
+         * \see can_convert(), type::register_converter_func()
          */
         template<typename T>
         T convert(bool* ok = nullptr) const;
@@ -536,9 +540,9 @@ class RTTR_API variant
          * \remark Before doing the conversion you should check whether it is in general possible to convert to type \p T
          *         with the function \ref can_convert()
          *
-         * \see can_convert(), type::register_converter_func()
-         *
          * \return `True` if the contained data could be converted to \p value; otherwise `false`.
+         *
+         * \see can_convert(), type::register_converter_func()
          */
         template<typename T>
         bool convert(T& value) const;
@@ -560,11 +564,11 @@ class RTTR_API variant
          *   view.set_value(0, 42);                             // set the first index to the value 42
          * \endcode
          *
-         * \see can_convert(), convert()
-         *
          * \remark This function will return an \ref variant_array_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no array.
          *
          * \return A variant_array_view object.
+         *
+         * \see can_convert(), convert()
          */
         variant_array_view create_array_view() const;
 
@@ -593,11 +597,11 @@ class RTTR_API variant
          *   }
          * \endcode
          *
-         * \see can_convert(), convert()
-         *
          * \remark This function will return an \ref variant_associative_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no associative container.
          *
          * \return A variant_associative_view object.
+         *
+         * \see can_convert(), convert()
          */
         variant_associative_view create_associative_view() const;
 

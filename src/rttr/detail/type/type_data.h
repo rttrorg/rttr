@@ -241,7 +241,8 @@ static void create_wrapper(const argument& arg, variant& var)
 template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
 static enable_if_t<is_wrapper<Wrapper>::value &&
                    ::rttr::detail::is_copy_constructible<Wrapper>::value &&
-                   std::is_default_constructible<Wrapper>::value, impl::create_wrapper_func>
+                   std::is_default_constructible<Wrapper>::value &&
+                   has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
 get_create_wrapper_func()
 {
     return &create_wrapper<Wrapper, Tp>;
@@ -251,7 +252,8 @@ get_create_wrapper_func()
 template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
 static enable_if_t<!is_wrapper<Wrapper>::value ||
                    !::rttr::detail::is_copy_constructible<Wrapper>::value ||
-                   !std::is_default_constructible<Wrapper>::value, impl::create_wrapper_func>
+                   !std::is_default_constructible<Wrapper>::value ||
+                   !has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
 get_create_wrapper_func()
 {
     return nullptr;
