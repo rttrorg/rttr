@@ -58,6 +58,11 @@ namespace detail { struct invalid_wrapper_type { }; }
  * 1. `static wrapped_type get(const T& obj);`
  * 2. `static T create(wrapped_type& obj);`
  *
+ * \remark The \ref rttr::wrapper_mapper<T>::create(T& obj) "create()" function is optional. When no one is provided,
+ *         then it will be not possible to convert from the wrapped type to the wrapper class from inside a variant.
+ *
+ * \see variant::convert()
+ *
  * Following code example illustrates how to add a specialization:
  * \code{.cpp}
  *
