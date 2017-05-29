@@ -46,12 +46,32 @@ struct template_type_trait
     static std::vector<type> get_template_arguments() { return{}; }
 };
 
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+ // otherwise an internal compile error will occur
+template<template <typename... > class T>
+struct template_type_trait<T<>>
+{
+    using is_template_instantiation = std::true_type;
+    static std::vector<type> get_template_arguments() { return { }; }
+};
+
+template<template <typename... > class T, typename T1, typename...Args>
+struct template_type_trait<T<T1, Args...>>
+{
+    using is_template_instantiation = std::true_type;
+    static std::vector<type> get_template_arguments() { return { type::get<T1>(), rttr::type::get<Args>()..., }; }
+};
+
+#else
+
 template<template <typename... > class T, typename...Args>
 struct template_type_trait<T<Args...>>
 {
     using is_template_instantiation = std::true_type;
-    static std::vector<type> get_template_arguments() { return{ type::get<Args>()..., }; }
+    static std::vector<type> get_template_arguments() { return { type::get<Args>()..., }; }
 };
+
+#endif
 
 } // end namespace detail
 } // end namespace rttr
