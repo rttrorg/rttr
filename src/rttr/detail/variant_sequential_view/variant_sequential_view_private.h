@@ -25,8 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_
-#define RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_
+#ifndef RTTR_VARIANT_SEQUENTIAL_VIEW_PRIVATE_H_
+#define RTTR_VARIANT_SEQUENTIAL_VIEW_PRIVATE_H_
 
 #include "rttr/variant.h"
 #include "rttr/argument.h"
@@ -41,10 +41,10 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-class RTTR_LOCAL variant_associative_view_private
+class RTTR_LOCAL variant_sequential_view_private
 {
     public:
-        variant_associative_view_private() RTTR_NOEXCEPT
+        variant_sequential_view_private() RTTR_NOEXCEPT
         :   m_type(get_invalid_type()),
             m_key_type(get_invalid_type()),
             m_value_type(get_invalid_type()),
@@ -69,7 +69,7 @@ class RTTR_LOCAL variant_associative_view_private
         }
 
         template<typename T, typename RawType = raw_type_t<T>, typename ConstType = remove_pointer_t<T>>
-        variant_associative_view_private(const T& container) RTTR_NOEXCEPT
+        variant_sequential_view_private(const T& container) RTTR_NOEXCEPT
         :   m_type(type::get<RawType>()),
             m_key_type(type::get<typename associative_container_mapper<RawType>::key_t>()),
             m_value_type(type::get<conditional_t<std::is_void<typename associative_container_mapper<RawType>::value_t>::value,
@@ -95,9 +95,9 @@ class RTTR_LOCAL variant_associative_view_private
         {
         }
 
-        RTTR_FORCE_INLINE variant_associative_view_private(const variant_associative_view_private& other) = default;
+        RTTR_FORCE_INLINE variant_sequential_view_private(const variant_sequential_view_private& other) = default;
 
-        RTTR_FORCE_INLINE ~variant_associative_view_private()
+        RTTR_FORCE_INLINE ~variant_sequential_view_private()
         {
 
         }
@@ -250,4 +250,4 @@ class RTTR_LOCAL variant_associative_view_private
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_
+#endif // RTTR_VARIANT_SEQUENTIAL_VIEW_PRIVATE_H_

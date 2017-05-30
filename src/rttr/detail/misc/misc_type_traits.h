@@ -45,6 +45,8 @@ class type;
 
 template<typename T>
 struct associative_container_mapper;
+template<typename T>
+struct sequential_container_mapper;
 
 namespace detail
 {
@@ -473,7 +475,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template <typename T>
-    struct is_associative_container_impl
+    struct has_is_valid_alias
     {
         typedef char YesType[1];
         typedef char NoType[2];
@@ -485,8 +487,11 @@ namespace detail
         static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<associative_container_mapper<T> >(0)) == sizeof(YesType));
     };
 
-    template<typename T>
-    using is_associative_container = std::integral_constant<bool, is_associative_container_impl<remove_cv_t< remove_reference_t<T> > >::value>;
+    template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
+    using is_associative_container = std::integral_constant<bool, has_is_valid_alias<associative_container_mapper<Tp> >::value>;
+
+    template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
+    using is_sequential_container = std::integral_constant<bool, has_is_valid_alias<sequential_container_mapper<Tp > >::value>;
 
     /////////////////////////////////////////////////////////////////////////////////////
 
