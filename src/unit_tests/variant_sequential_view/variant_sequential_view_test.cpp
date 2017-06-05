@@ -38,34 +38,33 @@ using namespace std;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
+TEST_CASE("variant_sequential_view::ctor", "[variant_sequential_view]")
 {
    SECTION("empty")
    {
-        variant_associative_view a;
+        variant_sequential_view a;
         CHECK(a.is_valid() == false);
 
-        variant_associative_view b(a);
+        variant_sequential_view b(a);
         CHECK(b.is_valid() == false);
         a.swap(b);
         CHECK(a.is_valid() == false);
         CHECK(b.is_valid() == false);
 
         variant var;
-        variant_associative_view view = var.create_associative_view();
+        variant_sequential_view view = var.create_sequential_view();
 
         CHECK(view.is_valid() == false);
         CHECK(static_cast<bool>(view) == false);
         CHECK(view.is_empty() == true);
         CHECK(view.get_size() == 0);
         CHECK(view.get_type().is_valid() == false);
-        CHECK(view.erase(23) == 0);
    }
 
    SECTION("invalid")
    {
         variant var = 2;
-        variant_associative_view view = var.create_associative_view();
+        variant_sequential_view view = var.create_sequential_view();
         CHECK(view.is_valid() == false);
         CHECK(static_cast<bool>(view) == false);
         CHECK(view.is_empty() == true);
@@ -74,14 +73,14 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
    SECTION("valid")
    {
-        variant var = std::set<int>({1, 2, 3});
-        variant_associative_view a = var.create_associative_view();
+        variant var = std::vector<int>({1, 2, 3});
+        variant_sequential_view a = var.create_sequential_view();
         CHECK(a.is_valid() == true);
         CHECK(static_cast<bool>(a) == true);
         CHECK(a.is_empty() == false);
         CHECK(a.get_size() == 3);
 
-        variant_associative_view b(a);
+        variant_sequential_view b(a);
         CHECK(b.is_valid() == true);
         CHECK(b.is_empty() == false);
         CHECK(b.get_size() == 3);
@@ -90,10 +89,10 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::other ctor", "[variant_associative_view]")
+TEST_CASE("variant_sequential_view::other ctor", "[variant_sequential_view]")
 {
-    variant var = std::set<int>({1, 2, 3});
-    variant_associative_view a(var.create_associative_view());
+    variant var = std::vector<int>({1, 2, 3});
+    variant_sequential_view a(var.create_sequential_view());
     CHECK(a.is_valid() == true);
     CHECK(a.is_empty() == false);
     CHECK(a.get_size() == 3);
@@ -101,15 +100,15 @@ TEST_CASE("variant_associative_view::other ctor", "[variant_associative_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
+TEST_CASE("variant_sequential_view::get_type", "[variant_sequential_view]")
 {
 
     SECTION("valid test")
     {
-        variant var = std::set<int>({ 1, 2, 3 });
-        variant_associative_view view = var.create_associative_view();
+        variant var = std::vector<int>({ 1, 2, 3 });
+        auto view = var.create_sequential_view();
 
-        CHECK(view.get_type() == type::get<std::set<int>>());
+        CHECK(view.get_type() == type::get<std::vector<int>>());
         CHECK(view.get_type() == var.get_type());
     }
 
@@ -117,34 +116,28 @@ TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
     SECTION("invalid test")
     {
         variant var = 23;
-        variant_associative_view view = var.create_associative_view();
+        auto view = var.create_sequential_view();
 
         CHECK(view.get_type().is_valid() == false);
 
         var = variant();
-        view = var.create_associative_view();
+        view = var.create_sequential_view();
         CHECK(view.get_type().is_valid() == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_associative_view]")
+TEST_CASE("variant_sequential_view::get_data", "[variant_sequential_view]")
 {
 
     SECTION("valid test")
     {
-        variant var = std::set<int>({ 1, 2, 3 });
-        variant_associative_view view = var.create_associative_view();
+        variant var = std::vector<int>({ 1, 2, 3 });
+        auto view = var.create_sequential_view();
 
-        CHECK(view.get_key_type() == type::get<int>());
-        CHECK(view.get_value_type().is_valid() == false);
+        CHECK(view.get_value_type() == type::get<int>());
 
-        var = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
-        view = var.create_associative_view();
-
-        CHECK(view.get_key_type() == type::get<int>());
-        CHECK(view.get_value_type() == type::get<std::string>());
     }
 
 
@@ -157,6 +150,7 @@ TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_ass
         CHECK(view.get_value_type().is_valid()  == false);
     }
 }
+#if 0
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -636,3 +630,4 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+#endif

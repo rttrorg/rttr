@@ -55,7 +55,6 @@ template<typename T, typename ConstType, typename Tp = conditional_t<std::is_con
 struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
 {
     using base_class    = sequential_container_mapper<T>;
-    using key_t         = typename base_class::key_t;
     using value_t       = typename base_class::value_t;
     using itr_t         = typename base_class::itr_t;
     using const_itr_t   = typename base_class::const_itr_t;
@@ -66,25 +65,18 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
         return *reinterpret_cast<ConstType*>(container);
     }
 
-    static variant get_key(const iterator_data& itr)
+    template<typename..., typename ReturnType = decltype(base_class::get_data(std::declval<itr_t>())), enable_if_t<std::is_reference<ReturnType>::value, int> = 0>
+    static variant get_data(const iterator_data& itr)
     {
         auto& it = itr_wrapper::get_iterator(itr);
-        return variant(std::ref(base_class::get_key(it)));
+        return variant(std::ref(base_class::get_data(it)));
     }
 
-    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value, int> = 0>
-    static variant
-    get_value(const iterator_data& itr)
+    template<typename..., typename ReturnType = decltype(base_class::get_data(std::declval<itr_t>())), enable_if_t<!std::is_reference<ReturnType>::value, int> = 0>
+    static variant get_data(const iterator_data& itr)
     {
         auto& it = itr_wrapper::get_iterator(itr);
-        return variant(std::ref(base_class::get_value(it)));
-    }
-
-    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value, int> = 0>
-    static variant
-    get_value(const iterator_data& itr)
-    {
-        return variant();
+        return variant(base_class::get_data(it));
     }
 
     static void begin(void* container, iterator_data& itr)
@@ -107,14 +99,6 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
         return base_class::get_size(get_container(container));
     }
 
-    static void find(void* container, iterator_data& itr, argument& key)
-    {
-        if (key.get_type() == ::rttr::type::get<key_t>())
-            itr_wrapper::create(itr, base_class::find(get_container(container), key.get_value<key_t>()));
-        else
-            end(container, itr);
-    }
-
     /////////////////////////////////////////////////////////////////////////
 
     template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
@@ -131,51 +115,28 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
 
     /////////////////////////////////////////////////////////////////////////
 
-    static void equal_range(void* container, argument& key,
-                            iterator_data& itr_begin, iterator_data& itr_end)
-    {
-        if (key.get_type() == ::rttr::type::get<key_t>())
-        {
-            auto ret = base_class::equal_range(get_container(container), key.get_value<key_t>());
-            itr_wrapper::create(itr_begin, ret.first);
-            itr_wrapper::create(itr_end, ret.second);
-        }
-        else
-        {
-            end(container, itr_begin);
-            end(container, itr_end);
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-
     template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
-    static std::size_t erase(void* container, argument& key)
+    static void erase(void* container, const iterator_data& itr_pos, iterator_data& itr)
     {
-        if (key.get_type() == ::rttr::type::get<key_t>())
-        {
-            return base_class::erase(get_container(container), key.get_value<key_t>());
-        }
-        else
-        {
-            return 0;
-        }
+        const auto ret = base_class::erase(get_container(container), itr_wrapper::get_iterator(itr_pos));
+        itr_wrapper::create(itr, ret);
     }
 
     template<typename..., typename C = ConstType, enable_if_t<std::is_const<C>::value, int> = 0>
-    static std::size_t erase(void* container, argument& key)
+    static void erase(void* container, const iterator_data& itr_pos, iterator_data& itr)
     {
-        return 0;
+        itr_wrapper::create(itr, base_class::end(get_container(container)));
+        return;
     }
 
     /////////////////////////////////////////////////////////////////////////
 
     template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value && !std::is_const<ConstType>::value, int> = 0>
-    static bool insert_key(void* container, argument& key, iterator_data& itr)
+    static bool insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
     {
-        if (key.get_type() == ::rttr::type::get<key_t>())
+        if (value.get_type() == ::rttr::type::get<value_t>())
         {
-            auto ret = base_class::insert_key(get_container(container), key.get_value<key_t>());
+            auto ret = base_class::insert(get_container(container), value.get_value<value_t>(), itr_wrapper::get_iterator(itr_pos));
             itr_wrapper::create(itr, ret.first);
             return ret.second;
         }
@@ -187,38 +148,11 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
     }
 
     template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value || std::is_const<ConstType>::value, int> = 0>
-    static bool insert_key(void* container, argument& key, iterator_data& itr)
+    static bool insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
     {
         end(container, itr);
         return false;
     }
-
-    /////////////////////////////////////////////////////////////////////////
-
-    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value && !std::is_const<ConstType>::value, int> = 0>
-    static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
-    {
-        if (key.get_type() == ::rttr::type::get<key_t>() &&
-            value.get_type() == ::rttr::type::get<value_t>())
-        {
-            auto ret = base_class::insert_key_value(get_container(container), key.get_value<key_t>(), value.get_value<value_t>());
-            itr_wrapper::create(itr, ret.first);
-            return ret.second;
-        }
-        else
-        {
-            end(container, itr);
-            return false;
-        }
-    }
-
-    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value || std::is_const<ConstType>::value, int> = 0>
-    static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
-    {
-        end(container, itr);
-        return false;
-    }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -227,14 +161,18 @@ template<typename T>
 struct sequential_container_base
 {
     using container_t   = T;
-    using key_t         = typename T::key_type;
-    using value_t       = typename associative_container_value_t<T>::type;
+    using value_t       = typename T::value_type;
     using itr_t         = typename T::iterator;
     using const_itr_t   = typename T::const_iterator;
 
-    static const key_t& get_key(const const_itr_t& itr)
+    static value_t& get_data(const itr_t& itr)
     {
-        return itr->first;
+        return *itr;
+    }
+
+    static const value_t& get_data(const const_itr_t& itr)
+    {
+        return *itr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -263,26 +201,93 @@ struct sequential_container_base
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static itr_t find(container_t& container, const key_t& key)
+    static void clear(container_t& container)
     {
-        return container.find(key);
+        container.clear();
     }
 
-    static const_itr_t find(const container_t& container, const key_t& key)
+    static bool is_empty(const container_t& container)
     {
-        return container.find(key);
+        return container.empty();
+    }
+
+    static std::size_t get_size(const container_t& container)
+    {
+        return container.size();
+    }
+
+    static itr_t erase(container_t& container, const itr_t& itr)
+    {
+        return container.erase(itr);
+    }
+
+    static itr_t erase(container_t& container, const const_itr_t& itr)
+    {
+        return container.erase(itr);
+    }
+
+    static itr_t insert(container_t& container, const value_t& value, const itr_t& itr_pos)
+    {
+        return container.insert(itr_pos, value);
+    }
+
+    static itr_t insert(container_t& container, const value_t& value, const const_itr_t& itr_pos)
+    {
+        return container.insert(itr_pos, value);
+    }
+};
+
+
+
+} // end namespace detail
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct sequential_container_mapper<std::vector<T>> : detail::sequential_container_base<std::vector<T>> {};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<>
+struct sequential_container_mapper<std::vector<bool>>
+{
+    using container_t   = std::vector<bool>;
+    using value_t       = typename std::vector<bool>::value_type;
+    using itr_t         = typename std::vector<bool>::iterator;
+    using const_itr_t   = typename std::vector<bool>::const_iterator;
+
+    static value_t get_data(const itr_t& itr)
+    {
+        return *itr;
+    }
+
+    static value_t get_data(const const_itr_t& itr)
+    {
+        return *itr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static std::pair<itr_t, itr_t> equal_range(container_t& container, const key_t& key)
+    static itr_t begin(container_t& container)
     {
-        return container.equal_range(key);
+        return container.begin();
     }
 
-    static std::pair<const_itr_t, const_itr_t> equal_range(const container_t& container, const key_t& key)
+    static const_itr_t begin(const container_t& container)
     {
-        return container.equal_range(key);
+        return container.begin();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t end(container_t& container)
+    {
+        return container.end();
+    }
+
+    static const_itr_t end(const container_t& container)
+    {
+        return container.end();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -302,159 +307,33 @@ struct sequential_container_base
         return container.size();
     }
 
-    static std::size_t erase(container_t& container, const key_t& key)
+    static itr_t erase(container_t& container, const itr_t& itr)
     {
-        return container.erase(key);
+        return container.erase(itr);
     }
 
-    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
+    static itr_t erase(container_t& container, const const_itr_t& itr)
     {
-        return {container.end(), false};
-    }
-};
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct sequential_container_map_base : sequential_container_base<T>
-{
-    using container_t   = typename sequential_container_base<T>::container_t;
-    using key_t         = typename sequential_container_base<T>::key_t;
-    using value_t       = typename sequential_container_base<T>::value_t;
-    using itr_t         = typename sequential_container_base<T>::itr_t;
-    using const_itr_t   = typename sequential_container_base<T>::const_itr_t;
-
-    static value_t& get_value(itr_t& itr)
-    {
-        return itr->second;
+        return container.erase(itr);
     }
 
-    static const value_t& get_value(const const_itr_t& itr)
+    static itr_t insert(container_t& container, const value_t& value, const itr_t& itr_pos)
     {
-        return itr->second;
+        return container.insert(itr_pos, value);
     }
 
-    static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value)
+    static itr_t insert(container_t& container, const value_t& value, const const_itr_t& itr_pos)
     {
-        return container.insert(std::make_pair(key, value));
+        return container.insert(itr_pos, value);
     }
 };
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct sequential_container_key_base : sequential_container_base<T>
-{
-    using container_t   = typename sequential_container_base<T>::container_t;
-    using key_t         = typename T::key_type;
-    using value_t       = void;
-    using itr_t         = typename T::iterator;
-    using const_itr_t   = typename T::const_iterator;
-
-    static const key_t& get_key(const const_itr_t& itr)
-    {
-        return *itr;
-    }
-
-    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
-    {
-        return container.insert(key);
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct sequential_container_base_multi : sequential_container_base<T>
-{
-    using container_t   = typename sequential_container_base<T>::container_t;
-    using key_t         = typename T::key_type;
-    using value_t       = typename T::mapped_type;
-    using itr_t         = typename T::iterator;
-    using const_itr_t   = typename T::const_iterator;
-
-    static value_t& get_value(itr_t& itr)
-    {
-        return itr->second;
-    }
-
-    static const value_t& get_value(const const_itr_t& itr)
-    {
-        return itr->second;
-    }
-
-    static std::pair<itr_t, bool> insert_key_value(container_t& container, const key_t& key, const value_t& value)
-    {
-        return {container.insert(std::make_pair(key, value)), true};
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct sequential_container_key_base_multi : sequential_container_key_base<T>
-{
-    using container_t   = typename sequential_container_key_base<T>::container_t;
-    using key_t         = typename T::key_type;
-    using itr_t         = typename T::iterator;
-
-    static std::pair<itr_t, bool> insert_key(container_t& container, const key_t& key)
-    {
-        return {container.insert(key), true};
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace detail
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K>
-struct sequential_container_mapper<std::set<K>> : detail::sequential_container_key_base<std::set<K>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K>
-struct sequential_container_mapper<std::multiset<K>> : detail::sequential_container_key_base_multi<std::multiset<K>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K, typename T>
-struct sequential_container_mapper<std::map<K, T>> : detail::sequential_container_map_base<std::map<K, T>> { };
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K, typename T>
-struct sequential_container_mapper<std::multimap<K, T>> : detail::sequential_container_base_multi<std::multimap<K, T>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K>
-struct sequential_container_mapper<std::unordered_set<K>> : detail::sequential_container_key_base<std::unordered_set<K>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K, typename T>
-struct sequential_container_mapper<std::unordered_map<K, T>> : detail::sequential_container_map_base<std::unordered_map<K, T>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K>
-struct sequential_container_mapper<std::unordered_multiset<K>> : detail::sequential_container_key_base_multi<std::unordered_multiset<K>> {};
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename K, typename T>
-struct sequential_container_mapper<std::unordered_multimap<K, T>> : detail::sequential_container_base_multi<std::unordered_multimap<K, T>> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace detail
 {
 
-struct associative_container_empty
+struct sequential_container_empty
 {
     static void create(iterator_data& itr_tgt, const iterator_data& src)
     {
@@ -473,19 +352,13 @@ struct associative_container_empty
         return true;
     }
 
-    static variant get_key(const iterator_data& itr)
-    {
-        return variant();
-    }
-
-    static variant get_value(const iterator_data& itr)
+    static variant get_data(const iterator_data& itr)
     {
         return variant();
     }
 
     static void begin(void* container, iterator_data& itr)
     {
-
     }
 
     static bool is_empty(void* container)
@@ -498,31 +371,15 @@ struct associative_container_empty
         return 0;
     }
 
-    static void find(void* container, iterator_data& itr, argument& arg)
+    static void erase(void* container, const iterator_data& itr_pos, iterator_data& itr)
     {
-    }
-
-    static std::size_t erase(void* container, argument& arg)
-    {
-        return 0;
     }
 
     static void clear(void* container)
     {
     }
 
-    static void equal_range(void* container, argument& key,
-                            iterator_data& itr_begin, iterator_data& itr_end)
-    {
-
-    }
-
-    static bool insert_key(void* container, argument& key, iterator_data& itr)
-    {
-        return false;
-    }
-
-    static bool insert_key_value(void* container, argument& key, argument& value, iterator_data& itr)
+    static bool insert(void* container, argument& value, const iterator_data& itr, iterator_data& pos)
     {
         return false;
     }

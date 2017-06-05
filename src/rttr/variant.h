@@ -44,6 +44,7 @@ namespace rttr
 
 class variant_array_view;
 class variant_associative_view;
+class variant_sequential_view;
 class type;
 class variant;
 class argument;
@@ -358,6 +359,14 @@ class RTTR_API variant
         bool is_associative_container() const;
 
         /*!
+         * \brief Returns true, when for the underlying or the \ref type::get_wrapped_type() "wrapped type"
+         *        an sequential_mapper exists.
+         *
+         * \return True if the containing value is an sequentail container; otherwise false.
+         */
+        bool is_sequential_container() const;
+
+        /*!
          * \brief Returns a reference to the containing value as type \p T.
          *
          * \code{.cpp}
@@ -604,6 +613,37 @@ class RTTR_API variant
          * \see can_convert(), convert()
          */
         variant_associative_view create_associative_view() const;
+
+        /*!
+         * \brief Creates a \ref variant_sequential_view from the containing value,
+         *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
+         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_sequential_container() "sequential container".
+         *        Otherwise a default constructed variant_sequential_view will be returned.
+         *
+         * A typical example is the following:
+         *
+         * \code{.cpp}
+         *  std::vector<int> my_vec = { 1, 2, 3, 4, 5};
+         *  variant var = my_vec; // copies data into variant
+         *  if (var.is_sequential_container())
+         *  {
+         *      variant_sequential_view view = var.create_sequential_view();  // performs no copy of the underlying vector
+         *      std::cout << view.get_size() << std::endl;  // prints: '5'
+         *      for (const auto& item : view) // iterates over all elements of the std::vector<T>
+         *      {
+         *          // remark that the value is stored inside a 'std::reference_wrapper', however there is an automatic conversion for wrapper classes implemented.
+         *          std::cout << "data: " << item.to_string() << " ";
+         *      }
+         *  }
+         * \endcode
+         *
+         * \remark This function will return an \ref variant_sequential_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no sequential container.
+         *
+         * \return A variant_sequential_view object.
+         *
+         * \see can_convert(), convert()
+         */
+        variant_sequential_view create_sequential_view() const;
 
         /*!
          * \brief Returns the variant as a `bool` if this variant is of \ref is_type() "type" `bool`.

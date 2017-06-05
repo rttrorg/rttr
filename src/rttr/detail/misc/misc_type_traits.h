@@ -480,18 +480,18 @@ namespace detail
         typedef char YesType[1];
         typedef char NoType[2];
 
-        template <typename U> static NoType& check(typename U::is_valid*);
-        template <typename U> static YesType& check(...);
+        template <typename U> static YesType& check(typename U::is_valid*);
+        template <typename U> static NoType& check(...);
 
 
-        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<associative_container_mapper<T> >(0)) == sizeof(YesType));
+        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<T>(0)) == sizeof(YesType));
     };
 
     template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
-    using is_associative_container = std::integral_constant<bool, has_is_valid_alias<associative_container_mapper<Tp> >::value>;
+    using is_associative_container = std::integral_constant<bool, !has_is_valid_alias<associative_container_mapper<Tp> >::value>;
 
     template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
-    using is_sequential_container = std::integral_constant<bool, has_is_valid_alias<sequential_container_mapper<Tp > >::value>;
+    using is_sequential_container = std::integral_constant<bool, !has_is_valid_alias<sequential_container_mapper<Tp > >::value>;
 
     /////////////////////////////////////////////////////////////////////////////////////
 

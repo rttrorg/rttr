@@ -45,23 +45,22 @@ namespace rttr
 
 /*!
  * The \ref variant_sequential_view describes a class that refers to an
- * <a target="_blank" href=https://en.wikipedia.org/wiki/Associative_containers>associative container</a> (e.g: `std::map`)
+ * <a target="_blank" href=https://en.wikipedia.org/wiki/Sequence_container_(C%2B%2B)>sequence container</a> (e.g: `std::vector`)
  * inside a \ref variant.
  * With an instance of that class you can set/get values of such container,
  * without having access to the type declaration of the type or it's elements.
  *
- * A \ref variant_sequential_view can be created directly from a \ref variant with its member function \ref variant::create_associative_view() "create_associative_view()".
- * \remark The instance of an variant_sequential_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_associative_view
+ * A \ref variant_sequential_view can be created directly from a \ref variant with its member function \ref variant::create_sequential_view() "create_sequential_view()".
+ * \remark The instance of an variant_sequential_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_sequential_view
  *         is undefined behaviour.
  *
  * Meta Information
  * ----------------
  *
- * RTTR recognize whether a type is an associative container or not with the help of the \ref associative_container_mapper class template.
+ * RTTR recognize whether a type is an sequential container or not with the help of the \ref sequential_container_mapper class template.
  * This call can access different container types via one common interface.
  * At the moment there exist specializations for following types:
- * `std::set<Key>`, `std::map<Key, T>`, `std::multiset<Key>`, `std::multimap<Key, T>`, `std::unordered_set<Key>`,
- * `std::unordered_map<Key, T>`, `std::unordered_multiset<Key>` and `std::unordered_multimap<Key, T>`.
+ * `std::vector<T>`, `std::array<T, std::size_t>`, `std::list<T>`, `std::deque<T>`
  *
  * Copying and Assignment
  * ----------------------
@@ -72,22 +71,26 @@ namespace rttr
  * ----------------------
  *
  * \code{.cpp}
- *  std::map<int, std::string> my_map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
- *  variant var = my_map;
- *  if (var.is_associative_container())
+ *  std::vector<int> my_vec = { 1, 2, 3, 4, 5};
+ *  variant var = my_vec; // copies data into variant
+ *  if (var.is_sequential_container())
  *  {
- *      variant_sequential_view view = var.create_associative_view();
- *      std::cout << view.get_size() << std::endl;      // prints: '3'
+ *      variant_sequential_view view = var.create_sequential_view();  // performs no copy of the underlying vector
+ *      std::cout << view.get_size() << std::endl;  // prints: '5'
  *      for (const auto& item : view)
  *      {
- *          // remark that the key and value are stored inside a 'std::reference_wrapper'
- *          std::cout << "Key: " << item.first.extract_wrapped_value().to_string() << " ";
- *          std::cout << "Value: " << item.second.extract_wrapped_value().to_string() << std::endl;
+ *          // remark that the value is stored inside a 'std::reference_wrapper', however there is an automatic conversion for wrapper classes implemented.
+ *          std::cout << "data: " << item.to_string() << " ";
  *      }
  *  }
  * \endcode
  *
- * \see variant
+ * Output:
+ * \code
+ *  1 2 3 4 5
+ * \endcode
+ *
+ * \see variant, type::is_sequential_container()
  */
 class RTTR_API variant_sequential_view
 {
@@ -144,29 +147,20 @@ class RTTR_API variant_sequential_view
 
 
         /*!
-         * \brief Returns the \ref type object of this associative container.
+         * \brief Returns the \ref type object of this sequential container.
          *
          * \remark When the view is not valid, this function will return an invalid type object.
          *
-         * \return \ref type "Type" of the associative container.
+         * \return \ref type "Type" of the sequential container.
          */
         type get_type() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns the \ref type from the key of this associative container.
+         * \brief Returns the \ref type object from the value of this sequential container.
          *
          * \remark When the view is not valid, this function will return an invalid type object.
          *
-         * \return \ref type "Type" from the key of the associative container.
-         */
-        type get_key_type() const RTTR_NOEXCEPT;
-
-        /*!
-         * \brief Returns the \ref type object from the value of this associative container.
-         *
-         * \remark When the view is not valid, this function will return an invalid type object.
-         *
-         * \return \ref type "Type" from the value of the associative container.
+         * \return \ref type "Type" from the value of the sequential container.
          */
         type get_value_type() const RTTR_NOEXCEPT;
 
@@ -178,41 +172,26 @@ class RTTR_API variant_sequential_view
         bool is_empty() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns the number of elements in the associative container.
+         * \brief Returns the number of elements in the sequential container.
          *
-         * \return The number of elements in the associative container.
+         * \return The number of elements in the sequential container.
          */
         std::size_t get_size() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Insert a key into the container.
+         * \brief Insert a value into the container.
          *
          * \return A pair consisting of an iterator to the inserted element (or to the element that prevented the insertion)
          *         and a bool denoting whether the insertion took place.
          */
-        std::pair<const_iterator, bool> insert(argument key);
+        const_iterator insert(const const_iterator& pos, argument value);
 
         /*!
-         * \brief Insert a key-value pair into the container.
+         * \brief Removes the element (if one exists) at the position \p pos.
          *
-         * \return A pair consisting of an iterator to the inserted element (or to the element that prevented the insertion)
-         *         and a bool denoting whether the insertion took place.
+         * \return Iterator following the last removed element.
          */
-        std::pair<const_iterator, bool> insert(argument key, argument value);
-
-        /*!
-         * \brief Finds an element with specific key \p key .
-         *
-         * \return The element with key equivalent to \p key. If no element is found an invalid iterator is returned.
-         */
-        const_iterator find(argument key);
-
-        /*!
-         * \brief Removes the element (if one exists) with the key equivalent to \p key.
-         *
-         * \return The number of elements removed.
-         */
-        std::size_t erase(argument key);
+        const_iterator erase(const const_iterator& pos);
 
         /*!
          * \brief Removes all elements from the container.
@@ -220,42 +199,6 @@ class RTTR_API variant_sequential_view
          * \remark Invalidates all references, pointers, or iterators referring to contained elements.
          */
         void clear();
-
-        /*!
-         * \brief Returns a range containing all elements with the given \p key in the container.
-         *
-         * Example code:
-         * \code{.cpp}
-         *  auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C"}, { 2, "D" },
-         *                                                   { 3, "E" }, { 3, "F" } };
-         *
-         *  variant var = multimap;
-         *
-         *  auto view = var.create_associative_view();
-         *  for (int i = 1; i <= 3; ++i)
-         *  {
-         *      std::cout << i << " =>";
-         *      auto range = view.equal_range(i);
-         *      for (auto itr = range.first; itr != range.second; ++itr)
-         *      {
-         *          std::cout << " " << itr.value().extract_wrapped_value().to_string();
-         *      }
-         *      std::cout << std::endl;
-         *  }
-         *\endcode
-         *
-         * Output:
-         * \code
-         *  1 => A
-         *  2 => B C D
-         *  3 => E, F
-         * \endcode
-         *
-         * \return std::pair containing a pair of iterators defining the wanted range:
-         *         the first pointing to the first element that is not less than \p key and
-         *         the second pointing to the first element greater than \p key.
-         */
-        std::pair<const_iterator, const_iterator> equal_range(argument key);
 
         /*!
          * \brief Returns an iterator to the first element of the container.
@@ -276,24 +219,23 @@ class RTTR_API variant_sequential_view
         const_iterator end() const;
 
         /*!
-         * The \ref variant_sequential_view::const_iterator allows iteration over an associative container in a variant.
+         * The \ref variant_sequential_view::const_iterator allows iteration over an sequential container in a variant.
          * An instance can only be created by an variant_sequential_view.
          *
          * Typical Usage
          * ----------------------
          *
          * \code{.cpp}
-         *  std::map<int, std::string> my_map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
-         *  variant var = my_map;
-         *  if (var.is_associative_container())
+         *  std::vector<int> my_vec = { 1, 2, 3, 4, 5};
+         *  variant var = my_vec; // copies data into variant
+         *  if (var.is_sequential_container())
          *  {
-         *      variant_sequential_view view = var.create_associative_view();
-         *      std::cout << view.get_size() << std::endl;      // prints: '3'
+         *      variant_sequential_view view = var.create_sequential_view();  // performs no copy of the underlying vector
+         *      std::cout << view.get_size() << std::endl;  // prints: '5'
          *      for (const auto& item : view)
          *      {
-         *          // remark that the key and value are stored inside a 'std::reference_wrapper'
-         *          std::cout << "Key: " << item.first.extract_wrapped_value().to_string() << " ";
-         *          std::cout << "Value: " << item.second.extract_wrapped_value().to_string() << std::endl;
+         *          // remark that the value is stored inside a 'std::reference_wrapper', however there is an automatic conversion for wrapper classes implemented.
+         *          std::cout << "data: " << item.to_string() << " ";
          *      }
          *  }
          * \endcode
@@ -322,28 +264,21 @@ class RTTR_API variant_sequential_view
                 const_iterator& operator=(const_iterator other);
 
                 /*!
-                 * Returns the underlying key and value stored in a `std::pair<key, value>`.
-                 * The actual data in the variant is stored inside a `std::reference_wrapper<T>`
+                 * Returns the underlying value in a variant stored in a `std::reference_wrapper<T>`.
+                 * When the data cannot be returns as reference from the container, the data is stored directly inside the variant.
+                 * E.g. for `std::vector<bool>` no reference can be returned.
                  *
                  * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
                  */
-                const std::pair<variant, variant> operator*() const;
-
-                /*!
-                 * \brief Returns the current key, stored inside a `std::reference_wrapper<T>`
-                 *        and copied to a variant.
-                 *
-                 * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
-                 */
-                const variant get_key() const;
+                const variant operator*() const;
 
                 /*!
                  * \brief Returns the current value, stored inside a `std::reference_wrapper<T>`
                  *        and copied to a variant.
                  *
-                 * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
+                 * \see operator*(), variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
                  */
-                const variant get_value() const;
+                const variant get_data() const;
 
                 /*!
                  * \brief Pre-increment operator advances the iterator to the next item

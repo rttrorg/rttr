@@ -94,13 +94,6 @@ type variant_sequential_view::get_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type variant_sequential_view::get_key_type() const RTTR_NOEXCEPT
-{
-    return m_view.get_key_type();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 type variant_sequential_view::get_value_type() const RTTR_NOEXCEPT
 {
     return m_view.get_value_type();
@@ -122,42 +115,24 @@ std::size_t variant_sequential_view::get_size() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::pair<variant_sequential_view::const_iterator, bool> variant_sequential_view::insert(argument key)
+variant_sequential_view::const_iterator variant_sequential_view::insert(const const_iterator& pos, argument value)
 {
     const_iterator itr(&m_view);
 
-    auto success = m_view.insert(key, itr.m_itr);
-
-    return {itr, success};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::pair<variant_sequential_view::const_iterator, bool> variant_sequential_view::insert(argument key, argument value)
-{
-    const_iterator itr(&m_view);
-
-    auto success = m_view.insert(key, value, itr.m_itr);
-
-    return {itr, success};
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-variant_sequential_view::const_iterator variant_sequential_view::find(argument arg)
-{
-    const_iterator itr(&m_view);
-
-    m_view.find(itr.m_itr, arg);
+    m_view.insert(pos.m_itr, value, itr.m_itr);
 
     return itr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::size_t variant_sequential_view::erase(argument key)
+variant_sequential_view::const_iterator variant_sequential_view::erase(const const_iterator& pos)
 {
-    return m_view.erase(key);
+    const_iterator itr(&m_view);
+
+    m_view.erase(pos.m_itr, itr.m_itr);
+
+    return itr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -165,20 +140,6 @@ std::size_t variant_sequential_view::erase(argument key)
 void variant_sequential_view::clear()
 {
     m_view.clear();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::pair<variant_sequential_view::const_iterator, variant_sequential_view::const_iterator>
-variant_sequential_view::equal_range(argument key)
-{
-    const_iterator itr_begin(&m_view);
-    const_iterator itr_end(&m_view);
-
-    m_view.equal_range(key, itr_begin.m_itr, itr_end.m_itr);
-
-
-    return {itr_begin, itr_end};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -246,23 +207,16 @@ void variant_sequential_view::const_iterator::swap(const_iterator& other)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const std::pair<variant, variant> variant_sequential_view::const_iterator::operator*() const
+const variant variant_sequential_view::const_iterator::operator*() const
 {
-    return m_view->get_key_value(m_itr);
+    return m_view->get_data(m_itr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const variant variant_sequential_view::const_iterator::get_key() const
+const variant variant_sequential_view::const_iterator::get_data() const
 {
-    return m_view->get_key(m_itr);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-const variant variant_sequential_view::const_iterator::get_value() const
-{
-    return m_view->get_value(m_itr);
+    return m_view->get_data(m_itr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

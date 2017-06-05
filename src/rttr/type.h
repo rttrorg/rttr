@@ -446,6 +446,16 @@ class RTTR_API type
         RTTR_FORCE_INLINE bool is_associative_container() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns true whether the given type represents an
+         *        <a target="_blank" href=https://en.wikipedia.org/wiki/Sequence_container_(C%2B%2B)>sequence container</a>.
+         *
+         * \return True if the type is an sequential container, otherwise false.
+         *
+         * \see \ref sequential_container_mapper "sequential_container_mapper<T>"
+         */
+        RTTR_FORCE_INLINE bool is_sequential_container() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns true whether the given type represents a pointer.
          *        e.g. `int*`, or `bool*`
          *

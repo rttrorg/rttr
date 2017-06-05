@@ -434,6 +434,23 @@ TEST_CASE("Test rttr::type - is_associative_container", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Test rttr::type - is_sequential_container", "[type]")
+{
+    CHECK(type::get<std::vector<int>>().is_sequential_container()       == true);
+
+    CHECK(type::get<int>().is_sequential_container()            == false);
+    CHECK(type::get<float>().is_sequential_container()          == false);
+    CHECK(type::get<int*>().is_sequential_container()           == false);
+    CHECK(type::get<float*>().is_sequential_container()         == false);
+    CHECK(type::get<double>().is_sequential_container()         == false);
+    CHECK(type::get<char>().is_sequential_container()           == false);
+    CHECK(type::get<bool>().is_sequential_container()           == false);
+    CHECK(type::get<ClassSingle6A>().is_sequential_container()  == false);
+    CHECK((type::get<std::map<int, std::string>>().is_sequential_container()  == false));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("Test rttr::type - Check is_wrapper", "[type]")
 {
     CHECK(type::get<std::shared_ptr<int>>().is_wrapper()        == true);
