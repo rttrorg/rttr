@@ -253,4 +253,4 @@ using add_const_t = typename std::add_const<T>::type;
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_MISC_TYPE_TRAITS_H_
+#endif // RTTR_STD_TYPE_TRAITS_H_

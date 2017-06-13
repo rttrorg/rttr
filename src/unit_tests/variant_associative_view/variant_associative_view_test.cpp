@@ -160,7 +160,7 @@ TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_ass
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::is_associative_container", "[variant_associative_view]")
+TEST_CASE("variant::is_associative_container", "[variant_associative_view]")
 {
     SECTION("invalid")
     {

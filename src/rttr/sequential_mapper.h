@@ -188,7 +188,9 @@ template<typename T>
 struct sequential_container_mapper
 {
 #ifndef DOXYGEN
-    using is_valid = std::false_type;
+    using is_valid      = std::false_type;
+    using container_t   = T;
+    using value_t       = detail::invalid_type;
 #else
     using container_t = T;                          //!< An alias declaration to the container type itself.
     using key_t       = typename T::key_type;       //!< An alias to the key type.

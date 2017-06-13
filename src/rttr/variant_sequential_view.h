@@ -172,6 +172,43 @@ class RTTR_API variant_sequential_view
         bool is_empty() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns `true` if this sequential view is dynamic, otherwise `false`.
+         *        When an sequential view is dynamic, it is possible to change its \ref set_size "size",
+         *        \ref clear its content or \ref insert and \ref erase values from it.
+         *
+         * \see set_size(), insert(), erase(), clear()
+         *
+         * \return A boolean flag which indicates whether this sequential container is dynamic or not.
+         */
+        bool is_dynamic() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief Gets the rank (number of dimensions) of this sequential container.
+         *
+         * Take a look at following return values:
+         *  - \p `int[4]` => `1`
+         *  - \p `int[4][4]` => `2`
+         *  - \p `int[4][4][4]` => `3`
+         *  - ...
+         *
+         * \return Returns the rank of the sequential container.
+         */
+        std::size_t get_rank() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief Gets the type of the given rank index.
+         *
+         * Take a look at following return value for an array of type: `int[2][10]`
+         *  - \p `get_rank_type(0)` => `int[2][10]`
+         *  - \p `get_rank_type(1)` => `int[10]`
+         *  - \p `get_rank_type(2)` => `int`
+         *  - \p `get_rank_type(3)` => **INVALID**
+         *
+         * \return The rank type at the given dimension \p index.
+         */
+        type get_rank_type(std::size_t index) const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns the number of elements in the sequential container.
          *
          * \return The number of elements in the sequential container.
@@ -179,10 +216,18 @@ class RTTR_API variant_sequential_view
         std::size_t get_size() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Sets the size of the sequential container.
+         *
+         * \return `true`, when the size of the container could be changed, otherwise `false`.
+         *
+         * \see is_dynamic()
+         */
+        bool set_size(std::size_t size) const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Insert a value into the container.
          *
-         * \return A pair consisting of an iterator to the inserted element (or to the element that prevented the insertion)
-         *         and a bool denoting whether the insertion took place.
+         * \return An iterator to the inserted element, otherwise an invalid iterator, when the insertion was not possible.
          */
         const_iterator insert(const const_iterator& pos, argument value);
 

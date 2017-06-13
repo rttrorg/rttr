@@ -30,14 +30,16 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/iterator_wrapper.h"
+#include "rttr/detail/misc/sequential_container_type_traits.h"
 
 #include "rttr/variant.h"
 #include <type_traits>
 
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <unordered_set>
+#include <vector>
+#include <list>
+#include <deque>
+#include <array>
+#include <initializer_list>
 
 namespace rttr
 {
@@ -94,9 +96,42 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
         return base_class::is_empty(get_container(container));
     }
 
+    static bool is_dynamic()
+    {
+        return base_class::is_dynamic();
+    }
+
+    static std::size_t get_rank()
+    {
+        return rank_count<T>::value;
+    }
+
+    static ::rttr::type get_rank_type(std::size_t index)
+    {
+        if (index <= rank_count<T>::value)
+            return get_ranke_type<T, rank_count<T>::value>::get_type(index);
+        else
+            return get_invalid_type();
+    }
+
     static std::size_t get_size(void* container)
     {
         return base_class::get_size(get_container(container));
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
+    static bool set_size(void* container, std::size_t size)
+    {
+        return base_class::set_size(get_container(container), size);
+    }
+
+    template<typename..., typename C = ConstType, enable_if_t<std::is_const<C>::value, int> = 0>
+    static bool set_size(void* container, std::size_t size)
+    {
+        // cannot set size for a const container...
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -131,39 +166,41 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
 
     /////////////////////////////////////////////////////////////////////////
 
-    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value && !std::is_const<ConstType>::value, int> = 0>
-    static bool insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
+    template<typename..., typename C = ConstType, enable_if_t<!std::is_const<C>::value, int> = 0>
+    static void insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
     {
         if (value.get_type() == ::rttr::type::get<value_t>())
         {
             auto ret = base_class::insert(get_container(container), value.get_value<value_t>(), itr_wrapper::get_iterator(itr_pos));
-            itr_wrapper::create(itr, ret.first);
-            return ret.second;
+            itr_wrapper::create(itr, ret);
         }
         else
         {
             end(container, itr);
-            return false;
         }
     }
 
-    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value || std::is_const<ConstType>::value, int> = 0>
-    static bool insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
+    template<typename..., typename C = ConstType, enable_if_t<std::is_const<C>::value, int> = 0>
+    static void insert(void* container, argument& value, const iterator_data& itr_pos, iterator_data& itr)
     {
         end(container, itr);
-        return false;
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct sequential_container_base
+struct sequential_container_base_dynamic
 {
     using container_t   = T;
     using value_t       = typename T::value_type;
     using itr_t         = typename T::iterator;
     using const_itr_t   = typename T::const_iterator;
+
+    static bool is_dynamic()
+    {
+        return true;
+    }
 
     static value_t& get_data(const itr_t& itr)
     {
@@ -216,6 +253,12 @@ struct sequential_container_base
         return container.size();
     }
 
+    static bool set_size(container_t& container, std::size_t size)
+    {
+        container.resize(size);
+        return true;
+    }
+
     static itr_t erase(container_t& container, const itr_t& itr)
     {
         return container.erase(itr);
@@ -239,12 +282,114 @@ struct sequential_container_base
 
 
 
+template<typename T>
+struct sequential_container_base_static
+{
+    using container_t   = T;
+    using value_t       = typename T::value_type;
+    using itr_t         = typename T::iterator;
+    using const_itr_t   = typename T::const_iterator;
+
+    static bool is_dynamic()
+    {
+        return false;
+    }
+
+    static value_t& get_data(const itr_t& itr)
+    {
+        return *itr;
+    }
+
+    static const value_t& get_data(const const_itr_t& itr)
+    {
+        return *itr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t begin(container_t& container)
+    {
+        return container.begin();
+    }
+
+    static const_itr_t begin(const container_t& container)
+    {
+        return container.begin();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static itr_t end(container_t& container)
+    {
+        return container.end();
+    }
+
+    static const_itr_t end(const container_t& container)
+    {
+        return container.end();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static void clear(container_t& container)
+    {
+    }
+
+    static bool is_empty(const container_t& container)
+    {
+        return container.empty();
+    }
+
+    static std::size_t get_size(const container_t& container)
+    {
+        return container.size();
+    }
+
+    static bool set_size(container_t& container, std::size_t size)
+    {
+        return false;
+    }
+
+    static itr_t erase(container_t& container, const itr_t& itr)
+    {
+        return end(container);
+    }
+
+    static itr_t erase(container_t& container, const const_itr_t& itr)
+    {
+        return end(container);
+    }
+
+    static itr_t insert(container_t& container, const value_t& value, const itr_t& itr_pos)
+    {
+        return end(container);
+    }
+
+    static itr_t insert(container_t& container, const value_t& value, const const_itr_t& itr_pos)
+    {
+        return end(container);
+    }
+};
+
 } // end namespace detail
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct sequential_container_mapper<std::vector<T>> : detail::sequential_container_base<std::vector<T>> {};
+struct sequential_container_mapper<std::vector<T>> : detail::sequential_container_base_dynamic<std::vector<T>> {};
+template<typename T>
+struct sequential_container_mapper<std::list<T>> : detail::sequential_container_base_dynamic<std::list<T>> {};
+template<typename T>
+struct sequential_container_mapper<std::deque<T>> : detail::sequential_container_base_dynamic<std::deque<T>> {};
+
+template<typename T, std::size_t N>
+struct sequential_container_mapper<std::array<T, N>> : detail::sequential_container_base_static<std::array<T, N>> {};
+
+// FIXME Enable support
+//template<typename T>
+//struct sequential_container_mapper<std::initializer_list<T>> : detail::sequential_container_base_static<std::initializer_list<T>> {};
+//template<typename T, std::size_t N>
+//struct sequential_container_mapper<T[N]>> : detail::sequential_container_base_static<T[N]> {};
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -252,9 +397,14 @@ template<>
 struct sequential_container_mapper<std::vector<bool>>
 {
     using container_t   = std::vector<bool>;
-    using value_t       = typename std::vector<bool>::value_type;
-    using itr_t         = typename std::vector<bool>::iterator;
-    using const_itr_t   = typename std::vector<bool>::const_iterator;
+    using value_t       = std::vector<bool>::value_type;
+    using itr_t         = std::vector<bool>::iterator;
+    using const_itr_t   = std::vector<bool>::const_iterator;
+
+    static bool is_dynamic()
+    {
+        return true;
+    }
 
     static value_t get_data(const itr_t& itr)
     {
@@ -305,6 +455,12 @@ struct sequential_container_mapper<std::vector<bool>>
     static std::size_t get_size(const container_t& container)
     {
         return container.size();
+    }
+
+    static bool set_size(container_t& container, std::size_t size)
+    {
+        container.resize(size);
+        return true;
     }
 
     static itr_t erase(container_t& container, const itr_t& itr)
@@ -366,9 +522,29 @@ struct sequential_container_empty
         return true;
     }
 
+    static bool is_dynamic()
+    {
+        return false;
+    }
+
+    static std::size_t get_rank()
+    {
+        return 0;
+    }
+
+    static type get_rank_type(std::size_t index)
+    {
+        return get_invalid_type();
+    }
+
     static std::size_t get_size(void* container)
     {
         return 0;
+    }
+
+    static bool set_size(void* container, std::size_t size)
+    {
+        return false;
     }
 
     static void erase(void* container, const iterator_data& itr_pos, iterator_data& itr)
@@ -379,11 +555,12 @@ struct sequential_container_empty
     {
     }
 
-    static bool insert(void* container, argument& value, const iterator_data& itr, iterator_data& pos)
+    static void insert(void* container, argument& value, const iterator_data& itr, iterator_data& pos)
     {
-        return false;
     }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

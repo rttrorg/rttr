@@ -989,6 +989,16 @@ namespace detail
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
+     template <typename... T>
+     struct count_types : std::integral_constant<std::size_t, 0>::type
+     {
+     };
+
+     template <template <typename... > class List, typename... Types>
+     struct count_types<List<Types...>> : std::integral_constant<std::size_t, sizeof...(Types) - 1>::type
+     {
+     };
+
 } // end namespace detail
 } // end namespace rttr
 
