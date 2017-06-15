@@ -138,6 +138,8 @@ TEST_CASE("variant - get_wrapped_value", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
 TEST_CASE("variant - is_array", "[variant]")
 {
     variant a = std::vector<int>(100, 1);
@@ -147,5 +149,7 @@ TEST_CASE("variant - is_array", "[variant]")
     variant b = raw_array;
     CHECK(b.is_array() == true);
 }
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////

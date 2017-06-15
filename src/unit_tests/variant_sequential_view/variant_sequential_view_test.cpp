@@ -212,9 +212,6 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
         CHECK(var.is_sequential_container() == true);
     }
 
-    /*
-    // FIXME
-
     SECTION("valid - std::initializer_list")
     {
         auto init_list = {1, 2, 3};
@@ -230,7 +227,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
         variant var = array;
         CHECK(var.is_sequential_container() == true);
     }
-    */
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -345,8 +342,7 @@ TEST_CASE("variant_sequential_view::get_rank_type()", "[variant_sequential_view]
         CHECK(view.get_rank_type(2) == type::get<int>());
         CHECK(view.get_rank_type(3).is_valid() == false);
     }
-    /*
-    FIXME
+
     SECTION("raw array")
     {
         int obj[2][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
@@ -358,7 +354,6 @@ TEST_CASE("variant_sequential_view::get_rank_type()", "[variant_sequential_view]
         CHECK(view.get_rank_type(2) == type::get<int>());
         CHECK(view.get_rank_type(3).is_valid() == false);
     }
-    */
 
     SECTION("invalid")
     {
@@ -391,12 +386,12 @@ TEST_CASE("variant_sequential_view::get_size()", "[variant_sequential_view]")
         CHECK(sub_view.is_valid() == true);
         CHECK(sub_view.get_size() == 3);
     }
-    /*
-    FIXME
+
     SECTION("raw array")
     {
         int obj[2][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
         variant var = obj;
+        auto view = var.create_sequential_view();
 
         CHECK(view.get_size() == 2);
         auto itr = view.begin();
@@ -406,7 +401,6 @@ TEST_CASE("variant_sequential_view::get_size()", "[variant_sequential_view]")
         CHECK(sub_view.is_valid() == true);
         CHECK(sub_view.get_size() == 10);
     }
-    */
 
     SECTION("invalid")
     {
@@ -447,16 +441,14 @@ TEST_CASE("variant_sequential_view::set_size()", "[variant_sequential_view]")
         CHECK(sub_view.set_size(10) == true);
         CHECK(sub_view.get_size() == 10);
     }
-    /*
-    FIXME
+
     SECTION("raw array")
     {
         int obj[2] = { 0, 0 };
         variant var = obj;
-
+        auto view = var.create_sequential_view();
         CHECK(view.set_size(10) == false);
     }
-    */
 
     SECTION("invalid")
     {
@@ -608,6 +600,37 @@ TEST_CASE("variant_sequential_view::begin/end", "[variant_sequential_view]")
         }
     }
 
+    SECTION("initializer_list")
+    {
+        auto array = { 1, 2, 3, 4, 5 };
+        variant var = array;
+        auto view = var.create_sequential_view();
+
+        int i = 0;
+        for (auto& item : view)
+        {
+            CHECK(item.to_int() == ++i);
+        }
+    }
+
+    SECTION("raw array")
+    {
+        int obj[2][5] = { { 1, 2, 3, 4, 5}, { 6, 7, 8, 9, 10 } };
+        variant var = &obj;
+        auto view = var.create_sequential_view();
+
+        int i = 0;
+        for (auto& item : view)
+        {
+            if (item.is_sequential_container())
+            {
+                for (auto& sub_item : item.create_sequential_view())
+                {
+                    CHECK(sub_item.to_int() == ++i);
+                }
+            }
+        }
+    }
 
     SECTION("invalid test")
     {

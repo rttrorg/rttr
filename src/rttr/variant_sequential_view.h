@@ -51,7 +51,7 @@ namespace rttr
  * without having access to the type declaration of the type or it's elements.
  *
  * A \ref variant_sequential_view can be created directly from a \ref variant with its member function \ref variant::create_sequential_view() "create_sequential_view()".
- * \remark The instance of an variant_sequential_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_sequential_view
+ * \remark The instance of an variant_sequential_view is always valid as long as the referenced \ref variant is valid, otherwise accessing a variant_sequential_view
  *         is undefined behaviour.
  *
  * Meta Information
@@ -60,7 +60,7 @@ namespace rttr
  * RTTR recognize whether a type is an sequential container or not with the help of the \ref sequential_container_mapper class template.
  * This call can access different container types via one common interface.
  * At the moment there exist specializations for following types:
- * `std::vector<T>`, `std::array<T, std::size_t>`, `std::list<T>`, `std::deque<T>`
+ * `std::vector<T>`, `std::array<T, std::size_t>`, `std::list<T>`, `std::deque<T>`, `std::initializer_list<T>` and raw arrays
  *
  * Copying and Assignment
  * ----------------------
@@ -313,6 +313,8 @@ class RTTR_API variant_sequential_view
                  * When the data cannot be returns as reference from the container, the data is stored directly inside the variant.
                  * E.g. for `std::vector<bool>` no reference can be returned.
                  *
+                 * \remark For MSVC 2013, the return of `std::reference_wrapper` for arrays doesnt work, thats why we return a ptr instead.
+                 *
                  * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
                  */
                 const variant operator*() const;
@@ -330,7 +332,7 @@ class RTTR_API variant_sequential_view
                  *        in the container and returns an iterator to the new current item.
                  *
                  * \remark Calling this function on and iterator with value variant_sequential_view::end()
-                 *         leads to undefinied behaviour.
+                 *         leads to undefined behaviour.
                  */
                 const_iterator &operator++();
 
@@ -345,7 +347,7 @@ class RTTR_API variant_sequential_view
                  *        an iterator to the new current item.
                  *
                  * \remark Calling this function on and iterator with value variant_sequential_view::begin()
-                 *         leads to undefinied behaviour.
+                 *         leads to undefined behaviour.
                  */
                 const_iterator &operator--();
 

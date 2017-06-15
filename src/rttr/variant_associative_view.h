@@ -51,7 +51,7 @@ namespace rttr
  * without having access to the type declaration of the type or it's elements.
  *
  * A \ref variant_associative_view can be created directly from a \ref variant with its member function \ref variant::create_associative_view() "create_associative_view()".
- * \remark The instance of an variant_associative_view is always valid till the referenced \ref variant is valid, otherwise accessing a variant_associative_view
+ * \remark The instance of an variant_associative_view is always valid as long as the referenced \ref variant is valid, otherwise accessing a variant_associative_view
  *         is undefined behaviour.
  *
  * Meta Information
@@ -350,7 +350,7 @@ class RTTR_API variant_associative_view
                  *        in the container and returns an iterator to the new current item.
                  *
                  * \remark Calling this function on and iterator with value variant_associative_view::end()
-                 *         leads to undefinied behaviour.
+                 *         leads to undefined behaviour.
                  */
                 const_iterator &operator++();
 
@@ -365,7 +365,7 @@ class RTTR_API variant_associative_view
                  *        an iterator to the new current item.
                  *
                  * \remark Calling this function on and iterator with value variant_associative_view::begin()
-                 *         leads to undefinied behaviour.
+                 *         leads to undefined behaviour.
                  */
                 const_iterator &operator--();
 

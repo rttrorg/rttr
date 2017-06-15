@@ -342,13 +342,19 @@ class RTTR_API variant
         explicit operator bool() const;
 
         /*!
+         * \deprecated Use instead rttr::variant::is_sequential_container()
+         *
          * \brief When the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
          *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array",
          *        then this function will return true, otherwise false.
          *
          * \return True if the containing value is an array; otherwise false.
          */
+#ifndef DOXYGEN
+        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::is_sequential_container()") bool is_array() const;
+#else
         bool is_array() const;
+#endif
 
         /*!
          * \brief Returns true, when for the underlying or the \ref type::get_wrapped_type() "wrapped type"
@@ -557,6 +563,8 @@ class RTTR_API variant
         bool convert(T& value) const;
 
         /*!
+         * \deprecated Use instead rttr::variant::create_sequential_view()
+         *
          * \brief Creates a \ref variant_array_view from the containing value,
          *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
          *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array".
@@ -579,7 +587,11 @@ class RTTR_API variant
          *
          * \see can_convert(), convert()
          */
+#ifndef DOXYGEN
+        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::create_sequential_view()") variant_array_view create_array_view() const;
+#else
         variant_array_view create_array_view() const;
+#endif
 
         /*!
          * \brief Creates a \ref variant_associative_view from the containing value,

@@ -35,6 +35,52 @@ using namespace std;
 namespace rttr
 {
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
+/////////////////////////////////////////////////////////////////////////////////
+
+ variant_array_view::variant_array_view() RTTR_NOEXCEPT
+:   m_array_wrapper(detail::make_unique<detail::array_wrapper_base>())
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+variant_array_view::variant_array_view(const variant_array_view& other) RTTR_NOEXCEPT
+:   m_array_wrapper(std::move(other.m_array_wrapper->clone()))
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+variant_array_view::variant_array_view(variant_array_view&& other) RTTR_NOEXCEPT
+:   m_array_wrapper(std::move(other.m_array_wrapper))
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+variant_array_view::~variant_array_view() RTTR_NOEXCEPT
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+void variant_array_view::swap(variant_array_view& other) RTTR_NOEXCEPT
+{
+    std::swap(m_array_wrapper, other.m_array_wrapper);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+variant_array_view& variant_array_view::operator=(const variant_array_view& other) RTTR_NOEXCEPT
+{
+    variant_array_view(other).swap(*this);
+    return *this;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool variant_array_view::is_valid() const RTTR_NOEXCEPT
@@ -260,5 +306,7 @@ bool variant_array_view::remove_value_variadic(const std::vector<std::size_t>& i
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 
 } // end namespace rttr

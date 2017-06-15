@@ -36,6 +36,8 @@
 using namespace rttr;
 using namespace std;
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
@@ -933,5 +935,7 @@ TEST_CASE("variant_array_view::misc", "[variant_array_view]")
         REQUIRE(ret.get_value<int>()    == 23);
     }
 }
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////

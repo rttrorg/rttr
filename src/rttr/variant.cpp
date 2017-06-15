@@ -207,12 +207,16 @@ variant variant::create_wrapped_value(const type& wrapped_type) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;
     m_policy(detail::variant_policy_operation::TO_ARRAY, m_data, result.m_array_wrapper);
     return result;
 }
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
