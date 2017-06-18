@@ -88,30 +88,30 @@ variant extract_basic_types(Value& json_value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static void write_array_recursively(variant_array_view& var_array, Value& json_array_value)
+static void write_array_recursively(variant_sequential_view& view, Value& json_array_value)
 {
-    var_array.set_size(json_array_value.Size());
+    view.set_size(json_array_value.Size());
     for (SizeType i = 0; i < json_array_value.Size(); ++i)
     {
         auto& json_index_value = json_array_value[i];
         if (json_index_value.IsArray())
         {
-            auto sub_array_view = var_array.get_value_as_ref(i).create_array_view();
+            auto sub_array_view = view.get_value(i).create_sequential_view();
             write_array_recursively(sub_array_view, json_index_value);
         }
         else if (json_index_value.IsObject())
         {
-            variant var_tmp = var_array.get_value_as_ref(i);
+            variant var_tmp = view.get_value(i);
             variant wrapped_var = var_tmp.extract_wrapped_value();
             fromjson_recursively(wrapped_var, json_index_value);
-            var_array.set_value(i, wrapped_var);
+            view.set_value(i, wrapped_var);
         }
         else
         {
-            const type array_type = var_array.get_rank_type(i);
+            const type array_type = view.get_rank_type(i);
             variant extracted_value = extract_basic_types(json_index_value);
             if (extracted_value.convert(array_type))
-                var_array.set_value(i, extracted_value);
+                view.set_value(i, extracted_value);
         }
     }
 }
@@ -189,11 +189,11 @@ void fromjson_recursively(instance obj2, Value& json_object)
             case kArrayType:
             {
                 variant var;
-                if (value_t.is_array())
+                if (value_t.is_sequential_container())
                 {
                     var = prop.get_value(obj);
-                    auto array_view = var.create_array_view();
-                    write_array_recursively(array_view, json_value);
+                    auto view = var.create_sequential_view();
+                    write_array_recursively(view, json_value);
                 }
                 else if (value_t.is_associative_container())
                 {

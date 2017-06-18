@@ -198,7 +198,7 @@ class RTTR_LOCAL variant_sequential_view_private
             return m_set_value_func(m_container, index, arg);
         }
 
-        RTTR_INLINE variant get_value(std::size_t index)
+        RTTR_INLINE variant get_value(std::size_t index) const
         {
             return m_get_value_func(m_container, index);
         }

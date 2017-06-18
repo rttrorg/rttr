@@ -179,7 +179,7 @@ bool variant_sequential_view::set_value(std::size_t index, argument arg)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant variant_sequential_view::get_value(std::size_t index)
+variant variant_sequential_view::get_value(std::size_t index) const
 {
     return m_view.get_value(index);
 }

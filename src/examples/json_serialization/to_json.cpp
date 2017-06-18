@@ -114,19 +114,18 @@ bool write_atomic_types_to_json(const type& t, const variant& var, PrettyWriter<
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static void write_array(const variant_array_view& a, PrettyWriter<StringBuffer>& writer)
+static void write_array(const variant_sequential_view& view, PrettyWriter<StringBuffer>& writer)
 {
     writer.StartArray();
-    for (int i = 0; i < a.get_size(); ++i)
+    for (const auto& item : view)
     {
-        variant var = a.get_value_as_ref(i);
-        if (var.is_array())
+        if (item.is_sequential_container())
         {
-            write_array(var.create_array_view(), writer);
+            write_array(item.create_sequential_view(), writer);
         }
         else
         {
-            variant wrapped_var = var.extract_wrapped_value();
+            variant wrapped_var = item.extract_wrapped_value();
             type value_type = wrapped_var.get_type();
             if (value_type.is_arithmetic() || value_type == type::get<std::string>() || value_type.is_enumeration())
             {
@@ -193,7 +192,7 @@ bool write_variant(const variant& var, PrettyWriter<StringBuffer>& writer)
     }
     else if (value_type.is_array())
     {
-        write_array(var.create_array_view(), writer);
+        write_array(var.create_sequential_view(), writer);
     }
     else if (value_type.is_associative_container())
     {

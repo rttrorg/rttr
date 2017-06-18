@@ -263,7 +263,7 @@ class RTTR_API variant_sequential_view
          *
          * \see get_size()
          */
-        variant get_value(std::size_t index);
+        variant get_value(std::size_t index) const;
 
         /*!
          * \brief Returns an iterator to the first element of the container.
