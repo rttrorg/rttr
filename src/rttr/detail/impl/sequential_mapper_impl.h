@@ -806,7 +806,15 @@ struct sequential_container_mapper<std::vector<bool>>
 
     static itr_t insert(container_t& container, const value_t& value, const const_itr_t& itr_pos)
     {
+// to prevent following gcc bug: 'no matching function for call to `std::vector<bool>::insert(const const_itr_t&, bool) return container.insert(itr, bool);`
+// vec.erase(vec.cbegin()); fails for unkown reason with this old version
+#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900)
+        auto itr_non_const = container.begin();
+        std::advance (itr_non_const, std::distance<const_itr_t>(itr_non_const, itr_pos));
+        return container.insert(itr_non_const, value);
+#else
         return container.insert(itr_pos, value);
+#endif
     }
 
     static std::vector<bool>::reference get_value(container_t& container, std::size_t index)
