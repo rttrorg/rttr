@@ -203,6 +203,84 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
     {
         end(container, itr);
     }
+
+    /////////////////////////////////////////////////////////////////////////
+    // is_const<T> is used because of std::initializer_list, it can only return a constant value
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<!std::is_const<C>::value &&
+                         !std::is_array<remove_reference_t<ReturnType>>::value &&
+                         !std::is_const<remove_reference_t<ReturnType>>::value, int> = 0>
+    static bool set_value(void* container, std::size_t index, argument& value)
+    {
+        if (value.get_type() == ::rttr::type::get<value_t>())
+        {
+            base_class::get_value(get_container(container), index) = value.get_value<value_t>();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<!std::is_const<C>::value &&
+                         std::is_array<remove_reference_t<ReturnType>>::value &&
+                         !std::is_const<remove_reference_t<ReturnType>>::value, int> = 0>
+    static bool set_value(void* container, std::size_t index, argument& value)
+    {
+        if (value.get_type() == ::rttr::type::get<value_t>())
+        {
+            copy_array(value.get_value<value_t>(), base_class::get_value(get_container(container), index));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<std::is_const<C>::value ||
+                         std::is_const<remove_reference_t<ReturnType>>::value, int> = 0>
+    static bool set_value(void* container, std::size_t index, argument& value)
+    {
+        base_class::get_value(get_container(container), index);
+        return false;
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<std::is_reference<ReturnType>::value && !std::is_array<remove_reference_t<ReturnType>>::value, int> = 0>
+    static variant get_value(void* container, std::size_t index)
+    {
+        return variant(std::ref(base_class::get_value(get_container(container), index)));
+    }
+
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<std::is_reference<ReturnType>::value && std::is_array<remove_reference_t<ReturnType>>::value, int> = 0>
+    static variant get_value(void* container, std::size_t index)
+    {
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+        // the compiler has a bug:
+        // int foo[2];
+        // auto bar = std::ref(foo);
+        // does not compile..., so we return a ptr here, instead of a std::reference_wrapper
+        return variant(&base_class::get_value(get_container(container), index));
+#else
+        return variant(std::ref(base_class::get_value(get_container(container), index)));
+#endif
+    }
+
+    template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
+             enable_if_t<!std::is_reference<ReturnType>::value, int> = 0>
+    static variant get_value(void* container, std::size_t index)
+    {
+        return variant(static_cast<value_t>(base_class::get_value(get_container(container), index)));
+    }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -301,6 +379,48 @@ struct sequential_container_base_dynamic
 //////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
+struct sequential_container_base_dynamic_direct_access : sequential_container_base_dynamic<T>
+{
+    using container_t   = T;
+    using value_t       = typename T::value_type;
+
+    static value_t& get_value(container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
+
+    static const value_t& get_value(const container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct sequential_container_base_dynamic_itr_access : sequential_container_base_dynamic<T>
+{
+    using container_t   = T;
+    using value_t       = typename T::value_type;
+
+    static value_t& get_value(container_t& container, std::size_t index)
+    {
+        auto it = container.begin();
+        std::advance(it, index);
+        return *it;
+    }
+
+    static const value_t& get_value(const container_t& container, std::size_t index)
+    {
+        auto it = container.begin();
+        std::advance(it, index);
+        return *it;
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
 struct sequential_container_base_static
 {
     using container_t   = T;
@@ -387,23 +507,22 @@ struct sequential_container_base_static
     {
         return end(container);
     }
+
+    static value_t& get_value(container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
+
+    static const value_t& get_value(const container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
 };
 
 } // end namespace detail
 
-//////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-struct sequential_container_mapper<std::vector<T>> : detail::sequential_container_base_dynamic<std::vector<T>> {};
-template<typename T>
-struct sequential_container_mapper<std::list<T>> : detail::sequential_container_base_dynamic<std::list<T>> {};
-template<typename T>
-struct sequential_container_mapper<std::deque<T>> : detail::sequential_container_base_dynamic<std::deque<T>> {};
-
-template<typename T, std::size_t N>
-struct sequential_container_mapper<std::array<T, N>> : detail::sequential_container_base_static<std::array<T, N>> {};
-
 //////////////////////////////////////////////////////////////////////////////////////////
+// direct specialization
 
 template<typename T, std::size_t N>
 struct sequential_container_mapper<T[N]>
@@ -481,6 +600,16 @@ struct sequential_container_mapper<T[N]>
     static itr_t insert(container_t& container, const value_t& value, const itr_t& itr_pos)
     {
         return end(container);
+    }
+
+    static value_t& get_value(container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
+
+    static const value_t& get_value(const container_t& container, std::size_t index)
+    {
+        return container[index];
     }
 };
 
@@ -563,9 +692,24 @@ struct sequential_container_mapper<std::initializer_list<T>>
     {
         return end(container);
     }
+
+    static const value_t& get_value(container_t& container, std::size_t index)
+    {
+        auto it = container.begin();
+        std::advance(it, index);
+        return *it;
+    }
+
+    static const value_t& get_value(const container_t& container, std::size_t index)
+    {
+        auto it = container.begin();
+        std::advance(it, index);
+        return *it;
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////
+// specialization for std::vector<bool>, because vec[index] returns a `std::vector<bool>::reference` not a `bool&`
 
 template<>
 struct sequential_container_mapper<std::vector<bool>>
@@ -656,7 +800,30 @@ struct sequential_container_mapper<std::vector<bool>>
     {
         return container.insert(itr_pos, value);
     }
+
+    static std::vector<bool>::reference get_value(container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
+
+    static std::vector<bool>::const_reference get_value(const container_t& container, std::size_t index)
+    {
+        return container[index];
+    }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+struct sequential_container_mapper<std::vector<T>> : detail::sequential_container_base_dynamic_direct_access<std::vector<T>> {};
+template<typename T>
+struct sequential_container_mapper<std::list<T>> : detail::sequential_container_base_dynamic_itr_access<std::list<T>> {};
+template<typename T>
+struct sequential_container_mapper<std::deque<T>> : detail::sequential_container_base_dynamic_direct_access<std::deque<T>> {};
+
+template<typename T, std::size_t N>
+struct sequential_container_mapper<std::array<T, N>> : detail::sequential_container_base_static<std::array<T, N>> {};
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -731,6 +898,16 @@ struct sequential_container_empty
 
     static void insert(void* container, argument& value, const iterator_data& itr, iterator_data& pos)
     {
+    }
+
+    static bool set_value(void* container, std::size_t index, argument& value)
+    {
+        return false;
+    }
+
+    static variant get_value(void* container, std::size_t index)
+    {
+        return variant();
     }
 };
 

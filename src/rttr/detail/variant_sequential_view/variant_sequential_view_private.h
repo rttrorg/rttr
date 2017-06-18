@@ -63,7 +63,9 @@ class RTTR_LOCAL variant_sequential_view_private
             m_advance_func(sequential_container_empty::advance),
             m_erase_func(sequential_container_empty::erase),
             m_clear_func(sequential_container_empty::clear),
-            m_insert_func(sequential_container_empty::insert)
+            m_insert_func(sequential_container_empty::insert),
+            m_set_value_func(sequential_container_empty::set_value),
+            m_get_value_func(sequential_container_empty::get_value)
         {
         }
 
@@ -87,7 +89,9 @@ class RTTR_LOCAL variant_sequential_view_private
             m_advance_func(sequential_container_mapper_wrapper<RawType, ConstType>::advance),
             m_erase_func(sequential_container_mapper_wrapper<RawType, ConstType>::erase),
             m_clear_func(sequential_container_mapper_wrapper<RawType, ConstType>::clear),
-            m_insert_func(sequential_container_mapper_wrapper<RawType, ConstType>::insert)
+            m_insert_func(sequential_container_mapper_wrapper<RawType, ConstType>::insert),
+            m_set_value_func(sequential_container_mapper_wrapper<RawType, ConstType>::set_value),
+            m_get_value_func(sequential_container_mapper_wrapper<RawType, ConstType>::get_value)
         {
         }
 
@@ -189,6 +193,16 @@ class RTTR_LOCAL variant_sequential_view_private
             m_insert_func(m_container, value, itr_pos, itr);
         }
 
+        RTTR_INLINE bool set_value(std::size_t index, argument& arg)
+        {
+            return m_set_value_func(m_container, index, arg);
+        }
+
+        RTTR_INLINE variant get_value(std::size_t index)
+        {
+            return m_get_value_func(m_container, index);
+        }
+
     private:
         static bool equal_cmp_dummy_func(const iterator_data& lhs_itr, const iterator_data& rhs_itr) RTTR_NOEXCEPT;
         using equality_func     = decltype(&equal_cmp_dummy_func); // workaround because of 'noexcept' can only appear on function declaration
@@ -208,6 +222,8 @@ class RTTR_LOCAL variant_sequential_view_private
         using is_dynamic_func   = bool(*)();
         using erase_func        = void(*)(void* container, const iterator_data& itr_pos, iterator_data& itr);
         using insert_func       = void(*)(void* container, argument& value, const detail::iterator_data& itr_pos, detail::iterator_data& itr);
+        using set_value_func    = bool(*)(void* container, std::size_t index, argument& arg);
+        using get_value_func    = variant(*)(void* container, std::size_t index);
 
         type                    m_type;
         type                    m_value_type;
@@ -228,6 +244,8 @@ class RTTR_LOCAL variant_sequential_view_private
         erase_func              m_erase_func;
         clear_func              m_clear_func;
         insert_func             m_insert_func;
+        set_value_func          m_set_value_func;
+        get_value_func          m_get_value_func;
 };
 
 } // end namespace detail

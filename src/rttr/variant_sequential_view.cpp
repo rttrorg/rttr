@@ -172,6 +172,20 @@ void variant_sequential_view::clear()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool variant_sequential_view::set_value(std::size_t index, argument arg)
+{
+    return m_view.set_value(index, arg);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant variant_sequential_view::get_value(std::size_t index)
+{
+    return m_view.get_value(index);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant_sequential_view::const_iterator variant_sequential_view::begin() const
 {
     const_iterator itr(&m_view);

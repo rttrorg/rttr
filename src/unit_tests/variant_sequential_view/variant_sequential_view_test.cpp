@@ -188,6 +188,14 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
         CHECK(var.is_sequential_container() == true);
     }
 
+    SECTION("valid - std::vector<bool>")
+    {
+        auto vec = std::vector<bool>({true, false, true});
+
+        variant var = vec;
+        CHECK(var.is_sequential_container() == true);
+    }
+
     SECTION("valid - std::list")
     {
         auto list = std::list<int>({1, 2, 3});
@@ -450,6 +458,16 @@ TEST_CASE("variant_sequential_view::set_size()", "[variant_sequential_view]")
         CHECK(view.set_size(10) == false);
     }
 
+    SECTION("const std::vector")
+    {
+        auto vec = std::vector<int>({ 1, 2, 3, 4, 5 });
+        variant var = std::cref(vec);
+        auto view = var.create_sequential_view();
+
+        CHECK(view.set_size(100) == false);
+        CHECK(view.get_size()    == 5);
+    }
+
     SECTION("invalid")
     {
         variant var = 1;
@@ -490,6 +508,15 @@ TEST_CASE("variant_sequential_view::insert()", "[variant_sequential_view]")
 
         CHECK(itr == view.end());
         CHECK(view.get_size() == 5);
+    }
+
+    SECTION("const std::vector")
+    {
+        auto vec = std::vector<int>({ 1, 2, 3, 4, 5 });
+        variant var = std::cref(vec);
+        auto view = var.create_sequential_view();
+
+        CHECK(view.insert(view.begin(), 42) == view.end());
     }
 
     SECTION("invalid")
@@ -535,6 +562,15 @@ TEST_CASE("variant_sequential_view::erase()", "[variant_sequential_view]")
         CHECK(view.get_size() == 5);
     }
 
+    SECTION("const std::vector")
+    {
+        auto vec = std::vector<int>({ 1, 2, 3, 4, 5 });
+        variant var = std::cref(vec);
+        auto view = var.create_sequential_view();
+
+        CHECK(view.erase(view.begin()) == view.end());
+    }
+
     SECTION("invalid")
     {
         variant var = 1;
@@ -567,6 +603,16 @@ TEST_CASE("variant_sequential_view::clear()", "[variant_sequential_view]")
         CHECK(view.get_size() == 5);
     }
 
+    SECTION("const std::vector")
+    {
+        auto vec = std::vector<int>({ 1, 2, 3, 4, 5 });
+        variant var = std::cref(vec);
+        auto view = var.create_sequential_view();
+
+        view.clear();
+        CHECK(view.get_size() == 5);
+    }
+
     SECTION("invalid")
     {
         variant var = 1;
@@ -576,6 +622,214 @@ TEST_CASE("variant_sequential_view::clear()", "[variant_sequential_view]")
         CHECK(view.get_size() == 0);
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_sequential_view::set_value()", "[variant_sequential_view]")
+{
+    SECTION("std::vector")
+    {
+        variant var = std::vector<int>({ 1, 2, 3, 4, 5});
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.set_value(0, 42) == true);
+        CHECK(view.set_value(1, 42) == true);
+        CHECK(view.set_value(2, 42) == true);
+        CHECK(view.set_value(3, 42) == true);
+        CHECK(view.set_value(4, 42) == true);
+
+        CHECK(view.get_value(0).to_int() == 42);
+        CHECK(view.get_value(1).to_int() == 42);
+        CHECK(view.get_value(2).to_int() == 42);
+        CHECK(view.get_value(3).to_int() == 42);
+        CHECK(view.get_value(4).to_int() == 42);
+    }
+
+    SECTION("std::vector<bool>")
+    {
+        variant var = std::vector<bool>( {true, false, false, true, true} );
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.set_value(0, false) == true);
+        CHECK(view.set_value(1, false) == true);
+        CHECK(view.set_value(2, false) == true);
+        CHECK(view.set_value(3, false) == true);
+        CHECK(view.set_value(4, false) == true);
+
+        CHECK(view.get_value(0).to_bool() == false);
+        CHECK(view.get_value(1).to_bool() == false);
+        CHECK(view.get_value(2).to_bool() == false);
+        CHECK(view.get_value(3).to_bool() == false);
+        CHECK(view.get_value(4).to_bool() == false);
+    }
+
+    SECTION("std::list")
+    {
+        variant var = std::list<int>({ 1, 2, 3, 4, 5} );
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.set_value(0, 42) == true);
+        CHECK(view.set_value(1, 42) == true);
+        CHECK(view.set_value(2, 42) == true);
+        CHECK(view.set_value(3, 42) == true);
+        CHECK(view.set_value(4, 42) == true);
+
+        CHECK(view.get_value(0).to_int() == 42);
+        CHECK(view.get_value(1).to_int() == 42);
+        CHECK(view.get_value(2).to_int() == 42);
+        CHECK(view.get_value(3).to_int() == 42);
+        CHECK(view.get_value(4).to_int() == 42);
+    }
+
+    SECTION("std::array")
+    {
+        variant var = std::array<int, 5>{ {1, 2, 3, 4, 5} };
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.set_value(0, 42) == true);
+        CHECK(view.set_value(1, 42) == true);
+        CHECK(view.set_value(2, 42) == true);
+        CHECK(view.set_value(3, 42) == true);
+        CHECK(view.set_value(4, 42) == true);
+
+        CHECK(view.get_value(0).to_int() == 42);
+        CHECK(view.get_value(1).to_int() == 42);
+        CHECK(view.get_value(2).to_int() == 42);
+        CHECK(view.get_value(3).to_int() == 42);
+        CHECK(view.get_value(4).to_int() == 42);
+    }
+
+    SECTION("raw array")
+    {
+        int obj[2][5] = { { 1, 2, 3, 4, 5}, { 6, 7, 8, 9, 10 } };
+        int sub_array[5] = { 42, 42, 42, 42, 42};
+
+        variant var = &obj;
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 2);
+
+        CHECK(view.set_value(1, sub_array) == true);
+
+        auto sub_view_1 = view.get_value(0).create_sequential_view();
+        auto sub_view_2 = view.get_value(1).create_sequential_view();
+        CHECK(sub_view_1.get_value(0).to_int() == 1);
+        CHECK(sub_view_2.get_value(0).to_int() == 42);
+    }
+
+    SECTION("const std::vector")
+    {
+        auto vec = std::vector<int>({ 1, 2, 3, 4, 5 });
+        variant var = std::cref(vec);
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.set_value(0, 42)      == false);
+        CHECK(view.get_value(0).to_int() == 1);
+    }
+
+    SECTION("invalid")
+    {
+        variant var = 1;
+        auto view = var.create_sequential_view();
+        CHECK(view.set_value(0, 42) == false);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant_sequential_view::get_value()", "[variant_sequential_view]")
+{
+    SECTION("std::vector")
+    {
+        variant var = std::vector<int>({ 1, 2, 3, 4, 5});
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.get_value(0).to_int() == 1);
+        CHECK(view.get_value(1).to_int() == 2);
+        CHECK(view.get_value(2).to_int() == 3);
+        CHECK(view.get_value(3).to_int() == 4);
+        CHECK(view.get_value(4).to_int() == 5);
+    }
+
+    SECTION("std::vector<bool>")
+    {
+        variant var = std::vector<bool>( {true, false, false, true, true} );
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.get_value(0).to_bool() == true);
+        CHECK(view.get_value(1).to_bool() == false);
+        CHECK(view.get_value(2).to_bool() == false);
+        CHECK(view.get_value(3).to_bool() == true);
+        CHECK(view.get_value(4).to_bool() == true);
+    }
+
+    SECTION("std::list")
+    {
+        variant var = std::list<int>({ 1, 2, 3, 4, 5} );
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.get_value(0).to_int() == 1);
+        CHECK(view.get_value(1).to_int() == 2);
+        CHECK(view.get_value(2).to_int() == 3);
+        CHECK(view.get_value(3).to_int() == 4);
+        CHECK(view.get_value(4).to_int() == 5);
+    }
+
+    SECTION("std::array")
+    {
+        variant var = std::array<int, 5>{ {1, 2, 3, 4, 5} };
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 5);
+
+        CHECK(view.get_value(0).to_int() == 1);
+        CHECK(view.get_value(1).to_int() == 2);
+        CHECK(view.get_value(2).to_int() == 3);
+        CHECK(view.get_value(3).to_int() == 4);
+        CHECK(view.get_value(4).to_int() == 5);
+    }
+
+    SECTION("raw array")
+    {
+        int obj[2][5] = { { 1, 2, 3, 4, 5}, { 6, 7, 8, 9, 10 } };
+        variant var = &obj;
+        auto view = var.create_sequential_view();
+
+        REQUIRE(view.get_size() == 2);
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+        CHECK((view.get_value(0).is_type<int(*)[5]>() == true));
+#else
+        CHECK((view.get_value(0).is_type<std::reference_wrapper<int[5]>>() == true));
+#endif
+        auto sub_view = view.get_value(1).create_sequential_view();
+        CHECK(sub_view.get_value(0).is_type<std::reference_wrapper<int>>() == true);
+        CHECK(sub_view.get_value(0).to_int() == 6);
+    }
+
+    SECTION("invalid")
+    {
+        variant var = 1;
+        auto view = var.create_sequential_view();
+        CHECK(view.get_value(0).is_valid() == false);
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

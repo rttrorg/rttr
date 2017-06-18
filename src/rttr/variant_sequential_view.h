@@ -246,6 +246,26 @@ class RTTR_API variant_sequential_view
         void clear();
 
         /*!
+         * \brief Set the content of the the argument \p arg at the specified index \p index
+         *        into the underlying sequential container.
+         *
+         * \return `true` if the value could be set, otherwise `false`.
+         */
+        bool set_value(std::size_t index, argument arg);
+
+        /*!
+         * \brief Returns the current value at index \p index.
+         *
+         * \return The data at the specified index \p index, wrapped inside a `std::reference_wrapper<T>`.
+         *
+         * \remark Make sure the index is in a valid range, otherwise undefined behaviour may occurr.
+         *         For MSVC 2013 and raw arrays, the address of the data is returned (because of a bug).
+         *
+         * \see get_size()
+         */
+        variant get_value(std::size_t index);
+
+        /*!
          * \brief Returns an iterator to the first element of the container.
          *
          * \see end()

@@ -905,6 +905,7 @@ TEST_CASE("variant_array_view::misc", "[variant_array_view]")
         REQUIRE(var_arr.get_size() == 3);
 
         var_arr.set_value(0, false);
+        
         CHECK(var_arr.get_value(0).get_value<bool>() == false);
         CHECK(var_arr.get_value(1).get_value<bool>() == false);
         CHECK(var_arr.get_value(2).get_value<bool>() == false);
