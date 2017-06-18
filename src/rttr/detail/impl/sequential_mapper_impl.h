@@ -788,7 +788,15 @@ struct sequential_container_mapper<std::vector<bool>>
 
     static itr_t erase(container_t& container, const const_itr_t& itr)
     {
+// to prevent following gcc bug: 'no matching function for call to `std::vector<bool>::erase(const const_itr_t&) return container.erase(itr);`
+// vec.erase(vec.cbegin()); fails for unkown reason with this old version
+#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900)
+        auto itr_non_const = container.begin();
+        std::advance (itr_non_const, std::distance<const_itr_t>(itr_non_const, itr));
+        return container.erase(itr_non_const);
+#else
         return container.erase(itr);
+#endif
     }
 
     static itr_t insert(container_t& container, const value_t& value, const itr_t& itr_pos)
