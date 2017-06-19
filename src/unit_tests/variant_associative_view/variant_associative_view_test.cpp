@@ -94,6 +94,9 @@ TEST_CASE("variant_associative_view::other ctor", "[variant_associative_view]")
 {
     variant var = std::set<int>({1, 2, 3});
     variant_associative_view a(var.create_associative_view());
+    CHECK(a.is_valid() == true);
+    CHECK(a.is_empty() == false);
+    CHECK(a.get_size() == 3);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +160,7 @@ TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_ass
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::is_associative_container", "[variant_associative_view]")
+TEST_CASE("variant::is_associative_container", "[variant_associative_view]")
 {
     SECTION("invalid")
     {

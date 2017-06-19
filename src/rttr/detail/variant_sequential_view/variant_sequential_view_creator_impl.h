@@ -25,63 +25,37 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
-#define RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
+#ifndef RTTR_VARIANT_SEQUENTIAL_CREATOR_IMPL_H_
+#define RTTR_VARIANT_SEQUENTIAL_CREATOR_IMPL_H_
 
-#include "rttr/variant.h"
-#include "rttr/argument.h"
-#include "rttr/instance.h"
-#include "rttr/detail/array/array_wrapper_base.h"
+#include "rttr/detail/variant_sequential_view/variant_sequential_view_private.h"
 
 namespace rttr
 {
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array_view::variant_array_view() RTTR_NOEXCEPT
-:    m_array_wrapper(detail::make_unique<detail::array_wrapper_base>())
-{
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array_view::variant_array_view(const variant_array_view& other) RTTR_NOEXCEPT
-:   m_array_wrapper(std::move(other.m_array_wrapper->clone()))
+namespace detail
 {
 
-}
+/////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array_view::variant_array_view(variant_array_view&& other) RTTR_NOEXCEPT
-:   m_array_wrapper(std::move(other.m_array_wrapper))
+template<typename T, typename Tp>
+enable_if_t<can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+create_variant_sequential_view(T&& value)
 {
-
+    return variant_sequential_view_private(wrapped_raw_addressof(value));
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE variant_array_view::~variant_array_view() RTTR_NOEXCEPT
+template<typename T, typename Tp>
+enable_if_t<!can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+create_variant_sequential_view(T&& value)
 {
+    return variant_sequential_view_private();
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE void variant_array_view::swap(variant_array_view& other) RTTR_NOEXCEPT
-{
-    std::swap(m_array_wrapper, other.m_array_wrapper);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RTTR_INLINE variant_array_view& variant_array_view::operator=(const variant_array_view& other) RTTR_NOEXCEPT
-{
-    variant_array_view(other).swap(*this);
-    return *this;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
+} // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ARRAY_VIEW_IMPL_H_
+#endif // RTTR_VARIANT_SEQUENTIAL_CREATOR_IMPL_H_

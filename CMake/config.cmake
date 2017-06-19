@@ -103,7 +103,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libstdc++ -static -lstdc++")
 endif()
 
-
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  message(STATUS "added flag /bigobj to MSVC compiler")
+endif()
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations

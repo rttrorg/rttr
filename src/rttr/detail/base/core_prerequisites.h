@@ -199,6 +199,20 @@ namespace rttr
 #define RTTR_STATIC_CONSTEXPR static RTTR_CONSTEXPR_OR_CONST
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// deprecated macro
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC || RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   define RTTR_DEPRECATED __attribute__ ((deprecated))
+#   define RTTR_DEPRECATED_WITH_MSG(msg) __attribute__ ((deprecated(msg)))
+#elif RTTR_COMPILER == RTTR_COMPILER_MSVC
+#   define RTTR_DEPRECATED __declspec(deprecated)
+#   define RTTR_DEPRECATED_WITH_MSG(msg) __declspec(deprecated(msg))
+#else
+#   pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+#   define RTTR_DEPRECATED(func) func
+#   define RTTR_DEPRECATED_MSG(func) func
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////////////
 // Disable some MSVC compile warnings
 /////////////////////////////////////////////////////////////////////////////////////////
 #if  RTTR_COMPILER == RTTR_COMPILER_MSVC
@@ -231,18 +245,26 @@ namespace rttr
 // #includes of Singleton
 #   pragma warning( disable: 4661)
 
-// disable: deprecation warnings when using CRT calls in VC8
-// These show up on all C runtime lib code in VC8, disable since they clutter
-// the warnings with things we may not be able to do anything about (e.g.
-// generated code from nvparse etc). I doubt very much that these calls
-// will ever be actually removed from VC anyway, it would break too much code.
-#   pragma warning( disable: 4996)
-
 // disable: "unreferenced formal parameter"
 // Many versions of VC have bugs which generate this error in cases where they shouldn't
 #   pragma warning (disable : 4100)
 #endif
 
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC
+#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   _Pragma ("GCC diagnostic push") \
+                                                _Pragma ("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RTTR_END_DISABLE_DEPRECATED_WARNING     _Pragma ("GCC diagnostic pop")
+#elif RTTR_COMPILER == RTTR_COMPILER_CLANG
+#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   _Pragma ("clang diagnostic push") \
+                                                _Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RTTR_END_DISABLE_DEPRECATED_WARNING     _Pragma ("clang diagnostic pop")
+#elif RTTR_COMPILER == RTTR_COMPILER_MSVC
+#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   __pragma( warning( push )) \
+                                                __pragma( warning( disable: 4996))
+#define RTTR_END_DISABLE_DEPRECATED_WARNING     __pragma( warning( pop ))
+#else
+#   pragma message("WARNING: ukown compiler, don't know how to disable deprecated warnings")
+#endif
 } // end namespace rttr
 
 #endif // RTTR_CORE_PREREQUISITES_H_

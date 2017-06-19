@@ -48,6 +48,7 @@ set(DOXYGEN_PREDEFINED        "DOXYGEN \\
                                RTTR_CXX14_CONSTEXPR=constexpr \\
                                RTTR_STATIC_CONSTEXPR=static constexpr \\
                                RTTR_NOEXCEPT_OR_NOTHROW=throw() \\
+                               RTTR_DEPRECATED_WITH_MSG= \\
                                ")
 set(DOXYGEN_EXCLUDE_SYMBOLS   "impl* \\
                                impl::* \\

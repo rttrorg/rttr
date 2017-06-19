@@ -36,6 +36,8 @@
 using namespace rttr;
 using namespace std;
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("variant_array_view::ctor", "[variant_array_view]")
@@ -903,6 +905,7 @@ TEST_CASE("variant_array_view::misc", "[variant_array_view]")
         REQUIRE(var_arr.get_size() == 3);
 
         var_arr.set_value(0, false);
+        
         CHECK(var_arr.get_value(0).get_value<bool>() == false);
         CHECK(var_arr.get_value(1).get_value<bool>() == false);
         CHECK(var_arr.get_value(2).get_value<bool>() == false);
@@ -933,5 +936,7 @@ TEST_CASE("variant_array_view::misc", "[variant_array_view]")
         REQUIRE(ret.get_value<int>()    == 23);
     }
 }
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////

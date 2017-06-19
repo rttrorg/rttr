@@ -250,4 +250,4 @@ class RTTR_LOCAL variant_associative_view_private
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_VARIANT_ASSOCIATIVE_VIEW_P_H_
+#endif // RTTR_VARIANT_ASSOCIATIVE_VIEW_PRIVATE_H_

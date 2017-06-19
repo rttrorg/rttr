@@ -30,6 +30,7 @@
 #include "rttr/detail/variant/variant_data_policy.h"
 #include "rttr/variant_array_view.h"
 #include "rttr/variant_associative_view.h"
+#include "rttr/variant_sequential_view.h"
 #include "rttr/argument.h"
 
 #include <algorithm>
@@ -172,6 +173,13 @@ bool variant::is_associative_container() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool variant::is_sequential_container() const
+{
+    return m_policy(detail::variant_policy_operation::IS_SEQUENTIAL_CONTAINER, m_data, detail::argument_wrapper());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type variant::get_type() const
 {
     type src_type = detail::get_invalid_type();
@@ -199,6 +207,8 @@ variant variant::create_wrapped_value(const type& wrapped_type) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
 variant_array_view variant::create_array_view() const
 {
     variant_array_view result;
@@ -206,12 +216,23 @@ variant_array_view variant::create_array_view() const
     return result;
 }
 
+RTTR_END_DISABLE_DEPRECATED_WARNING
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 variant_associative_view variant::create_associative_view() const
 {
     variant_associative_view result;
     m_policy(detail::variant_policy_operation::CREATE_ASSOCIATIV_VIEW, m_data, result.m_view);
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+variant_sequential_view variant::create_sequential_view() const
+{
+    variant_sequential_view result;
+    m_policy(detail::variant_policy_operation::CREATE_SEQUENTIAL_VIEW, m_data, result.m_view);
     return result;
 }
 

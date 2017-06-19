@@ -50,6 +50,9 @@ namespace detail
 
 /*!
  * The \ref variant_array_view describes a class that refers to an array inside a \ref variant.
+ *
+ * \deprecated This class is deprecated, please use instead: \ref variant_sequential_view
+ *
  * With an instance of that class you can set/get values of an array,
  * without having access to the type declaration of the type or it's elements.
  *
@@ -134,8 +137,15 @@ namespace detail
  *
  * \see variant
  */
+#ifndef DOXYGEN
+class RTTR_API RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant_sequential_view") variant_array_view
+#else
 class RTTR_API variant_array_view
+#endif
 {
+
+RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+
     public:
         /*!
          * \brief Constructs an invalid variant_array_view object.
@@ -465,10 +475,10 @@ class RTTR_API variant_array_view
         friend class argument;
 
         std::unique_ptr<detail::array_wrapper_base> m_array_wrapper;
+
+RTTR_END_DISABLE_DEPRECATED_WARNING
 };
 
 } // end namespace rttr
-
-#include "rttr/detail/variant_array_view/variant_array_view_impl.h"
 
 #endif // RTTR_VARIANT_ARRAY_H_

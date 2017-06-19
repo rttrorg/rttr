@@ -89,4 +89,5 @@ set(SOURCE_FILES main.cpp
                  variant/variant_conv_to_enum.cpp
                  variant_array_view/variant_array_view_test.cpp
                  variant_associative_view/variant_associative_view_test.cpp
+                 variant_sequential_view/variant_sequential_view_test.cpp
                  )

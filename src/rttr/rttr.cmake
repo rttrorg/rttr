@@ -42,6 +42,7 @@ set(HEADER_FILES access_levels.h
                  parameter_info.h
                  registration
                  registration.h
+                 sequential_mapper.h
                  string_view.h
                  rttr_cast.h
                  rttr_enable.h
@@ -50,6 +51,7 @@ set(HEADER_FILES access_levels.h
                  variant.h
                  variant_array_view.h
                  variant_associative_view.h
+                 variant_sequential_view.h
                  wrapper_mapper.h
                  detail/array/array_accessor.h
                  detail/array/array_accessor_impl.h
@@ -89,6 +91,7 @@ set(HEADER_FILES access_levels.h
                  detail/impl/enum_flags_impl.h
                  detail/impl/instance_impl.h
                  detail/impl/rttr_cast_impl.h
+                 detail/impl/sequential_mapper_impl.h
                  detail/impl/string_view_impl.h
                  detail/impl/wrapper_mapper_impl.h
                  detail/metadata/metadata.h
@@ -104,8 +107,9 @@ set(HEADER_FILES access_levels.h
                  detail/misc/flat_map.h
                  detail/misc/flat_multimap.h
                  detail/misc/function_traits.h
-				 detail/misc/iterator_wrapper.h
+                 detail/misc/iterator_wrapper.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/sequential_container_type_traits.h
                  detail/misc/std_type_traits.h
                  detail/misc/template_type_trait.h
                  detail/misc/utility.h
@@ -146,13 +150,15 @@ set(HEADER_FILES access_levels.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
                  detail/variant/variant_impl.h
-                 detail/variant_array_view/variant_array_view_impl.h
                  detail/variant_array_view/variant_array_view_creator.h
                  detail/variant_array_view/variant_array_view_creator_impl.h
                  detail/variant_array_view/variant_array_view_traits.h
                  detail/variant_associative_view/variant_associative_view_private.h
                  detail/variant_associative_view/variant_associative_view_creator.h
                  detail/variant_associative_view/variant_associative_view_creator_impl.h
+                 detail/variant_sequential_view/variant_sequential_view_private.h
+                 detail/variant_sequential_view/variant_sequential_view_creator_impl.h
+                 detail/variant_sequential_view/variant_sequential_view_creator.h
                 )
 
 set(SOURCE_FILES constructor.cpp
@@ -167,6 +173,7 @@ set(SOURCE_FILES constructor.cpp
                  variant.cpp
                  variant_array_view.cpp
                  variant_associative_view.cpp
+                 variant_sequential_view.cpp
                  detail/comparison/compare_equal.cpp
                  detail/comparison/compare_less.cpp
                  detail/misc/standard_types.cpp

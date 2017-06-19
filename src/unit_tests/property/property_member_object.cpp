@@ -258,9 +258,9 @@ TEST_CASE("property - class object - as_reference_wrapper", "[property]")
     variant var = prop.get_value(obj);
     CHECK(var.get_type().is_wrapper() == true);
     CHECK(var.get_type().get_wrapped_type().is_array() == true);
-    auto array_view = var.create_array_view();
-    CHECK(array_view.get_size() == 1000);
-    CHECK(array_view.set_value(20, 42) == true);
+    auto view = var.create_sequential_view();
+    CHECK(view.get_size() == 1000);
+    CHECK(view.set_value(20, 42) == true);
 
     std::vector<int> some_vec(1, 12);
     CHECK(prop.set_value(obj, std::ref(some_vec)) == true);
@@ -301,9 +301,9 @@ TEST_CASE("property - class object - read only - as_reference_wrapper", "[proper
     variant var = prop.get_value(obj);
     CHECK(var.get_type().is_wrapper() == true);
     CHECK(var.get_type().get_wrapped_type().is_array() == true);
-    auto array_view = var.create_array_view();
-    CHECK(array_view.get_size() == 50);
-    CHECK(array_view.set_value(20, 42) == false);
+    auto view = var.create_sequential_view();
+    CHECK(view.get_size() == 50);
+    CHECK(view.set_value(20, 42) == false);
 
     std::vector<int> some_vec(1, 12);
     CHECK(prop.set_value(obj, std::cref(some_vec)) == false);
