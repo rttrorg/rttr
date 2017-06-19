@@ -325,7 +325,7 @@ TEST_CASE("variant_sequential_view::get_rank()", "[variant_sequential_view]")
     {
         variant var = 1;
         auto view = var.create_sequential_view();
-        CHECK(view.is_dynamic() == false);
+        CHECK(view.get_rank() == 0);
     }
 }
 
