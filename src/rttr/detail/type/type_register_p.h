@@ -169,12 +169,17 @@ private:
     template<typename T>
     static void update_class_list(const type& t, T item_ptr);
 
-    static std::string derive_name(const type_data& wrapper_type,
-                                   const type_data& array_raw_type,
-                                   string_view name);
+    static std::string derive_name(const type_data& type);
     //! Returns true, when the name was already registered
     static bool register_name(uint16_t& id, type_data& info);
     static void register_base_class_info(type_data& info);
+    /*!
+     * \brief This will update the name of the template parameters of a template instance, whith all custom names
+     * e.g.: `std::reference_wrapper<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > >` =>
+     *       `std::reference_wrapper<class std::string>`
+     *
+     */
+    static void update_template_instance_name(type_data& info);
 
 };
 

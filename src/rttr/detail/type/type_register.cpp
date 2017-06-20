@@ -294,7 +294,7 @@ bool type_register_private::register_name(uint16_t& id, type_data& info)
     ++m_type_id_counter;
 
     orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
-    info.name = derive_name(*info.wrapped_type, *info.array_raw_type, info.type_name);
+    info.name = derive_name(info);
     get_custom_name_to_id().insert(std::make_pair(info.name, type(&info)));
 
     id = m_type_id_counter;
@@ -362,6 +362,8 @@ type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
 
     // has to be done as last step
     register_base_class_info(info);
+
+    update_template_instance_name(info);
 
     return type(type_data_container[id]);
 }
@@ -452,17 +454,56 @@ static std::string derive_name_impl(const std::string& src_name, const std::stri
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_register_private::derive_name(const type_data& wrapper_type, const type_data& array_raw_type, string_view name)
+void type_register_private::update_template_instance_name(type_data& info)
 {
-    if (!array_raw_type.is_valid())
-        return normalize_orig_name(name); // this type is already the raw_type, so we have to forward just the current name
+    auto& nested_types = info.get_class_data().m_nested_types;
+    if (nested_types.empty()) // no template type
+        return;
 
-    std::string src_name_orig = normalize_orig_name(name);
+    const auto has_custom_name = (info.name != info.type_name);
+    if (has_custom_name)
+        return;
 
-    const auto& custom_name = array_raw_type.name;
-    std::string raw_name_orig = normalize_orig_name(array_raw_type.type_name);
+    const auto start_pos = info.name.find("<");
+    const auto end_pos = info.name.rfind(">");
 
-    return derive_name_impl(src_name_orig, raw_name_orig, custom_name);
+    if (start_pos == std::string::npos || end_pos == std::string::npos)
+        return;
+
+    auto new_name = info.name.substr(0, start_pos);
+    const auto end_part = info.name.substr(end_pos);
+    auto index = nested_types.size();
+    new_name += std::string("<");
+    for (const auto& item : nested_types)
+    {
+        --index;
+        const auto& custom_name = item.m_type_data->name;
+        new_name += custom_name;
+        if (index > 0)
+            new_name += ",";
+    }
+
+    new_name += end_part;
+    info.name = new_name;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string type_register_private::derive_name(const type_data& info)
+{
+    if (info.array_raw_type->is_valid())
+    {
+        std::string src_name_orig = normalize_orig_name(info.type_name);
+
+        const auto& custom_name = info.array_raw_type->name;
+        std::string raw_name_orig = normalize_orig_name(info.array_raw_type->type_name);
+
+        return derive_name_impl(src_name_orig, raw_name_orig, custom_name);
+    }
+    else
+    {
+        return normalize_orig_name(info.type_name);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
