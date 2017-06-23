@@ -203,10 +203,10 @@ struct raw_type_info<T, false>
 
 /////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, bool = std::is_same<T, typename raw_array_type<T>::type >::value>
+template<typename T, bool = std::is_array<T>::value>
 struct array_raw_type
 {
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<raw_array_type_t<T>>(); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ struct array_raw_type
 template<typename T>
 struct array_raw_type<T, false>
 {
-    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_array_type<T>::type>(); }
+    static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
