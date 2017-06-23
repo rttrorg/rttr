@@ -294,7 +294,7 @@ bool type_register_private::register_name(uint16_t& id, type_data& info)
     ++m_type_id_counter;
 
     orig_name_to_id.insert(std::make_pair(info.type_name, type(&info)));
-    info.name = derive_name(info);
+    info.name = derive_name(type(&info));
     get_custom_name_to_id().insert(std::make_pair(info.name, type(&info)));
 
     id = m_type_id_counter;
@@ -356,14 +356,13 @@ type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
         return type(type_data_container[id]);
 
     info.raw_type_data  = !info.raw_type_data->is_valid() ? &info : info.raw_type_data;
-    info.array_raw_type = !info.array_raw_type->is_valid() ? &info : info.array_raw_type;
 
     type_data_container.push_back(&info);
 
     // has to be done as last step
     register_base_class_info(info);
 
-    update_template_instance_name(info);
+    update_custom_name(derive_template_instance_name(info), type(&info));
 
     return type(type_data_container[id]);
 }
@@ -454,21 +453,21 @@ static std::string derive_name_impl(const std::string& src_name, const std::stri
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::update_template_instance_name(type_data& info)
+std::string type_register_private::derive_template_instance_name(type_data& info)
 {
     auto& nested_types = info.get_class_data().m_nested_types;
     if (nested_types.empty()) // no template type
-        return;
+        return info.name;
 
     const auto has_custom_name = (info.name != info.type_name);
     if (has_custom_name)
-        return;
+        return info.name;
 
     const auto start_pos = info.name.find("<");
     const auto end_pos = info.name.rfind(">");
 
     if (start_pos == std::string::npos || end_pos == std::string::npos)
-        return;
+        return info.name;
 
     auto new_name = info.name.substr(0, start_pos);
     const auto end_part = info.name.substr(end_pos);
@@ -484,25 +483,49 @@ void type_register_private::update_template_instance_name(type_data& info)
     }
 
     new_name += end_part;
-    info.name = new_name;
+
+    return new_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::string type_register_private::derive_name(const type_data& info)
+void type_register_private::update_custom_name(std::string new_name, type& t)
 {
-    if (info.array_raw_type->is_valid())
+    auto& type_name = t.m_type_data->name;
+
+    if (new_name != type_name)
     {
-        std::string src_name_orig = normalize_orig_name(info.type_name);
+        auto& custom_name_to_id = get_custom_name_to_id();
+        custom_name_to_id.erase(type_name);
 
-        const auto& custom_name = info.array_raw_type->name;
-        std::string raw_name_orig = normalize_orig_name(info.array_raw_type->type_name);
+        type_name = std::move(new_name);
+        custom_name_to_id.insert(std::make_pair(type_name, t));
+    }
+}
 
-        return derive_name_impl(src_name_orig, raw_name_orig, custom_name);
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string type_register_private::derive_name(const type& t)
+{
+    if (t.is_array() && t.get_raw_array_type().is_valid())
+    {
+        auto src_name_orig  = normalize_orig_name(t.get_full_name());
+        auto custom_name    = t.get_raw_array_type().get_name();
+        auto raw_name_orig  = normalize_orig_name( t.get_raw_array_type().get_full_name());
+
+        return derive_name_impl(src_name_orig, raw_name_orig, custom_name.to_string());
+    }
+    else if (t != t.get_raw_type())
+    {
+        auto src_name_orig  = normalize_orig_name(t.get_full_name());
+        auto custom_name    = t.get_raw_type().get_name();
+        auto raw_name_orig  = normalize_orig_name( t.get_raw_type().get_full_name());
+
+        return derive_name_impl(src_name_orig, raw_name_orig, custom_name.to_string());
     }
     else
     {
-        return normalize_orig_name(info.type_name);
+        return normalize_orig_name(t.get_full_name());
     }
 }
 
@@ -513,29 +536,25 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
     if (!t.is_valid())
         return;
 
-    auto& type_data = *t.m_type_data;
+    update_custom_name(custom_name.to_string(), t);
 
-    const auto& orig_name = type_data.name;
-    auto& custom_name_to_id = get_custom_name_to_id();
-    custom_name_to_id.erase(orig_name);
-
-    type_data.name = custom_name.to_string();
-
-    custom_name_to_id.insert(std::make_pair(type_data.name, t));
-    std::string raw_name = normalize_orig_name(t.m_type_data->type_name);
-    const auto& t_name = type_data.name;
-
-    auto tmp_type_list = custom_name_to_id.value_data();
+    // we have to make a copy of the list, because we also perform an insertion with 'update_custom_name'
+    auto tmp_type_list = get_custom_name_to_id().value_data();
     for (auto& tt : tmp_type_list)
     {
-        if (tt.get_raw_array_type() == t && tt != t)
-        {
-            const auto& orig_name_derived = tt.m_type_data->name;
-            custom_name_to_id.erase(orig_name_derived);
+        if (tt == t || tt.get_raw_type() == tt)
+            continue;
 
-            tt.m_type_data->name = derive_name_impl(orig_name_derived, raw_name, t_name);
-            custom_name_to_id.insert(std::make_pair(tt.m_type_data->name, tt));
-        }
+        auto new_name = derive_name(tt);
+        update_custom_name(new_name, tt);
+    }
+
+    for (auto& tt : tmp_type_list)
+    {
+        if (tt == t || !tt.is_template_instantiation())
+            continue;
+
+        update_custom_name(derive_template_instance_name(*tt.m_type_data), tt);
     }
 }
 
