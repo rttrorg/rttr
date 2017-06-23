@@ -489,7 +489,7 @@ std::string type_register_private::derive_template_instance_name(type_data& info
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::update_custom_name(std::string new_name, type& t)
+void type_register_private::update_custom_name(std::string new_name, const type& t)
 {
     auto& type_name = t.m_type_data->name;
 

@@ -184,7 +184,7 @@ private:
     /*!
      * Updates the custom name for the given type \p t with \p new_name
      */
-    static void update_custom_name(std::string new_name, type& t);
+    static void update_custom_name(std::string new_name, const type& t);
 
 };
 
