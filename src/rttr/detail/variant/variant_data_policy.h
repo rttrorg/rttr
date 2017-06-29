@@ -339,7 +339,8 @@ struct variant_data_base_policy
                 const variant& rhs  = std::get<1>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
-                const bool is_lhs_arithmetic = std::is_arithmetic<T>::value;
+                const auto is_lhs_arithmetic = std::is_arithmetic<T>::value;
+                RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 
                 if (lhs_type == rhs_type)
                 {
@@ -361,6 +362,7 @@ struct variant_data_base_policy
                     }
                 }
 
+                RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
                 return false;
             }
             case variant_policy_operation::COMPARE_LESS:
@@ -708,7 +710,6 @@ struct RTTR_API variant_data_policy_empty
             case variant_policy_operation::COMPARE_EQUAL:
             {
                 const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
-                const variant& lhs  = std::get<0>(param);
                 const variant& rhs  = std::get<1>(param);
                 return !rhs.is_valid();
             }
@@ -824,7 +825,6 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::COMPARE_EQUAL:
             {
                 const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
-                const variant& lhs  = std::get<0>(param);
                 const variant& rhs  = std::get<1>(param);
                 return (rhs.is_type<void>());
             }

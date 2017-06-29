@@ -66,7 +66,7 @@ struct invoke_defaults_helper
 {
 private:
     template<std::size_t... Def_Idx, typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE variant
+    static RTTR_INLINE variant
     invoke_with_defaults_helper(const F& func_ptr, const instance& obj, index_sequence<Def_Idx...>,
                                 const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
@@ -76,7 +76,7 @@ private:
 
 public:
     template<typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE
+    static RTTR_INLINE
     enable_if_t< are_args_and_defaults_in_valid_range<F, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const F& func_ptr, const instance& obj, const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
@@ -91,7 +91,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE
+    static RTTR_INLINE
     enable_if_t< !are_args_and_defaults_in_valid_range<F, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const F& func_ptr, const instance& obj, const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
@@ -110,7 +110,7 @@ struct invoke_defaults_helper<Invoker_Class, type_list<Ctor_Args...>>
 {
 private:
     template<std::size_t... Def_Idx, typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE variant
+    static RTTR_INLINE variant
     invoke_with_defaults_extract(index_sequence<Def_Idx...>, const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
         return Invoker_Class::invoke(args..., argument(std::get<Def_Idx>(def_args))...);
@@ -118,7 +118,7 @@ private:
 
 public:
     template<typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE
+    static RTTR_INLINE
     enable_if_t< are_args_and_defaults_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
@@ -133,7 +133,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename... Def_Types, typename... TArgs>
-    static RTTR_FORCE_INLINE
+    static RTTR_INLINE
     enable_if_t< !are_args_and_defaults_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>, type_list<Def_Types...>>::value, variant>
     invoke(const std::tuple<Def_Types...>& def_args, const TArgs&...args)
     {
@@ -154,7 +154,7 @@ template<typename Invoker_Class, std::size_t... Arg_Idx>
 struct invoke_variadic_helper<Invoker_Class, index_sequence<Arg_Idx...>>
 {
     template<typename... Args>
-    static RTTR_FORCE_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
+    static RTTR_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
     {
         static RTTR_CONSTEXPR_OR_CONST std::size_t Arg_Count = sizeof...(Arg_Idx);
         if (arg_list.size() == Arg_Count)
@@ -168,7 +168,7 @@ template<typename Invoker_Class>
 struct invoke_variadic_helper<Invoker_Class, index_sequence<>>
 {
     template<typename...Args>
-    static RTTR_FORCE_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
+    static RTTR_INLINE variant invoke(std::vector<argument>& arg_list, Args&&...args)
     {
         return Invoker_Class::invoke(args...);
     }

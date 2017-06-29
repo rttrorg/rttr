@@ -30,7 +30,7 @@ extern void bench_variant_conversion();
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char** argv)
+int main(int /* argc */, char** /* argv */)
 {
     bench_variant_create();
     bench_variant_conversion();

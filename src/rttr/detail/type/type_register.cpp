@@ -795,13 +795,11 @@ RTTR_INLINE T* type_register_private::get_item_by_type(const type& t, const std:
     using vec_value_type = data_container<T>;
     const auto id = t.get_id();
     auto itr = std::lower_bound(vec.cbegin(), vec.cend(), id, typename vec_value_type::order_by_id());
-    for (; itr != vec.cend(); ++itr)
+    if (itr != vec.cend())
     {
         auto& item = *itr;
         if (item.m_id == id)
             return item.m_data.get();
-        else
-            break;
     }
 
     return nullptr;

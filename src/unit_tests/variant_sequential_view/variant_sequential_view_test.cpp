@@ -892,11 +892,6 @@ TEST_CASE("variant_sequential_view::begin/end", "[variant_sequential_view]")
         auto view = var.create_sequential_view();
 
         CHECK(view.begin() == view.end());
-
-        for (auto& item : view)
-        {
-            CHECK(false);
-        }
     }
 }
 

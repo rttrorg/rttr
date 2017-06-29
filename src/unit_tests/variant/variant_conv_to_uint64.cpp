@@ -106,7 +106,7 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
         variant var = std::string("17446744073709551615");
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
-        auto e = std::numeric_limits<uint64_t>().max();
+
         CHECK(var.to_uint64(&ok) == 17446744073709551615UL);
         CHECK(ok == true);
 
@@ -122,9 +122,6 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
         CHECK(ok == false);
         CHECK(var.convert(type::get<uint64_t>()) == false);
     }
-
-    auto e=std::numeric_limits<int8_t>().max();
-    auto e2= std::numeric_limits<uint8_t>().max();
 
     SECTION("too big")
     {

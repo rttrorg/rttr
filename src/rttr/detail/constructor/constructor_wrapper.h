@@ -106,7 +106,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         template<typename... TArgs>
-        static RTTR_FORCE_INLINE
+        static RTTR_INLINE
         enable_if_t< are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
         invoke_impl(const TArgs&...args)
         {
@@ -114,7 +114,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         }
 
         template<typename... TArgs>
-        static RTTR_FORCE_INLINE
+        static RTTR_INLINE
         enable_if_t< !are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
         invoke_impl(const TArgs&...args)
         {
@@ -283,7 +283,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         variant get_metadata(const variant& key)            const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
         template<typename... TArgs>
-        static RTTR_FORCE_INLINE
+        static RTTR_INLINE
         enable_if_t< are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
         invoke_impl(const TArgs&...args)
         {
@@ -291,7 +291,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         }
 
         template<typename... TArgs>
-        static RTTR_FORCE_INLINE
+        static RTTR_INLINE
         enable_if_t< !are_args_in_valid_range<type_list<Ctor_Args...>, type_list<TArgs...>>::value, variant>
         invoke_impl(const TArgs&...args)
         {

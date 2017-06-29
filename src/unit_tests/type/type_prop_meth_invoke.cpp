@@ -78,7 +78,6 @@ TEST_CASE("Test property shortcuts to set/get property", "[property]")
     {
         // derived obj
         type_prop_invoke_test obj;
-        type_prop_invoke_test_base& base = obj;
 
         variant var = type::get(obj).get_property_value("p2", obj);
         REQUIRE(var.is_type<std::string>() == true);

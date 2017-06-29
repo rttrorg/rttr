@@ -106,7 +106,7 @@ TEST_CASE("variant::to_uint32() - from std::string", "[variant]")
         variant var = std::string("4147483640");
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
-        auto e = std::numeric_limits<uint32_t>().max();
+
         CHECK(var.to_uint32(&ok) == 4147483640);
         CHECK(ok == true);
 

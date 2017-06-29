@@ -51,7 +51,7 @@ endif()
 target_include_directories(bench_rttr_cast PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
 target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
 if(MSVC)
-    set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+    set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200")
 endif()
 
 set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d

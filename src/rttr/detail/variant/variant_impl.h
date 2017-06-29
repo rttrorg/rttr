@@ -194,7 +194,7 @@ RTTR_INLINE variant::try_pointer_conversion(T& to, const type& source_type, cons
 
     if (ptr)
     {
-        if ((ptr = type::apply_offset(ptr, source_type, target_type)))
+        if ((ptr = type::apply_offset(ptr, source_type, target_type)) != nullptr)
         {
             to = reinterpret_cast<T>(ptr);
             return true;
@@ -266,7 +266,7 @@ RTTR_INLINE bool variant::convert(T& value) const
              target_type.get_wrapped_type() == source_type)
     {
         variant var = create_wrapped_value(target_type);
-        if ((ok = var.is_valid()))
+        if ((ok = var.is_valid()) == true)
             value = var.get_value<T>();
     }
     else if (target_type == source_type)

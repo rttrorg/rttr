@@ -254,14 +254,28 @@ namespace rttr
 #define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   _Pragma ("GCC diagnostic push") \
                                                 _Pragma ("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
 #define RTTR_END_DISABLE_DEPRECATED_WARNING     _Pragma ("GCC diagnostic pop")
+
+#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+
 #elif RTTR_COMPILER == RTTR_COMPILER_CLANG
 #define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   _Pragma ("clang diagnostic push") \
                                                 _Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
 #define RTTR_END_DISABLE_DEPRECATED_WARNING     _Pragma ("clang diagnostic pop")
+
+#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+
 #elif RTTR_COMPILER == RTTR_COMPILER_MSVC
 #define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   __pragma( warning( push )) \
                                                 __pragma( warning( disable: 4996))
 #define RTTR_END_DISABLE_DEPRECATED_WARNING     __pragma( warning( pop ))
+
+
+#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING   __pragma( warning( push )) \
+                                                      __pragma( warning( disable: 4127))
+#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING     __pragma( warning( pop ))
+
 #else
 #   pragma message("WARNING: ukown compiler, don't know how to disable deprecated warnings")
 #endif

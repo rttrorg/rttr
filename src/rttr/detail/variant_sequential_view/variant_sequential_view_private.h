@@ -167,7 +167,7 @@ class RTTR_LOCAL variant_sequential_view_private
             return m_equal_func(lhs_itr, rhs_itr);
         }
 
-        RTTR_FORCE_INLINE const variant get_data(const iterator_data& itr) const
+        RTTR_INLINE const variant get_data(const iterator_data& itr) const
         {
             return m_get_data_func(itr);
         }

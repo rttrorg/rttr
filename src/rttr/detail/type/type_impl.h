@@ -272,7 +272,7 @@ RTTR_FORCE_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE variant type::create_variant(const argument& data) const
+RTTR_INLINE variant type::create_variant(const argument& data) const
 {
     return m_type_data->create_variant(data);
 }

@@ -45,7 +45,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, default_invoke, void_member_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
         using class_t = typename function_traits<F>::class_type;
         class_t* ptr = obj.try_convert<class_t>();
@@ -65,7 +65,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, default_invoke, void_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
     {
         if (check_all_true(args.template is_type< param_types_t<F, ArgCount> >()...))
         {
@@ -83,7 +83,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, default_invoke, return_member_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
         using class_t = typename function_traits<F>::class_type;
         class_t* ptr = obj.try_convert<class_t>();
@@ -100,7 +100,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, default_invoke, return_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
     {
         if (check_all_true(args.template is_type< param_types_t<F, ArgCount> >()...))
             return func(args.template get_value< param_types_t<F, ArgCount> >()...);
@@ -115,7 +115,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, discard_return, return_member_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
         using class_t = typename function_traits<F>::class_type;
         class_t* ptr = obj.try_convert<class_t>();
@@ -135,7 +135,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, discard_return, return_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
     {
         if (check_all_true(args.template is_type< param_types_t<F, ArgCount> >()...))
         {
@@ -153,7 +153,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, return_as_ptr, return_member_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func_ptr, const instance& obj, const TArgs&...args)
     {
         using class_t = typename function_traits<F>::class_type;
         class_t* ptr = obj.try_convert<class_t>();
@@ -172,7 +172,7 @@ template<typename F, std::size_t... ArgCount>
 struct method_invoker<F, return_as_ptr, return_func, index_sequence<ArgCount...>>
 {
     template<typename... TArgs>
-    RTTR_FORCE_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
+    RTTR_INLINE static variant invoke(const F& func, const instance& obj, const TArgs&...args)
     {
         if (check_all_true(args.template is_type< param_types_t<F, ArgCount> >()...))
         {

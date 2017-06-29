@@ -1134,7 +1134,7 @@ class RTTR_API type
         /////////////////////////////////////////////////////////////////////////////////
 
         //! Creates a variant from the given argument data.
-        RTTR_FORCE_INLINE variant create_variant(const argument& data) const;
+        RTTR_INLINE variant create_variant(const argument& data) const;
 
         friend class variant;
         template<typename Target_Type, typename Source_Type>

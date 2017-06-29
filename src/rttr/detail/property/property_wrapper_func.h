@@ -171,10 +171,10 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
 
         bool set_value(instance& object, argument& arg) const
         {
-            using arg_type = typename std::remove_reference<arg_type>::type;
-            if (arg.is_type<arg_type*>())
+            using arg_type_t = remove_reference_t<arg_type>;
+            if (arg.is_type<arg_type_t*>())
             {
-                m_setter(*arg.get_value<arg_type*>());
+                m_setter(*arg.get_value<arg_type_t*>());
                 return true;
             }
             return false;
@@ -275,10 +275,10 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, get_as_ref_wrapp
 
         bool set_value(instance& object, argument& arg) const
         {
-            using arg_type = remove_reference_t<arg_type>;
-            if (arg.is_type<std::reference_wrapper<arg_type>>())
+            using arg_type_t = remove_reference_t<arg_type>;
+            if (arg.is_type<std::reference_wrapper<arg_type_t>>())
             {
-                m_setter(arg.get_value<std::reference_wrapper<arg_type>>().get());
+                m_setter(arg.get_value<std::reference_wrapper<arg_type_t>>().get());
                 return true;
             }
             return false;
