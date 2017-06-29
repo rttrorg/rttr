@@ -25,75 +25,24 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/type>
-#include <catch/catch.hpp>
+#ifndef RTTR_REGISTRATION_FRIEND_H_
+#define RTTR_REGISTRATION_FRIEND_H_
 
-using namespace rttr;
+#include "rttr/detail/base/core_prerequisites.h"
 
-struct instance_base
+namespace rttr
 {
-    RTTR_ENABLE()
-};
-
-struct instance_derived : instance_base
+namespace detail
 {
-    RTTR_ENABLE(instance_base)
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("instance - empty", "[instance]")
-{
-    instance obj;
-    CHECK(obj.is_valid() == false);
-    CHECK(obj.get_type().is_valid() == false);
-
-    CHECK(obj.get_derived_type().is_valid() == false);
-    CHECK(obj.get_wrapped_instance().is_valid() == false);
+template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer>
+struct constructor_invoker;
+}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+static void rttr_auto_register_reflection_function_();
 
-TEST_CASE("instance - valid", "[instance]")
-{
-    std::string text = "test";
-    instance obj = text;
-    CHECK(obj.is_valid() == true);
-    CHECK(obj.get_type() == type::get<std::string>());
+#define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();                               \
+                                 template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
+                                 friend struct rttr::detail::constructor_invoker;
 
-    CHECK(obj.get_derived_type() == type::get<std::string>());
-    CHECK(obj.get_wrapped_instance().is_valid() == false);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("instance - derived", "[instance]")
-{
-    instance_derived d;
-    instance_base& base = d;
-    instance obj = base;
-    CHECK(obj.is_valid() == true);
-    CHECK(obj.get_type() == type::get<instance_base>());
-
-    CHECK(obj.get_derived_type() == type::get<instance_derived>());
-    CHECK(obj.get_wrapped_instance().is_valid() == false);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("instance - wrapped derived type", "[instance]")
-{
-    std::shared_ptr<instance_base> b = std::make_shared<instance_derived>();
-    instance obj = b;
-    CHECK(obj.is_valid() == true);
-    CHECK(obj.get_type() == type::get<std::shared_ptr<instance_base>>());
-
-    CHECK(obj.get_derived_type() == type::get<std::shared_ptr<instance_base>>());
-    CHECK(obj.get_wrapped_instance().is_valid() == true);
-    CHECK(obj.get_wrapped_instance().get_type() == type::get<instance_base*>());
-    CHECK(obj.get_wrapped_instance().get_derived_type() == type::get<instance_derived>());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
+#endif // RTTR_REGISTRATION_FRIEND_H_

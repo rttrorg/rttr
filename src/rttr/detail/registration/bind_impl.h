@@ -193,7 +193,6 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Ctor_Args...> : pu
 
             // at the moment we only supported one policy
             using first_prop_policy = typename std::tuple_element<0, as_std_tuple_t<policy_list>>::type;
-            using metadata_count = count_type<::rttr::detail::metadata, type_list<Args...>>;
             m_ctor = create_constructor_wrapper<first_prop_policy>(std::move(get_metadata(std::forward<Args>(args)...)),
                                                                    std::move(get_default_args<type_list<Ctor_Args...>, constructor_type>(std::forward<Args>(args)...)),
                                                                    std::move(create_param_infos<type_list<Ctor_Args...>, constructor_type>(std::forward<Args>(args)...)));

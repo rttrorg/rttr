@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/registration>
-
+#include <rttr/registration_friend>
 #include <iostream>
 #include <memory>
 #include <functional>
@@ -58,18 +58,12 @@ struct property_member_obj_test
 
 
 
-    RTTR_REGISTRATION_FRIEND;
+    RTTR_REGISTRATION_FRIEND
 };
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // init static variables and some global functions added as properties to the test class
-
-
-
-static void my_callback(int)
-{
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

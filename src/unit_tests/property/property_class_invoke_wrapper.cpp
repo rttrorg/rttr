@@ -39,6 +39,7 @@ using namespace std;
 
 struct property_wrapper_test_base
 {
+    virtual ~property_wrapper_test_base() {}
     int p1;
 
     RTTR_ENABLE();

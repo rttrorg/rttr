@@ -25,10 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/type>
-#include <rttr/registration>
-
 #include "benchmarks/bench_method/test_methods.h"
+
+#include <rttr/type>
 
 #include <nonius/nonius.h++>
 #include <nonius/html_group_reporter.h>

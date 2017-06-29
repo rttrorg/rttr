@@ -251,7 +251,7 @@ bool variant::can_convert(const type& target_type) const
 
     if (source_type.get_pointer_dimension() == 1 && target_type.get_pointer_dimension() == 1)
     {
-        if (void * ptr = type::apply_offset(get_raw_ptr(), source_type, target_type))
+        if (type::apply_offset(get_raw_ptr(), source_type, target_type))
             return true;
     }
 

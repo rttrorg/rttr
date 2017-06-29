@@ -41,7 +41,9 @@ set(HEADER_FILES access_levels.h
                  property.h
                  parameter_info.h
                  registration
+                 registration_friend
                  registration.h
+                 registration_friend.h
                  sequential_mapper.h
                  string_view.h
                  rttr_cast.h

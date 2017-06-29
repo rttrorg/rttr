@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/registration>
-
+#include <rttr/registration_friend>
 #include <iostream>
 #include <memory>
 #include <functional>
@@ -204,7 +204,7 @@ TEST_CASE("property - class function - read only - bind as ptr", "[property]")
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
-    auto e = prop.get_type().get_name();
+
     CHECK(prop.get_type() == type::get<const int*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");

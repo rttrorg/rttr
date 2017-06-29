@@ -80,6 +80,9 @@ variant extract_basic_types(Value& json_value)
                 return json_value.GetUint64();
             break;
         }
+        // we handle only the basic types here
+        case kObjectType:
+        case kArrayType: return variant();
     }
 
     return variant();
