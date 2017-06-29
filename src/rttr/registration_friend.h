@@ -41,8 +41,35 @@ struct constructor_invoker;
 
 static void rttr_auto_register_reflection_function_();
 
+#ifdef DOXYGEN
+
+/*!
+ * When you have a class and the method or property is declared in private scope,
+ * then you can still register this item when you insert the macro: \ref RTTR_REGISTRATION_FRIEND inside the class.
+ *
+ * See following example code:
+ * \code{.cpp}
+ * #include <rttr/registration_friend> // important!
+ * class foo
+ * {
+ * private:
+ *     int value;
+ *
+ *     RTTR_REGISTRATION_FRIEND
+ * };
+ *
+ * RTTR_REGISTRATION
+ * {
+ *     rttr::registration::class_<foo>("foo")
+ *                         .property("value", &foo:value); // no compile error, because we use 'RTTR_REGISTRATION_FRIEND' inside 'foo'
+ * }
+ * \endcode
+ */
+#define RTTR_REGISTRATION_FRIEND
+#else
 #define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();                               \
                                  template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
                                  friend struct rttr::detail::constructor_invoker;
+#endif
 
 #endif // RTTR_REGISTRATION_FRIEND_H_
