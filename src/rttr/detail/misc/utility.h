@@ -501,10 +501,10 @@ RTTR_INLINE static std::size_t generate_hash(const char* text, std::size_t lengt
 /////////////////////////////////////////////////////////////////////////////////////////
 // custom has functor, to make sure that "std::string" and "rttr::string_view" uses the same hashing algorithm
 template <typename T>
-class hash;
+struct hash;
 
 template <>
-class hash<std::string>
+struct hash<std::string>
 {
 public:
     size_t operator()(const std::string& text) const

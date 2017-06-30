@@ -480,7 +480,7 @@ void type::register_less_than_comparator()
 namespace std
 {
     template <>
-    class hash<rttr::type>
+    struct hash<rttr::type>
     {
     public:
         size_t operator()(const rttr::type& info) const
