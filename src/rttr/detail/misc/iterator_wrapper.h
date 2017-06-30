@@ -76,8 +76,7 @@ struct iterator_wrapper_small
 
     static void destroy(iterator_data& itr)
     {
-        auto& itr_value = get_iterator(itr);
-        itr_value.~Itr();
+        get_iterator(itr).~Itr();
     }
 };
 

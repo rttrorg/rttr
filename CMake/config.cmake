@@ -104,8 +104,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /W4")
-  message(STATUS "added flag /bigobj, /W4 to MSVC compiler")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+    replaceCompilerOption({"/W3" "/W4")
+    message(STATUS "added flag /bigobj, /W4 to MSVC compiler")
 endif()
 
 # RelWithDepInfo should have the same option like the Release build
