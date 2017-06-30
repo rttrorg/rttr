@@ -218,8 +218,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
     SECTION("type_with_no_equal_operator")
     {
-        type_with_no_equal_operator array[5] = {1, 2, 3, 4, 5};
-        type_with_no_equal_operator arrays[5] = {1, 2, 3, 4, 5};
+        type_with_no_equal_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
+        type_with_no_equal_operator arrays[5]   = {{1}, {2}, {3}, {4}, {5}};
         variant a = array;
         variant b = arrays;
 
@@ -229,8 +229,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
     SECTION("type_with_no_equal_operator")
     {
-        type_with_no_equal_operator array[5] = {1, 2, 3, 4, 5};
-        type_with_no_equal_operator arrays[5] = {1, 2, 3, 0, 5};
+        type_with_no_equal_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
+        type_with_no_equal_operator arrays[5]   = {{1}, {2}, {3}, {4}, {5}};
         variant a = array;
         variant b = arrays;
 
