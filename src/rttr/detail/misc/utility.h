@@ -330,6 +330,7 @@ class reverse_wrapper
 {
     public:
         reverse_wrapper(T& container) : m_container(container) { }
+
         decltype(std::declval<T>().rbegin()) begin() { return m_container.rbegin(); }
         decltype(std::declval<T>().rend()) end() { return m_container.rend(); }
 
@@ -337,6 +338,8 @@ class reverse_wrapper
         decltype(std::declval<T>().crend()) end() const { return m_container.crend(); }
 
     private:
+        reverse_wrapper<T>& operator=(const reverse_wrapper<T>& other);
+
         T& m_container;
 };
 

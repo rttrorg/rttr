@@ -780,8 +780,16 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
             auto t = type::get<Enum_Type>();
             type_register::custom_name(t, name);
 
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    #pragma warning( push )
+    #pragma warning( disable : 4127)
+#endif
             if (!std::is_same<Class_Type, void>::value)
                 m_declared_type = type::get<Class_Type>();
+
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
+    #pragma warning( pop )
+#endif
         }
 
         ~bind()

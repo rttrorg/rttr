@@ -47,6 +47,7 @@ struct property_member_obj_test
     }
 
 
+
     int                 _p1;
     const int           _p2 = 12;
     std::vector<int>    _p3;
@@ -57,6 +58,8 @@ struct property_member_obj_test
     int*                _p10 = &_p1;
 
 
+private:
+    property_member_obj_test& operator=(const property_member_obj_test& obj);
 
     RTTR_REGISTRATION_FRIEND
 };
