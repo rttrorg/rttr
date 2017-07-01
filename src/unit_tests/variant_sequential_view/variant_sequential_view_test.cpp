@@ -214,7 +214,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
     SECTION("valid - std::array")
     {
-        auto array = std::array<int, 4>({1, 2, 3});
+        auto array = std::array<int, 4>{{1, 2, 3}};
 
         variant var = array;
         CHECK(var.is_sequential_container() == true);
@@ -276,7 +276,7 @@ TEST_CASE("variant_sequential_view::is_dynamic()", "[variant_sequential_view]")
 
     SECTION("std::array")
     {
-        std::array<int, 3> array = { 1, 2, 3 };
+        std::array<int, 3> array = {{1, 2, 3}};
         variant var = array;
         auto view = var.create_sequential_view();
         CHECK(view.is_dynamic() == false);
@@ -315,7 +315,7 @@ TEST_CASE("variant_sequential_view::get_rank()", "[variant_sequential_view]")
 
     SECTION("std::array")
     {
-        std::array<int, 3> array = { 1, 2, 3 };
+        std::array<int, 3> array = {{1, 2, 3}};
         variant var = array;
         auto view = var.create_sequential_view();
         CHECK(view.get_rank() == 1);
