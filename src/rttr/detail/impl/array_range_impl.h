@@ -58,6 +58,17 @@ RTTR_INLINE array_range<T, Predicate>::array_range()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Predicate>
+array_range<T, Predicate>& array_range<T, Predicate>::operator=(const array_range<T, Predicate>& other)
+{
+    m_begin = other.m_begin;
+    m_end   = other.m_end;
+    m_pred  = other.m_pred;
+    return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_iterator array_range<T, Predicate>::begin()
 {
     if (empty_())

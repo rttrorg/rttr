@@ -81,6 +81,12 @@ public:
      */
     array_range(const T* begin, size_type size, const Predicate& pred = Predicate());
 
+    /*!
+     * \brief Copy assignment operator.
+     *        Replaces the contents with a copy of the contents of \p other.
+     */
+    array_range<T, Predicate>& operator=(const array_range<T, Predicate>& other);
+
 #ifndef DOXYGEN
     /*!
      * The base class for all item forward iterators.
