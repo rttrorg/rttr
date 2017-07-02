@@ -30,6 +30,11 @@
 
 #include <rttr/type>
 
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wunused-private-field"
+#endif
+
 namespace ns_foo
 {
 
@@ -168,6 +173,8 @@ struct class_multiple_final_D : class_multiple_final
         .method("method_" #NUMBER, &ns_foo::CLASS_NAME::RTTR_CAT(method_,NUMBER)) \
         ;
 
-
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   pragma GCC diagnostic pop
+#endif
 
 #endif // RTTR_TEST_METHODS_H_

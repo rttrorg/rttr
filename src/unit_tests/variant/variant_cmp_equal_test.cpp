@@ -196,8 +196,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 {
     SECTION("int - pos.")
     {
-        int array[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
-        int arrays[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+        int array[2][5]     = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+        int arrays[2][5]    = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
         variant a = array;
         variant b = arrays;
 
@@ -207,8 +207,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
     SECTION("int - neg.")
     {
-        int array[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
-        int arrays[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 0, 5}};
+        int array[2][5]     = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+        int arrays[2][5]    = {{1, 2, 3, 4, 5}, {1, 2, 3, 0, 5}};
         variant a = array;
         variant b = arrays;
 
@@ -218,8 +218,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
     SECTION("type_with_no_equal_operator")
     {
-        type_with_no_equal_operator array[5] = {1, 2, 3, 4, 5};
-        type_with_no_equal_operator arrays[5] = {1, 2, 3, 4, 5};
+        type_with_no_equal_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
+        type_with_no_equal_operator arrays[5]   = {{1}, {2}, {3}, {4}, {5}};
         variant a = array;
         variant b = arrays;
 
@@ -229,8 +229,8 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
     SECTION("type_with_no_equal_operator")
     {
-        type_with_no_equal_operator array[5] = {1, 2, 3, 4, 5};
-        type_with_no_equal_operator arrays[5] = {1, 2, 3, 0, 5};
+        type_with_no_equal_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
+        type_with_no_equal_operator arrays[5]   = {{1}, {2}, {3}, {0}, {5}};
         variant a = array;
         variant b = arrays;
 

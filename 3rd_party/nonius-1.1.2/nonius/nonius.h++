@@ -639,7 +639,10 @@ namespace nonius {
 } // namespace nonius
 
 #include <utility>
-
+#ifdef _MSC_VER
+    #pragma warning( push )
+    #pragma warning( disable : 4127)
+#endif
 namespace nonius {
     namespace detail {
         template <typename Clock = default_clock, typename Fun>
@@ -661,6 +664,9 @@ namespace nonius {
     } // namespace detail
 } // namespace nonius
 
+#ifdef _MSC_VER
+    #pragma warning( pop )
+#endif
 // #included from: detail/unique_name.h++
 // Nonius - C++ benchmarking tool
 //

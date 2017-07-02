@@ -27,7 +27,7 @@
 
 extern void start_rttr_cast_benchmark();
 
-int main(int argc, char** argv)
+int main(int /* argc */, char** /* argv */)
 {
     start_rttr_cast_benchmark();
 }

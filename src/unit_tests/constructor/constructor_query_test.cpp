@@ -39,8 +39,6 @@ struct constructor_query_test
     constructor_query_test(const constructor_query_test&){}
 
     static constructor_query_test create_object(int v) { return constructor_query_test(v); }
-
-    RTTR_ENABLE()
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

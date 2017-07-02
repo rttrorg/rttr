@@ -47,7 +47,7 @@ RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
 /////////////////////////////////////////////////////////////////////////////////
 
 variant_array_view::variant_array_view(const variant_array_view& other) RTTR_NOEXCEPT
-:   m_array_wrapper(std::move(other.m_array_wrapper->clone()))
+:   m_array_wrapper(other.m_array_wrapper->clone())
 {
 
 }

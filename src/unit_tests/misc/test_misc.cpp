@@ -63,8 +63,6 @@ namespace
 
 TEST_CASE("Test raw_adressof", "[raw_adressof]")
 {
-    volatile ClassSingleBase* obj = nullptr;
-
     SECTION("Test pointer type")
     {
         int value = 23;

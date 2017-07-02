@@ -26,7 +26,7 @@
 *************************************************************************************/
 
 #include <rttr/registration>
-
+#include <rttr/registration_friend>
 #include <iostream>
 #include <memory>
 #include <functional>
@@ -47,6 +47,7 @@ struct property_member_obj_test
     }
 
 
+
     int                 _p1;
     const int           _p2 = 12;
     std::vector<int>    _p3;
@@ -57,19 +58,15 @@ struct property_member_obj_test
     int*                _p10 = &_p1;
 
 
+private:
+    property_member_obj_test& operator=(const property_member_obj_test& obj);
 
-    RTTR_REGISTRATION_FRIEND;
+    RTTR_REGISTRATION_FRIEND
 };
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // init static variables and some global functions added as properties to the test class
-
-
-
-static void my_callback(int)
-{
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

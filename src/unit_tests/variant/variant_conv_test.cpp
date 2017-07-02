@@ -621,7 +621,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
         CHECK(var.can_convert(type::get<std::nullptr_t>()) == false);
 
         bool ok = false;
-        std::nullptr_t o = var.convert<std::nullptr_t>(&ok);
+        var.convert<std::nullptr_t>(&ok);
         CHECK(ok == false);
 
         CHECK(var.convert(type::get<std::nullptr_t>()) == false);
@@ -641,7 +641,7 @@ TEST_CASE("variant test - convert to nullptr", "[variant]")
         CHECK(null_obj == nullptr);
 
         bool ok = false;
-        std::nullptr_t o = var.convert<std::nullptr_t>(&ok);
+        var.convert<std::nullptr_t>(&ok);
         CHECK(ok == true);
 
         CHECK(var.convert(type::get<std::nullptr_t>()) == true);
@@ -702,6 +702,7 @@ TEST_CASE("variant test - convert from wrapped value", "[variant]")
         bool ok = false;
         int val = var.convert<int>(&ok);
         CHECK(ok == false);
+        CHECK(val == 0);
 
         CHECK(var.convert(type::get<int>()) == false);
     }

@@ -51,7 +51,7 @@ endif()
 target_include_directories(bench_variant PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
 target_compile_definitions(bench_variant PUBLIC BOOST_ALL_NO_LIB)
 if(MSVC)
-    set_target_properties(bench_variant PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+    set_target_properties(bench_variant PROPERTIES COMPILE_FLAGS "/Zm200")
 endif()
 
 set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d

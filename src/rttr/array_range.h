@@ -315,6 +315,7 @@ private:
     void prev(array_reverse_iterator<DataType>& itr) const;
 
     bool empty_() const;
+    array_range<T, Predicate>& operator=(const array_range<T, Predicate>& other);
 
 private:
     const T* const   m_begin;

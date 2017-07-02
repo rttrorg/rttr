@@ -259,8 +259,8 @@ TEST_CASE("variant::operator<() - raw arrays", "[variant]")
 {
     SECTION("int - pos.")
     {
-        int array[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
-        int arrays[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+        int array[2][5]     = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
+        int arrays[2][5]    = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
         variant a = array;
         variant b = arrays;
 
@@ -270,8 +270,8 @@ TEST_CASE("variant::operator<() - raw arrays", "[variant]")
 
     SECTION("int - neg.")
     {
-        int array[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 0, 5}};
-        int arrays[2][5] = {{1, 2, 3, 4, 5}, {1, 2, 3, 5, 5}};
+        int array[2][5]     = {{1, 2, 3, 4, 5}, {1, 2, 3, 0, 5}};
+        int arrays[2][5]    = {{1, 2, 3, 4, 5}, {1, 2, 3, 5, 5}};
 
         variant a = array;
         variant b = arrays;
@@ -282,8 +282,8 @@ TEST_CASE("variant::operator<() - raw arrays", "[variant]")
 
     SECTION("type with no less than operator")
     {
-        type_with_no_less_than_operator array[5] = {1, 2, 3, 4, 5};
-        type_with_no_less_than_operator arrays[5] = {1, 2, 3, 4, 5};
+        type_with_no_less_than_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
+        type_with_no_less_than_operator arrays[5]   = {{1}, {2}, {3}, {4}, {5}};
         variant a = array;
         variant b = arrays;
 
@@ -292,8 +292,8 @@ TEST_CASE("variant::operator<() - raw arrays", "[variant]")
 
     SECTION("register less than operator - raw array")
     {
-        type_with_less_than_operator array[5] = {1, 2, 3, 0, 5};
-        type_with_less_than_operator arrays[5] = {1, 2, 3, 4, 5};
+        type_with_less_than_operator array[5]   = {{1}, {2}, {3}, {0}, {5}};
+        type_with_less_than_operator arrays[5]  = {{1}, {2}, {3}, {4}, {5}};
         variant a = array;
         variant b = arrays;
 
@@ -306,8 +306,8 @@ TEST_CASE("variant::operator<() - raw arrays", "[variant]")
 
     SECTION("register less than operator - std::array")
     {
-        std::array<int, 5> array_a = {1, 2, 0, 4, 5};
-        std::array<int, 5> array_b = {1, 2, 3, 4, 5};
+        std::array<int, 5> array_a = { {1, 2, 0, 4, 5} };
+        std::array<int, 5> array_b = { {1, 2, 3, 4, 5} };
 
         variant a = array_a;
         variant b = array_b;

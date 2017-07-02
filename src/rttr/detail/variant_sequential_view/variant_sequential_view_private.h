@@ -51,9 +51,9 @@ class RTTR_LOCAL variant_sequential_view_private
             m_get_is_empty_func(sequential_container_empty::is_empty),
             m_get_size_func(sequential_container_empty::get_size),
             m_set_size_func(sequential_container_empty::set_size),
+            m_is_dynamic_func(sequential_container_empty::is_dynamic),
             m_get_rank_func(sequential_container_empty::get_rank),
             m_get_rank_type_func(sequential_container_empty::get_rank_type),
-            m_is_dynamic_func(sequential_container_empty::is_dynamic),
             m_begin_func(sequential_container_empty::begin),
             m_end_func(sequential_container_empty::begin),
             m_equal_func(sequential_container_empty::equal),
@@ -77,9 +77,9 @@ class RTTR_LOCAL variant_sequential_view_private
             m_get_is_empty_func(sequential_container_mapper_wrapper<RawType, ConstType>::is_empty),
             m_get_size_func(sequential_container_mapper_wrapper<RawType, ConstType>::get_size),
             m_set_size_func(sequential_container_mapper_wrapper<RawType, ConstType>::set_size),
+            m_is_dynamic_func(sequential_container_mapper_wrapper<RawType, ConstType>::is_dynamic),
             m_get_rank_func(sequential_container_mapper_wrapper<RawType, ConstType>::get_rank),
             m_get_rank_type_func(sequential_container_mapper_wrapper<RawType, ConstType>::get_rank_type),
-            m_is_dynamic_func(sequential_container_mapper_wrapper<RawType, ConstType>::is_dynamic),
             m_begin_func(sequential_container_mapper_wrapper<RawType, ConstType>::begin),
             m_end_func(sequential_container_mapper_wrapper<RawType, ConstType>::end),
             m_equal_func(sequential_container_mapper_wrapper<RawType, ConstType>::equal),
@@ -167,7 +167,7 @@ class RTTR_LOCAL variant_sequential_view_private
             return m_equal_func(lhs_itr, rhs_itr);
         }
 
-        RTTR_FORCE_INLINE const variant get_data(const iterator_data& itr) const
+        RTTR_INLINE const variant get_data(const iterator_data& itr) const
         {
             return m_get_data_func(itr);
         }

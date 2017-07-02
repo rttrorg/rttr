@@ -25,10 +25,9 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/type>
-#include <rttr/registration>
-
 #include "benchmarks/bench_method/test_methods.h"
+
+#include <rttr/type>
 
 #include <nonius/nonius.h++>
 #include <nonius/html_group_reporter.h>
@@ -47,7 +46,7 @@ nonius::benchmark bench_native_find_method_level_1()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_1* obj = dynamic_cast<ns_foo::method_class_d_1*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_1*>(&obj_base))
             {
                 value = 1;
             }
@@ -89,7 +88,7 @@ nonius::benchmark bench_native_find_method_level_3()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_3* obj = dynamic_cast<ns_foo::method_class_d_3*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_3*>(&obj_base))
             {
                 value = 1;
             }
@@ -131,7 +130,7 @@ nonius::benchmark bench_native_find_method_level_6()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_6* obj = dynamic_cast<ns_foo::method_class_d_6*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_6*>(&obj_base))
             {
                 value = 1;
             }
@@ -175,7 +174,7 @@ nonius::benchmark bench_native_find_method_neg_level_1()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_2* obj = dynamic_cast<ns_foo::method_class_d_2*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_2*>(&obj_base))
             {
                 value = 1;
             }
@@ -217,7 +216,7 @@ nonius::benchmark bench_native_find_method_neg_level_3()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_4* obj = dynamic_cast<ns_foo::method_class_d_4*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_4*>(&obj_base))
             {
                 value = 1;
             }
@@ -260,7 +259,7 @@ nonius::benchmark bench_native_find_method_neg_level_6()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::method_class_d_7* obj = dynamic_cast<ns_foo::method_class_d_7*>(&obj_base))
+            if (dynamic_cast<ns_foo::method_class_d_7*>(&obj_base))
             {
                 value = 1;
             }
@@ -303,7 +302,7 @@ nonius::benchmark bench_native_find_method_cross_cast_level_1()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_1C* obj = dynamic_cast<ns_foo::class_multiple_1C*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_1C*>(&obj_base))
             {
                 value = 1;
             }
@@ -345,7 +344,7 @@ nonius::benchmark bench_native_find_method_cross_cast_level_3()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_3C* obj = dynamic_cast<ns_foo::class_multiple_3C*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_3C*>(&obj_base))
             {
                 value = 1;
             }
@@ -387,7 +386,7 @@ nonius::benchmark bench_native_find_method_cross_cast_level_6()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_final* obj = dynamic_cast<ns_foo::class_multiple_final*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_final*>(&obj_base))
             {
                 value = 1;
             }
@@ -431,7 +430,7 @@ nonius::benchmark bench_native_find_method_cross_cast_neg_level_1()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_1C* obj = dynamic_cast<ns_foo::class_multiple_1C*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_1C*>(&obj_base))
             {
                 value = 1;
             }
@@ -473,7 +472,7 @@ nonius::benchmark bench_native_find_method_cross_cast_neg_level_3()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_3C* obj = dynamic_cast<ns_foo::class_multiple_3C*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_3C*>(&obj_base))
             {
                 value = 1;
             }
@@ -515,7 +514,7 @@ nonius::benchmark bench_native_find_method_cross_cast_neg_level_6()
         volatile std::size_t value = 0;
         meter.measure([&]()
         {
-            if (ns_foo::class_multiple_final_D* obj = dynamic_cast<ns_foo::class_multiple_final_D*>(&obj_base))
+            if (dynamic_cast<ns_foo::class_multiple_final_D*>(&obj_base))
             {
                 value = 1;
             }

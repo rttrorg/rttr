@@ -29,7 +29,7 @@ extern void bench_method();
 extern void bench_invoke_method();
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char** argv)
+int main(int /* argc */, char** /* argv */)
 {
     bench_method();
     bench_invoke_method();

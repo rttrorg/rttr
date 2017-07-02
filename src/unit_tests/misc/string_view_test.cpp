@@ -161,8 +161,6 @@ TEST_CASE("string_view - rbegin(), rend(), crbegin(), crend()", "[string_view]")
 {
     auto string_literal = "Hello World";
     string_view text = string_literal;
-    auto e = *text.rbegin();
-
 
     CHECK(*text.rbegin() == *"d");
     CHECK(text.rend() == string_view::reverse_iterator(string_literal));

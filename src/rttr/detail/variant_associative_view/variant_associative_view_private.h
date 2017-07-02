@@ -152,17 +152,17 @@ class RTTR_LOCAL variant_associative_view_private
             return m_equal_func(lhs_itr, rhs_itr);
         }
 
-        RTTR_FORCE_INLINE const variant get_key(const iterator_data& itr) const
+        RTTR_INLINE const variant get_key(const iterator_data& itr) const
         {
             return m_get_key_func(itr);
         }
 
-        RTTR_FORCE_INLINE const variant get_value(const iterator_data& itr) const
+        RTTR_INLINE const variant get_value(const iterator_data& itr) const
         {
             return m_get_value_func(itr);
         }
 
-        RTTR_FORCE_INLINE const std::pair<variant, variant> get_key_value(const iterator_data& itr) const
+        RTTR_INLINE const std::pair<variant, variant> get_key_value(const iterator_data& itr) const
         {
             return {m_get_key_func(itr), m_get_value_func(itr)};
         }

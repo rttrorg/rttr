@@ -105,7 +105,7 @@ template<std::size_t... Indices, typename...T>
 static RTTR_INLINE std::array<parameter_info, sizeof...(T)>
 create_paramter_info_array_impl(index_sequence<Indices...>, const parameter_infos<T...>& param_infos)
  {
-     return {create_param_info(std::get<Indices>(param_infos.m_param_infos))...};
+    return { {create_param_info(std::get<Indices>(param_infos.m_param_infos))...} };
  };
 
 // MSVC 2015 cannot handle sizeof...(),

@@ -30,6 +30,11 @@
 
 #include <rttr/type>
 
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wunused-private-field"
+#endif
+
 #define CLASS(CLASS_NAME) struct CLASS_NAME { virtual ~CLASS_NAME() {} RTTR_ENABLE() virtual int getType() { return 0; } int dummyIntValue; };
 
 #define CLASS_INHERIT(CLASS1, CLASS2) struct CLASS1 : CLASS2 { virtual int getType() { return 1; } RTTR_ENABLE(CLASS2) double dummyDoubleValue; };
@@ -159,5 +164,9 @@ CLASS_INHERIT(ClassDiamondRight5, ClassDiamondRight4)
 CLASS_INHERIT(ClassDiamondRight6, ClassDiamondRight5)
 
 CLASS_MULTI_INHERIT_3(ClassDiamondFinal, ClassDiamondLeft5, ClassDiamondMiddle5, ClassDiamondRight5)
+
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG
+#   pragma GCC diagnostic pop
+#endif
 
 #endif // RTTR_TESTCLASSES_H_

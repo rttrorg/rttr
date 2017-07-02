@@ -47,7 +47,7 @@ class metadata_handler
     public:
         RTTR_FORCE_INLINE metadata_handler(std::array<metadata, Metadata_Count> new_data) : m_metadata_list(std::move(new_data)) { }
 
-        RTTR_FORCE_INLINE variant get_metadata(const variant& key) const
+        RTTR_INLINE variant get_metadata(const variant& key) const
         {
             // I don't expect that many data, so we iterate from start to end
             for (const auto& item : m_metadata_list)
@@ -75,7 +75,7 @@ class metadata_handler<0>
 
         RTTR_FORCE_INLINE void set_metadata(std::array<metadata, 0> new_data) { }
 
-        RTTR_FORCE_INLINE variant get_metadata(const variant& key) const  { return variant(); }
+        RTTR_INLINE variant get_metadata(const variant& key) const  { return variant(); }
 };
 
 } // end namespace detail

@@ -25,78 +25,51 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/registration>
-#include <catch/catch.hpp>
+#ifndef RTTR_REGISTRATION_FRIEND_H_
+#define RTTR_REGISTRATION_FRIEND_H_
 
-struct type_prop_invoke_test_base
+#include "rttr/detail/base/core_prerequisites.h"
+
+namespace rttr
 {
-    int p1 = 12;
-
-    RTTR_ENABLE()
-};
-
-struct type_prop_invoke_test : type_prop_invoke_test_base
+namespace detail
 {
-    std::string p2 = "text";
-
-    RTTR_ENABLE(type_prop_invoke_test_base)
-};
-
-static int g_prop_invoke = 42;
-
-
-using namespace rttr;
-
-RTTR_REGISTRATION
-{
-    registration::class_<type_prop_invoke_test_base>("type_prop_invoke_test_base")
-        .property("p1", &type_prop_invoke_test_base::p1);
-
-    registration::class_<type_prop_invoke_test>("type_prop_invoke_test")
-        .property("p2", &type_prop_invoke_test::p2);
-
-    registration::property("g_prop_invoke", &g_prop_invoke);
+template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer>
+struct constructor_invoker;
+}
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+static void rttr_auto_register_reflection_function_();
 
-TEST_CASE("Test property shortcuts to set/get property", "[property]")
-{
-    SECTION("test set property with instance")
-    {
-        type_prop_invoke_test_base obj;
-        variant var = type::get(obj).get_property_value("p1", obj);
-        REQUIRE(var.is_type<int>() == true);
-        CHECK(var.get_value<int>() == 12);
+#ifdef DOXYGEN
 
-        bool success = type::get(obj).set_property_value("p1", obj, 500);
-        CHECK(success == true);
-        CHECK(obj.p1 == 500);
-    }
+/*!
+ * When you have a class and the method or property is declared in private scope,
+ * then you can still register this item when you insert the macro: \ref RTTR_REGISTRATION_FRIEND inside the class.
+ *
+ * See following example code:
+ * \code{.cpp}
+ * #include <rttr/registration_friend> // important!
+ * class foo
+ * {
+ * private:
+ *     int value;
+ *
+ *     RTTR_REGISTRATION_FRIEND
+ * };
+ *
+ * RTTR_REGISTRATION
+ * {
+ *     rttr::registration::class_<foo>("foo")
+ *                         .property("value", &foo:value); // no compile error, because we use 'RTTR_REGISTRATION_FRIEND' inside 'foo'
+ * }
+ * \endcode
+ */
+#define RTTR_REGISTRATION_FRIEND
+#else
+#define RTTR_REGISTRATION_FRIEND friend void ::rttr_auto_register_reflection_function_();                               \
+                                 template<typename Ctor_Type, typename Policy, typename Accessor, typename Arg_Indexer> \
+                                 friend struct rttr::detail::constructor_invoker;
+#endif
 
-    SECTION("test set property with derived instance")
-    {
-        // derived obj
-        type_prop_invoke_test obj;
-
-        variant var = type::get(obj).get_property_value("p2", obj);
-        REQUIRE(var.is_type<std::string>() == true);
-        CHECK(var.get_value<std::string>() == "text");
-
-        bool success = type::get(obj).set_property_value("p2", obj, std::string("Hello World"));
-        CHECK(success == true);
-        CHECK(obj.p2 == "Hello World");
-    }
-
-    SECTION("test set global property")
-    {
-        bool success = type::set_property_value("g_prop_invoke", 23);
-        CHECK(success == true);
-
-        variant var = type::get_property_value("g_prop_invoke");
-        REQUIRE(var.is_type<int>() == true);
-        CHECK(var.get_value<int>() == 23);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
+#endif // RTTR_REGISTRATION_FRIEND_H_

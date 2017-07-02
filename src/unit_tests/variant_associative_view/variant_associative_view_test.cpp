@@ -627,11 +627,6 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.begin() == view.end());
-
-        for (auto& item : view)
-        {
-            CHECK(false);
-        }
     }
 }
 
