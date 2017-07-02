@@ -142,7 +142,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
-          env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true    
+      env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true    
 
     - os: linux
       compiler: gcc
