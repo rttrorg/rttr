@@ -31,6 +31,8 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/comparison/comparable_types.h"
+#include "rttr/detail/misc/template_type_trait.h"
+
 
 #include <type_traits>
 #include <cstring>
@@ -45,21 +47,37 @@ namespace detail
 RTTR_API bool compare_types_equal(const void* lhs, const void* rhs, const type& t);
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
+using has_equal_operator_impl = std::integral_constant<bool, has_equal_operator<T>::value && !std::is_array<T>::value &&
+                                                             !is_template_instance<T>::value>;
+
+template<typename T>
+using is_equal_comparable = std::integral_constant<bool, has_equal_operator_impl<T>::value ||
+                                                         is_comparable_type<T>::value>;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE typename std::enable_if<is_equal_comparable<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && !std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_equal_comparable<T>::value && !std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_INLINE typename std::enable_if<!is_comparable_type<T>::value && std::is_array<T>::value, bool>::type
+RTTR_INLINE typename std::enable_if<!is_equal_comparable<T>::value && std::is_array<T>::value, bool>::type
 compare_equal(const T& lhs, const T& rhs);
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -68,5 +86,8 @@ compare_equal(const T& lhs, const T& rhs);
 } // end namespace rttr
 
 #include "rttr/detail/comparison/compare_equal_impl.h"
+// the include in this place is necessary, otherwise we get an error during compilation:
+// "'compare_equal': identifier not found"
+#include "rttr/detail/misc/template_type_trait_impl.h"
 
 #endif // RTTR_COMPARE_EQUAL_H_

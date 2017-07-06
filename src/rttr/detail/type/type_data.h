@@ -273,7 +273,6 @@ get_create_wrapper_func()
 using type_trait_value = uint64_t;
 #define TYPE_TRAIT_TO_BITSET_VALUE(trait) (static_cast<std::uint64_t>(std::trait<T>::value) << static_cast<std::size_t>(type_trait_infos::trait))
 #define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
-#define TYPE_TRAIT_TO_BITSET_VALUE_3(trait, check) (static_cast<std::uint64_t>(trait<T>::check::value) << static_cast<std::size_t>(type_trait_infos::check))
 
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT
@@ -302,7 +301,8 @@ type_data& get_type_data() RTTR_NOEXCEPT
                                                         TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container) |
                                                         TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_sequential_container, is_sequential_container) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_3(template_type_trait, is_template_instantiation)}
+                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::template_type_trait, is_template_instantiation)
+                                                      }
                                       };
     return instance;
 }

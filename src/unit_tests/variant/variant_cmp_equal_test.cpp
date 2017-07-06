@@ -31,6 +31,13 @@
 
 using namespace rttr;
 
+struct type_with_equal_operator
+{
+    int i;
+
+    bool operator ==(const type_with_equal_operator& other) const { return (i == other.i); }
+};
+
 struct type_with_no_equal_operator
 {
     int i;
@@ -227,6 +234,24 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
         CHECK((a != b) == true);
     }
 
+    SECTION("type_with_equal_operator")
+    {
+        type_with_equal_operator array_a[5]     = {{1}, {2}, {3}, {4}, {5}};
+        type_with_equal_operator array_b[5]     = {{1}, {2}, {3}, {4}, {5}};
+        type_with_equal_operator array_c[5]     = {{1}, {2}, {0}, {4}, {5}};
+        type_with_equal_operator array_d[6]     = {{1}, {2}, {3}, {4}, {5}, {6} };
+        variant a = array_a;
+        variant b = array_b;
+        variant c = array_c;
+        variant d = array_d;
+
+        CHECK((a == b) == true);
+        CHECK((a != b) == false);
+
+        CHECK((a == c) == false);
+        CHECK((a == d) == false);
+    }
+
     SECTION("type_with_no_equal_operator")
     {
         type_with_no_equal_operator array[5]    = {{1}, {2}, {3}, {4}, {5}};
@@ -286,7 +311,6 @@ static std::string convert_to_string(const point& p, bool& ok)
 TEST_CASE("variant::operator==() - custom", "[variant]")
 {
     type::register_converter_func(convert_to_string);
-    type::register_equal_comparator<point>();
 
     SECTION("equal")
     {
