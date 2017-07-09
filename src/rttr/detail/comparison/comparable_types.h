@@ -32,7 +32,6 @@
 #include "rttr/string_view.h"
 
 #include <type_traits>
-#include <cstring>
 
 namespace rttr
 {

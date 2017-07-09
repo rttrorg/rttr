@@ -30,149 +30,29 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 
-#include "rttr/type.h"
-
 #include <type_traits>
 
 namespace rttr
 {
+class type;
+
 namespace detail
 {
 
 template<typename T>
-struct template_type_trait
+struct template_type_trait : std::false_type                                                                                                   \
 {
-    using is_template_instantiation = std::false_type;
-    static std::vector<type> get_template_arguments() { return{}; }
+    static std::vector<::rttr::type> get_template_arguments();
 };
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
- // otherwise an internal compile error will occur
-template<template <typename... > class T>
-struct template_type_trait<T<>>
-{
-    using is_template_instantiation = std::true_type;
-    static std::vector<type> get_template_arguments() { return { }; }
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
-template<template <typename... > class T, typename T1, typename...Args>
-struct template_type_trait<T<T1, Args...>>
-{
-    using is_template_instantiation = std::true_type;
-    static std::vector<type> get_template_arguments() { return { type::get<T1>(), rttr::type::get<Args>()..., }; }
-};
+template<typename T>
+using is_template_instance = template_type_trait<T>;
 
-#else
+/////////////////////////////////////////////////////////////////////////////////////////
 
-template<template <typename... > class T, typename...Args>
-struct template_type_trait<T<Args...>>
-{
-    using is_template_instantiation = std::true_type;
-    static std::vector<type> get_template_arguments() { return { type::get<Args>()..., }; }
-};
-
-#endif
-
-} // end namespace detail
-} // end namespace rttr
-
-
-#define RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_1(value_type)                                                                            \
-namespace rttr                                                                                                                      \
-{                                                                                                                                   \
-namespace detail                                                                                                                    \
-{                                                                                                                                   \
-    template<template <value_type...> class T, value_type...Args>                                                                   \
-    struct template_type_trait<T<Args...>>                                                                                          \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<Args>()..., }; }                                     \
-    };                                                                                                                              \
-}                                                                                                                                   \
-}
-
-#define RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_2(value_type)                                                                            \
-namespace rttr                                                                                                                      \
-{                                                                                                                                   \
-namespace detail                                                                                                                    \
-{                                                                                                                                   \
-    template<template <typename, value_type > class T, typename T1, value_type N1>                                                  \
-    struct template_type_trait<T<T1, N1>>                                                                                           \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<T1>(), type::get<value_type>() }; }                  \
-    };                                                                                                                              \
-                                                                                                                                    \
-    template<template <value_type, typename > class T, typename T1, value_type N1>                                                  \
-    struct template_type_trait<T<N1, T1>>                                                                                           \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<value_type>(), type::get<T1>() }; }                  \
-    };                                                                                                                              \
-}                                                                                                                                   \
-}
-
-#define RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_3(value_type)                                                                            \
-namespace rttr                                                                                                                      \
-{                                                                                                                                   \
-namespace detail                                                                                                                    \
-{                                                                                                                                   \
-    template<template <typename, typename, value_type > class T, typename T1, typename T2, value_type N1>                           \
-    struct template_type_trait<T<T1, T2, N1>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<T1>(), type::get<T2>(), type::get<N1>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-    template<template <typename, value_type, typename > class T, typename T1, typename T2, value_type N1>                           \
-    struct template_type_trait<T<T1, N1, T2>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<T1>(), type::get<N1>(), type::get<T2>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-    template<template <value_type, typename, typename > class T, typename T1, typename T2, value_type N1>                           \
-    struct template_type_trait<T<N1, T1, T2>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<N1>(), type::get<T1>(), type::get<T2>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-                                                                                                                                    \
-                                                                                                                                    \
-    template<template <value_type, value_type, typename > class T, typename T1, value_type N1, value_type N2>                       \
-    struct template_type_trait<T<N1, N2, T1>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<N1>(), type::get<N2>(), type::get<T1>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-    template<template <value_type, typename, value_type > class T, typename T1, value_type N1, value_type N2>                       \
-    struct template_type_trait<T<N1, T1, N2>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<N1>(), type::get<T1>(), type::get<N2>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-    template<template <typename, value_type, value_type > class T, typename T1, value_type N1, value_type N2>                       \
-    struct template_type_trait<T<T1, N1, N2>>                                                                                       \
-    {                                                                                                                               \
-        using is_template_instantiation = std::true_type;                                                                           \
-        static std::vector<type> get_template_arguments() { return { type::get<T1>(), type::get<N1>(), type::get<N2>() }; }         \
-    };                                                                                                                              \
-                                                                                                                                    \
-}                                                                                                                                   \
-}
-
-#define RTTR_ADD_TYPE_TRAIT_SPECIALIZATION(value_type) \
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_1(value_type) \
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_2(value_type) \
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION_3(value_type)
-
-
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION(std::size_t)
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION(bool)
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION(int)
-RTTR_ADD_TYPE_TRAIT_SPECIALIZATION(char)
+}   // end namespace detail
+}   // end namespace rttr
 
 #endif // RTTR_TEMPLATE_TYPE_TRAIT_H_
