@@ -80,14 +80,16 @@ RTTR_INLINE variant& variant::operator=(T&& other)
 
 RTTR_INLINE bool variant::operator==(const variant& other) const
 {
-    return compare_equal(other);
+    auto ok = false;
+    return compare_equal(other, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool variant::operator!=(const variant& other) const
 {
-    return !compare_equal(other);
+    auto ok = false;
+    return !compare_equal(other, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +97,31 @@ RTTR_INLINE bool variant::operator!=(const variant& other) const
 RTTR_INLINE bool variant::operator<(const variant& other) const
 {
     return compare_less(other);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool variant::operator<=(const variant& other) const
+{
+    auto ok = false;
+    return (compare_equal(other, ok) || compare_less(other));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool variant::operator>=(const variant& other) const
+{
+    auto ok = false;
+    return (compare_equal(other, ok) || !compare_less(other));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+RTTR_INLINE bool variant::operator>(const variant& other) const
+{
+    auto ok = false;
+    auto cmp_result = compare_equal(other, ok);
+    return (ok && !cmp_result && !compare_less(other));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

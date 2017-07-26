@@ -49,8 +49,9 @@ namespace detail
  */
 template<typename T>
 RTTR_INLINE typename std::enable_if<is_equal_comparable<T>::value && !std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
+compare_equal(const T& lhs, const T& rhs, bool& ok)
 {
+    ok = true;
     return (lhs == rhs);
 }
 
@@ -58,18 +59,18 @@ compare_equal(const T& lhs, const T& rhs)
 
 template<typename T>
 RTTR_INLINE typename std::enable_if<!is_equal_comparable<T>::value && !std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
+compare_equal(const T& lhs, const T& rhs, bool& ok)
 {
-    return compare_types_equal(&lhs, &rhs, type::get<T>());
+    return compare_types_equal(&lhs, &rhs, type::get<T>(), ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 RTTR_INLINE typename std::enable_if<!is_equal_comparable<T>::value && std::is_array<T>::value, bool>::type
-compare_equal(const T& lhs, const T& rhs)
+compare_equal(const T& lhs, const T& rhs, bool& ok)
 {
-    return compare_array_equal(lhs, rhs);
+    return compare_array_equal(lhs, rhs, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

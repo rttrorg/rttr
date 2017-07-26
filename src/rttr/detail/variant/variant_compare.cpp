@@ -53,8 +53,9 @@ static RTTR_INLINE bool almost_equal(double p1, double p2)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_compare_equal(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
+bool variant_compare_equal(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type, bool& ok)
 {
+    ok = true;
     if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
     {
         return almost_equal(lhs.to_double(), rhs.to_double());
