@@ -199,8 +199,9 @@ install:
       mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
-      if ! brew ls --version cmake &>/dev/null; then brew install cmake; fi
+      brew upgrade cmake || brew install cmake
     fi
+  - cmake --version
   #######################################################################################
   # Install recent Doxygen
   #######################################################################################
@@ -213,7 +214,11 @@ install:
   #######################################################################################
   # Install vera++
   #######################################################################################
-  - if [[ "${CHECK_FORMATTING}" == "true" ]]; then brew install vera++; fi
+  - |
+    if [[ "${CHECK_FORMATTING}" == "true" ]]; then
+      brew upgrade pcre || brew install pcre || exit 1
+      brew upgrade vera++ || brew install vera++ || exit 1
+    fi
 
   #######################################################################################
   # Install Clang
