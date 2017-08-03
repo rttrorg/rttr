@@ -11,7 +11,7 @@ Every call to these member functions, will return @ref rttr::registration::bind 
 Let's start with a simple example. Consider the following C++ class:
 
 ~~~~{.cpp}
-#include <rttr/type>
+# include <rttr/type>
 
 // test class.h
 struct test_class
@@ -30,7 +30,7 @@ The registration process is now done at global scope in the cpp file.
 
 ~~~~{.cpp}
 // test_class.cpp
-#include <rttr/registration>
+# include <rttr/registration>
 
 RTTR_REGISTRATION
 {
@@ -146,7 +146,7 @@ RTTR_REGISTRATION
 With the @ref rttr::registration::class_<T>::property() "property()" member function you will register the member variable `Foo::value` 
 with read and write access.
 
-###Read Only Properties###
+### Read Only Properties ###
 When you want a register a property with `read-only` access, 
 then this is also possible with @ref rttr::registration::class_<T>::property_readonly "property_readonly()" member function.
 
@@ -160,7 +160,7 @@ RTTR_REGISTRATION
 }
 ~~~~
 
-###Private Properties###
+### Private Properties ###
 
 When you have a class and the property is declared in private scope, then you can still register this property when you insert the macro: \ref RTTR_REGISTRATION_FRIEND
 inside the class.
@@ -176,7 +176,7 @@ private:
 
 This will make this class a friend to the registration system.
 
-###Getter Setter For Properties###
+### Getter Setter For Properties ###
 You can also register getter and setter functions and make them look as if they were a public data member. Consider the following class:
 ~~~~{.cpp}
 class Foo

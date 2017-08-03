@@ -14,8 +14,8 @@ For example when you want to register the byte string to integer conversion func
 
 Do it in the following way:
 ~~~~{.cpp}
-#include <rttr/registration>
-#include <cstdlib>
+# include <rttr/registration>
+# include <cstdlib>
 
 RTTR_REGISTRATION
 {
@@ -33,8 +33,8 @@ This will avoid the hassle with the function pointer signature.
 For example the two functions: `float sin (float x);` and `double sin (double x);` can be registered like following:
 
 ~~~~{.cpp}
-#include <rttr/registration>
-#include <cmath>
+# include <rttr/registration>
+# include <cmath>
 
 RTTR_REGISTRATION
 {

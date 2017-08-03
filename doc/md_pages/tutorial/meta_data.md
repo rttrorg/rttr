@@ -12,7 +12,7 @@ Please take a look at following example:
 
 \code{.cpp}
 
-#include <rttr/registration>
+# include <rttr/registration>
 
 enum class MetaData_Type
 {

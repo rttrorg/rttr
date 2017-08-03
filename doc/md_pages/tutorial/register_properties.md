@@ -29,7 +29,7 @@ It has following synopsis:
 
 The following example shows how to use these register functions:
 ~~~~{.cpp}
-#include <rttr/registration>
+# include <rttr/registration>
 using namespace rttr;
 
 static const double pi = 3.14259;

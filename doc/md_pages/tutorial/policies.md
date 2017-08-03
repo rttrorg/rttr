@@ -57,7 +57,7 @@ int main()
 }
 ~~~~
 
-###as_std_shared_ptr###
+### as_std_shared_ptr ###
 
 The @ref rttr::policy::ctor::as_std_shared_ptr "as_std_shared_ptr" policy will create an 
 instance of a class through `std::make_shared<T>`.
@@ -94,7 +94,7 @@ int main()
 }                                                    // because the var object is gone out of scope
 ~~~~
 
-###as_raw_ptr###
+### as_raw_ptr ###
 
 The @ref rttr::policy::ctor::as_raw_ptr "as_raw_ptr" policy will create an instance of a class as raw pointer.
 
@@ -131,7 +131,7 @@ int main()
 
 # Properties {#prop_policy_link}
 
-###bind_as_ptr###
+### bind_as_ptr ###
 The motivation for @ref rttr::policy::prop::bind_as_ptr "bind_as_ptr" policy is to avoid expensive copies when returning a property.
 The default registration behaviour of RTTR is to return all values by copying the content in a variant.
 When you have primitive data types like integer or doubles you are good to go with the standard binding behaviour.
@@ -167,7 +167,7 @@ int main()
 }
 ~~~~
 
-###as_reference_wrapper###
+### as_reference_wrapper ###
 The motivation for the @ref rttr::policy::prop::as_reference_wrapper "as_reference_wrapper" policy is the 
 same like the @ref rttr::policy::prop::bind_as_ptr "prop::bind_as_ptr" policy,
 avoid copy of data. The value will be wrapped inside a `std::reference_wrapper<T>`
@@ -205,7 +205,7 @@ int main()
 
 # Methods {#meth_policy_link}
 
-###discard_return###
+### discard_return ###
 Sometimes it is necessary that the client caller should ignore the return value of a method call.
 Therefore @ref rttr::policy::meth::discard_return "discard_return" policy was introduced.
 
@@ -236,7 +236,7 @@ int main()
 }
 ~~~~
 
-###return_ref_as_ptr###
+### return_ref_as_ptr ###
 The motivation for the @ref rttr::policy::meth::return_ref_as_ptr "return_ref_as_ptr" policy is the same like the @ref rttr::policy::prop::bind_as_ptr "prop::bind_as_ptr" policy.
 When you really need to get a reference to the return value of a method call you have to use this policy,
 otherwise the returned reference will be copied into the variant.

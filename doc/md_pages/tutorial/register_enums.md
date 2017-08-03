@@ -13,7 +13,7 @@ It has following synopsis:
 - `name` the declared name of this enum
 
 ~~~~{.cpp}
-#include <rttr/registration>
+# include <rttr/registration>
 using namespace rttr;
 
 enum class E_Alignment

@@ -28,7 +28,7 @@ on <a target="_blank" href="http://flamingdangerzone.com/nonius/#main_content">B
 You may have to set the `BOOST_ROOT` environment variable to the Boost installation directory.
 
 
-###Config CMake Build###
+### Config CMake Build ###
 The build of RTTR can be configured at CMake configuration time with following variables:
 
 - `BUILD_STATIC`: Build RTTR as static library; Default: `FALSE`
