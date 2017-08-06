@@ -317,15 +317,15 @@ TEST_CASE("variant::operator>() - raw arrays", "[variant]")
 
     SECTION("register less than operator - std::array")
     {
-        std::array<int, 5> array_a = { {1, 2, 3, 4, 5} };
-        std::array<int, 5> array_b = { {1, 2, 0, 4, 5} };
+        std::array<int, 6> array_a = { {1, 2, 3, 4, 5, 6} };
+        std::array<int, 6> array_b = { {1, 2, 0, 4, 5, 6} };
 
         variant a = array_a;
         variant b = array_b;
 
         CHECK((a > b) == false);
 
-        type::register_comparators<std::array<int, 5>>();
+        type::register_comparators<std::array<int, 6>>();
 
         CHECK((a > b) == true);
     }
