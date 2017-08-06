@@ -255,6 +255,8 @@ class RTTR_API variant
          *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
          *         The reason for that is, template types might define the `==` operator, but not the contained template type.
          *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
+         *
          * \see \ref variant::operator!=(const variant&) const "operator!="
          *
          * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
@@ -267,6 +269,8 @@ class RTTR_API variant
          * \remark In order to use this function with template types, like `std::tuple<int, std::string>`,
          *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
          *         The reason for that is, template types might define the `!=` operator, but not the contained template type.
+         *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
          *
          * \see \ref variant::operator==(const variant&) const "operator=="
          *
@@ -284,11 +288,58 @@ class RTTR_API variant
          *         you need to register the comparison operator to the type system with \ref type::register_comparators<T>().
          *         The reason for that is, template types might define the `<` operator, but not the contained template type.
          *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
+         *
          * \see \ref variant::operator>(const variant&) const "operator\>"
          *
          * \return A boolean with value `true`, that indicates that this variant is *less than* \p other, otherwise `false`.
          */
         RTTR_INLINE bool operator<(const variant& other) const;
+
+
+        /*!
+         * \brief Compares this variant with \p other and returns `true` if this is *less* or *equal* than \p other, otherwise returns `false`.
+         *
+         * The variant uses the *less than* and equality operator of the containing \ref get_type() "type"
+         * to get the result of the comparision.
+         *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
+         *
+         * \see \ref variant::operator<(const variant&) const "operator\<",
+         *      \ref variant::operator==(const variant&) const "operator\=="
+         *
+         * \return A boolean with value `true`, that indicates that this variant is *less* or *equal* than \p other, otherwise `false`.
+         */
+        RTTR_INLINE bool operator<=(const variant& other) const;
+
+        /*!
+         * \brief Compares this variant with \p other and returns `true` if this is *greater* or *equal* then \p other, otherwise returns `false`.
+         *
+         * The variant uses the *greater than* and equality operator of the containing \ref get_type() "type"
+         * to get the result of the comparision.
+         *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
+         *
+         * \see \ref variant::operator>(const variant&) const "operator\>",
+         *      \ref variant::operator==(const variant&) const "operator\=="
+         *
+         * \return A boolean with value `true`, that indicates that this variant is *greater* or *equal* than \p other, otherwise `false`.
+         */
+        RTTR_INLINE bool operator>=(const variant& other) const;
+
+        /*!
+         * \brief Compares this variant with \p other and returns `true` if this is *greater than* \p other, otherwise returns `false`.
+         *
+         * The variant uses the *less than* and equality operator of the containing \ref get_type() "type"
+         * to get the result of the comparision.
+         *
+         * \note Comparability might not be available for the type stored in this variant or in \p other.
+         *
+         * \see \ref variant::operator<(const variant&) const "operator\<"
+         *
+         * \return A boolean with value `true`, that indicates that this variant is *greater than* \p other, otherwise `false`.
+         */
+        RTTR_INLINE bool operator>(const variant& other) const;
 
         /*!
          * \brief When the variant contains a value, then this function will clear the content.
@@ -983,16 +1034,20 @@ class RTTR_API variant
         /*!
          * \brief Compares the containing and the given variant \p other for equality.
          *
+         * \param ok \p ok is set to `true` if the value could be compared; otherwise \p ok is set to `false`.
+         *
          * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
          */
-        bool compare_equal(const variant& other) const;
+        bool compare_equal(const variant& other, bool& ok) const;
 
         /*!
          * \brief Compares the containing and the given variant \p other for less than.
          *
+         * \param ok \p ok is set to `true` if the value could be compared; otherwise \p ok is set to `false`.
+         *
          * \return A boolean with value `true`, that indicates this variant is less than the \p other, otherwise `false`.
          */
-        bool compare_less(const variant& other) const;
+        bool compare_less(const variant& other, bool& ok) const;
 
         /*!
          * \brief A function to check whether the contained pointer type is a `nullptr` or not.
@@ -1011,7 +1066,7 @@ class RTTR_API variant
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;
         friend struct detail::variant_data_policy_nullptr_t;
-        friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&);
+        friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&, bool& ok);
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;

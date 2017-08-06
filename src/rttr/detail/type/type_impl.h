@@ -459,6 +459,8 @@ void type::register_comparators()
 template<typename T>
 void type::register_equal_comparator()
 {
+    static_assert(detail::has_equal_operator<T>::value, "No equal operator for given type found.");
+
     static detail::type_equal_comparator<T> cmp;
     detail::type_register::equal_comparator(type::get<T>(), &cmp);
 }
@@ -468,6 +470,8 @@ void type::register_equal_comparator()
 template<typename T>
 void type::register_less_than_comparator()
 {
+    static_assert(detail::has_less_than_operator<T>::value, "No less-than operator for given type found.");
+
     static detail::type_less_than_comparator<T> cmp;
     detail::type_register::less_than_comparator(type::get<T>(), &cmp);
 }
