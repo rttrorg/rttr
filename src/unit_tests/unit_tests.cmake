@@ -74,6 +74,7 @@ set(SOURCE_FILES main.cpp
                  variant/variant_cmp_equal_test.cpp
                  variant/variant_cmp_less_test.cpp
                  variant/variant_cmp_greater_test.cpp
+                 variant/variant_cmp_less_or_equal.cpp
                  variant/variant_cmp_greater_or_equal.cpp
                  variant/variant_misc_test.cpp
                  variant/variant_conv_to_bool.cpp
