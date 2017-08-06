@@ -1034,7 +1034,6 @@ class RTTR_API variant
         /*!
          * \brief Compares the containing and the given variant \p other for equality.
          *
-         *
          * \param ok \p ok is set to `true` if the value could be compared; otherwise \p ok is set to `false`.
          *
          * \return A boolean with value `true`, that indicates both variant's are equal, otherwise `false`.
@@ -1044,9 +1043,11 @@ class RTTR_API variant
         /*!
          * \brief Compares the containing and the given variant \p other for less than.
          *
+         * \param ok \p ok is set to `true` if the value could be compared; otherwise \p ok is set to `false`.
+         *
          * \return A boolean with value `true`, that indicates this variant is less than the \p other, otherwise `false`.
          */
-        bool compare_less(const variant& other) const;
+        bool compare_less(const variant& other, bool& ok) const;
 
         /*!
          * \brief A function to check whether the contained pointer type is a `nullptr` or not.
@@ -1065,7 +1066,7 @@ class RTTR_API variant
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;
         friend struct detail::variant_data_policy_nullptr_t;
-        friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&);
+        friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&, bool& ok);
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;

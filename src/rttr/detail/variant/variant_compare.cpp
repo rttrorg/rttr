@@ -68,8 +68,9 @@ bool variant_compare_equal(const variant& lhs, const type& lhs_type, const varia
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type)
+bool variant_compare_less(const variant& lhs, const type& lhs_type, const variant& rhs, const type& rhs_type, bool& ok)
 {
+    ok = true;
     if (lhs_type.is_arithmetic() && rhs_type.is_arithmetic())
     {
         if (is_floating_point(lhs_type) || is_floating_point(rhs_type))
@@ -81,7 +82,7 @@ bool variant_compare_less(const variant& lhs, const type& lhs_type, const varian
     {
         variant lhs_tmp;
         if (lhs.convert(rhs_type, lhs_tmp))
-            return lhs_tmp.compare_less(rhs);
+            return lhs_tmp.compare_less(rhs, ok);
 
         if (!lhs.is_nullptr() && rhs.is_nullptr())
             return false;
@@ -91,9 +92,14 @@ bool variant_compare_less(const variant& lhs, const type& lhs_type, const varian
         bool ok2 = false;
         auto ret = (lhs.to_string(&ok1) < rhs.to_string(&ok2));
         if (ok1 && ok2)
+        {
             return ret;
+        }
         else
-            return (lhs_type < rhs_type);
+        {
+            ok = false;
+            return false;
+        }
     }
 }
 

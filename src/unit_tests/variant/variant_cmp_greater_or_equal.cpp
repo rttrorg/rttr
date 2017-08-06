@@ -33,29 +33,26 @@
 using namespace rttr;
 using namespace std;
 
-struct type_with_no_less_than_operator_2
+template<typename T>
+struct custom_compare_type
 {
-    int i;
-};
+    T i;
 
-struct type_with_less_than_operator_2 // important, other name
-{
-    int i;
+    bool operator==(const custom_compare_type<T>& other) const { return (i == other.i); }
 
-    bool operator<(const type_with_less_than_operator_2& rhs) const { return (i < rhs.i); }
-    bool operator==(const type_with_less_than_operator_2& other) const { return (i == other.i); }
+    bool operator<(const custom_compare_type<T>& other) const { return (i < other.i); }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - empty", "[variant]")
+TEST_CASE("variant::operator>=() - empty", "[variant]")
 {
     SECTION("empty type")
     {
         variant a;
         variant b;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
     SECTION("full type lhs")
@@ -63,7 +60,7 @@ TEST_CASE("variant::operator>() - empty", "[variant]")
         variant a = 23;
         variant b;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
     SECTION("full type rhs")
@@ -71,180 +68,140 @@ TEST_CASE("variant::operator>() - empty", "[variant]")
         variant a;
         variant b = 23;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - integer", "[variant]")
+TEST_CASE("variant::operator>=() - integer", "[variant]")
 {
     SECTION("equal")
     {
         variant a = static_cast<int8_t>(100);
         variant b = static_cast<int32_t>(100);
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == true);
     }
 
-    SECTION("lower > bigger")
+    SECTION("lower >= bigger")
     {
         variant a = static_cast<int8_t>(100);
         variant b = static_cast<int32_t>(10000);
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
-    SECTION("bigger > lower")
+    SECTION("bigger >= lower")
     {
         variant a = static_cast<int32_t>(10000);
         variant b = static_cast<int8_t>(100);
 
-        CHECK((a > b) == true);
+        CHECK((a >= b) == true);
     }
 
-    SECTION("lower > bigger[unsigned]")
+    SECTION("lower >= bigger[unsigned]")
     {
         variant a = static_cast<int32_t>(-10000);
         variant b = static_cast<int8_t>(100);
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - float", "[variant]")
+TEST_CASE("variant::operator>=() - float", "[variant]")
 {
-    SECTION("lower > bigger")
+    SECTION("equal")
+    {
+        variant a = 123.2f;
+        variant b = 123.2f;
+
+        CHECK((a >= b) == true);
+    }
+
+    SECTION("lower >= bigger")
     {
         variant a = static_cast<int8_t>(123);
         variant b = 123.2f;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
-    SECTION("bigger < lower")
+    SECTION("bigger >= lower")
     {
         variant a = 123.2f;
         variant b = static_cast<int8_t>(123);
 
-        CHECK((a > b) == true);
+        CHECK((a >= b) == true);
     }
 
-    SECTION("lower > bigger")
+    SECTION("lower >= bigger")
     {
         variant a = -1230.3f;
         variant b = static_cast<int8_t>(100);
 
-        CHECK((a < b) == true);
+        CHECK((a >= b) == false);
     }
 
-    SECTION("lower > bigger")
+    SECTION("lower >= bigger")
     {
         variant a = -1230.37f;
         variant b = -1230.31;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - double", "[variant]")
+TEST_CASE("variant::operator>=() - double", "[variant]")
 {
-    SECTION("lower > bigger")
+    SECTION("equal")
+    {
+        variant a = 123.2;
+        variant b = 123.2;
+
+        CHECK((a >= b) == true);
+    }
+
+    SECTION("lower >= bigger")
     {
         variant a = static_cast<int8_t>(123);
         variant b = 123.2;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
-    SECTION("int - bigger < lower")
+    SECTION("int - bigger >= lower")
     {
         variant a = 123.2;
         variant b = static_cast<int8_t>(123);
 
-        CHECK((a > b) == true);
+        CHECK((a >= b) == true);
     }
 
-    SECTION("int UnSigned - lower < bigger")
+    SECTION("int UnSigned - lower >= bigger")
     {
         variant a = -1230.3;
         variant b = static_cast<int8_t>(100);
 
-        CHECK((a > b) == false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-TEST_CASE("variant::operator>() - Non-template type", "[variant]")
-{
-    SECTION("lower < bigger")
-    {
-        variant a = type_with_less_than_operator_2{ 23 };
-        variant b = type_with_less_than_operator_2{ 42 };
-
-        CHECK((a > b) == false);
-        CHECK((b > a) == true);
+        CHECK((a >= b) == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - template type - comparator registered", "[variant]")
-{
-    SECTION("lower < bigger")
-    {
-        variant a = std::make_tuple<int, int, int>(23, 12, 4);
-        variant b = std::make_tuple<int, int, int>(42, 44, 55);
-
-        CHECK((a > b) == false);
-        CHECK((b > a) == false);
-
-        type::register_comparators<std::tuple<int, int, int>>();
-
-        CHECK((a > b) == false);
-        CHECK((b > a) == true);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("variant::operator>() - template type - no comparator registered", "[variant]")
-{
-    SECTION("lower < bigger, use std::string comparator")
-    {
-        variant a = std::make_pair(1, 2);
-        variant b = std::make_pair(3, 4);
-
-        CHECK((a < b) == false);
-        CHECK((b < a) == false);
-
-        type::register_converter_func([](const std::pair<int, int>& p, bool& ok) -> std::string
-                                     {
-                                        ok = true;
-                                        return std::to_string(p.first);
-                                     });
-
-        CHECK((a < b) == true);
-        CHECK((b < a) == false);
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("variant::operator>() - with nullptr", "[variant]")
+TEST_CASE("variant::operator>=() - with nullptr", "[variant]")
 {
     SECTION("nullptr > nullptr")
     {
         variant a = nullptr;
         variant b = nullptr;
 
-        CHECK((a > b) == false);
-        CHECK((b > a) == false);
+        CHECK((a >= b) == true);
     }
 
     SECTION("nullptr > valid")
@@ -253,7 +210,7 @@ TEST_CASE("variant::operator>() - with nullptr", "[variant]")
         variant a = nullptr;
         variant b = &obj;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == false);
     }
 
     SECTION("valid > nullptr")
@@ -262,23 +219,22 @@ TEST_CASE("variant::operator>() - with nullptr", "[variant]")
         variant a = &obj;
         variant b = nullptr;
 
-        CHECK((a > b) == false);
+        CHECK((a >= b) == true);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::operator>() - raw arrays", "[variant]")
+TEST_CASE("variant::operator>=() - raw arrays", "[variant]")
 {
-    SECTION("int - pos.")
+    SECTION("int - pos. - equal")
     {
         int array[2][5]     = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
         int arrays[2][5]    = {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 5}};
         variant a = array;
         variant b = arrays;
 
-        CHECK((a > b) == false);
-        CHECK((a == b) == true);
+        CHECK((a >= b) == true);
     }
 
     SECTION("int - neg.")
@@ -289,47 +245,24 @@ TEST_CASE("variant::operator>() - raw arrays", "[variant]")
         variant a = array;
         variant b = arrays;
 
-        CHECK((a > b) == true);
-        CHECK((a != b) == true);
+        CHECK((a >= b) == true);
     }
+}
 
-    SECTION("type with no less than operator")
-    {
-        type_with_no_less_than_operator_2 array[5]    = {{1}, {2}, {3}, {12}, {5}};
-        type_with_no_less_than_operator_2 arrays[5]   = {{1}, {2}, {3}, {4}, {5}};
-        variant a = array;
-        variant b = arrays;
+/////////////////////////////////////////////////////////////////////////////////////////
 
-        CHECK((a > b) == false);
-        CHECK((b > a) == false);
-    }
+TEST_CASE("variant::operator>=() - custom type", "[variant]")
+{
+    variant a = custom_compare_type<int> { 2 };
+    variant b = custom_compare_type<int> { 1 };
 
-    SECTION("greater than operator - raw array")
-    {
-        type_with_less_than_operator_2 array[5]   = {{1}, {2}, {3}, {12}, {5}};
-        type_with_less_than_operator_2 arrays[5]  = {{1}, {2}, {3}, {4}, {5}};
-        variant a = array;
-        variant b = arrays;
+    type::register_equal_comparator<custom_compare_type<int>>();
 
-        CHECK((a > b) == true);
-        CHECK((b > a) == false);
-    }
+    CHECK((a >= b) == false); // no valid comparision, because the less-than operator was not registered
 
-    SECTION("register less than operator - std::array")
-    {
-        std::array<int, 5> array_a = { {1, 2, 3, 4, 5} };
-        std::array<int, 5> array_b = { {1, 2, 0, 4, 5} };
+    type::register_less_than_comparator<custom_compare_type<int>>();
 
-        variant a = array_a;
-        variant b = array_b;
-
-        CHECK((a > b) == false);
-
-        type::register_comparators<std::array<int, 5>>();
-
-        CHECK((a > b) == true);
-    }
-
+    CHECK((a >= b) == true); // now we can compare
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

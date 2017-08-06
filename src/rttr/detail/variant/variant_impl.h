@@ -96,32 +96,36 @@ RTTR_INLINE bool variant::operator!=(const variant& other) const
 
 RTTR_INLINE bool variant::operator<(const variant& other) const
 {
-    return compare_less(other);
+    bool ok = false;
+    return compare_less(other, ok);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool variant::operator<=(const variant& other) const
 {
-    auto ok = false;
-    return (compare_equal(other, ok) || compare_less(other));
+    auto ok_equal = false, ok_less = false;
+    return ((compare_equal(other, ok_equal) && ok_equal) ||
+            (compare_less(other, ok_less) && ok_less));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool variant::operator>=(const variant& other) const
 {
-    auto ok = false;
-    return (compare_equal(other, ok) || !compare_less(other));
+    auto ok_equal = false, ok_less = false;
+    return ( ((compare_equal(other, ok_equal) && ok_equal) ||
+              (!compare_less(other, ok_less) && ok_less))
+            && is_valid() && other.is_valid());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool variant::operator>(const variant& other) const
 {
-    auto ok = false;
-    auto cmp_result = compare_equal(other, ok);
-    return (ok && !cmp_result && !compare_less(other));
+    auto ok_equal = false, ok_less = false;
+    return ((!compare_equal(other, ok_equal) && ok_equal) &&
+            (!compare_less(other, ok_less) && ok_less));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

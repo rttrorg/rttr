@@ -131,9 +131,9 @@ bool variant::compare_equal(const variant& other, bool& ok) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant::compare_less(const variant& other) const
+bool variant::compare_less(const variant& other, bool& ok) const
 {
-    return m_policy(detail::variant_policy_operation::COMPARE_LESS, m_data,  std::tie(*this, other));
+    return m_policy(detail::variant_policy_operation::COMPARE_LESS, m_data,  std::tie(*this, other, ok));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
