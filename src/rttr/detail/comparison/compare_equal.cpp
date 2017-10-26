@@ -39,11 +39,15 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool compare_types_equal(const void* lhs, const void* rhs, const type& t)
+bool compare_types_equal(const void* lhs, const void* rhs, const type& t, bool& ok)
 {
     if (auto cmp_f = type_register_private::get_equal_comparator(t))
+    {
+        ok = true;
         return cmp_f->cmp(lhs, rhs);
+    }
 
+    ok = false;
     return false;
 }
 

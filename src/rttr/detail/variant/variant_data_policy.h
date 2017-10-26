@@ -151,18 +151,18 @@ using variant_policy_func = bool (*)(variant_policy_operation, const variant_dat
 // some ugly workaround for MSVC < v. 1800
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
-    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
-        compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()))
+    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs, ok)                                  \
+        compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), ok)
 #else
-    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs)                                            \
-        compare_equal(Tp::get_value(src_data), rhs.get_value<T>())
+    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs, ok)                                  \
+        compare_equal(Tp::get_value(src_data), rhs.get_value<T>(), ok)
 #endif
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                           \
         compare_less_than(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), result)
 #else
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                                     \
+    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                           \
         compare_less_than(Tp::get_value(src_data), rhs.get_value<T>(), result)
 #endif
 
@@ -334,9 +334,10 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& lhs  = std::get<0>(param);
                 const variant& rhs  = std::get<1>(param);
+                bool& ok            = std::get<2>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
                 const auto is_lhs_arithmetic = std::is_arithmetic<T>::value;
@@ -344,21 +345,23 @@ struct variant_data_base_policy
 
                 if (lhs_type == rhs_type)
                 {
-                    return COMPARE_EQUAL_PRE_PROC(src_data, rhs);
+                    return COMPARE_EQUAL_PRE_PROC(src_data, rhs, ok);
                 }
                 else
                 {
                     if (is_lhs_arithmetic && rhs_type.is_arithmetic())
                     {
-                        return variant_compare_equal(lhs, lhs_type, rhs, rhs_type);
+                        return variant_compare_equal(lhs, lhs_type, rhs, rhs_type, ok);
                     }
                     else
                     {
                         variant var_tmp;
                         if (rhs.convert(lhs_type, var_tmp))
-                            return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp);
+                            return COMPARE_EQUAL_PRE_PROC(src_data, var_tmp, ok);
                         else if (lhs.convert(rhs_type, var_tmp))
-                            return (var_tmp.compare_equal(rhs));
+                            return (var_tmp.compare_equal(rhs, ok));
+                        else if (rhs.is_nullptr())
+                            return is_nullptr(Tp::get_value(src_data));
                     }
                 }
 
@@ -367,24 +370,35 @@ struct variant_data_base_policy
             }
             case variant_policy_operation::COMPARE_LESS:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& lhs  = std::get<0>(param);
                 const variant& rhs  = std::get<1>(param);
+                bool& ok            = std::get<2>(param);
                 const type rhs_type = rhs.get_type();
                 const type lhs_type = type::get<T>();
                 int result = 0;
                 if (lhs_type == rhs_type)
                 {
-                    if (COMPARE_LESS_PRE_PROC(src_data, rhs, result))
+                    if ((ok = COMPARE_LESS_PRE_PROC(src_data, rhs, result)) == true)
                         return (result == -1 ? true : false);
                 }
                 else
                 {
-                    return variant_compare_less(lhs, lhs_type, rhs, rhs_type);
+                    return variant_compare_less(lhs, lhs_type, rhs, rhs_type, ok);
                 }
 
-                // as last try, do a string conversion
-                return (lhs.to_string() < rhs.to_string());
+                bool ok1 = false;
+                bool ok2 = false;
+                auto ret = (lhs.to_string(&ok1) < rhs.to_string(&ok2));
+                if (ok1 && ok2)
+                {
+                    ok = true;
+                    return ret;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -709,9 +723,12 @@ struct RTTR_API variant_data_policy_empty
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& rhs  = std::get<1>(param);
-                return !rhs.is_valid();
+                bool& ok            = std::get<2>(param);
+                if (!rhs.is_valid())
+                    ok = true;
+                return ok;
             }
             case variant_policy_operation::COMPARE_LESS:
             {
@@ -824,9 +841,12 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& rhs  = std::get<1>(param);
-                return (rhs.is_type<void>());
+                bool& ok            = std::get<2>(param);
+                if (rhs.is_type<void>())
+                    ok = true;
+                return ok;
             }
             case variant_policy_operation::COMPARE_LESS:
             {
@@ -975,31 +995,19 @@ struct RTTR_API variant_data_policy_nullptr_t
             }
             case variant_policy_operation::COMPARE_EQUAL:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
-                const variant& lhs  = std::get<0>(param);
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& rhs  = std::get<1>(param);
-                const type rhs_type = rhs.get_type();
-                const type lhs_type = type::get<std::nullptr_t>();
-                if (lhs_type == rhs_type)
-                {
-                    return compare_equal(get_value(src_data), rhs.get_value<std::nullptr_t>());
-                }
-                else
-                {
-                    variant var_tmp;
-                    if (rhs.convert(lhs_type, var_tmp))
-                        return compare_equal(get_value(src_data), var_tmp.get_value<std::nullptr_t>());
-                    else if (lhs.convert(rhs_type, var_tmp))
-                        return (var_tmp.compare_equal(rhs));
-                }
-
-                return false;
+                bool&           ok  = std::get<2>(param);
+                ok = true;
+                return rhs.is_nullptr();
             }
             case variant_policy_operation::COMPARE_LESS:
             {
-                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&>>();
+                const auto& param   = arg.get_value<std::tuple<const variant&, const variant&, bool&>>();
                 const variant& lhs  = std::get<0>(param);
                 const variant& rhs  = std::get<1>(param);
+                bool& ok            = std::get<2>(param);
+                ok = true;
                 return (lhs.is_nullptr() && !rhs.is_nullptr());
             }
         }
