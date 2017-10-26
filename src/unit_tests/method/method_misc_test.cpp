@@ -50,6 +50,20 @@ struct method_misc_test
     static void static_func() {}
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+struct base_class_with_methods
+{
+    base_class_with_methods(){}
+    void some_method() {}
+
+    RTTR_ENABLE()
+};
+
+struct derived_class_without_registered_methods : base_class_with_methods
+{
+    RTTR_ENABLE(base_class_with_methods)
+};
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +86,11 @@ RTTR_REGISTRATION
             metadata("Text",  "Some funky description")
         )
         ;
+
+    registration::class_<base_class_with_methods>("base_class_with_methods")
+        .method("some_method", &base_class_with_methods::some_method);
+
+    registration::class_<derived_class_without_registered_methods>("derived_class_without_registered_methods");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -225,3 +244,16 @@ TEST_CASE("method - default_func - NEGATIVE - get_metadata()", "[method]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("method - check inheritance of methods", "[method]")
+{
+    // base class has registered methodes, the derived class not
+    type t = type::get<derived_class_without_registered_methods>();
+    auto meth_range = t.get_methods();
+    REQUIRE(meth_range.size() == 1);
+
+    CHECK((*meth_range.begin()).get_name() == "some_method");
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
