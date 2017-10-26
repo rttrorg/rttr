@@ -266,6 +266,33 @@ TEST_CASE("variant::operator==() - raw arrays", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant::operator==() - custom type with equal operator", "[variant]")
+{
+    SECTION("equal - type_with_equal_operator")
+    {
+        type_with_equal_operator value_1 = { 1 };
+        type_with_equal_operator value_2 = { 1 };
+        variant a = value_1;
+        variant b = value_2;
+
+        CHECK((a == b) == true);
+        CHECK((a != b) == false);
+    }
+
+    SECTION("not equal - type_with_equal_operator")
+    {
+        type_with_equal_operator value_1 = { 1 };
+        type_with_equal_operator value_2 = { 2 };
+        variant a = value_1;
+        variant b = value_2;
+
+        CHECK((a == b) == false);
+        CHECK((a != b) == true);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant::operator==() - std::string", "[variant]")
 {
     SECTION("equal")
