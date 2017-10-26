@@ -364,7 +364,13 @@ type type_register_private::register_type(type_data& info) RTTR_NOEXCEPT
 
     update_custom_name(derive_template_instance_name(info), type(&info));
 
-    return type(type_data_container[id]);
+    // when a base class type has class items, but the derived one not,
+    // we update the derived class item list
+    const auto t = type(type_data_container[id]);
+    update_class_list(t, &detail::class_data::m_properties);
+    update_class_list(t, &detail::class_data::m_methods);
+
+    return t;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -762,7 +768,7 @@ void type_register_private::update_class_list(const type& t, T item_ptr)
 {
     // update type "t" with all items from the base classes
     auto& all_class_items = (t.m_type_data->get_class_data().*item_ptr);
-    auto item_range = get_items_for_type(t, t.m_type_data->get_class_data().*item_ptr);
+    auto item_range = get_items_for_type(t, all_class_items);
     detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
     all_class_items.reserve(all_class_items.size() + 1);
     all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary

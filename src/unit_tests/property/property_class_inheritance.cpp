@@ -95,6 +95,8 @@ struct bottom : left, right, right_2
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 struct base_prop_not_registered
 {
     base_prop_not_registered() : value(100) {}
@@ -105,6 +107,23 @@ struct derived_registered_prop : base_prop_not_registered
 {
 
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+struct base_class_with_props
+{
+    base_class_with_props() : value(100) {}
+    int value;
+
+    RTTR_ENABLE()
+};
+
+struct derived_class_without_registered_props : base_class_with_props
+{
+    RTTR_ENABLE(base_class_with_props)
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 static double g_name;
 
@@ -159,6 +178,12 @@ RTTR_REGISTRATION
 
     registration::class_<derived_registered_prop>("derived_registered_prop")
         .property("value", &derived_registered_prop::value);
+
+
+    registration::class_<base_class_with_props>("base_class_with_props")
+        .property("value", &base_class_with_props::value);
+
+    registration::class_<derived_class_without_registered_props>("derived_class_without_registered_props");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -509,6 +534,18 @@ TEST_CASE("property - base class not registered", "[property]")
 
     REQUIRE(range.size() == 1);
     CHECK(*range.begin() == t_prop);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - check inheritance of probs", "[property]")
+{
+    // base class has registered properties, the derived class not
+    type t_prop = type::get<derived_class_without_registered_props>();
+    auto prop_range = t_prop.get_properties();
+    REQUIRE(prop_range.size() == 1);
+
+    CHECK((*prop_range.begin()).get_name() == "value");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
