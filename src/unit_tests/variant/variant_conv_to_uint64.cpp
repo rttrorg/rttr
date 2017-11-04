@@ -87,6 +87,8 @@ TEST_CASE("variant::to_uint64() - from char", "[variant]")
         CHECK(var.get_value<uint64_t>() == 65);
     }
 
+RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+
     if (std::numeric_limits<char>::is_signed)
     {
         SECTION("invalid conversion negative")
@@ -98,6 +100,9 @@ TEST_CASE("variant::to_uint64() - from char", "[variant]")
             CHECK(var.convert(type::get<uint64_t>()) == false);
         }
     }
+
+RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
