@@ -87,13 +87,16 @@ TEST_CASE("variant::to_uint32() - from char", "[variant]")
         CHECK(var.get_value<uint32_t>() == 65);
     }
 
-    SECTION("invalid conversion negative")
+    if (std::numeric_limits<char>::is_signed)
     {
-        variant var = char(-60);
-        bool ok = false;
-        CHECK(var.to_uint32(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<uint32_t>()) == false);
+        SECTION("invalid conversion negative")
+        {
+            variant var = char(-60);
+            bool ok = false;
+            CHECK(var.to_uint32(&ok) == 0);
+            CHECK(ok == false);
+            CHECK(var.convert(type::get<uint32_t>()) == false);
+        }
     }
 }
 
