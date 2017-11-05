@@ -87,14 +87,22 @@ TEST_CASE("variant::to_double() - from char", "[variant]")
         CHECK(var.get_value<double>() == 65.0);
     }
 
-    SECTION("valid conversion negative")
+RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+
+    if (std::numeric_limits<char>::is_signed)
     {
-        variant var = char(-60);
-        bool ok = false;
-        CHECK(var.to_double(&ok) == -60.0);
-        CHECK(ok == true);
-        CHECK(var.convert(type::get<double>()) == true);
+        SECTION("valid conversion negative")
+        {
+            variant var = char(-60);
+            bool ok = false;
+            CHECK(var.to_double(&ok) == -60.0);
+            CHECK(ok == true);
+            CHECK(var.convert(type::get<double>()) == true);
+        }
     }
+
+RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

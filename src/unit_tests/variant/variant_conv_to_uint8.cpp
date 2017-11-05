@@ -87,14 +87,22 @@ TEST_CASE("variant::to_uint8() - from char", "[variant]")
         CHECK(var.get_value<uint8_t>() == 65);
     }
 
-    SECTION("invalid conversion negative")
+RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+
+    if (std::numeric_limits<char>::is_signed)
     {
-        variant var = char(-60);
-        bool ok = false;
-        CHECK(var.to_uint8(&ok) == 0);
-        CHECK(ok == false);
-        CHECK(var.convert(type::get<uint8_t>()) == false);
+        SECTION("invalid conversion negative")
+        {
+            variant var = char(-60);
+            bool ok = false;
+            CHECK(var.to_uint8(&ok) == 0);
+            CHECK(ok == false);
+            CHECK(var.convert(type::get<uint8_t>()) == false);
+        }
     }
+
+RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
