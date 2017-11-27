@@ -34,20 +34,22 @@ MESSAGE(STATUS ${LIBRARY_OUTPUT_DIRECTORY})
 MESSAGE(STATUS "Finding 3rd party libs...")
 MESSAGE(STATUS "===========================")
 
-if (MSVC)
-    # there is a the moment a problem with finding multiple versions of boost,
-    # i.e. the static AND the static runtime version; that is not possible atm.
-    # Because of that, the benchmarks cannot be build with the static runtime lib option enabled
-    set(Boost_USE_STATIC_LIBS       ON)
-    set(Boost_USE_STATIC_RUNTIME    OFF)
-    set(BOOST_ALL_DYN_LINK          OFF)
+if (BUILD_BENCHMARKS)
+    if (MSVC)
+        # there is a the moment a problem with finding multiple versions of boost,
+        # i.e. the static AND the static runtime version; that is not possible atm.
+        # Because of that, the benchmarks cannot be build with the static runtime lib option enabled
+        set(Boost_USE_STATIC_LIBS       ON)
+        set(Boost_USE_STATIC_RUNTIME    OFF)
+        set(BOOST_ALL_DYN_LINK          OFF)
 
-    find_package(Boost COMPONENTS chrono system)
-else()
-    find_package(Boost)
+        find_package(Boost COMPONENTS chrono system)
+    else()
+        find_package(Boost)
+    endif()
+    
+    find_package(Threads REQUIRED)
 endif()
-
-find_package(Threads REQUIRED)
 
 set(RAPID_JSON_DIR ${RTTR_3RD_PARTY_DIR}/rapidjson-1.1.0)
 set(CATCH_DIR ${RTTR_3RD_PARTY_DIR}/catch-1.8.2)
