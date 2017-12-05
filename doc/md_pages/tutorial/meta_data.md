@@ -53,7 +53,7 @@ int main()
     std::cout << value.get_value<bool>(); // prints "false"
     
     value = prop.get_metadata("Description");
-    std::cout << value.get_value<int>(); // prints "This is a value."
+    std::cout << value.get_value<std::string>(); // prints "This is a value."
 }
 \endcode
 
