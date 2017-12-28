@@ -29,7 +29,6 @@
 #define RTTR_TYPE_REGISTER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-
 #include "rttr/string_view.h"
 
 #include <memory>

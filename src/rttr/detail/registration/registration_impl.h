@@ -41,7 +41,9 @@
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/type/type_register.h"
 #include "rttr/detail/registration/bind_impl.h"
+#include "rttr/detail/registration/registration_state_saver.h"
 #include "rttr/policy.h"
+#include "rttr/enumeration.h"
 
 #include <string>
 #include <vector>
@@ -228,7 +230,7 @@ registration::bind<detail::enum_, Class_Type, Enum_Type> registration::class_<Cl
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop, void, A, detail::public_access> registration::property(string_view name, A acc)
+registration::bind<detail::prop, detail::invalid_type, A, detail::public_access> registration::property(string_view name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value, "No valid property accessor provided!");
@@ -238,7 +240,7 @@ registration::bind<detail::prop, void, A, detail::public_access> registration::p
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A>
-registration::bind<detail::prop_readonly, void, A, detail::public_access> registration::property_readonly(string_view name, A acc)
+registration::bind<detail::prop_readonly, detail::invalid_type, A, detail::public_access> registration::property_readonly(string_view name, A acc)
 {
     using namespace detail;
     static_assert(std::is_pointer<A>::value || is_functor<A>::value,
@@ -250,7 +252,7 @@ registration::bind<detail::prop_readonly, void, A, detail::public_access> regist
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename A1, typename A2>
-registration::bind<detail::prop, void, A1, A2, detail::public_access> registration::property(string_view name, A1 getter, A2 setter)
+registration::bind<detail::prop, detail::invalid_type, A1, A2, detail::public_access> registration::property(string_view name, A1 getter, A2 setter)
 {
     using namespace detail;
     static_assert(is_functor<A1>::value || is_functor<A2>::value,
@@ -262,7 +264,7 @@ registration::bind<detail::prop, void, A1, A2, detail::public_access> registrati
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename F>
-registration::bind<detail::meth, void, F, detail::public_access> registration::method(string_view name, F f)
+registration::bind<detail::meth, detail::invalid_type, F, detail::public_access> registration::method(string_view name, F f)
 {
     using namespace detail;
     static_assert(is_functor<F>::value, "No valid property accessor provided!");
@@ -272,7 +274,7 @@ registration::bind<detail::meth, void, F, detail::public_access> registration::m
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Enum_Type>
-registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(string_view name)
+registration::bind<detail::enum_, detail::invalid_type, Enum_Type> registration::enumeration(string_view name)
 {
     using namespace detail;
     static_assert(std::is_enum<Enum_Type>::value, "No enum type provided, please call this method with an enum type!");
@@ -283,19 +285,24 @@ registration::bind<detail::enum_, void, Enum_Type> registration::enumeration(str
 
 } // end namespace rttr
 
-#define RTTR_REGISTRATION                                                \
-static void rttr_auto_register_reflection_function_();                   \
-namespace                                                                \
-{                                                                        \
-    struct rttr__auto__register__                                        \
-    {                                                                    \
-        rttr__auto__register__()                                         \
-        {                                                                \
-            rttr_auto_register_reflection_function_();                   \
-        }                                                                \
-    };                                                                   \
-}                                                                        \
-static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__); \
+#define RTTR_REGISTRATION                                                 \
+static void rttr_auto_register_reflection_function_();                    \
+namespace                                                                 \
+{                                                                         \
+    struct rttr__auto__register__                                         \
+    {                                                                     \
+        rttr__auto__register__()                                          \
+        {                                                                 \
+            m_state.begin_save_state();                                   \
+            rttr_auto_register_reflection_function_();                    \
+            m_state.end_save_state();                                     \
+        }                                                                 \
+                                                                          \
+        private:                                                          \
+            rttr::detail::registration_state_saver m_state;               \
+    };                                                                    \
+}                                                                         \
+static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__);  \
 static void rttr_auto_register_reflection_function_()
 
 

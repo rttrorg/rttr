@@ -42,6 +42,8 @@
 #include "rttr/property.h"
 #include "rttr/constructor.h"
 #include "rttr/destructor.h"
+#include "rttr/detail/method/method_wrapper_base.h"
+#include "rttr/detail/property/property_wrapper_base.h"
 
 
 #include <type_traits>
@@ -82,6 +84,8 @@ struct class_data
     std::vector<constructor>    m_ctors;
     std::vector<type>           m_nested_types;
     destructor                  m_dtor;
+    std::vector<std::unique_ptr<method_wrapper_base>>   m_method_storage;
+    std::vector<std::unique_ptr<property_wrapper_base>> m_property_storage;
 };
 
 enum class type_trait_infos : std::size_t

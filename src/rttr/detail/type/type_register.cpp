@@ -183,15 +183,61 @@ void type_register::register_base_class(const type& derived_type, const base_cla
     r_type.m_type_data->get_class_data().m_derived_types.push_back(type(derived_type.m_type_data));
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::deque<std::unique_ptr<method_wrapper_base>>& type_register_private::get_method_storage()
+{
+    static std::deque<std::unique_ptr<method_wrapper_base>> container;
+    return container;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+flat_multimap<string_view, ::rttr::method>& type_register_private::get_global_method_storage()
+{
+    static flat_multimap<string_view, ::rttr::method> meths;
+    return meths;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+flat_multimap<string_view, ::rttr::property>& type_register_private::get_global_property_storage()
+{
+    static flat_multimap<string_view, ::rttr::property> props;
+    return props;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::deque<std::unique_ptr<property_wrapper_base>>& type_register_private::get_property_storage()
+{
+    static std::deque<std::unique_ptr<property_wrapper_base>> container;
+    return container;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<method>& type_register_private::get_global_methods()
+{
+    static std::vector<::rttr::method> container;
+    return container;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<property>& type_register_private::get_global_properties()
+{
+    static std::vector<::rttr::property> container;
+    return container;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 {
     return type_register_private::register_type(info);
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +321,7 @@ std::vector<type_register_private::data_container<std::vector<metadata>>>& type_
     static std::vector<data_container<std::vector<metadata>>> obj;
     return obj;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -598,27 +645,8 @@ void type_register_private::destructor(const type& t, std::unique_ptr<destructor
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-flat_multimap<string_view, ::rttr::property>& type_register_private::get_global_property_storage()
-{
-    static flat_multimap<string_view, ::rttr::property> props;
-    return props;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static std::vector<std::unique_ptr<detail::property_wrapper_base>>& get_property_storage()
-{
-    static std::vector<std::unique_ptr<detail::property_wrapper_base>> container;
-    return container;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void type_register_private::property(const type& t, std::unique_ptr<property_wrapper_base> prop)
 {
-    if (!t.is_valid())
-        return;
-
     const auto name = prop->get_name();
 
     if (t.is_class())
@@ -629,7 +657,7 @@ void type_register_private::property(const type& t, std::unique_ptr<property_wra
             return;
 
         property_list.emplace_back(detail::create_item<::rttr::property>(prop.get()));
-        get_property_storage().push_back(std::move(prop));
+        t.m_type_data->get_class_data().m_property_storage.push_back(std::move(prop));
         update_class_list(t, &detail::class_data::m_properties);
     }
     else
@@ -638,6 +666,7 @@ void type_register_private::property(const type& t, std::unique_ptr<property_wra
             return;
 
         auto p = detail::create_item<::rttr::property>(prop.get());
+        get_global_properties().push_back(p);
         get_global_property_storage().insert(std::move(name), std::move(p));
         get_property_storage().push_back(std::move(prop));
     }
@@ -647,27 +676,8 @@ void type_register_private::property(const type& t, std::unique_ptr<property_wra
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-flat_multimap<string_view, ::rttr::method>& type_register_private::get_global_method_storage()
-{
-    static flat_multimap<string_view, ::rttr::method> meths;
-    return meths;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static std::vector<std::unique_ptr<method_wrapper_base>>& get_method_storage()
-{
-    static std::vector<std::unique_ptr<method_wrapper_base>> container;
-    return container;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void type_register_private::method(const type& t, std::unique_ptr<method_wrapper_base> meth)
 {
-    if (!t.is_valid())
-        return;
-
     const auto name = meth->get_name();
     if (t.is_class())
     {
@@ -676,7 +686,7 @@ void type_register_private::method(const type& t, std::unique_ptr<method_wrapper
 
         auto& method_list = t.m_type_data->get_class_data().m_methods;
         method_list.emplace_back(create_item<::rttr::method>(meth.get()));
-        get_method_storage().push_back(std::move(meth));
+        t.m_type_data->get_class_data().m_method_storage.push_back(std::move(meth));
         update_class_list(t, &class_data::m_methods);
     }
     else
@@ -685,6 +695,7 @@ void type_register_private::method(const type& t, std::unique_ptr<method_wrapper
             return;
 
         auto m = create_item<::rttr::method>(meth.get());
+        get_global_methods().push_back(m);
         get_global_method_storage().insert(std::move(name), std::move(m));
         get_method_storage().push_back(std::move(meth));
     }

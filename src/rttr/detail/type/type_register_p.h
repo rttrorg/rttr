@@ -67,6 +67,7 @@ class RTTR_LOCAL type_register_private
 public:
 
     static type register_type(type_data& info) RTTR_NOEXCEPT;
+    static void unregister_type(type_data& info) RTTR_NOEXCEPT;
 
     static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
     static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
@@ -79,10 +80,18 @@ public:
     static flat_multimap<string_view, ::rttr::method>& get_global_method_storage();
     /////////////////////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    static std::vector<::rttr::method>& get_global_methods();
+    static std::vector<::rttr::property>& get_global_properties();
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
     static std::vector<type_data*>& get_type_data_storage();
     static std::vector<type>& get_type_storage();
     static flat_map<string_view, type>& get_orig_name_to_id();
     static flat_map<std::string, type, hash>& get_custom_name_to_id();
+    static std::deque<std::unique_ptr<method_wrapper_base>>& get_method_storage();
+    static std::deque<std::unique_ptr<property_wrapper_base>>& get_property_storage();
 
     /////////////////////////////////////////////////////////////////////////////////////
 

@@ -136,6 +136,7 @@ set(HEADER_FILES access_levels.h
                  detail/registration/register_base_class_from_accessor.h
                  detail/registration/registration_impl.h
                  detail/registration/registration_executer.h
+                 detail/registration/registration_state_saver.h
                  detail/type/accessor_type.h
                  detail/type/base_classes.h
                  detail/type/get_create_variant_func.h
@@ -147,6 +148,7 @@ set(HEADER_FILES access_levels.h
                  detail/type/type_impl.h
                  detail/type/type_name.h
                  detail/type/type_register_p.h
+                 detail/type/type_deregister.h
                  detail/type/type_string_utils.h
                  detail/variant/variant_compare.h
                  detail/variant/variant_data.h
@@ -190,5 +192,6 @@ set(SOURCE_FILES constructor.cpp
                  detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
                  detail/type/type_register.cpp
+                 detail/type/type_deregister.cpp
                  detail/variant/variant_compare.cpp
                  )

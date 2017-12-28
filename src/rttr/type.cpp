@@ -179,7 +179,10 @@ array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 array_range<type> type::get_types() RTTR_NOEXCEPT
 {
     auto& type_list = detail::type_register_private::get_type_storage();
-    return array_range<type>(&type_list[1], type_list.size() - 1);
+    if (type_list.size() == 1) // when we have only one type in it (invalid type), we return an empty range
+        return array_range<type>();
+    else
+        return array_range<type>(&type_list[1], type_list.size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +410,7 @@ method type::get_global_method(string_view name, const std::vector<type>& type_l
 
 array_range<method> type::get_global_methods() RTTR_NOEXCEPT
 {
-    auto& vec = detail::type_register_private::get_global_method_storage().value_data();
+    auto& vec = detail::type_register_private::get_global_methods();
     return array_range<method>(vec.data(), vec.size());
 }
 
@@ -415,7 +418,7 @@ array_range<method> type::get_global_methods() RTTR_NOEXCEPT
 
 array_range<property> type::get_global_properties() RTTR_NOEXCEPT
 {
-    auto& vec = detail::type_register_private::get_global_property_storage().value_data();
+    auto& vec = detail::type_register_private::get_global_properties();
     return array_range<property>(vec.data(), vec.size());
 }
 
