@@ -87,7 +87,7 @@ void type_deregister::item(const type& t) RTTR_NOEXCEPT
 
     auto& orig_name_to_id = type_register_private::get_orig_name_to_id();
     orig_name_to_id.erase(info.type_name);
-    
+
     if (t.is_class())
     {
         info.get_class_data().m_methods.clear();
@@ -95,6 +95,9 @@ void type_deregister::item(const type& t) RTTR_NOEXCEPT
 
         info.get_class_data().m_properties.clear();
         info.get_class_data().m_property_storage.clear();
+
+        info.get_class_data().m_constructor_storage.clear();
+        info.get_class_data().m_dtor_storage.reset();
     }
 }
 

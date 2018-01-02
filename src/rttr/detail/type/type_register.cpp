@@ -615,13 +615,9 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
 
 void type_register_private::constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor)
 {
-    static std::vector<std::unique_ptr<constructor_wrapper_base> > constructor_list;
-    if (!t.is_valid())
-        return;
-
     auto& class_data = t.m_type_data->get_class_data();
     class_data.m_ctors.emplace_back(create_item<::rttr::constructor>(ctor.get()));
-    constructor_list.push_back(std::move(ctor));
+    class_data.m_constructor_storage.push_back(std::move(ctor));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -630,14 +626,14 @@ void type_register_private::constructor(const type& t, std::unique_ptr<construct
 
 void type_register_private::destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor)
 {
-    static std::vector<std::unique_ptr<destructor_wrapper_base> > destructor_list;
+    auto& class_data = t.m_type_data->get_class_data();
 
-    auto& dtor_type = t.m_type_data->get_class_data().m_dtor;
+    auto& dtor_type = class_data.m_dtor;
     if (!dtor_type) // when no dtor is set at the moment
     {
         auto d = create_item<::rttr::destructor>(dtor.get());
         dtor_type = d;
-        destructor_list.push_back(std::move(dtor));
+        class_data.m_dtor_storage = std::move(dtor);
     }
 }
 
@@ -852,7 +848,7 @@ void type_register_private::register_enumeration(const type& t, std::unique_ptr<
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_metadata( const type& t, std::vector<metadata> data)
+void type_register_private::register_metadata(const type& t, std::vector<metadata> data)
 {
     if (!t.is_valid() || data.empty())
         return;
@@ -866,7 +862,7 @@ void type_register_private::register_metadata( const type& t, std::vector<metada
         register_item_type(t, std::move(new_meta_vec), get_metadata_type_list());
     }
 
-    auto meta_vec_ref = *meta_vec;
+    auto& meta_vec_ref = *meta_vec;
 
     // when we insert new items, we want to check first whether a item with same key exist => ignore this data
     for (auto& new_item : data)
