@@ -118,9 +118,9 @@ void type_register::metadata(const type& t, std::vector<::rttr::detail::metadata
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::converter(const type& t, std::unique_ptr<type_converter_base> converter)
+void type_register::converter(const type& t, const type_converter_base* converter)
 {
-     type_register_private::converter(t, move(converter));
+     type_register_private::converter(t, converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -285,9 +285,9 @@ flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id(
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<type_register_private::data_container<type_converter_base>>& type_register_private::get_type_converter_list()
+std::vector<type_register_private::data_container<const type_converter_base*>>& type_register_private::get_type_converter_list()
 {
-    static std::vector<data_container<type_converter_base>> obj;
+    static std::vector<data_container<const type_converter_base*>> obj;
     return obj;
 }
 
@@ -794,7 +794,7 @@ void type_register_private::update_class_list(const type& t, T item_ptr)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::converter(const type& t, std::unique_ptr<type_converter_base> converter)
+void type_register_private::converter(const type& t, const type_converter_base* converter)
 {
     if (!t.is_valid())
         return;
@@ -802,10 +802,29 @@ void type_register_private::converter(const type& t, std::unique_ptr<type_conver
     if (get_converter(t, converter->m_target_type))
         return;
 
-    using vec_value_type = data_container<type_converter_base>;
+    using vec_value_type = data_container<const type_converter_base*>;
     auto& container = get_type_converter_list();
-    container.push_back({t.get_id(), std::move(converter)});
+    container.push_back({t.get_id(), converter});
     std::stable_sort(container.begin(), container.end(), vec_value_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::deregister_converter(const type_converter_base* converter)
+{
+    using vec_value_type = data_container<const type_converter_base*>;
+    auto& container = get_type_converter_list();
+    auto itr = std::lower_bound(container.begin(), container.end(),
+                                converter, vec_value_type::order_by_id());
+    for (; itr != container.end(); ++itr)
+    {
+        auto& item = *itr;
+        if (item.m_data == converter)
+        {
+            container.erase(itr++);
+            break;
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -828,7 +847,7 @@ const type_converter_base* type_register_private::get_converter(const type& sour
 {
     const auto src_id = source_type.get_id();
     const auto target_id = target_type.get_id();
-    using vec_value_type = data_container<type_converter_base>;
+    using vec_value_type = data_container<const type_converter_base*>;
     auto& container = get_type_converter_list();
     auto itr = std::lower_bound(container.cbegin(), container.cend(),
                                 src_id, vec_value_type::order_by_id());
@@ -839,7 +858,7 @@ const type_converter_base* type_register_private::get_converter(const type& sour
             break; // type not found
 
         if (item.m_data->m_target_type.get_id() == target_id)
-            return item.m_data.get();
+            return item.m_data;
     }
 
     return nullptr;

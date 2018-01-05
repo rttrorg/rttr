@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/array_mapper.h"
 #include "rttr/variant.h"
+#include "rttr/detail/type/type_deregister.h"
 
 namespace rttr
 {
@@ -44,7 +45,10 @@ struct RTTR_LOCAL type_converter_base
 {
     type_converter_base(const type& target_type) : m_target_type(target_type) {}
     virtual variant to_variant(void* data, bool& ok) const = 0;
-    virtual ~type_converter_base() {}
+    virtual ~type_converter_base()
+    {
+        type_deregister::converter(&(*this));
+    }
 
     type m_target_type;
 };

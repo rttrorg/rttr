@@ -95,7 +95,8 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+    static void converter(const type& t, const type_converter_base* converter);
+    static void deregister_converter(const type_converter_base* converter);
     static void comparator(const type& t, const type_comparator_base* comparator);
     static void equal_comparator(const type& t, const type_comparator_base* comparator);
     static void less_than_comparator(const type& t, const type_comparator_base* comparator);
@@ -140,13 +141,23 @@ private:
             {
                 return _left.m_id < _right;
             }
+
+            RTTR_INLINE bool operator () ( const data_container<T>& _left, const Data_Type& _right ) const
+            {
+                return _left.m_data < _right;
+            }
+
+            RTTR_INLINE bool operator () ( const Data_Type& _left, const data_container<T>& _right ) const
+            {
+                return _left < _right.m_data;
+            }
         };
 
         type::type_id   m_id;
         Data_Type       m_data;
     };
 
-    static std::vector<data_container<type_converter_base>>& get_type_converter_list();
+    static std::vector<data_container<const type_converter_base*>>& get_type_converter_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_comparator_list();
 
     static std::vector<data_container<const type_comparator_base*>>& get_type_equal_comparator_list();

@@ -94,7 +94,7 @@ public:
 
     static void metadata( const type& t, std::vector<metadata> data);
 
-    static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+    static void converter(const type& t, const type_converter_base* converter);
 
     static void comparator(const type& t, type_comparator_base* comparator);
 

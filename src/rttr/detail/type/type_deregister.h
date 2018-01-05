@@ -43,6 +43,8 @@ class constructor;
 namespace detail
 {
 
+struct type_converter_base;
+
 /*!
  * Dergisters previousely registered items.
  */
@@ -57,18 +59,6 @@ class RTTR_API type_deregister
         static void item(const type& t) RTTR_NOEXCEPT;
 
         /*!
-         * \brief unregister the given property \p prop.
-         *
-         */
-        static void item(const property& prop) RTTR_NOEXCEPT;
-
-        /*!
-         * \brief unregister the given method \p meth.
-         *
-         */
-        static void item(const method& meth) RTTR_NOEXCEPT;
-
-        /*!
          * \brief unregister the given global method \p meth.
          *
          */
@@ -80,18 +70,12 @@ class RTTR_API type_deregister
          */
         static void global_property(const property& prop) RTTR_NOEXCEPT;
 
-        /*!
-         * \brief unregister the given constructor \p ctor.
-         *
-         */
-        static void item(const constructor& ctor) RTTR_NOEXCEPT;
 
-
-        /*!
-         * \brief unregister the given enumeration \p e.
-         *
-         */
-        static void item(const enumeration& enum_) RTTR_NOEXCEPT;
+       /*!
+        * \brief unregister the given converter \p conv.
+        *
+        */
+        static void converter(const type_converter_base* conv) RTTR_NOEXCEPT;
 };
 
 } // end namespace detail

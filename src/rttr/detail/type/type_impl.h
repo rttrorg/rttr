@@ -440,9 +440,9 @@ RTTR_INLINE void type::register_converter_func(F func)
     using source_type_orig = param_types_t<F, 0>;
     using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
-    auto converter = detail::make_unique<type_converter<target_type, source_type, F>>(func);
+    static const type_converter<target_type, source_type, F> converter(func);
     type source_t = type::get<source_type>();
-    type_register::converter(source_t, std::move(converter));
+    type_register::converter(source_t, &converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

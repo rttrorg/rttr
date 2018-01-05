@@ -59,19 +59,19 @@ namespace detail
 template<typename T, typename I>
 static void remove_wrapper_item(T& container, I& item)
 {
-     container.erase(std::remove_if(container.begin(), container.end(),
-                     [&item](std::unique_ptr<class_item_to_wrapper_t<raw_type_t<I>>>& item_)
-                            { return (create_item<raw_type_t<I>>(item_.get()) == item); }),
-                     container.end());
+    container.erase(std::remove_if(container.begin(), container.end(),
+        [&item](std::unique_ptr<class_item_to_wrapper_t<raw_type_t<I>>>& item_)
+    { return (create_item<raw_type_t<I>>(item_.get()) == item); }),
+        container.end());
 }
 
 template<typename T, typename I>
 static void remove_item(T& container, I& item)
 {
-     container.erase(std::remove_if(container.begin(), container.end(),
-                     [&item](I& item_)
-                            { return (item_== item); }),
-                     container.end());
+    container.erase(std::remove_if(container.begin(), container.end(),
+        [&item](I& item_)
+    { return (item_== item); }),
+        container.end());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -82,8 +82,8 @@ void type_deregister::item(const type& t) RTTR_NOEXCEPT
 
     auto& info = *t.m_type_data;
     type_data_container.erase(std::remove_if(type_data_container.begin(), type_data_container.end(),
-                                             [info](type_data* data_info) { return (data_info == &info); }),
-                              type_data_container.end());
+        [info](type_data* data_info) { return (data_info == &info); }),
+        type_data_container.end());
 
     auto& orig_name_to_id = type_register_private::get_orig_name_to_id();
     orig_name_to_id.erase(info.type_name);
@@ -99,28 +99,6 @@ void type_deregister::item(const type& t) RTTR_NOEXCEPT
         info.get_class_data().m_constructor_storage.clear();
         info.get_class_data().m_dtor_storage.reset();
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_deregister::item(const property& prop) RTTR_NOEXCEPT
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_deregister::item(const method& meth) RTTR_NOEXCEPT
-{
-    auto& class_data = meth.get_declaring_type().m_type_data->get_class_data();
-
-    auto& methods = class_data.m_methods;
-    methods.erase(std::remove_if(methods.begin(), methods.end(),
-                 [&meth](const method& item) { return (item == meth); }),
-                 methods.end());
-
-    auto& method_wrappers = class_data.m_method_storage;
-    remove_wrapper_item(method_wrappers, meth);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -146,16 +124,11 @@ void type_deregister::global_property(const property& prop) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_deregister::item(const constructor& ctor) RTTR_NOEXCEPT
+void type_deregister::converter(const type_converter_base* conv) RTTR_NOEXCEPT
 {
+    type_register_private::deregister_converter(conv);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_deregister::item(const enumeration& e) RTTR_NOEXCEPT
-{
-
-}
 
 /////////////////////////////////////////////////////////////////////////////////////
 
