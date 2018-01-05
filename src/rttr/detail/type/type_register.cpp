@@ -125,13 +125,6 @@ void type_register::converter(const type& t, const type_converter_base* converte
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::comparator(const type& t, type_comparator_base* comparator)
-{
-    type_register_private::comparator(t, comparator);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void type_register::equal_comparator(const type& t, type_comparator_base* comparator)
 {
     type_register_private::equal_comparator(t, comparator);
@@ -288,14 +281,6 @@ flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id(
 std::vector<type_register_private::data_container<const type_converter_base*>>& type_register_private::get_type_converter_list()
 {
     static std::vector<data_container<const type_converter_base*>> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_comparator_list()
-{
-    static std::vector<data_container<const type_comparator_base*>> obj;
     return obj;
 }
 
@@ -834,27 +819,6 @@ void type_register_private::deregister_converter(const type_converter_base* conv
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::comparator(const type& t, const type_comparator_base* comparator)
-{
-    if (!t.is_valid())
-        return;
-
-    using data_type = data_container<const type_comparator_base*>;
-    auto& container = get_type_comparator_list();
-    container.push_back({t.get_id(), comparator});
-    std::stable_sort(container.begin(), container.end(),
-                     data_type::order_by_id());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-void type_register_private::deregister_comparator(const type_comparator_base* converter)
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
 const type_converter_base* type_register_private::get_converter(const type& source_type, const type& target_type)
 {
     const auto src_id = source_type.get_id();
@@ -874,21 +838,6 @@ const type_converter_base* type_register_private::get_converter(const type& sour
     }
 
     return nullptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-const type_comparator_base* type_register_private::get_comparator(const type& t)
-{
-    using vec_value_type = data_container<const type_comparator_base*>;
-    const auto id = t.get_id();
-    auto& container = get_type_comparator_list();
-    auto itr = std::lower_bound(container.cbegin(), container.cend(), id,
-                                vec_value_type::order_by_id());
-    if (itr != container.cend() && itr->m_id == id)
-        return itr->m_data;
-    else
-        return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

@@ -131,13 +131,6 @@ void type_deregister::converter(const type_converter_base* conv) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_deregister::comparator(const type_comparator_base* conv) RTTR_NOEXCEPT
-{
-
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void type_deregister::equal_comparator(const type_comparator_base* conv) RTTR_NOEXCEPT
 {
     type_register_private::deregister_equal_comparator(conv);

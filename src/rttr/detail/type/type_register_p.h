@@ -98,9 +98,6 @@ public:
     static void converter(const type& t, const type_converter_base* converter);
     static void deregister_converter(const type_converter_base* converter);
 
-    static void comparator(const type& t, const type_comparator_base* comparator);
-    static void deregister_comparator(const type_comparator_base* converter);
-
     static void equal_comparator(const type& t, const type_comparator_base* comparator);
     static void deregister_equal_comparator(const type_comparator_base* converter);
 
@@ -110,7 +107,6 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
     static const type_converter_base* get_converter(const type& source_type, const type& target_type);
-    static const type_comparator_base* get_comparator(const type& t);
     static const type_comparator_base* get_equal_comparator(const type& t);
     static const type_comparator_base* get_less_than_comparator(const type& t);
     static variant get_metadata(const type& t, const variant& key);
@@ -164,8 +160,6 @@ private:
     };
 
     static std::vector<data_container<const type_converter_base*>>& get_type_converter_list();
-    static std::vector<data_container<const type_comparator_base*>>& get_type_comparator_list();
-
     static std::vector<data_container<const type_comparator_base*>>& get_type_equal_comparator_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_less_comparator_list();
 

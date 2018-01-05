@@ -78,13 +78,6 @@ class RTTR_API type_deregister
         */
         static void converter(const type_converter_base* conv) RTTR_NOEXCEPT;
 
-
-       /*!
-        * \brief unregister the given comparator \p conv.
-        *
-        */
-        static void comparator(const type_comparator_base* conv) RTTR_NOEXCEPT;
-
        /*!
         * \brief unregister the given equal comparator \p conv.
         *
