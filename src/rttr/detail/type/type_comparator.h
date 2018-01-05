@@ -29,6 +29,7 @@
 #define RTTR_TYPE_COMPARATOR_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/type/type_deregister.h"
 
 namespace rttr
 {
@@ -57,6 +58,11 @@ struct type_equal_comparator : type_comparator_base
 {
     type_equal_comparator() : type_comparator_base(equal) {}
 
+    ~type_equal_comparator()
+    {
+        type_deregister::equal_comparator(this);
+    }
+
     static bool equal(const void* lhs, const void* rhs)
     {
         const T& l = *static_cast<const T*>(lhs);
@@ -71,6 +77,11 @@ template<typename T>
 struct type_less_than_comparator : type_comparator_base
 {
     type_less_than_comparator() : type_comparator_base(less_than) {}
+
+    ~type_less_than_comparator()
+    {
+        type_deregister::less_than_comparator(this);
+    }
 
     static bool less_than(const void* lhs, const void* rhs)
     {

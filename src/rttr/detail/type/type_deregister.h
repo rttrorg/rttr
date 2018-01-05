@@ -44,6 +44,7 @@ namespace detail
 {
 
 struct type_converter_base;
+struct type_comparator_base;
 
 /*!
  * Dergisters previousely registered items.
@@ -76,6 +77,25 @@ class RTTR_API type_deregister
         *
         */
         static void converter(const type_converter_base* conv) RTTR_NOEXCEPT;
+
+
+       /*!
+        * \brief unregister the given comparator \p conv.
+        *
+        */
+        static void comparator(const type_comparator_base* conv) RTTR_NOEXCEPT;
+
+       /*!
+        * \brief unregister the given equal comparator \p conv.
+        *
+        */
+        static void equal_comparator(const type_comparator_base* conv) RTTR_NOEXCEPT;
+
+       /*!
+        * \brief unregister the given less-than comparator \p conv.
+        *
+        */
+        static void less_than_comparator(const type_comparator_base* conv) RTTR_NOEXCEPT;
 };
 
 } // end namespace detail

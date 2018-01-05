@@ -97,9 +97,15 @@ public:
 
     static void converter(const type& t, const type_converter_base* converter);
     static void deregister_converter(const type_converter_base* converter);
+
     static void comparator(const type& t, const type_comparator_base* comparator);
+    static void deregister_comparator(const type_comparator_base* converter);
+
     static void equal_comparator(const type& t, const type_comparator_base* comparator);
+    static void deregister_equal_comparator(const type_comparator_base* converter);
+
     static void less_than_comparator(const type& t, const type_comparator_base* comparator);
+    static void deregister_less_than_comparator(const type_comparator_base* converter);
 
     /////////////////////////////////////////////////////////////////////////////////////
 

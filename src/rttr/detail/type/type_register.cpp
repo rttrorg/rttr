@@ -810,21 +810,26 @@ void type_register_private::converter(const type& t, const type_converter_base* 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::deregister_converter(const type_converter_base* converter)
+template<typename Container, typename Item>
+static void remove_item(Container& container, Item& item)
 {
-    using vec_value_type = data_container<const type_converter_base*>;
-    auto& container = get_type_converter_list();
+    using order = typename Container::value_type::order_by_id;
     auto itr = std::lower_bound(container.begin(), container.end(),
-                                converter, vec_value_type::order_by_id());
-    for (; itr != container.end(); ++itr)
+                                item, order());
+    if (itr != container.end())
     {
-        auto& item = *itr;
-        if (item.m_data == converter)
+        if ((*itr).m_data == item)
         {
-            container.erase(itr++);
-            break;
+            container.erase(itr);
         }
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::deregister_converter(const type_converter_base* converter)
+{
+    remove_item(get_type_converter_list(), converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -839,6 +844,13 @@ void type_register_private::comparator(const type& t, const type_comparator_base
     container.push_back({t.get_id(), comparator});
     std::stable_sort(container.begin(), container.end(),
                      data_type::order_by_id());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::deregister_comparator(const type_comparator_base* converter)
+{
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -918,9 +930,23 @@ void type_register_private::equal_comparator(const type& t, const type_comparato
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+void type_register_private::deregister_equal_comparator(const type_comparator_base* converter)
+{
+    remove_item(get_type_equal_comparator_list(), converter);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 void type_register_private::less_than_comparator(const type& t, const type_comparator_base* comparator)
 {
     register_comparator_impl(t, comparator, get_type_less_comparator_list());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::deregister_less_than_comparator(const type_comparator_base* converter)
+{
+    remove_item(get_type_equal_comparator_list(), converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
