@@ -102,9 +102,18 @@ void type_register::custom_name(type& t, string_view custom_name)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::metadata(const type& t, std::vector< ::rttr::detail::metadata > data)
+void type_register::metadata(const type& t, std::vector<::rttr::detail::metadata> data)
 {
-    type_register_private::register_metadata(t, move(data));
+    auto& vec_to_insert = *t.m_type_data->get_metadata().get();
+
+    // when we insert new items, we want to check first whether a item with same key exist => ignore this data
+    for (auto& new_item : data)
+    {
+        if (type_register_private::get_metadata(new_item,  vec_to_insert).is_valid() == false)
+            vec_to_insert.emplace_back(std::move(new_item));
+    }
+
+    std::sort(vec_to_insert.begin(), vec_to_insert.end(), metadata::order_by_key());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -305,15 +314,6 @@ std::vector<type_register_private::data_container<const type_comparator_base*>>&
     static std::vector<data_container<const type_comparator_base*>> obj;
     return obj;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<std::vector<metadata>>>& type_register_private::get_metadata_type_list()
-{
-    static std::vector<data_container<std::vector<metadata>>> obj;
-    return obj;
-}
-
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -792,73 +792,6 @@ void type_register_private::update_class_list(const type& t, T item_ptr)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE T* type_register_private::get_item_by_type(const type& t, const std::vector<data_container<T>>& vec)
-{
-    using vec_value_type = data_container<T>;
-    const auto id = t.get_id();
-    auto itr = std::lower_bound(vec.cbegin(), vec.cend(), id, typename vec_value_type::order_by_id());
-    if (itr != vec.cend())
-    {
-        auto& item = *itr;
-        if (item.m_id == id)
-            return item.m_data.get();
-    }
-
-    return nullptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_INLINE void type_register_private::register_item_type(const type& t, std::unique_ptr<T> new_item,
-                                                           std::vector<data_container<T>>& vec)
-{
-    if (!t.is_valid())
-        return;
-
-    using data_type = data_container<T>;
-    vec.push_back({t.get_id(), std::move(new_item)});
-    std::stable_sort(vec.begin(), vec.end(), typename data_type::order_by_id());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<metadata>* type_register_private::get_metadata_list(const type& t)
-{
-    return get_item_by_type(t, get_metadata_type_list());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-void type_register_private::register_metadata(const type& t, std::vector<metadata> data)
-{
-    if (!t.is_valid() || data.empty())
-        return;
-
-    auto meta_vec = get_metadata_list(t);
-
-    if (!meta_vec)
-    {
-        auto new_meta_vec = detail::make_unique<std::vector<metadata>>(data.cbegin(), data.cend());
-        meta_vec = new_meta_vec.get();
-        register_item_type(t, std::move(new_meta_vec), get_metadata_type_list());
-    }
-
-    auto& meta_vec_ref = *meta_vec;
-
-    // when we insert new items, we want to check first whether a item with same key exist => ignore this data
-    for (auto& new_item : data)
-    {
-        if (get_metadata(new_item,  meta_vec_ref).is_valid() == false)
-            meta_vec_ref.emplace_back(std::move(new_item));
-    }
-
-    std::sort(meta_vec_ref.begin(), meta_vec_ref.end(), metadata::order_by_key());
-}
-
 /////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::converter(const type& t, std::unique_ptr<type_converter_base> converter)
@@ -989,7 +922,7 @@ void type_register_private::register_comparator_impl(const type& t, const type_c
 
 variant type_register_private::get_metadata(const type& t, const variant& key)
 {
-    auto meta_vec = get_metadata_list(t);
+    auto meta_vec = t.m_type_data->get_metadata().get();
     return (meta_vec ? get_metadata(key, *meta_vec) : variant());
 }
 

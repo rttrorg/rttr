@@ -95,7 +95,6 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static void register_metadata( const type& t, std::vector<metadata> data);
     static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
     static void comparator(const type& t, const type_comparator_base* comparator);
     static void equal_comparator(const type& t, const type_comparator_base* comparator);
@@ -108,6 +107,7 @@ public:
     static const type_comparator_base* get_equal_comparator(const type& t);
     static const type_comparator_base* get_less_than_comparator(const type& t);
     static variant get_metadata(const type& t, const variant& key);
+    static variant get_metadata(const variant& key, const std::vector<metadata>& data);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,22 +146,11 @@ private:
         Data_Type       m_data;
     };
 
-    template<typename T>
-    static RTTR_INLINE T* get_item_by_type(const type& t, const std::vector<data_container<T>>& vec);
-    template<typename T>
-    static RTTR_INLINE void register_item_type(const type& t, std::unique_ptr<T> new_item, std::vector<data_container<T>>& vec);
-
-    static std::vector<metadata>* get_metadata_list(const type& t);
-    static variant get_metadata(const variant& key, const std::vector<metadata>& data);
-
     static std::vector<data_container<type_converter_base>>& get_type_converter_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_comparator_list();
 
     static std::vector<data_container<const type_comparator_base*>>& get_type_equal_comparator_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_less_comparator_list();
-
-    static std::vector<data_container<enumeration_wrapper_base>>& get_enumeration_list();
-    static std::vector<data_container<std::vector<metadata>>>& get_metadata_type_list();
 
     static void register_comparator_impl(const type& t, const type_comparator_base* comparator,
                                          std::vector<data_container<const type_comparator_base*>>& comparator_list);
