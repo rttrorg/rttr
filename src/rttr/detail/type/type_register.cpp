@@ -90,7 +90,7 @@ void type_register::destructor(const type& t, std::unique_ptr<destructor_wrapper
 
 void type_register::enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_item)
 {
-    type_register_private::register_enumeration(t, std::move(enum_item));
+    t.m_type_data->get_enumeration() = std::move(enum_item);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -303,14 +303,6 @@ std::vector<type_register_private::data_container<const type_comparator_base*>>&
 std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_less_comparator_list()
 {
     static std::vector<data_container<const type_comparator_base*>> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<enumeration_wrapper_base>>& type_register_private::get_enumeration_list()
-{
-    static std::vector<data_container<enumeration_wrapper_base>> obj;
     return obj;
 }
 
@@ -839,13 +831,6 @@ std::vector<metadata>* type_register_private::get_metadata_list(const type& t)
     return get_item_by_type(t, get_metadata_type_list());
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void type_register_private::register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_item)
-{
-    register_item_type(t, std::move(enum_item), get_enumeration_list());
-}
-
 /////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::register_metadata(const type& t, std::vector<metadata> data)
@@ -1021,16 +1006,6 @@ variant type_register_private::get_metadata(const variant& key, const std::vecto
     }
 
     return variant();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-enumeration type_register_private::get_enumeration(const type& t)
-{
-    if (auto item = get_item_by_type(t, get_enumeration_list()))
-        return create_item<enumeration>(item);
-    else
-        return create_invalid_item<enumeration>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

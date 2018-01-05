@@ -46,6 +46,7 @@
 #include "rttr/detail/property/property_wrapper_base.h"
 #include "rttr/detail/constructor/constructor_wrapper_base.h"
 #include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 
 
 #include <type_traits>
@@ -116,9 +117,10 @@ enum class type_trait_infos : std::size_t
 namespace impl
 {
 
-using create_variant_func = decltype(&create_invalid_variant_policy::create_variant);
-using get_base_types_func = decltype(&base_classes<int>::get_types);
-using create_wrapper_func = void(*)(const argument& arg, variant& var);
+using create_variant_func  = decltype(&create_invalid_variant_policy::create_variant);
+using get_base_types_func  = decltype(&base_classes<int>::get_types);
+using create_wrapper_func  = void(*)(const argument& arg, variant& var);
+using get_enumeration_func = std::unique_ptr<enumeration_wrapper_base>&(*)(void);
 
 } // end namespace impl
 
@@ -140,6 +142,7 @@ struct type_data
     impl::get_base_types_func get_base_types; // FIXME: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
 
+    impl::get_enumeration_func get_enumeration;
     impl::create_wrapper_func create_wrapper;
     class_data& (*get_class_data)();
 
@@ -275,6 +278,29 @@ get_create_wrapper_func()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static std::unique_ptr<enumeration_wrapper_base>& get_enumeration_func_impl()
+{
+    static std::unique_ptr<enumeration_wrapper_base> obj = make_unique<enumeration_wrapper_base>();
+    return obj;
+}
+
+template<typename T>
+static enable_if_t<std::is_enum<T>::value, impl::get_enumeration_func>
+get_enumeration_func()
+{
+    return &get_enumeration_func_impl<T>;
+}
+
+template<typename T>
+static enable_if_t<!std::is_enum<T>::value, impl::get_enumeration_func>
+get_enumeration_func()
+{
+    return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -295,6 +321,7 @@ type_data& get_type_data() RTTR_NOEXCEPT
 
                                       &create_variant_func<T>::create_variant,
                                       &base_classes<T>::get_types,
+                                      get_enumeration_func<T>(),
                                       get_create_wrapper_func<T>(),
 
                                       &get_type_class_data<T>,
@@ -325,6 +352,7 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                       0, 0,
                                       &create_invalid_variant_policy::create_variant,
                                       &base_classes<void>::get_types,
+                                      nullptr,
                                       get_create_wrapper_func<void>(),
                                       &get_invalid_type_class_data,
                                       0,

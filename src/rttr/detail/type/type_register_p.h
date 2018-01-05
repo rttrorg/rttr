@@ -95,7 +95,6 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static void register_enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
     static void register_metadata( const type& t, std::vector<metadata> data);
     static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
     static void comparator(const type& t, const type_comparator_base* comparator);
@@ -109,7 +108,6 @@ public:
     static const type_comparator_base* get_equal_comparator(const type& t);
     static const type_comparator_base* get_less_than_comparator(const type& t);
     static variant get_metadata(const type& t, const variant& key);
-    static enumeration get_enumeration(const type& t);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
