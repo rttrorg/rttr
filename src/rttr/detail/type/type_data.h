@@ -134,6 +134,11 @@ struct type_data
     type_data* wrapped_type;
     type_data* array_raw_type;
 
+    ~type_data()
+    {
+        type_register::type_unreg(*this);
+    }
+
     std::string name;
     string_view type_name;
 
@@ -323,35 +328,35 @@ using type_trait_value = uint64_t;
 template<typename T>
 type_data& get_type_data() RTTR_NOEXCEPT
 {
-    static auto instance = type_data{ raw_type_info<T>::get_type().m_type_data, wrapper_type_info<T>::get_type().m_type_data,
-                                      array_raw_type<T>::get_type().m_type_data,
+    static type_data instance { raw_type_info<T>::get_type().m_type_data, wrapper_type_info<T>::get_type().m_type_data,
+                                array_raw_type<T>::get_type().m_type_data,
 
-                                      ::rttr::detail::get_type_name<T>().to_string(), ::rttr::detail::get_type_name<T>(),
+                                ::rttr::detail::get_type_name<T>().to_string(), ::rttr::detail::get_type_name<T>(),
 
-                                      get_size_of<T>::value(),
-                                      pointer_count<T>::value,
+                                get_size_of<T>::value(),
+                                pointer_count<T>::value,
 
-                                      &create_variant_func<T>::create_variant,
-                                      &base_classes<T>::get_types,
-                                      get_enumeration_func<T>(),
-                                      &get_metadata_func_impl<T>,
-                                      get_create_wrapper_func<T>(),
+                                &create_variant_func<T>::create_variant,
+                                &base_classes<T>::get_types,
+                                get_enumeration_func<T>(),
+                                &get_metadata_func_impl<T>,
+                                get_create_wrapper_func<T>(),
 
-                                      &get_type_class_data<T>,
-                                      0,
-                                      type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_array, is_array) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_arithmetic) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_object_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_sequential_container, is_sequential_container) |
-                                                        TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::template_type_trait, is_template_instantiation)
-                                                      }
-                                      };
+                                &get_type_class_data<T>,
+                                0,
+                                type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_array, is_array) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE(is_pointer) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE(is_arithmetic) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE(is_member_object_pointer) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE(is_member_function_pointer) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_sequential_container, is_sequential_container) |
+                                                  TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::template_type_trait, is_template_instantiation)
+                                                }
+                              };
     return instance;
 }
 
@@ -359,18 +364,18 @@ type_data& get_type_data() RTTR_NOEXCEPT
 
 static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
 {
-    static auto instance = type_data{ nullptr, nullptr,
-                                      nullptr,
-                                      std::string(""), string_view(),
-                                      0, 0,
-                                      &create_invalid_variant_policy::create_variant,
-                                      &base_classes<void>::get_types,
-                                      nullptr,
-                                      nullptr,
-                                      get_create_wrapper_func<void>(),
-                                      &get_invalid_type_class_data,
-                                      0,
-                                      type_trait_value{0}};
+    static type_data instance{ nullptr, nullptr,
+                               nullptr,
+                               std::string(""), string_view(),
+                               0, 0,
+                               &create_invalid_variant_policy::create_variant,
+                               &base_classes<void>::get_types,
+                               nullptr,
+                               nullptr,
+                               get_create_wrapper_func<void>(),
+                               &get_invalid_type_class_data,
+                               0,
+                               type_trait_value{0}};
 
     instance.raw_type_data  = &instance;
     instance.wrapped_type   = &instance;

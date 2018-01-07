@@ -242,6 +242,38 @@ type type_register::type_reg(type_data& info) RTTR_NOEXCEPT
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register::type_unreg(type_data& info) RTTR_NOEXCEPT
+{
+    auto& type_data_container = type_register_private::get_type_data_storage();
+
+    bool found_type_data = false;
+
+    for (auto itr = type_data_container.rbegin();
+         itr != type_data_container.rend();
+         itr++)
+    {
+        if (*itr == &info)
+        {
+            found_type_data = true;
+            type_data_container.erase(std::next(itr).base());
+            break;
+        }
+    }
+
+    // we want to remove the name info, only when we found the correct type_data
+    // it can be, that a duplicate type_data object will try to deregister itself
+    if (found_type_data)
+    {
+        auto& orig_name_to_id = type_register_private::get_orig_name_to_id();
+        orig_name_to_id.erase(info.type_name);
+
+        auto& custom_name_to_id = type_register_private::get_custom_name_to_id();
+        custom_name_to_id.erase(info.name);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 // Here comes the implementation of the registration class 'type_register_private'

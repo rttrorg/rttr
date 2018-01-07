@@ -112,6 +112,9 @@ public:
      */
     static type type_reg(type_data& info) RTTR_NOEXCEPT;
 
+
+    static void type_unreg(type_data& info) RTTR_NOEXCEPT;
+
 private:
 
     friend class type;

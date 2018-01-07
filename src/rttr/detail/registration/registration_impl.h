@@ -293,13 +293,8 @@ namespace                                                                 \
     {                                                                     \
         rttr__auto__register__()                                          \
         {                                                                 \
-            m_state.begin_save_state();                                   \
             rttr_auto_register_reflection_function_();                    \
-            m_state.end_save_state();                                     \
         }                                                                 \
-                                                                          \
-        private:                                                          \
-            rttr::detail::registration_state_saver m_state;               \
     };                                                                    \
 }                                                                         \
 static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__);  \

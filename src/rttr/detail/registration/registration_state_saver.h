@@ -30,7 +30,6 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/array_range.h"
-#include "rttr/detail/type/type_deregister.h"
 
 #include <vector>
 
@@ -43,81 +42,66 @@ namespace detail
  * This class saves the current state of the registration of all possible items
  * and will undo the registration when the instance is destroyed.
  */
-class registration_state_saver
+class RTTR_LOCAL registration_state_saver
 {
-    private:
-        /*!
-         * This will perform a copy of the given \p range starting at index \p from_index.
-         */
-        template<typename T>
-        std::vector<T> copy_range(const array_range<T>& range, typename array_range<T>::size_type from_index)
-        {
-            std::vector<T> result;
-            const auto size = range.size();
-            result.reserve(size - from_index);
-            typename array_range<T>::size_type index = 0;
-            for (auto& item : range)
-            {
-                if (index >= from_index)
-                    result.push_back(item);
-
-                ++index;
-            }
-
-
-            return result;
-        }
-
     public:
+        registration_state_saver() = default;
+
         /*!
-         * \brief Will perform the deregistration when the object goes out of scope.
+         * This will not deregister any of the items.
          */
-        ~registration_state_saver()
-        {
-            for (auto meth : m_global_properties)
-                type_deregister::global_property(meth);
+        ~registration_state_saver() = default;
 
-            for (auto meth : m_global_methods)
-                type_deregister::global_method(meth);
-
-            for (auto t : m_types)
-                type_deregister::item(t);
-        }
+        // no copy
+        registration_state_saver(const registration_state_saver&) = delete;
+        // no assign
+        registration_state_saver& operator=(const registration_state_saver&) = delete;
 
         /*!
          * Begin storing the current registration state.
          * The first method you should call.
          */
-        void begin_save_state()
-        {
-            m_old_type_size     = type::get_types().size();
-            m_old_methods_size  = type::get_global_methods().size();
-            m_old_property_size = type::get_global_properties().size();
-        }
+        void save_state_begin();
 
         /*!
          * End storing the current registration state.
          * The last method you should call.
          */
-        void end_save_state()
-        {
-            m_types             = copy_range(type::get_types(), m_old_type_size);
-            m_global_methods    = copy_range(type::get_global_methods(), m_old_methods_size);
-            m_global_properties = copy_range(type::get_global_properties(), m_old_property_size);
+        void save_state_end();
 
-            m_types.shrink_to_fit();
-            m_global_methods.shrink_to_fit();
-            m_global_properties.shrink_to_fit();
-        }
+        /*!
+         * Call this method, in order to deregister any of the newly registered items.
+         * The last method you should call.
+         */
+        void restore_state();
+
+        /*!
+         * Reset the state of all currently held member variables.
+         */
+        void reset();
+
+        /*!
+         * Returns the list of newly registered type in the current state.
+         */
+        array_range<type> get_types() const RTTR_NOEXCEPT;
+
+        /*!
+         * Returns the list of newly registered global properties in the current state.
+         */
+        array_range<property> get_global_properites() const RTTR_NOEXCEPT;
+
+        /*!
+         * Returns the list of newly registered global methods in the current state.
+         */
+        array_range<method> get_global_methodes() const RTTR_NOEXCEPT;
 
     private:
-        std::size_t                 m_old_type_size;
-        std::size_t                 m_old_methods_size;
-        std::size_t                 m_old_property_size;
+        std::size_t                 m_old_type_size     = 0;
+        std::size_t                 m_old_methods_size  = 0;
+        std::size_t                 m_old_property_size = 0;
         std::vector<type>           m_types;
-        std::vector<method>         m_global_methods;
         std::vector<property>       m_global_properties;
-        std::vector<enumeration>    m_global_enums;
+        std::vector<method>         m_global_methods;
 };
 
 } // end namespace detail
