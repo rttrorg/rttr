@@ -69,10 +69,14 @@ public:
     static type register_type(type_data& info) RTTR_NOEXCEPT;
     static void unregister_type(type_data& info) RTTR_NOEXCEPT;
 
-    static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
-    static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
-    static void property(const type& t, std::unique_ptr<property_wrapper_base> prop);
-    static void method(const type& t, std::unique_ptr<method_wrapper_base> meth);
+    static void register_constructor(const constructor_wrapper_base* ctor);
+    static void register_destructor(const destructor_wrapper_base* dtor);
+    static void register_property(const property_wrapper_base* prop);
+    static void register_global_property(const property_wrapper_base* prop);
+
+    static void register_method(const method_wrapper_base* meth);
+    static void register_global_method(const method_wrapper_base* meth);
+
     static void register_custom_name(type& t, string_view custom_name);
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -90,19 +94,17 @@ public:
     static std::vector<type>& get_type_storage();
     static flat_map<string_view, type>& get_orig_name_to_id();
     static flat_map<std::string, type, hash>& get_custom_name_to_id();
-    static std::deque<std::unique_ptr<method_wrapper_base>>& get_method_storage();
-    static std::deque<std::unique_ptr<property_wrapper_base>>& get_property_storage();
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static void converter(const type& t, const type_converter_base* converter);
-    static void deregister_converter(const type_converter_base* converter);
+    static void register_converter(const type_converter_base* converter);
+    static void unregister_converter(const type_converter_base* converter);
 
-    static void equal_comparator(const type& t, const type_comparator_base* comparator);
-    static void deregister_equal_comparator(const type_comparator_base* converter);
+    static void register_equal_comparator(const type_comparator_base* comparator);
+    static void unregister_equal_comparator(const type_comparator_base* converter);
 
-    static void less_than_comparator(const type& t, const type_comparator_base* comparator);
-    static void deregister_less_than_comparator(const type_comparator_base* converter);
+    static void register_less_than_comparator(const type_comparator_base* comparator);
+    static void unregister_less_than_comparator(const type_comparator_base* converter);
 
     /////////////////////////////////////////////////////////////////////////////////////
 

@@ -426,8 +426,8 @@ array_range<property> type::get_global_properties() RTTR_NOEXCEPT
 
 enumeration type::get_enumeration() const RTTR_NOEXCEPT
 {
-    if (m_type_data->get_enumeration)
-        return detail::create_item<enumeration>(m_type_data->get_enumeration().get());
+    if (m_type_data->enum_wrapper)
+        return detail::create_item<enumeration>(m_type_data->enum_wrapper);
     else
         return detail::create_invalid_item<enumeration>();
 }

@@ -41,6 +41,8 @@ template<typename ClassType>
 class destructor_wrapper : public destructor_wrapper_base
 {
     public:
+        type get_declaring_type() const RTTR_NOEXCEPT { return type::get<ClassType>(); }
+
         type get_destructed_type() const RTTR_NOEXCEPT { return type::get<ClassType*>(); }
 
         bool is_valid() const RTTR_NOEXCEPT { return true; }

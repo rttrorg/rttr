@@ -40,6 +40,8 @@
 #include "rttr/detail/type/type_comparator.h"
 #include "rttr/detail/type/type_data.h"
 #include "rttr/detail/type/type_name.h"
+#include "rttr/detail/registration/registration_type_cmp_manager.h"
+
 
 namespace rttr
 {
@@ -440,9 +442,7 @@ RTTR_INLINE void type::register_converter_func(F func)
     using source_type_orig = param_types_t<F, 0>;
     using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
-    static const type_converter<target_type, source_type, F> converter(func);
-    type source_t = type::get<source_type>();
-    type_register::converter(source_t, &converter);
+    get_registration_type_cmp_manager<int>().add_item(::rttr::detail::make_unique<type_converter<target_type, source_type, F>>(func));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -461,8 +461,7 @@ void type::register_equal_comparator()
 {
     static_assert(detail::has_equal_operator<T>::value, "No equal operator for given type found.");
 
-    static detail::type_equal_comparator<T> cmp;
-    detail::type_register::equal_comparator(type::get<T>(), &cmp);
+    detail::get_registration_type_cmp_manager<int>().add_equal_cmp(::rttr::detail::make_unique<detail::type_equal_comparator<T>>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -472,8 +471,7 @@ void type::register_less_than_comparator()
 {
     static_assert(detail::has_less_than_operator<T>::value, "No less-than operator for given type found.");
 
-    static detail::type_less_than_comparator<T> cmp;
-    detail::type_register::less_than_comparator(type::get<T>(), &cmp);
+    detail::get_registration_type_cmp_manager<int>().add_less_than_cmp(::rttr::detail::make_unique<detail::type_less_than_comparator<T>>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -42,13 +42,7 @@
 #include "rttr/property.h"
 #include "rttr/constructor.h"
 #include "rttr/destructor.h"
-#include "rttr/detail/method/method_wrapper_base.h"
-#include "rttr/detail/property/property_wrapper_base.h"
-#include "rttr/detail/constructor/constructor_wrapper_base.h"
-#include "rttr/detail/destructor/destructor_wrapper_base.h"
-#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 #include "rttr/detail/metadata/metadata.h"
-
 
 #include <type_traits>
 #include <bitset>
@@ -69,6 +63,8 @@ static type get_invalid_type() RTTR_NOEXCEPT;
 using rttr_cast_func        = void*(*)(void*);
 using get_derived_info_func = derived_info(*)(void*);
 
+class enumeration_wrapper_base;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 struct class_data
@@ -88,10 +84,6 @@ struct class_data
     std::vector<constructor>    m_ctors;
     std::vector<type>           m_nested_types;
     destructor                  m_dtor;
-    std::vector<std::unique_ptr<method_wrapper_base>>       m_method_storage;
-    std::vector<std::unique_ptr<property_wrapper_base>>     m_property_storage;
-    std::vector<std::unique_ptr<constructor_wrapper_base>>  m_constructor_storage;
-    std::unique_ptr<destructor_wrapper_base>                m_dtor_storage;
 };
 
 enum class type_trait_infos : std::size_t
@@ -121,7 +113,6 @@ namespace impl
 using create_variant_func  = decltype(&create_invalid_variant_policy::create_variant);
 using get_base_types_func  = decltype(&base_classes<int>::get_types);
 using create_wrapper_func  = void(*)(const argument& arg, variant& var);
-using get_enumeration_func = std::unique_ptr<enumeration_wrapper_base>&(*)(void);
 using get_metadata_func    = std::unique_ptr<std::vector<metadata>>&(*)(void);
 
 } // end namespace impl
@@ -149,9 +140,9 @@ struct type_data
     impl::get_base_types_func get_base_types; // FIXME: this info should not be stored, its just temporarily,
                                               // thats why we store it as function pointer
 
-    impl::get_enumeration_func get_enumeration;
+    enumeration_wrapper_base*  enum_wrapper;
     impl::get_metadata_func    get_metadata;
-    impl::create_wrapper_func create_wrapper;
+    impl::create_wrapper_func  create_wrapper;
     class_data& (*get_class_data)();
 
     uint16_t type_index;
@@ -288,29 +279,6 @@ get_create_wrapper_func()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static std::unique_ptr<enumeration_wrapper_base>& get_enumeration_func_impl()
-{
-    static std::unique_ptr<enumeration_wrapper_base> obj = make_unique<enumeration_wrapper_base>();
-    return obj;
-}
-
-template<typename T>
-static enable_if_t<std::is_enum<T>::value, impl::get_enumeration_func>
-get_enumeration_func()
-{
-    return &get_enumeration_func_impl<T>;
-}
-
-template<typename T>
-static enable_if_t<!std::is_enum<T>::value, impl::get_enumeration_func>
-get_enumeration_func()
-{
-    return nullptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
 static std::unique_ptr<std::vector<metadata>>& get_metadata_func_impl()
 {
     static std::unique_ptr<std::vector<metadata>> obj = make_unique<std::vector<metadata>>();
@@ -338,7 +306,7 @@ type_data& get_type_data() RTTR_NOEXCEPT
 
                                 &create_variant_func<T>::create_variant,
                                 &base_classes<T>::get_types,
-                                get_enumeration_func<T>(),
+                                nullptr,
                                 &get_metadata_func_impl<T>,
                                 get_create_wrapper_func<T>(),
 

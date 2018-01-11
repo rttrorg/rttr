@@ -80,25 +80,39 @@ public:
     // no assign
     type_register& operator=(const type_register&) = delete;
 
-    static void property(const type& t, std::unique_ptr<property_wrapper_base> prop);
+    static void register_property(const property_wrapper_base* prop);
+    static void unregister_property(const property_wrapper_base* prop);
 
-    static void method(const type& t, std::unique_ptr<method_wrapper_base> meth);
+    static void register_global_property(const property_wrapper_base* prop);
+    static void unregister_global_property(const property_wrapper_base* prop);
 
-    static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
+    static void register_method(method_wrapper_base* meth);
+    static void unregister_method(method_wrapper_base* meth);
 
-    static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
+    static void register_global_method(method_wrapper_base* meth);
+    static void unregister_global_method(method_wrapper_base* meth);
 
-    static void enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
+    static void register_constructor(constructor_wrapper_base* ctor);
+    static void unregister_constructor(constructor_wrapper_base* meth);
+
+    static void register_destructor(destructor_wrapper_base* dtor);
+    static void unregister_destructor(destructor_wrapper_base* meth);
+
+    static void register_enumeration(enumeration_wrapper_base* enum_data);
+    static void unregister_enumeration(enumeration_wrapper_base* enum_data);
 
     static void custom_name(type& t, string_view name);
 
     static void metadata( const type& t, std::vector<metadata> data);
 
-    static void converter(const type& t, const type_converter_base* converter);
+    static void register_converter(const type_converter_base* converter);
+    static void unregister_converter(const type_converter_base* converter);
 
-    static void equal_comparator(const type& t, type_comparator_base* comparator);
+    static void register_equal_comparator(type_comparator_base* comparator);
+    static void unregister_equal_comparator(const type_comparator_base* converter);
 
-    static void less_than_comparator(const type& t, type_comparator_base* comparator);
+    static void register_less_than_comparator(type_comparator_base* comparator);
+    static void unregister_less_than_comparator(const type_comparator_base* converter);
 
     static void register_base_class(const type& derived_type, const base_class_info& base_info);
 

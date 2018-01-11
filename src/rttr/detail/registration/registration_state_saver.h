@@ -48,7 +48,7 @@ class RTTR_LOCAL registration_state_saver
         registration_state_saver() = default;
 
         /*!
-         * This will not deregister any of the items.
+         * This will not unregister any of the items.
          */
         ~registration_state_saver() = default;
 
@@ -68,12 +68,6 @@ class RTTR_LOCAL registration_state_saver
          * The last method you should call.
          */
         void save_state_end();
-
-        /*!
-         * Call this method, in order to deregister any of the newly registered items.
-         * The last method you should call.
-         */
-        void restore_state();
 
         /*!
          * Reset the state of all currently held member variables.
