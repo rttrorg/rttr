@@ -137,7 +137,6 @@ set(HEADER_FILES access_levels.h
                  detail/registration/registration_impl.h
                  detail/registration/registration_executer.h
                  detail/registration/registration_manager.h
-                 detail/registration/registration_type_cmp_manager.h
                  detail/registration/registration_state_saver.h
                  detail/type/accessor_type.h
                  detail/type/base_classes.h

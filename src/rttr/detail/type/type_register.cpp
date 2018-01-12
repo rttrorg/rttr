@@ -1018,7 +1018,7 @@ type_register_private::get_type_comparator_impl(const type& t,
 
 void type_register_private::register_equal_comparator(const type_comparator_base* comparator)
 {
-    register_comparator_impl(comparator->type, comparator, get_type_equal_comparator_list());
+    register_comparator_impl(comparator->cmp_type, comparator, get_type_equal_comparator_list());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1032,7 +1032,7 @@ void type_register_private::unregister_equal_comparator(const type_comparator_ba
 
 void type_register_private::register_less_than_comparator(const type_comparator_base* comparator)
 {
-    register_comparator_impl(comparator->type, comparator, get_type_less_comparator_list());
+    register_comparator_impl(comparator->cmp_type, comparator, get_type_less_comparator_list());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

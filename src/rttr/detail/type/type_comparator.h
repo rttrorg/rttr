@@ -44,12 +44,12 @@ struct RTTR_LOCAL type_comparator_base
     using cmp_func = bool (*)(const void* lhs, const void* rhs);
 
     type_comparator_base(cmp_func cmp_f = [](const void*, const void*) ->bool { return false; }, type t = get_invalid_type())
-    :   cmp(cmp_f), type(t)
+    :   cmp(cmp_f), cmp_type(t)
     {
     }
 
     cmp_func    cmp;
-    type        type;
+    type        cmp_type;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

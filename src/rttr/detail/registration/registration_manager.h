@@ -31,11 +31,11 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/detail/type/type_register.h"
-#include "rttr/detail/method/method_wrapper.h"
-#include "rttr/detail/property/property_wrapper.h"
-#include "rttr/detail/constructor/constructor_wrapper.h"
-#include "rttr/detail/destructor/destructor_wrapper.h"
-#include "rttr/detail/enumeration/enumeration_wrapper.h"
+#include "rttr/detail/property/property_wrapper_base.h"
+#include "rttr/detail/method/method_wrapper_base.h"
+#include "rttr/detail/constructor/constructor_wrapper_base.h"
+#include "rttr/detail/destructor/destructor_wrapper_base.h"
+#include "rttr/detail/enumeration/enumeration_wrapper_base.h"
 
 #include <vector>
 #include <memory>
@@ -65,6 +65,13 @@ class RTTR_LOCAL registration_manager
                 type_register::unregister_global_method(meth.get());
             for (auto& enum_ : m_enumerations)
                 type_register::unregister_enumeration(enum_.get());
+
+            for (auto& item : m_type_converters)
+                type_register::unregister_converter(item.get());
+            for (auto& item : m_type_equal_cmps)
+                type_register::unregister_equal_comparator(item.get());
+            for (auto& item : m_type_less_than_cmps)
+                type_register::unregister_less_than_comparator(item.get());
         }
 
         void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
@@ -115,6 +122,24 @@ class RTTR_LOCAL registration_manager
             m_enumerations.push_back(std::move(enum_));
         }
 
+        void add_item(std::unique_ptr<type_converter_base> conv)
+        {
+            type_register::register_converter(conv.get());
+            m_type_converters.push_back(std::move(conv));
+        }
+
+        void add_equal_cmp(std::unique_ptr<type_comparator_base> cmp)
+        {
+            type_register::register_equal_comparator(cmp.get());
+            m_type_equal_cmps.push_back(std::move(cmp));
+        }
+
+        void add_less_than_cmp(std::unique_ptr<type_comparator_base> cmp)
+        {
+            type_register::register_less_than_comparator(cmp.get());
+            m_type_less_than_cmps.push_back(std::move(cmp));
+        }
+
         // no copy, no assign
         registration_manager(const registration_manager&) = delete;
         registration_manager& operator=(const registration_manager&) = delete;
@@ -130,6 +155,10 @@ class RTTR_LOCAL registration_manager
         std::vector<std::unique_ptr<method_wrapper_base>>       m_global_methods;
 
         std::vector<std::unique_ptr<enumeration_wrapper_base>>  m_enumerations;
+
+        std::vector<std::unique_ptr<type_converter_base>>       m_type_converters;
+        std::vector<std::unique_ptr<type_comparator_base>>      m_type_equal_cmps;
+        std::vector<std::unique_ptr<type_comparator_base>>      m_type_less_than_cmps;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
