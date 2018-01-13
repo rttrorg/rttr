@@ -45,6 +45,8 @@
 #include "rttr/detail/filter/filter_item_funcs.h"
 #include "rttr/detail/type/type_string_utils.h"
 
+#include <iostream>
+
 #include <set>
 
 using namespace std;
@@ -74,6 +76,15 @@ static void remove_item(T& container, const I& item)
         container.end());
 }
 
+struct foo()
+{
+    foo(){}
+    ~foo()
+    {
+        std::cout << "~foo" << std::endl;
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 static std::vector<type> convert_param_list(const array_range<parameter_info>& param_list);
@@ -92,9 +103,14 @@ void type_register::unregister_property(const property_wrapper_base* prop)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+static void test()
+{
+    static foo obj;
+}
 
 void type_register::register_global_property(const property_wrapper_base* prop)
 {
+    test();
     type_register_private::register_global_property(prop);
 }
 
@@ -102,6 +118,8 @@ void type_register::register_global_property(const property_wrapper_base* prop)
 
 void type_register::unregister_global_property(const property_wrapper_base* prop)
 {
+    std::cout << "unregister_global_property()";
+    std::cout << prop->get_name().to_string() << std::endl;
     auto& g_props = type_register_private::get_global_property_storage();
     g_props.erase(prop->get_name());
 
@@ -176,6 +194,8 @@ void type_register::register_enumeration(enumeration_wrapper_base* enum_item)
 
 void type_register::unregister_enumeration(enumeration_wrapper_base* enum_item)
 {
+    const auto t = enum_item->get_type();
+    t.m_type_data->enum_wrapper = nullptr; // FIXME: possible unsafe: m_type_data can be invalid
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
