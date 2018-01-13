@@ -176,8 +176,6 @@ void type_register::register_enumeration(enumeration_wrapper_base* enum_item)
 
 void type_register::unregister_enumeration(enumeration_wrapper_base* enum_item)
 {
-    const auto t = enum_item->get_type();
-    t.m_type_data->enum_wrapper = nullptr; // FIXME: possible unsafe: m_type_data can be invalid
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
