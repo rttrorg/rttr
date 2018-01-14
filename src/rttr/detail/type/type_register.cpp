@@ -76,14 +76,14 @@ static void remove_item(T& container, const I& item)
         container.end());
 }
 
-struct foo()
+struct foo
 {
     foo(){}
     ~foo()
     {
         std::cout << "~foo" << std::endl;
     }
-}
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
