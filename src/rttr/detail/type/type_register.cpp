@@ -44,8 +44,7 @@
 
 #include "rttr/detail/filter/filter_item_funcs.h"
 #include "rttr/detail/type/type_string_utils.h"
-
-#include <iostream>
+#include "rttr/detail/registration/registration_manager.h"
 
 #include <set>
 
@@ -76,18 +75,24 @@ static void remove_item(T& container, const I& item)
         container.end());
 }
 
-struct foo
-{
-    foo(){}
-    ~foo()
-    {
-        std::cout << "~foo" << std::endl;
-    }
-};
-
 /////////////////////////////////////////////////////////////////////////////////////////
 
 static std::vector<type> convert_param_list(const array_range<parameter_info>& param_list);
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register::register_reg_manager(registration_manager* manager)
+{
+    type_register_private::register_reg_manager(manager);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register::unregister_reg_manager(registration_manager* manager)
+{
+    type_register_private::unregister_reg_manager(manager);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,14 +108,9 @@ void type_register::unregister_property(const property_wrapper_base* prop)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-static void test()
-{
-    static foo obj;
-}
 
 void type_register::register_global_property(const property_wrapper_base* prop)
 {
-    test();
     type_register_private::register_global_property(prop);
 }
 
@@ -118,8 +118,6 @@ void type_register::register_global_property(const property_wrapper_base* prop)
 
 void type_register::unregister_global_property(const property_wrapper_base* prop)
 {
-    std::cout << "unregister_global_property()";
-    std::cout << prop->get_name().to_string() << std::endl;
     auto& g_props = type_register_private::get_global_property_storage();
     g_props.erase(prop->get_name());
 
@@ -309,6 +307,46 @@ void type_register::register_base_class(const type& derived_type, const base_cla
 
     auto r_type = base_info.m_base_type.get_raw_type();
     r_type.m_type_data->get_class_data().m_derived_types.push_back(type(derived_type.m_type_data));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*! A helper class to register the registration managers.
+ * This class is needed in order to avoid that the registration_manager instance's
+ * are trying to deregister its content, although the RTTR library is already unloaded.
+ * So every registration manager class holds a flag whether it should deregister itself or not.
+ */
+struct registration_reg_manager
+{
+    ~registration_reg_manager()
+    {
+        // when this dtor is running, it means, that RTTR library will be unloaded
+        for(auto& manager : m_manager_list)
+            manager->set_disable_unregister();
+    }
+    std::set<registration_manager*> m_manager_list;
+};
+
+registration_reg_manager& get_registration_manager()
+{
+    static registration_reg_manager obj;
+    return obj;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::register_reg_manager(registration_manager* manager)
+{
+    auto& manager_obj = get_registration_manager();
+    manager_obj.m_manager_list.insert(manager);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::unregister_reg_manager(registration_manager* manager)
+{
+    auto& manager_obj = get_registration_manager();
+    manager_obj.m_manager_list.erase(manager);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

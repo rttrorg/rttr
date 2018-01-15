@@ -67,6 +67,7 @@ struct type_getter;
 struct type_data;
 
 class metadata;
+class registration_manager;
 
 /*!
  * This class contains all functions to register properties, methods etc.. for a specific type.
@@ -115,6 +116,9 @@ public:
     static void unregister_less_than_comparator(const type_comparator_base* converter);
 
     static void register_base_class(const type& derived_type, const base_class_info& base_info);
+
+    static void register_reg_manager(registration_manager* manager);
+    static void unregister_reg_manager(registration_manager* manager);
 
     /*!
      * \brief Register the type info for the given name

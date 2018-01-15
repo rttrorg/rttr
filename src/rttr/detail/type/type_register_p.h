@@ -66,6 +66,11 @@ class RTTR_LOCAL type_register_private
 {
 public:
 
+    static void register_reg_manager(registration_manager* manager);
+    static void unregister_reg_manager(registration_manager* manager);
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
     static type register_type(type_data& info) RTTR_NOEXCEPT;
     static void unregister_type(type_data& info) RTTR_NOEXCEPT;
 

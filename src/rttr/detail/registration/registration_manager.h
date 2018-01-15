@@ -52,9 +52,15 @@ namespace detail
 class RTTR_LOCAL registration_manager
 {
     public:
-        registration_manager() = default;
+        registration_manager()
+        {
+            type_register::register_reg_manager(this);
+        }
         ~registration_manager()
         {
+            if (!m_should_unregister)
+                return;
+
             for (auto& prop : m_properties)
                 type_register::unregister_property(prop.get());
             for (auto& prop : m_global_properties)
@@ -72,6 +78,8 @@ class RTTR_LOCAL registration_manager
                 type_register::unregister_equal_comparator(item.get());
             for (auto& item : m_type_less_than_cmps)
                 type_register::unregister_less_than_comparator(item.get());
+
+            type_register::unregister_reg_manager(this);
         }
 
         void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
@@ -140,11 +148,18 @@ class RTTR_LOCAL registration_manager
             m_type_less_than_cmps.push_back(std::move(cmp));
         }
 
+        void set_disable_unregister()
+        {
+            m_should_unregister = false;
+        }
+
+
         // no copy, no assign
         registration_manager(const registration_manager&) = delete;
         registration_manager& operator=(const registration_manager&) = delete;
 
     private:
+        bool                                                    m_should_unregister = true;
         std::vector<std::unique_ptr<constructor_wrapper_base>>  m_constructors;
         std::vector<std::unique_ptr<destructor_wrapper_base>>   m_destructors;
 
