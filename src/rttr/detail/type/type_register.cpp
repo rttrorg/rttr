@@ -320,6 +320,7 @@ struct registration_reg_manager
 {
     ~registration_reg_manager()
     {
+        std::cout << "~registration_reg_manager" << std::endl;
         // when this dtor is running, it means, that RTTR library will be unloaded
         for(auto& manager : m_manager_list)
             manager->set_disable_unregister();
@@ -345,6 +346,8 @@ void type_register_private::register_reg_manager(registration_manager* manager)
 
 void type_register_private::unregister_reg_manager(registration_manager* manager)
 {
+    std::cout << "unregister_reg_manager" << std::endl;
+
     auto& manager_obj = get_registration_manager();
     manager_obj.m_manager_list.erase(manager);
 }

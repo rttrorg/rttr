@@ -40,6 +40,8 @@
 #include <vector>
 #include <memory>
 
+#include <iostream>
+
 namespace rttr
 {
 namespace detail
@@ -58,6 +60,7 @@ class RTTR_LOCAL registration_manager
         }
         ~registration_manager()
         {
+            std::cout << "~registration_manager" << std::endl;
             if (!m_should_unregister)
                 return;
 
