@@ -47,6 +47,7 @@
 #include "rttr/detail/registration/registration_manager.h"
 
 #include <set>
+#include <iostream>
 
 using namespace std;
 
@@ -118,6 +119,7 @@ void type_register::register_global_property(const property_wrapper_base* prop)
 
 void type_register::unregister_global_property(const property_wrapper_base* prop)
 {
+    std::cout << "unregister_global_property" << std::endl;
     auto& g_props = type_register_private::get_global_property_storage();
     g_props.erase(prop->get_name());
 
