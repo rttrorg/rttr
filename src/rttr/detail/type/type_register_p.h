@@ -76,11 +76,14 @@ public:
 
     static void register_constructor(const constructor_wrapper_base* ctor);
     static void register_destructor(const destructor_wrapper_base* dtor);
+    
     static void register_property(const property_wrapper_base* prop);
     static void register_global_property(const property_wrapper_base* prop);
+    static void unregister_global_property(const property_wrapper_base* prop);
 
     static void register_method(const method_wrapper_base* meth);
     static void register_global_method(const method_wrapper_base* meth);
+    static void unregister_global_method(const method_wrapper_base* meth);
 
     static void register_custom_name(type& t, string_view custom_name);
 
@@ -122,6 +125,9 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
 private:
+
+    static type_register_private& get_instance();
+    ~type_register_private() = default;
 
     template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
     struct data_container
@@ -166,6 +172,22 @@ private:
         Data_Type       m_data;
     };
 
+    /*! A helper class to register the registration managers.
+     * This class is needed in order to avoid that the registration_manager instance's
+     * are trying to deregister its content, although the RTTR library is already unloaded.
+     * So every registration manager class holds a flag whether it should deregister itself or not.
+     */
+    struct registration_reg_manager
+    {
+        ~registration_reg_manager()
+        {
+            // when this dtor is running, it means, that RTTR library will be unloaded
+            for (auto& manager : m_manager_list)
+                manager->set_disable_unregister();
+        }
+        std::set<registration_manager*> m_manager_list;
+    };
+
     static std::vector<data_container<const type_converter_base*>>& get_type_converter_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_equal_comparator_list();
     static std::vector<data_container<const type_comparator_base*>>& get_type_less_comparator_list();
@@ -199,6 +221,22 @@ private:
      * Updates the custom name for the given type \p t with \p new_name
      */
     static void update_custom_name(std::string new_name, const type& t);
+
+    registration_reg_manager                                    m_registration_reg_manager;
+
+    flat_map<std::string, type, hash>                           m_custom_name_to_id;
+    flat_map<string_view, type>                                 m_orig_name_to_id;
+    std::vector<type>                                           m_type_list = { type(&get_invalid_type_data()) };
+    std::vector<type_data*>                                     m_type_data_storage = { &get_invalid_type_data() };
+
+    flat_multimap<string_view, ::rttr::property>                m_global_property_stroage;
+    flat_multimap<string_view, ::rttr::method>                  m_global_method_stroage;
+    std::vector<::rttr::property>                               m_global_properties;
+    std::vector<::rttr::method>                                 m_global_methods;
+
+    std::vector<data_container<const type_converter_base*>>     m_type_converter_list;
+    std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
+    std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
 
 };
 

@@ -47,7 +47,6 @@
 #include "rttr/detail/registration/registration_manager.h"
 
 #include <set>
-#include <iostream>
 
 using namespace std;
 
@@ -119,11 +118,7 @@ void type_register::register_global_property(const property_wrapper_base* prop)
 
 void type_register::unregister_global_property(const property_wrapper_base* prop)
 {
-    std::cout << "unregister_global_property" << std::endl;
-    auto& g_props = type_register_private::get_global_property_storage();
-    g_props.erase(prop->get_name());
-
-    remove_item(type_register_private::get_global_properties(), create_item<rttr::property>(prop));
+    type_register_private::unregister_global_property(prop);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -150,10 +145,7 @@ void type_register::register_global_method(method_wrapper_base* method)
 
 void type_register::unregister_global_method(method_wrapper_base* meth)
 {
-    auto& g_methods = type_register_private::get_global_method_storage();
-    g_methods.erase(meth->get_name());
-
-    remove_item(type_register_private::get_global_methods(), create_item<rttr::method>(meth));
+    type_register_private::unregister_global_method(meth);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -313,26 +305,9 @@ void type_register::register_base_class(const type& derived_type, const base_cla
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-/*! A helper class to register the registration managers.
- * This class is needed in order to avoid that the registration_manager instance's
- * are trying to deregister its content, although the RTTR library is already unloaded.
- * So every registration manager class holds a flag whether it should deregister itself or not.
- */
-struct registration_reg_manager
+type_register_private& type_register_private::get_instance()
 {
-    ~registration_reg_manager()
-    {
-        std::cout << "~registration_reg_manager" << std::endl;
-        // when this dtor is running, it means, that RTTR library will be unloaded
-        for(auto& manager : m_manager_list)
-            manager->set_disable_unregister();
-    }
-    std::set<registration_manager*> m_manager_list;
-};
-
-registration_reg_manager& get_registration_manager()
-{
-    static registration_reg_manager obj;
+    static type_register_private obj;
     return obj;
 }
 
@@ -340,7 +315,7 @@ registration_reg_manager& get_registration_manager()
 
 void type_register_private::register_reg_manager(registration_manager* manager)
 {
-    auto& manager_obj = get_registration_manager();
+    auto& manager_obj = get_instance().m_registration_reg_manager;
     manager_obj.m_manager_list.insert(manager);
 }
 
@@ -348,9 +323,7 @@ void type_register_private::register_reg_manager(registration_manager* manager)
 
 void type_register_private::unregister_reg_manager(registration_manager* manager)
 {
-    std::cout << "unregister_reg_manager" << std::endl;
-
-    auto& manager_obj = get_registration_manager();
+    auto& manager_obj = get_instance().m_registration_reg_manager;
     manager_obj.m_manager_list.erase(manager);
 }
 
@@ -358,32 +331,28 @@ void type_register_private::unregister_reg_manager(registration_manager* manager
 
 flat_multimap<string_view, ::rttr::method>& type_register_private::get_global_method_storage()
 {
-    static flat_multimap<string_view, ::rttr::method> meths;
-    return meths;
+    return get_instance().m_global_method_stroage;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 flat_multimap<string_view, ::rttr::property>& type_register_private::get_global_property_storage()
 {
-    static flat_multimap<string_view, ::rttr::property> props;
-    return props;
+    return get_instance().m_global_property_stroage;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<method>& type_register_private::get_global_methods()
 {
-    static std::vector<::rttr::method> container;
-    return container;
+    return get_instance().m_global_methods;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<property>& type_register_private::get_global_properties()
 {
-    static std::vector<::rttr::property> container;
-    return container;
+    return get_instance().m_global_properties;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -428,62 +397,9 @@ void type_register::type_unreg(type_data& info) RTTR_NOEXCEPT
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
+//
 // Here comes the implementation of the registration class 'type_register_private'
-
-std::vector<type_data*>& type_register_private::get_type_data_storage()
-{
-    static std::vector<type_data*> obj = {&get_invalid_type_data()};
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type>& type_register_private::get_type_storage()
-{
-    static std::vector<type> obj = {type(&get_invalid_type_data())};
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-flat_map<string_view, type>& type_register_private::get_orig_name_to_id()
-{
-    static flat_map<string_view, type> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id()
-{
-    static flat_map<std::string, type, hash> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<const type_converter_base*>>& type_register_private::get_type_converter_list()
-{
-    static std::vector<data_container<const type_converter_base*>> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_equal_comparator_list()
-{
-    static std::vector<data_container<const type_comparator_base*>> obj;
-    return obj;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_less_comparator_list()
-{
-    static std::vector<data_container<const type_comparator_base*>> obj;
-    return obj;
-}
-
+//
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type_register_private::register_name(uint16_t& id, type_data& info)
@@ -806,27 +722,15 @@ void type_register_private::register_property(const property_wrapper_base* prop)
 {
     const auto t    = prop->get_declaring_type();
     const auto name = prop->get_name();
-    auto p          = detail::create_item<::rttr::property>(prop);
-
-    if (t.is_class())
-    {
-        auto& property_list = t.m_type_data->get_class_data().m_properties;
-
-        if (get_type_property(t, name))
-            return;
-
-        property_list.emplace_back(p);
-        update_class_list(t, &detail::class_data::m_properties);
-    }
-    else
-    {
-        if (t.get_global_property(name))
-            return;
-
-        get_global_properties().emplace_back(p);
-        get_global_property_storage().insert(std::move(name), std::move(p));
-
-    }
+    
+    auto& property_list = t.m_type_data->get_class_data().m_properties;
+    
+    if (get_type_property(t, name))
+        return;
+    
+    auto p = detail::create_item<::rttr::property>(prop);
+    property_list.emplace_back(p);
+    update_class_list(t, &detail::class_data::m_properties);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -835,13 +739,23 @@ void type_register_private::register_global_property(const property_wrapper_base
 {
     const auto t    = prop->get_declaring_type();
     const auto name = prop->get_name();
-    auto p          = detail::create_item<::rttr::property>(prop);
 
      if (t.get_global_property(name))
          return;
 
+     auto p = detail::create_item<::rttr::property>(prop);
      get_global_properties().emplace_back(p);
      get_global_property_storage().insert(std::move(name), std::move(p));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::unregister_global_property(const property_wrapper_base* prop)
+{
+    auto& g_props = get_global_property_storage();
+    g_props.erase(prop->get_name());
+
+    remove_item(get_global_properties(), create_item<rttr::property>(prop));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -875,6 +789,16 @@ void type_register_private::register_global_method(const method_wrapper_base* me
 
     get_global_methods().push_back(m);
     get_global_method_storage().insert(std::move(name), std::move(m));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::unregister_global_method(const method_wrapper_base* meth)
+{
+    auto& g_meths = get_global_method_storage();
+    g_meths.erase(meth->get_name());
+
+    remove_item(get_global_methods(), create_item<rttr::method>(meth));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1138,6 +1062,55 @@ variant type_register_private::get_metadata(const variant& key, const std::vecto
     }
 
     return variant();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_data*>& type_register_private::get_type_data_storage()
+{
+    return get_instance().m_type_data_storage;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type>& type_register_private::get_type_storage()
+{
+    return get_instance().m_type_list;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+flat_map<string_view, type>& type_register_private::get_orig_name_to_id()
+{
+    return get_instance().m_orig_name_to_id;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id()
+{
+    return get_instance().m_custom_name_to_id;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_converter_base*>>& type_register_private::get_type_converter_list()
+{
+    return get_instance().m_type_converter_list;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_equal_comparator_list()
+{
+    return get_instance().m_type_equal_cmp_list;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<type_register_private::data_container<const type_comparator_base*>>& type_register_private::get_type_less_comparator_list()
+{
+    return get_instance().m_type_less_than_cmp_list;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

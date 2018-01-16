@@ -37,9 +37,6 @@
 #include <functional>
 #include <algorithm>
 
-
-#include <iostream> // FIXME: remove
-
 namespace rttr
 {
 namespace detail
@@ -86,10 +83,6 @@ class flat_multimap
 
 
         flat_multimap() {}
-        ~flat_multimap()
-        {
-            std::cout << "~flat_multimap" << std::endl;
-        }
 
     private:
         using has_type = Hash<Key>;
