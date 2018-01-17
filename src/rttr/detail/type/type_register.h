@@ -121,8 +121,8 @@ public:
     static void unregister_reg_manager(registration_manager* manager);
 
 
-    static type register_type(type_data* info);
-    static void unregister_type(type_data* info);
+    static type register_type(type_data* info) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
 private:
 
