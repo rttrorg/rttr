@@ -73,7 +73,7 @@ class destructor_wrapper_base;
 class property_wrapper_base;
 
 template<typename T>
-type_data& get_type_data() RTTR_NOEXCEPT;
+std::unique_ptr<type_data> make_type_data();
 
 template<typename T, typename Tp, typename Converter>
 struct variant_data_base_policy;
@@ -1148,7 +1148,7 @@ class RTTR_API type
         friend class detail::type_register_private;
 
         template<typename T>
-        friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;
+        friend std::unique_ptr<detail::type_data> detail::make_type_data();
 
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;

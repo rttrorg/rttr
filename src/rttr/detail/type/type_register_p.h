@@ -71,12 +71,12 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    static type register_type(type_data& info) RTTR_NOEXCEPT;
-    static void unregister_type(type_data& info) RTTR_NOEXCEPT;
+    static type register_type(type_data* info) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
     static void register_constructor(const constructor_wrapper_base* ctor);
     static void register_destructor(const destructor_wrapper_base* dtor);
-    
+
     static void register_property(const property_wrapper_base* prop);
     static void register_global_property(const property_wrapper_base* prop);
     static void unregister_global_property(const property_wrapper_base* prop);
@@ -207,15 +207,15 @@ private:
 
     static std::string derive_name(const type& t);
     //! Returns true, when the name was already registered
-    static bool register_name(uint16_t& id, type_data& info);
-    static void register_base_class_info(type_data& info);
+    static bool register_name(uint16_t& id, type_data* info);
+    static void register_base_class_info(type_data* info);
     /*!
      * \brief This will create the derived name of a template instance, with all the custom names of a template parameter.
      * e.g.: `std::reference_wrapper<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > >` =>
      *       `std::reference_wrapper<class std::string>`
      *
      */
-    static std::string derive_template_instance_name(type_data& info);
+    static std::string derive_template_instance_name(type_data* info);
 
     /*!
      * Updates the custom name for the given type \p t with \p new_name

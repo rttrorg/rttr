@@ -299,7 +299,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg( get_type_data<T>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<T>());
         return val;
     }
 };
@@ -307,15 +307,15 @@ struct type_getter
 /////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * Explicit specializations for type void;
- * because we cannot implement the check whether a type is completely defined for type `void`
- */
+* Explicit specializations for type void;
+* because we cannot implement the check whether a type is completely defined for type `void`
+*/
 template <>
 struct type_getter<void>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg( get_type_data<void>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<void>());
         return val;
     }
 };
@@ -323,15 +323,15 @@ struct type_getter<void>
 /////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * Explicit specializations for function types;
- * because we cannot implement the check whether a type is completely defined for functions
- */
+* Explicit specializations for function types;
+* because we cannot implement the check whether a type is completely defined for functions
+*/
 template <typename T>
 struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg( get_type_data<T>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<T>());
         return val;
     }
 };

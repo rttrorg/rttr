@@ -120,18 +120,9 @@ public:
     static void register_reg_manager(registration_manager* manager);
     static void unregister_reg_manager(registration_manager* manager);
 
-    /*!
-     * \brief Register the type info for the given name
-     *
-     * \remark When a type with the given name is already registered,
-     *         then the type for the already registered type will be returned.
-     *
-     * \return A valid type object.
-     */
-    static type type_reg(type_data& info) RTTR_NOEXCEPT;
 
-
-    static void type_unreg(type_data& info) RTTR_NOEXCEPT;
+    static type register_type(type_data* info);
+    static void unregister_type(type_data* info);
 
 private:
 

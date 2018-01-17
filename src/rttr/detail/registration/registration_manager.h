@@ -79,7 +79,17 @@ class RTTR_LOCAL registration_manager
             for (auto& item : m_type_less_than_cmps)
                 type_register::unregister_less_than_comparator(item.get());
 
+            for (auto& type : m_type_data_list)
+                type_register::unregister_type(type.get());
+
             type_register::unregister_reg_manager(this);
+        }
+
+        type add_item(std::unique_ptr<type_data> obj)
+        {
+            auto reg_type = type_register::register_type(obj.get());
+            m_type_data_list.push_back(std::move(obj));
+            return reg_type;
         }
 
         void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
@@ -160,6 +170,8 @@ class RTTR_LOCAL registration_manager
 
     private:
         bool                                                    m_should_unregister = true;
+        std::vector<std::unique_ptr<type_data>>                 m_type_data_list;
+
         std::vector<std::unique_ptr<constructor_wrapper_base>>  m_constructors;
         std::vector<std::unique_ptr<destructor_wrapper_base>>   m_destructors;
 
