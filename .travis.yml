@@ -81,7 +81,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: [g++-7']
+          packages: ['g++-7']
       env: COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
     # this config fails at the moment because of disabled APT on llvm
