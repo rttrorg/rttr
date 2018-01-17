@@ -290,7 +290,7 @@ using type_trait_value = uint64_t;
 #define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
 
 template<typename T>
-std::unique_ptr<type_data> make_type_data() RTTR_NOEXCEPT
+std::unique_ptr<type_data> make_type_data()
 {
     auto obj = std::unique_ptr<type_data>
                (
