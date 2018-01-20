@@ -47,7 +47,7 @@ set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
 
 is_vs_based_build(VS_BUILD)
 
-set(CMAKE_DEBUG_POSTFIX "_d")
+set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
 
 # detect architecture
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
