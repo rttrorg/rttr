@@ -78,7 +78,7 @@ endif()
 #  http://www.cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
 if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW) # MACOSX_RPATH
-    set(CMAKE_MACOSX_RPATH TRUE)
+    set(CMAKE_MACOSX_RPATH TRUE)  # replaces path with @rpath
 endif()
 
 include(GNUInstallDirs)
@@ -94,9 +94,4 @@ add_subdirectory(src)
 # and the documentation
 if (BUILD_DOCUMENTATION)
     add_subdirectory(doc)
-endif()
-
-# here we specify the installation directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
 endif()

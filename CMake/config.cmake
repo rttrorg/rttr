@@ -40,7 +40,7 @@ set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
 set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
 
 # in order to group in visual studio the targets into solution filters
-set_property( GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #3rd part dependencies dirs
 set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
@@ -85,7 +85,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
   message(WARNING "clang support is currently experimental")
   
-  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libstdc++ -static -lstdc++")
+  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static")
 endif()
 
 if(MSVC)
@@ -121,8 +121,4 @@ if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
              DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
              COMPONENT Devel)
-
-    install(FILES "${LICENSE_FILE}" "${README_FILE}"
-            DESTINATION "${CMAKE_INSTALL_INFODIR}"
-            PERMISSIONS OWNER_READ)
 endif()
