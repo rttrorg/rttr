@@ -72,6 +72,16 @@ if (USE_PCH)
   endif()
 endif()
 
+# In response to CMake 3.0 generating warnings regarding policy CMP0042,
+# the OSX RPATH settings have been updated per recommendations found
+# in the CMake Wiki:
+#  http://www.cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
+if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW) # MACOSX_RPATH
+    set(CMAKE_MACOSX_RPATH TRUE)
+endif()
+
+include(GNUInstallDirs)
 include(config)
 include(3rd_party_libs)
 

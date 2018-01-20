@@ -39,28 +39,13 @@ message("Project version: ${RTTR_VERSION_STR}")
 set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
 set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
 
-# dirs where the binaries should be placed, installed
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-set(RTTR_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
-
 # in order to group in visual studio the targets into solution filters
 set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 
 #3rd part dependencies dirs
 set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
 
-getNameOfDir(CMAKE_LIBRARY_OUTPUT_DIRECTORY RTTR_TARGET_BIN_DIR)
 is_vs_based_build(VS_BUILD)
-if (VS_BUILD)
-  #set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR}/\${CMAKE_INSTALL_CONFIG_NAME})
-  set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR})
-  set(RTTR_LIB_INSTALL_DIR "lib")
-else()
-  set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR})
-  set(RTTR_LIB_INSTALL_DIR "lib")
-endif()
 
 set(CMAKE_DEBUG_POSTFIX "_d")
 
@@ -134,10 +119,10 @@ write_basic_package_version_file(
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION cmake
+             DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
              COMPONENT Devel)
 
     install(FILES "${LICENSE_FILE}" "${README_FILE}"
-            DESTINATION "."
+            DESTINATION "${CMAKE_INSTALL_INFODIR}"
             PERMISSIONS OWNER_READ)
 endif()

@@ -57,12 +57,14 @@ if (${BUILD_RTTR_DYNAMIC})
                                
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+                )
 
         install(EXPORT rttr_targets
-                DESTINATION cmake
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
                 NAMESPACE RTTR::
                 FILE rttr-config.cmake)
             
@@ -96,8 +98,11 @@ if (BUILD_STATIC)
     
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+                )
     endif()
 endif()
 
@@ -130,9 +135,11 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     if (BUILD_INSTALLER)
         install_pdb_files(rttr_core_s)
         install(TARGETS rttr_core_s EXPORT rttr_targets
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+                )
     endif()
     
     if (BUILD_STATIC)
@@ -160,8 +167,11 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         
         if (BUILD_INSTALLER)
             install(TARGETS rttr_core_lib_s EXPORT rttr_targets
-                    ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-                    LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                    RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+                    LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                    ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                    FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+                    )
         endif()
 
     endif()
