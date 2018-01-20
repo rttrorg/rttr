@@ -125,7 +125,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
 private:
-
+    type_register_private();
     static type_register_private& get_instance();
     ~type_register_private() = default;
 
@@ -226,8 +226,8 @@ private:
 
     flat_map<std::string, type, hash>                           m_custom_name_to_id;
     flat_map<string_view, type>                                 m_orig_name_to_id;
-    std::vector<type>                                           m_type_list = { type(&get_invalid_type_data()) };
-    std::vector<type_data*>                                     m_type_data_storage = { &get_invalid_type_data() };
+    std::vector<type>                                           m_type_list;
+    std::vector<type_data*>                                     m_type_data_storage;
 
     flat_multimap<string_view, ::rttr::property>                m_global_property_stroage;
     flat_multimap<string_view, ::rttr::method>                  m_global_method_stroage;

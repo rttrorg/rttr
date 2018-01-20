@@ -305,6 +305,14 @@ void type_register::register_base_class(const type& derived_type, const base_cla
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type_register_private::type_register_private()
+:   m_type_list({type(&get_invalid_type_data()) }),
+    m_type_data_storage({&get_invalid_type_data()})
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type_register_private& type_register_private::get_instance()
 {
     static type_register_private obj;
