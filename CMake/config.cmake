@@ -50,11 +50,6 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
 endif()
 
-# OSX
-if(APPLE)
-  set(CMAKE_MACOSX_RPATH ON)
-endif()		  
-
 # in order to group in visual studio the targets into solution filters
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -64,16 +59,38 @@ set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
 getNameOfDir(CMAKE_LIBRARY_OUTPUT_DIRECTORY RTTR_TARGET_BIN_DIR)
 is_vs_based_build(VS_BUILD)
 
-# Set all install directories for the targets
+# set all install directories for the targets
 if(UNIX)
   include(GNUInstallDirs)
-else()
+  # all directories set
+else(WINDOWS)
   set(CMAKE_INSTALL_LIBDIR "lib")
   set(CMAKE_INSTALL_BINDIR "bin")
   set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
+
+# set the rpath for executables
+set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+set(CMAKE_SKIP_BUILD_RPATH FALSE)            # Use automatic rpath for build
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)     # Use specific rpath for INSTALL
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # NO automatic rpath for INSTALL
+if(APPLE)
+  set(MACOSX_RPATH ON CACHE STRING "Set this to off if you dont want @rpath in install names") # uses a install name @rpath/... for libraries
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};@executable_path")
+  # the executable is relocatable, since the library builds with and install name "@rpath/librttr_core.0.9.6.dylib"
+  # the executable links 
+elseif(UNIX)
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};$ORIGIN")
+elseif(WINDOWS)
+  # no such thin as rpath exists, make the output of the library in the binary folder!
+  # such that the executables find the dlls
+  set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_BINDIR}")
+  set(RTTR_EXECUTABLE_INSTALL_RPATH ${CMAKE_INSTALL_BINDIR}) # default, has no effect
+endif()
+
+
 
 # detect architecture
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -111,7 +128,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
   message(WARNING "clang support is currently experimental")
   
-  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static")
+  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
 endif()
 
 if(MSVC)

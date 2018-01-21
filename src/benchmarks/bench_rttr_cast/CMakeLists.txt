@@ -55,7 +55,8 @@ if(MSVC)
 endif()
 
 set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d
-                                                 FOLDER "Benchmarks")
+                                                 FOLDER "Benchmarks"
+                                                 INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 
 add_dependencies(bench_rttr_cast RTTR::Core)
 
