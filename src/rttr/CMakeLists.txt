@@ -86,7 +86,7 @@ if (BUILD_STATIC)
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME rttr_core)
     else()
-        message(SEND_ERROR "Do now know how to to name the static library.")
+        message(SEND_ERROR "Do not know how to to name the static library.")
     endif()
     
     target_include_directories(rttr_core_lib PUBLIC
@@ -109,9 +109,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
 
     target_include_directories(rttr_core_s PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-    $<INSTALL_INTERFACE:include>)
+                               $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+                               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+                               $<INSTALL_INTERFACE:include>)
 
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
@@ -124,7 +124,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS})
     else()
-        message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
+        message(SEND_ERROR "Do not know how to statically link against the standard library with this compiler.")
     endif()
 
     if (BUILD_INSTALLER)
@@ -140,9 +140,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         add_library(RTTR::Core_Lib_STL ALIAS rttr_core_lib_s)
         
         target_include_directories(rttr_core_lib_s PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-        $<INSTALL_INTERFACE:include>)
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+                                   $<INSTALL_INTERFACE:include>)
 
         set_target_properties(rttr_core_lib_s PROPERTIES
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
@@ -155,7 +155,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             set_target_properties(rttr_core_lib_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS} OUTPUT_NAME rttr_core_s)
         else()
-            message(SEND_ERROR "Do now know how to statically link against the standard library with this compiler.")
+            message(SEND_ERROR "Do not know how to statically link against the standard library with this compiler.")
         endif()
         
         if (BUILD_INSTALLER)
