@@ -161,11 +161,6 @@ private:
             {
                 return _left.m_data < _right;
             }
-
-            RTTR_INLINE bool operator () ( const Data_Type& _left, const data_container<T>& _right ) const
-            {
-                return _left < _right.m_data;
-            }
         };
 
         type::type_id   m_id;

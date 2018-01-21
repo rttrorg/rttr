@@ -46,7 +46,6 @@ struct RTTR_LOCAL type_converter_base
     type_converter_base(const type& target_type) : m_target_type(target_type) {}
     virtual variant to_variant(void* data, bool& ok) const = 0;
     virtual type get_source_type() const = 0;
-    virtual ~type_converter_base() = default;
 
     type m_target_type;
 };
@@ -57,7 +56,6 @@ template<typename TargetType>
 struct type_converter_target : type_converter_base
 {
     type_converter_target(const type& target_type) : type_converter_base(target_type) {}
-    virtual ~type_converter_target() = default;
     variant to_variant(void* data, bool& ok) const override { return convert(data, ok); }
     virtual TargetType convert(void* data, bool& ok) const = 0;
 };
@@ -68,7 +66,6 @@ template<typename TargetType, typename SourceType, typename F>
 struct type_converter : type_converter_target<TargetType>
 {
     type_converter(const F& acc) : type_converter_target<TargetType>(type::get<TargetType>()), m_acc(acc) { }
-    virtual ~type_converter() = default;
     virtual type get_source_type() const override { return type::get<SourceType>(); }
     TargetType convert(void* data, bool& ok) const override
     {

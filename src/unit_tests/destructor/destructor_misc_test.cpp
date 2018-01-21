@@ -84,3 +84,15 @@ TEST_CASE("destructor - compare operator", "[destructor]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("destructor::get_declaring_type()", "[destructor]")
+{
+    destructor dtor = type::get_by_name("dtor_misc_test").get_destructor();
+
+    destructor invalid_dtor = type::get_by_name("foobar").get_destructor();
+
+    CHECK(dtor.get_declaring_type() == type::get<dtor_misc_test>());
+    CHECK(invalid_dtor.get_declaring_type().is_valid() == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

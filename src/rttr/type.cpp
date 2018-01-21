@@ -179,10 +179,7 @@ array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 array_range<type> type::get_types() RTTR_NOEXCEPT
 {
     auto& type_list = detail::type_register_private::get_type_storage();
-    if (type_list.size() == 1) // when we have only one type in it (invalid type), we return an empty range
-        return array_range<type>();
-    else
-        return array_range<type>(&type_list[1], type_list.size() - 1);
+    return array_range<type>(&type_list[1], type_list.size() - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
