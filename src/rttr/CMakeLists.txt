@@ -92,9 +92,9 @@ if (BUILD_STATIC)
     endif()
     
     target_include_directories(rttr_core_lib PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-    $<INSTALL_INTERFACE:include>)
+                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+                                $<INSTALL_INTERFACE:include>)
     
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
