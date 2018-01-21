@@ -72,6 +72,11 @@ if (USE_PCH)
   endif()
 endif()
 
+# here we specify the installation directory
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
+endif()
+
 include(config)
 include(3rd_party_libs)
 
@@ -86,7 +91,3 @@ if (BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
 
-# here we specify the installation directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
-endif()
