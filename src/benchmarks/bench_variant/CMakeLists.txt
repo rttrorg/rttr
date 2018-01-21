@@ -55,7 +55,9 @@ if(MSVC)
 endif()
 
 set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d
-                                               FOLDER "Benchmarks")
+                                               FOLDER "Benchmarks"
+                                               BUILD_WITH_INSTALL_RPATH ON
+                                               INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 
 add_dependencies(bench_variant RTTR::Core)
 
