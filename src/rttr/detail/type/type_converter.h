@@ -46,6 +46,7 @@ struct RTTR_LOCAL type_converter_base
     type_converter_base(const type& target_type) : m_target_type(target_type) {}
     virtual variant to_variant(void* data, bool& ok) const = 0;
     virtual type get_source_type() const = 0;
+    virtual ~type_converter_base() {};
 
     type m_target_type;
 };
