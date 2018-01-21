@@ -60,7 +60,11 @@ set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d
 add_dependencies(bench_rttr_cast RTTR::Core)
 
 install(TARGETS bench_rttr_cast
-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR} )
+        RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+        )
 
 ###############################################################################
 
@@ -84,7 +88,11 @@ if (BUILD_STATIC)
     add_dependencies(bench_rttr_cast_lib RTTR::Core_Lib)
 
     install(TARGETS bench_rttr_cast_lib
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+            )
 endif()
 
 ###############################################################################
@@ -119,7 +127,11 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     endif()
 
     install(TARGETS bench_rttr_cast_s
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+            )
 
     if (BUILD_STATIC)
         add_executable(bench_rttr_cast_lib_s ${SRC_FILES} ${HPP_FILES})
@@ -151,7 +163,11 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         endif()
 
         install(TARGETS bench_rttr_cast_lib_s
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+                RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
+                )
     endif()
 endif()
 
