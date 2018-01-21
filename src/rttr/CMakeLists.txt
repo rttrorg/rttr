@@ -58,7 +58,7 @@ if (${BUILD_RTTR_DYNAMIC})
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
                 RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
+                LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR}
                 ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
 
         install(EXPORT rttr_targets
@@ -131,7 +131,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         install_pdb_files(rttr_core_s)
         install(TARGETS rttr_core_s EXPORT rttr_targets
                 RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
+                LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR}
                 ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
     endif()
     
