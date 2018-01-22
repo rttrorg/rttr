@@ -82,22 +82,18 @@ public:
     type_register& operator=(const type_register&) = delete;
 
     static void register_property(const property_wrapper_base* prop);
-    static void unregister_property(const property_wrapper_base* prop);
+    static void register_method(method_wrapper_base* meth);
+    // there are no methods for unregister prop & methods,
+    // because they will be unregistered automatically, when the types are unregistered
 
     static void register_global_property(const property_wrapper_base* prop);
     static void unregister_global_property(const property_wrapper_base* prop);
-
-    static void register_method(method_wrapper_base* meth);
-    static void unregister_method(method_wrapper_base* meth);
 
     static void register_global_method(method_wrapper_base* meth);
     static void unregister_global_method(method_wrapper_base* meth);
 
     static void register_constructor(constructor_wrapper_base* ctor);
-    static void unregister_constructor(constructor_wrapper_base* meth);
-
     static void register_destructor(destructor_wrapper_base* dtor);
-    static void unregister_destructor(destructor_wrapper_base* meth);
 
     static void register_enumeration(enumeration_wrapper_base* enum_data);
     static void unregister_enumeration(enumeration_wrapper_base* enum_data);

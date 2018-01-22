@@ -61,12 +61,8 @@ class RTTR_LOCAL registration_manager
             if (!m_should_unregister)
                 return;
 
-            for (auto& prop : m_properties)
-                type_register::unregister_property(prop.get());
             for (auto& prop : m_global_properties)
                 type_register::unregister_global_property(prop.get());
-            for (auto& meth : m_methods)
-                type_register::unregister_method(meth.get());
             for (auto& meth : m_global_methods)
                 type_register::unregister_global_method(meth.get());
             for (auto& enum_ : m_enumerations)
