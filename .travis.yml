@@ -41,7 +41,7 @@ matrix:
     # check code formatting
     - os: linux
       compiler: gcc
-      env: NAME="Check Code Formatting" COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+      env: NAME="check code formatting" COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
     
     # valgrind memory check
     - os: linux
@@ -50,7 +50,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
-      env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
+      env: NAME="valgrind" COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
 
     # check code coverage x86 => result https://coveralls.io/github/rttrorg/rttr
     - os: linux
@@ -62,7 +62,7 @@ matrix:
       after_success:
         - pip install --user urllib3[secure] cpp-coveralls
         - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
-      env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
+      env: NAME="code coverage x86" COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
     
     # check code coverage x64 => result https://coveralls.io/github/rttrorg/rttr
     - os: linux
@@ -74,7 +74,7 @@ matrix:
       after_success:
         - pip install --user urllib3[secure] cpp-coveralls
         - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
+      env: NAME="code coverage x64" COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
     
     # build docu and upload to server
     - os: linux
@@ -92,7 +92,7 @@ matrix:
             lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
             lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
           fi
-      env: BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
+      env: NAME="documentation build" BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
 
     # Linux / GCC
     - os: linux
