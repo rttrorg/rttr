@@ -320,7 +320,7 @@ private:
 private:
     const T* const   m_begin;
     const T* const   m_end;
-    const Predicate     m_pred;
+    const Predicate  m_pred;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////

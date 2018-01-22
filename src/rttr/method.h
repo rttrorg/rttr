@@ -174,7 +174,7 @@ class RTTR_API method
          * \remark When this method does not belong to a class (i.e. is a global method) it will return an invalid type.
          *         When this method is not valid, this function will return an invalid type object (see \ref type::is_valid).
          *
-         * \return Type of the underlying property.
+         * \return \ref type "Type" of the declaring class/struct for this method.
          */
         type get_declaring_type() const RTTR_NOEXCEPT;
 

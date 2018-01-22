@@ -29,6 +29,7 @@
 #define RTTR_TYPE_COMPARATOR_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
+#include "rttr/detail/type/type_register.h"
 
 namespace rttr
 {
@@ -42,12 +43,13 @@ struct RTTR_LOCAL type_comparator_base
 {
     using cmp_func = bool (*)(const void* lhs, const void* rhs);
 
-    type_comparator_base(cmp_func cmp_f = [](const void*, const void*) ->bool { return false; })
-    :   cmp(cmp_f)
+    type_comparator_base(cmp_func cmp_f = [](const void*, const void*) ->bool { return false; }, type t = get_invalid_type())
+    :   cmp(cmp_f), cmp_type(t)
     {
     }
 
     cmp_func    cmp;
+    type        cmp_type;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +57,7 @@ struct RTTR_LOCAL type_comparator_base
 template<typename T>
 struct type_equal_comparator : type_comparator_base
 {
-    type_equal_comparator() : type_comparator_base(equal) {}
+    type_equal_comparator() : type_comparator_base(equal, type::get<T>()) {}
 
     static bool equal(const void* lhs, const void* rhs)
     {
@@ -70,7 +72,7 @@ struct type_equal_comparator : type_comparator_base
 template<typename T>
 struct type_less_than_comparator : type_comparator_base
 {
-    type_less_than_comparator() : type_comparator_base(less_than) {}
+    type_less_than_comparator() : type_comparator_base(less_than, type::get<T>()) {}
 
     static bool less_than(const void* lhs, const void* rhs)
     {
