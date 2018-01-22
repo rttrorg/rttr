@@ -72,10 +72,9 @@ endif()
 set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
 
 # set the rpath for executables
-set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
-set(CMAKE_SKIP_BUILD_RPATH FALSE)            # Use automatic rpath for build
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)     # Use specific rpath for INSTALL
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # NO automatic rpath for INSTALL
+set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)    # when building, don't use the install RPATH already (but later on when installing)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF) # NO automatic rpath for INSTALL
 if(APPLE)
   set(MACOSX_RPATH ON CACHE STRING "Set this to off if you dont want @rpath in install names") # uses a install name @rpath/... for libraries
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};@executable_path")
