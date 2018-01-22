@@ -102,6 +102,7 @@ TEST_CASE("property - global function", "[property]")
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == true);
     CHECK(prop.is_array() == false);
+    CHECK(prop.get_declaring_type().is_valid() == false);
     CHECK(prop.get_type() == type::get<std::string>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -174,6 +175,7 @@ TEST_CASE("property - global function - read only - bind as ptr", "[property]")
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == true);
     CHECK(prop.is_array() == false);
+    CHECK(prop.get_declaring_type().is_valid() == false);
     CHECK(prop.get_type() == type::get<const int*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");

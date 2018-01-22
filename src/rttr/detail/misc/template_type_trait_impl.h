@@ -38,7 +38,7 @@ namespace detail
 {
 
 template<typename T>
-std::vector<::rttr::type> template_type_trait<T>::get_template_arguments() { return{}; }
+std::vector<::rttr::type> template_type_trait<T>::get_template_arguments() { return {}; }
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
  // otherwise an internal compile error will occur
@@ -74,7 +74,7 @@ namespace rttr                                                                  
 namespace detail                                                                                                                            \
 {                                                                                                                                           \
     template<template <value_type...> class T, value_type...Args>                                                                           \
-    struct template_type_trait<T<Args...>> : std::true_type                                                                                                 \
+    struct template_type_trait<T<Args...>> : std::true_type                                                                                 \
     {                                                                                                                                       \
         static std::vector<::rttr::type> get_template_arguments() { return { ::rttr::type::get<Args>()..., }; }                             \
     };                                                                                                                                      \

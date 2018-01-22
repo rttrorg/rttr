@@ -74,27 +74,36 @@ namespace detail
  *
 \code{.cpp}
   using namespace rttr;
-  struct MyStruct
+  enum class E_Alignment
   {
-     enum E_Alignment
-     {
-        AlignLeft       = 0x0001,
-        AlignRight      = 0x0002,
-        AlignHCenter    = 0x0004,
-        AlignJustify    = 0x0008
-     };
+     AlignLeft       = 0x0001,
+     AlignRight      = 0x0002,
+     AlignHCenter    = 0x0004,
+     AlignJustify    = 0x0008
   };
-  enumeration enum_align = type::get_by_name("MyStruct").get_enumeration("E_Alignment");
+
+  RTTR_REGISTRATION
+  {
+    rttr::registration::enumeration<E_Alignment>("E_Alignment")
+        (
+            value("AlignLeft",      E_Alignment::AlignLeft),
+            value("AlignRight",     E_Alignment::AlignRight),
+            value("AlignHCenter",   E_Alignment::AlignHCenter),
+            value("AlignJustify",   E_Alignment::AlignJustify)
+        );
+  }
+
+  enumeration enum_align = type::get_by_name("E_Alignment").get_enumeration();
   if (enum_align)
   {
-     MyStruct::E_Alignment enum_value = MyStruct::AlignLeft;
+     E_Alignment enum_value = E_Alignment::AlignLeft;
      string_view name = enum_align.value_to_name(enum_value);
      std::cout << name; // prints "AlignLeft"
 
      variant var = enum_align.name_to_value("AlignJustify");
-     std::cout << var.get_value<MyStruct::E_Alignment>(); // prints "8";
-     std::cout << var.to_int();                           // prints "8";
-     std::cout << var.to_string();                        // prints "AlignJustify";
+     enum_value = var.get_value<E_Alignment>(); // is now: "AlignJustify"
+     std::cout << var.to_int();                 // prints "8";
+     std::cout << var.to_string();              // prints "AlignJustify";
   }
 \endcode
  *

@@ -75,6 +75,13 @@ destructor::operator bool() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type destructor::get_declaring_type() const RTTR_NOEXCEPT
+{
+    return m_wrapper->get_declaring_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type destructor::get_destructed_type() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_destructed_type();
