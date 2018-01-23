@@ -119,7 +119,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
   endif()
 
-  replaceCompilerOption("-W[0-9a-zA-Z-#]+" "") # remove all warnings , will be added seperately
+  replaceCompilerOption("-W[0-9a-zA-Z#-]+" "") # remove all warnings , will be added seperately
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -128,10 +128,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   message(WARNING "clang support is currently experimental")
   
   set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
-  replaceCompilerOption("-W[0-9a-zA-Z-#]+" "") # remove all warnings , will be added seperately
+  replaceCompilerOption("-W[0-9a-zA-Z#-]+" "") # remove all warnings , will be added seperately
 endif()
 
-if(MSVC)
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
     replaceCompilerOption("/W\d" "") # replace warnings , will be added seperately
 endif()

@@ -53,7 +53,7 @@ target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
 if(MSVC)
     set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200")
 endif()
-
+add_warning_levels(bench_rttr_cast "benchmarks")
 set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d
                                                  FOLDER "Benchmarks"
                                                  INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
