@@ -96,8 +96,6 @@ public:
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
 
-            reference operator*() const;
-            pointer operator->();
             bool operator==(const self_type& rhs) const;
             bool operator!=(const self_type& rhs) const;
 
@@ -120,10 +118,15 @@ public:
     {
         public:
             using self_type = array_iterator<DataType>;
+            using reference = typename array_iterator_base<DataType>::reference;
+            using pointer   = typename array_iterator_base<DataType>::pointer;
 
             array_iterator();
             array_iterator(const array_iterator<DataType>& other);
 
+
+            reference operator*() const;
+            pointer operator->();
 
             self_type& operator++();
             self_type operator++(int index);
@@ -142,9 +145,14 @@ public:
     {
         public:
             using self_type = array_reverse_iterator<DataType>;
+            using reference = typename array_iterator_base<DataType>::reference;
+            using pointer   = typename array_iterator_base<DataType>::pointer;
 
             array_reverse_iterator();
             array_reverse_iterator(const array_reverse_iterator<DataType>& other);
+
+            reference operator*() const;
+            pointer operator->();
 
             self_type& operator++();
             self_type operator++(int index);
