@@ -387,6 +387,51 @@ function(activate_precompiled_headers _PRECOMPILED_HEADER _SOURCE_FILES)
 endfunction()
 
 ####################################################################################
+# Adds warnings compiler options to the target depending on the category
+# _TARGET Target name
+# _CATEGORY "library" or "unit_tests" or "benchmarks"
+####################################################################################
+macro( add_warning_levels _TARGET _CATEGORY)
+  if("${_CATEGORY}" STREQUAL "library" OR "${_CATEGORY}" STREQUAL "examples")
+    if(CXX_COMPILER_ID STREQUAL "GNU")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type")
+    elseif(CXX_COMPILER_ID MATCHES "Clang")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type")
+    elseif(MSVC)
+      set(CXX_FLAGS "/WX" "/W4")
+    else()
+      message(FATAL_ERROR "Unknown compiler to set warning levels! ")
+    endif()
+  elseif("${_CATEGORY}" STREQUAL "unit_tests")
+    if(CXX_COMPILER_ID STREQUAL "GNU")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type" "-Wunused-private-field")
+    elseif(CXX_COMPILER_ID MATCHES "Clang")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type" "-Wunused-private-field")
+    elseif(MSVC)
+      set(CXX_FLAGS "/WX" "/W4")
+    else()
+      message(FATAL_ERROR "Unknown compiler to set warning levels! ")
+    endif()
+  elseif("${_CATEGORY}" STREQUAL "benchmarks")
+    if(CXX_COMPILER_ID STREQUAL "GNU")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type" "-Wunused-private-field")
+    elseif(CXX_COMPILER_ID MATCHES "Clang")
+      set(CXX_FLAGS "-Wall" "-Werror" "-Wno-noexcept-type" "-Wunused-private-field")
+    elseif(MSVC)
+      set(CXX_FLAGS "/WX" "/W4")
+    else()
+      message(FATAL_ERROR "Unknown compiler to set warning levels! ")
+    endif()
+  endif()
+
+  target_compile_options(${target} PRIVATE ${CXX_FLAGS} )
+  target_compile_options(${target} PRIVATE $<$<CONFIG:Debug>:${CXX_FLAGS_DEBUG} )
+  target_compile_options(${target} PRIVATE $<$<CONFIG:Release>:${CXX_FLAGS_RELEASE} )
+  target_compile_options(${target} PRIVATE $<$<CONFIG:MinSizeRel>:${CXX_FLAGS_MINSIZEREL} )
+  target_compile_options(${target} PRIVATE $<$<CONFIG:RelWithDebInfo>:${CXX_FLAGS_RELWITHDEBINFO} )
+endmacro()
+
+####################################################################################
 # Adds or replace a compiler option
 # _OLD_OPTION The option which should be replaced
 # _NEW_OPTION The new option which should be added

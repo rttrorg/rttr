@@ -46,6 +46,8 @@ if (${BUILD_RTTR_DYNAMIC})
     target_compile_definitions(rttr_core PRIVATE RTTR_DLL_EXPORTS)
     target_compile_definitions(rttr_core PUBLIC RTTR_DLL)
 
+    add_warning_levels(rttr_core "library")
+
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core)
@@ -77,7 +79,9 @@ endif()
 if (BUILD_STATIC)
     add_library(rttr_core_lib STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
     add_library(RTTR::Core_Lib ALIAS rttr_core_lib)
-    
+
+    add_warning_levels(rttr_core_lib "library")
+
     set_target_properties(rttr_core_lib PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_Lib)
@@ -113,6 +117,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     target_compile_definitions(rttr_core_s PRIVATE RTTR_DLL_EXPORTS)
     target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
 
+    add_warning_levels(rttr_core_s "library")
+
     target_include_directories(rttr_core_s PUBLIC
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
@@ -146,6 +152,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         add_library(rttr_core_lib_s STATIC ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
         add_library(RTTR::Core_Lib_STL ALIAS rttr_core_lib_s)
         
+        add_warning_levels(rttr_core_lib_s "library")
+
         target_include_directories(rttr_core_lib_s PUBLIC
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>

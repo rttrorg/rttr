@@ -102,13 +102,12 @@ endif()
 
 enable_rtti(BUILD_WITH_RTTI)
 
+# cxx default flags 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    message(STATUS "added flag -std=c++0x,to g++")
   else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-noexcept-type")
-    message(STATUS "added flag -std=c++11, -Wno-noexcept-type to g++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   endif()
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -119,23 +118,24 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   else()
     set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
   endif()
+
+  replaceCompilerOption("-W[0-9a-zA-Z-#]+" "") # remove all warnings , will be added seperately
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-noexcept-type")
-  message(STATUS "added flag -std=c++11 to g++")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
   message(WARNING "clang support is currently experimental")
   
   set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
+  replaceCompilerOption("-W[0-9a-zA-Z-#]+" "") # remove all warnings , will be added seperately
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /WX")
-    replaceCompilerOption("/W3" "/W4")
-    message(STATUS "added flag /bigobj, /W4 to MSVC compiler")
-    message(STATUS "Treats all compiler warnings as errors.")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+    replaceCompilerOption("/W\d" "") # replace warnings , will be added seperately
 endif()
+message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}'")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
@@ -152,6 +152,7 @@ else()
   message(WARNING "Please adjust CMAKE_CXX_FLAGS_RELWITHDEBINFO flags for this compiler!")
 endif()
 
+# cmake config file
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"

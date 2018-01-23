@@ -40,6 +40,7 @@ if (USE_PCH)
 endif()
 
 add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
+add_warning_levels(unit_tests "unit_tests")
 target_link_libraries(unit_tests RTTR::Core)
 add_dependencies(unit_tests RTTR::Core)
 target_include_directories(unit_tests PUBLIC ${CATCH_DIR})

@@ -108,10 +108,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     if(MSVC)
         set_target_properties(bench_method_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
     endif()
-
+    add_warning_levels(bench_rttr_cast "benchmarks")
     set_target_properties(bench_method_s PROPERTIES DEBUG_POSTFIX _d
                                                     FOLDER "Benchmarks")
-
+    
     add_dependencies(bench_method_s RTTR::Core_STL)
 
     if (MSVC)
