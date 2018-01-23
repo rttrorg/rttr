@@ -197,6 +197,7 @@ TEST_CASE("Test method", "[method]")
     REQUIRE(obj.method_1_called == true);
     REQUIRE(meth.get_name() == "method_1");
     REQUIRE(meth.get_parameter_infos().empty() == true);
+    REQUIRE(meth.get_declaring_type().is_valid() == true);
 
     ////////////////////////////////////////
     t_meth.get_method("method_2").invoke(inst);
@@ -335,6 +336,7 @@ TEST_CASE("global methods", "[method]")
 {
     free_function_called = false;
     method global_meth_1 = type::get_global_method("free_function", {type::get<bool>()});
+    REQUIRE(global_meth_1.get_declaring_type().is_valid() == false);
     REQUIRE(bool(global_meth_1) == true);
     REQUIRE(global_meth_1.get_parameter_infos().begin()->get_type() == type::get<bool>());
     variant success = global_meth_1.invoke(instance());

@@ -41,7 +41,7 @@ namespace detail
 
 bool compare_types_equal(const void* lhs, const void* rhs, const type& t, bool& ok)
 {
-    if (auto cmp_f = type_register_private::get_equal_comparator(t))
+    if (auto cmp_f = t.get_equal_comparator())
     {
         ok = true;
         return cmp_f->cmp(lhs, rhs);

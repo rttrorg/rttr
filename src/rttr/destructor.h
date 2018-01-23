@@ -87,6 +87,15 @@ class RTTR_API destructor
         explicit operator bool() const RTTR_NOEXCEPT;
 
         /*!
+         * Returns the class that declares this destructor.
+         *
+         * \remark When this destructor is not valid, this function will return an invalid type object (see \ref type::is_valid).
+         *
+         * \return \ref type "Type" of the declaring class/struct for this destructor.
+         */
+        type get_declaring_type() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns the rttr::type for which this destructor can delete objects.
          *
          * \return The type of this destructor.

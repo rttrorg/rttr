@@ -547,7 +547,7 @@ TEST_CASE("Test rttr::type - get_template_arguments()", "[type]")
         CHECK((type::get<my_class_template<int, bool, char>>().get_template_arguments().size() == 3));
     }
 
-    SECTION("invvalid test")
+    SECTION("invalid test")
     {
         CHECK(type::get<int>().get_template_arguments().size()                == 0);
         CHECK(type::get<ClassSingleBase>().get_template_arguments().size()    == 0);
@@ -582,6 +582,13 @@ TEST_CASE("Test rttr::type - Check custom wrapper type", "[type]")
     CHECK(type::get<custom_wrapper<int>>().get_wrapped_type()          == type::get<int>());
 
     CHECK(type::get<custom_wrapper<const int>>().get_wrapped_type()    == type::get<int>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - get_types()", "[type]")
+{
+    CHECK(type::get_types().size() > 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -119,6 +119,7 @@ TEST_CASE("property - class function", "[property]")
     CHECK(prop.is_static() == false);
     CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::string>());
+    CHECK(prop.get_declaring_type() == type::get<property_member_func_test>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 

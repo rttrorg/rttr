@@ -29,7 +29,6 @@
 #define RTTR_TYPE_REGISTER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-
 #include "rttr/string_view.h"
 
 #include <memory>
@@ -68,6 +67,7 @@ struct type_getter;
 struct type_data;
 
 class metadata;
+class registration_manager;
 
 /*!
  * This class contains all functions to register properties, methods etc.. for a specific type.
@@ -81,39 +81,44 @@ public:
     // no assign
     type_register& operator=(const type_register&) = delete;
 
-    static void property(const type& t, std::unique_ptr<property_wrapper_base> prop);
+    static void register_property(const property_wrapper_base* prop);
+    static void register_method(method_wrapper_base* meth);
+    // there are no methods for unregister prop & methods,
+    // because they will be unregistered automatically, when the types are unregistered
 
-    static void method(const type& t, std::unique_ptr<method_wrapper_base> meth);
+    static void register_global_property(const property_wrapper_base* prop);
+    static void unregister_global_property(const property_wrapper_base* prop);
 
-    static void constructor(const type& t, std::unique_ptr<constructor_wrapper_base> ctor);
+    static void register_global_method(method_wrapper_base* meth);
+    static void unregister_global_method(method_wrapper_base* meth);
 
-    static void destructor(const type& t, std::unique_ptr<destructor_wrapper_base> dtor);
+    static void register_constructor(constructor_wrapper_base* ctor);
+    static void register_destructor(destructor_wrapper_base* dtor);
 
-    static void enumeration(const type& t, std::unique_ptr<enumeration_wrapper_base> enum_data);
+    static void register_enumeration(enumeration_wrapper_base* enum_data);
+    static void unregister_enumeration(enumeration_wrapper_base* enum_data);
 
     static void custom_name(type& t, string_view name);
 
     static void metadata( const type& t, std::vector<metadata> data);
 
-    static void converter(const type& t, std::unique_ptr<type_converter_base> converter);
+    static void register_converter(const type_converter_base* converter);
+    static void unregister_converter(const type_converter_base* converter);
 
-    static void comparator(const type& t, type_comparator_base* comparator);
+    static void register_equal_comparator(type_comparator_base* comparator);
+    static void unregister_equal_comparator(const type_comparator_base* converter);
 
-    static void equal_comparator(const type& t, type_comparator_base* comparator);
-
-    static void less_than_comparator(const type& t, type_comparator_base* comparator);
+    static void register_less_than_comparator(type_comparator_base* comparator);
+    static void unregister_less_than_comparator(const type_comparator_base* converter);
 
     static void register_base_class(const type& derived_type, const base_class_info& base_info);
 
-    /*!
-     * \brief Register the type info for the given name
-     *
-     * \remark When a type with the given name is already registered,
-     *         then the type for the already registered type will be returned.
-     *
-     * \return A valid type object.
-     */
-    static type type_reg(type_data& info) RTTR_NOEXCEPT;
+    static void register_reg_manager(registration_manager* manager);
+    static void unregister_reg_manager(registration_manager* manager);
+
+
+    static type register_type(type_data* info) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
 private:
 
