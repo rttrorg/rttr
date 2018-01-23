@@ -40,6 +40,8 @@
 #include "rttr/detail/type/type_comparator.h"
 #include "rttr/detail/type/type_data.h"
 #include "rttr/detail/type/type_name.h"
+#include "rttr/detail/registration/registration_manager.h"
+
 
 namespace rttr
 {
@@ -297,7 +299,7 @@ struct type_getter
         // (a forward declaration is not enough because base_classes will not be found)
         using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
         (void) sizeof(type_must_be_complete);
-        static const type val = type_register::type_reg( get_type_data<T>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<T>());
         return val;
     }
 };
@@ -305,15 +307,15 @@ struct type_getter
 /////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * Explicit specializations for type void;
- * because we cannot implement the check whether a type is completely defined for type `void`
- */
+* Explicit specializations for type void;
+* because we cannot implement the check whether a type is completely defined for type `void`
+*/
 template <>
 struct type_getter<void>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg( get_type_data<void>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<void>());
         return val;
     }
 };
@@ -321,15 +323,15 @@ struct type_getter<void>
 /////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * Explicit specializations for function types;
- * because we cannot implement the check whether a type is completely defined for functions
- */
+* Explicit specializations for function types;
+* because we cannot implement the check whether a type is completely defined for functions
+*/
 template <typename T>
 struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
 {
     static type get_type() RTTR_NOEXCEPT
     {
-        static const type val = type_register::type_reg( get_type_data<T>() );
+        static const type val = get_registration_manager<int>().add_item(make_type_data<T>());
         return val;
     }
 };
@@ -440,9 +442,7 @@ RTTR_INLINE void type::register_converter_func(F func)
     using source_type_orig = param_types_t<F, 0>;
     using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
-    auto converter = detail::make_unique<type_converter<target_type, source_type, F>>(func);
-    type source_t = type::get<source_type>();
-    type_register::converter(source_t, std::move(converter));
+    get_registration_manager<int>().add_item(::rttr::detail::make_unique<type_converter<target_type, source_type, F>>(func));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -461,8 +461,7 @@ void type::register_equal_comparator()
 {
     static_assert(detail::has_equal_operator<T>::value, "No equal operator for given type found.");
 
-    static detail::type_equal_comparator<T> cmp;
-    detail::type_register::equal_comparator(type::get<T>(), &cmp);
+    detail::get_registration_manager<int>().add_equal_cmp(::rttr::detail::make_unique<detail::type_equal_comparator<T>>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -472,8 +471,7 @@ void type::register_less_than_comparator()
 {
     static_assert(detail::has_less_than_operator<T>::value, "No less-than operator for given type found.");
 
-    static detail::type_less_than_comparator<T> cmp;
-    detail::type_register::less_than_comparator(type::get<T>(), &cmp);
+    detail::get_registration_manager<int>().add_less_than_cmp(::rttr::detail::make_unique<detail::type_less_than_comparator<T>>());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

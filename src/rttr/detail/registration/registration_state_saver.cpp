@@ -25,61 +25,91 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_CONVERTER_H_
-#define RTTR_TYPE_CONVERTER_H_
-
-#include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/array_mapper.h"
-#include "rttr/variant.h"
-#include "rttr/detail/type/type_register.h"
+#include "rttr/detail/registration/registration_state_saver.h"
 
 namespace rttr
 {
-
 namespace detail
 {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct RTTR_LOCAL type_converter_base
+template<typename T>
+static std::vector<T> copy_range(const array_range<T>& range, typename array_range<T>::size_type from_index)
 {
-    type_converter_base(const type& target_type) : m_target_type(target_type) {}
-    virtual variant to_variant(void* data, bool& ok) const = 0;
-    virtual type get_source_type() const = 0;
-    virtual ~type_converter_base() {};
-
-    type m_target_type;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename TargetType>
-struct type_converter_target : type_converter_base
-{
-    type_converter_target(const type& target_type) : type_converter_base(target_type) {}
-    variant to_variant(void* data, bool& ok) const override { return convert(data, ok); }
-    virtual TargetType convert(void* data, bool& ok) const = 0;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename TargetType, typename SourceType, typename F>
-struct type_converter : type_converter_target<TargetType>
-{
-    type_converter(const F& acc) : type_converter_target<TargetType>(type::get<TargetType>()), m_acc(acc) { }
-    virtual type get_source_type() const override { return type::get<SourceType>(); }
-    TargetType convert(void* data, bool& ok) const override
+    std::vector<T> result;
+    const auto size = range.size();
+    result.reserve(size - from_index);
+    typename array_range<T>::size_type index = 0;
+    for (auto& item : range)
     {
-        SourceType* obj = static_cast<SourceType*>(data);
-        return m_acc(*obj, ok);
+        if (index >= from_index)
+            result.push_back(item);
+
+        ++index;
     }
 
-    F m_acc;
-};
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void registration_state_saver::save_state_begin()
+{
+    m_old_type_size     = type::get_types().size();
+    m_old_methods_size  = type::get_global_methods().size();
+    m_old_property_size = type::get_global_properties().size();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void registration_state_saver::save_state_end()
+{
+    m_types             = copy_range(type::get_types(), m_old_type_size);
+    m_global_methods    = copy_range(type::get_global_methods(), m_old_methods_size);
+    m_global_properties = copy_range(type::get_global_properties(), m_old_property_size);
+
+    m_types.shrink_to_fit();
+    m_global_methods.shrink_to_fit();
+    m_global_properties.shrink_to_fit();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void registration_state_saver::reset()
+{
+    m_old_type_size = 0;
+    m_old_property_size = 0;
+    m_old_methods_size = 0;
+
+    m_types.clear();
+    m_global_properties.clear();
+    m_global_methods.clear();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<type> registration_state_saver::get_types() const RTTR_NOEXCEPT
+{
+    return {m_types.data(), m_types.size()};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<property> registration_state_saver::get_global_properties() const RTTR_NOEXCEPT
+{
+    return {m_global_properties.data(), m_global_properties.size()};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+array_range<method> registration_state_saver::get_global_methods() const RTTR_NOEXCEPT
+{
+    return {m_global_methods.data(), m_global_methods.size()};
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr
 
-#endif // RTTR_TYPE_CONVERTER_H_
