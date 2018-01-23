@@ -38,11 +38,45 @@ env:
 
 matrix:
   include:
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+    # check code formatting
+    - os: linux
+      compiler: gcc
+      env: NAME="check code formatting" COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+    
+    # valgrind memory check
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
+      env: NAME="valgrind" COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
 
+    # check code coverage x86 => result https://coveralls.io/github/rttrorg/rttr
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
+      after_success:
+        - pip install --user urllib3[secure] cpp-coveralls
+        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
+      env: NAME="code coverage x86" COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
+    
+    # check code coverage x64 => result https://coveralls.io/github/rttrorg/rttr
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib']
+      after_success:
+        - pip install --user urllib3[secure] cpp-coveralls
+        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
+      env: NAME="code coverage x64" COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
+    
+    # build docu and upload to server
     - os: linux
       compiler: gcc
       addons:
@@ -58,8 +92,9 @@ matrix:
             lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
             lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
           fi
-      env: BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
+      env: NAME="documentation build" BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
 
+    # Linux / GCC
     - os: linux
       compiler: gcc
       addons:
@@ -75,7 +110,32 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7']
+      env: COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'libboost-all-dev']
+      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
+    
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8-multilib', 'libboost-all-dev']
+      env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
 
+    # Linux / CLang
     # this config fails at the moment because of disabled APT on llvm
     - os: linux
       compiler: clang
@@ -117,7 +177,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
+   
+    # OSX/Clang
     - os: osx
       osx_image: xcode7.3
       compiler: clang
@@ -126,55 +187,11 @@ matrix:
     - os: osx
       osx_image: xcode7.3
       compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'libboost-all-dev']
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
-    
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'libboost-all-dev']
-      env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true    
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true      
 
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
-      after_success:
-        - pip install --user urllib3[secure] cpp-coveralls
-        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
-      env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
-    
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib']
-      after_success:
-        - pip install --user urllib3[secure] cpp-coveralls
-        - coveralls -e 3rd_party -e src/benchmarks -e src/unit_tests -i src/rttr --gcov-options '\-lp' --gcov 'gcov-4.8'
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Debug GCOV_FLAGS='--coverage' UNIT_TESTS=true
-      
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
-      env: COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
   allow_failures:
     - env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    - env: COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
 before_install:
   - export CIT_ROOT=`pwd`
@@ -216,8 +233,7 @@ install:
   #######################################################################################
   - |
     if [[ "${CHECK_FORMATTING}" == "true" ]]; then
-      brew upgrade pcre || brew install pcre || exit 1
-      brew upgrade vera++ || brew install vera++ || exit 1
+      sudo apt-get install vera++ -y
     fi
 
   #######################################################################################

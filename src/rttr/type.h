@@ -73,10 +73,15 @@ class destructor_wrapper_base;
 class property_wrapper_base;
 
 template<typename T>
-type_data& get_type_data() RTTR_NOEXCEPT;
+std::unique_ptr<type_data> make_type_data();
 
 template<typename T, typename Tp, typename Converter>
 struct variant_data_base_policy;
+
+struct type_comparator_base;
+
+RTTR_API bool compare_types_less_than(const void*, const void*, const type&, int&);
+RTTR_API bool compare_types_equal(const void*, const void*, const type&, bool&);
 } // end namespace detail
 
 /*!
@@ -1093,10 +1098,29 @@ class RTTR_API type
         /*!
          * \brief When for the current type instance a converter function to type \p target_type was registered,
          *        then this function returns a valid pointer to a type_converter_base object.
-         *        Otherwise this function returns a nullptr.
+         *        Otherwise this function returns a `nullptr`.
          *
+         * \see register_converter_func()
          */
         const detail::type_converter_base* get_type_converter(const type& target_type) const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief When for the current type instance a equal comparator function was registered,
+         *        then this function returns a valid pointer to a `type_comparator_base` object.
+         *        Otherwise this function returns a `nullptr`.
+         *
+         * \see register_equal_comparator()
+         */
+        const detail::type_comparator_base* get_equal_comparator() const RTTR_NOEXCEPT;
+
+        /*!
+         * \brief When for the current type instance a less-than comparator function was registered,
+         *        then this function returns a valid pointer to a `type_comparator_base` object.
+         *        Otherwise this function returns a `nullptr`.
+         *
+         * \see register_less_than_comparator()
+         */
+        const detail::type_comparator_base* get_less_than_comparator() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the level of indirection for this this type. A.k.a pointer count.
@@ -1148,10 +1172,13 @@ class RTTR_API type
         friend class detail::type_register_private;
 
         template<typename T>
-        friend detail::type_data& detail::get_type_data() RTTR_NOEXCEPT;
+        friend std::unique_ptr<detail::type_data> detail::make_type_data();
 
         template<typename T, typename Tp, typename Converter>
         friend struct detail::variant_data_base_policy;
+
+        friend RTTR_API bool detail::compare_types_less_than(const void*, const void*, const type&, int&);
+        friend RTTR_API bool detail::compare_types_equal(const void*, const void*, const type&, bool&);
 
     private:
         detail::type_data* m_type_data;

@@ -288,7 +288,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A>
-    static bind<detail::prop, void, A, detail::public_access> property(string_view name, A acc);
+    static bind<detail::prop, detail::invalid_type, A, detail::public_access> property(string_view name, A acc);
 
     /*!
      * \brief Register a global read only property.
@@ -306,7 +306,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A>
-    static bind<detail::prop_readonly, void, A, detail::public_access> property_readonly(string_view name, A acc);
+    static bind<detail::prop_readonly, detail::invalid_type, A, detail::public_access> property_readonly(string_view name, A acc);
 
     /*!
      * \brief Register a property to this class.
@@ -324,7 +324,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename A1, typename A2>
-    static bind<detail::prop, void, A1, A2, detail::public_access> property(string_view name, A1 getter, A2 setter);
+    static bind<detail::prop, detail::invalid_type, A1, A2, detail::public_access> property(string_view name, A1 getter, A2 setter);
 
     /*!
      * \brief Register a method to this class.
@@ -340,7 +340,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename F>
-    static bind<detail::meth, void, F, detail::public_access> method(string_view name, F f);
+    static bind<detail::meth, detail::invalid_type, F, detail::public_access> method(string_view name, F f);
 
     /*!
      * \brief Register a global enumeration of type \p Enum_Type
@@ -354,7 +354,7 @@ public:
      * \return A \ref bind object, in order to chain more calls.
      */
     template<typename Enum_Type>
-    static bind<detail::enum_, void, Enum_Type> enumeration(string_view name);
+    static bind<detail::enum_, detail::invalid_type, Enum_Type> enumeration(string_view name);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
