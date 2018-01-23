@@ -54,7 +54,6 @@ if(MSVC)
     set_target_properties(bench_method PROPERTIES COMPILE_FLAGS "/Zm200")
 endif()
 
-add_warning_levels(bench_method "benchmarks")
 set_target_properties(bench_method PROPERTIES DEBUG_POSTFIX _d
                                               FOLDER "Benchmarks"
                                               INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
@@ -82,7 +81,6 @@ if (BUILD_STATIC)
         set_target_properties(bench_method_lib PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
     endif()
 
-    add_warning_levels(bench_method_lib "benchmarks")
     set_target_properties(bench_method_lib PROPERTIES DEBUG_POSTFIX _d
                                                       FOLDER "Benchmarks"
                                                       INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
@@ -112,7 +110,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         set_target_properties(bench_method_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
     endif()
 
-    add_warning_levels(bench_method_s "benchmarks")
     set_target_properties(bench_method_s PROPERTIES DEBUG_POSTFIX _d
                                                     FOLDER "Benchmarks"
                                                     INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
@@ -149,7 +146,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
             set_target_properties(bench_method_lib_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
         endif()
 
-        add_warning_levels(bench_method_lib_s "benchmarks")
         set_target_properties(bench_method_lib_s PROPERTIES DEBUG_POSTFIX _d
                                                             FOLDER "Benchmarks"
                                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
