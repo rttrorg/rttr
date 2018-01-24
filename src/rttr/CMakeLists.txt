@@ -92,7 +92,7 @@ if (BUILD_STATIC)
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME rttr_core)
     else()
-        message(SEND_ERROR "Do not know how to to name the static library.")
+        message(SEND_ERROR "Do not know how to name the static library.")
     endif()
     
     target_include_directories(rttr_core_lib PUBLIC

@@ -162,6 +162,10 @@ write_basic_package_version_file(
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
+             DESTINATION "${CMAKE_INSTALL_DATADIR}/rttr/cmake"
              COMPONENT Devel)
+
+    install(FILES "${LICENSE_FILE}" "${README_FILE}"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/rttr"
+            PERMISSIONS OWNER_READ)
 endif()
