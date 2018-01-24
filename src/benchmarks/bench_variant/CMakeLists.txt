@@ -62,11 +62,10 @@ set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d
 add_dependencies(bench_variant RTTR::Core)
 
 install(TARGETS bench_variant
-        RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX}
-        )
+        RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+        LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+        ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+        FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
 ###############################################################################
 
@@ -92,10 +91,10 @@ if (BUILD_STATIC)
     add_dependencies(bench_variant_lib RTTR::Core_Lib)
 
     install(TARGETS bench_variant_lib
-            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
-            LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX})
+            RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+            LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+            ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+            FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 endif()
 
 ###############################################################################
@@ -132,10 +131,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     endif()
 
     install(TARGETS bench_variant_s
-            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
-            LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX})
+            RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+            LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+            ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+            FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
     if (BUILD_STATIC)
         add_executable(bench_variant_lib_s ${SRC_FILES} ${HPP_FILES})
@@ -169,10 +168,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         endif()
 
         install(TARGETS bench_variant_lib_s
-                RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
-                LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                FRAMEWORK     DESTINATION ${CMAKE_INSTALL_PREFIX})
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
     endif()
 endif()
 

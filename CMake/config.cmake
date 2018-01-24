@@ -62,14 +62,27 @@ is_vs_based_build(VS_BUILD)
 # set all install directories for the targets
 if(UNIX)
   include(GNUInstallDirs)
-  # all directories set
+  set(RTTR_RUNTIME_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}") 
+  set(RTTR_LIBRARY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_ARCHIVE_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+
+  set(RTTR_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
+
 else(WINDOWS)
-  set(CMAKE_INSTALL_LIBDIR "lib")
-  set(CMAKE_INSTALL_BINDIR "bin")
-  set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_PREFIX}")
+  set(RTTR_RUNTIME_INSTALL_DIR "bin") 
+  set(RTTR_LIBRARY_INSTALL_DIR "bin")
+  set(RTTR_ARCHIVE_INSTALL_DIR "lib")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "bin")
+
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
+set(CMAKE_DEBUG_POSTFIX "_d")
 
 # set the rpath for executables
 set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
@@ -77,16 +90,14 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)    # when building, don't use the instal
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF) # NO automatic rpath for INSTALL
 if(APPLE)
   set(MACOSX_RPATH ON CACHE STRING "Set this to off if you dont want @rpath in install names") # uses a install name @rpath/... for libraries
-  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};@executable_path")
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};@executable_path")
   # the executable is relocatable, since the library builds with and install name "@rpath/librttr_core.0.9.6.dylib"
   # the executable links 
 elseif(UNIX)
-  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};$ORIGIN")
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
 elseif(WINDOWS)
-  # no such thin as rpath exists, make the output of the library in the binary folder!
-  # such that the executables find the dlls
-  set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_BINDIR}")
-  set(RTTR_EXECUTABLE_INSTALL_RPATH ${CMAKE_INSTALL_BINDIR}) # default, has no effect
+  # no such thin as rpath exists,
+  set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
 
 
@@ -162,10 +173,10 @@ write_basic_package_version_file(
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION "${CMAKE_INSTALL_DATADIR}/rttr/cmake"
+             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
              COMPONENT Devel)
 
     install(FILES "${LICENSE_FILE}" "${README_FILE}"
-            DESTINATION "${CMAKE_INSTALL_DATADIR}/rttr"
-            PERMISSIONS OWNER_READ)
+             DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
+             PERMISSIONS OWNER_READ)
 endif()
