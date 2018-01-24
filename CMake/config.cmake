@@ -62,12 +62,14 @@ is_vs_based_build(VS_BUILD)
 # set all install directories for the targets
 if(UNIX)
   include(GNUInstallDirs)
+  set(RTTR_INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}") # make the output of the library in the binary folder!
+  set(RTTR_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}") # make the output of the library in the binary folder!
+  set(RTTR_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 else(WINDOWS)
-  set(CMAKE_INSTALL_LIBDIR "bin") # make the output of the library in the binary folder!
-  set(CMAKE_INSTALL_BINDIR "bin") 
-  set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_PREFIX}")
+  set(RTTR_INSTALL_LIBDIR "bin") # make the output of the library in the binary folder!
+  set(RTTR_INSTALL_BINDIR "bin") 
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
@@ -80,14 +82,14 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)    # when building, don't use the instal
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF) # NO automatic rpath for INSTALL
 if(APPLE)
   set(MACOSX_RPATH ON CACHE STRING "Set this to off if you dont want @rpath in install names") # uses a install name @rpath/... for libraries
-  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};@executable_path")
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};@executable_path")
   # the executable is relocatable, since the library builds with and install name "@rpath/librttr_core.0.9.6.dylib"
   # the executable links 
 elseif(UNIX)
-  set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};$ORIGIN")
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
 elseif(WINDOWS)
   # no such thin as rpath exists,
-  set(RTTR_EXECUTABLE_INSTALL_RPATH ${CMAKE_INSTALL_BINDIR}) # default, has no effect
+  set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
 
 
