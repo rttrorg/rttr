@@ -58,10 +58,10 @@ if (${BUILD_RTTR_DYNAMIC})
                                
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
-                RUNTIME       DESTINATION ${RTTR_INSTALL_BINDIR}
-                LIBRARY       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                ARCHIVE       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                FRAMEWORK     DESTINATION ${RTTR_INSTALL_LIBDIR}
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR}
                 )
 
         install(EXPORT rttr_targets
@@ -100,10 +100,10 @@ if (BUILD_STATIC)
     
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
-                RUNTIME       DESTINATION ${RTTR_INSTALL_BINDIR}
-                LIBRARY       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                ARCHIVE       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                FRAMEWORK     DESTINATION ${RTTR_INSTALL_LIBDIR}
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR}
                 )
     endif()
 endif()
@@ -138,10 +138,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     if (BUILD_INSTALLER)
         install_pdb_files(rttr_core_s)
         install(TARGETS rttr_core_s EXPORT rttr_targets
-                RUNTIME       DESTINATION ${RTTR_INSTALL_BINDIR}
-                LIBRARY       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                ARCHIVE       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                FRAMEWORK     DESTINATION ${RTTR_INSTALL_LIBDIR}
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR}
                 )
     endif()
     
@@ -171,10 +171,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         
         if (BUILD_INSTALLER)
             install(TARGETS rttr_core_lib_s EXPORT rttr_targets
-                    RUNTIME       DESTINATION ${RTTR_INSTALL_BINDIR}
-                    LIBRARY       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                    ARCHIVE       DESTINATION ${RTTR_INSTALL_LIBDIR}
-                    FRAMEWORK     DESTINATION ${RTTR_INSTALL_LIBDIR}
+                    RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                    LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                    ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                    FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR}
                     )
         endif()
 

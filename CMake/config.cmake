@@ -62,19 +62,27 @@ is_vs_based_build(VS_BUILD)
 # set all install directories for the targets
 if(UNIX)
   include(GNUInstallDirs)
-  set(RTTR_INSTALL_BINDIR "${CMAKE_INSTALL_BINDIR}") # make the output of the library in the binary folder!
-  set(RTTR_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}") # make the output of the library in the binary folder!
+  set(RTTR_RUNTIME_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}") 
+  set(RTTR_LIBRARY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_ARCHIVE_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+
   set(RTTR_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
+
 else(WINDOWS)
-  set(RTTR_INSTALL_LIBDIR "bin") # make the output of the library in the binary folder!
-  set(RTTR_INSTALL_BINDIR "bin") 
+  set(RTTR_RUNTIME_INSTALL_DIR "bin") 
+  set(RTTR_LIBRARY_INSTALL_DIR "bin")
+  set(RTTR_ARCHIVE_INSTALL_DIR "lib")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "bin")
+
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
+set(CMAKE_DEBUG_POSTFIX "_d")
 
 # set the rpath for executables
 set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
