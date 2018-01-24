@@ -62,11 +62,14 @@ is_vs_based_build(VS_BUILD)
 # set all install directories for the targets
 if(UNIX)
   include(GNUInstallDirs)
-  # all directories set
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 else(WINDOWS)
   set(CMAKE_INSTALL_LIBDIR "lib")
   set(CMAKE_INSTALL_BINDIR "bin")
   set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_PREFIX}")
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 set(CMAKE_DEBUG_POSTFIX CACHE STRING "_d")
@@ -161,6 +164,10 @@ write_basic_package_version_file(
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
+             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
              COMPONENT Devel)
+
+    install(FILES "${LICENSE_FILE}" "${README_FILE}"
+             DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
+             PERMISSIONS OWNER_READ)
 endif()
