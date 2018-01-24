@@ -68,8 +68,8 @@ namespace rttr
                          __clang_patchlevel__)
 #elif defined( __GNUC__ )
 #   define RTTR_COMPILER RTTR_COMPILER_GNUC
-#   define RTTR_COMP_VER (((__GNUC__)*1000) + \
-                         (__GNUC_MINOR__*100) + \
+#   define RTTR_COMP_VER (((__GNUC__)*100) + \
+                         (__GNUC_MINOR__*10) + \
                           __GNUC_PATCHLEVEL__)
 #elif defined( _MSC_VER )
 #   define RTTR_COMPILER RTTR_COMPILER_MSVC
@@ -261,41 +261,55 @@ namespace rttr
 #endif
 
 #if RTTR_COMPILER == RTTR_COMPILER_GNUC
-#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING           _Pragma ("GCC diagnostic push") \
+#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING        _Pragma ("GCC diagnostic push") \
                                                         _Pragma ("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-#define RTTR_END_DISABLE_DEPRECATED_WARNING             _Pragma ("GCC diagnostic pop")
+#   define RTTR_END_DISABLE_DEPRECATED_WARNING          _Pragma ("GCC diagnostic pop")
 
-#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
-#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+#   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+#   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+#if RTTR_COMP_VER >= 700
 
-#define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING          _Pragma ("GCC diagnostic push") \
+    #define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING      _Pragma ("GCC diagnostic push") \
                                                         _Pragma ("GCC diagnostic ignored \"-Wnoexcept-type\"")
-#define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING            _Pragma ("GCC diagnostic pop")
+    #define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING        _Pragma ("GCC diagnostic pop")
+#else
+
+    #define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
+    #define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
+
+#endif
 
 #elif RTTR_COMPILER == RTTR_COMPILER_CLANG
-#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING           _Pragma ("clang diagnostic push") \
+#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING        _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
-#define RTTR_END_DISABLE_DEPRECATED_WARNING             _Pragma ("clang diagnostic pop")
+#   define RTTR_END_DISABLE_DEPRECATED_WARNING          _Pragma ("clang diagnostic pop")
 
-#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
-#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
+#   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
+#   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
-#define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING          _Pragma ("clang diagnostic push") \
+#if RTTR_COMP_VER >= 500
+
+#       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")
-#define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING            _Pragma ("clang diagnostic pop")
+#       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING     _Pragma ("clang diagnostic pop")
+
+#else
+#       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
+#       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
+#endif
 
 #elif RTTR_COMPILER == RTTR_COMPILER_MSVC
-#define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING           __pragma( warning( push )) \
+#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING        __pragma( warning( push )) \
                                                         __pragma( warning( disable: 4996))
-#define RTTR_END_DISABLE_DEPRECATED_WARNING             __pragma( warning( pop ))
+#   define RTTR_END_DISABLE_DEPRECATED_WARNING          __pragma( warning( pop ))
 
 
-#define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING     __pragma( warning( push )) \
+#   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING  __pragma( warning( push )) \
                                                         __pragma( warning( disable: 4127))
-#define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING       __pragma( warning( pop ))
+#   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING    __pragma( warning( pop ))
 
-#define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
-#define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
+#   define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
+#   define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 
 #else
 #   pragma message("WARNING: ukown compiler, don't know how to disable deprecated warnings")
