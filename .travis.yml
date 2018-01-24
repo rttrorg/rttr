@@ -127,6 +127,7 @@ matrix:
           packages: ['g++-4.8-multilib', 'libboost-all-dev']
       env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
     
+    # Linux / CLang
     - os: linux
       compiler: clang
       addons:
@@ -134,8 +135,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib', 'libboost-all-dev']
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
-
-    # Linux / CLang
+      
     # this config fails at the moment because of disabled APT on llvm
     - os: linux
       compiler: clang
@@ -177,17 +177,34 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.8-multilib']
       env: LLVM_VERSION=3.8.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
+          packages: ['g++-6', 'clang-5.0',]
+      env: LLVM_VERSION=5.0.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
    
     # OSX/Clang
     - os: osx
-      osx_image: xcode7.3
+      osx_image: xcode9.2
       compiler: clang
       env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
       
     - os: osx
-      osx_image: xcode7.3
+      osx_image: xcode9.2
       compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true      
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
+      
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true         
 
   allow_failures:
     - env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
