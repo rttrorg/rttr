@@ -65,8 +65,8 @@ if(UNIX)
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 else(WINDOWS)
-  set(CMAKE_INSTALL_LIBDIR "lib")
-  set(CMAKE_INSTALL_BINDIR "bin")
+  set(CMAKE_INSTALL_LIBDIR "bin") # make the output of the library in the binary folder!
+  set(CMAKE_INSTALL_BINDIR "bin") 
   set(CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_PREFIX}")
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
@@ -86,9 +86,7 @@ if(APPLE)
 elseif(UNIX)
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR};$ORIGIN")
 elseif(WINDOWS)
-  # no such thin as rpath exists, make the output of the library in the binary folder!
-  # such that the executables find the dlls
-  set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_BINDIR}")
+  # no such thin as rpath exists,
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${CMAKE_INSTALL_BINDIR}) # default, has no effect
 endif()
 

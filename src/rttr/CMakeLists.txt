@@ -64,7 +64,7 @@ if (${BUILD_RTTR_DYNAMIC})
                 )
 
         install(EXPORT rttr_targets
-                DESTINATION ${CMAKE_INSTALL_DATADIR}/rttr/cmake
+                DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
                 NAMESPACE RTTR::
                 FILE rttr-config.cmake)
             
