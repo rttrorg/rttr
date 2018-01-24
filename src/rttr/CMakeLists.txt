@@ -48,7 +48,8 @@ if (${BUILD_RTTR_DYNAMIC})
 
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core)
+                          EXPORT_NAME Core
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
                           
     target_include_directories(rttr_core PUBLIC
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
@@ -80,7 +81,8 @@ if (BUILD_STATIC)
     
     set_target_properties(rttr_core_lib PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_Lib)
+                          EXPORT_NAME Core_Lib
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
     elseif (CMAKE_COMPILER_IS_GNUCXX)
@@ -120,7 +122,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_STL)
+                          EXPORT_NAME Core_STL
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
                           
     if (MSVC)
         target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -153,7 +156,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
         set_target_properties(rttr_core_lib_s PROPERTIES
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                              EXPORT_NAME Core_Lib_STL)
+                              EXPORT_NAME Core_Lib_STL
+                              DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
             set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core_s)
