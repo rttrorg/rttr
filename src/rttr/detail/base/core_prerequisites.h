@@ -111,7 +111,7 @@ namespace rttr
 #     define RTTR_HELPER_DLL_EXPORT __declspec( dllexport )
 #     define RTTR_HELPER_DLL_LOCAL
 #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
-#   if RTTR_COMP_VER >= 4000
+#   if RTTR_COMP_VER >= 400
 #       define RTTR_HELPER_DLL_IMPORT __attribute__ ((visibility ("default")))
 #       define RTTR_HELPER_DLL_EXPORT __attribute__ ((visibility ("default")))
 #       define RTTR_HELPER_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
