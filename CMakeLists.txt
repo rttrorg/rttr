@@ -31,7 +31,7 @@
 # the build configuration options are initialized.                                 #
 ####################################################################################
 
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.0)
 
 project ("rttr")
 
@@ -84,9 +84,4 @@ add_subdirectory(src)
 # and the documentation
 if (BUILD_DOCUMENTATION)
     add_subdirectory(doc)
-endif()
-
-# here we specify the installation directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${RTTR_INSTALL_DIR} CACHE PATH  "RTTR install prefix" FORCE)
 endif()

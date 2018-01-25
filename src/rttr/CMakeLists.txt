@@ -48,7 +48,8 @@ if (${BUILD_RTTR_DYNAMIC})
 
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core)
+                          EXPORT_NAME Core
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
                           
     target_include_directories(rttr_core PUBLIC
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
@@ -57,12 +58,13 @@ if (${BUILD_RTTR_DYNAMIC})
                                
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
         install(EXPORT rttr_targets
-                DESTINATION cmake
+                DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
                 NAMESPACE RTTR::
                 FILE rttr-config.cmake)
             
@@ -78,7 +80,8 @@ if (BUILD_STATIC)
     
     set_target_properties(rttr_core_lib PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_Lib)
+                          EXPORT_NAME Core_Lib
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
     elseif (CMAKE_COMPILER_IS_GNUCXX)
@@ -90,14 +93,16 @@ if (BUILD_STATIC)
     endif()
     
     target_include_directories(rttr_core_lib PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-    $<INSTALL_INTERFACE:include>)
+                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+                                $<INSTALL_INTERFACE:include>)
     
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
     endif()
 endif()
 
@@ -115,7 +120,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_STL)
+                          EXPORT_NAME Core_STL
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
                           
     if (MSVC)
         target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -130,9 +136,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     if (BUILD_INSTALLER)
         install_pdb_files(rttr_core_s)
         install(TARGETS rttr_core_s EXPORT rttr_targets
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                LIBRARY DESTINATION ${RTTR_BIN_INSTALL_DIR}
-                ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
     endif()
     
     if (BUILD_STATIC)
@@ -146,7 +153,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
         set_target_properties(rttr_core_lib_s PROPERTIES
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                              EXPORT_NAME Core_Lib_STL)
+                              EXPORT_NAME Core_Lib_STL
+                              DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
             set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core_s)
@@ -160,8 +168,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         
         if (BUILD_INSTALLER)
             install(TARGETS rttr_core_lib_s EXPORT rttr_targets
-                    ARCHIVE DESTINATION ${RTTR_LIB_INSTALL_DIR}
-                    LIBRARY DESTINATION ${RTTR_LIB_INSTALL_DIR})
+                    RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                    LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                    ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                    FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
         endif()
 
     endif()

@@ -53,6 +53,13 @@ bool destructor_wrapper_base::is_valid() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type destructor_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
+{
+    return get_invalid_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type destructor_wrapper_base::get_destructed_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
