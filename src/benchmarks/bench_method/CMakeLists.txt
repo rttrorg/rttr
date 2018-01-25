@@ -55,11 +55,15 @@ if(MSVC)
 endif()
 
 set_target_properties(bench_method PROPERTIES DEBUG_POSTFIX _d
-                                              FOLDER "Benchmarks")
+                                              FOLDER "Benchmarks"
+                                              INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 add_dependencies(bench_method RTTR::Core)
 
 install(TARGETS bench_method
-        RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+        RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+        LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+        ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+        FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
 ###############################################################################
 
@@ -78,12 +82,16 @@ if (BUILD_STATIC)
     endif()
 
     set_target_properties(bench_method_lib PROPERTIES DEBUG_POSTFIX _d
-                                                      FOLDER "Benchmarks")
+                                                      FOLDER "Benchmarks"
+                                                      INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 
     add_dependencies(bench_method_lib RTTR::Core_Lib)
 
     install(TARGETS bench_method_lib
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+            RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+            LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+            ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+            FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 endif()
 
 ###############################################################################
@@ -103,8 +111,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     endif()
 
     set_target_properties(bench_method_s PROPERTIES DEBUG_POSTFIX _d
-                                                    FOLDER "Benchmarks")
-
+                                                    FOLDER "Benchmarks"
+                                                    INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+    
     add_dependencies(bench_method_s RTTR::Core_STL)
 
     if (MSVC)
@@ -118,7 +127,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     endif()
 
     install(TARGETS bench_method_s
-            RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+            RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+            LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+            ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+            FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
     if (BUILD_STATIC)
         add_executable(bench_method_lib_s ${SRC_FILES} ${HPP_FILES})
@@ -135,7 +147,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         endif()
 
         set_target_properties(bench_method_lib_s PROPERTIES DEBUG_POSTFIX _d
-                                                            FOLDER "Benchmarks")
+                                                            FOLDER "Benchmarks"
+                                                            INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 
         add_dependencies(bench_method_lib_s RTTR::Core_Lib_STL)
 
@@ -150,7 +163,10 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         endif()
 
         install(TARGETS bench_method_lib_s
-                RUNTIME DESTINATION ${RTTR_BIN_INSTALL_DIR})
+                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
     endif()
 endif()
 

@@ -40,29 +40,67 @@ set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
 set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
 
 # dirs where the binaries should be placed, installed
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-set(RTTR_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
+
+# here we specify the installation directory
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH  "RTTR install prefix" FORCE)
+endif()
 
 # in order to group in visual studio the targets into solution filters
-set_property( GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #3rd part dependencies dirs
 set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
 
 getNameOfDir(CMAKE_LIBRARY_OUTPUT_DIRECTORY RTTR_TARGET_BIN_DIR)
 is_vs_based_build(VS_BUILD)
-if (VS_BUILD)
-  #set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR}/\${CMAKE_INSTALL_CONFIG_NAME})
-  set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR})
-  set(RTTR_LIB_INSTALL_DIR "lib")
-else()
-  set(RTTR_BIN_INSTALL_DIR ${RTTR_TARGET_BIN_DIR})
-  set(RTTR_LIB_INSTALL_DIR "lib")
+
+# set all install directories for the targets
+if(UNIX)
+  include(GNUInstallDirs)
+  set(RTTR_RUNTIME_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}") 
+  set(RTTR_LIBRARY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_ARCHIVE_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+
+  set(RTTR_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
+
+else(WINDOWS)
+  set(RTTR_RUNTIME_INSTALL_DIR "bin") 
+  set(RTTR_LIBRARY_INSTALL_DIR "bin")
+  set(RTTR_ARCHIVE_INSTALL_DIR "lib")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "bin")
+
+  set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
+  set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 set(CMAKE_DEBUG_POSTFIX "_d")
+
+# set the rpath for executables
+set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
+set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)    # when building, don't use the install RPATH already (but later on when installing)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF) # NO automatic rpath for INSTALL
+if(APPLE)
+  set(MACOSX_RPATH ON CACHE STRING "Set this to off if you dont want @rpath in install names") # uses a install name @rpath/... for libraries
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};@executable_path")
+  # the executable is relocatable, since the library builds with and install name "@rpath/librttr_core.0.9.6.dylib"
+  # the executable links 
+elseif(UNIX)
+  set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
+elseif(WINDOWS)
+  # no such thin as rpath exists,
+  set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
+endif()
+
+
 
 # detect architecture
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -110,7 +148,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_COMPILER_FLAGS}")
     message(STATUS "added flag ${ADDITIONAL_COMPILER_FLAGS} to clang++")
   
-    set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libstdc++ -static -lstdc++")
+  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
 endif()
 
 if(MSVC)
@@ -144,10 +182,10 @@ write_basic_package_version_file(
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION cmake
+             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
              COMPONENT Devel)
 
     install(FILES "${LICENSE_FILE}" "${README_FILE}"
-            DESTINATION "."
-            PERMISSIONS OWNER_READ)
+             DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
+             PERMISSIONS OWNER_READ)
 endif()
