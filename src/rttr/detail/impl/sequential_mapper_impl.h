@@ -790,7 +790,7 @@ struct sequential_container_mapper<std::vector<bool>>
     {
 // to prevent following gcc bug: 'no matching function for call to `std::vector<bool>::erase(const const_itr_t&) return container.erase(itr);`
 // vec.erase(vec.cbegin()); fails for unkown reason with this old version
-#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900)
+#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 490)
         auto itr_non_const = container.begin();
         std::advance (itr_non_const, std::distance<const_itr_t>(itr_non_const, itr));
         return container.erase(itr_non_const);
@@ -808,7 +808,7 @@ struct sequential_container_mapper<std::vector<bool>>
     {
 // to prevent following gcc bug: 'no matching function for call to `std::vector<bool>::insert(const const_itr_t&, bool) return container.insert(itr, bool);`
 // vec.erase(vec.cbegin()); fails for unkown reason with this old version
-#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900)
+#if (RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 490)
         auto itr_non_const = container.begin();
         std::advance (itr_non_const, std::distance<const_itr_t>(itr_non_const, itr_pos));
         return container.insert(itr_non_const, value);

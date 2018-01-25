@@ -153,7 +153,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
     }
     else
     {
-        const_reverse_iterator itr(m_end - 1, this);
+        const_reverse_iterator itr(m_end, this);
         if (m_pred(*itr))
             return itr;
 
@@ -168,7 +168,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rend()
 {
-    return (empty_() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
+    return const_reverse_iterator{m_begin, this};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
     }
     else
     {
-        const_reverse_iterator itr(m_end - 1, this);
+        const_reverse_iterator itr(m_end, this);
         if (m_pred(*itr))
             return itr;
 
@@ -197,7 +197,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::rend() const
 {
-    return (empty_() ? const_reverse_iterator{m_begin, this} : const_reverse_iterator{m_begin - 1, this});
+    return const_reverse_iterator{m_begin, this};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +211,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
     }
     else
     {
-        const_reverse_iterator itr(m_end - 1, this);
+        const_reverse_iterator itr(m_end, this);
         if (m_pred(*itr))
             return itr;
 
@@ -226,7 +226,7 @@ RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_ran
 template<typename T, typename Predicate>
 RTTR_INLINE typename array_range<T, Predicate>::const_reverse_iterator array_range<T, Predicate>::crend() const
 {
-    return (empty_() ? const_reverse_iterator{m_end, this} : const_reverse_iterator{m_begin - 1, this});
+    return const_reverse_iterator{m_begin, this};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -331,26 +331,6 @@ array_range<T, Predicate>::array_iterator_base<DataType>::array_iterator_base(ty
 
 template<typename T, typename Predicate>
 template<typename DataType>
-RTTR_INLINE typename array_range<T, Predicate>::template array_iterator_base<DataType>::reference
-array_range<T, Predicate>::array_iterator_base<DataType>::operator*() const
-{
-    return *m_ptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Predicate>
-template<typename DataType>
-RTTR_INLINE typename array_range<T, Predicate>::template array_iterator_base<DataType>::pointer
-array_range<T, Predicate>::array_iterator_base<DataType>::operator->()
-{
-    return m_ptr;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, typename Predicate>
-template<typename DataType>
 RTTR_INLINE bool array_range<T, Predicate>::array_iterator_base<DataType>::operator==(const self_type& rhs) const
 {
     return (m_ptr == rhs.m_ptr);
@@ -409,6 +389,26 @@ RTTR_INLINE array_range<T, Predicate>::array_iterator<DataType>::array_iterator(
 
 template<typename T, typename Predicate>
 template<typename DataType>
+RTTR_INLINE typename array_range<T, Predicate>::template array_iterator<DataType>::reference
+array_range<T, Predicate>::array_iterator<DataType>::operator*() const
+{
+    return *this->m_ptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
+template<typename DataType>
+RTTR_INLINE typename array_range<T, Predicate>::template array_iterator<DataType>::pointer
+array_range<T, Predicate>::array_iterator<DataType>::operator->()
+{
+    return this->m_ptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
+template<typename DataType>
 RTTR_INLINE typename array_range<T, Predicate>::template array_iterator<DataType>::self_type&
 array_range<T, Predicate>::array_iterator<DataType>::operator++()
 {
@@ -455,6 +455,28 @@ RTTR_INLINE array_range<T, Predicate>::array_reverse_iterator<DataType>::array_r
                                                                                                 const array_range<T, Predicate>* const range)
 :   array_iterator_base<DataType>(ptr, range)
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
+template<typename DataType>
+RTTR_INLINE typename array_range<T, Predicate>::template array_reverse_iterator<DataType>::reference
+array_range<T, Predicate>::array_reverse_iterator<DataType>::operator*() const
+{
+    auto tmp = this->m_ptr;
+    return (*--tmp);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Predicate>
+template<typename DataType>
+RTTR_INLINE typename array_range<T, Predicate>::template array_reverse_iterator<DataType>::pointer
+array_range<T, Predicate>::array_reverse_iterator<DataType>::operator->()
+{
+    auto tmp = this->m_ptr;
+    return --tmp;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

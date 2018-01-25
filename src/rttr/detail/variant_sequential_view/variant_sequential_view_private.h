@@ -95,74 +95,74 @@ class RTTR_LOCAL variant_sequential_view_private
         {
         }
 
-        RTTR_FORCE_INLINE variant_sequential_view_private(const variant_sequential_view_private& other) = default;
+        RTTR_INLINE variant_sequential_view_private(const variant_sequential_view_private& other) = default;
 
-        RTTR_FORCE_INLINE ~variant_sequential_view_private()
+        RTTR_INLINE ~variant_sequential_view_private()
         {
 
         }
 
-        RTTR_FORCE_INLINE type get_type() const RTTR_NOEXCEPT
+        RTTR_INLINE type get_type() const RTTR_NOEXCEPT
         {
             return m_type;
         }
 
-        RTTR_FORCE_INLINE type get_value_type() const RTTR_NOEXCEPT
+        RTTR_INLINE type get_value_type() const RTTR_NOEXCEPT
         {
             return m_value_type;
         }
 
-        RTTR_FORCE_INLINE void copy(iterator_data& itr_tgt, const iterator_data& itr_src) const
+        RTTR_INLINE void copy(iterator_data& itr_tgt, const iterator_data& itr_src) const
         {
             m_create_func(itr_tgt, itr_src);
         }
 
-        RTTR_FORCE_INLINE void destroy(iterator_data& itr) const
+        RTTR_INLINE void destroy(iterator_data& itr) const
         {
             m_delete_func(itr);
         }
 
-        RTTR_FORCE_INLINE void begin(iterator_data& itr) const
+        RTTR_INLINE void begin(iterator_data& itr) const
         {
             m_begin_func(m_container, itr);
         }
 
-        RTTR_FORCE_INLINE void end(iterator_data& itr) const
+        RTTR_INLINE void end(iterator_data& itr) const
         {
             m_end_func(m_container, itr);
         }
 
-        RTTR_FORCE_INLINE bool is_empty() const RTTR_NOEXCEPT
+        RTTR_INLINE bool is_empty() const RTTR_NOEXCEPT
         {
             return m_get_is_empty_func(m_container);
         }
 
-        RTTR_FORCE_INLINE bool is_dynamic() const RTTR_NOEXCEPT
+        RTTR_INLINE bool is_dynamic() const RTTR_NOEXCEPT
         {
             return m_is_dynamic_func();
         }
 
-        RTTR_FORCE_INLINE std::size_t get_rank() const RTTR_NOEXCEPT
+        RTTR_INLINE std::size_t get_rank() const RTTR_NOEXCEPT
         {
             return m_get_rank_func();
         }
 
-        RTTR_FORCE_INLINE type get_rank_type(std::size_t index) const RTTR_NOEXCEPT
+        RTTR_INLINE type get_rank_type(std::size_t index) const RTTR_NOEXCEPT
         {
             return m_get_rank_type_func(index);
         }
 
-        RTTR_FORCE_INLINE std::size_t get_size() const RTTR_NOEXCEPT
+        RTTR_INLINE std::size_t get_size() const RTTR_NOEXCEPT
         {
             return m_get_size_func(m_container);
         }
 
-        RTTR_FORCE_INLINE bool set_size(std::size_t size) const RTTR_NOEXCEPT
+        RTTR_INLINE bool set_size(std::size_t size) const RTTR_NOEXCEPT
         {
             return m_set_size_func(m_container, size);
         }
 
-        RTTR_FORCE_INLINE bool equal(const iterator_data& lhs_itr, const iterator_data& rhs_itr) const RTTR_NOEXCEPT
+        RTTR_INLINE bool equal(const iterator_data& lhs_itr, const iterator_data& rhs_itr) const RTTR_NOEXCEPT
         {
             return m_equal_func(lhs_itr, rhs_itr);
         }
@@ -173,12 +173,12 @@ class RTTR_LOCAL variant_sequential_view_private
         }
 
 
-        RTTR_FORCE_INLINE void advance(iterator_data& itr, std::ptrdiff_t index) const
+        RTTR_INLINE void advance(iterator_data& itr, std::ptrdiff_t index) const
         {
             m_advance_func(itr, index);
         }
 
-        RTTR_FORCE_INLINE void clear()
+        RTTR_INLINE void clear()
         {
             m_clear_func(m_container);
         }

@@ -560,7 +560,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     m_type_data_storage.erase(std::remove_if(m_type_data_storage.begin(), m_type_data_storage.end(),
                                              [&found_type_data, info](type_data* data)
                                              {
-                                                 return (data == info) ? found_type_data = true : false;
+                                                 return (data == info) ? (found_type_data = true) : false;
                                              }),
                               m_type_data_storage.end()
                              );

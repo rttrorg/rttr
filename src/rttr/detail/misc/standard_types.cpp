@@ -89,6 +89,11 @@ RTTR_REGISTRATION
                 .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
                 .method("operator[]",   rttr::select_non_const(&std::string::operator[]))
 #endif
+#if __cplusplus >= 201703L
+                .method("data",         rttr::select_const(&std::string::data))
+                .method("data",         rttr::select_non_const(&std::string::data))
+#else
                 .method("data",         &std::string::data)
+#endif
                 .method("c_str",        &std::string::c_str);
 }

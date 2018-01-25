@@ -48,7 +48,12 @@ namespace detail                                                            \
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
     // sizeof("const char *__cdecl rttr::detail::f<"), sizeof(">(void)")
+#ifdef RTTR_NO_CXX11_NOEXCEPT
     RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(36, 7)
+#else
+    RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(36, 16)  // with " noexcept"
+#endif
+
 #elif RTTR_COMPILER == RTTR_COMPILER_GNUC
     // sizeof("const char* rttr::detail::f() [with T = "), sizeof("]")
     RTTR_REGISTRATION_FUNC_EXTRACT_VARIABLES(40, 1)
