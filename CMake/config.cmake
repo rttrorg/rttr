@@ -144,7 +144,7 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-    replaceCompilerOption("/W\d" "") # replace warnings , will be added seperately
+    replaceCompilerOption("/[W|w][0-9x:]*" "") # replace warnings , will be added seperately
 endif()
 message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}'")
 
