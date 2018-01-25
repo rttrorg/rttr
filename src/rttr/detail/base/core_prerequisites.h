@@ -175,7 +175,7 @@ namespace rttr
 #   if !__has_feature(cxx_noexcept)
 #       define RTTR_NO_CXX11_NOEXCEPT
 #   endif
-#   if !__has_feature(__cxx_noexcept_function_type)
+#   if !__has_feature(__cxx_noexcept_function_type) && __clang_major__< 6 // (__clang_major__< 5 is a hack since clang >= 6 should have the feature but doesnt...)
 #       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
 #   endif
 #endif

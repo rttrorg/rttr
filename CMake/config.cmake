@@ -116,12 +116,12 @@ enable_rtti(BUILD_WITH_RTTI)
 # cxx default flags 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++0x -Wall -Werror")
+    set(ADDITIONAL_COMPILER_FLAGS "-std=c++0x -Wall")
   elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "7.0.0")
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall -Werror")
+    set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall")
     SET(BUILD_BENCHMARKS FALSE)
   else()
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall -Werror")
+    set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall")
   endif()
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
     set(ADDITIONAL_COMPILER_FLAGS "${ADDITIONAL_COMPILER_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -134,30 +134,25 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   else()
     set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
   endif()
-
-  replaceCompilerOption("-W[0-9a-zA-Z#-]+" "") # remove all warnings , will be added seperately
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
-        set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall -Werror")
-        SET(BUILD_BENCHMARKS FALSE)
-    else()
-        set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall -Werror")
-        set(ADDITIONAL_COMPILER_FLAGS "${ADDITIONAL_COMPILER_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-    endif()
-      
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_COMPILER_FLAGS}")
-  
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
+      set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall")
+  else()
+      set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall")
+      set(ADDITIONAL_COMPILER_FLAGS "${ADDITIONAL_COMPILER_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+  endif()
+    
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_COMPILER_FLAGS}")
+
   set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
-  replaceCompilerOption("-W[0-9a-zA-Z#-]+" "") # remove all warnings , will be added seperately
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-    replaceCompilerOption("/[W|w][0-9x:]*" "") # replace warnings , will be added seperately
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Wall")
 endif()
-message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}'")
+message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}', Warning levels are added project level specific!")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
