@@ -391,7 +391,7 @@ endfunction()
 # _OLD_OPTION The option which should be replaced
 # _NEW_OPTION The new option which should be added
 ####################################################################################
-macro( replaceCompilerOption _OLD_OPTION _NEW_OPTION)
+macro( replace_compiler_option _OLD_OPTION _NEW_OPTION)
   foreach(flag_var
           CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
           CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
@@ -426,10 +426,10 @@ macro(enable_rtti _ENABLE)
 
   if (${_ENABLE})
     message(STATUS "Enabled: use of RTTI")
-    replaceCompilerOption("${disable_rtti_opt}" "${enable_rtti_opt}")
+    replace_compiler_option("${disable_rtti_opt}" "${enable_rtti_opt}")
   else()
     message(STATUS "Disabled: use of RTTI")
-    replaceCompilerOption(${enable_rtti_opt} ${disable_rtti_opt})
+    replace_compiler_option(${enable_rtti_opt} ${disable_rtti_opt})
   endif()
 endmacro()
 
@@ -505,3 +505,21 @@ macro(generateLibraryVersionVariables MAJOR MINOR PATCH PRODUCT_NAME PRODUCT_CPY
   set(LIBRARY_COPYRIGHT ${PRODUCT_CPY_RIGHT})
   set(LIBRARY_LICENSE ${PRODUCT_LICENSE})
 endmacro()
+
+function(set_compiler_warnings target)
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(WARNINGS -Werror
+                     -Wall)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(WARNINGS -Werror
+                     -Wall)
+    elseif(MSVC)
+        set(WARNINGS /WX
+                     /W4)
+    endif()
+
+    target_compile_options(${target} PRIVATE ${WARNINGS}) 
+endfunction()
+
+

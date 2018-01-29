@@ -49,13 +49,22 @@ if (${BUILD_RTTR_DYNAMIC})
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core
-                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX}
+                          CXX_STANDARD ${MAX_CXX_STANDARD}
+                          CXX_VISIBILITY_PRESET hidden
+                          VISIBILITY_INLINES_HIDDEN 1)
                           
+    if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+        target_compile_features(rttr_core PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+    endif()
+                         
     target_include_directories(rttr_core PUBLIC
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                $<INSTALL_INTERFACE:include>)
-                               
+
+    set_compiler_warnings(rttr_core)
+    
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
                 RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -97,6 +106,12 @@ if (BUILD_STATIC)
                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                 $<INSTALL_INTERFACE:include>)
     
+    if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+        target_compile_features(rttr_core_lib PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+    endif()
+    
+    set_compiler_warnings(rttr_core_lib)
+    
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
                 RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -122,7 +137,12 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL
                           DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-                          
+
+    if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+        target_compile_features(rttr_core_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+    endif()
+    
+    set_compiler_warnings(rttr_core_s)
     if (MSVC)
         target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
     elseif(CMAKE_COMPILER_IS_GNUCXX)
@@ -155,6 +175,12 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                               EXPORT_NAME Core_Lib_STL
                               DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+            
+        if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+            target_compile_features(rttr_core_lib_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+        endif()
+    
+        set_compiler_warnings(rttr_core_lib_s)
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
             set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core_s)

@@ -44,8 +44,15 @@ target_link_libraries(unit_tests RTTR::Core)
 add_dependencies(unit_tests RTTR::Core)
 target_include_directories(unit_tests PUBLIC ${CATCH_DIR})
 set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX _d 
-                                            INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+                                            INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                            CXX_STANDARD ${MAX_CXX_STANDARD})
 
+set_compiler_warnings(unit_tests)
+
+if (MSVC)
+    target_compile_options(unit_tests PRIVATE /bigobj) 
+endif()
+                                            
 # run tests
 add_custom_target(run_tests ALL
                   COMMAND "$<TARGET_FILE:unit_tests>"
