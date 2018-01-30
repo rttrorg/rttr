@@ -41,7 +41,7 @@ matrix:
     # check code formatting
     - os: linux
       compiler: gcc
-      env: NAME="check code formatting" COMPILER=g++-4.8 ARCH=x86_64 CHECK_FORMATTING=true UNIT_TESTS=false
+      env: NAME="check code formatting" CHECK_FORMATTING=true 
     
     # valgrind memory check
     - os: linux
@@ -49,8 +49,8 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386', 'libc6-dbg:i386', 'valgrind']
-      env: NAME="valgrind" COMPILER=g++-4.8 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
+          packages: ['g++-4.9', 'valgrind', 'ninja-build']
+      env: NAME="valgrind" COMPILER=g++-4.9 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
 
     # check code coverage x86 => result https://coveralls.io/github/rttrorg/rttr
     - os: linux
@@ -100,32 +100,48 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'linux-libc-dev:i386']
-      env: COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=true
+          packages: ['g++-4.9', 'ninja-build']
+      env: NAME="g++-4.9 x86" COMPILER=g++-4.9 ARCH=x86 CONF=Release UNIT_TESTS=true
 
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib']
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+          packages: ['g++-4.9-multilib', 'ninja-build']
+      env: NAME="g++-4.9 x64" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7']
-      env: COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+          packages: ['g++-4.9-multilib', 'libboost-all-dev']
+      env: NAME="g++-4.9 x64 - Build benchmarks & examples" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
       compiler: gcc
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8-multilib', 'libboost-all-dev']
-      env: COMPILER=g++-4.8 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
+          packages: ['g++-5', 'ninja-build']
+      env: NAME="g++-5" COMPILER=g++-5 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'ninja-build']
+      env: NAME="g++-6" COMPILER=g++-6 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+       
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'ninja-build']
+      env: NAME="g++-7" COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
     
     # Linux / CLang
     - os: linux
@@ -140,6 +156,14 @@ matrix:
       compiler: clang
       addons:
         apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
+          packages: ['g++-6', 'clang-4.0', 'ninja-build']
+      env: NAME="clang++-4.0 - build benchmarks & examples" COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
+      
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'clang-3.8', 'ninja-build']
       env: COMPILER=clang++-3.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
@@ -148,9 +172,9 @@ matrix:
       compiler: clang
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'ninja-build']
-      env: COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'clang-3.9', 'ninja-build']
+      env: COMPILER=clang++-3.9 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
       compiler: clang
@@ -168,14 +192,7 @@ matrix:
           packages: ['g++-6', 'clang-5.0',]
       env: COMPILER=clang++-5.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'ninja-build']
-      env: NAME="Build Benchmarks & Examples" COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
-   
+  
     # OSX/Clang
     - os: osx
       osx_image: xcode9.2
