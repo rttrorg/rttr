@@ -267,10 +267,8 @@ before_script:
       eval "ARCH_FLAGS=\${ARCH_FLAGS_${ARCH}}" ;
       (cd build && cmake
       -DCMAKE_CXX_COMPILER=${COMPILER}
-      -DCMAKE_C_COMPILER=${CC}
       -DCMAKE_BUILD_TYPE=${CONF}
       -DCMAKE_CXX_FLAGS="$ARCH_FLAGS $CMAKE_ADDITIONAL_FLAGS $GCOV_FLAGS"
-      -DCMAKE_C_FLAGS="$ARCH_FLAGS"
       -DBUILD_WEBSITE_DOCU=$BUILD_DOCU
       -DBUILD_EXAMPLES=$BUILD_EXAMPLES
       -DBUILD_BENCHMARKS=$BUILD_BENCHMARKS
@@ -280,7 +278,6 @@ script:
   # show OS/compiler version
   - uname -a
   - $CXX --version
-  - $ARCH_FLAGS
   - |
     if [[ "${CHECK_FORMATTING}" == "true" ]]; then
       # F001: Source files should not use the '\r' (CR) character
