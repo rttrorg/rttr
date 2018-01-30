@@ -150,7 +150,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
-          packages: ['g++-6', 'clang-3.7', 'ninja-build']
+          packages: ['libstdc++-5-dev', 'clang-3.7', 'ninja-build']
       env: COMPILER=clang++-3.7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
@@ -158,7 +158,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'ninja-build']
+          packages: ['libstdc++-6-dev', 'clang-4.0', 'ninja-build']
       env: NAME="clang++-4.0 - build benchmarks & examples" COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
@@ -166,7 +166,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'clang-3.8', 'ninja-build']
+          packages: ['libstdc++-5-dev', 'clang-3.8', 'ninja-build']
       env: COMPILER=clang++-3.8 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
@@ -174,7 +174,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'clang-3.9', 'ninja-build']
+          packages: ['libstdc++-6-dev', 'clang-3.9', 'ninja-build']
       env: COMPILER=clang++-3.9 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
@@ -182,15 +182,15 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['g++-6', 'clang-4.0', 'ninja-build']
-      env: COMPILER=clang++-4.0 ARCH=x86 CONF=Release UNIT_TESTS=true
+          packages: ['libstdc++-6-dev', 'clang-4.0', 'ninja-build']
+      env: COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
      
     - os: linux
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-          packages: ['g++-6', 'clang-5.0',]
+          packages: ['libstdc++-7-dev', 'clang-5.0',]
       env: COMPILER=clang++-5.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
   
