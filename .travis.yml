@@ -26,6 +26,7 @@
 ####################################################################################
 
 language: cpp
+dist: trusty
 sudo: false
 
 env:
@@ -50,7 +51,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'valgrind', 'ninja-build']
-      env: NAME="valgrind" COMPILER=g++-4.9 ARCH=x86 CONF=Debug VALGRIND=true UNIT_TESTS=true
+      env: NAME="valgrind" COMPILER=g++-4.9 ARCH=x64 CONF=Debug VALGRIND=true UNIT_TESTS=true
 
     # check code coverage x86 => result https://coveralls.io/github/rttrorg/rttr
     - os: linux
@@ -100,7 +101,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'ninja-build']
+          packages: ['g++-4.9-multilib', 'ninja-build']
       env: NAME="g++-4.9 x86" COMPILER=g++-4.9 ARCH=x86 CONF=Release UNIT_TESTS=true
 
     - os: linux
@@ -108,7 +109,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9-multilib', 'ninja-build']
+          packages: ['g++-4.9', 'ninja-build']
       env: NAME="g++-4.9 x64" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=true
       
     - os: linux
@@ -116,7 +117,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9-multilib', 'libboost-all-dev']
+          packages: ['g++-4.9', 'libboost-all-dev']
       env: NAME="g++-4.9 x64 - Build benchmarks & examples" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
@@ -279,6 +280,7 @@ script:
   # show OS/compiler version
   - uname -a
   - $CXX --version
+  - $ARCH_FLAGS
   - |
     if [[ "${CHECK_FORMATTING}" == "true" ]]; then
       # F001: Source files should not use the '\r' (CR) character
