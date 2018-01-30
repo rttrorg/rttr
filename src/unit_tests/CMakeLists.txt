@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(unit_tests)
+project(unit_tests LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")

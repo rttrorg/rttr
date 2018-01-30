@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(rttr)
+project(rttr LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")

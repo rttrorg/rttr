@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench_rttr_cast)
+project(bench_rttr_cast LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")

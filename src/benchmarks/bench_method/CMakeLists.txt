@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench_method)
+project(bench_method LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")

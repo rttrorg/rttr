@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(json_serialization)
+project(json_serialization LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
