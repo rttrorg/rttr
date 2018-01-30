@@ -101,7 +101,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9-multilib', ''linux-libc-dev:i386', 'ninja-build']
+          packages: ['g++-4.9-multilib', 'linux-libc-dev:i386', 'ninja-build']
       env: NAME="g++-4.9 x86" COMPILER=g++-4.9 ARCH=x86 CONF=Release UNIT_TESTS=true
 
     - os: linux
