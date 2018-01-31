@@ -154,7 +154,7 @@ namespace rttr
 #       define RTTR_NO_CXX11_CONSTEXPR
 #       define RTTR_NO_CXX14_CONSTEXPR
 #   endif
-#   if !defined(__cpp_noexcept_function_type) || (__cpp_noexcept_function_type < 201510)
+#   if !defined(_HAS_CXX17) || _HAS_CXX17 == 0
 #       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
 #   endif
 #endif

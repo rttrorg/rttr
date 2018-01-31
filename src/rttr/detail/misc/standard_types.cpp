@@ -89,7 +89,7 @@ RTTR_REGISTRATION
                 .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
                 .method("operator[]",   rttr::select_non_const(&std::string::operator[]))
 #endif
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201703L || (RTTR_COMPILER == RTTR_COMPILER_MSVC && !defined(RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE))
                 .method("data",         rttr::select_const(&std::string::data))
                 .method("data",         rttr::select_non_const(&std::string::data))
 #else
