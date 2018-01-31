@@ -88,6 +88,14 @@ namespace detail
     template<typename R, typename... Args>
     struct is_functor<R (&)(Args...)> : std::true_type {};
 
+#ifndef RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
+    template<typename R, typename... Args>
+    struct is_functor<R (*)(Args...) noexcept> : std::true_type {};
+
+    template<typename R, typename... Args>
+    struct is_functor<R (&)(Args...) noexcept> : std::true_type {};
+#endif
+
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
 
