@@ -36,6 +36,7 @@ cmake_minimum_required (VERSION 3.0)
 project ("rttr" LANGUAGES CXX)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
+message("Supported features = ${CMAKE_CXX_COMPILE_FEATURES}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 

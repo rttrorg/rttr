@@ -94,6 +94,7 @@ if (BUILD_STATIC)
     set_target_properties(rttr_core_lib PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_Lib
+                          CXX_STANDARD ${MAX_CXX_STANDARD}
                           DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
@@ -140,6 +141,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL
+                          CXX_STANDARD ${MAX_CXX_STANDARD}
                           DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
     if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
@@ -181,6 +183,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         set_target_properties(rttr_core_lib_s PROPERTIES
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                               EXPORT_NAME Core_Lib_STL
+                              CXX_STANDARD ${MAX_CXX_STANDARD}
                               DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
             
         if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
@@ -188,7 +191,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         endif()
     
         add_warning_levels(rttr_core_lib_s "library")
-        
+
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
             set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core_s)
