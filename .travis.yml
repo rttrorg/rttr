@@ -158,7 +158,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-4.0']
-          packages: ['libstdc++-6-dev', 'clang-4.0', 'ninja-build']
+          packages: ['libstdc++-6-dev', 'clang-4.0', 'libboost-all-dev', 'ninja-build']
       env: NAME="clang++-4.0 - build benchmarks & examples" COMPILER=clang++-4.0 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
