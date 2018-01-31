@@ -113,11 +113,10 @@ endif()
 
 enable_rtti(BUILD_WITH_RTTI)
 
-set(MAX_CXX_STANDARD 17)
+get_latest_supported_cxx(CXX_STANDARD)
+set(MAX_CXX_STANDARD ${CXX_STANDARD})
 
-if(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
-    set(MAX_CXX_STANDARD 14)
-endif()
+message(STATUS "using C++: ${MAX_CXX_STANDARD}")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
@@ -142,6 +141,7 @@ if(MSVC)
     if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         replace_compiler_option("/MD" " ")
     endif()
+    
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(MINGW)
         set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
