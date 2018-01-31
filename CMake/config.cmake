@@ -113,12 +113,11 @@ endif()
 
 enable_rtti(BUILD_WITH_RTTI)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(MAX_CXX_STANDARD 17)
-
 if(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
     set(MAX_CXX_STANDARD 14)
 endif()
-message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}', Warning levels are added project level specific!")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations

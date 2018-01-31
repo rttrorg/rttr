@@ -60,8 +60,6 @@ set_target_properties(bench_variant PROPERTIES DEBUG_POSTFIX _d
                                                INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                CXX_STANDARD ${MAX_CXX_STANDARD})
 
-set_compiler_warnings(bench_variant)
-
 install(TARGETS bench_variant
         RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
         LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
@@ -89,8 +87,6 @@ if (BUILD_STATIC)
                                                        FOLDER "Benchmarks"
                                                        INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                        CXX_STANDARD ${MAX_CXX_STANDARD})
-
-    set_compiler_warnings(bench_variant_lib)
 
     install(TARGETS bench_variant_lib
             RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -120,8 +116,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                      FOLDER "Benchmarks"
                                                      INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                      CXX_STANDARD ${MAX_CXX_STANDARD})
-
-    set_compiler_warnings(bench_variant_s)
 
     if (MSVC)
         target_compile_options(bench_variant_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -158,8 +152,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                              FOLDER "Benchmarks"
                                                              INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                              CXX_STANDARD ${MAX_CXX_STANDARD})
-
-        set_compiler_warnings(bench_variant_lib_s)
 
         if (MSVC)
             target_compile_options(bench_variant_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")

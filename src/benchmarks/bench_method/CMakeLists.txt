@@ -59,8 +59,6 @@ set_target_properties(bench_method PROPERTIES DEBUG_POSTFIX _d
                                               FOLDER "Benchmarks"
                                               INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                               CXX_STANDARD ${MAX_CXX_STANDARD})
-set_compiler_warnings(bench_method)
-
 install(TARGETS bench_method
         RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
         LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
@@ -88,8 +86,6 @@ if (BUILD_STATIC)
                                                       FOLDER "Benchmarks"
                                                       INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                       CXX_STANDARD ${MAX_CXX_STANDARD})
-
-    set_compiler_warnings(bench_method_lib)
 
     install(TARGETS bench_method_lib
             RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -120,8 +116,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                     INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                     CXX_STANDARD ${MAX_CXX_STANDARD})
     
-    set_compiler_warnings(bench_method_s)
-
     if (MSVC)
         target_compile_options(bench_method_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
     elseif(CMAKE_COMPILER_IS_GNUCXX)
@@ -157,8 +151,6 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                             FOLDER "Benchmarks"
                                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                             CXX_STANDARD ${MAX_CXX_STANDARD})
-
-        set_compiler_warnings(bench_method_lib_s)
 
         if (MSVC)
             target_compile_options(bench_method_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
