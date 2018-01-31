@@ -578,7 +578,7 @@ function(get_latest_supported_cxx CXX_STANDARD)
     else()
         if (HAS_CXX_CONSTEXPR)
             set(${CXX_STANDARD} 14 PARENT_SCOPE)
-        else
+        else()
             set(${CXX_STANDARD} 11 PARENT_SCOPE)
         endif()
     endif()
