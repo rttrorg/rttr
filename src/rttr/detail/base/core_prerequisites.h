@@ -159,23 +159,14 @@ namespace rttr
 #   endif
 #endif
 
-#if RTTR_COMPILER == RTTR_COMPILER_GNUC
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC ||  RTTR_COMPILER == RTTR_COMPILER_CLANG
 #   if !defined(__cpp_constexpr) || (__cpp_constexpr < 201304)
 #       define RTTR_NO_CXX14_CONSTEXPR
 #   endif
-#   if !defined(__cpp_noexcept_function_type) || (__cpp_noexcept_function_type < 201510)
-#       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
-#   endif
-#endif
-
-#if RTTR_COMPILER == RTTR_COMPILER_CLANG
-#   if !__has_feature(__cxx_generic_lambdas__) || !__has_feature(__cxx_relaxed_constexpr__)
-#       define RTTR_NO_CXX14_CONSTEXPR
-#   endif
-#   if !__has_feature(cxx_noexcept)
+#   if !defined(cpp_noexcept)
 #       define RTTR_NO_CXX11_NOEXCEPT
 #   endif
-#   if !__has_feature(__cxx_noexcept_function_type) && __clang_major__< 6 // (__clang_major__< 5 is a hack since clang >= 6 should have the feature but doesnt...)
+#   if !defined(__cpp_noexcept_function_type) || (__cpp_noexcept_function_type < 201510)
 #       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
 #   endif
 #endif

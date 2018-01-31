@@ -39,7 +39,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct RTTR_LOCAL type_comparator_base
+struct type_comparator_base
 {
     using cmp_func = bool (*)(const void* lhs, const void* rhs);
 

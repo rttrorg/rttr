@@ -113,44 +113,10 @@ endif()
 
 enable_rtti(BUILD_WITH_RTTI)
 
-# cxx default flags 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++0x -Wall")
-  elseif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "7.0.0")
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall")
-    SET(BUILD_BENCHMARKS FALSE)
-  else()
-    set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall")
-  endif()
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
-    set(ADDITIONAL_COMPILER_FLAGS "${ADDITIONAL_COMPILER_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  endif()
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_COMPILER_FLAGS}")
+set(MAX_CXX_STANDARD 17)
 
-  if(MINGW)
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-  else()
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
-  endif()
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
-      set(ADDITIONAL_COMPILER_FLAGS "-std=c++17 -Wall")
-  else()
-      set(ADDITIONAL_COMPILER_FLAGS "-std=c++11 -Wall")
-      set(ADDITIONAL_COMPILER_FLAGS "${ADDITIONAL_COMPILER_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  endif()
-    
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_COMPILER_FLAGS}")
-
-  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Wall")
+if(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+    set(MAX_CXX_STANDARD 14)
 endif()
 message(STATUS "Set the following CXX Flags: '${CMAKE_CXX_FLAGS}', Warning levels are added project level specific!")
 
@@ -167,6 +133,24 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")
 else()
   message(WARNING "Please adjust CMAKE_CXX_FLAGS_RELWITHDEBINFO flags for this compiler!")
+endif()
+
+if(MSVC)
+    # we have to remove the default warning level,
+    # otherwise we get ugly compiler warnings, because of later replacing 
+    # option /W3 with /W4 (which will be later added)
+    replace_compiler_option("/W3" " ") 
+    if (BUILD_WITH_STATIC_RUNTIME_LIBS)
+        replace_compiler_option("/MD" " ")
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(MINGW)
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+    else()
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
 endif()
 
 # cmake config file

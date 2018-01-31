@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(json_serialization)
+project(json_serialization LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -44,9 +44,10 @@ target_link_libraries(json_serialization RTTR::Core)
 target_include_directories(json_serialization PUBLIC ${RAPID_JSON_DIR})
 set_target_properties(json_serialization PROPERTIES DEBUG_POSTFIX _d
                                                     FOLDER "Examples"
-                                                    INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+                                                    INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                                    CXX_STANDARD ${MAX_CXX_STANDARD})
 
-add_warning_levels(json_serialization "examples")
+set_compiler_warnings(json_serialization)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
