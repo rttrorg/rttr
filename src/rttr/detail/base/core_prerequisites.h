@@ -62,6 +62,10 @@ namespace rttr
 // Compiler
 /////////////////////////////////////////////////////////////////////////////////////////
 #if defined( __clang__ )
+
+#if defined __apple_build_version__
+#   define RTTR_COMP_VER_IS_APPLE_CLANG
+#endif
 #   define RTTR_COMPILER RTTR_COMPILER_CLANG
 #   define RTTR_COMP_VER (((__clang_major__)*100) + \
                          (__clang_minor__*10) + \
@@ -278,7 +282,8 @@ namespace rttr
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
-#if RTTR_COMP_VER >= 500
+#if (!defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 500 ) || \
+    (defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 810) 
 
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")
@@ -303,7 +308,7 @@ namespace rttr
 #   define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 
 #else
-#   pragma message("WARNING: ukown compiler, don't know how to disable deprecated warnings")
+#   pragma message("WARNING: unkown compiler, don't know how to disable deprecated warnings")
 #endif
 
 } // end namespace rttr
