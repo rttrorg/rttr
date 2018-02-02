@@ -165,7 +165,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'ninja-build']
-      env: NAME="g++-7" COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      env: NAME="g++-7" COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
     
     # Linux / CLang
     - os: linux
