@@ -27,7 +27,6 @@
 
 #include <rttr/registration>
 
-#include <string>
 #include <vector>
 #include <map>
 #include <list>
