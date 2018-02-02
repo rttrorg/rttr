@@ -283,7 +283,7 @@ namespace rttr
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
 #if (!defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 500 ) || \
-    (defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 900) 
+    (defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 900)
 
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")
