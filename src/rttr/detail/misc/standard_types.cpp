@@ -31,6 +31,7 @@
 #include <map>
 #include <list>
 #include <set>
+#include <string>
 
 // explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx
 // thats a bug in libc++, because of interaction with __attribute__ ((__visibility__("hidden"), __always_inline__)) in std::string

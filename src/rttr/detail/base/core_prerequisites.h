@@ -278,12 +278,11 @@ namespace rttr
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
-#if RTTR_COMP_VER >= 500
-
+#if (RTTR_COMP_VER >= 500 && RTTR_PLATFORM != RTTR_PLATFORM_APPLE) ||
+    (RTTR_COMP_VER >= 900 && RTTR_PLATFORM == RTTR_PLATFORM_APPLE)
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")
 #       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING     _Pragma ("clang diagnostic pop")
-
 #else
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
 #       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
@@ -303,7 +302,7 @@ namespace rttr
 #   define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 
 #else
-#   pragma message("WARNING: ukown compiler, don't know how to disable deprecated warnings")
+#   pragma message("WARNING: unknown compiler, don't know how to disable deprecated warnings")
 #endif
 
 } // end namespace rttr
