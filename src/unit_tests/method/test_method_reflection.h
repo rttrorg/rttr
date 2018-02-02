@@ -63,6 +63,12 @@ struct method_test
         return (var == 23) ? true : false;
     }
 
+    int func_with_noexcept(int value) const volatile RTTR_NOEXCEPT
+    {
+        method_with_noexpcet_called = true;
+        return 42;
+    }
+
     double dummy_data = 12;
     std::string dummy_text = "Hello World";
     int method_3_value = 0;
@@ -82,6 +88,7 @@ struct method_test
     bool method_func_ptr_arg_called = false;
     bool method_with_ptr_called     = false;
     void(*m_func_ptr)(int)          = nullptr;
+    mutable bool method_with_noexpcet_called= false;
 
     RTTR_ENABLE()
 };

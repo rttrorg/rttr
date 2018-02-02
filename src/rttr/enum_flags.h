@@ -273,11 +273,8 @@ namespace detail
  */
 class invalid_enum_flag
 {
-public:
-    RTTR_CONSTEXPR RTTR_INLINE explicit invalid_enum_flag(int v) : m_value(v) {}
-
-private:
-    int32_t m_value;
+    public:
+        RTTR_CONSTEXPR RTTR_INLINE explicit invalid_enum_flag(int v){}
 };
 
 } // end namespace detail

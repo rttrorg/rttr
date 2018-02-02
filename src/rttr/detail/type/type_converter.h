@@ -41,7 +41,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct RTTR_LOCAL type_converter_base
+struct type_converter_base
 {
     type_converter_base(const type& target_type) : m_target_type(target_type) {}
     virtual variant to_variant(void* data, bool& ok) const = 0;
