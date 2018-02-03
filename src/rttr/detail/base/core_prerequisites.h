@@ -40,6 +40,7 @@ namespace rttr
 #define RTTR_COMPILER_MSVC 1
 #define RTTR_COMPILER_GNUC 2
 #define RTTR_COMPILER_CLANG 3
+#define RTTR_COMPILER_APPLECLANG 4
 
 #define RTTR_ENDIAN_LITTLE 1
 #define RTTR_ENDIAN_BIG 2
@@ -64,9 +65,10 @@ namespace rttr
 #if defined( __clang__ )
 
 #if defined __apple_build_version__
-#   define RTTR_COMP_VER_IS_APPLE_CLANG
-#endif
+#   define RTTR_COMPILER RTTR_COMPILER_APPLECLANG
+#else
 #   define RTTR_COMPILER RTTR_COMPILER_CLANG
+#endif
 #   define RTTR_COMP_VER (((__clang_major__)*100) + \
                          (__clang_minor__*10) + \
                          __clang_patchlevel__)
@@ -282,8 +284,8 @@ namespace rttr
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
-#if (!defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 500 ) || \
-    (defined(RTTR_COMP_VER_IS_APPLE_CLANG) && RTTR_COMP_VER >= 900)
+#if (RTTR_COMPILER == RTTR_COMPILER_CLANG && RTTR_COMP_VER >= 500 ) || \
+    (RTTR_COMPILER == RTTR_COMPILER_APPLECLANG && RTTR_COMP_VER >= 900)
 
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")

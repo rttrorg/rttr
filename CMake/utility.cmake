@@ -551,22 +551,6 @@ macro(generateLibraryVersionVariables MAJOR MINOR PATCH PRODUCT_NAME PRODUCT_CPY
   set(LIBRARY_LICENSE ${PRODUCT_LICENSE})
 endmacro()
 
-function(set_compiler_warnings target)
-
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(WARNINGS -Werror
-                     -Wall)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(WARNINGS -Werror
-                     -Wall)
-    elseif(MSVC)
-        set(WARNINGS /WX
-                     /W4)
-    endif()
-
-    target_compile_options(${target} PRIVATE ${WARNINGS}) 
-endfunction()
-
 function(get_latest_supported_cxx CXX_STANDARD)
 
     set(CMAKE_CXX_STANDARD 17)

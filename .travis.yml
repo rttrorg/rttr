@@ -38,35 +38,8 @@ env:
     - secure: "1ogFHnhUroT3nA1HxyXN5/Hoek6LcTazRPTGpYjKAge8To/x614D6R9j2yu0EDOZalolq0VeOONnHLnss6aPGeMvvHH1rvoKTDQsFjsm1fB6qLRr/qpZXs+G4mxStarxrXr5487hEkPP10fEi/PSOx8Gme6Kny+tXHxDzP04ljcZYVvxWfkb+cQBCnYupbHk4hzfKRmPYcUn6lCPyOGIzwsHQQI/LubmkiU+wQ0zcLLsTZSThk+zt6FlxYWykZGL24yrqmoXRszx8dR14cWPzvkxVeEOe3OY9mNix1Z7ki2eVeEk8m7d70yPmV5p8F2/nPGC7kUXTvPrAL62CcE5moHubijJwKXJM6nBQJYCPGygnvRnWxnoqO/9JpDuds4Cv+tbJMgo2ViLPsYk3BgMnYo4z+p4JViN9P4/jzbhsVtWd4rnXmPt9j4FkED+Eyt8BUzXFdTAPpuzwZSvmYzzR8MdZE/telCAcWUoiS35IQcWJ0UmPpNZfR1Lll0cWQ+dTmjNETJvwognuaTAexL7m0uMhX6KQIZfap2H0w+CIua7+jl6eb9iyvXv9vZZEUCH2kTWnYXqBmDGRHG3tEp97o5+yWQm1qjweLvKAMRirdkSaZEL0lrsJ8mBS6Y+PQwAQxlu+P3pFEJ6uU3fJrKyciuWnVDZKyddIrJEZorXjOA="
 
 matrix:
-  allow_failures:
-    - env: COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true
   include:
 
-    # OSX/Clang
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
-      
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
-      
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true         
-
-    # check code formatting
-    - os: linux
-      compiler: gcc
-      env: NAME="check code formatting" CHECK_FORMATTING=true 
-    
     # valgrind memory check
     - os: linux
       compiler: gcc
@@ -216,6 +189,31 @@ matrix:
           packages: ['libstdc++-7-dev', 'clang-5.0',]
       env: COMPILER=clang++-5.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
+    # OSX/Clang
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+      
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
+      
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true         
+
+    # check code formatting
+    - os: linux
+      compiler: gcc
+      env: NAME="check code formatting" CHECK_FORMATTING=true 
+    
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
