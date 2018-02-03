@@ -59,6 +59,8 @@ set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d
                                                  INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                  CXX_STANDARD ${MAX_CXX_STANDARD})
 
+set_compiler_warnings(bench_rttr_cast)
+
 install(TARGETS bench_rttr_cast
         RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
         LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
@@ -85,6 +87,8 @@ if (BUILD_STATIC)
                                                          FOLDER "Benchmarks"
                                                          INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                          CXX_STANDARD ${MAX_CXX_STANDARD})
+
+    set_compiler_warnings(bench_rttr_cast_lib)
 
     install(TARGETS bench_rttr_cast_lib
             RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -113,6 +117,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                        FOLDER "Benchmarks"
                                                        INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                        CXX_STANDARD ${MAX_CXX_STANDARD})
+
+    set_compiler_warnings(bench_rttr_cast_s)
 
     if (MSVC)
         target_compile_options(bench_rttr_cast_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -148,6 +154,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                                                FOLDER "Benchmarks"
                                                                INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                                CXX_STANDARD ${MAX_CXX_STANDARD})
+
+        set_compiler_warnings(bench_rttr_cast_lib_s)
 
         if (MSVC)
             target_compile_options(bench_rttr_cast_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
