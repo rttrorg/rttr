@@ -390,7 +390,7 @@ endfunction()
 # Adds warnings compiler options to the target depending on the category
 # _TARGET Target name
 ####################################################################################
-function( set_compiler_warnings _TARGET)
+function( set_compiler_warnings target)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(WARNINGS "-Werror"
                  "-Wall")
@@ -402,7 +402,7 @@ function( set_compiler_warnings _TARGET)
                  "/W4")
   endif()
 
-  target_compile_options(${_TARGET} PRIVATE ${WARNINGS}) 
+  target_compile_options(${target} PRIVATE ${WARNINGS}) 
 endfunction()
 
 ####################################################################################
