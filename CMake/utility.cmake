@@ -391,7 +391,7 @@ endfunction()
 # _TARGET Target name
 # _CATEGORY "library" or "unit_tests" or "benchmarks"
 ####################################################################################
-macro( add_warning_levels _TARGET _CATEGORY)
+macro( set_compiler_warnings _TARGET _CATEGORY)
   if("${_CATEGORY}" STREQUAL "library" OR "${_CATEGORY}" STREQUAL "examples")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       set(CXX_FLAGS "-Werror")
