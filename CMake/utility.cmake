@@ -389,47 +389,21 @@ endfunction()
 ####################################################################################
 # Adds warnings compiler options to the target depending on the category
 # _TARGET Target name
-# _CATEGORY "library" or "unit_tests" or "benchmarks"
 ####################################################################################
-macro( set_compiler_warnings _TARGET _CATEGORY)
-  if("${_CATEGORY}" STREQUAL "library" OR "${_CATEGORY}" STREQUAL "examples")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set(CXX_FLAGS "-Werror")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(CXX_FLAGS "-Werror")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      set(CXX_FLAGS "/WX" "/W4")
-    else()
-      message(FATAL_ERROR "Unknown compiler to set warning levels: ${_CATEGORY} for target ${_TARGET}! ")
-    endif()
-  elseif("${_CATEGORY}" STREQUAL "unit_tests")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set(CXX_FLAGS "-Werror" "-Wno-unused-private-field" "-Wno-delete-non-virtual-dtor")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(CXX_FLAGS "-Werror" "-Wno-unused-private-field" "-Wno-delete-non-virtual-dtor")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      set(CXX_FLAGS "/WX" "/W4")
-    else()
-      message(FATAL_ERROR "Unknown compiler to set warning levels: ${_CATEGORY} for target ${_TARGET}! ")
-    endif()
-  elseif("${_CATEGORY}" STREQUAL "benchmarks")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set(CXX_FLAGS "-Werror" "-Wno-unused-private-field" "-Wno-delete-non-virtual-dtor")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(CXX_FLAGS "-Werror" "-Wno-unused-private-field" "-Wno-delete-non-virtual-dtor")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      set(CXX_FLAGS "/WX" "/W4")
-    else()
-      message(FATAL_ERROR "Unknown compiler to set warning levels: ${_CATEGORY} for target ${_TARGET}! ")
-    endif()
+function( set_compiler_warnings _TARGET)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(WARNINGS "-Werror"
+                 "-Wall")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(WARNINGS "-Werror"
+                 "-Wall")
+  elseif(MSVC)
+    set(WARNINGS "/WX"
+                 "/W4")
   endif()
 
-  target_compile_options(${_TARGET} PRIVATE ${CXX_FLAGS} )
-  target_compile_options(${_TARGET} PRIVATE $<$<CONFIG:Debug>:${CXX_FLAGS_DEBUG}> )
-  target_compile_options(${_TARGET} PRIVATE $<$<CONFIG:Release>:${CXX_FLAGS_RELEASE}> )
-  target_compile_options(${_TARGET} PRIVATE $<$<CONFIG:MinSizeRel>:${CXX_FLAGS_MINSIZEREL}> )
-  target_compile_options(${_TARGET} PRIVATE $<$<CONFIG:RelWithDebInfo>:${CXX_FLAGS_RELWITHDEBINFO}> )
-endmacro()
+  target_compile_options(${target} PRIVATE ${WARNINGS}) 
+endfunction()
 
 ####################################################################################
 # Adds or replace a compiler option

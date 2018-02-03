@@ -47,7 +47,7 @@ set_target_properties(json_serialization PROPERTIES DEBUG_POSTFIX _d
                                                     INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                                     CXX_STANDARD ${MAX_CXX_STANDARD})
 
-set_compiler_warnings(json_serialization "examples")
+set_compiler_warnings(json_serialization)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

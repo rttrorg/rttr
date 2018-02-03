@@ -65,7 +65,7 @@ if (${BUILD_RTTR_DYNAMIC})
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                $<INSTALL_INTERFACE:include>)
 
-    set_compiler_warnings(rttr_core "library")
+    set_compiler_warnings(rttr_core)
     
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core EXPORT rttr_targets
@@ -115,7 +115,7 @@ if (BUILD_STATIC)
         target_compile_features(rttr_core_lib PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
     endif()
     
-    set_compiler_warnings(rttr_core_lib "library")
+    set_compiler_warnings(rttr_core_lib)
 
     if (BUILD_INSTALLER)
         install(TARGETS rttr_core_lib EXPORT rttr_targets
@@ -148,7 +148,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         target_compile_features(rttr_core_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
     endif()
     
-    set_compiler_warnings(rttr_core_s "library")
+    set_compiler_warnings(rttr_core_s)
 
     if (MSVC)
         target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -190,7 +190,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
             target_compile_features(rttr_core_lib_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
         endif()
     
-        set_compiler_warnings(rttr_core_lib_s "library")
+        set_compiler_warnings(rttr_core_lib_s)
 
         if (MSVC)
             target_compile_options(rttr_core_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")

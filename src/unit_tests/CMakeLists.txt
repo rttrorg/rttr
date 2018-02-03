@@ -47,7 +47,7 @@ set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX _d
                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 
-set_compiler_warnings(unit_tests "unit_tests")
+set_compiler_warnings(unit_tests)
 
 if (MSVC)
     target_compile_options(unit_tests PRIVATE /bigobj) 

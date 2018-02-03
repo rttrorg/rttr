@@ -40,6 +40,11 @@ env:
 matrix:
   include:
 
+     # check code formatting
+    - os: linux
+      compiler: gcc
+      env: NAME="check code formatting" CHECK_FORMATTING=true 
+      
     # valgrind memory check
     - os: linux
       compiler: gcc
@@ -207,12 +212,7 @@ matrix:
     - os: osx
       osx_image: xcode8.3
       compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true         
-
-    # check code formatting
-    - os: linux
-      compiler: gcc
-      env: NAME="check code formatting" CHECK_FORMATTING=true 
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
     
 before_install:
   - export CIT_ROOT=`pwd`
