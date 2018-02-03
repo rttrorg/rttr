@@ -402,7 +402,7 @@ function( set_compiler_warnings _TARGET)
                  "/W4")
   endif()
 
-  target_compile_options(${target} PRIVATE ${WARNINGS}) 
+  target_compile_options(${_TARGET} PRIVATE ${WARNINGS}) 
 endfunction()
 
 ####################################################################################
