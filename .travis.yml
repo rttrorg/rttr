@@ -39,6 +39,31 @@ env:
 
 matrix:
   include:
+    # OSX/Clang
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+      
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+
+    - os: osx
+      osx_image: xcode9
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
+      
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
      # check code formatting
     - os: linux
@@ -194,31 +219,31 @@ matrix:
           packages: ['libstdc++-7-dev', 'clang-5.0',]
       env: COMPILER=clang++-5.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
-    # OSX/Clang
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+    # # OSX/Clang
+    # - os: osx
+    #   osx_image: xcode9.2
+    #   compiler: clang
+    #   env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
       
-    - os: osx
-      osx_image: xcode9.2
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    # - os: osx
+    #   osx_image: xcode9.2
+    #   compiler: clang
+    #   env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
-    - os: osx
-      osx_image: xcode9
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    # - os: osx
+    #   osx_image: xcode9
+    #   compiler: clang
+    #   env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
+    # - os: osx
+    #   osx_image: xcode8.3
+    #   compiler: clang
+    #   env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true
       
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
+    # - os: osx
+    #   osx_image: xcode8.3
+    #   compiler: clang
+    #   env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
     
 before_install:
   - export CIT_ROOT=`pwd`
