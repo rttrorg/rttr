@@ -388,7 +388,7 @@ endfunction()
 
 ####################################################################################
 # Adds warnings compiler options to the target depending on the category
-# _TARGET Target name
+# target Target name
 ####################################################################################
 function( set_compiler_warnings target)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
