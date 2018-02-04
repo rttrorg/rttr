@@ -248,7 +248,7 @@ class RTTR_API type
          *
          * \return The type name.
          */
-        RTTR_FORCE_INLINE string_view get_name() const RTTR_NOEXCEPT;
+        RTTR_INLINE string_view get_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is valid, that means the type holds valid data to a type.
@@ -272,7 +272,7 @@ class RTTR_API type
          *
          * \return The corresponding raw type object.
          */
-        RTTR_FORCE_INLINE type get_raw_type() const RTTR_NOEXCEPT;
+        RTTR_INLINE type get_raw_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object which represent the wrapped type.
@@ -294,7 +294,7 @@ class RTTR_API type
          *
          * \return The type object of the wrapped type.
          */
-        RTTR_FORCE_INLINE type get_wrapped_type() const RTTR_NOEXCEPT;
+        RTTR_INLINE type get_wrapped_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object for the given template type \a T.
@@ -343,14 +343,14 @@ class RTTR_API type
          *
          * \return The size of the type in bytes.
          */
-        RTTR_FORCE_INLINE std::size_t get_sizeof() const RTTR_NOEXCEPT;
+        RTTR_INLINE std::size_t get_sizeof() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type is class; that is not an atomic type or a method.
          *
          * \return True if the type is a class, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_class() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_class() const RTTR_NOEXCEPT;
 
          /*!
          * \brief Returns true whether the given type is an instantiation of a class template.
@@ -370,7 +370,7 @@ class RTTR_API type
          *
          * \see get_template_arguments()
          */
-        RTTR_FORCE_INLINE bool is_template_instantiation() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_template_instantiation() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a list of type objects that represents the template arguments.
@@ -400,7 +400,7 @@ class RTTR_API type
          *
          * \return True if the type is an enumeration, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_enumeration() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_enumeration() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the enumerator if this type is an enum type;
@@ -429,7 +429,7 @@ class RTTR_API type
          * \return True if the type is an wrapper, otherwise false.
          *
          */
-        RTTR_FORCE_INLINE bool is_wrapper() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_wrapper() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an array.
@@ -438,7 +438,7 @@ class RTTR_API type
          *
          * \see \ref array_mapper "array_mapper<T>"
          */
-        RTTR_FORCE_INLINE bool is_array() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_array() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an
@@ -448,7 +448,7 @@ class RTTR_API type
          *
          * \see \ref associative_container_mapper "associative_container_mapper<T>"
          */
-        RTTR_FORCE_INLINE bool is_associative_container() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_associative_container() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an
@@ -458,7 +458,7 @@ class RTTR_API type
          *
          * \see \ref sequential_container_mapper "sequential_container_mapper<T>"
          */
-        RTTR_FORCE_INLINE bool is_sequential_container() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_sequential_container() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer.
@@ -466,7 +466,7 @@ class RTTR_API type
          *
          * \return True if the type is a pointer, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_pointer() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents an arithmetic type.
@@ -475,7 +475,7 @@ class RTTR_API type
          *
          * \return True if the type is a arithmetic type, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_arithmetic() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_arithmetic() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a function
@@ -483,7 +483,7 @@ class RTTR_API type
          *
          * \return True if the type is a function pointer, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member object.
@@ -491,7 +491,7 @@ class RTTR_API type
          *
          * \return True if the type is a member object pointer, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_member_object_pointer() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_member_object_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true whether the given type represents a pointer to a member function.
@@ -499,7 +499,7 @@ class RTTR_API type
          *
          * \return True if the type is a member function pointer type, otherwise false.
          */
-        RTTR_FORCE_INLINE bool is_member_function_pointer() const RTTR_NOEXCEPT;
+        RTTR_INLINE bool is_member_function_pointer() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this type is derived from the given type \p other, otherwise false.
@@ -1128,7 +1128,7 @@ class RTTR_API type
          *
          * \return The pointer dimension.
          */
-        RTTR_FORCE_INLINE std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
+        RTTR_INLINE std::size_t get_pointer_dimension() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the raw type of an array
@@ -1137,14 +1137,14 @@ class RTTR_API type
          *
          * \return The raw array type.
          */
-        RTTR_FORCE_INLINE type get_raw_array_type() const RTTR_NOEXCEPT;
+        RTTR_INLINE type get_raw_array_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the compiler depended name of the type.
          *
          * \return The full type name.
          */
-        RTTR_FORCE_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
+        RTTR_INLINE string_view get_full_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Creates a wrapped value from the given argument \p arg and moves it into the

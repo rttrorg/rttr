@@ -113,40 +113,16 @@ endif()
 
 enable_rtti(BUILD_WITH_RTTI)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Werror")
-    message(STATUS "added flag -std=c++0x, -Wall, -Werror to g++")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-    message(STATUS "added flag -std=c++11, -Wall, -Werror to g++")
-  endif()
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  endif()
-
-  if(MINGW)
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-  else()
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
-  endif()
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-  message(STATUS "added flag -std=c++11, -Wall, -Werror to g++")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  message(WARNING "clang support is currently experimental")
-  
-  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
-endif()
+get_latest_supported_cxx(CXX_STANDARD)
+set(MAX_CXX_STANDARD ${CXX_STANDARD})
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /WX")
-    replaceCompilerOption("/W3" "/W4")
-    message(STATUS "added flag /bigobj, /W4 to MSVC compiler")
-    message(STATUS "Treats all compiler warnings as errors.")
+    if (${CXX_STANDARD} EQUAL 17 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.12.25835.0")
+        set(MAX_CXX_STANDARD 14) # downgrade, because RTTR does not compile with this flag (template error)
+    endif()
 endif()
+
+message(STATUS "using C++: ${MAX_CXX_STANDARD}")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
@@ -161,6 +137,25 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")
 else()
   message(WARNING "Please adjust CMAKE_CXX_FLAGS_RELWITHDEBINFO flags for this compiler!")
+endif()
+
+if(MSVC)
+    # we have to remove the default warning level,
+    # otherwise we get ugly compiler warnings, because of later replacing 
+    # option /W3 with /W4 (which will be later added)
+    replace_compiler_option("/W3" " ") 
+    if (BUILD_WITH_STATIC_RUNTIME_LIBS)
+        replace_compiler_option("/MD" " ")
+    endif()
+    
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(MINGW)
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+    else()
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
 endif()
 
 include(CMakePackageConfigHelpers)

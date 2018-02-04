@@ -148,7 +148,7 @@ class flat_multimap
                 return (m_value_list.cend());
         }
 // older versions of gcc stl, have no support for const_iterator in std::vector<T>::erase(const_iterator)
-#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 4900
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 490
         void erase(const Key& key)
         {
             iterator_key itr = find_key(key);

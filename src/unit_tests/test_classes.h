@@ -30,13 +30,17 @@
 
 #include <rttr/type>
 
-#define CLASS(CLASS_NAME) struct CLASS_NAME { RTTR_ENABLE() virtual int getType() { return 0; } int dummyIntValue; };
+#define CLASS(CLASS_NAME) struct CLASS_NAME \
+{ RTTR_ENABLE() virtual int getType() { return dummyIntValue; } int dummyIntValue = 0; };
 
-#define CLASS_INHERIT(CLASS1, CLASS2) struct CLASS1 : CLASS2 { virtual int getType() { return 1; } RTTR_ENABLE(CLASS2) double dummyDoubleValue; };
+#define CLASS_INHERIT(CLASS1, CLASS2) struct CLASS1 : CLASS2 \
+{ virtual int getType() { return static_cast<int>(dummyDoubleValue); } RTTR_ENABLE(CLASS2) double dummyDoubleValue = 1; };
 
-#define CLASS_MULTI_INHERIT_2(CLASS1, CLASS2, CLASS3) struct CLASS1 : CLASS2, CLASS3 { virtual int getType() { return 1; } RTTR_ENABLE(CLASS2, CLASS3) bool dummyBoolValue; };
+#define CLASS_MULTI_INHERIT_2(CLASS1, CLASS2, CLASS3) struct CLASS1 : CLASS2, CLASS3 \
+{ virtual int getType() { return static_cast<int>(dummyBoolValue); } RTTR_ENABLE(CLASS2, CLASS3) bool dummyBoolValue = false; };
 
-#define CLASS_MULTI_INHERIT_5(CLASS1, CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) struct CLASS1 : CLASS2, CLASS3, CLASS4, CLASS5, CLASS6 { virtual int getType() { return 1; } RTTR_ENABLE(CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) bool dummyBoolValue; };
+#define CLASS_MULTI_INHERIT_5(CLASS1, CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) struct CLASS1 : CLASS2, CLASS3, CLASS4, CLASS5, CLASS6 \
+{ virtual int getType() { return static_cast<int>(dummyBoolValue); } RTTR_ENABLE(CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) bool dummyBoolValue = true; };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // The following class structures has 7 hierarchy levels and is 5 classes wide;
