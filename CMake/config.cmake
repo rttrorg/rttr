@@ -82,7 +82,9 @@ else(WINDOWS)
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-set(CMAKE_DEBUG_POSTFIX "_d")
+# to avoid a setting a global debug flag automatically for all targets
+# we use an own variable
+set(RTTR_DEBUG_POSTFIX "_d") 
 
 # set the rpath for executables
 set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
@@ -99,8 +101,6 @@ elseif(WINDOWS)
   # no such thing as rpath exists
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
-
-
 
 # detect architecture
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)

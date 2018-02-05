@@ -51,7 +51,7 @@ if (${BUILD_RTTR_DYNAMIC})
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core
-                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX}
+                          DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           CXX_VISIBILITY_PRESET hidden
                           VISIBILITY_INLINES_HIDDEN 1)
@@ -95,7 +95,7 @@ if (BUILD_STATIC)
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_Lib
                           CXX_STANDARD ${MAX_CXX_STANDARD}
-                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+                          DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
     elseif (CMAKE_COMPILER_IS_GNUCXX)
@@ -142,7 +142,9 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL
                           CXX_STANDARD ${MAX_CXX_STANDARD}
-                          DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+                          DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                          CXX_VISIBILITY_PRESET hidden
+                          VISIBILITY_INLINES_HIDDEN 1)
 
     if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
         target_compile_features(rttr_core_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
@@ -184,7 +186,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                               VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                               EXPORT_NAME Core_Lib_STL
                               CXX_STANDARD ${MAX_CXX_STANDARD}
-                              DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+                              DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
             
         if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
             target_compile_features(rttr_core_lib_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
