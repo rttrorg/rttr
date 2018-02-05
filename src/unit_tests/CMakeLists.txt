@@ -43,7 +43,7 @@ add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(unit_tests RTTR::Core)
 add_dependencies(unit_tests RTTR::Core)
 target_include_directories(unit_tests PUBLIC ${CATCH_DIR})
-set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX _d 
+set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 

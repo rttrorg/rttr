@@ -410,18 +410,19 @@ endfunction()
 # _OLD_OPTION The option which should be replaced
 # _NEW_OPTION The new option which should be added
 ####################################################################################
-macro( replace_compiler_option _OLD_OPTION _NEW_OPTION)
+function( replace_compiler_option _OLD_OPTION _NEW_OPTION)
   foreach(flag_var
           CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
           CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
     if(${flag_var} MATCHES ${_OLD_OPTION})
-      string(REGEX REPLACE "${_OLD_OPTION}" "${_NEW_OPTION}" ${flag_var} "${${flag_var}}")
+      # the whitespace after_OLD_OPTION is necessary to really match only the flag and not some sub flag (/MD should match by /MDd)
+      string(REGEX REPLACE "${_OLD_OPTION} " "${_NEW_OPTION}" ${flag_var} "${${flag_var}}")
     else()
       set(${flag_var} "${${flag_var}} ${_NEW_OPTION}")
     endif()
-   # set(${flag_var} ${${flag_var}} PARENT_SCOPE)
+   set(${flag_var} ${${flag_var}} PARENT_SCOPE)
   endforeach()
-endmacro()
+endfunction()
 
 ####################################################################################
 # enables or disables the user of RTTI for all following source files.
@@ -526,16 +527,16 @@ macro(generateLibraryVersionVariables MAJOR MINOR PATCH PRODUCT_NAME PRODUCT_CPY
 endmacro()
 
 function(get_latest_supported_cxx CXX_STANDARD)
-
-    set(CMAKE_CXX_STANDARD 17)
-
     if (POLICY CMP0067)
         cmake_policy(SET CMP0067 NEW)
     endif()
     
+    # we need to set CMAKE_CXX_STANDARD in order to use the flags for 'check_cxx_source_compiles'
     if(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
-    set(MAX_CXX_STANDARD 14)
-    endif()
+        set(CMAKE_CXX_STANDARD 14)
+    else()
+        set(CMAKE_CXX_STANDARD 17)
+    endif()    
 
     include(CheckCXXSourceCompiles)
 
@@ -577,14 +578,15 @@ function(get_latest_supported_cxx CXX_STANDARD)
                               HAS_CXX_CONSTEXPR)
 
     if (HAS_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT AND HAS_STL_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT)
-        set(${CXX_STANDARD} 17 PARENT_SCOPE)
+        set(MAX_CXX_STD 17)
     else()
         if (HAS_CXX_CONSTEXPR)
-            set(${CXX_STANDARD} 14 PARENT_SCOPE)
+            set(MAX_CXX_STD 14)
         else()
-            set(${CXX_STANDARD} 11 PARENT_SCOPE)
+            set(MAX_CXX_STD 11)
         endif()
     endif()
-
+    
+    set(${CXX_STANDARD} ${MAX_CXX_STD} PARENT_SCOPE)
 endfunction()
 
