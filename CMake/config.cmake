@@ -73,10 +73,10 @@ if(UNIX)
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 
 else(WINDOWS)
-  set(RTTR_RUNTIME_INSTALL_DIR "bin") 
-  set(RTTR_LIBRARY_INSTALL_DIR "bin")
-  set(RTTR_ARCHIVE_INSTALL_DIR "lib")
-  set(RTTR_FRAMEWORK_INSTALL_DIR "bin")
+  set(RTTR_RUNTIME_INSTALL_DIR   "${CMAKE_INSTALL_PREFIX}/bin") 
+  set(RTTR_LIBRARY_INSTALL_DIR   "${CMAKE_INSTALL_PREFIX}/bin")
+  set(RTTR_ARCHIVE_INSTALL_DIR   "${CMAKE_INSTALL_PREFIX}/lib")
+  set(RTTR_FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
@@ -96,7 +96,7 @@ if(APPLE)
 elseif(UNIX)
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
 elseif(WINDOWS)
-  # no such thin as rpath exists,
+  # no such thing as rpath exists
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
 
@@ -111,6 +111,9 @@ else()
     message(STATUS "Architecture: x86")
 endif()
 
+# use standard c++ insteaf of extented (-std=c++17 vs. std=gnu++17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 enable_rtti(BUILD_WITH_RTTI)
 
 get_latest_supported_cxx(CXX_STANDARD)
@@ -118,7 +121,7 @@ set(MAX_CXX_STANDARD ${CXX_STANDARD})
 
 if(MSVC)
     if (${CXX_STANDARD} EQUAL 17 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.12.25835.0")
-        set(MAX_CXX_STANDARD 14) # downgrade, because RTTR does not compile with this flag (template error)
+        set(MAX_CXX_STANDARD 14) # downgrade, because RTTR can't be compiled atm. with c++17 flag (template error)
     endif()
 endif()
 
@@ -146,8 +149,9 @@ if(MSVC)
     replace_compiler_option("/W3" " ") 
     if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         replace_compiler_option("/MD" " ")
+        replace_compiler_option("/MDd" " ")
     endif()
-    
+   
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(MINGW)
         set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
@@ -160,17 +164,17 @@ endif()
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-  VERSION ${RTTR_VERSION_STR}
-  COMPATIBILITY AnyNewerVersion
+    "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
+    VERSION ${RTTR_VERSION_STR}
+    COMPATIBILITY AnyNewerVersion
 )
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
-             COMPONENT Devel)
+            DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
+            COMPONENT Devel)
 
     install(FILES "${LICENSE_FILE}" "${README_FILE}"
-             DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
-             PERMISSIONS OWNER_READ)
+            DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
+            PERMISSIONS OWNER_READ)
 endif()
