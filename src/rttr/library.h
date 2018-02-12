@@ -177,7 +177,7 @@ public:
       *
       * \see property
       */
-     array_range<property> get_gloabl_properties() const RTTR_NOEXCEPT;
+     array_range<property> get_global_properties() const RTTR_NOEXCEPT;
 
      /*!
       * \brief A range of all registered global \ref method "methods" in this library.

@@ -174,9 +174,9 @@ array_range<type> library::get_types() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<property> library::get_gloabl_properties() const RTTR_NOEXCEPT
+array_range<property> library::get_global_properties() const RTTR_NOEXCEPT
 {
-    return m_pimpl->get_gloabl_properties();
+    return m_pimpl->get_global_properties();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

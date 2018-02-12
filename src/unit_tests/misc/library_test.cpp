@@ -60,33 +60,33 @@ TEST_CASE("library - load", "[library]")
         CHECK(does_plugin_type_exist() == true);
 
         CHECK(lib.get_types().size()             > 1);
-        CHECK(lib.get_properties().size()       == 0);
-        CHECK(lib.get_methods().size()          == 0);
+        CHECK(lib.get_global_properties().size() == 0);
+        CHECK(lib.get_global_methods().size()    == 0);
 
         CHECK(lib.unload() == true);
-        CHECK(lib.get_error_string().empty()    == true);
+        CHECK(lib.get_error_string().empty()     == true);
 
-        CHECK(lib.get_types().size()            == 0);
-        CHECK(lib.get_properties().size()       == 0);
-        CHECK(lib.get_methods().size()          == 0);
-        CHECK(does_plugin_type_exist()          == false);
+        CHECK(lib.get_types().size()             == 0);
+        CHECK(lib.get_global_properties().size() == 0);
+        CHECK(lib.get_global_methods().size()    == 0);
+        CHECK(does_plugin_type_exist()           == false);
     }
 
     SECTION("negative test")
     {
         library lib("SomeNonExisitingLibrary");
 
-        CHECK(lib.is_loaded()                   == false);
-        CHECK(lib.get_types().size()            == 0);
-        CHECK(lib.get_properties().size()       == 0);
-        CHECK(lib.get_methods().size()          == 0);
-        CHECK(lib.get_error_string().empty()    == true);
+        CHECK(lib.is_loaded()                    == false);
+        CHECK(lib.get_types().size()             == 0);
+        CHECK(lib.get_global_properties().size() == 0);
+        CHECK(lib.get_global_methods().size()    == 0);
+        CHECK(lib.get_error_string().empty()     == true);
 
-        CHECK(lib.load()                        == false);
+        CHECK(lib.load()                         == false);
 
-        CHECK(lib.is_loaded()                   == false);
-        CHECK(lib.get_error_string().empty()    == false);
-        CHECK(lib.unload()                      == false);
+        CHECK(lib.is_loaded()                    == false);
+        CHECK(lib.get_error_string().empty()     == false);
+        CHECK(lib.unload()                       == false);
     }
 
     SECTION("load with suffix")
@@ -120,16 +120,16 @@ TEST_CASE("library - multi load", "[library]")
     {
         library lib(library_name);
 
-        CHECK(does_plugin_type_exist()  == false);
-        CHECK(lib.load()                == true);
-        CHECK(lib.load()                == true);
+        CHECK(does_plugin_type_exist()              == false);
+        CHECK(lib.load()                            == true);
+        CHECK(lib.load()                            == true);
 
-        REQUIRE(lib.get_error_string().empty()  == true);
-        CHECK(does_plugin_type_exist()          == true);
+        REQUIRE(lib.get_error_string().empty()      == true);
+        CHECK(does_plugin_type_exist()              == true);
 
-        CHECK(lib.get_types().size()         > 1);
-        CHECK(lib.get_properties().size()   == 0);
-        CHECK(lib.get_methods().size()      == 0);
+        CHECK(lib.get_types().size()                > 1);
+        CHECK(lib.get_global_properties().size()    == 0);
+        CHECK(lib.get_global_methods().size()       == 0);
 
         CHECK(lib.unload() == true);
         CHECK(does_plugin_type_exist() == false);

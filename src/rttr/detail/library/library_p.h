@@ -120,7 +120,7 @@ public:
 
     array_range<type> get_types() const RTTR_NOEXCEPT { return m_state_saver.get_types(); }
 
-    array_range<property> get_gloabl_properties() const RTTR_NOEXCEPT { return m_state_saver.get_global_properties(); }
+    array_range<property> get_global_properties() const RTTR_NOEXCEPT { return m_state_saver.get_global_properties(); }
 
     array_range<method> get_global_methods() const RTTR_NOEXCEPT { return m_state_saver.get_global_methods(); }
 
