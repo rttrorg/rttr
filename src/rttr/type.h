@@ -172,7 +172,7 @@ RTTR_API bool compare_types_equal(const void*, const void*, const type&, bool&);
 class RTTR_API type
 {
     public:
-        typedef uint16_t type_id;
+        typedef uintptr_t type_id;
 
         /*!
          * \brief Assigns a type to another one.
@@ -1076,7 +1076,7 @@ class RTTR_API type
          *
          * \param id The unique id of the data type.
          */
-        RTTR_INLINE type(detail::type_data* data) RTTR_NOEXCEPT;
+        RTTR_INLINE explicit type(detail::type_data* data) RTTR_NOEXCEPT;
 
         /*!
          * \brief This function try to convert the given pointer \p ptr from the type \p source_type

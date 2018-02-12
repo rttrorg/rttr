@@ -141,9 +141,7 @@ struct type_data
     impl::create_wrapper_func  create_wrapper;
     impl::get_class_data_func  get_class_data;
 
-    uint16_t type_index;
-    static const uint16_t m_invalid_id = 0;
-    RTTR_FORCE_INLINE bool is_valid() const RTTR_NOEXCEPT { return (type_index != m_invalid_id); }
+    bool is_valid;
     RTTR_FORCE_INLINE bool type_trait_value(type_trait_infos type_trait) const RTTR_NOEXCEPT { return m_type_traits.test(static_cast<std::size_t>(type_trait)); }
 
 
@@ -311,7 +309,7 @@ std::unique_ptr<type_data> make_type_data()
                             get_create_wrapper_func<T>(),
 
                             &get_type_class_data<T>,
-                            0,
+                            true,
                             type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
                                               TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_array, is_array) |
@@ -343,7 +341,7 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                nullptr,
                                get_create_wrapper_func<void>(),
                                &get_invalid_type_class_data,
-                               0,
+                               false,
                                type_trait_value{0}};
 
     instance.raw_type_data  = &instance;

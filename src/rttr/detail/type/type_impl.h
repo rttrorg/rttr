@@ -79,63 +79,63 @@ RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 
 RTTR_INLINE bool type::operator<(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index < other.m_type_data->type_index);
+    return (m_type_data < other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index > other.m_type_data->type_index);
+    return (m_type_data > other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index >= other.m_type_data->type_index);
+    return (m_type_data >= other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator<=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index <= other.m_type_data->type_index);
+    return (m_type_data <= other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator==(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index == other.m_type_data->type_index);
+    return (m_type_data == other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator!=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index != other.m_type_data->type_index);
+    return (m_type_data != other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type_id type::get_id() const RTTR_NOEXCEPT
 {
-    return m_type_data->type_index;
+    return reinterpret_cast<type::type_id>(m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::is_valid() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_valid();
+    return m_type_data->is_valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_valid();
+    return m_type_data->is_valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ RTTR_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 
 RTTR_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
 {
-    return m_type_data->wrapped_type->is_valid();
+    return m_type_data->wrapped_type->is_valid;
 }
 
 

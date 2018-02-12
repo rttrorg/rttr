@@ -201,7 +201,7 @@ private:
 
     static std::string derive_name(const type& t);
     //! Returns true, when the name was already registered
-    bool register_name(uint16_t& id, type_data* info);
+    type register_name_if_neccessary(type_data* info);
     static void register_base_class_info(type_data* info);
     /*!
      * \brief This will create the derived name of a template instance, with all the custom names of a template parameter.
@@ -231,7 +231,6 @@ private:
     std::vector<data_container<const type_converter_base*>>     m_type_converter_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
-
 };
 
 } // end namespace detail

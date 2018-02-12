@@ -457,30 +457,20 @@ static void remove_item(T& container, const I& item)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool type_register_private::register_name(uint16_t& id, type_data* info)
+type type_register_private::register_name_if_neccessary(type_data* info)
 {
     using namespace detail;
 
-    auto& orig_name_to_id = m_orig_name_to_id;
-    auto ret = orig_name_to_id.find(info->type_name);
-    if (ret != orig_name_to_id.end())
-    {
-        id = (*ret).get_id();
-        return true;
-    }
+    auto ret = m_orig_name_to_id.find(info->type_name);
+    if (ret != m_orig_name_to_id.end())
+        return (*ret);
 
-    static type::type_id m_type_id_counter = 0;
-    ++m_type_id_counter;
-
-    orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
+    m_orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
     info->name = derive_name(type(info));
     m_custom_name_to_id.insert(std::make_pair(info->name, type(info)));
 
-    id = m_type_id_counter;
-    info->type_index = id;
     m_type_list.emplace_back(type(info));
-
-    return false;
+    return get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -507,7 +497,7 @@ void type_register_private::register_base_class_info(type_data* info)
     // sort the base classes after it registration index, that means the root class is always the first in the list,
     // followed by its derived classes, here it depends on the order of RTTR_ENABLE(CLASS)
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
-                                                          { return left.m_base_type.get_id() < right.m_base_type.get_id(); });
+                                                         { return left.m_base_type.is_base_of(right.m_base_type); });
 
     auto& class_data = info->get_class_data();
     for (const auto& t : base_classes)
@@ -528,12 +518,11 @@ type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
     info->get_base_types();
 
     using namespace detail;
-    uint16_t id = 0;
-    const bool isAlreadyRegistered = register_name(id, info);
-    if (isAlreadyRegistered)
-        return type(m_type_data_storage[id]);
 
-    info->raw_type_data  = !info->raw_type_data->is_valid() ? info : info->raw_type_data;
+    if (auto t = register_name_if_neccessary(info))
+        return t;
+
+    info->raw_type_data  = !info->raw_type_data->is_valid ? info : info->raw_type_data;
 
     m_type_data_storage.push_back(info);
 
@@ -544,7 +533,7 @@ type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
     // when a base class type has class items, but the derived one not,
     // we update the derived class item list
-    const auto t = type(m_type_data_storage[id]);
+    const auto t = type(info);
     update_class_list(t, &detail::class_data::m_properties);
     update_class_list(t, &detail::class_data::m_methods);
 
