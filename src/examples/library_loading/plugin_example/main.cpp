@@ -25,19 +25,83 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#include <cstdio>
+#include <string>
+#include <vector>
+#include <array>
+#include <map>
+#include <iostream>
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "array_range.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "enum_flags.h"
-#include "library.h"
+#include <rttr/registration>
 
-#endif // RTTR_TYPE_HEADERS_H_
+class MyPlugin
+{
+public:
+    MyPlugin()
+    {}
+
+    int some_method()
+    {
+        return 42;
+    }
+
+    void some_foo()
+    {
+        std::cout << "int";
+    }
+    int value;
+    bool flag;
+
+};
+
+class MyPlugin2
+{
+public:
+    MyPlugin2()
+    {}
+
+    int some_method()
+    {
+        return 42;
+    }
+
+    void some_foo()
+    {
+        std::cout << "int";
+    }
+    int value;
+    bool flag;
+
+    RTTR_ENABLE()
+
+};
+
+RTTR_REGISTRATION
+{
+   rttr::registration::class_<MyPlugin>("MyPlugin")
+   .constructor<>()
+   .property("value", &MyPlugin::value)
+    .property("flag", &MyPlugin::flag)
+    .method("some_method", &MyPlugin::some_method)
+    //.method("some_foo", &MyPlugin::some_foo)
+    //.method("some_foo3", &MyPlugin::some_foo)
+    ;
+#if 0
+
+    MyPlugin foo;
+    rttr::type::get<MyPlugin>();
+
+    rttr::type::get<MyPlugin*>();
+
+    rttr::type::get<MyPlugin2>();
+    rttr::type::get<MyPlugin2*>();
+    rttr::type::get<MyPlugin2**>();
+    rttr::type::get<MyPlugin2***>();
+
+   //new rttr::detail::property_wrapper<rttr::detail::member_object_ptr, int(MyPlugin::*), void, rttr::access_levels::public_access, rttr::detail::return_as_copy, rttr::detail::set_value, 0>("foo", rttr::type::get<MyPlugin>(), &MyPlugin::value, {});
+   rttr::variant var = 2;
+  // rttr::variant var5 = 5;
+  // rttr::variant varf5 = std::string("asds");
+#endif
+}
+

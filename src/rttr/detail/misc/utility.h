@@ -522,6 +522,23 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+inline enable_if_t<std::is_same<T, std::string>::value || std::is_same<T, std::wstring>::value, bool>
+starts_with(const T& big_str, const T& small_str)
+{
+    return (big_str.compare(0, small_str.size(), small_str) == 0);
+}
+
+template<typename T>
+inline enable_if_t<std::is_same<T, std::string>::value || std::is_same<T, std::wstring>::value, bool>
+ends_with(const T& big_str, const T& small_str)
+{
+    return (big_str.size() >= small_str.size() &&
+            big_str.compare(big_str.size() - small_str.size(), small_str.size(), small_str) == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

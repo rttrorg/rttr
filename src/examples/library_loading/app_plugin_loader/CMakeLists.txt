@@ -2,7 +2,7 @@
 #                                                                                  #
 #  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
 #                                                                                  #
-#  This file is part of RTTR (Run Time Type Reflection)                            #
+#  This file is part of the examples of RTTR (Run Time Type Reflection)            #
 #  License: MIT License                                                            #
 #                                                                                  #
 #  Permission is hereby granted, free of charge, to any person obtaining           #
@@ -25,47 +25,27 @@
 #                                                                                  #
 ####################################################################################
 
-project(unit_tests LANGUAGES CXX)
+project(app_plugin_loader LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
-                                "RTTR unit_tests" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
+                                "RTTR Examples: library_loading" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
 
-loadFolder("unit_tests" HPP_FILES SRC_FILES)
+loadFolder("app_plugin_loader" HPP_FILES SRC_FILES)
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
-add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(unit_tests RTTR::Core)
-add_dependencies(unit_tests RTTR::Core)
-target_include_directories(unit_tests PUBLIC ${CATCH_DIR})
-set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                                            FOLDER "Testing"
-                                            INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
-                                            CXX_STANDARD ${MAX_CXX_STANDARD})
+add_executable(app_plugin_loader ${SRC_FILES} ${HPP_FILES})
+target_link_libraries(app_plugin_loader RTTR::Core)
+add_dependencies(app_plugin_loader plugin_example)
 
-set_compiler_warnings(unit_tests)
+set_target_properties(app_plugin_loader PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                                    FOLDER "Examples/library_loading")
 
-if (MSVC)
-    target_compile_options(unit_tests PRIVATE /bigobj) 
-endif()
-                                            
-# run tests
-add_custom_target(run_tests ALL
-                  COMMAND "$<TARGET_FILE:unit_tests>"
-                  DEPENDS unit_tests
-                  COMMENT "Running unit_tests")
-                  
-set_target_properties(run_tests PROPERTIES 
-                                FOLDER "Testing")
-
-add_subdirectory(plugin)
-
-add_dependencies(unit_tests unit_test_plugin)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

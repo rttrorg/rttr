@@ -63,7 +63,8 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
                               *_p.h* \\
                               */src/rttr/detail/* \\
                               */src/test/* \\
-                              */src/benchmark/*")
+                              */src/benchmark/* \\
+                              */src/examples/*")
 
 set(DOXYGEN_INDEX_FILE_IN   "index.html.in")
 
