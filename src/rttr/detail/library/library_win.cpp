@@ -110,9 +110,9 @@ std::string error_string(int error_code = -1)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define IS_SEP(x)    ((x) == L'/' || (x) == L'\\')
-#define PREF	L'\\'
-#define COLON	L':'
+#define IS_SEP(x)   ((x) == L'/' || (x) == L'\\')
+#define PREF        L'\\'
+#define COLON       L':'
 
 // returns end of prefix
 size_t get_prefix_end(const std::wstring& path)
@@ -121,14 +121,14 @@ size_t get_prefix_end(const std::wstring& path)
         && IS_SEP(path[0])
         && IS_SEP(path[1])
         && !IS_SEP(path[2]))
-    {	// network name, pick off \\name
+    {   // network name => \\name
         std::size_t idx = 3;
         for (; idx < path.size() && !IS_SEP(path[idx]); ++idx)
             ;
         return idx;
     }
     else
-    {	// no network name, pick off drive:
+    {   // no network name => drive:
         std::size_t idx = path.find(COLON, 0);
         if (idx == path.npos)
             idx = 0;

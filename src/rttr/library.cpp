@@ -96,7 +96,7 @@ class library_manager
         }
 
         // use std::less in order to use string_view for finding the item
-        std::map<std::string, std::shared_ptr<library_private>, std::less<>> m_library_map;
+        std::map<std::string, std::shared_ptr<library_private>, std::less<void>> m_library_map;
 };
 }
 
