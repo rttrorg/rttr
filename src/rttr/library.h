@@ -195,4 +195,4 @@ private:
 
 } // end namespace rttr
 
-#endif // RTTR_LIBRARY_H_
+#endif  // RTTR_LIBRARY_H_
