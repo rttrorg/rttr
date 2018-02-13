@@ -25,19 +25,49 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+#include <cstdio>
+#include <string>
+#include <vector>
+#include <array>
+#include <map>
+#include <iostream>
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "array_range.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "enum_flags.h"
-#include "library.h"
+#include <rttr/registration>
 
-#endif // RTTR_TYPE_HEADERS_H_
+struct point2D { int x; int y; };
+
+class test_plugin_class
+{
+public:
+    test_plugin_class()
+    {}
+
+    int some_method()
+    {
+        return 42;
+    }
+
+
+    int value;
+    std::vector<point2D> point_list = { {1, 2}, {3, 4}, {5, 6} };
+
+};
+
+
+RTTR_REGISTRATION
+{
+    rttr::registration::class_<test_plugin_class>("test_plugin_class")
+            .constructor<>()
+             (
+                 rttr::policy::ctor::as_object
+             )
+            .property("value", &test_plugin_class::value)
+            .property("point_list", &test_plugin_class::point_list)
+             (
+                 rttr::policy::prop::as_reference_wrapper
+             )
+            .method("some_method", &test_plugin_class::some_method)
+            ;
+
+}
+

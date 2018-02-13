@@ -26,3 +26,4 @@
 ####################################################################################
 
 add_subdirectory (json_serialization)
+add_subdirectory (library_loading)
