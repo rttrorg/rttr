@@ -25,19 +25,24 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_TYPE_HEADERS_H_
-#define RTTR_TYPE_HEADERS_H_
+// std stuff
+#include <map>
+#include <string>
+#include <vector>
+#include <set>
+#include <list>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+#include <tuple>
+#include <algorithm>
+#include <cassert>
+#include <climits>
+#include <iosfwd>
+#include <memory>
+#include <type_traits>
 
-#include "type.h"
-#include "rttr_enable.h"
-#include "rttr_cast.h"
-#include "array_range.h"
-#include "constructor.h"
-#include "destructor.h"
-#include "method.h"
-#include "property.h"
-#include "enumeration.h"
-#include "enum_flags.h"
-#include "library.h"
+#include <rttr/registration>
 
-#endif // RTTR_TYPE_HEADERS_H_
