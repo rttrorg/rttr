@@ -285,33 +285,33 @@ registration::bind<detail::enum_, detail::invalid_type, Enum_Type> registration:
 
 } // end namespace rttr
 
-#define RTTR_REGISTRATION                                                 \
-static void rttr_auto_register_reflection_function_();                    \
-namespace                                                                 \
-{                                                                         \
-    struct rttr__auto__register__                                         \
-    {                                                                     \
-        rttr__auto__register__()                                          \
-        {                                                                 \
-            rttr_auto_register_reflection_function_();                    \
-        }                                                                 \
-    };                                                                    \
-}                                                                         \
-static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__);  \
+#define RTTR_REGISTRATION                                                           \
+static void rttr_auto_register_reflection_function_();                              \
+namespace                                                                           \
+{                                                                                   \
+    struct rttr__auto__register__                                                   \
+    {                                                                               \
+        rttr__auto__register__()                                                    \
+        {                                                                           \
+            rttr_auto_register_reflection_function_();                              \
+        }                                                                           \
+    };                                                                              \
+}                                                                                   \
+static const rttr__auto__register__ RTTR_CAT(auto_register__, __LINE__);            \
 static void rttr_auto_register_reflection_function_()
 
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
 #define RTTR_REGISTRATION_PLUGIN RTTR_REGISTRATION
 #else
-#define RTTR_REGISTRATION_PLUGIN                                          \
-static void rttr_auto_register_reflection_function_() RTTR_DECLARE_CTOR;  \
-static void rttr_auto_unregister_reflection_function() RTTR_DECLARE_DTOR; \
-                                                                          \
-static void rttr_auto_unregister_reflection_function()                    \
-{                                                                         \
-    rttr::detail::get_registration_manager().unregister();                \
-}                                                                         \
+#define RTTR_REGISTRATION_PLUGIN                                                    \
+static void rttr_auto_register_reflection_function_() RTTR_DECLARE_PLUGIN_CTOR;     \
+static void rttr_auto_unregister_reflection_function() RTTR_DECLARE_PLUGIN_DTOR;    \
+                                                                                    \
+static void rttr_auto_unregister_reflection_function()                              \
+{                                                                                   \
+    rttr::detail::get_registration_manager().unregister();                          \
+}                                                                                   \
 static void rttr_auto_register_reflection_function_()
 #endif
 
