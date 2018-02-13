@@ -49,13 +49,14 @@ class library_manager
         {
             auto& manager = get_instance();
 
-            auto itr = manager.m_library_map.find(file_name);
+            auto file_as_string = file_name.to_string();
+            auto itr = manager.m_library_map.find(file_as_string);
             if (itr != manager.m_library_map.end())
                 return itr->second;
 
             auto lib = std::make_shared<library_private>(file_name, version);
 
-            manager.m_library_map.insert({file_name.to_string(), lib});
+            manager.m_library_map.emplace(std::move(file_as_string), lib);
 
             return lib;
         }
@@ -68,7 +69,7 @@ class library_manager
         static void remove_item(const std::shared_ptr<library_private>& item)
         {
             auto& manager = get_instance();
-            auto itr = manager.m_library_map.find(item->get_file_name()); // because we use string_view to find the item
+            auto itr = manager.m_library_map.find(item->get_file_name().to_string()); // because we use string_view to find the item
             if (itr != manager.m_library_map.end())
                 manager.m_library_map.erase(itr);
         }
@@ -96,7 +97,7 @@ class library_manager
         }
 
         // use std::less in order to use string_view for finding the item
-        std::map<std::string, std::shared_ptr<library_private>, std::less<void>> m_library_map;
+        std::map<std::string, std::shared_ptr<library_private>> m_library_map;
 };
 }
 
