@@ -44,6 +44,11 @@ target_link_libraries(plugin_example RTTR::Core)
 set_target_properties(plugin_example PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                         FOLDER "Examples/library_loading")
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    # we have to use this flag, otherwise dlclose does not call the destructor function
+    # of the library
+    target_compile_options(plugin_example PRIVATE "-fno-gnu-unique")
+endif()
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

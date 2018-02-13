@@ -58,27 +58,7 @@ class RTTR_LOCAL registration_manager
         }
         ~registration_manager()
         {
-            if (!m_should_unregister)
-                return;
-
-            for (auto& prop : m_global_properties)
-                type_register::unregister_global_property(prop.get());
-            for (auto& meth : m_global_methods)
-                type_register::unregister_global_method(meth.get());
-            for (auto& enum_ : m_enumerations)
-                type_register::unregister_enumeration(enum_.get());
-
-            for (auto& item : m_type_converters)
-                type_register::unregister_converter(item.get());
-            for (auto& item : m_type_equal_cmps)
-                type_register::unregister_equal_comparator(item.get());
-            for (auto& item : m_type_less_than_cmps)
-                type_register::unregister_less_than_comparator(item.get());
-
-            for (auto& type : m_type_data_list)
-                type_register::unregister_type(type.get());
-
-            type_register::unregister_reg_manager(this);
+            unregister();
         }
 
         type add_item(std::unique_ptr<type_data> obj)
@@ -159,6 +139,45 @@ class RTTR_LOCAL registration_manager
             m_should_unregister = false;
         }
 
+        void unregister()
+        {
+            if (!m_should_unregister)
+                return;
+
+            for (auto& prop : m_global_properties)
+                type_register::unregister_global_property(prop.get());
+            for (auto& meth : m_global_methods)
+                type_register::unregister_global_method(meth.get());
+            for (auto& enum_ : m_enumerations)
+                type_register::unregister_enumeration(enum_.get());
+
+            for (auto& item : m_type_converters)
+                type_register::unregister_converter(item.get());
+            for (auto& item : m_type_equal_cmps)
+                type_register::unregister_equal_comparator(item.get());
+            for (auto& item : m_type_less_than_cmps)
+                type_register::unregister_less_than_comparator(item.get());
+
+            for (auto& type : m_type_data_list)
+                type_register::unregister_type(type.get());
+
+            type_register::unregister_reg_manager(this);
+
+            m_type_data_list.clear();
+            m_constructors.clear();
+            m_destructors.clear();
+            m_properties.clear();
+            m_global_properties.clear();
+            m_methods.clear();
+            m_global_methods.clear();
+            m_enumerations.clear();
+            m_type_converters.clear();
+            m_type_equal_cmps.clear();
+            m_type_less_than_cmps.clear();
+
+            m_should_unregister = false;
+        }
+
 
         // no copy, no assign
         registration_manager(const registration_manager&) = delete;
@@ -186,8 +205,8 @@ class RTTR_LOCAL registration_manager
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-registration_manager& get_registration_manager() RTTR_NOEXCEPT
+
+static registration_manager& get_registration_manager() RTTR_NOEXCEPT
 {
     static registration_manager obj;
     return obj;
@@ -199,7 +218,7 @@ template<typename T, typename Item>
 static RTTR_FORCE_INLINE enable_if_t<std::is_same<T, invalid_type>::value, void> // we want to store only global items
 store_item(Item item)
 {
-    auto& obj = get_registration_manager<int>();
+    auto& obj = get_registration_manager();
     obj.add_global_item(std::move(item));
 }
 
@@ -207,7 +226,7 @@ template<typename T, typename Item>
 enable_if_t<!std::is_same<T, invalid_type>::value, void>
 static RTTR_FORCE_INLINE store_item(Item item)
 {
-    auto& obj = get_registration_manager<int>();
+    auto& obj = get_registration_manager();
     obj.add_item(std::move(item));
 }
 

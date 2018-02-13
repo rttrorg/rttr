@@ -48,6 +48,11 @@ set_target_properties(unit_test_plugin PROPERTIES
                                        DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                        FOLDER "Testing")
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    # we have to use this flag, otherwise dlclose does not call the destructor function
+    # of the library
+    target_compile_options(unit_test_plugin PRIVATE "-fno-gnu-unique")
+endif()
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
