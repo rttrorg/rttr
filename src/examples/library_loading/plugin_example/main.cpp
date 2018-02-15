@@ -54,7 +54,7 @@ public:
 
 };
 
-RTTR_REGISTRATION_PLUGIN
+RTTR_PLUGIN_REGISTRATION
 {
    rttr::registration::class_<MyPlugin>("MyPlugin")
         .constructor<>()

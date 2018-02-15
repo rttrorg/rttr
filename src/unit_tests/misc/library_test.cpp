@@ -135,7 +135,7 @@ TEST_CASE("library - multi load", "[library]")
         CHECK(does_plugin_type_exist() == false);
     }
 
-    SECTION("load the same lib multiple times")
+    SECTION("load the same lib from different instance multiple times")
     {
         library lib1(library_name);
         library lib2(library_name);
@@ -154,6 +154,25 @@ TEST_CASE("library - multi load", "[library]")
 
         CHECK(lib2.unload() == true);
 
+        CHECK(does_plugin_type_exist() == false);
+    }
+
+    SECTION("load the same lib multiple times 2xload() and unload()")
+    {
+        library lib(library_name);
+
+        CHECK(does_plugin_type_exist() == false);
+
+        CHECK(lib.load() == true);
+        CHECK(does_plugin_type_exist() == true);
+
+        CHECK(lib.unload() == true);
+        CHECK(does_plugin_type_exist() == false);
+
+        CHECK(lib.load() == true);
+        CHECK(does_plugin_type_exist() == true);
+
+        CHECK(lib.unload() == true);
         CHECK(does_plugin_type_exist() == false);
     }
 }

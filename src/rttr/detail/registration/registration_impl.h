@@ -302,9 +302,9 @@ static void rttr_auto_register_reflection_function_()
 
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#define RTTR_REGISTRATION_PLUGIN RTTR_REGISTRATION
+#define RTTR_PLUGIN_REGISTRATION RTTR_REGISTRATION
 #else
-#define RTTR_REGISTRATION_PLUGIN                                                    \
+#define RTTR_PLUGIN_REGISTRATION                                                    \
 static void rttr_auto_register_reflection_function_() RTTR_DECLARE_PLUGIN_CTOR;     \
 static void rttr_auto_unregister_reflection_function() RTTR_DECLARE_PLUGIN_DTOR;    \
                                                                                     \

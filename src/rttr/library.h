@@ -43,18 +43,21 @@ class library_private;
 
 /*!
  * The \ref library class provides a cross platform way of explicit loading shared objects
- *  (`.so` on Unix based system and `.DLL` on windows).
+ * (`.so` on Unix based system and `.DLL` on windows).
  *
  * With a call to \ref load() the library will be loaded and with \ref unload() unloaded.
  * The explicit call to \ref unload() is not necessary. An internal ref count will trigger the unload automatically
- * on application exit.
+ * on application exit. So you are free the let the \ref library instance go out of scope after loading,
+ * the type data will still be available.
  *
- * After loading the registered type in the library are known to the type system of RTTR.
+ * After loading the library, the types of the plugin will be registered to the type system of RTTR.
+ * Use therefore the macro: \ref RTTR_PLUGIN_REGISTRATION.
  * The \ref type "types" or global \ref property "properties" or  \ref method "methods"
  * can be retrieved directly from the library class via getters.
  *
- * Because the types are registered via RTTR inside the \ref RTTR_REGISTRATION macro
- * It is not necessary to additionally mark your types for export (e.g. using `__declspec( dllexport )` on windows)
+ * Because the types are registered via RTTR, it is not necessary to additionally mark your
+ * types for export (e.g. using `__declspec( dllexport )` on windows).
+ * Furthermore, with using RTTR, it is possible to export overloaded methods (same name but different signature).
  *
  * Copying and Assignment
  * ----------------------
@@ -63,15 +66,34 @@ class library_private;
  * Typical Usage
  * ----------------------
  * A typical usage example is the following:
+ * Some cpp file in your plugin called: "MyPlugin":
+ *  \code{.cpp}
+ *   #include <rttr/registration>
+ *   struct Foo
+ *   {
+ *      void set_value(int v) { value = v; }
+ *      int get_value() const { return value; }
+ *      int value = 0;
+ *   };
+ *
+ *   RTTR_PLUGIN_REGISTRATION
+ *   {
+ *     rttr::registration::class_<Foo>("Foo")
+ *             .constructor<>()
+ *             .property("value", &Foo::set_value, &Foo::get_value);
+ *   }
+ *
+ *  \endcode
+ *
+ * Now in your application, which loads the plugin:
  *  \code{.cpp}
  *   library lib("MyPlugin"); // file suffix is not needed, will be automatically appended
  *   lib.load();
- *   auto type_list = t.get_types();
- *   for (auto& t : type_list)
- *   {
- *      std::cout << "loaded types: " << t.get_name() << std::endl;
- *   }
- *
+ *   auto t = type::get_by_name("Foo");
+ *   std::cout << t.get_name() << std::endl; // prints "Foo"
+ *   variant var = t.create();
+ *   auto value = t.set_property_value("value", var, 12);
+ *   std::cout << t.get_property_value("value", var).to_string() << std::endl; // prints "12"
  *  \endcode
  */
 class RTTR_API library
@@ -113,7 +135,7 @@ public:
 
      /*!
       * \brief Unloads the library.
-      *        On application termination this happens automatically, so usually you don't need to call this function.
+      *        On application exit this happens automatically, so usually you don't need to call this function.
       *        When the same library is loaded multiple times, this call will not succeed before every library instance was unloaded.
       *
       * \remark When you unload the library, make sure you don't hold any data (methods, properties or variants etc...) anymore,
