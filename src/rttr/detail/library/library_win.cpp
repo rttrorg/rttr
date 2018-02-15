@@ -39,6 +39,35 @@
 
 namespace
 {
+#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 700
+
+std::wstring convert_utf8_to_utf16(const std::string& source)
+{
+    if (source.empty())
+        return std::wstring();
+
+    const auto size_needed = MultiByteToWideChar(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), NULL, 0);
+    std::wstring result(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), &result[0], size_needed);
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+std::string convert_utf16_to_utf8(const std::wstring& source)
+{
+    if (source.empty())
+        return std::string();
+
+    const auto size_needed = WideCharToMultiByte(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), NULL, 0, NULL, NULL);
+    std::string result( size_needed, 0 );
+    WideCharToMultiByte(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), &result[0], size_needed, NULL, NULL);
+    return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#else
 
 std::wstring convert_utf8_to_utf16(const std::string& str)
 {
@@ -53,6 +82,8 @@ std::string convert_utf16_to_utf8(const std::wstring& str)
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.to_bytes(str);
 }
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
