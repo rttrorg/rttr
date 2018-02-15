@@ -29,6 +29,9 @@
 #include "rttr/detail/library/library_p.h"
 
 #include <map>
+#include <mutex>
+
+static std::mutex g_library_mutex;
 
 namespace rttr
 {
@@ -40,13 +43,14 @@ namespace detail
 
 /*!
  * A simple manager class, to hold all created library_private pointer objects. A private singleton.
- * After application exit he will unload all libs without any reference.
+ * After application exit it will unload all libs without any reference.
  */
 class library_manager
 {
     public:
         static std::shared_ptr<library_private> create_or_find_library(string_view file_name, string_view version)
         {
+            std::lock_guard<std::mutex> l(g_library_mutex);
             auto& manager = get_instance();
 
             auto file_as_string = file_name.to_string();
@@ -68,6 +72,8 @@ class library_manager
 
         static void remove_item(const std::shared_ptr<library_private>& item)
         {
+            std::lock_guard<std::mutex> l(g_library_mutex);
+
             auto& manager = get_instance();
             auto itr = manager.m_library_map.find(item->get_file_name().to_string()); // because we use string_view to find the item
             if (itr != manager.m_library_map.end())
@@ -114,6 +120,8 @@ library::library(string_view file_name, string_view version)
 
 library::~library()
 {
+    // the library_manager holds an instance too, so the use_count is always >= 2
+    // when 2 are left, it means there exist only one "library" instance
     if (m_pimpl.use_count() == 2 && m_pimpl->get_load_count() == 0)
         detail::library_manager::remove_item(m_pimpl);
 }
