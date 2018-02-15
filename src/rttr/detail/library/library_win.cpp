@@ -35,7 +35,10 @@
 #include <iostream>
 #include <string>
 #include <locale>
+
+#if RTTR_COMPILER != RTTR_COMPILER_GNUC  || RTTR_COMP_VER >= 700
 #include <codecvt>
+#endif
 
 namespace
 {
