@@ -57,8 +57,10 @@ public:
     library_private(string_view file_name, string_view version)
     :   m_file_name(file_name),
         m_version(version),
+        m_load_count(0),
         m_handle(nullptr)
     {
+
     }
 
     ~library_private() = default;
@@ -139,7 +141,7 @@ private:
     std::string                 m_error_string;
     registration_state_saver    m_state_saver;
 
-    std::atomic_int             m_load_count{0};
+    std::atomic_int             m_load_count;
 
 #if RTTR_PLATFORM == RTTR_PLATFORM_WINDOWS
     HMODULE
