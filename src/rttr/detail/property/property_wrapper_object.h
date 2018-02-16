@@ -58,13 +58,9 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
         bool set_value(instance& object, argument& arg) const
         {
             if (arg.is_type<C>())
-            {
-                return property_accessor<C>::set_value(*m_accessor, arg);
-            }
+                return property_accessor<C>::set_value(*m_accessor, arg.get_value<C>());
             else
-            {
                 return false;
-            }
         }
 
         variant get_value(instance& object) const
@@ -237,13 +233,9 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_
         bool set_value(instance& object, argument& arg) const
         {
             if (arg.is_type<std::reference_wrapper<C>>())
-            {
-                return property_accessor<std::reference_wrapper<C>>::set_value(*m_accessor, arg);
-            }
+                return property_accessor<C>::set_value(*m_accessor, arg.get_value<std::reference_wrapper<C>>().get());
             else
-            {
                 return false;
-            }
         }
 
         variant get_value(instance& object) const

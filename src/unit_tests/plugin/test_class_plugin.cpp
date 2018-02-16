@@ -25,14 +25,11 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <cstdio>
-#include <string>
-#include <vector>
-#include <array>
-#include <map>
-#include <iostream>
-
 #include <rttr/registration>
+
+using namespace rttr;
+
+#include <vector>
 
 struct point2D { int x; int y; };
 
@@ -42,32 +39,34 @@ public:
     test_plugin_class()
     {}
 
-    int some_method()
+    void set_point(point2D point)
     {
-        return 42;
+        m_point = point;
+    }
+
+    point2D get_point() const
+    {
+        return m_point;
     }
 
 
-    int value;
-    std::vector<point2D> point_list = { {1, 2}, {3, 4}, {5, 6} };
-
+    point2D m_point;
 };
 
 
 RTTR_PLUGIN_REGISTRATION
 {
-    rttr::registration::class_<test_plugin_class>("test_plugin_class")
+    registration::class_<test_plugin_class>("test_plugin_class")
             .constructor<>()
              (
-                 rttr::policy::ctor::as_object
+                 policy::ctor::as_object
              )
-            .property("value", &test_plugin_class::value)
-            .property("point_list", &test_plugin_class::point_list)
-             (
-                 rttr::policy::prop::as_reference_wrapper
-             )
-            .method("some_method", &test_plugin_class::some_method)
+            .property("point", &test_plugin_class::get_point, &test_plugin_class::set_point)
             ;
 
+    registration::class_<point2D>("point2D")
+            .constructor<>()
+            .property("x", &point2D::x)
+            .property("y", &point2D::y);
 }
 

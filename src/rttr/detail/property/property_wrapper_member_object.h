@@ -60,7 +60,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
         {
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A>())
-                return property_accessor<A>::set_value((ptr->*m_acc), arg);
+                return property_accessor<A>::set_value((ptr->*m_acc), arg.get_value<A>());
             else
                 return false;
         }
@@ -158,8 +158,7 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<A*>())
             {
-                (ptr->*m_acc) = *arg.get_value<A*>();
-                return true;
+                return property_accessor<A>::set_value((ptr->*m_acc), *arg.get_value<A*>());
             }
             else
             {
@@ -259,13 +258,9 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_w
         {
             C* ptr = object.try_convert<C>();
             if (ptr && arg.is_type<std::reference_wrapper<A>>())
-            {
-                return property_accessor<std::reference_wrapper<A>>::set_value((ptr->*m_acc), arg);
-            }
+                return property_accessor<A>::set_value((ptr->*m_acc), arg.get_value<std::reference_wrapper<A>>().get());
             else
-            {
                 return false;
-            }
         }
 
         variant get_value(instance& object) const

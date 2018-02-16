@@ -25,56 +25,30 @@
 *                                                                                   *
 *************************************************************************************/
 
-#ifndef RTTR_PROPERTY_ACCESSOR_H_
-#define RTTR_PROPERTY_ACCESSOR_H_
+#include <rttr/registration>
 
-namespace rttr
-{
-namespace detail
-{
+using namespace rttr;
+#include <vector>
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// We have to use this property_accessor helper struct, because of a bug in MSVC compiler
-// "ambiguous call to overloaded function when using raw arrays"
 
-template<typename T>
-struct property_accessor
+class test_container_plugin
 {
-    static bool set_value(T& prop, const T& arg)
-    {
-        prop = arg;
-        return true;
-    }
+public:
+    test_container_plugin()
+    {}
+
+    int my_array[100];
+
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, std::size_t N>
-struct property_accessor<T[N]>
+RTTR_PLUGIN_REGISTRATION
 {
-    static bool set_value(T (& target)[N], const T (& src)[N])
-    {
-        copy_array(src, target);
-        return true;
-    }
-};
+    registration::class_<test_container_plugin>("test_container_plugin")
+            .constructor<>()()
+            .property("my_array", &test_container_plugin::my_array)
+             (
+                 policy::prop::bind_as_ptr
+             );
+}
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T, std::size_t N>
-struct property_accessor<T(*)[N]>
-{
-
-    static bool set_value(T (*target)[N], const T (*src)[N])
-    {
-        copy_array(src, target);
-        return true;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace detail
-} // end namespace rttr
-
-#endif // RTTR_PROPERTY_ACCESSOR_H_

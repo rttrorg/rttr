@@ -181,7 +181,7 @@ TEST_CASE("library - multi load", "[library]")
 
 TEST_CASE("library - using types", "[library]")
 {
-    SECTION("sequential view")
+    SECTION("property invoke")
     {
         library lib(library_name);
 
@@ -192,7 +192,39 @@ TEST_CASE("library - using types", "[library]")
             variant var_obj = t.create();
             CHECK(var_obj.get_type() == t);
 
-            auto prop = t.get_property("point_list");
+            auto prop = t.get_property("point");
+            CHECK(prop.is_valid() == true);
+
+            variant point = prop.get_value(var_obj);
+            REQUIRE(point.is_valid() == true);
+
+            auto point_x = point.get_type().get_property("x");
+            auto point_y = point.get_type().get_property("y");
+
+            point_x.set_value(point, 23);
+            point_y.set_value(point, 42);
+
+            CHECK(point_x.get_value(point).to_int() == 23);
+            CHECK(point_y.get_value(point).to_int() == 42);
+
+            CHECK(prop.set_value(var_obj, point) == true);
+        }
+
+        CHECK(lib.unload() == true);
+    }
+
+    SECTION("sequential view")
+    {
+        library lib(library_name);
+
+        CHECK(lib.load() == true);
+
+        {
+            auto t = type::get_by_name("test_container_plugin");
+            variant var_obj = t.create();
+            CHECK(var_obj.is_valid() == true);
+
+            auto prop = t.get_property("my_array");
             CHECK(prop.is_valid() == true);
 
             variant var_point_list = prop.get_value(var_obj);
@@ -203,7 +235,7 @@ TEST_CASE("library - using types", "[library]")
             auto view = var_point_list.create_sequential_view();
 
             CHECK(view.is_valid() == true);
-            CHECK(view.get_size() == 3);
+            CHECK(view.get_size() == 100);
         }
 
         CHECK(lib.unload() == true);
