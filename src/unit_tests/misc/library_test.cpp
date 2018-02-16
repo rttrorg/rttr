@@ -43,7 +43,8 @@ using namespace rttr;
 
 bool does_plugin_type_exist()
 {
-    return type::get_by_name("test_plugin_class").is_valid();
+    return type::get_by_name("test_plugin_class").is_valid() &&
+           type::get_by_name("test_container_plugin").is_valid();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +240,6 @@ TEST_CASE("library - using types", "[library]")
         }
 
         CHECK(lib.unload() == true);
-
     }
 }
 
