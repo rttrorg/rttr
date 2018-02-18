@@ -119,12 +119,6 @@ enable_rtti(BUILD_WITH_RTTI)
 get_latest_supported_cxx(CXX_STANDARD)
 set(MAX_CXX_STANDARD ${CXX_STANDARD})
 
-if(MSVC)
-    if (${CXX_STANDARD} EQUAL 17 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.12.25835.0")
-        set(MAX_CXX_STANDARD 14) # downgrade, because RTTR can't be compiled atm. with c++17 flag (template error)
-    endif()
-endif()
-
 message(STATUS "using C++: ${MAX_CXX_STANDARD}")
 
 # RelWithDepInfo should have the same option like the Release build
