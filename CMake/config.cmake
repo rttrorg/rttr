@@ -72,7 +72,7 @@ if(UNIX)
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 
-else(WINDOWS)
+elseif(WINDOWS)
   set(RTTR_RUNTIME_INSTALL_DIR   "bin") 
   set(RTTR_LIBRARY_INSTALL_DIR   "bin")
   set(RTTR_ARCHIVE_INSTALL_DIR   "lib")
@@ -80,6 +80,8 @@ else(WINDOWS)
 
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
+else()
+  message(FATAL_ERROR "Could not set install folders for this platform!")
 endif()
 
 # to avoid a setting a global debug flag automatically for all targets
