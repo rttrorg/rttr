@@ -73,16 +73,18 @@ if(UNIX)
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 
 else(WINDOWS)
-  set(RTTR_RUNTIME_INSTALL_DIR "bin") 
-  set(RTTR_LIBRARY_INSTALL_DIR "bin")
-  set(RTTR_ARCHIVE_INSTALL_DIR "lib")
+  set(RTTR_RUNTIME_INSTALL_DIR   "bin") 
+  set(RTTR_LIBRARY_INSTALL_DIR   "bin")
+  set(RTTR_ARCHIVE_INSTALL_DIR   "lib")
   set(RTTR_FRAMEWORK_INSTALL_DIR "bin")
 
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-set(CMAKE_DEBUG_POSTFIX "_d")
+# to avoid a setting a global debug flag automatically for all targets
+# we use an own variable
+set(RTTR_DEBUG_POSTFIX "_d") 
 
 # set the rpath for executables
 set(CMAKE_SKIP_BUILD_RPATH OFF)            # use, i.e. don't skip the full RPATH for the build tree
@@ -96,11 +98,9 @@ if(APPLE)
 elseif(UNIX)
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
 elseif(WINDOWS)
-  # no such thin as rpath exists,
+  # no such thing as rpath exists
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
-
-
 
 # detect architecture
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -111,42 +111,15 @@ else()
     message(STATUS "Architecture: x86")
 endif()
 
+# use standard c++ insteaf of extented (-std=c++17 vs. std=gnu++17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 enable_rtti(BUILD_WITH_RTTI)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Werror")
-    message(STATUS "added flag -std=c++0x, -Wall, -Werror to g++")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-    message(STATUS "added flag -std=c++11, -Wall, -Werror to g++")
-  endif()
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.0.0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  endif()
+get_latest_supported_cxx(CXX_STANDARD)
+set(MAX_CXX_STANDARD ${CXX_STANDARD})
 
-  if(MINGW)
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-  else()
-    set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
-  endif()
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-  message(STATUS "added flag -std=c++11, -Wall, -Werror to g++")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-  message(WARNING "clang support is currently experimental")
-  
-  set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
-endif()
-
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /WX")
-    replaceCompilerOption("/W3" "/W4")
-    message(STATUS "added flag /bigobj, /W4 to MSVC compiler")
-    message(STATUS "Treats all compiler warnings as errors.")
-endif()
+message(STATUS "using C++: ${MAX_CXX_STANDARD}")
 
 # RelWithDepInfo should have the same option like the Release build
 # but of course with Debug informations
@@ -163,19 +136,39 @@ else()
   message(WARNING "Please adjust CMAKE_CXX_FLAGS_RELWITHDEBINFO flags for this compiler!")
 endif()
 
+if(MSVC)
+    # we have to remove the default warning level,
+    # otherwise we get ugly compiler warnings, because of later replacing 
+    # option /W3 with /W4 (which will be later added)
+    replace_compiler_option("/W3" " ") 
+    if (BUILD_WITH_STATIC_RUNTIME_LIBS)
+        replace_compiler_option("/MD" " ")
+        replace_compiler_option("/MDd" " ")
+    endif()
+   
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(MINGW)
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+    else()
+        set(GNU_STATIC_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
+endif()
+
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-  VERSION ${RTTR_VERSION_STR}
-  COMPATIBILITY AnyNewerVersion
+    "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
+    VERSION ${RTTR_VERSION_STR}
+    COMPATIBILITY AnyNewerVersion
 )
 
 if (BUILD_INSTALLER)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
-             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
-             COMPONENT Devel)
+            DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
+            COMPONENT Devel)
 
     install(FILES "${LICENSE_FILE}" "${README_FILE}"
-             DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
-             PERMISSIONS OWNER_READ)
+            DESTINATION ${RTTR_ADDITIONAL_FILES_INSTALL_DIR}
+            PERMISSIONS OWNER_READ)
 endif()

@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(bench_rttr_cast)
+project(bench_rttr_cast LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -51,13 +51,15 @@ endif()
 target_include_directories(bench_rttr_cast PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
 target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
 if(MSVC)
-    set_target_properties(bench_rttr_cast PROPERTIES COMPILE_FLAGS "/Zm200")
+    target_compile_options(bench_rttr_cast PRIVATE /Zm200)
 endif()
-set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX _d
-                                                 FOLDER "Benchmarks"
-                                                 INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
 
-add_dependencies(bench_rttr_cast RTTR::Core)
+set_target_properties(bench_rttr_cast PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                                 FOLDER "Benchmarks"
+                                                 INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                                 CXX_STANDARD ${MAX_CXX_STANDARD})
+
+set_compiler_warnings(bench_rttr_cast)
 
 install(TARGETS bench_rttr_cast
         RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -78,14 +80,15 @@ if (BUILD_STATIC)
     target_include_directories(bench_rttr_cast_lib PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
     target_compile_definitions(bench_rttr_cast_lib PUBLIC BOOST_ALL_NO_LIB)
     if(MSVC)
-        set_target_properties(bench_rttr_cast_lib PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+        target_compile_options(bench_rttr_cast_lib PRIVATE /Zm200 /bigobj)
     endif()
 
-    set_target_properties(bench_rttr_cast_lib PROPERTIES DEBUG_POSTFIX _d
+    set_target_properties(bench_rttr_cast_lib PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                                          FOLDER "Benchmarks"
-                                                         INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+                                                         INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                                         CXX_STANDARD ${MAX_CXX_STANDARD})
 
-    add_dependencies(bench_rttr_cast_lib RTTR::Core_Lib)
+    set_compiler_warnings(bench_rttr_cast_lib)
 
     install(TARGETS bench_rttr_cast_lib
             RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
@@ -107,14 +110,15 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
     target_include_directories(bench_rttr_cast_s PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
     target_compile_definitions(bench_rttr_cast_s PUBLIC BOOST_ALL_NO_LIB)
     if(MSVC)
-        set_target_properties(bench_rttr_cast_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+        target_compile_options(bench_rttr_cast_s PRIVATE /Zm200 /bigobj)
     endif()
 
-    set_target_properties(bench_rttr_cast_s PROPERTIES DEBUG_POSTFIX _d
+    set_target_properties(bench_rttr_cast_s PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                                        FOLDER "Benchmarks"
-                                                       INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+                                                       INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                                       CXX_STANDARD ${MAX_CXX_STANDARD})
 
-    add_dependencies(bench_rttr_cast_s RTTR::Core_STL)
+    set_compiler_warnings(bench_rttr_cast_s)
 
     if (MSVC)
         target_compile_options(bench_rttr_cast_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
@@ -143,14 +147,15 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
         target_include_directories(bench_rttr_cast_lib_s PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
         target_compile_definitions(bench_rttr_cast_lib_s PUBLIC BOOST_ALL_NO_LIB)
         if(MSVC)
-            set_target_properties(bench_rttr_cast_lib_s PROPERTIES COMPILE_FLAGS "/Zm200 /bigobj")
+            target_compile_options(bench_rttr_cast_lib_s PRIVATE /Zm200 /bigobj)
         endif()
 
-        set_target_properties(bench_rttr_cast_lib_s PROPERTIES DEBUG_POSTFIX _d
+        set_target_properties(bench_rttr_cast_lib_s PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                                                FOLDER "Benchmarks"
-                                                               INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}")
+                                                               INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                                               CXX_STANDARD ${MAX_CXX_STANDARD})
 
-        add_dependencies(bench_rttr_cast_lib_s RTTR::Core_Lib_STL)
+        set_compiler_warnings(bench_rttr_cast_lib_s)
 
         if (MSVC)
             target_compile_options(bench_rttr_cast_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")

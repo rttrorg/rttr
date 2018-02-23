@@ -31,6 +31,7 @@
 #include <map>
 #include <list>
 #include <set>
+#include <string>
 
 // explicit instantiation of std::string needed, otherwise we get a linker error with clang on osx
 // thats a bug in libc++, because of interaction with __attribute__ ((__visibility__("hidden"), __always_inline__)) in std::string
@@ -89,6 +90,12 @@ RTTR_REGISTRATION
                 .method("operator[]",   rttr::select_overload<char&(size_t)>(&std::string::operator[]))
                 .method("operator[]",   rttr::select_non_const(&std::string::operator[]))
 #endif
+#if __cplusplus >= 201703L || (RTTR_COMPILER == RTTR_COMPILER_MSVC && !defined(RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE)) || \
+     (RTTR_COMP_VER >= 900 && RTTR_PLATFORM == RTTR_PLATFORM_APPLE)
+                .method("data",         rttr::select_const(&std::string::data))
+                .method("data",         rttr::select_non_const(&std::string::data))
+#else
                 .method("data",         &std::string::data)
+#endif
                 .method("c_str",        &std::string::c_str);
 }

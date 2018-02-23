@@ -79,196 +79,196 @@ RTTR_INLINE type& type::operator=(const type& other) RTTR_NOEXCEPT
 
 RTTR_INLINE bool type::operator<(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index < other.m_type_data->type_index);
+    return (m_type_data < other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index > other.m_type_data->type_index);
+    return (m_type_data > other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator>=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index >= other.m_type_data->type_index);
+    return (m_type_data >= other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator<=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index <= other.m_type_data->type_index);
+    return (m_type_data <= other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator==(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index == other.m_type_data->type_index);
+    return (m_type_data == other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::operator!=(const type& other) const RTTR_NOEXCEPT
 {
-    return (m_type_data->type_index != other.m_type_data->type_index);
+    return (m_type_data != other.m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::type_id type::get_id() const RTTR_NOEXCEPT
 {
-    return m_type_data->type_index;
+    return reinterpret_cast<type::type_id>(m_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE bool type::is_valid() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_valid();
+    return m_type_data->is_valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 RTTR_INLINE type::operator bool() const RTTR_NOEXCEPT
 {
-    return m_type_data->is_valid();
+    return m_type_data->is_valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE type type::get_raw_type() const RTTR_NOEXCEPT
+RTTR_INLINE type type::get_raw_type() const RTTR_NOEXCEPT
 {
     return type(m_type_data->raw_type_data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE type type::get_wrapped_type() const RTTR_NOEXCEPT
+RTTR_INLINE type type::get_wrapped_type() const RTTR_NOEXCEPT
 {
     return type(m_type_data->wrapped_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE type type::get_raw_array_type() const RTTR_NOEXCEPT
+RTTR_INLINE type type::get_raw_array_type() const RTTR_NOEXCEPT
 {
     return type(m_type_data->array_raw_type);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE string_view type::get_name() const RTTR_NOEXCEPT
+RTTR_INLINE string_view type::get_name() const RTTR_NOEXCEPT
 {
     return m_type_data->name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
+RTTR_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
 {
     return m_type_data->type_name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE std::size_t type::get_sizeof() const RTTR_NOEXCEPT
+RTTR_INLINE std::size_t type::get_sizeof() const RTTR_NOEXCEPT
 {
     return m_type_data->get_sizeof;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
+RTTR_INLINE std::size_t type::get_pointer_dimension() const RTTR_NOEXCEPT
 {
     return m_type_data->get_pointer_dimension;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_class() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_class() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_class);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_template_instantiation() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_template_instantiation() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_template_instantiation);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_enumeration() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_enum);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_array() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_array() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_array);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_associative_container() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_associative_container() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_associative_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_sequential_container() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_sequential_container() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_sequential_container);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_pointer() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_pointer() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_arithmetic() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_arithmetic() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_arithmetic);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_function_pointer() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_function_pointer() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_function_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_member_object_pointer() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_member_object_pointer() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_member_object_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_member_function_pointer() const RTTR_NOEXCEPT
 {
     return m_type_data->type_trait_value(detail::type_trait_infos::is_member_function_pointer);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_FORCE_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
+RTTR_INLINE bool type::is_wrapper() const RTTR_NOEXCEPT
 {
-    return m_type_data->wrapped_type->is_valid();
+    return m_type_data->wrapped_type->is_valid;
 }
 
 
