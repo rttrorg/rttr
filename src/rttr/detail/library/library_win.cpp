@@ -36,13 +36,9 @@
 #include <string>
 #include <locale>
 
-#if RTTR_COMPILER != RTTR_COMPILER_GNUC  || RTTR_COMP_VER >= 700
-#include <codecvt>
-#endif
 
 namespace
 {
-#if RTTR_COMPILER == RTTR_COMPILER_GNUC && RTTR_COMP_VER < 700
 
 std::wstring convert_utf8_to_utf16(const std::string& source)
 {
@@ -67,26 +63,6 @@ std::string convert_utf16_to_utf8(const std::wstring& source)
     WideCharToMultiByte(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), &result[0], size_needed, NULL, NULL);
     return result;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-#else
-
-std::wstring convert_utf8_to_utf16(const std::string& str)
-{
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.from_bytes(str);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-std::string convert_utf16_to_utf8(const std::wstring& str)
-{
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.to_bytes(str);
-}
-
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
