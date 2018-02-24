@@ -264,6 +264,19 @@ type_register_private::type_register_private()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+type_register_private::~type_register_private()
+{
+    // When this dtor is running, it means, that RTTR library will be unloaded
+    // In order to avoid that the registration_manager instance's
+    // are trying to deregister its content, although the RTTR library is already unloaded
+    // every registration manager class holds a flag whether it should deregister itself or not
+    // and we are settings this flag here
+    for (auto& manager : m_registration_manager_list)
+        manager->set_disable_unregister();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 type_register_private& type_register_private::get_instance()
 {
     static type_register_private obj;
@@ -274,16 +287,14 @@ type_register_private& type_register_private::get_instance()
 
 void type_register_private::register_reg_manager(registration_manager* manager)
 {
-    auto& manager_obj = get_instance().m_registration_reg_manager;
-    manager_obj.m_manager_list.insert(manager);
+    m_registration_manager_list.insert(manager);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::unregister_reg_manager(registration_manager* manager)
 {
-    auto& manager_obj = get_instance().m_registration_reg_manager;
-    manager_obj.m_manager_list.erase(manager);
+    m_registration_manager_list.erase(manager);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
