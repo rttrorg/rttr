@@ -197,6 +197,7 @@ set(SOURCE_FILES constructor.cpp
                  detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
                  detail/registration/registration_state_saver.cpp
+                 detail/type/type_data.cpp
                  detail/type/type_register.cpp
                  detail/variant/variant_compare.cpp
                  )

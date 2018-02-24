@@ -1069,7 +1069,7 @@ class RTTR_API type
         /*!
          * Constructs an empty and invalid type object.
          */
-        RTTR_INLINE type() RTTR_NOEXCEPT;
+        type() RTTR_NOEXCEPT;
 
         /*!
          * \brief Constructs a valid type object.

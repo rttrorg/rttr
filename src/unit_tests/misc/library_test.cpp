@@ -159,7 +159,7 @@ TEST_CASE("library - multi load", "[library]")
         CHECK(does_plugin_type_exist() == false);
     }
 
-    SECTION("load the same lib multiple times 2xload() and unload()")
+    SECTION("load the same lib multiple times 2xload() and 2xunload()")
     {
         library lib(library_name);
 
@@ -235,13 +235,6 @@ TEST_CASE("library - using types", "[library]")
             CHECK(var_point_list.is_sequential_container() == true);
 
             auto view = var_point_list.create_sequential_view();
-            std::cout << "view.get_type().get_name(): " << view.get_type().get_name() << std::endl;
-            std::cout << "prop.get_type().get_name(): " << prop.get_type().get_name() << std::endl;
-            std::cout << "prop.get_type().get_raw_type().get_name(): " << prop.get_type().get_raw_type().get_name() << std::endl;
-            std::cout << "prop.get_type().is_valid(): " << prop.get_type().is_valid() << std::endl;
-            std::cout << "prop.get_type().get_raw_type().is_valid(): " << prop.get_type().get_raw_type().is_valid() << std::endl;
-            std::cout << "prop.get_type().is_valid(): " << prop.get_type().is_valid() << std::endl;
-            std::cout << "view.get_type().is_valid(): " << view.get_type().is_valid() << std::endl;
 
             CHECK(view.is_valid() == true);
             CHECK(view.get_size() == 100);
