@@ -72,7 +72,7 @@ if(UNIX)
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 
-elseif(WINDOWS)
+elseif(WIN32)
   set(RTTR_RUNTIME_INSTALL_DIR   "bin") 
   set(RTTR_LIBRARY_INSTALL_DIR   "bin")
   set(RTTR_ARCHIVE_INSTALL_DIR   "lib")
@@ -99,7 +99,7 @@ if(APPLE)
   # the executable links 
 elseif(UNIX)
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
-elseif(WINDOWS)
+elseif(WIN32)
   # no such thing as rpath exists
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
