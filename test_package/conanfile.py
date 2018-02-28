@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools, RunEnvironment
-from conans.errors import ConanException
 import os
-from io import StringIO
+
 
 def run_test(conanfile,bin_path, args, output=None):
     if conanfile.settings.os == "Windows":
-        conanfile.run("%s %s" % bin_path, args,output=output)
+        conanfile.run("%s %s" % bin_path, args, output=output)
     elif conanfile.settings.os == "Macos":
-        conanfile.run("DYLD_LIBRARY_PATH=%s %s %s" % (os.environ.get('DYLD_LIBRARY_PATH', ''), bin_path, args),output=output)
+        conanfile.run("DYLD_LIBRARY_PATH=%s %s %s" % (os.environ.get('DYLD_LIBRARY_PATH', ''), bin_path, args), output=output)
     else:
-        conanfile.run("LD_LIBRARY_PATH=%s %s %s" % (os.environ.get('LD_LIBRARY_PATH', ''), bin_path, args),output=output)
-    
+        conanfile.run("LD_LIBRARY_PATH=%s %s %s" % (os.environ.get('LD_LIBRARY_PATH', ''), bin_path, args), output=output)
+
 
 class TestPackageConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"

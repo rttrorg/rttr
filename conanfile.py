@@ -14,6 +14,7 @@ def rttr_version_detect(filename):
         version.append(match.groups()[0])
     return ".".join(version)
 
+
 class RttrConan(ConanFile):
     name = "rttr"
     version = rttr_version_detect("CMake/config.cmake")
@@ -32,8 +33,7 @@ class RttrConan(ConanFile):
     def source(self):
         # not needed, package file is with source
         pass
-    
-        
+
     def build(self):
         cmake = CMake(self)
         disable_opts = ["BENCHMARKS", "DOCUMENTATION", "EXAMPLES", "PACKAGE", "UNIT_TESTS"]
@@ -59,10 +59,8 @@ class RttrConan(ConanFile):
         prefix = "lib" if self.settings.os == "Windows" and not self.options.shared else ""
         unix = self.settings.os == "Linux" or self.settings.os == "Macos"
         bit64 = self.settings.arch == "x86_64" or self.settings.arch == "armv8"
-        
         if unix and bit64 and not self.options.shared:
             self.cpp_info.libdirs.append("lib64")
-        
-        self.cpp_info.libs = ["%srttr_core%s" % (prefix,suffix)]
+        self.cpp_info.libs = ["%srttr_core%s" % (prefix, suffix)]
 
 
