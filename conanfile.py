@@ -26,8 +26,8 @@ class RttrConan(ConanFile):
                "static_runtime": [True, False]}
     default_options = "shared=False", "rtti=True", "static_runtime=False"
     generators = "cmake"
-    exports = "README.md", "CMake/config.cmake"
-    exports_sources = "src/*", "3rd_party/*", "*.txt", "*.cmake"
+    exports = "CMake/config.cmake"
+    exports_sources = "src/*", "3rd_party/*", "*.txt", "*.cmake", "README.md"
 
     def source(self):
         # not needed, package file is with source
@@ -44,7 +44,6 @@ class RttrConan(ConanFile):
         cmake.definitions["BUILD_WITH_RTTI"] = self.options.rtti
         cmake.definitions["BUILD_STATIC"] = not self.options.shared
         cmake.definitions["BUILD_RTTR_DYNAMIC"] = self.options.shared
-
 
         if self.options["static_runtime"]:
             cmake.definitions["BUILD_WITH_STATIC_RUNTIME_LIBS"] = "ON"
