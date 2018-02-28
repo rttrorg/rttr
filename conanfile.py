@@ -1,8 +1,22 @@
 from conans import ConanFile, CMake
+import re
+import os
+
+
+def rttr_version_detect(filename):
+    conan_file_path = os.path.split(os.path.realpath(__file__))[0]
+    absfilepath = os.path.join(conan_file_path, filename)
+    version = []
+    with open(absfilepath, "r") as f:
+        st = f.read()
+    for verstr in "MAJOR", "MINOR", "PATCH":
+        match = re.search("RTTR_VERSION_%s (.)" % verstr, st)
+        version.append(match.groups()[0])
+    return ".".join(version)
 
 class RttrConan(ConanFile):
     name = "rttr"
-    version = "0.9.6"
+    version = rttr_version_detect("CMake/config.cmake")
     license = "MIT"
     url = "https://github.com/rttrorg/rttr"
     description = "An open source library, which adds (dynamic) reflection to C++"
@@ -12,7 +26,7 @@ class RttrConan(ConanFile):
                "static_runtime" : [True, False]}
     default_options = "shared=False", "rtti=True", "static_runtime=False"
     generators = "cmake"
-    exports = "README.md"
+    exports = "README.md", "CMake/config.cmake"
     exports_sources = "src/*" , "3rd_party/*", "*.txt", "*.cmake"
 
     def source(self):
