@@ -23,11 +23,11 @@ class RttrConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
                "rtti": [True, False],
-               "static_runtime" : [True, False]}
+               "static_runtime": [True, False]}
     default_options = "shared=False", "rtti=True", "static_runtime=False"
     generators = "cmake"
     exports = "README.md", "CMake/config.cmake"
-    exports_sources = "src/*" , "3rd_party/*", "*.txt", "*.cmake"
+    exports_sources = "src/*", "3rd_party/*", "*.txt", "*.cmake"
 
     def source(self):
         # not needed, package file is with source
@@ -40,12 +40,11 @@ class RttrConan(ConanFile):
         for opt in disable_opts:
             cmake.definitions["BUILD_%s" % opt] = False
 
-        a = lambda o : True if o else False
-
         cmake.definitions["BUILD_INSTALLER"] = True
-        cmake.definitions["BUILD_WITH_RTTI"] = a(self.options.rtti)
-        cmake.definitions["BUILD_STATIC"] = a(not self.options.shared)
-        cmake.definitions["BUILD_RTTR_DYNAMIC"] = a(self.options.shared)
+        cmake.definitions["BUILD_WITH_RTTI"] = self.options.rtti
+        cmake.definitions["BUILD_STATIC"] = not self.options.shared
+        cmake.definitions["BUILD_RTTR_DYNAMIC"] = self.options.shared
+
 
         if self.options["static_runtime"]:
             cmake.definitions["BUILD_WITH_STATIC_RUNTIME_LIBS"] = "ON"
@@ -59,6 +58,6 @@ class RttrConan(ConanFile):
     def package_info(self):
         suffix = "_d" if self.settings.build_type == "Debug" else ""
         prefix = "lib" if self.settings.os == "Windows" and not self.options.shared else ""
-        self.cpp_info.libs = ["%srttr_core%s" % (prefix, suffix)]
+        self.cpp_info.libs = ["%srttr_core%s" % (prefix,suffix)]
 
 
