@@ -47,12 +47,12 @@ using can_create_sequential_view = std::integral_constant<bool, is_sequential_co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = typename std::decay<T>::type>
-enable_if_t<can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+template<typename T>
+enable_if_t<can_create_sequential_view<T>::value, variant_sequential_view_private>
 create_variant_sequential_view(T&& value);
 
-template<typename T, typename Tp = typename std::decay<T>::type>
-enable_if_t<!can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+template<typename T>
+enable_if_t<!can_create_sequential_view<T>::value, variant_sequential_view_private>
 create_variant_sequential_view(T&& value);
 
 /////////////////////////////////////////////////////////////////////////////////////////
