@@ -72,7 +72,7 @@ if(UNIX)
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/rttr")
 
-else(WINDOWS)
+elseif(WIN32)
   set(RTTR_RUNTIME_INSTALL_DIR   "bin") 
   set(RTTR_LIBRARY_INSTALL_DIR   "bin")
   set(RTTR_ARCHIVE_INSTALL_DIR   "lib")
@@ -80,6 +80,8 @@ else(WINDOWS)
 
   set(RTTR_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
   set(RTTR_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
+else()
+  message(FATAL_ERROR "Could not set install folders for this platform!")
 endif()
 
 # to avoid a setting a global debug flag automatically for all targets
@@ -97,7 +99,7 @@ if(APPLE)
   # the executable links 
 elseif(UNIX)
   set(RTTR_EXECUTABLE_INSTALL_RPATH "${RTTR_INSTALL_FULL_LIBDIR};$ORIGIN")
-elseif(WINDOWS)
+elseif(WIN32)
   # no such thing as rpath exists
   set(RTTR_EXECUTABLE_INSTALL_RPATH ${RTTR_INSTALL_BINDIR}) # default, has no effect
 endif()
@@ -118,12 +120,6 @@ enable_rtti(BUILD_WITH_RTTI)
 
 get_latest_supported_cxx(CXX_STANDARD)
 set(MAX_CXX_STANDARD ${CXX_STANDARD})
-
-if(MSVC)
-    if (${CXX_STANDARD} EQUAL 17 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.12.25835.0")
-        set(MAX_CXX_STANDARD 14) # downgrade, because RTTR can't be compiled atm. with c++17 flag (template error)
-    endif()
-endif()
 
 message(STATUS "using C++: ${MAX_CXX_STANDARD}")
 

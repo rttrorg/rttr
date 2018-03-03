@@ -540,8 +540,8 @@ function(get_latest_supported_cxx CXX_STANDARD)
 
     include(CheckCXXSourceCompiles)
 
-    check_cxx_source_compiles(
-                              "#include <type_traits>
+    check_cxx_source_compiles("
+                              #include <type_traits>
                               typedef void F();
                               typedef void G() noexcept;
                               
@@ -554,8 +554,8 @@ function(get_latest_supported_cxx CXX_STANDARD)
                               "
                               HAS_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT)
 
-    check_cxx_source_compiles(
-                              "#include <type_traits>
+    check_cxx_source_compiles("
+                              #include <type_traits>
                               struct foo { void func() const noexcept {} };
                               template<typename T>
                               void test_func(T)
@@ -576,8 +576,27 @@ function(get_latest_supported_cxx CXX_STANDARD)
                               int main() { }
                               "
                               HAS_CXX_CONSTEXPR)
+                              
+    check_cxx_source_compiles( "
+                               #include <type_traits>
+                               template<typename T>
+                               struct template_type_trait : std::false_type {};
+                               
+                               template<template < bool > class T, bool N>
+                               struct template_type_trait<T<N>> : std::true_type {};
+                               
+                               template<template <std::size_t> class T, std::size_t N>
+                               struct template_type_trait<T<N>> : std::true_type {};
+                               
+                               template<std::size_t T>
+                               struct bar{};
+                               
+                               int main() { static bool foo = template_type_trait<bar<100>>::value;}
+                               "
+                               HAS_PARTIAL_SPECIALIZATION_FOR_ARRAYS)
 
-    if (HAS_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT AND HAS_STL_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT)
+    if (HAS_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT AND HAS_STL_NO_EXCEPT_TYPE_SIGNATURE_SUPPORT AND
+        HAS_PARTIAL_SPECIALIZATION_FOR_ARRAYS)
         set(MAX_CXX_STD 17)
     else()
         if (HAS_CXX_CONSTEXPR)

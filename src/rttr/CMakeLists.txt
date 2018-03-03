@@ -77,11 +77,6 @@ if (${BUILD_RTTR_DYNAMIC})
                 ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
                 FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
-        install(EXPORT rttr_targets
-                DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
-                NAMESPACE RTTR::
-                FILE rttr-config.cmake)
-            
         # install also pdb file
         install_pdb_files(rttr_core)
     endif()
@@ -225,6 +220,15 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     endif()
 endif()
+
+
+if(BUILD_INSTALLER)
+	install(EXPORT rttr_targets
+		DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
+		NAMESPACE RTTR::
+		FILE rttr-config.cmake)
+endif()
+
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
