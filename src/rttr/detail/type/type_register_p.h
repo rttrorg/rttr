@@ -72,7 +72,7 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    type register_type(type_data* info) RTTR_NOEXCEPT;
+    type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
     void register_constructor(const constructor_wrapper_base* ctor);
@@ -185,7 +185,7 @@ private:
 
     static std::string derive_name(const type& t);
     //! Returns true, when the name was already registered
-    type register_name_if_neccessary(type_data* info);
+    type_data* register_name_if_neccessary(type_data* info);
     static void register_base_class_info(type_data* info);
     /*!
      * \brief This will create the derived name of a template instance, with all the custom names of a template parameter.

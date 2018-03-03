@@ -68,9 +68,9 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type_data& get_invalid_type_data() RTTR_NOEXCEPT
+type_data* get_invalid_type_data() RTTR_NOEXCEPT
 {
-    static auto& instance = get_invalid_type_data_impl();
+    static auto instance = &get_invalid_type_data_impl();
     return instance;
 }
 

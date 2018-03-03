@@ -257,8 +257,8 @@ void type_register::register_base_class(const type& derived_type, const base_cla
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type_register_private::type_register_private()
-:   m_type_list({type(&get_invalid_type_data()) }),
-    m_type_data_storage({&get_invalid_type_data()})
+:   m_type_list({ type(get_invalid_type_data()) }),
+    m_type_data_storage({ get_invalid_type_data() })
 {
 }
 
@@ -327,7 +327,7 @@ std::vector<property>& type_register_private::get_global_properties()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register::register_type(type_data* info) RTTR_NOEXCEPT
+type_data* type_register::register_type(type_data* info) RTTR_NOEXCEPT
 {
     return type_register_private::get_instance().register_type(info);
 }
@@ -468,20 +468,20 @@ static void remove_item(T& container, const I& item)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register_private::register_name_if_neccessary(type_data* info)
+type_data* type_register_private::register_name_if_neccessary(type_data* info)
 {
     using namespace detail;
 
     auto ret = m_orig_name_to_id.find(info->type_name);
     if (ret != m_orig_name_to_id.end())
-        return (*ret);
+        return ret->m_type_data;
 
     m_orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
     info->name = derive_name(type(info));
     m_custom_name_to_id.insert(std::make_pair(info->name, type(info)));
 
     m_type_list.emplace_back(type(info));
-    return get_invalid_type();
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -523,7 +523,7 @@ void type_register_private::register_base_class_info(type_data* info)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
+type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 {
     // this will register the base types
     info->get_base_types();
@@ -548,7 +548,7 @@ type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
     update_class_list(t, &detail::class_data::m_properties);
     update_class_list(t, &detail::class_data::m_methods);
 
-    return t;
+    return info;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

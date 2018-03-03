@@ -61,10 +61,13 @@ class RTTR_LOCAL registration_manager
             unregister();
         }
 
-        type add_item(std::unique_ptr<type_data> obj)
+        type_data* add_item(std::unique_ptr<type_data> obj)
         {
             auto reg_type = type_register::register_type(obj.get());
-            m_type_data_list.push_back(std::move(obj));
+            const auto was_type_stored = (reg_type == obj.get());
+            if (was_type_stored)
+                m_type_data_list.push_back(std::move(obj)); // so we have to unregister it later
+
             return reg_type;
         }
 
@@ -206,7 +209,7 @@ class RTTR_LOCAL registration_manager
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-static registration_manager& get_registration_manager() RTTR_NOEXCEPT
+RTTR_LOCAL RTTR_INLINE registration_manager& get_registration_manager() RTTR_NOEXCEPT
 {
     static registration_manager obj;
     return obj;
@@ -214,8 +217,11 @@ static registration_manager& get_registration_manager() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+using is_global_item = std::integral_constant<bool, std::is_same<T, invalid_type>::value>;
+
 template<typename T, typename Item>
-static RTTR_FORCE_INLINE enable_if_t<std::is_same<T, invalid_type>::value, void> // we want to store only global items
+RTTR_LOCAL RTTR_FORCE_INLINE enable_if_t<is_global_item<T>::value, void>
 store_item(Item item)
 {
     auto& obj = get_registration_manager();
@@ -223,8 +229,8 @@ store_item(Item item)
 }
 
 template<typename T, typename Item>
-enable_if_t<!std::is_same<T, invalid_type>::value, void>
-static RTTR_FORCE_INLINE store_item(Item item)
+RTTR_LOCAL RTTR_FORCE_INLINE enable_if_t<!is_global_item<T>::value, void>
+store_item(Item item)
 {
     auto& obj = get_registration_manager();
     obj.add_item(std::move(item));

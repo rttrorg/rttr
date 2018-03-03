@@ -279,64 +279,49 @@ RTTR_INLINE variant type::create_variant(const argument& data) const
 namespace detail
 {
 
-RTTR_INLINE static type get_invalid_type() RTTR_NOEXCEPT { return type(); }
+RTTR_INLINE static type get_invalid_type() RTTR_NOEXCEPT { return create_type(nullptr); }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename T, typename Enable>
-struct type_getter
+RTTR_INLINE type create_type(type_data* data) RTTR_NOEXCEPT
 {
-    static type get_type() RTTR_NOEXCEPT
-    {
-        // when you get an error here, then the type was not completely defined
-        // (a forward declaration is not enough because base_classes will not be found)
-        using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
-        (void) sizeof(type_must_be_complete);
-        static const type val = get_registration_manager().add_item(make_type_data<T>());
-        return val;
-    }
-};
+    return data ? type(data) : type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+template<typename T>
+using is_complete_type = std::integral_constant<bool, !std::is_function<T>::value && !std::is_same<T, void>::value>;
+
+template<typename T>
+RTTR_LOCAL RTTR_INLINE enable_if_t<is_complete_type<T>::value, type>
+create_or_get_type() RTTR_NOEXCEPT
+{
+    // when you get an error here, then the type was not completely defined
+    // (a forward declaration is not enough because base_classes will not be found)
+    using type_must_be_complete = char[ sizeof(T) ? 1: -1 ];
+    (void) sizeof(type_must_be_complete);
+    static const type val = create_type(get_registration_manager().add_item(make_type_data<T>()));
+    return val;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 
-/*!
-* Explicit specializations for type void;
-* because we cannot implement the check whether a type is completely defined for type `void`
-*/
-template <>
-struct type_getter<void>
+template<typename T>
+RTTR_LOCAL RTTR_INLINE enable_if_t<!is_complete_type<T>::value, type>
+create_or_get_type() RTTR_NOEXCEPT
 {
-    static type get_type() RTTR_NOEXCEPT
-    {
-        static const type val = get_registration_manager().add_item(make_type_data<void>());
-        return val;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-
-/*!
-* Explicit specializations for function types;
-* because we cannot implement the check whether a type is completely defined for functions
-*/
-template <typename T>
-struct type_getter<T, typename std::enable_if<std::is_function<T>::value>::type>
-{
-    static type get_type() RTTR_NOEXCEPT
-    {
-        static const type val = get_registration_manager().add_item(make_type_data<T>());
-        return val;
-    }
-};
+    static const type val = create_type(get_registration_manager().add_item(make_type_data<T>()));
+    return val;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static RTTR_INLINE type get_type_from_instance(const T*) RTTR_NOEXCEPT
+RTTR_LOCAL RTTR_INLINE type get_type_from_instance(const T*) RTTR_NOEXCEPT
 {
-    return detail::type_getter<T>::get_type();
+    return detail::create_or_get_type<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +335,8 @@ struct type_from_instance<T, false> // the typeInfo function is not available
 {
     static RTTR_INLINE type get(T&&) RTTR_NOEXCEPT
     {
-        return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
+        using non_ref_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+        return create_or_get_type<non_ref_type>();
     }
 };
 
@@ -380,7 +366,8 @@ struct type_converter;
 template<typename T>
 RTTR_INLINE type type::get() RTTR_NOEXCEPT
 {
-    return detail::type_getter<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::get_type();
+    using non_ref_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+    return detail::create_or_get_type<non_ref_type>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

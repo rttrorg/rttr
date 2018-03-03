@@ -56,7 +56,7 @@ struct type_data;
 
 template<typename T>
 RTTR_INLINE type_data& get_type_data() RTTR_NOEXCEPT;
-RTTR_LOCAL type_data& get_invalid_type_data() RTTR_NOEXCEPT;
+RTTR_LOCAL type_data* get_invalid_type_data() RTTR_NOEXCEPT;
 
 static type get_invalid_type() RTTR_NOEXCEPT;
 
@@ -67,7 +67,7 @@ class enumeration_wrapper_base;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct class_data
+struct RTTR_LOCAL class_data
 {
     class_data(get_derived_info_func func, std::vector<type> nested_types)
     :   m_derived_info_func(func),
@@ -120,7 +120,7 @@ using get_class_data_func  = class_data&(*)(void);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-struct type_data
+struct RTTR_LOCAL type_data
 {
     type_data* raw_type_data;
     type_data* wrapped_type;
@@ -151,7 +151,7 @@ struct type_data
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static class_data& get_type_class_data() RTTR_NOEXCEPT
+RTTR_LOCAL RTTR_INLINE class_data& get_type_class_data() RTTR_NOEXCEPT
 {
     static std::unique_ptr<class_data> info = detail::make_unique<class_data>(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments());
     return (*info.get());
@@ -162,7 +162,7 @@ static class_data& get_type_class_data() RTTR_NOEXCEPT
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Enable = void>
-struct get_size_of
+struct RTTR_LOCAL get_size_of
 {
     RTTR_INLINE RTTR_CONSTEXPR static std::size_t value()
     {
@@ -173,7 +173,7 @@ struct get_size_of
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct get_size_of<T, enable_if_t<std::is_same<T, void>::value || std::is_function<T>::value>>
+struct RTTR_LOCAL get_size_of<T, enable_if_t<std::is_same<T, void>::value || std::is_function<T>::value>>
 {
     RTTR_INLINE RTTR_CONSTEXPR static std::size_t value()
     {
@@ -184,7 +184,7 @@ struct get_size_of<T, enable_if_t<std::is_same<T, void>::value || std::is_functi
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, bool = std::is_same<T, typename raw_type<T>::type >::value>
-struct raw_type_info
+struct RTTR_LOCAL raw_type_info
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
 };
@@ -192,7 +192,7 @@ struct raw_type_info
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct raw_type_info<T, false>
+struct RTTR_LOCAL raw_type_info<T, false>
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<typename raw_type<T>::type>(); }
 };
@@ -200,7 +200,7 @@ struct raw_type_info<T, false>
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, bool = std::is_array<T>::value>
-struct array_raw_type
+struct RTTR_LOCAL array_raw_type
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<raw_array_type_t<T>>(); }
 };
@@ -208,7 +208,7 @@ struct array_raw_type
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct array_raw_type<T, false>
+struct RTTR_LOCAL array_raw_type<T, false>
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); } // we have to return an empty type, so we can stop the recursion
 };
@@ -216,7 +216,7 @@ struct array_raw_type<T, false>
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, bool = is_wrapper<T>::value>
-struct wrapper_type_info
+struct RTTR_LOCAL wrapper_type_info
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return type::get<wrapper_mapper_t<T>>(); }
 };
@@ -224,7 +224,7 @@ struct wrapper_type_info
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct wrapper_type_info<T, false>
+struct RTTR_LOCAL wrapper_type_info<T, false>
 {
     static RTTR_INLINE type get_type() RTTR_NOEXCEPT { return get_invalid_type(); }
 };
@@ -232,7 +232,7 @@ struct wrapper_type_info<T, false>
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Wrapper, typename Wrapped_Type>
-static void create_wrapper(const argument& arg, variant& var)
+RTTR_LOCAL RTTR_INLINE void create_wrapper(const argument& arg, variant& var)
 {
     if (arg.get_type() != type::get<Wrapped_Type>())
         return;
@@ -242,10 +242,11 @@ static void create_wrapper(const argument& arg, variant& var)
 }
 
 template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
-static enable_if_t<is_wrapper<Wrapper>::value &&
-                   ::rttr::detail::is_copy_constructible<Wrapper>::value &&
-                   std::is_default_constructible<Wrapper>::value &&
-                   has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
+RTTR_LOCAL RTTR_INLINE
+enable_if_t<is_wrapper<Wrapper>::value &&
+            ::rttr::detail::is_copy_constructible<Wrapper>::value &&
+            std::is_default_constructible<Wrapper>::value &&
+            has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
 get_create_wrapper_func()
 {
     return &create_wrapper<Wrapper, Tp>;
@@ -253,10 +254,11 @@ get_create_wrapper_func()
 
 
 template<typename Wrapper, typename Tp = wrapper_mapper_t<Wrapper>>
-static enable_if_t<!is_wrapper<Wrapper>::value ||
-                   !::rttr::detail::is_copy_constructible<Wrapper>::value ||
-                   !std::is_default_constructible<Wrapper>::value ||
-                   !has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
+RTTR_LOCAL RTTR_INLINE
+enable_if_t<!is_wrapper<Wrapper>::value ||
+            !::rttr::detail::is_copy_constructible<Wrapper>::value ||
+            !std::is_default_constructible<Wrapper>::value ||
+            !has_create_wrapper_func<Wrapper>::value, impl::create_wrapper_func>
 get_create_wrapper_func()
 {
     return nullptr;
@@ -265,7 +267,7 @@ get_create_wrapper_func()
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-static std::vector<metadata>& get_metadata_func_impl()
+RTTR_LOCAL RTTR_INLINE std::vector<metadata>& get_metadata_func_impl()
 {
     static std::unique_ptr<std::vector<metadata>> obj = make_unique<std::vector<metadata>>();
     return (*obj.get());
@@ -280,7 +282,7 @@ using type_trait_value = uint64_t;
 #define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
 
 template<typename T>
-std::unique_ptr<type_data> make_type_data()
+RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
 {
     auto obj = std::unique_ptr<type_data>
                (

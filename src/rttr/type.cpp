@@ -65,7 +65,7 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type::type() RTTR_NOEXCEPT
-:   m_type_data(&detail::get_invalid_type_data())
+:   m_type_data(detail::get_invalid_type_data())
 {
 }
 
