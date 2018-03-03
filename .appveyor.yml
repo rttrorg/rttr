@@ -108,7 +108,7 @@ before_build:
   - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MSVC_12" call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_482" set PATH=C:\Qt\Tools\mingw482_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_492" set PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
-  - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH% & dir C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32
+  - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH% & dir C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\
   
 #######################################################################################
 # we can use Ninja for all configurations
