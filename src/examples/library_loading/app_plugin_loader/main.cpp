@@ -54,9 +54,15 @@ int main(int argc, char** argv)
 
     {   // scope is important, because we have to free all data before we unload the library
 
+        // print all classes contained in the library
+        for (auto t : lib.get_types())
+        {
+            if (t.is_class() && !t.is_wrapper())
+                std::cout << t.get_name() << std::endl;
+        }
         // we cannot use the actual type, to get the type information,
         // thus we use string to retrieve it
-        auto t = type::get_by_name("MyPlugin");
+        auto t = type::get_by_name("MyPluginClass");
 
         // iterate over all methods of the class
         for (auto meth : t.get_methods())
@@ -66,8 +72,8 @@ int main(int argc, char** argv)
 
         // work with the new type
         auto var = t.create();
-        auto value = t.invoke("some_method", var, {});
-        std::cout << value.to_string() << std::endl;
+        t.invoke("perform_calculation", var, {});
+        std::cout << t.get_property_value("value", var).to_int() << std::endl; // prints "12"
     } // all data has to be remove before unload the library, otherwise we get UB
 
     if (!lib.unload())

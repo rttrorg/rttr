@@ -761,6 +761,8 @@ RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(T
  * Just place the macro in global scope in a cpp file.
  *
  * \remark It is not possible to place the macro multiple times in one cpp file.
+ *         When you compile your plugin with the `gcc` toolchain, make sure you use the compiler option: `-fno-gnu-unique`.
+ *         otherwise the unregistration will not work properly.
  *
  * \see library
  */
