@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(app_plugin_loader LANGUAGES CXX)
+project(library_loader_example LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -39,11 +39,11 @@ if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
-add_executable(app_plugin_loader ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(app_plugin_loader RTTR::Core)
-add_dependencies(app_plugin_loader plugin_example)
+add_executable(library_loader_example ${SRC_FILES} ${HPP_FILES})
+target_link_libraries(library_loader_example RTTR::Core)
+add_dependencies(library_loader_example plugin_example)
 
-set_target_properties(app_plugin_loader PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+set_target_properties(library_loader_example PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                                     FOLDER "Examples/library_loading")
 
 
