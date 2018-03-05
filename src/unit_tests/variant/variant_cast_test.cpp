@@ -60,6 +60,16 @@ TEST_CASE("variant - variant_cast<T>(variant*)", "[variant]")
         CHECK(*value == 12);
     }
 
+    SECTION("valid cast - pointer")
+    {
+        int obj = 12;
+        variant var = &obj;
+
+        auto value = variant_cast<int*>(&var);
+        REQUIRE(value != nullptr);
+        CHECK(**value == 12);
+    }
+
     SECTION("invalid cast")
     {
         variant var = 12;
@@ -224,7 +234,7 @@ TEST_CASE("variant - variant_cast<T>(variant&&)", "[variant]")
         CHECK(move_count == 2);
 
         moveable_class&& m3 = variant_cast<moveable_class&&>(std::move(var));
-        CHECK(move_count == 3);
+        CHECK(move_count == 2); // will not move
         CHECK(m3.value == 12); // to avoid not used variable warning
     }
 }
