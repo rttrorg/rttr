@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of the examples of RTTR (Run Time Type Reflection)            #
 #  License: MIT License                                                            #
@@ -34,7 +34,7 @@ set(HPP_FILES "")
 set(SRC_FILES "")
 
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
-                                "RTTR Unit-Tests: unit_test_plugin" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
+                                "RTTR Unit-Tests: unit_test_plugin" "Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>" "MIT License")
 
 loadFolder("plugin" HPP_FILES SRC_FILES)
 
