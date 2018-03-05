@@ -43,7 +43,7 @@ namespace rttr
 namespace detail
 {
 template<typename T>
-using variant_t = detail::remove_cv_t<detail::remove_reference_t<T>>;
+using variant_t = remove_cv_t<remove_reference_t<T>>;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

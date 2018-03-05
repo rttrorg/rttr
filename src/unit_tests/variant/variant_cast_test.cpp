@@ -53,7 +53,7 @@ TEST_CASE("variant - variant_cast<T>(variant*)", "[variant]")
 
         CHECK(value != nullptr);
 
-        using value_t = std::remove_reference_t<decltype(value)>;
+        using value_t = detail::remove_reference_t<decltype(value)>;
         static_assert(std::is_same<decltype(value), int*>::value, "Must be integer pointer type!");
 
         REQUIRE(value != nullptr);
@@ -100,7 +100,7 @@ TEST_CASE("variant - variant_cast<T>(const variant*)", "[variant]")
 
         CHECK(value != nullptr);
 
-        using value_t = std::remove_reference_t<decltype(value)>;
+        using value_t = detail::remove_reference_t<decltype(value)>;
         static_assert(std::is_same<decltype(value), const int*>::value, "Must be integer pointer type!");
 
         REQUIRE(value != nullptr);
