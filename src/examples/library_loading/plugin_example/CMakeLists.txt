@@ -33,7 +33,7 @@ message(STATUS "===========================")
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
                                 "RTTR Examples: library_loading" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
 
-loadFolder("plugin_example" HPP_FILES SRC_FILES)
+loadFolder("files" HPP_FILES SRC_FILES)
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
