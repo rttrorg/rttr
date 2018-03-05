@@ -25,7 +25,7 @@
 #                                                                                  #
 ####################################################################################
 
-project(json_serialization LANGUAGES CXX)
+project(json_example LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
@@ -33,21 +33,22 @@ message(STATUS "===========================")
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
                                 "RTTR Examples: json serialization" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
 
-loadFolder("json" HPP_FILES SRC_FILES)
+loadFolder("files" HPP_FILES SRC_FILES)
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
-add_executable(json_serialization ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(json_serialization RTTR::Core)
-target_include_directories(json_serialization PUBLIC ${RAPID_JSON_DIR})
-set_target_properties(json_serialization PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                                                    FOLDER "Examples"
-                                                    INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
-                                                    CXX_STANDARD ${MAX_CXX_STANDARD})
+add_executable(json_example ${SRC_FILES} ${HPP_FILES})
+target_link_libraries(json_example RTTR::Core)
+target_include_directories(json_example PUBLIC ${RAPID_JSON_DIR})
+set_target_properties(json_example 
+                       PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                  FOLDER "Examples"
+                                  INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                                  CXX_STANDARD ${MAX_CXX_STANDARD})
 
-set_compiler_warnings(json_serialization)
+set_compiler_warnings(json_example)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
