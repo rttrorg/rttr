@@ -52,6 +52,11 @@ class instance;
 
 namespace detail
 {
+    template<class T>
+    RTTR_INLINE T* unsafe_variant_cast(variant* operand) RTTR_NOEXCEPT;
+    template<class T>
+    RTTR_INLINE const T* unsafe_variant_cast(const variant* operand) RTTR_NOEXCEPT;
+
     struct data_address_container;
     template<typename T>
     struct empty_type_converter;
@@ -422,6 +427,32 @@ class RTTR_API variant
          * \return True if the containing value is an sequentail container; otherwise false.
          */
         bool is_sequential_container() const;
+
+        /*!
+         * \brief Returns a reference to the containing value as type \p T.
+         *
+         * \code{.cpp}
+         *  struct custom_type
+         *  {
+         *     //...
+         *  };
+         *
+         *  variant var = custom_type{};
+         *  if (var.is_type<custom_type>())                         // yields to true
+         *      custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
+         * \endcode
+         *
+         * \remark Only call this method when it is possible to return the containing value as the given type \p T.
+         *         Use therefore the method \ref is_type().
+         *         Otherwise the call leads to undefined behaviour.
+         *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
+         *
+         * \see is_type()
+         *
+         * \return A reference to the stored value.
+         */
+        template<typename T>
+        T& get_value();
 
         /*!
          * \brief Returns a reference to the containing value as type \p T.
@@ -1067,12 +1098,106 @@ class RTTR_API variant
         friend struct detail::variant_data_base_policy;
         friend struct detail::variant_data_policy_nullptr_t;
         friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&, bool& ok);
+        template<class T>
+        friend RTTR_INLINE T* detail::unsafe_variant_cast(variant* operand) RTTR_NOEXCEPT;
+
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Returns a reference to the containing value as type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
+ *  std:string value = variant_cast<std::string>(var);        // copies the value
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(const variant& operand);
+
+/*!
+ * \brief Returns a reference to the containing value as type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
+ *  std:string value = variant_cast<std::string>(var);        // copies the value
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(variant& operand);
+
+/*!
+ * \brief Move the containing value from the variant into a type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std::string& a = variant_cast<std::string&>(var);
+ *  std:string b = variant_cast<std::string>(std::move(var)); // move the value to 'b'
+ *  std::cout << "a: " << a << std::endl; // is now empty
+ *  std::cout << "b: " << b << std::endl; // prints "hello world"
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(variant&& operand);
+
+/*!
+ * \brief Returns a pointer to the containing value with type \p T.
+ *        When the containing value is of type \p T, a valid pointer to the type will be returned.
+ *        Otherwise a `nullptr` is returned.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns extracts the value by reference
+ *  int* b        = variant_cast<int>(&var);
+ *  std::cout << "a valid: " << a != nullptr << std::endl;
+ *  std::cout << "b valid: " << b != nullptr << std::endl;
+ * \endcode
+ *
+ * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
+ */
+template<class T>
+const T* variant_cast(const variant* operand) RTTR_NOEXCEPT;
+
+/*!
+ * \brief Returns a pointer to the containing value with type \p T.
+ *        When the containing value is of type \p T, a valid pointer to the type will be returned.
+ *        Otherwise a `nullptr` is returned.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns extracts the value by reference
+ *  int* b        = variant_cast<int>(&var);
+ *  std::cout << "a valid: " << a != nullptr << std::endl;
+ *  std::cout << "b valid: " << b != nullptr << std::endl;
+ * \endcode
+ *
+ * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
+ */
+template<class T>
+T* variant_cast(variant* operand) RTTR_NOEXCEPT;
 
 } // end namespace rttr
 

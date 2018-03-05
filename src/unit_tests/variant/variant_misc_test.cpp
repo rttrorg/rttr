@@ -101,6 +101,36 @@ TEST_CASE("variant - swap", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant - get_value()", "[variant]")
+{
+    SECTION("check get_value() non-const version")
+    {
+        std::string text = "hello world";
+        variant var = text;
+
+        auto& value = var.get_value<std::string>();
+        value = "world";
+        using value_t = std::remove_reference_t<decltype(value)>;
+
+        static_assert(!std::is_const<value_t>::value, "Provide non-const getter!");
+
+        CHECK(var.get_value<std::string>() == "world");
+    }
+
+    SECTION("check get_value() const version")
+    {
+        std::string text = "hello world";
+        const variant var = text;
+
+        auto& value = var.get_value<std::string>();
+
+        using value_t = std::remove_reference_t<decltype(value)>;
+        static_assert(std::is_const<value_t>::value, "Provide non-const getter!");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant - get_wrapped_value", "[variant]")
 {
     int foo = 12;
