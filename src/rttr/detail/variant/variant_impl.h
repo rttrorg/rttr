@@ -141,7 +141,6 @@ RTTR_INLINE T& variant::get_value()
     using namespace detail;
     auto result = unsafe_variant_cast<variant_t<T>>(this);
 
-    using ref_type = conditional_t<std::is_reference<T>::value, T, add_lvalue_reference_t<T>>;
     return *result;
 }
 
@@ -153,7 +152,6 @@ RTTR_INLINE const T& variant::get_value() const
     using namespace detail;
     auto result = unsafe_variant_cast<variant_t<T>>(this);
 
-    using ref_type = conditional_t<std::is_reference<T>::value, T, add_lvalue_reference_t<T>>;
     return *result;
 }
 
