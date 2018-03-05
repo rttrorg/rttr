@@ -43,6 +43,7 @@ add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(unit_tests RTTR::Core Catch2::Catch)
 add_dependencies(unit_tests RTTR::Core)
 set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                            FOLDER "Testing"
                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 
@@ -57,7 +58,13 @@ add_custom_target(run_tests ALL
                   COMMAND "$<TARGET_FILE:unit_tests>"
                   DEPENDS unit_tests
                   COMMENT "Running unit_tests")
+                  
+set_target_properties(run_tests PROPERTIES 
+                                FOLDER "Testing")
 
+add_subdirectory(plugin)
+
+add_dependencies(unit_tests unit_test_plugin)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

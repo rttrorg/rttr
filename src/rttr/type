@@ -38,5 +38,6 @@
 #include "property.h"
 #include "enumeration.h"
 #include "enum_flags.h"
+#include "library.h"
 
 #endif // RTTR_TYPE_HEADERS_H_

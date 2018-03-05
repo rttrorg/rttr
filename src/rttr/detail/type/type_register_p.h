@@ -72,7 +72,7 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    type register_type(type_data* info) RTTR_NOEXCEPT;
+    type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
     void register_constructor(const constructor_wrapper_base* ctor);
@@ -130,7 +130,7 @@ public:
 
 private:
     type_register_private();
-    ~type_register_private() = default;
+    ~type_register_private();
 
     template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
     struct data_container
@@ -170,22 +170,6 @@ private:
         Data_Type       m_data;
     };
 
-    /*! A helper class to register the registration managers.
-     * This class is needed in order to avoid that the registration_manager instance's
-     * are trying to deregister its content, although the RTTR library is already unloaded.
-     * So every registration manager class holds a flag whether it should deregister itself or not.
-     */
-    struct registration_reg_manager
-    {
-        ~registration_reg_manager()
-        {
-            // when this dtor is running, it means, that RTTR library will be unloaded
-            for (auto& manager : m_manager_list)
-                manager->set_disable_unregister();
-        }
-        std::set<registration_manager*> m_manager_list;
-    };
-
     static void register_comparator_impl(const type& t, const type_comparator_base* comparator,
                                          std::vector<data_container<const type_comparator_base*>>& comparator_list);
     static const type_comparator_base* get_type_comparator_impl(const type& t,
@@ -201,7 +185,7 @@ private:
 
     static std::string derive_name(const type& t);
     //! Returns true, when the name was already registered
-    type register_name_if_neccessary(type_data* info);
+    type_data* register_name_if_neccessary(type_data* info);
     static void register_base_class_info(type_data* info);
     /*!
      * \brief This will create the derived name of a template instance, with all the custom names of a template parameter.
@@ -216,7 +200,12 @@ private:
      */
     void update_custom_name(std::string new_name, const type& t);
 
-    registration_reg_manager                                    m_registration_reg_manager;
+    /*! A helper class to register the registration managers.
+     * This class is needed in order to avoid that the registration_manager instance's
+     * are trying to deregister its content, although the RTTR library is already unloaded.
+     * So every registration manager class holds a flag whether it should deregister itself or not.
+     */
+    std::set<registration_manager*>                             m_registration_manager_list;
 
     flat_map<std::string, type, hash>                           m_custom_name_to_id;
     flat_map<string_view, type>                                 m_orig_name_to_id;

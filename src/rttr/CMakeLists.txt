@@ -55,6 +55,9 @@ if (${BUILD_RTTR_DYNAMIC})
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           CXX_VISIBILITY_PRESET hidden
                           VISIBILITY_INLINES_HIDDEN 1)
+    
+    target_link_libraries(rttr_core PRIVATE ${CMAKE_DL_LIBS})
+                          
                           
     if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
         target_compile_features(rttr_core PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
@@ -91,6 +94,9 @@ if (BUILD_STATIC)
                           EXPORT_NAME Core_Lib
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
+                          
+    target_link_libraries(rttr_core_lib PRIVATE ${CMAKE_DL_LIBS})
+    
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
     elseif (CMAKE_COMPILER_IS_GNUCXX)
@@ -133,6 +139,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                $<INSTALL_INTERFACE:include>)
 
+    target_link_libraries(rttr_core_s PRIVATE ${CMAKE_DL_LIBS})
+                               
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL
@@ -182,6 +190,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                               EXPORT_NAME Core_Lib_STL
                               CXX_STANDARD ${MAX_CXX_STANDARD}
                               DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
+                              
+        target_link_libraries(rttr_core_lib_s PRIVATE ${CMAKE_DL_LIBS})
             
         if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
             target_compile_features(rttr_core_lib_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR

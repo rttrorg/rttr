@@ -7,3 +7,4 @@ You can find more information on: <a target="_blank" href="http://www.rttr.org">
 
 ##### Following examples are available
 1. serialization/deserialization with json
+2. explicit loading of libraries at runtime

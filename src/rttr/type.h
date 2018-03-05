@@ -63,17 +63,15 @@ struct type_converter_base;
 class type_register;
 class type_register_private;
 
-template<typename T, typename Enable = void>
-struct type_getter;
-
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct invalid_type{};
 struct type_data;
 class destructor_wrapper_base;
 class property_wrapper_base;
+RTTR_LOCAL RTTR_INLINE type create_type(type_data*) RTTR_NOEXCEPT;
 
 template<typename T>
-std::unique_ptr<type_data> make_type_data();
+RTTR_LOCAL std::unique_ptr<type_data> make_type_data();
 
 template<typename T, typename Tp, typename Converter>
 struct variant_data_base_policy;
@@ -302,7 +300,7 @@ class RTTR_API type
          * \return type for the template type \a T.
          */
         template<typename T>
-        static type get() RTTR_NOEXCEPT;
+        RTTR_LOCAL static type get() RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object for the given instance \a object.
@@ -315,7 +313,7 @@ class RTTR_API type
          * \return type for an \a object of type \a T.
          */
         template<typename T>
-        static type get(T&& object) RTTR_NOEXCEPT;
+        RTTR_LOCAL static type get(T&& object) RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the type object with the given name \p name.
@@ -1069,7 +1067,7 @@ class RTTR_API type
         /*!
          * Constructs an empty and invalid type object.
          */
-        RTTR_INLINE type() RTTR_NOEXCEPT;
+        type() RTTR_NOEXCEPT;
 
         /*!
          * \brief Constructs a valid type object.
@@ -1164,12 +1162,11 @@ class RTTR_API type
         template<typename Target_Type, typename Source_Type>
         friend Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT;
 
-        template<typename T, typename Enable>
-        friend struct detail::type_getter;
         friend class instance;
         friend class detail::type_register;
-        friend type detail::get_invalid_type() RTTR_NOEXCEPT;
         friend class detail::type_register_private;
+
+        friend type detail::create_type(detail::type_data*) RTTR_NOEXCEPT;
 
         template<typename T>
         friend std::unique_ptr<detail::type_data> detail::make_type_data();

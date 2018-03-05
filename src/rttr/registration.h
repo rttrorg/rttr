@@ -745,6 +745,30 @@ RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(T
 #define RTTR_REGISTRATION
 
 /*!
+ * \brief Use this macro to automatically register your reflection information inside a plugin to RTTR.
+ *
+ * Use it in following way:
+ * \code{.cpp}
+ *
+ *   int some_method() { return 42; }
+ *
+ *   RTTR_PLUGIN_REGISTRATION
+ *   {
+ *       rttr::registration::method("some_method", &some_method);
+ *   }
+ * \endcode
+ *
+ * Just place the macro in global scope in a cpp file.
+ *
+ * \remark It is not possible to place the macro multiple times in one cpp file.
+ *         When you compile your plugin with the `gcc` toolchain, make sure you use the compiler option: `-fno-gnu-unique`.
+ *         otherwise the unregistration will not work properly.
+ *
+ * \see library
+ */
+#define RTTR_PLUGIN_REGISTRATION
+
+/*!
  * \brief Place this macro inside a class, when you need to reflect properties,
  *        methods or constructors which are declared in `protected` or `private` scope of the class.
  *
