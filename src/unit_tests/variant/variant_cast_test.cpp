@@ -53,7 +53,6 @@ TEST_CASE("variant - variant_cast<T>(variant*)", "[variant]")
 
         CHECK(value != nullptr);
 
-        using value_t = detail::remove_reference_t<decltype(value)>;
         static_assert(std::is_same<decltype(value), int*>::value, "Must be integer pointer type!");
 
         REQUIRE(value != nullptr);
@@ -100,7 +99,6 @@ TEST_CASE("variant - variant_cast<T>(const variant*)", "[variant]")
 
         CHECK(value != nullptr);
 
-        using value_t = detail::remove_reference_t<decltype(value)>;
         static_assert(std::is_same<decltype(value), const int*>::value, "Must be integer pointer type!");
 
         REQUIRE(value != nullptr);
@@ -232,6 +230,7 @@ TEST_CASE("variant - variant_cast<T>(variant&&)", "[variant]")
         CHECK(move_count == 1);
         moveable_class m2 = variant_cast<moveable_class>(std::move(var));
         CHECK(move_count == 2);
+        CHECK(m2.value == 12); // to avoid not used variable warning
 
         moveable_class&& m3 = variant_cast<moveable_class&&>(std::move(var));
         CHECK(move_count == 2); // will not move
