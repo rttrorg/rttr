@@ -110,7 +110,7 @@ TEST_CASE("variant - get_value()", "[variant]")
 
         auto& value = var.get_value<std::string>();
         value = "world";
-        using value_t = std::remove_reference_t<decltype(value)>;
+        using value_t = detail::remove_reference_t<decltype(value)>;
 
         static_assert(!std::is_const<value_t>::value, "Provide non-const getter!");
 
@@ -124,8 +124,9 @@ TEST_CASE("variant - get_value()", "[variant]")
 
         auto& value = var.get_value<std::string>();
 
-        using value_t = std::remove_reference_t<decltype(value)>;
+        using value_t = detail::remove_reference_t<decltype(value)>;
         static_assert(std::is_const<value_t>::value, "Provide non-const getter!");
+        CHECK(value == text);
     }
 }
 
