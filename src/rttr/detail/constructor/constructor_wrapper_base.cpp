@@ -55,7 +55,7 @@ constructor_wrapper_base::~constructor_wrapper_base()
 void constructor_wrapper_base::init() RTTR_NOEXCEPT
 {
     create_signature_string();
-    get_instanciated_type();
+    get_instantiated_type();
     get_parameter_infos();
 }
 
@@ -73,11 +73,11 @@ void constructor_wrapper_base::create_signature_string() RTTR_NOEXCEPT
     if (!m_signature.empty())
         return;
 
-    if (!get_instanciated_type())
+    if (!get_instantiated_type())
         return;
 
     auto param_info_list = get_parameter_infos();
-    m_signature = get_instanciated_type().get_raw_type().get_name().to_string() + "( ";
+    m_signature = get_instantiated_type().get_raw_type().get_name().to_string() + "( ";
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
     for (const auto& param : param_info_list)
@@ -117,7 +117,7 @@ access_levels constructor_wrapper_base::get_access_level() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type constructor_wrapper_base::get_instanciated_type() const RTTR_NOEXCEPT
+type constructor_wrapper_base::get_instantiated_type() const RTTR_NOEXCEPT
 {
     return get_invalid_type();
 }

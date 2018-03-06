@@ -88,7 +88,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 
         bool is_valid()                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()    const RTTR_NOEXCEPT { return Acc_Level; }
-        type get_instanciated_type()        const RTTR_NOEXCEPT { return type::get<instanciated_type>(); }
+        type get_instantiated_type()        const RTTR_NOEXCEPT { return type::get<instanciated_type>(); }
         type get_declaring_type()           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>(); }
 
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type)     const RTTR_NOEXCEPT { return {std::is_reference<Ctor_Args>::value...}; }
@@ -196,7 +196,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
 
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level; }
-        type get_instanciated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
+        type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
         type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>(); }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();      }
@@ -267,7 +267,7 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 
         bool is_valid()                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()    const RTTR_NOEXCEPT { return Acc_Level; }
-        type get_instanciated_type()        const RTTR_NOEXCEPT { return type::get<instanciated_type>(); }
+        type get_instantiated_type()        const RTTR_NOEXCEPT { return type::get<instanciated_type>(); }
         type get_declaring_type()           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>(); }
 
         RTTR_INLINE std::vector<bool> get_is_reference_impl(std::true_type)     const RTTR_NOEXCEPT { return {std::is_reference<Ctor_Args>::value...}; }
@@ -368,7 +368,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
 
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level; }
-        type get_instanciated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
+        type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
         type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>(); }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();      }

@@ -131,7 +131,7 @@ variant extract_value(Value::MemberIterator& itr, const type& t)
             constructor ctor = t.get_constructor();
             for (auto& item : t.get_constructors())
             {
-                if (item.get_instanciated_type() == t)
+                if (item.get_instantiated_type() == t)
                     ctor = item;
             }
             extracted_value = ctor.invoke();
