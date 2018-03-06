@@ -112,18 +112,18 @@ TEST_CASE("constructor - default ctor binding type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_instanciated_type", "[constructor]")
+TEST_CASE("constructor - get_instantiated_type", "[constructor]")
 {
     auto range = type::get<ctor_misc_test>().get_constructors();
     std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 4);
 
-    CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
-    CHECK(ctor_list[1].get_instanciated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
-    CHECK(ctor_list[2].get_instanciated_type() == type::get<ctor_misc_test>());
-    CHECK(ctor_list[3].get_instanciated_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[0].get_instantiated_type() == type::get<ctor_misc_test*>());
+    CHECK(ctor_list[1].get_instantiated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
+    CHECK(ctor_list[2].get_instantiated_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[3].get_instantiated_type() == type::get<ctor_misc_test>());
     //negative test
-    CHECK(type::get_by_name("").get_constructor().get_instanciated_type().is_valid() == false);
+    CHECK(type::get_by_name("").get_constructor().get_instantiated_type().is_valid() == false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

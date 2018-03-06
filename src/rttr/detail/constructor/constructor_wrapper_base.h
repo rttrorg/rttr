@@ -63,7 +63,7 @@ class RTTR_API constructor_wrapper_base
         virtual bool is_valid() const RTTR_NOEXCEPT;
         virtual type get_declaring_type() const RTTR_NOEXCEPT;
         virtual access_levels get_access_level() const RTTR_NOEXCEPT;
-        virtual type get_instanciated_type() const RTTR_NOEXCEPT;
+        virtual type get_instantiated_type() const RTTR_NOEXCEPT;
         virtual std::vector<bool> get_is_reference() const RTTR_NOEXCEPT;
         virtual std::vector<bool> get_is_const() const RTTR_NOEXCEPT;
         virtual array_range<parameter_info> get_parameter_infos() const RTTR_NOEXCEPT;
