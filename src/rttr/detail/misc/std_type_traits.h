@@ -248,6 +248,9 @@ using decay_t = typename std::decay<T>::type;
 template<typename T>
 using add_const_t = typename std::add_const<T>::type;
 
+template<typename T>
+using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail

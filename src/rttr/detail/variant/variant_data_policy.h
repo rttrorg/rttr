@@ -652,7 +652,7 @@ struct RTTR_API variant_data_policy_empty
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg.get_value<void*>() = nullptr;
+                arg.get_value<const void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::GET_TYPE:
@@ -767,7 +767,7 @@ struct RTTR_API variant_data_policy_void
             }
             case variant_policy_operation::GET_VALUE:
             {
-                arg.get_value<void*>() = nullptr;
+                arg.get_value<const void*>() = nullptr;
                 break;
             }
             case variant_policy_operation::GET_TYPE:
