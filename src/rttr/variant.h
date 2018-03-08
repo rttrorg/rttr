@@ -1150,7 +1150,7 @@ T variant_cast(variant& operand);
  *  variant var = std::string("hello world");
  *  std::string& a = variant_cast<std::string&>(var);
  *  std:string b = variant_cast<std::string>(std::move(var)); // move the value to 'b'
- *  std::cout << "a: " << a << std::endl; // is now empty
+ *  std::cout << "a: " << a << std::endl; // is now empty (nothing to print)
  *  std::cout << "b: " << b << std::endl; // prints "hello world"
  *
  * \endcode
@@ -1169,10 +1169,10 @@ T variant_cast(variant&& operand);
  * \code{.cpp}
  *
  *  variant var = std::string("hello world");
- *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns extracts the value by reference
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns the value by reference
  *  int* b        = variant_cast<int>(&var);
- *  std::cout << "a valid: " << a != nullptr << std::endl;
- *  std::cout << "b valid: " << b != nullptr << std::endl;
+ *  std::cout << "a valid: " << a != nullptr << std::endl;  // prints "1"
+ *  std::cout << "b valid: " << b != nullptr << std::endl;  // prints "0"
  * \endcode
  *
  * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
@@ -1188,10 +1188,10 @@ const T* variant_cast(const variant* operand) RTTR_NOEXCEPT;
  * \code{.cpp}
  *
  *  variant var = std::string("hello world");
- *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns extracts the value by reference
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns the value by reference
  *  int* b        = variant_cast<int>(&var);
- *  std::cout << "a valid: " << a != nullptr << std::endl;
- *  std::cout << "b valid: " << b != nullptr << std::endl;
+ *  std::cout << "a valid: " << a != nullptr << std::endl;  // prints "1"
+ *  std::cout << "b valid: " << b != nullptr << std::endl;  // prints "0"
  * \endcode
  *
  * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
