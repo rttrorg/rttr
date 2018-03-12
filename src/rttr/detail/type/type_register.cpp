@@ -560,6 +560,8 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
 void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     bool found_type_data = false;
 
     m_type_data_storage.erase(std::remove_if(m_type_data_storage.begin(), m_type_data_storage.end(),
