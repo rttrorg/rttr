@@ -40,6 +40,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace rttr
 {
@@ -220,6 +221,8 @@ private:
     std::vector<data_container<const type_converter_base*>>     m_type_converter_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
+
+    std::mutex                                                  m_mutex;
 };
 
 } // end namespace detail

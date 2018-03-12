@@ -476,6 +476,8 @@ type_data* type_register_private::register_name_if_neccessary(type_data* info)
     if (ret != m_orig_name_to_id.end())
         return ret->m_type_data;
 
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     m_orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
     info->name = derive_name(type(info));
     m_custom_name_to_id.insert(std::make_pair(info->name, type(info)));
@@ -535,7 +537,10 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
     info->raw_type_data  = !info->raw_type_data->is_valid ? info : info->raw_type_data;
 
-    m_type_data_storage.push_back(info);
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_type_data_storage.push_back(info);
+    }
 
     // has to be done as last step
     register_base_class_info(info);
@@ -617,6 +622,8 @@ std::string type_register_private::derive_template_instance_name(type_data* info
 
 void type_register_private::update_custom_name(std::string new_name, const type& t)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto& type_name = t.m_type_data->name;
 
     if (new_name != type_name)
