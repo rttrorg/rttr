@@ -54,12 +54,17 @@ namespace detail { struct invalid_wrapper_type { }; }
  * 1. `using wrapped_type = typename T::encapsulated_type;`
  * 2. `using type = T`
  *
- * And two functions:
+ * And three functions:
  * 1. `static wrapped_type get(const T& obj);`
- * 2. `static T create(wrapped_type& obj);`
+ * 2. `static T create(wrapped_type& obj);` (Optional)
+ * 3. `static T<U> convert(const type& source, bool& ok);` (Optional)
  *
  * \remark The \ref rttr::wrapper_mapper<T>::create(T& obj) "create()" function is optional. When no one is provided,
  *         then it will be not possible to convert from the wrapped type to the wrapper class from inside a variant.
+ *         The \ref rttr::wrapper_mapper<T>::convert(const type& source, bool& ok) "convert()" function is also optional.
+ *         When no one is provided, you cannot use the \ref rttr::type::register_wrapper_converter_for_base_classes<T>()
+ *         function. For the wrapper classes: `std::shared_ptr<T>` and `std::reference_wrapper<T>`
+ *         default conversion functions are included.
  *
  * \see variant::convert()
  *
@@ -73,6 +78,7 @@ namespace detail { struct invalid_wrapper_type { }; }
  *  {
  *  public:
  *      custom_type(T& obj) : m_data(std::addressof(obj)) {}
+ *      custom_type(T) : m_data(nullptr) {}
  *      T& get_data() { return *m_value; }
  *  private:
  *      T* m_data;
@@ -96,6 +102,21 @@ namespace detail { struct invalid_wrapper_type { }; }
  *      inline static type create(const wrapped_type& value)
  *      {
  *         return custom_type<T>(value);
+ *      }
+ *
+ *      template<typename U>
+ *      inline static custom_type<U> convert(const type& source, bool& ok)
+ *      {
+ *          if (auto obj = rttr_cast<typename custom_type<U>::wrapped_type*>(&source.get_data()))
+ *          {
+ *              ok = true;
+ *              return custom_type<U>(*obj);
+ *          }
+ *          else
+ *          {
+ *              ok = false;
+ *              return custom_type<U>();
+ *          }
  *      }
  *  };
  *
@@ -124,6 +145,12 @@ struct wrapper_mapper
     }
 
     inline static type create(const wrapped_type& value)
+    {
+        return type(value);
+    }
+
+    template<typename U>
+    inline static T<U> convert(const type& source, bool& ok)
     {
         return type(value);
     }
