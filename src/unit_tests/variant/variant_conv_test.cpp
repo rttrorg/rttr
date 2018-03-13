@@ -76,18 +76,21 @@ static vector2d convert_to_vector(const point& p, bool& ok)
 
 struct base
 {
+    virtual ~base() {};
     int dummy;
     RTTR_ENABLE()
 };
 
 struct derived : virtual base
 {
+    virtual ~derived() {};
     double dummy2;
     RTTR_ENABLE(base)
 };
 
 struct other_derived : virtual base
 {
+    virtual ~other_derived() {};
     double dummy3;
     RTTR_ENABLE(base)
 };
@@ -785,6 +788,44 @@ TEST_CASE("variant test - convert from enum", "[variant]")
     CHECK(converted != test_enum::first);
     CHECK(converted == test_enum::second);
     CHECK(static_cast<int>(converted) == 2);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::shared_ptr<T>>", "[variant]")
+{
+    variant var = std::make_shared<derived>();
+    CHECK(var.convert(type::get<std::shared_ptr<base>>())           == false);
+
+    type::register_wrapper_converter_for_base_classes<std::shared_ptr<derived>>();
+
+    CHECK(var.convert(type::get<std::shared_ptr<base>>())           == true);
+    CHECK(var.convert(type::get<std::shared_ptr<derived>>())        == true);
+
+    type::register_wrapper_converter_for_base_classes<std::shared_ptr<other_derived>>();
+
+    // negative test, we need first make a down cast, otherwise the target_type converter cannot be found
+    CHECK(var.convert(type::get<std::shared_ptr<base>>())           == true);
+    CHECK(var.convert(type::get<std::shared_ptr<other_derived>>())  == false);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::reference_wrapper<T>>", "[variant]")
+{
+    derived obj;
+    variant var = std::ref(obj);
+    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == false);
+
+    type::register_wrapper_converter_for_base_classes<std::reference_wrapper<derived>>();
+
+    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
+    CHECK(var.convert(type::get<std::reference_wrapper<derived>>())         == true);
+
+    type::register_wrapper_converter_for_base_classes<std::reference_wrapper<other_derived>>();
+    // negative test, we need first make a down cast, otherwise the target_type converter cannot be found
+    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
+    CHECK(var.convert(type::get<std::reference_wrapper<other_derived>>())   == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

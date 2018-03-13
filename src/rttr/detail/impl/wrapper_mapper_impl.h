@@ -57,6 +57,21 @@ struct wrapper_mapper<std::shared_ptr<T>>
     {
         return type(t);
     }
+
+    template<typename U>
+    static std::shared_ptr<U> convert(const type& source, bool& ok)
+    {
+        if (auto p = rttr_cast<typename std::shared_ptr<U>::element_type*>(source.get()))
+        {
+            ok = true;
+            return std::shared_ptr<U>(source, p);
+        }
+        else
+        {
+            ok = false;
+            return std::shared_ptr<U>();
+        }
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +90,22 @@ struct wrapper_mapper<std::reference_wrapper<T>>
     static RTTR_INLINE type create(const wrapped_type& t)
     {
         return type(t);
+    }
+
+    template<typename U>
+    static std::reference_wrapper<U> convert(const type& source, bool& ok)
+    {
+        if (auto obj = rttr_cast<typename std::reference_wrapper<U>::type*>(&source.get()))
+        {
+            ok = true;
+            return std::ref(*obj);
+        }
+        else
+        {
+            ok = false;
+            U* dummy = nullptr;
+            return std::ref(*dummy); // this is illegal, however the value will be discarded anyway
+        }
     }
 };
 

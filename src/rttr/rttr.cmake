@@ -113,6 +113,7 @@ set(HEADER_FILES access_levels.h
                  detail/misc/function_traits.h
                  detail/misc/iterator_wrapper.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/register_wrapper_mapper_conversion.h
                  detail/misc/sequential_container_type_traits.h
                  detail/misc/std_type_traits.h
                  detail/misc/template_type_trait.h
