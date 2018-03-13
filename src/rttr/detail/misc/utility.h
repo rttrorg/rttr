@@ -539,6 +539,14 @@ ends_with(const T& big_str, const T& small_str)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+/*!
+ * A simple identity function. Returns the same object, without doing anything.
+ */
+template<typename T>
+static RTTR_INLINE T& identity_func(T& func) { return func; }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr
 

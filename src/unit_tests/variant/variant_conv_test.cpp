@@ -801,6 +801,11 @@ TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::share
 
     CHECK(var.convert(type::get<std::shared_ptr<base>>())           == true);
     CHECK(var.convert(type::get<std::shared_ptr<derived>>())        == true);
+    
+    type::register_wrapper_converter_for_base_classes<std::shared_ptr<other_derived>>();
+    
+    // negative test, we need first make a down cast, otherwise the target_type converter cannot be found
+    CHECK(var.convert(type::get<std::shared_ptr<base>>())           == true);
     CHECK(var.convert(type::get<std::shared_ptr<other_derived>>())  == false);
 }
 
@@ -816,6 +821,10 @@ TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::refer
 
     CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
     CHECK(var.convert(type::get<std::reference_wrapper<derived>>())         == true);
+    
+    type::register_wrapper_converter_for_base_classes<std::reference_wrapper<other_derived>>();
+    // negative test, we need first make a down cast, otherwise the target_type converter cannot be found
+    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
     CHECK(var.convert(type::get<std::reference_wrapper<other_derived>>())   == false);
 }
 
