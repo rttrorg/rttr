@@ -91,22 +91,6 @@ struct wrapper_mapper<std::reference_wrapper<T>>
     {
         return type(t);
     }
-
-    template<typename U>
-    static std::reference_wrapper<U> convert(const type& source, bool& ok)
-    {
-        if (auto obj = rttr_cast<typename std::reference_wrapper<U>::type*>(&source.get()))
-        {
-            ok = true;
-            return std::ref(*obj);
-        }
-        else
-        {
-            ok = false;
-            U* dummy = nullptr;
-            return std::ref(*dummy); // this is illegal, however the value will be discarded anyway
-        }
-    }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////

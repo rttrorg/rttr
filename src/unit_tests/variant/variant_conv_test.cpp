@@ -810,22 +810,3 @@ TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::share
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("variant test - register_wrapper_converter_for_base_classes<std::reference_wrapper<T>>", "[variant]")
-{
-    derived obj;
-    variant var = std::ref(obj);
-    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == false);
-
-    type::register_wrapper_converter_for_base_classes<std::reference_wrapper<derived>>();
-
-    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
-    CHECK(var.convert(type::get<std::reference_wrapper<derived>>())         == true);
-
-    type::register_wrapper_converter_for_base_classes<std::reference_wrapper<other_derived>>();
-    // negative test, we need first make a down cast, otherwise the target_type converter cannot be found
-    CHECK(var.convert(type::get<std::reference_wrapper<base>>())            == true);
-    CHECK(var.convert(type::get<std::reference_wrapper<other_derived>>())   == false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
