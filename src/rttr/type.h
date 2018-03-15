@@ -981,6 +981,33 @@ class RTTR_API type
         static void register_converter_func(F func);
 
         /*!
+         * \brief Register for all base classes of the giving type \p T
+         *        wrapper converter functions.
+         *        The converters are registered in both directions respectively.
+         *        From derived to base class and vice versa.
+         *
+         *
+         * See following example code:
+         *  \code{.cpp}
+         *   struct base { virtual ~base() {}; RTTR_ENABLE() };
+         *   struct derived : base { virtual ~derived() {}; RTTR_ENABLE(base) };
+         *
+         *   variant var = std::make_shared<derived>();
+         *   var.convert(type::get<std::shared_ptr<base>>());    // yields to `false`
+         *
+         *   // register the conversion functions
+         *   type::register_wrapper_converter_for_base_classes<std::shared_ptr<derived>>();
+         *
+         *   var.convert(type::get<std::shared_ptr<base>>());    // yields to `true`, derived to base conversion
+         *   var.convert(type::get<std::shared_ptr<derived>>()); // yields to `true`, base to derived conversion
+         *  \endcode
+         *
+         * \see variant::convert(), \ref wrapper_mapper "wrapper_mapper<T>"
+         */
+        template<typename T>
+        static void register_wrapper_converter_for_base_classes();
+
+        /*!
          * \brief Register comparison operators for template type \p T.
          *        This requires a valid `operator==` and `operator<` for type \p T.
          *

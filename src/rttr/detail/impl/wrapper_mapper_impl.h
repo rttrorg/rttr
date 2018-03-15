@@ -57,6 +57,21 @@ struct wrapper_mapper<std::shared_ptr<T>>
     {
         return type(t);
     }
+
+    template<typename U>
+    static std::shared_ptr<U> convert(const type& source, bool& ok)
+    {
+        if (auto p = rttr_cast<typename std::shared_ptr<U>::element_type*>(source.get()))
+        {
+            ok = true;
+            return std::shared_ptr<U>(source, p);
+        }
+        else
+        {
+            ok = false;
+            return std::shared_ptr<U>();
+        }
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////

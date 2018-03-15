@@ -41,6 +41,7 @@
 #include "rttr/detail/type/type_data.h"
 #include "rttr/detail/type/type_name.h"
 #include "rttr/detail/registration/registration_manager.h"
+#include "rttr/detail/misc/register_wrapper_mapper_conversion.h"
 
 
 namespace rttr
@@ -423,6 +424,14 @@ RTTR_INLINE void type::register_converter_func(F func)
     using source_type = remove_cv_t<remove_reference_t<source_type_orig>>;
 
     get_registration_manager().add_item(::rttr::detail::make_unique<type_converter<target_type, source_type, F>>(func));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+RTTR_INLINE void type::register_wrapper_converter_for_base_classes()
+{
+    detail::reg_wrapper_converter_for_base_classes<T>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

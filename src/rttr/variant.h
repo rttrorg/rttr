@@ -447,7 +447,7 @@ class RTTR_API variant
          *         Otherwise the call leads to undefined behaviour.
          *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
          *
-         * \see is_type()
+         * \see is_type(), variant_cast<T>
          *
          * \return A reference to the stored value.
          */
@@ -473,7 +473,7 @@ class RTTR_API variant
          *         Otherwise the call leads to undefined behaviour.
          *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
          *
-         * \see is_type()
+         * \see is_type(), variant_cast<T>
          *
          * \return A reference to the stored value.
          */
