@@ -125,6 +125,7 @@ before_build:
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_482" set PATH=C:\Qt\Tools\mingw482_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_492" set PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
+  - echo '%APPVEYOR_REPO_BRANCH%' '%APPVEYOR_REPO_NAME%' '%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%'
   - IF "%BUILD_DOCU%" == "true" choco install lftp --version 4.7.5
   
 #######################################################################################
@@ -137,4 +138,4 @@ build_script:
   - if "%TESTS_ONLY%" == "true" (ninja run_tests)
   - if "%BUILD_EXAMPLES%" == "true" (ninja json_example && ninja library_loader_example)
   - if "%BUILD_BENCHMARKS%" == "true" (ninja bench_method && ninja bench_rttr_cast && ninja bench_variant)
-  - if "%BUILD_DOCU%" == "true" ( if %APPVEYOR_REPO_BRANCH% == "master" (ninja doc_website && echo "Upload documentation..." && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; mirror -R doc_website/master doc_tmp" && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; rm -r doc" && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; mv doc_tmp doc") )
+  - if "%BUILD_DOCU%" == "true" ( if '%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%' == "master" (ninja doc_website && echo "Upload documentation..." && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; mirror -R doc_website/master doc_tmp" && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; rm -r doc" && lftp -c "set ssl:verify-certificate no; open -u %FTP_USER%,%FTP_PASSWORD% ftp://server3.febas.net:21/; mv doc_tmp doc") )
