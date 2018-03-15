@@ -125,7 +125,7 @@ before_build:
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_482" set PATH=C:\Qt\Tools\mingw482_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_492" set PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
-  - '%APPVEYOR_REPO_BRANCH%'
+  - echo '%APPVEYOR_REPO_BRANCH%' '%APPVEYOR_REPO_NAME%' '%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%'
   - IF "%BUILD_DOCU%" == "true" choco install lftp --version 4.7.5
   
 #######################################################################################
