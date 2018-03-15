@@ -131,6 +131,7 @@ before_build:
 # we can use Ninja for all configurations
 #######################################################################################
 build_script:
+  - %APPVEYOR_REPO_BRANCH%
   - mkdir build
   - cd build
   - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=%BUILD_EXAMPLES% -DBUILD_BENCHMARKS=%BUILD_BENCHMARKS% -DBUILD_WEBSITE_DOCU=%BUILD_DOCU%
