@@ -127,7 +127,7 @@ before_build:
   - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
   - echo "%APPVEYOR_REPO_BRANCH%" "%APPVEYOR_REPO_NAME%" "%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%"
   - IF "%BUILD_DOCU%" == "true" choco install lftp --version 4.7.5
-  - if "%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%" echo "nothin set"
+  - if "%APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%" == "" echo "nothin set"
   
 #######################################################################################
 # we can use Ninja for all configurations
