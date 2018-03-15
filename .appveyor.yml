@@ -125,13 +125,13 @@ before_build:
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_482" set PATH=C:\Qt\Tools\mingw482_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x86" IF "%COMPILER%" == "MINGW_492" set PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
   - IF "%ARCHITECTURE%" == "x64" IF "%COMPILER%" == "MINGW_W64" set PATH=C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
+  - echo "current build: " %APPVEYOR_REPO_BRANCH%
   - IF "%BUILD_DOCU%" == "true" choco install lftp --version 4.7.5
   
 #######################################################################################
 # we can use Ninja for all configurations
 #######################################################################################
 build_script:
-  - %APPVEYOR_REPO_BRANCH%
   - mkdir build
   - cd build
   - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=%BUILD_EXAMPLES% -DBUILD_BENCHMARKS=%BUILD_BENCHMARKS% -DBUILD_WEBSITE_DOCU=%BUILD_DOCU%
