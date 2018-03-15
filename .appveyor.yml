@@ -98,10 +98,9 @@ install:
   # Install doxygen
   #######################################################################################
   - set DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.windows.bin.zip"
-  - appveyor DownloadFile %NINJA_URL% -FileName doxygen.zip
+  - appveyor DownloadFile %DOXYGEN_URL% -FileName doxygen.zip
   - 7z x doxygen.zip -oC:\projects\deps\doxygen-1.8.10 > nul
-  - set PATH=C:\projects\deps\doxygen-1.8.10\bin;%PATH%
-  - dir C:\projects\deps\doxygen-1.8.10
+  - set PATH=C:\projects\deps\doxygen-1.8.10;%PATH%
   - doxygen --version
 
   #######################################################################################
