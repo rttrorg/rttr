@@ -833,21 +833,6 @@ property type_register_private::get_type_property(const type& t, string_view nam
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_register_private::get_type_method(const type& t, string_view name)
-{
-    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
-    {
-        if (meth.get_name() == name)
-        {
-            return meth;
-        }
-    }
-
-    return create_invalid_item<::rttr::method>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 method type_register_private::get_type_method(const type& t, string_view name,
                                               const std::vector<type>& type_list)
 {
