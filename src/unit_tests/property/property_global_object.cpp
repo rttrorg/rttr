@@ -69,6 +69,8 @@ RTTR_REGISTRATION
             policy::prop::as_reference_wrapper
         )
         ;
+
+    registration::property("global_obj_1", &g_name); // cannot register the same object twice
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

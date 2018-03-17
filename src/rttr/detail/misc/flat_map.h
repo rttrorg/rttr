@@ -171,7 +171,7 @@ class flat_map
 
 // older versions of gcc stl, have no support for const_iterator in std::vector<T>::erase(const_iterator)
 #if RTTR_NO_CXX11_CONST_EREASE_SUPPORT_IN_STL
-        void erase(const Key& key)
+        bool erase(const Key& key)
         {
             iterator_key itr = find_key(key);
             if (itr != m_key_list.end())
@@ -181,12 +181,14 @@ class flat_map
                 {
                     m_key_list.erase(itr);
                     m_value_list.erase(value_itr);
+                    return true;
                 }
             }
 
+            return false;
         }
 #else
-        void erase(const Key& key)
+        bool erase(const Key& key)
         {
             const_iterator_key itr = find_key_const(key);
             if (itr != m_key_list.end())
@@ -196,9 +198,11 @@ class flat_map
                 {
                     m_key_list.erase(itr);
                     m_value_list.erase(value_itr);
+                    return true;
                 }
             }
 
+            return false;
         }
 #endif
 

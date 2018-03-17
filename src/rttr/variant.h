@@ -473,7 +473,7 @@ class RTTR_API variant
          *         Otherwise the call leads to undefined behaviour.
          *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
          *
-         * \see is_type()
+         * \see is_type(), variant_cast<T>
          *
          * \return A reference to the stored value.
          */
@@ -1131,8 +1131,8 @@ T variant_cast(const variant& operand);
  * \code{.cpp}
  *
  *  variant var = std::string("hello world");
- *  std:string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
- *  std:string value = variant_cast<std::string>(var);        // copies the value
+ *  std::string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
+ *  std::string value = variant_cast<std::string>(var);        // copies the value
  *
  * \endcode
  *
@@ -1149,7 +1149,7 @@ T variant_cast(variant& operand);
  *
  *  variant var = std::string("hello world");
  *  std::string& a = variant_cast<std::string&>(var);
- *  std:string b = variant_cast<std::string>(std::move(var)); // move the value to 'b'
+ *  std::string b = variant_cast<std::string>(std::move(var)); // move the value to 'b'
  *  std::cout << "a: " << a << std::endl; // is now empty (nothing to print)
  *  std::cout << "b: " << b << std::endl; // prints "hello world"
  *
