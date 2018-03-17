@@ -459,7 +459,7 @@ static bool remove_container_item(T& container, const I& item)
     bool result = false;
     container.erase(std::remove_if(container.begin(), container.end(),
                                    [&item, &result](I& item_)
-                                   { return (item_== item) ? result = true : false; }),
+                                   { return (item_== item) ? (result = true) : false; }),
                     container.end());
 
     return result;
