@@ -44,8 +44,11 @@ struct property_member_obj_test
     property_member_obj_test()
     : _p1(0), _p3(1000, 42)
     {
-        int tmp_array[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
-        rttr::detail::copy_array(tmp_array, _p11);
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
+        const int tmp_array[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
+        using array_t = rttr::detail::remove_const_t<rttr::detail::remove_reference_t<decltype(tmp_array)>>;
+        rttr::detail::copy_array(const_cast<array_t&>(tmp_array), _p11);
+#endif
     }
 
 
@@ -58,7 +61,11 @@ struct property_member_obj_test
     const variant       _p8 = 23;
     int*                _p9 = nullptr;
     int*                _p10 = &_p1;
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
     int                 _p11[4][4];
+#else
+    int                 _p11[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
+#endif
 
 
 private:
