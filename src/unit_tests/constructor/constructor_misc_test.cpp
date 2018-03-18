@@ -87,7 +87,8 @@ RTTR_REGISTRATION
         (
             policy::ctor::as_object,
             default_arguments(23),
-            metadata(E_MetaData::SCRIPTABLE, true)
+            metadata(E_MetaData::SCRIPTABLE, true),
+            parameter_names("value")
         )
         .constructor(&ctor_misc_test::create_object)
         (
@@ -98,6 +99,15 @@ RTTR_REGISTRATION
 
    registration::class_<not_copyable_ctor>("not_copyable_ctor")
         .constructor<>();
+
+
+   registration::class_<ctor_misc_test>("ctor_misc_test")
+       .constructor<int>()
+       (
+           policy::ctor::as_object,
+           default_arguments(23),
+           metadata(E_MetaData::SCRIPTABLE, true)
+           );
 
 }
 
@@ -150,9 +160,16 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_parameter_infos().empty() == true);
 
-    ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() >= 6);
+    ctor = ctor_list[4];
+
     REQUIRE(ctor.get_parameter_infos().size() == 1);
-    CHECK(ctor.get_parameter_infos().begin()->get_type() == type::get<int>());
+    auto info = *ctor.get_parameter_infos().begin();
+    CHECK(info.get_type() == type::get<int>());
+    CHECK(info.has_default_value() == true);
+    CHECK(info.get_default_value() == 23);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

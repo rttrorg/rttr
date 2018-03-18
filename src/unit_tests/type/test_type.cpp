@@ -271,12 +271,23 @@ TEST_CASE("type - get_base_classes()", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("type - is_base_of()", "[type]")
+{
+    auto t_base = type::get<ClassSingleBase>();
+    auto t_derived = type::get<ClassSingle6A>();
+
+    CHECK(t_base.is_base_of(t_derived)          == true);
+    CHECK(t_base.is_base_of<ClassSingle6A>()    == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("type - is_derived_from()", "[type]")
 {
     DiamondBottom d;
 
-    REQUIRE(type::get(d).is_derived_from(type::get<DiamondTop>()) == true); // dynamic
-    REQUIRE(type::get(d).is_derived_from<DiamondTop>() == true); // static
+    REQUIRE(type::get(d).is_derived_from(type::get<DiamondTop>())   == true); // dynamic
+    REQUIRE(type::get(d).is_derived_from<DiamondTop>()              == true); // static
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

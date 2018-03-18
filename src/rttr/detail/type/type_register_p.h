@@ -40,6 +40,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace rttr
 {
@@ -75,16 +76,16 @@ public:
     type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
-    void register_constructor(const constructor_wrapper_base* ctor);
-    void register_destructor(const destructor_wrapper_base* dtor);
+    bool register_constructor(const constructor_wrapper_base* ctor);
+    bool register_destructor(const destructor_wrapper_base* dtor);
 
-    void register_property(const property_wrapper_base* prop);
-    void register_global_property(const property_wrapper_base* prop);
-    void unregister_global_property(const property_wrapper_base* prop);
+    bool register_property(const property_wrapper_base* prop);
+    bool register_global_property(const property_wrapper_base* prop);
+    bool unregister_global_property(const property_wrapper_base* prop);
 
-    void register_method(const method_wrapper_base* meth);
-    void register_global_method(const method_wrapper_base* meth);
-    void unregister_global_method(const method_wrapper_base* meth);
+    bool register_method(const method_wrapper_base* meth);
+    bool register_global_method(const method_wrapper_base* meth);
+    bool unregister_global_method(const method_wrapper_base* meth);
 
     void register_custom_name(type& t, string_view custom_name);
 
@@ -106,14 +107,14 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    void register_converter(const type_converter_base* converter);
-    void unregister_converter(const type_converter_base* converter);
+    bool register_converter(const type_converter_base* converter);
+    bool unregister_converter(const type_converter_base* converter);
 
-    void register_equal_comparator(const type_comparator_base* comparator);
-    void unregister_equal_comparator(const type_comparator_base* converter);
+    bool register_equal_comparator(const type_comparator_base* comparator);
+    bool unregister_equal_comparator(const type_comparator_base* converter);
 
-    void register_less_than_comparator(const type_comparator_base* comparator);
-    void unregister_less_than_comparator(const type_comparator_base* converter);
+    bool register_less_than_comparator(const type_comparator_base* comparator);
+    bool unregister_less_than_comparator(const type_comparator_base* converter);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -170,13 +171,12 @@ private:
         Data_Type       m_data;
     };
 
-    static void register_comparator_impl(const type& t, const type_comparator_base* comparator,
+    static bool register_comparator_impl(const type& t, const type_comparator_base* comparator,
                                          std::vector<data_container<const type_comparator_base*>>& comparator_list);
     static const type_comparator_base* get_type_comparator_impl(const type& t,
                                                                 const std::vector<data_container<const type_comparator_base*>>& comparator_list);
 
     static ::rttr::property get_type_property(const type& t, string_view name);
-    static ::rttr::method get_type_method(const type& t, string_view name);
     static ::rttr::method get_type_method(const type& t, string_view name,
                                           const std::vector<type>& type_list);
 
@@ -220,6 +220,8 @@ private:
     std::vector<data_container<const type_converter_base*>>     m_type_converter_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
+
+    std::mutex                                                  m_mutex;
 };
 
 } // end namespace detail

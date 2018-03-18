@@ -157,7 +157,11 @@ RTTR_REGISTRATION
         .method("get_global_string_void", &get_global_string)
         (
             policy::meth::discard_return
-        );
+        )
+        ;
+
+    // register same method again, should not register anything
+    registration::method("get_global_string_void", &get_global_string);
 
     // the class 'derive_registered' has a base class 'base_not_registered'
     // which is not registered explictely via rttr, however the base-derived relationship

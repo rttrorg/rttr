@@ -73,68 +73,68 @@ class RTTR_LOCAL registration_manager
 
         void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
         {
-            type_register::register_constructor(ctor.get());
-            m_constructors.push_back(std::move(ctor));
+            if (type_register::register_constructor(ctor.get()))
+                m_constructors.push_back(std::move(ctor));
         }
 
         void add_item(std::unique_ptr<destructor_wrapper_base> dtor)
         {
-            type_register::register_destructor(dtor.get());
-            m_destructors.push_back(std::move(dtor));
+            if (type_register::register_destructor(dtor.get()))
+                m_destructors.push_back(std::move(dtor));
         }
 
         void add_item(std::unique_ptr<property_wrapper_base> prop)
         {
-            type_register::register_property(prop.get());
-            m_properties.push_back(std::move(prop));
+            if (type_register::register_property(prop.get()))
+                m_properties.push_back(std::move(prop));
         }
 
         void add_item(std::unique_ptr<method_wrapper_base> meth)
         {
-            type_register::register_method(meth.get());
-            m_methods.push_back(std::move(meth));
+            if (type_register::register_method(meth.get()))
+                m_methods.push_back(std::move(meth));
         }
 
         void add_item(std::unique_ptr<enumeration_wrapper_base> enum_)
         {
-            type_register::register_enumeration(enum_.get());
-            m_enumerations.push_back(std::move(enum_));
+            if (type_register::register_enumeration(enum_.get()))
+                m_enumerations.push_back(std::move(enum_));
         }
 
         void add_global_item(std::unique_ptr<property_wrapper_base> prop)
         {
-            type_register::register_global_property(prop.get());
-            m_global_properties.push_back(std::move(prop));
+            if (type_register::register_global_property(prop.get()))
+                m_global_properties.push_back(std::move(prop));
         }
 
         void add_global_item(std::unique_ptr<method_wrapper_base> meth)
         {
-            type_register::register_global_method(meth.get());
-            m_global_methods.push_back(std::move(meth));
+            if (type_register::register_global_method(meth.get()))
+                m_global_methods.push_back(std::move(meth));
         }
 
         void add_global_item(std::unique_ptr<enumeration_wrapper_base> enum_)
         {
-            type_register::register_enumeration(enum_.get());
-            m_enumerations.push_back(std::move(enum_));
+            if (type_register::register_enumeration(enum_.get()))
+                m_enumerations.push_back(std::move(enum_));
         }
 
         void add_item(std::unique_ptr<type_converter_base> conv)
         {
-            type_register::register_converter(conv.get());
-            m_type_converters.push_back(std::move(conv));
+            if (type_register::register_converter(conv.get()))
+                m_type_converters.push_back(std::move(conv));
         }
 
         void add_equal_cmp(std::unique_ptr<type_comparator_base> cmp)
         {
-            type_register::register_equal_comparator(cmp.get());
-            m_type_equal_cmps.push_back(std::move(cmp));
+            if (type_register::register_equal_comparator(cmp.get()))
+                m_type_equal_cmps.push_back(std::move(cmp));
         }
 
         void add_less_than_cmp(std::unique_ptr<type_comparator_base> cmp)
         {
-            type_register::register_less_than_comparator(cmp.get());
-            m_type_less_than_cmps.push_back(std::move(cmp));
+            if (type_register::register_less_than_comparator(cmp.get()))
+                m_type_less_than_cmps.push_back(std::move(cmp));
         }
 
         void set_disable_unregister()

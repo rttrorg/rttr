@@ -44,6 +44,11 @@ struct property_member_obj_test
     property_member_obj_test()
     : _p1(0), _p3(1000, 42)
     {
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
+        const int tmp_array[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
+        using array_t = rttr::detail::remove_const_t<rttr::detail::remove_reference_t<decltype(tmp_array)>>;
+        rttr::detail::copy_array(const_cast<array_t&>(tmp_array), _p11);
+#endif
     }
 
 
@@ -56,6 +61,11 @@ struct property_member_obj_test
     const variant       _p8 = 23;
     int*                _p9 = nullptr;
     int*                _p10 = &_p1;
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
+    int                 _p11[4][4];
+#else
+    int                 _p11[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
+#endif
 
 
 private:
@@ -99,6 +109,7 @@ RTTR_REGISTRATION
         .property_readonly("p8", &property_member_obj_test::_p8)
         .property("p9", &property_member_obj_test::_p9)
         .property_readonly("p10", &property_member_obj_test::_p10)
+        .property("p11", &property_member_obj_test::_p11)
         ;
 }
 
@@ -382,6 +393,28 @@ TEST_CASE("property - raw pointer as property", "[property]")
         CHECK(var.get_type() == type::get<int*>());
         CHECK(obj._p10 == var.get_value<int*>());
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("property - array property", "[property]")
+{
+    property_member_obj_test obj;
+    type t = type::get(obj);
+    auto prop = t.get_property("p11");
+    REQUIRE(prop.is_valid() == true);
+
+    auto var = prop.get_value(obj);
+    auto view = var.create_sequential_view();
+    CHECK(view.get_rank() == 2);
+    int line[4] = { 1, 2, 3, 4 };
+
+    CHECK(view.set_value(1, line) == true);
+    CHECK(view.set_value(2, line) == true);
+
+    CHECK(prop.set_value(obj, var) == true);
+    CHECK(var == obj._p11);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
