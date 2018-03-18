@@ -44,6 +44,8 @@ struct property_member_obj_test
     property_member_obj_test()
     : _p1(0), _p3(1000, 42)
     {
+        int tmp_array[4][4] = { {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} };
+        rttr::detail::copy_array(tmp_array, _p11);
     }
 
 
@@ -56,7 +58,7 @@ struct property_member_obj_test
     const variant       _p8 = 23;
     int*                _p9 = nullptr;
     int*                _p10 = &_p1;
-    int                 _p11[4][4] = {0};
+    int                 _p11[4][4];
 
 
 private:
