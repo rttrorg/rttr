@@ -286,8 +286,8 @@ namespace rttr
                                                         _Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
 #   define RTTR_END_DISABLE_DEPRECATED_WARNING          _Pragma ("clang diagnostic pop")
 #else
-#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING   
-#   define RTTR_END_DISABLE_DEPRECATED_WARNING 
+#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+#   define RTTR_END_DISABLE_DEPRECATED_WARNING
 #endif
 
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
