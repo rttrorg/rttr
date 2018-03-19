@@ -97,18 +97,14 @@ install:
   #######################################################################################
   # Install doxygen
   #######################################################################################
-  - cmd: >-
-      if "%BUILD_DOCU%" == "true" (
-      set DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.windows.bin.zip"
-      
-      appveyor DownloadFile %DOXYGEN_URL% -FileName doxygen.zip
-      
-      7z x doxygen.zip -oC:\projects\deps\doxygen-1.8.10 > nul
-      
-      set PATH=C:\projects\deps\doxygen-1.8.10;%PATH%
-      
-      doxygen --version
-      )
+  - ps: >-
+      If ($env:BUILD_DOCU -Match "true") {
+        $env:DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.windows.bin.zip"
+        appveyor DownloadFile $env:DOXYGEN_URL -FileName doxygen.zip
+        7z x doxygen.zip -oC:\projects\deps\doxygen-1.8.10 > nul
+        $env:PATH="C:\projects\deps\doxygen-1.8.10;$env:PATH"
+        doxygen --version
+      }
 
   #######################################################################################
   # CMake
