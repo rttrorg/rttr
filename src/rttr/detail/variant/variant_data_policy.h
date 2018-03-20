@@ -1021,6 +1021,40 @@ struct RTTR_API variant_data_policy_nullptr_t
     }
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// default export, to reduce compile time, and code bloat
+template struct RTTR_API variant_data_policy_arithmetic<bool>;
+template struct RTTR_API variant_data_policy_arithmetic<char>;
+template struct RTTR_API variant_data_policy_arithmetic<float>;
+template struct RTTR_API variant_data_policy_arithmetic<double>;
+
+template struct RTTR_API variant_data_policy_arithmetic<std::uint8_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::uint16_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::uint32_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::uint64_t>;
+
+template struct RTTR_API variant_data_policy_arithmetic<std::int8_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::int16_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::int32_t>;
+template struct RTTR_API variant_data_policy_arithmetic<std::int64_t>;
+
+
+template struct RTTR_API variant_data_policy_small<bool*>;
+template struct RTTR_API variant_data_policy_small<char*>;
+template struct RTTR_API variant_data_policy_small<float*>;
+template struct RTTR_API variant_data_policy_small<double*>;
+
+template struct RTTR_API variant_data_policy_small<std::uint8_t*>;
+template struct RTTR_API variant_data_policy_small<std::uint16_t*>;
+template struct RTTR_API variant_data_policy_small<std::uint32_t*>;
+template struct RTTR_API variant_data_policy_small<std::uint64_t*>;
+
+template struct RTTR_API variant_data_policy_small<std::int8_t*>;
+template struct RTTR_API variant_data_policy_small<std::int16_t*>;
+template struct RTTR_API variant_data_policy_small<std::int32_t*>;
+template struct RTTR_API variant_data_policy_small<std::int64_t*>;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
