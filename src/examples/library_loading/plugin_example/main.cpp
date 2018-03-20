@@ -53,6 +53,7 @@ struct MyPluginClass
 
 RTTR_PLUGIN_REGISTRATION
 {
+
    rttr::registration::class_<MyPluginClass>("MyPluginClass")
         .constructor<>()
         .property("value", &MyPluginClass::value)

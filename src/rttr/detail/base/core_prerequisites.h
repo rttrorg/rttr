@@ -280,16 +280,20 @@ namespace rttr
 #   define RTTR_DECLARE_PLUGIN_DTOR       __attribute__((destructor))
 
 #elif RTTR_COMPILER == RTTR_COMPILER_CLANG || RTTR_COMPILER == RTTR_COMPILER_APPLECLANG
+
+#if defined(__has_warning) && __has_warning("-Wdeprecated-declarations")
 #   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING        _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wdeprecated-declarations\"")
 #   define RTTR_END_DISABLE_DEPRECATED_WARNING          _Pragma ("clang diagnostic pop")
+#else
+#   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
+#   define RTTR_END_DISABLE_DEPRECATED_WARNING
+#endif
 
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
-#if (RTTR_COMPILER == RTTR_COMPILER_CLANG && RTTR_COMP_VER >= 500 ) || \
-    (RTTR_COMPILER == RTTR_COMPILER_APPLECLANG && RTTR_COMP_VER >= 900)
-
+#if defined(__has_warning) && __has_warning("-Wnoexcept-type")
 #       define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING   _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Wnoexcept-type\"")
 #       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING     _Pragma ("clang diagnostic pop")
