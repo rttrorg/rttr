@@ -171,6 +171,18 @@ class RTTR_API variant_associative_view
         type get_value_type() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns `true`, when this associative container stores only keys.
+         *        When also value are stored, it will return `false`.
+         *
+         * For example an `std::set` has no values, it's a key-only associative container. Then this method returns `true`.
+         * An `std::map<K,V>` on the other hand contains keys and values. So this method will then return `false`.
+         * A simple convenience method instead of calling: `get_value_type().is_valid() == false;`
+         *
+         * \return `true`, when this associative container stores only keys; otherwise `false`.
+         */
+        bool is_key_only_type() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Checks if the container has no elements.
          *
          * \return `true` if container is empty, otherwise `false`.

@@ -108,6 +108,13 @@ type variant_associative_view::get_value_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+bool variant_associative_view::is_key_only_type() const RTTR_NOEXCEPT
+{
+    return (m_view.get_value_type().is_valid() == false && is_valid());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool variant_associative_view::is_empty() const RTTR_NOEXCEPT
 {
     return m_view.is_empty();
