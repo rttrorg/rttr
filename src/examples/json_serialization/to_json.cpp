@@ -148,10 +148,16 @@ static void write_associative_container(const variant_associative_view& view, Pr
     static const string_view key_name("key");
     static const string_view value_name("value");
 
-    const bool is_value_type = view.get_value_type().is_valid();
     writer.StartArray();
 
-    if (is_value_type)
+    if (view.is_key_only_type())
+    {
+        for (auto& item : view)
+        {
+            write_variant(item.first, writer);
+        }
+    }
+    else
     {
         for (auto& item : view)
         {
@@ -165,13 +171,6 @@ static void write_associative_container(const variant_associative_view& view, Pr
             write_variant(item.second, writer);
 
             writer.EndObject();
-        }
-    }
-    else
-    {
-        for (auto& item : view)
-        {
-            write_variant(item.first, writer);
         }
     }
 
