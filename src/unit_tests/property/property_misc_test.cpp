@@ -151,14 +151,14 @@ TEST_CASE("property - get_enumeration()", "[property]")
 TEST_CASE("property - is_array()", "[property]")
 {
     property prop = type::get<prop_misc_test>().get_property("value_1");
-    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type().is_sequential_container() == false);
 
     prop = type::get<prop_misc_test>().get_property("list");
-    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type().is_sequential_container() == true);
 
     prop = type::get<prop_misc_test>().get_property("");
     CHECK(prop.is_valid() == false);
-    CHECK(prop.is_array() == false);
+    CHECK(prop.get_type().is_sequential_container() == false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

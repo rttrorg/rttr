@@ -149,7 +149,6 @@ class RTTR_API property
          */
         bool is_readonly() const RTTR_NOEXCEPT;
 
-
         /*!
          * \brief Returns true if this property is static property, otherwise false.
          *        A static property does not need an instance for performing set_value/get_value.
@@ -159,7 +158,6 @@ class RTTR_API property
          * \return True if this is a static property, otherwise false.
          */
         bool is_static() const RTTR_NOEXCEPT;
-
 
         /*!
          * \brief Returns true if the underlying property is an \ref enumeration.
@@ -179,15 +177,6 @@ class RTTR_API property
          * \return An enumeration object.
          */
         enumeration get_enumeration() const RTTR_NOEXCEPT;
-
-        /*!
-         * \brief Returns true if the underlying property is an \ref array.
-         *
-         * \remark When the property is not valid, this function will return false.
-         *
-         * \return True if this is a \ref array type, otherwise false.
-         */
-        bool is_array() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the name of this property.

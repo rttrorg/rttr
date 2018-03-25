@@ -467,11 +467,11 @@ namespace detail
         static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<T>(0)) == sizeof(YesType));
     };
 
-    template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
-    using is_associative_container = std::integral_constant<bool, !has_is_valid_alias<associative_container_mapper<Tp> >::value>;
+    template<typename T, typename Tp = remove_cv_t<remove_reference_t<T>>>
+    using is_associative_container = std::integral_constant<bool, !has_is_valid_alias<associative_container_mapper<Tp>>::value>;
 
-    template<typename T, typename Tp = remove_cv_t< remove_reference_t<T>>>
-    using is_sequential_container = std::integral_constant<bool, !has_is_valid_alias<sequential_container_mapper<Tp > >::value>;
+    template<typename T, typename Tp = remove_cv_t<remove_reference_t<T>>>
+    using is_sequential_container = std::integral_constant<bool, !has_is_valid_alias<sequential_container_mapper<Tp>>::value>;
 
     /////////////////////////////////////////////////////////////////////////////////////
 

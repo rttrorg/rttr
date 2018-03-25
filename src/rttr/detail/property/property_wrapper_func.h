@@ -59,7 +59,6 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<return_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -165,7 +164,6 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<typename std::remove_reference<return_type>::type*>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -216,7 +214,6 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
         bool is_readonly()  const RTTR_NOEXCEPT { return true; }
         bool is_static()    const RTTR_NOEXCEPT { return true; }
         type get_type()     const RTTR_NOEXCEPT { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }
-        bool is_array()     const RTTR_NOEXCEPT { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -269,7 +266,6 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, get_as_ref_wrapp
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper<remove_reference_t<return_type>> >(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -322,7 +318,6 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, get_as_ref_wrapper
         bool is_readonly()  const RTTR_NOEXCEPT { return true; }
         bool is_static()    const RTTR_NOEXCEPT { return true; }
         type get_type()     const RTTR_NOEXCEPT { return type::get<policy_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 

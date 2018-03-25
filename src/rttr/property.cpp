@@ -114,13 +114,6 @@ enumeration property::get_enumeration() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_array() const RTTR_NOEXCEPT
-{
-    return m_wrapper->is_array();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 string_view property::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();

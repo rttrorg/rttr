@@ -127,7 +127,6 @@ TEST_CASE("property - class object", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<int>());
     CHECK(prop.get_declaring_type() == type::get<property_member_obj_test>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -156,7 +155,6 @@ TEST_CASE("property - class object - read only", "[property]")
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<int>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -183,7 +181,7 @@ TEST_CASE("property - class object - bind as ptr", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type().get_raw_type().is_sequential_container() == true);
     CHECK(prop.get_type() == type::get<std::vector<int>*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -217,7 +215,7 @@ TEST_CASE("property - class object - read only - bind as ptr", "[property]")
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type().get_raw_type().is_sequential_container() == true);
     CHECK(prop.get_type() == type::get<const std::vector<int>*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -251,7 +249,7 @@ TEST_CASE("property - class object - as_reference_wrapper", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type().get_wrapped_type().is_sequential_container() == true);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<std::vector<int>>>());
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -266,7 +264,7 @@ TEST_CASE("property - class object - as_reference_wrapper", "[property]")
     // check array size
     variant var = prop.get_value(obj);
     CHECK(var.get_type().is_wrapper() == true);
-    CHECK(var.get_type().get_wrapped_type().is_array() == true);
+    CHECK(var.get_type().get_wrapped_type().is_sequential_container() == true);
     auto view = var.create_sequential_view();
     CHECK(view.get_size() == 1000);
     CHECK(view.set_value(20, 42) == true);
@@ -294,7 +292,7 @@ TEST_CASE("property - class object - read only - as_reference_wrapper", "[proper
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == true);
+    CHECK(prop.get_type().get_wrapped_type().is_sequential_container() == true);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const std::vector<int>>>());
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -309,7 +307,8 @@ TEST_CASE("property - class object - read only - as_reference_wrapper", "[proper
     // check array size
     variant var = prop.get_value(obj);
     CHECK(var.get_type().is_wrapper() == true);
-    CHECK(var.get_type().get_wrapped_type().is_array() == true);
+    CHECK(var.get_type().get_wrapped_type().is_sequential_container() == true);
+    CHECK(var.is_sequential_container() == true);
     auto view = var.create_sequential_view();
     CHECK(view.get_size() == 50);
     CHECK(view.set_value(20, 42) == false);
