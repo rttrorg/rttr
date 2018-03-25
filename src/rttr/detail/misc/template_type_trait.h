@@ -31,6 +31,7 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include <type_traits>
+#include <vector>
 
 namespace rttr
 {

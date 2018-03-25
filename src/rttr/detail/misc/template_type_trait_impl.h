@@ -30,9 +30,6 @@
 
 #include "rttr/type.h"
 
-#include <type_traits>
-#include <vector>
-
 namespace rttr
 {
 namespace detail
