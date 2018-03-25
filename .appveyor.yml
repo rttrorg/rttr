@@ -68,6 +68,10 @@ environment:
     BUILD_EXAMPLES: true
     BUILD_BENCHMARKS: true
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  - COMPILER: MSVC_14
+    ARCHITECTURE: x64
+    BUILD_DOCU: true
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
 build:
   verbosity: detailed
