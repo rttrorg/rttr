@@ -31,7 +31,6 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include "rttr/detail/misc/function_traits.h"
-#include "rttr/array_mapper.h"
 
 #include "rttr/detail/misc/std_type_traits.h"
 
@@ -456,25 +455,6 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template <typename T>
-    struct is_array_impl
-    {
-        typedef char YesType[1];
-        typedef char NoType[2];
-
-        template <typename U> static NoType& check(typename U::no_array_type*);
-        template <typename U> static YesType& check(...);
-
-
-        static RTTR_CONSTEXPR_OR_CONST bool value = (sizeof(check<array_mapper<T> >(0)) == sizeof(YesType));
-    };
-
-    template<typename T>
-    using is_array = std::integral_constant<bool, is_array_impl<remove_cv_t< remove_reference_t<T> > >::value>;
-
-
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template <typename T>
     struct has_is_valid_alias
     {
         typedef char YesType[1];
@@ -507,64 +487,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    using is_raw_array_type = ::rttr::detail::is_array<raw_type_t<T>>;
-    /////////////////////////////////////////////////////////////////////////////////////
-    // rank_type<T, size_t>::type
-    //
-    // rank_type<int[2][10][4], 0>::type => int[2][10][4]
-    // rank_type<int[2][10][4], 1>::type => int[10][4]
-    // rank_type<int[2][10][4], 2>::type => int[4]
-    // works of course with all other classes, which has an array_mapper specialization
-
-    template <typename... T>
-    struct concat_array_types;
-
-
-    template <template <typename ...> class List, typename ...Types, typename T>
-    struct concat_array_types<List<Types...>, T, std::true_type>
-    {
-        using type = List<Types...>;
-    };
-
-    template <template <typename... > class List, typename... Types, typename T>
-    struct concat_array_types<List<Types...>, T, std::false_type>
-    {
-        using sub_type = typename array_mapper<T>::sub_type;
-        using type = typename concat_array_types< List<Types..., T>, sub_type, typename std::is_same<T, sub_type>::type >::type;
-    };
-
-    template<typename T>
-    struct array_rank_type_list
-    {
-        using sub_type = typename array_mapper<T>::sub_type;
-        using types = typename concat_array_types< std::tuple<>, T, typename std::is_same<T, sub_type>::type >::type;
-    };
-
-    template<typename T, size_t N>
-    struct rank_type
-    {
-        using type = typename std::tuple_element<N, typename array_rank_type_list<T>::types>::type;
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    // rank<T>::value
-    //
-    // rank<int[2][10][4]>::value => 3
-    // rank<std::vector<std::vector<int>>>::value => 2
-     template <typename... T>
-     struct rank_impl
-     {
-         using type = typename std::integral_constant<std::size_t, 0>::type;
-     };
-
-     template <template <typename... > class List, typename... Types>
-     struct rank_impl<List<Types...>>
-     {
-         using type = typename std::integral_constant<std::size_t, sizeof...(Types) - 1>::type;
-     };
-
-    template<typename T>
-    using rank = typename rank_impl< typename detail::array_rank_type_list<T>::types >::type;
+    using is_raw_array_type = std::is_array<raw_type_t<T>>;
 
     /////////////////////////////////////////////////////////////////////////////////////
     // pointer_count<T>::value Returns the number of pointers for a type

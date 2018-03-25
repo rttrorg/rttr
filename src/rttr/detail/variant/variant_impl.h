@@ -34,7 +34,6 @@
 #include "rttr/detail/type/type_converter.h"
 #include "rttr/detail/misc/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/variant_array_view.h"
 #include "rttr/variant_associative_view.h"
 #include "rttr/variant_sequential_view.h"
 

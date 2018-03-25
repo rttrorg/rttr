@@ -430,11 +430,19 @@ class RTTR_API type
         RTTR_INLINE bool is_wrapper() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns true whether the given type represents an array.
+         * \brief Returns `true` whether the given type represents an array.
+         *        An array is always also a sequential container.
+         *        The check will return `true` only for raw C-Style arrays:
+         * \code{.cpp}
          *
-         * \return True if the type is an array, otherwise false.
+         *  type::get<int[10]>().is_array();            // true
+         *  type::get<int>().is_array();                // false
+         *  type::get<std::array<int,10>>().is_array(); // false
+         * \endcode
          *
-         * \see \ref array_mapper "array_mapper<T>"
+         * \return `true` if the type is an array, otherwise `false`.
+         *
+         * \see is_sequential_container()
          */
         RTTR_INLINE bool is_array() const RTTR_NOEXCEPT;
 

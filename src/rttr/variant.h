@@ -42,7 +42,6 @@
 namespace rttr
 {
 
-class variant_array_view;
 class variant_associative_view;
 class variant_sequential_view;
 class type;
@@ -68,8 +67,7 @@ namespace detail
     enum class variant_policy_operation : uint8_t;
 
     template<typename T, typename Decayed = decay_except_array_t<T>>
-    using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value &&
-                                        !std::is_same<Decayed, variant_array_view>::value, Decayed>;
+    using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value, Decayed>;
 
     using variant_policy_func = bool (*)(variant_policy_operation, const variant_data&, argument_wrapper);
 }
@@ -398,21 +396,6 @@ class RTTR_API variant
         explicit operator bool() const;
 
         /*!
-         * \deprecated Use instead rttr::variant::is_sequential_container()
-         *
-         * \brief When the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
-         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array",
-         *        then this function will return true, otherwise false.
-         *
-         * \return True if the containing value is an array; otherwise false.
-         */
-#ifndef DOXYGEN
-        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::is_sequential_container()") bool is_array() const;
-#else
-        bool is_array() const;
-#endif
-
-        /*!
          * \brief Returns true, when for the underlying or the \ref type::get_wrapped_type() "wrapped type"
          *        an associative_mapper exists.
          *
@@ -643,37 +626,6 @@ class RTTR_API variant
          */
         template<typename T>
         bool convert(T& value) const;
-
-        /*!
-         * \deprecated Use instead rttr::variant::create_sequential_view()
-         *
-         * \brief Creates a \ref variant_array_view from the containing value,
-         *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
-         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array".
-         *        Otherwise a default constructed variant_array_view will be returned.
-         *        For shorten this check, use the function \ref is_array().
-         *
-         * A typical example is the following:
-         *
-         * \code{.cpp}
-         *   int obj_array[100];
-         *   variant var = obj_array;                           // copies the content of obj_array into var
-         *   variant_array_view view = var.create_array_view(); // creates a view of the hold array in the variant (data is not copied!)
-         *   std::size_t x = view.get_size();                   // return number of elements x = 100
-         *   view.set_value(0, 42);                             // set the first index to the value 42
-         * \endcode
-         *
-         * \remark This function will return an \ref variant_array_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no array.
-         *
-         * \return A variant_array_view object.
-         *
-         * \see can_convert(), convert()
-         */
-#ifndef DOXYGEN
-        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::create_sequential_view()") variant_array_view create_array_view() const;
-#else
-        variant_array_view create_array_view() const;
-#endif
 
         /*!
          * \brief Creates a \ref variant_associative_view from the containing value,

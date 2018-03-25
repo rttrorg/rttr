@@ -35,7 +35,6 @@
 #include "rttr/argument.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/policy.h"
-#include "rttr/array_mapper.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/property/property_accessor.h"
 

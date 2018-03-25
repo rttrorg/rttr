@@ -409,6 +409,7 @@ TEST_CASE("Test rttr::type - Check is_array", "[type]")
     CHECK(type::get<int[10]>().is_array()        == true);
     CHECK(type::get<char[10]>().is_array()       == true);
 
+    CHECK(type::get<char(*)[10]>().is_array()    == false);
     CHECK(type::get<int>().is_array()            == false);
     CHECK(type::get<float>().is_array()          == false);
     CHECK(type::get<int*>().is_array()           == false);

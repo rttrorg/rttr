@@ -29,7 +29,6 @@
 #define RTTR_TYPE_CONVERTER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/array_mapper.h"
 #include "rttr/variant.h"
 #include "rttr/detail/type/type_register.h"
 
