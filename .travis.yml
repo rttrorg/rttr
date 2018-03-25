@@ -93,9 +93,9 @@ matrix:
           echo "current branch: ${TRAVIS_BRANCH}"
           if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
             echo "Upload documentation..."
-            travis_wait lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mirror -R ${TRAVIS_BUILD_DIR}/build/doc_website/master doc_tmp"
-            travis_wait lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
-            travis_wait lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mirror -R ${TRAVIS_BUILD_DIR}/build/doc_website/master doc_tmp"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; rm -r doc"
+            lftp -c "set ssl:verify-certificate no; open -u ${FTP_USER},${FTP_PASSWORD} ftp://server3.febas.net:21/; mv doc_tmp doc"
           fi
       env: NAME="documentation build" BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
 
@@ -222,7 +222,10 @@ matrix:
       osx_image: xcode8.3
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
-    
+
+  allow_failures:
+    - env: NAME="documentation build" BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
+   
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
