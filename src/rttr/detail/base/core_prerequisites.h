@@ -160,7 +160,7 @@ namespace rttr
 #       define RTTR_NO_CXX11_CONSTEXPR
 #       define RTTR_NO_CXX14_CONSTEXPR
 #   endif
-#   if !defined(_HAS_CXX17) || _HAS_CXX17 == 0
+#   if !defined(_MSVC_LANG) || (_MSVC_LANG < 201703L)
 #       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
 #   endif
 #endif
