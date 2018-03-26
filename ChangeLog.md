@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [v0.9.6](https://github.com/rttrorg/rttr/releases/tag/v0.9.6) (2018-03-15)
 [Full Changelog](https://github.com/rttrorg/rttr/compare/v0.9.5...v0.9.6)
+Blog Entry: www.rttr.org/news/major-release-0-9-6
 
 [![Generic badge](https://img.shields.io/badge/►-Features-98B808.svg?colorA=98B808)](https://github.com/acki-m/rttr/blob/feature-adjust-readme/ChangeLog.md)
 
@@ -57,13 +58,17 @@ All notable changes to this project will be documented in this file. This projec
 - Replaced default constructor binding from `as_object` to `as_std_shared_ptr` [\#14](https://github.com/rttrorg/rttr/issues/14)
 - Fixed missing invoke of dtor when type is pointer type [\#14](https://github.com/rttrorg/rttr/issues/14)
 - Do not search for boost, when not needed [\#93](https://github.com/rttrorg/rttr/issues/93)
+- `type::is_array()` now returns only `true` for C-style arrays, 
+before that it also `true` for specialization of array_mapper types [\#144](https://github.com/rttrorg/rttr/pull/144)
 
 [![Generic badge](https://img.shields.io/badge/►-Removed-613F09.svg?colorA=613F09)](https://github.com/acki-m/rttr/blob/feature-adjust-readme/ChangeLog.md)
 
-- `variant_array_view` class
+- `variant_array_view` class [\#144](https://github.com/rttrorg/rttr/pull/144)
+- `property::is_array()` method [\#144](https://github.com/rttrorg/rttr/pull/144)
 
 ## [v0.9.5](https://github.com/rttrorg/rttr/releases/tag/v0.9.5) (2015-12-23)
 [Full Changelog](https://github.com/rttrorg/rttr/compare/init_commit...v0.9.5)
+Blog Entry: http://www.rttr.org/news/new-stable-release-0-9-5
 
 - the macro RTTR_DECLARE_TYPE was removed, so it is not necessary anymore to declare 
   a type before using it (RTTR does still not require a compiler with rtti)
