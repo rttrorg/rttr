@@ -189,11 +189,11 @@ bool write_variant(const variant& var, PrettyWriter<StringBuffer>& writer)
                                    is_wrapper ? var.extract_wrapped_value() : var, writer))
     {
     }
-    else if (value_type.is_array())
+    else if (var.is_sequential_container())
     {
         write_array(var.create_sequential_view(), writer);
     }
-    else if (value_type.is_associative_container())
+    else if (var.is_associative_container())
     {
         write_associative_container(var.create_associative_view(), writer);
     }

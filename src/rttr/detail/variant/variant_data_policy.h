@@ -31,7 +31,6 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/variant/variant_data.h"
 #include "rttr/detail/misc/argument_wrapper.h"
-#include "rttr/detail/variant_array_view/variant_array_view_creator.h"
 #include "rttr/detail/variant_associative_view/variant_associative_view_creator.h"
 #include "rttr/detail/variant_sequential_view/variant_sequential_view_creator.h"
 #include "rttr/detail/variant/variant_data_converter.h"
@@ -130,10 +129,8 @@ enum class variant_policy_operation : uint8_t
     GET_RAW_TYPE,
     GET_RAW_PTR,
     GET_ADDRESS_CONTAINER,
-    IS_ARRAY,
     IS_ASSOCIATIVE_CONTAINER,
     IS_SEQUENTIAL_CONTAINER,
-    TO_ARRAY,
     CREATE_ASSOCIATIV_VIEW,
     CREATE_SEQUENTIAL_VIEW,
     IS_VALID,
@@ -293,10 +290,6 @@ struct variant_data_base_policy
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(Tp::get_value(src_data)));
                 break;
             }
-            case variant_policy_operation::IS_ARRAY:
-            {
-                return can_create_array_container<T>::value;
-            }
             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
             {
                 return can_create_associative_view<T>::value;
@@ -304,11 +297,6 @@ struct variant_data_base_policy
             case variant_policy_operation::IS_SEQUENTIAL_CONTAINER:
             {
                 return can_create_sequential_view<T>::value;
-            }
-            case variant_policy_operation::TO_ARRAY:
-            {
-                arg.get_value<std::unique_ptr<array_wrapper_base>&>() = create_variant_array_view(const_cast<T&>(Tp::get_value(src_data)));
-                break;
             }
             case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
@@ -685,10 +673,6 @@ struct RTTR_API variant_data_policy_empty
                 data.m_data_address_wrapped_type    = nullptr;
                 break;
             }
-            case variant_policy_operation::IS_ARRAY:
-            {
-                return false;
-            }
             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
             {
                 return false;
@@ -696,10 +680,6 @@ struct RTTR_API variant_data_policy_empty
             case variant_policy_operation::IS_SEQUENTIAL_CONTAINER:
             {
                 return false;
-            }
-            case variant_policy_operation::TO_ARRAY:
-            {
-                break;
             }
             case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
@@ -799,10 +779,6 @@ struct RTTR_API variant_data_policy_void
                 data.m_data_address_wrapped_type    = nullptr;
                 break;
             }
-            case variant_policy_operation::IS_ARRAY:
-            {
-                return false;
-            }
             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
             {
                 return false;
@@ -810,10 +786,6 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::IS_SEQUENTIAL_CONTAINER:
             {
                 return false;
-            }
-            case variant_policy_operation::TO_ARRAY:
-            {
-                break;
             }
             case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {
@@ -957,10 +929,6 @@ struct RTTR_API variant_data_policy_nullptr_t
                 data.m_data_address_wrapped_type    = as_void_ptr(wrapped_raw_addressof(get_value(src_data)));
                 break;
             }
-            case variant_policy_operation::IS_ARRAY:
-            {
-                return false;
-            }
             case variant_policy_operation::IS_ASSOCIATIVE_CONTAINER:
             {
                 return false;
@@ -968,10 +936,6 @@ struct RTTR_API variant_data_policy_nullptr_t
             case variant_policy_operation::IS_SEQUENTIAL_CONTAINER:
             {
                 return false;
-            }
-            case variant_policy_operation::TO_ARRAY:
-            {
-                break;
             }
             case variant_policy_operation::CREATE_ASSOCIATIV_VIEW:
             {

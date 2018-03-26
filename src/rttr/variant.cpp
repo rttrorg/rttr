@@ -28,7 +28,6 @@
 #include "rttr/variant.h"
 
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/variant_array_view.h"
 #include "rttr/variant_associative_view.h"
 #include "rttr/variant_sequential_view.h"
 #include "rttr/argument.h"
@@ -160,13 +159,6 @@ variant::operator bool() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool variant::is_array() const
-{
-    return m_policy(detail::variant_policy_operation::IS_ARRAY, m_data, detail::argument_wrapper());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool variant::is_associative_container() const
 {
     return m_policy(detail::variant_policy_operation::IS_ASSOCIATIVE_CONTAINER, m_data, detail::argument_wrapper());
@@ -205,19 +197,6 @@ variant variant::create_wrapped_value(const type& wrapped_type) const
     m_policy(detail::variant_policy_operation::CREATE_WRAPPED_VALUE, m_data, std::tie(var, wrapped_type));
     return var;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
-
-variant_array_view variant::create_array_view() const
-{
-    variant_array_view result;
-    m_policy(detail::variant_policy_operation::TO_ARRAY, m_data, result.m_array_wrapper);
-    return result;
-}
-
-RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

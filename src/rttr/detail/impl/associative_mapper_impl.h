@@ -30,10 +30,10 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 #include "rttr/detail/misc/iterator_wrapper.h"
-
+#include "rttr/argument.h"
 #include "rttr/variant.h"
-#include <type_traits>
 
+#include <type_traits>
 #include <set>
 #include <map>
 #include <unordered_map>

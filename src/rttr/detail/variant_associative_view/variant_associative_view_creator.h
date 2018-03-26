@@ -32,6 +32,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/std_type_traits.h"
 #include "rttr/associative_mapper.h"
+#include "rttr/wrapper_mapper.h"
 
 #include <memory>
 

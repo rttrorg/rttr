@@ -111,13 +111,6 @@ variant property_wrapper_base::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property_wrapper_base::is_array() const RTTR_NOEXCEPT
-{
-    return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 bool property_wrapper_base::set_value(instance& object, argument& arg) const
 {
     return false;

@@ -117,7 +117,6 @@ TEST_CASE("property - class function", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::string>());
     CHECK(prop.get_declaring_type() == type::get<property_member_func_test>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -147,7 +146,6 @@ TEST_CASE("property - class function - read only", "[property]")
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<int>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -174,7 +172,6 @@ TEST_CASE("property - class function - bind as ptr", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<const std::string*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
@@ -204,7 +201,6 @@ TEST_CASE("property - class function - read only - bind as ptr", "[property]")
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
 
     CHECK(prop.get_type() == type::get<const int*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -251,7 +247,6 @@ TEST_CASE("property - class function - as_reference_wrapper", "[property]")
     // metadata
     CHECK(prop.is_readonly() == false);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const std::string>>());
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
@@ -282,7 +277,6 @@ TEST_CASE("property - class function - read only - as_reference_wrapper", "[prop
     // metadata
     CHECK(prop.is_readonly() == true);
     CHECK(prop.is_static() == false);
-    CHECK(prop.is_array() == false);
     CHECK(prop.get_type() == type::get<std::reference_wrapper<const int>>());
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);

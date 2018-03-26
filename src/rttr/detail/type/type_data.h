@@ -306,7 +306,7 @@ RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
                             true,
                             type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
-                                              TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_array, is_array) |
+                                              TYPE_TRAIT_TO_BITSET_VALUE(is_array) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_pointer) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_arithmetic) |
                                               TYPE_TRAIT_TO_BITSET_VALUE_2(is_function_ptr, is_function_pointer) |

@@ -27,7 +27,6 @@
 
 set(HEADER_FILES access_levels.h
                  argument.h
-                 array_mapper.h
                  array_range.h
                  associative_mapper.h
                  constructor.h
@@ -52,15 +51,9 @@ set(HEADER_FILES access_levels.h
                  type
                  type.h
                  variant.h
-                 variant_array_view.h
                  variant_associative_view.h
                  variant_sequential_view.h
                  wrapper_mapper.h
-                 detail/array/array_accessor.h
-                 detail/array/array_accessor_impl.h
-                 detail/array/array_mapper_impl.h
-                 detail/array/array_wrapper.h
-                 detail/array/array_wrapper_base.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
@@ -158,9 +151,6 @@ set(HEADER_FILES access_levels.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
                  detail/variant/variant_impl.h
-                 detail/variant_array_view/variant_array_view_creator.h
-                 detail/variant_array_view/variant_array_view_creator_impl.h
-                 detail/variant_array_view/variant_array_view_traits.h
                  detail/variant_associative_view/variant_associative_view_private.h
                  detail/variant_associative_view/variant_associative_view_creator.h
                  detail/variant_associative_view/variant_associative_view_creator_impl.h
@@ -180,7 +170,6 @@ set(SOURCE_FILES constructor.cpp
                  registration.cpp
                  type.cpp
                  variant.cpp
-                 variant_array_view.cpp
                  variant_associative_view.cpp
                  variant_sequential_view.cpp
                  detail/comparison/compare_equal.cpp

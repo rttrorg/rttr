@@ -32,6 +32,8 @@
 #include "rttr/detail/metadata/metadata.h"
 #include "rttr/variant.h"
 
+#include <array>
+
 namespace rttr
 {
 namespace detail
