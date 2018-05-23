@@ -56,6 +56,7 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                nullptr,
                                get_create_wrapper_func<void>(),
                                &get_invalid_type_class_data,
+                               nullptr,
                                false,
                                type_trait_value{0}};
 

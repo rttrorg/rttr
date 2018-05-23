@@ -584,7 +584,7 @@ TEST_CASE("variant test - convert internal", "[variant]")
     REQUIRE(ret == true);
     REQUIRE(var.is_type<std::string>() == true);
 
-    auto ptr = detail::make_unique<derived>();
+    auto ptr = rttr::detail::make_unique<derived>();
     derived* d = ptr.get();
     base* b = d;
     var = b;

@@ -31,17 +31,7 @@
 #include <type_traits>
 
 #include "rttr/type.h"
-#include "rttr/detail/misc/misc_type_traits.h"
-
-namespace rttr
-{
-namespace detail
-{
-#ifndef DOXYGEN
-    template<typename... U> struct type_list;
-#endif
-} // end namespace detail
-} // end namespace rttr
+#include "rttr/type_list.h"
 
 #ifdef DOXYGEN
 
@@ -59,7 +49,8 @@ namespace detail
  * \endcode
  *
  * Place the macro \ref RTTR_ENABLE() somewhere in the class, it doesn't matter if its under the public,
- * protected or private class accessor section.
+ * protected or private class accessor section. The macro will close itself with a `private` visibility.
+ * So when you not specify anything afterwords, everything will be `private`.
  *
  * Into the derived class you put the same macro, but now as argument the name of the parent class.
  * Which is in this case `Base`.
@@ -86,13 +77,13 @@ namespace detail
 
 #else
 
-#define TYPE_LIST(...)      rttr::detail::type_list<__VA_ARGS__>
+#define TYPE_LIST(...)      ::rttr::type_list<__VA_ARGS__>
 
 #define RTTR_ENABLE(...) \
 public:\
-    virtual RTTR_INLINE rttr::type get_type() const { return rttr::detail::get_type_from_instance(this); }  \
+    virtual RTTR_INLINE ::rttr::type get_type() const { return ::rttr::detail::get_type_from_instance(this); }  \
     virtual RTTR_INLINE void* get_ptr() { return reinterpret_cast<void*>(this); } \
-    virtual RTTR_INLINE rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), rttr::detail::get_type_from_instance(this)}; } \
+    virtual RTTR_INLINE ::rttr::detail::derived_info get_derived_info() { return {reinterpret_cast<void*>(this), ::rttr::detail::get_type_from_instance(this)}; } \
     using base_class_list = TYPE_LIST(__VA_ARGS__); \
 private:
 

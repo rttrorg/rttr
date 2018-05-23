@@ -41,6 +41,8 @@
 #include "rttr/detail/default_arguments/default_arguments.h"
 #include "rttr/detail/default_arguments/invoke_with_defaults.h"
 #include "rttr/detail/parameter_info/parameter_infos.h"
+#include "rttr/detail/visitor/visitor_iterator.h"
+#include "rttr/detail/visitor/constructor_visitor_invoker.h"
 
 #include <vector>
 #include <utility>
@@ -51,7 +53,7 @@ namespace rttr
 namespace detail
 {
 
-template<typename ClassType, typename Constructor_Type, access_levels Acc_Level, typename Policy,
+template<typename Class_Type, typename Constructor_Type, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename Default_Args, typename Parameter_Infos, typename... Args>
 class constructor_wrapper;
 
@@ -133,6 +135,12 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
                 return variant();
         }
 
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info<Class_Type, Policy, Ctor_Args...>(ctor);
+            visitor_invoker(visitor, make_ctor_visitor_invoker(obj));
+        }
+
     private:
         default_args<Def_Args...> m_def_args;
         parameter_infos<Param_Args...> m_param_infos;
@@ -141,9 +149,9 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy,
+template<typename Class_Type, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename... Def_Args, typename...Param_Args, typename F>
-class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
+class constructor_wrapper<Class_Type, return_func, Acc_Level, Policy,
                           Metadata_Count, default_args<Def_Args...>, parameter_infos<Param_Args...>, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
@@ -170,7 +178,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level; }
         type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                      }
-        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>();     }
+        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>();    }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();          }
         array_range<parameter_info> get_parameter_infos()   const RTTR_NOEXCEPT { return array_range<parameter_info>(m_param_info_list.data(),
@@ -211,6 +219,12 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
                 return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_creator_func, instance(), m_def_args.m_args);
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info_func<Class_Type, Policy, F>(ctor, m_creator_func);
+            visitor_invoker(visitor, make_ctor_visitor_invoker_func(obj));
         }
 
     private:
@@ -297,15 +311,21 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy, Metadata_Co
                 return variant();
         }
 
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info<Class_Type, Policy, Ctor_Args...>(ctor);
+            visitor_invoker(visitor, make_ctor_visitor_invoker(obj));
+        }
+
     private:
         default_args<Def_Args...> m_def_args;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy,
+template<typename Class_Type, access_levels Acc_Level, typename Policy,
          std::size_t Metadata_Count, typename... Def_Args, typename F>
-class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
+class constructor_wrapper<Class_Type, return_func, Acc_Level, Policy,
                           Metadata_Count, default_args<Def_Args...>, parameter_infos<>, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
@@ -330,7 +350,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level;                                           }
         type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                      }
-        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>();     }
+        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>();    }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();      }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();          }
         array_range<parameter_info> get_parameter_infos()   const RTTR_NOEXCEPT { return array_range<parameter_info>();                       }
@@ -370,6 +390,12 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
                 return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_creator_func, instance(), m_def_args.m_args);
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info_func<Class_Type, Policy, F>(ctor, m_creator_func);
+            visitor_invoker(visitor, make_ctor_visitor_invoker_func(obj));
         }
 
     private:

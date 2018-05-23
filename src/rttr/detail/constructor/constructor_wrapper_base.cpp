@@ -210,5 +210,11 @@ variant constructor_wrapper_base::invoke_variadic(std::vector<argument>& args) c
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void constructor_wrapper_base::visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace detail
 } // end namespace rttr

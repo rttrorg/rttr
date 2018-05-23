@@ -44,6 +44,7 @@
 #include "rttr/detail/registration/registration_state_saver.h"
 #include "rttr/policy.h"
 #include "rttr/enumeration.h"
+#include "rttr/detail/visitor/create_type_visitor_func.h"
 
 #include <string>
 #include <vector>
@@ -97,6 +98,7 @@ registration::class_<Class_Type>::class_(string_view name)
 {
     auto t = type::get<Class_Type>();
     detail::type_register::custom_name(t, name);
+    detail::type_register::register_visit_type_func(t, &detail::visit_type<Class_Type>);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -43,6 +43,7 @@ class argument;
 
 template<typename T>
 class class_;
+class visitor;
 
 namespace detail
 {
@@ -60,6 +61,9 @@ struct derived_info;
 
 using variant_create_func   = variant(*)(const argument&);
 using get_derived_func      = derived_info(*)(void*);
+
+enum class type_of_visit : bool;
+using visit_type_func       = void(*)(type_of_visit, visitor&, const type&);
 
 template<typename T, typename Enable>
 struct type_getter;
@@ -119,6 +123,7 @@ public:
 
     static type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     static void unregister_type(type_data* info) RTTR_NOEXCEPT;
+    static bool register_visit_type_func(type& t, visit_type_func) RTTR_NOEXCEPT;
 
 private:
 

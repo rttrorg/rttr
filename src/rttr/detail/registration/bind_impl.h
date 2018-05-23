@@ -618,11 +618,12 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
             using namespace detail;
             using param_info_t =  decltype(create_param_infos<type_list<F>, function_type>());
             return detail::make_unique<method_wrapper<Acc_Func,
+                                                      Class_Type,
                                                       map_access_level_to_enum<acc_level>::value,
                                                       default_invoke,
                                                       default_args<>,
                                                       param_info_t,
-                                                      0>>(name, type::get<Class_Type>(), func, std::array<detail::metadata, 0>(), param_info_t());
+                                                      0>>(name, func, std::array<detail::metadata, 0>(), param_info_t());
         }
 
         template<typename Acc_Func, typename... Args>
@@ -670,12 +671,12 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                               detail::parameter_infos<Param_Args...> param_infos)
         {
             return detail::make_unique<detail::method_wrapper<F,
+                                                              Class_Type,
                                                               detail::map_access_level_to_enum<acc_level>::value,
                                                               Policy,
                                                               detail::default_args<TArgs...>,
                                                               detail::parameter_infos<Param_Args...>,
                                                               Metadata_Count>>(name,
-                                                                               type::get<Class_Type>(),
                                                                                func,
                                                                                std::move(metadata_list),
                                                                                std::move(def_args),
@@ -690,12 +691,12 @@ class registration::bind<detail::meth, Class_Type, F, acc_level> : public regist
                               detail::parameter_infos<Param_Args...> param_infos)
         {
             return detail::make_unique<detail::method_wrapper<F,
+                                                              Class_Type,
                                                               detail::map_access_level_to_enum<acc_level>::value,
                                                               Policy,
                                                               detail::default_args<>,
                                                               detail::parameter_infos<Param_Args...>,
                                                               Metadata_Count>>(name,
-                                                                               type::get<Class_Type>(),
                                                                                func,
                                                                                std::move(metadata_list),
                                                                                std::move(param_infos));

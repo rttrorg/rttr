@@ -44,6 +44,8 @@ RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
 #include "property.h"
 #include "enumeration.h"
 #include "registration.h"
+#include "visitor.h"
+#include "detail/visitor/visitor_iterator.h"
 
 #ifdef RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
 RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
