@@ -31,6 +31,8 @@
 #include <rttr/visitor.h>
 #include <catch/catch.hpp>
 
+struct visitor_test_class;
+
 class my_visitor : public rttr::visitor
 {
 public:
@@ -48,7 +50,7 @@ public:
     template<typename Derived, typename Base_Class, typename...Base_Classes>
     void iterate_base_classes()
     {
-        if (type::get<Derived>().get_name() == "visitor_test_class")
+        if (rttr::type::get<Derived>().get_name() == "visitor_test_class")
         {
             CHECK((std::is_same<Derived, visitor_test_class>::value == true));
             CHECK((std::is_same<Base_Class, visitor_test_class_base>::value == true));
