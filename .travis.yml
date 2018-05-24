@@ -309,7 +309,7 @@ script:
   - |
     if [[ "${BUILD_EXAMPLES}" == "true" ]]; then
       # Run unit tests on two cores
-      (cd build && make json_example -j2 && make library_loader_example -j2)
+      (cd build && make examples)
     fi
   - |
     if [[ "${VALGRIND}" == "true" ]]; then

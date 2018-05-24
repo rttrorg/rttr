@@ -51,5 +51,7 @@ if (MSVC)
     target_compile_options(scripting_example PRIVATE /bigobj) 
 endif()
 
+add_dependencies(examples scripting_example)
+
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

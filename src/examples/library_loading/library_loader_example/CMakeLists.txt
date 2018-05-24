@@ -48,6 +48,7 @@ set_target_properties(library_loader_example PROPERTIES
                       FOLDER "Examples/library_loading"
                       CXX_STANDARD ${MAX_CXX_STANDARD})
 
+add_dependencies(examples library_loader_example)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

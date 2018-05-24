@@ -50,5 +50,7 @@ set_target_properties(json_example PROPERTIES
 
 set_compiler_warnings(json_example)
 
+add_dependencies(examples json_example)
+
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
