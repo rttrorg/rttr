@@ -42,11 +42,11 @@ endif()
 add_executable(json_example ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(json_example RTTR::Core)
 target_include_directories(json_example PUBLIC ${RAPID_JSON_DIR})
-set_target_properties(json_example 
-                       PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                                  FOLDER "Examples"
-                                  INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
-                                  CXX_STANDARD ${MAX_CXX_STANDARD})
+set_target_properties(json_example PROPERTIES 
+                      DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                      FOLDER "Examples"
+                      INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
+                      CXX_STANDARD ${MAX_CXX_STANDARD})
 
 set_compiler_warnings(json_example)
 

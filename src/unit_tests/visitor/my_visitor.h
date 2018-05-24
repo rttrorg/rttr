@@ -32,6 +32,7 @@
 #include <catch/catch.hpp>
 
 struct visitor_test_class;
+class visitor_test_class_base;
 
 class my_visitor : public rttr::visitor
 {
@@ -100,8 +101,6 @@ public:
     template<typename T, typename...Ctor_Args>
     void visit_constructor(const constructor_info<T>& info)
     {
-        using declaring_type_t = typename constructor_info<T>::declaring_type;
-
         visited_ctors.push_back(info.ctor_item);
     }
 

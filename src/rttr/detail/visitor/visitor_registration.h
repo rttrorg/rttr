@@ -68,8 +68,8 @@ namespace detail
 } // end namespace detail
 } // end namespace rttr
 
-#define DECLARE_TL(_name) _DECLARE_TL(_name, __COUNTER__)
-#define _DECLARE_TL(_name, _start)\
+#define DECLARE_TL(_name) DECLARE_TL_IMPL(_name, __COUNTER__)
+#define DECLARE_TL_IMPL(_name, _start)\
     /* Declare the type list meta-variable and initialize with an empty list */\
     template<size_t IDX>\
     struct _name##_history;\
@@ -102,14 +102,14 @@ namespace detail
     }
 
 #define READ_TL(_name) typename _name##_read<__COUNTER__ - 1>::type
-#define _ADD_TL(_name, _class, _idx)\
+#define ADD_TL_IMPL(_name, _class, _idx)\
     /* Define the current type_list at index _idx */\
     template<>\
     struct _name##_history<_idx> {\
         using previous = typename _name##_read<_idx - 1>::type;\
         using type = typename rttr::detail::push_back<_class, previous>::type;\
     }
-#define ADD_TL(_name, _class) _ADD_TL(_name, _class, __COUNTER__)
+#define ADD_TL(_name, _class) ADD_TL_IMPL(_name, _class, __COUNTER__)
 
 DECLARE_TL(rttr_visitor_list);
 

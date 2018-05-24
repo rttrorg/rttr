@@ -33,6 +33,7 @@
 struct visitor_test_class_base
 {
     visitor_test_class_base() {};
+    virtual ~visitor_test_class_base(){}
 
     void base_method() {}
 
