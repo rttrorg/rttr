@@ -32,7 +32,7 @@
 #include <catch/catch.hpp>
 
 struct visitor_test_class;
-class visitor_test_class_base;
+struct visitor_test_class_base;
 
 class my_visitor : public rttr::visitor
 {
