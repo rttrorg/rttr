@@ -52,4 +52,3 @@ struct visitor_test_class : visitor_test_class_base
 static std::string some_global_method() { return "42"; }
 
 #endif // RTTR_VISITOR_TEST_CLASS_H_
-
