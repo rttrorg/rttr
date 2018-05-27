@@ -129,7 +129,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'ninja-build']
+          packages: ['g++-5', 'libboost-all-dev', 'ninja-build']
       env: NAME="g++-5 - Build benchmarks & examples" COMPILER=g++-5 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
