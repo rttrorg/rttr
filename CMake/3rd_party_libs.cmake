@@ -47,7 +47,9 @@ if (BUILD_BENCHMARKS)
     else()
         find_package(Boost)
     endif()
-    
+endif()
+
+if (BUILD_BENCHMARKS OR BUILD_EXAMPLES)
     find_package(Threads REQUIRED)
 endif()
 

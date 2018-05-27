@@ -40,7 +40,7 @@ if (USE_PCH)
 endif()
 
 add_executable(scripting_example ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(scripting_example RTTR::Core ChaiScript::ChaiScript)
+target_link_libraries(scripting_example RTTR::Core ChaiScript::ChaiScript ${CMAKE_DL_LIBS} Threads::Threads)
 # chaiscript minimum C++ version is 14
 set_target_properties(scripting_example 
                        PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
