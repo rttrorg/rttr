@@ -111,7 +111,7 @@ bool library_private::load_native()
     if (is_absolute_path(m_file_name))
     {
         suffix_list.insert(suffix_list.begin(), std::string());
-        prefix_list.insert(suffix_list.begin(), std::string());
+        prefix_list.insert(prefix_list.begin(), std::string());
     }
     else
     {
