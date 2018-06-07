@@ -94,6 +94,20 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
+    template<typename T>
+    void visit_property(const property_info<T>& info)
+    {
+        m_chai.add(chaiscript::fun(info.property_accessor), info.property_item.get_name().to_string());
+    }
+
+    template<typename T>
+    void visit_readonly_property(const property_info<T>& info)
+    {
+        m_chai.add(chaiscript::fun(info.property_accessor), info.property_item.get_name().to_string());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
 private:
     template<typename T>
     static std::string get_type_name()

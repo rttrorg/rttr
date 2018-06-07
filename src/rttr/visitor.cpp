@@ -70,6 +70,11 @@ void visitor::visit_impl(const type& t)
         ctor.visit(*this);
     }
 
+    for (auto prop : t.get_properties(filter))
+    {
+        prop.visit(*this);
+    }
+
     for (auto meth : t.get_methods(filter))
     {
         meth.visit(*this);
@@ -90,6 +95,13 @@ void visitor::visit(method meth)
 void visitor::visit(constructor ctor)
 {
     ctor.visit(*this);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void visitor::visit(property prop)
+{
+    prop.visit(*this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -129,6 +129,16 @@ public:
      */
     void visit(constructor ctor);
 
+    /*!
+     * \brief Calling this function will indirectly call one of the functions:
+     *        - \ref visit_property()
+     *        - \ref visit_readonly_property()
+     *        - \ref visit_global_property()
+     *        - \ref visit_global_readonly_property()
+     *         for the underlying registered type.
+     */
+    void visit(property prop);
+
 #ifdef DOXYGEN
     /*!
      * \brief The \ref type_info class is used to forward all information during registration of a \ref rttr::registration::class_ "class".
@@ -227,6 +237,18 @@ public:
         using policy         = Policy;
         const method         method_item;
         Acc                  function_ptr;
+    };
+
+    template<typename T>
+    struct property_info;
+
+    template<typename T, typename Policy, typename Acc>
+    struct property_info<type_list<T, Policy, Acc>>
+    {
+        using declaring_type = T;
+        using policy         = Policy;
+        const property       property_item;
+        Acc                  property_accessor;
     };
 #endif
 
@@ -338,6 +360,66 @@ public:
      */
     template<typename T>
     void visit_global_method(const method_info<T>& info);
+
+    /*!
+     * \brief This function will be called when you visit a property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_property()
+     */
+    template<typename T>
+    void visit_property(const property_info<T>& info);
+
+    /*!
+     * \brief This function will be called when you visit a global property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_global_property()
+     */
+    template<typename T>
+    void visit_global_property(const property_info<T>& info);
+
+    /*!
+     * \brief This function will be called when you visit a read only property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_property()
+     */
+    template<typename T>
+    void visit_readonly_property(const property_info<T>& info);
+
+    /*!
+     * \brief This function will be called when you visit a global read only property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_global_property()
+     */
+    template<typename T>
+    void visit_global_readonly_property(const property_info<T>& info);
 
 private:
     void visit_impl(const type& t);

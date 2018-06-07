@@ -351,11 +351,12 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
             return detail::make_unique<property_wrapper<acc_type,
+                                                        Class_Type,
                                                         A,
                                                         void,
                                                         detail::map_access_level_to_enum<acc_level>::value,
                                                         default_getter_policy, default_setter_policy,
-                                                        0>>(name, type::get<Class_Type>(), acc, std::array<detail::metadata, 0>());
+                                                        0>>(name, acc, std::array<detail::metadata, 0>());
         }
 
         template<typename Acc, std::size_t Metadata_Count, typename... Args>
@@ -381,11 +382,12 @@ class registration::bind<detail::prop, Class_Type, A, acc_level> : public regist
             using acc_type          = typename property_type<Acc>::type;
 
             auto prop = detail::make_unique<property_wrapper<acc_type,
+                                                             Class_Type,
                                                              Acc,
                                                              void,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
-                                                             Metadata_Count>>(name, type::get<Class_Type>(), acc, std::move(metadata_list));
+                                                             Metadata_Count>>(name, acc, std::move(metadata_list));
             return std::move(prop);
         }
 
@@ -444,9 +446,10 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
             using namespace detail;
             using acc_type = typename property_type<A1>::type;
             return detail::make_unique<property_wrapper<acc_type,
+                                                        Class_Type,
                                                         Acc1, Acc2,
                                                         detail::map_access_level_to_enum<acc_level>::value,
-                                                        default_getter_policy, default_setter_policy, 0>>(name, type::get<Class_Type>(),
+                                                        default_getter_policy, default_setter_policy, 0>>(name,
                                                                                                           getter, setter, std::array<detail::metadata, 0>());
         }
 
@@ -471,10 +474,11 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level> : public r
             using setter_policy     = typename get_setter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<A1>::type;
             auto prop = detail::make_unique<property_wrapper<acc_type,
+                                                             Class_Type,
                                                              Acc1, Acc2,
                                                              detail::map_access_level_to_enum<acc_level>::value,
                                                              getter_policy, setter_policy,
-                                                             Metadata_Count>>(name, type::get<Class_Type>(),
+                                                             Metadata_Count>>(name,
                                                                               getter, setter, std::move(metadata_list));
             return std::move(prop);
         }
@@ -534,9 +538,9 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
         {
             using namespace detail;
             using acc_type = typename property_type<Acc>::type;
-            return detail::make_unique<property_wrapper<acc_type, A, void,
+            return detail::make_unique<property_wrapper<acc_type, Class_Type, A, void,
                                                         detail::map_access_level_to_enum<acc_level>::value,
-                                                        default_getter_policy, default_setter_policy, 0>>(name, type::get<Class_Type>(),
+                                                        default_getter_policy, default_setter_policy, 0>>(name,
                                                                                                           acc, std::array<detail::metadata, 0>());
         }
 
@@ -561,9 +565,9 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level> : publ
             using getter_policy     = typename get_getter_policy<first_prop_policy>::type;
             using acc_type          = typename property_type<Acc>::type;
 
-            auto prop = detail::make_unique<property_wrapper<acc_type, Acc, void,
+            auto prop = detail::make_unique<property_wrapper<acc_type, Class_Type, Acc, void,
                                                              detail::map_access_level_to_enum<acc_level>::value,
-                                                             getter_policy, default_setter_policy, Metadata_Count>>(name, type::get<Class_Type>(),
+                                                             getter_policy, default_setter_policy, Metadata_Count>>(name,
                                                                                                                     acc, std::move(metadata_list));
 
             return std::move(prop);

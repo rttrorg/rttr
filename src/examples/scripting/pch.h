@@ -45,3 +45,6 @@
 #include <type_traits>
 
 #include <rttr/type> // remark, we cannot include <rttr/registration> anymore when using the visitor
+
+#include <chaiscript/dispatchkit/function_call.hpp>
+#include <chaiscript/chaiscript.hpp>

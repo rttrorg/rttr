@@ -32,18 +32,18 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter/setter - function pointer
 
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -86,16 +86,16 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_copy, 
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
@@ -123,6 +123,12 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
             return (variant(m_accessor()));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, Getter>(prop, m_accessor);
+            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         Getter m_accessor;
 };
@@ -133,18 +139,18 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_copy, re
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter/setter
 
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -192,15 +198,15 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, return_as_ptr, s
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
@@ -227,6 +233,12 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
             return (variant(const_cast<const typename std::remove_reference<return_type>::type*>(&(m_accessor()))));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, Getter>(prop, m_accessor);
+            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         Getter  m_accessor;
 };
@@ -235,18 +247,18 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, return_as_ptr, rea
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter/setter
 
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using arg_type      = typename param_types<Setter, 0>::type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -294,17 +306,17 @@ class property_wrapper<function_ptr, Getter, Setter, Acc_Level, get_as_ref_wrapp
 /////////////////////////////////////////////////////////////////////////////////////////
 // global function getter
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<function_ptr, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
+class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type = typename function_traits<Getter>::return_type;
     using policy_type = std::reference_wrapper<add_const_t<remove_reference_t<return_type>>>;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(get)
         {
@@ -329,6 +341,12 @@ class property_wrapper<function_ptr, Getter, void, Acc_Level, get_as_ref_wrapper
         variant get_value(instance& object) const
         {
             return variant(std::cref(m_accessor()));
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, Getter>(prop, m_accessor);
+            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

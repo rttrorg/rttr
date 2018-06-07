@@ -119,11 +119,45 @@ public:
     {
         visited_meths.push_back(info.method_item);
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    void visit_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    void visit_readonly_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    void visit_global_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    void visit_global_readonly_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
 public:
 
     std::vector<rttr::type>             visited_types;
     std::vector<rttr::constructor>      visited_ctors;
     std::vector<rttr::method>           visited_meths;
+    std::vector<rttr::property>         visited_props;
 
     /////////////////////////////////////////////////////////////////////////////////////
 

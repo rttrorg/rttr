@@ -55,6 +55,13 @@ TEST_CASE("visitor - type", "[visitor]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void sanity_check(my_visitor& vi)
+{
+    REQUIRE(vi.visited_types.size() == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("visitor - method", "[visitor]")
 {
     my_visitor vi;
@@ -65,12 +72,12 @@ TEST_CASE("visitor - method", "[visitor]")
     REQUIRE(vi.visited_meths.size() == 1);
     CHECK(vi.visited_meths[0] == meth);
 
-    REQUIRE(vi.visited_types.size() == 0);
+    sanity_check(vi);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("visitor - global method", "[visitor]")
+TEST_CASE("visitor - method global", "[visitor]")
 {
     my_visitor vi;
     auto meth = type::get_global_method("some_global_method");
@@ -79,7 +86,64 @@ TEST_CASE("visitor - global method", "[visitor]")
     REQUIRE(vi.visited_meths.size() == 1);
     CHECK(vi.visited_meths[0] == meth);
 
-    REQUIRE(vi.visited_types.size() == 0);
+    sanity_check(vi);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - property (incl. inheritance)", "[visitor]")
+{
+    my_visitor vi;
+    auto t = type::get_by_name("visitor_test_class");
+    vi.visit(t);
+
+    REQUIRE(vi.visited_props.size() == 3);
+    CHECK(vi.visited_props[0] == t.get_property("base_property"));
+    CHECK(vi.visited_props[1] == t.get_property("derived_property"));
+    CHECK(vi.visited_props[2] == t.get_property("readonly_property"));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - property readonly", "[visitor]")
+{
+    my_visitor vi;
+    auto t = type::get_by_name("visitor_test_class");
+    auto prop = t.get_property("readonly_property");
+    vi.visit(prop);
+
+    REQUIRE(vi.visited_props.size() == 1);
+    CHECK(vi.visited_props[0] == prop);
+
+    sanity_check(vi);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - property global", "[visitor]")
+{
+    my_visitor vi;
+    auto prop = type::get_global_property("some_global_property");
+    vi.visit(prop);
+
+    REQUIRE(vi.visited_props.size() == 1);
+    CHECK(vi.visited_props[0] == prop);
+
+    sanity_check(vi);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - property global readonly", "[visitor]")
+{
+    my_visitor vi;
+    auto prop = type::get_global_property("get_prop_as_function");
+    vi.visit(prop);
+
+    REQUIRE(vi.visited_props.size() == 1);
+    CHECK(vi.visited_props[0] == prop);
+
+    sanity_check(vi);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

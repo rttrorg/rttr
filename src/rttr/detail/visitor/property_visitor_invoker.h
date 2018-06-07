@@ -25,40 +25,100 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "visitor_test_class.h"
+#ifndef RTTR_PROPERTY_VISITOR_INVOKER_H_
+#define RTTR_PROPERTY_VISITOR_INVOKER_H_
 
-#include "my_visitor.h" // IMPORTANT!! All visitors must be included before the include of <registration>
-#include <rttr/registration>
+#include "rttr/detail/base/core_prerequisites.h"
 
 
-static int some_global_property = 12;
+namespace rttr
+{
+class method;
 
-static bool get_prop_as_function() { return true; }
+namespace detail
+{
 
-using namespace rttr;
+struct invalid_type;
+struct read_only;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_REGISTRATION
+/*!
+ *
+ */
+template<typename T, typename S = void>
+class property_visitor_invoker
 {
-    registration::class_<visitor_test_class_base>("visitor_test_class_base")
-        .constructor()
-        .method("base_method", &visitor_test_class_base::base_method)
-        .property("base_property", &visitor_test_class_base::base_property)
-        ;
 
-    registration::class_<visitor_test_class>("visitor_test_class")
-        .constructor()
-        .constructor<int>()
-        .method("some_method", &visitor_test_class::some_method)
-        .property("derived_property", &visitor_test_class::derived_property)
-        .property_readonly("readonly_property", &visitor_test_class::readonly_property)
-        ;
+private:
+    using declaring_type_t = typename visitor::property_info<T>::declaring_type;
 
-    registration::method("some_global_method", &some_global_method);
+    template<typename U>
+    using is_global_property = std::is_same<U, invalid_type>;
 
-    registration::property("some_global_property", &some_global_property)
-                  .property_readonly("get_prop_as_function", &get_prop_as_function);
+    template<typename U>
+    using is_read_only = std::is_same<U, read_only>;
+
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename U, typename V, typename W>
+    enable_if_t<!is_global_property<U>::value && !is_read_only<V>::value, void>
+    call_impl(W& visitor) const
+    {
+        visitor.visit_property(m_info);
+    }
+
+    template<typename U, typename V, typename W>
+    enable_if_t<!is_global_property<U>::value && is_read_only<V>::value, void>
+    call_impl(W& visitor) const
+    {
+        visitor.visit_readonly_property(m_info);
+    }
+
+    template<typename U, typename V, typename W>
+    enable_if_t<is_global_property<U>::value && !is_read_only<V>::value, void>
+    call_impl(W& visitor) const
+    {
+        visitor.visit_global_property(m_info);
+    }
+
+    template<typename U, typename V, typename W>
+    enable_if_t<is_global_property<U>::value && is_read_only<V>::value, void>
+    call_impl(W& visitor) const
+    {
+        visitor.visit_global_readonly_property(m_info);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+public:
+    property_visitor_invoker(const visitor::property_info<T>& info)
+    :   m_info(info)
+    {
+    }
+
+    template<typename W>
+    void call(W& visitor) const
+    {
+        call_impl<declaring_type_t, S>(visitor);
+    }
+
+private:
+    const visitor::property_info<T>& m_info;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename S = void, typename T = void>
+static property_visitor_invoker<T, S> make_property_visitor_invoker(const visitor::property_info<T>& info)
+{
+    return property_visitor_invoker<T, S>(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+} // end namespace detail
+} // end namespace rttr
+
+#endif // RTTR_PROPERTY_VISITOR_INVOKER_H_

@@ -78,6 +78,38 @@ void visitor::visit_global_method(const method_info<T>& info)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+void visitor::visit_property(const property_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void visitor::visit_global_property(const property_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void visitor::visit_readonly_property(const property_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void visitor::visit_global_readonly_property(const property_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 namespace detail
 {
 
@@ -113,6 +145,13 @@ static visitor::method_info<type_list<T, Policy, Acc>> make_method_info(const me
     return visitor::method_info<type_list<T, Policy, Acc>>{meth, acc};
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Policy, typename Acc>
+static visitor::property_info<type_list<T, Policy, Acc>> make_property_info(const property& prop, const Acc& acc)
+{
+    return visitor::property_info<type_list<T, Policy, Acc>>{prop, acc};
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

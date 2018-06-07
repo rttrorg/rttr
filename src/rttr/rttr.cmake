@@ -162,6 +162,7 @@ set(HEADER_FILES access_levels.h
                  detail/visitor/visitor_iterator.h
                  detail/visitor/method_visitor_invoker.h
                  detail/visitor/constructor_visitor_invoker.h
+                 detail/visitor/property_visitor_invoker.h
                  detail/visitor/visitor_impl.h
                  detail/visitor/type_visitor_invoker.h
                  detail/visitor/visitor_registration.h

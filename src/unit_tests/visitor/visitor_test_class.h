@@ -37,6 +37,8 @@ struct visitor_test_class_base
 
     void base_method() {}
 
+    int base_property;
+
     RTTR_ENABLE()
 };
 
@@ -46,6 +48,9 @@ struct visitor_test_class : visitor_test_class_base
     visitor_test_class(int) {};
 
     void some_method(int) {}
+
+    bool derived_property;
+    const float readonly_property = 3;
 
     RTTR_ENABLE(visitor_test_class_base)
 };

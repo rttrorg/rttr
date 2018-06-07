@@ -44,10 +44,14 @@ int main(int argc, char** argv)
     std::string script = R"(
                             var obj = player(12)
                             obj.shoot()
+                            obj.speed = 23
+                            print("")
+                            print("${obj.speed}")
+                            print("${obj.bullets}")
                             )";
     try
     {
-        chai.eval<bool>(script);
+        chai.eval(script);
     }
     catch(const chaiscript::exception::bad_boxed_cast& e)
     {
