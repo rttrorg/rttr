@@ -52,15 +52,15 @@ namespace rttr
 namespace detail
 {
 
-template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos, std::size_t Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos, std::size_t Metadata_Count, typename Visitor_List>
 class method_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename... Param_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename... Param_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         method_wrapper(string_view name,
@@ -123,7 +123,7 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, param
         void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
         {
             auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
-            visitor_invoker(visitor, make_method_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
         }
 
     private:
@@ -134,8 +134,8 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, param
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, typename...Param_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, typename...Param_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
@@ -209,7 +209,7 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_
         void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
         {
             auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
-            visitor_invoker(visitor, make_method_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
         }
 
     private:
@@ -221,8 +221,8 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count>
-class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         method_wrapper(string_view name,
@@ -282,7 +282,7 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, param
         void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
         {
             auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
-            visitor_invoker(visitor, make_method_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
         }
 
     private:
@@ -291,8 +291,8 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, param
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
@@ -362,7 +362,7 @@ class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_
         void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
         {
             auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
-            visitor_invoker(visitor, make_method_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
         }
 
     private:

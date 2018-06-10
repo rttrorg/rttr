@@ -32,8 +32,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -70,7 +70,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_copy, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
         }
 
     private:
@@ -81,8 +81,8 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -115,7 +115,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_copy, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:
@@ -126,8 +126,8 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -170,7 +170,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_ptr, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
         }
 
     private:
@@ -181,8 +181,8 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -215,7 +215,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_ptr, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:
@@ -226,8 +226,8 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -265,7 +265,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_re
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
         }
 
     private:
@@ -276,8 +276,8 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_re
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
@@ -310,7 +310,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_re
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, C*>(prop, m_accessor);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

@@ -32,8 +32,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter/Setter - pointer to member function
 
-template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -91,8 +91,8 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -134,7 +134,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_copy, Getter>(prop, m_getter);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:
@@ -146,8 +146,8 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Getter/Setter pointer to member function
-template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -210,8 +210,8 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -256,7 +256,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, return_as_ptr, Getter>(prop, m_getter);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:
@@ -268,8 +268,8 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Getter/Setter pointer to member function
-template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -332,8 +332,8 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -378,7 +378,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
         void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
         {
             auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, Getter>(prop, m_getter);
-            visitor_invoker(visitor, make_property_visitor_invoker<read_only>(obj));
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

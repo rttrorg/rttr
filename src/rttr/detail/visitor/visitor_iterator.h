@@ -75,16 +75,6 @@ struct RTTR_LOCAL visitor_iterator<>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-
-template<typename Invoker>
-static void visitor_invoker(visitor& vi, const Invoker& invoker)
-{
-    // COMMENT FOR CLIENT USE:
-    // when you get a compile error here:
-    // you have to place RTTR_REGISTER_VISITOR() before the include of <rttr/registration>
-    visitor_iterator<READ_TL(rttr_visitor_list)>::visit(vi, invoker);
-}
-
 } // end namespace detail
 } // end namespace rttr
 

@@ -57,8 +57,8 @@ RTTR_REGISTRATION
 
     registration::method("some_global_method", &some_global_method);
 
-    registration::property("some_global_property", &some_global_property)
-                  .property_readonly("get_prop_as_function", &get_prop_as_function);
+    registration::property("some_global_property", &some_global_property);
+                 registration::property_readonly("get_prop_as_function", &get_prop_as_function);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
