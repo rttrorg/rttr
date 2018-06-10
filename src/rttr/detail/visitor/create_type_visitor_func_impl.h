@@ -41,32 +41,32 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename...Base_Classes>
+template<typename T, typename Visitor_list, typename...Base_Classes>
 RTTR_INLINE void visit_type_impl(type_of_visit visit_type, visitor& vi, const type& t, type_list<Base_Classes...>)
 {
     auto obj = make_type_visitor_info<T, Base_Classes...>(t);
-    visitor_invoker(vi, make_type_visitor_invoker(obj, visit_type));
+    visitor_iterator<Visitor_list>::visit(vi, make_type_visitor_invoker(obj, visit_type));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
+template<typename T, typename Visitor_list>
 RTTR_INLINE
 enable_if_t<has_base_class_list<T>::value, void>
 visit_type(type_of_visit visit_type, visitor& vi, const type& t)
 {
-    visit_type_impl<T>(visit_type, vi, t, typename T::base_class_list{});
+    visit_type_impl<T, Visitor_list>(visit_type, vi, t, typename T::base_class_list{});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
+template<typename T, typename Visitor_list>
 RTTR_INLINE
 enable_if_t<!has_base_class_list<T>::value, void>
 visit_type(type_of_visit visit_type, visitor& vi, const type& t)
 {
     auto obj = make_type_visitor_info<T>(t);
-    visitor_invoker(vi, make_type_visitor_invoker(obj, visit_type));
+    visitor_iterator<Visitor_list>::visit(vi, make_type_visitor_invoker(obj, visit_type));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

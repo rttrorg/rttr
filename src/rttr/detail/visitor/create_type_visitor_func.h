@@ -45,14 +45,14 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
+template<typename T, typename Visitor_List>
 RTTR_INLINE
 enable_if_t<has_base_class_list<T>::value, void>
 visit_type(type_of_visit visit_type, visitor& vi, const type& t);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
+template<typename T, typename Visitor_List>
 RTTR_INLINE
 enable_if_t<!has_base_class_list<T>::value, void>
 visit_type(type_of_visit visit_type, visitor& vi, const type& t);
