@@ -62,29 +62,29 @@ private:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename U, typename Policy, typename V>
-    enable_if_t<!is_global_property<U>::value && !is_read_only<Policy>::value, void>
+    template<typename U, typename P, typename V>
+    enable_if_t<!is_global_property<U>::value && !is_read_only<P>::value, void>
     call_impl(V& visitor) const
     {
         visitor.visit_property(m_info);
     }
 
-    template<typename U, typename Policy, typename V>
-    enable_if_t<!is_global_property<U>::value && is_read_only<Policy>::value, void>
+    template<typename U, typename P, typename V>
+    enable_if_t<!is_global_property<U>::value && is_read_only<P>::value, void>
     call_impl(V& visitor) const
     {
         visitor.visit_readonly_property(m_info);
     }
 
-    template<typename U, typename Policy, typename V>
-    enable_if_t<is_global_property<U>::value && !is_read_only<Policy>::value, void>
+    template<typename U, typename P, typename V>
+    enable_if_t<is_global_property<U>::value && !is_read_only<P>::value, void>
     call_impl(V& visitor) const
     {
         visitor.visit_global_property(m_info);
     }
 
-    template<typename U, typename Policy, typename V>
-    enable_if_t<is_global_property<U>::value && is_read_only<Policy>::value, void>
+    template<typename U, typename P, typename V>
+    enable_if_t<is_global_property<U>::value && is_read_only<P>::value, void>
     call_impl(V& visitor) const
     {
         visitor.visit_global_readonly_property(m_info);
