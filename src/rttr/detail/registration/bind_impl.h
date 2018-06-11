@@ -116,7 +116,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Visitor_List, Ctor
                                                            Policy,
                                                            Metadata_Count,
                                                            default_args<TArgs...>,
-                                                           parameter_infos<Param_Args...>, Visitor_List, 
+                                                           parameter_infos<Param_Args...>, Visitor_List,
                                                             Ctor_Args...>>(std::move(metadata_list),
                                                                            std::move(def_args),
                                                                            std::move(param_infos));
@@ -134,7 +134,7 @@ class registration::bind<detail::ctor, Class_Type, acc_level, Visitor_List, Ctor
                                                            Policy,
                                                            Metadata_Count,
                                                            default_args<>,
-                                                           parameter_infos<Param_Args...>, Visitor_List, 
+                                                           parameter_infos<Param_Args...>, Visitor_List,
                                                            Ctor_Args...>>(std::move(metadata_list),
                                                                           std::move(param_infos));
         }
