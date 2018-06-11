@@ -82,6 +82,12 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, return_as_copy, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
+        }
+
     private:
         Getter  m_getter;
         Setter  m_setter;
@@ -198,6 +204,12 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
                 return variant(&(ptr->*m_getter)());
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, return_as_ptr, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
         }
 
     private:
@@ -320,6 +332,12 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
                 return variant(std::ref((ptr->*m_getter)()));
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, get_as_ref_wrapper, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
         }
 
     private:

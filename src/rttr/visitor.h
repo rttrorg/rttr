@@ -142,7 +142,7 @@ public:
 #ifdef DOXYGEN
     /*!
      * \brief The \ref type_info class is used to forward all information during registration of a \ref rttr::registration::class_ "class".
-     * The information will be forwarded when the methods: visit_type_begin() and visit_type_end() are implemented.
+     * The information will be forwarded when the methods: \ref visit_type_begin() and \ref visit_type_end() are implemented.
      */
     template<typename T>
     struct type_info
@@ -156,7 +156,7 @@ public:
 
     /*!
      * \brief The \ref constructor_info class is used to forward all information during registration of a constructor.
-     * The information will be forwarded when the methods: visit_constructor() are implemented.
+     * The information will be forwarded when the methods: \ref visit_constructor() are implemented.
      */
     template<typename T>
     struct constructor_info
@@ -168,7 +168,7 @@ public:
 
     /*!
      * \brief The \ref constructor_function_info class is used to forward all information during registration of a \ref constructor function.
-     * The information will be forwarded when the methods: visit_constructor_function() are implemented.
+     * The information will be forwarded when the methods: \ref visit_constructor_function() are implemented.
      */
     template<typename T>
     struct constructor_function_info
@@ -181,7 +181,7 @@ public:
 
     /*!
      * \brief The \ref method_info class is used to forward all information during registration of a \ref method.
-     * The information will be forwarded when the methods: visit_constructor() are implemented.
+     * The information will be forwarded when the methods: \ref visit_method() are implemented.
      */
     template<typename T>
     struct method_info
@@ -190,6 +190,33 @@ public:
         using policy            = Policy;       //!< The used policy during registration
         const method&           method_item;    //!< The method object
         Acc                     function_ptr;   //!< The function pointer of the method (can be a member- or free function)
+    };
+
+    /*!
+     * \brief The \ref property_info class is used to forward all information during registration of a \ref property.
+     * The information will be forwarded when the methods: \ref visit_property() are implemented.
+     */
+    template<typename T>
+    struct property_info
+    {
+        using declaring_type = T;
+        using policy         = Policy;
+        const property       property_item;
+        Acc                  property_accessor;
+    };
+
+    /*!
+     * \brief The \ref method_info class is used to forward all information during registration of a \ref property.
+     * The information will be forwarded when the methods: \ref visit_property() are implemented.
+     */
+    template<typename T>
+    struct property_getter_setter_info
+    {
+        using declaring_type = T;
+        using policy         = Policy;
+        const property       property_item;
+        Getter               property_getter;
+        Setter               property_setter;
     };
 #else
     template<typename T>
@@ -249,6 +276,19 @@ public:
         using policy         = Policy;
         const property       property_item;
         Acc                  property_accessor;
+    };
+
+    template<typename T>
+    struct property_getter_setter_info;
+
+    template<typename T, typename Policy, typename Getter, typename Setter>
+    struct property_getter_setter_info<type_list<T, Policy, Getter, Setter>>
+    {
+        using declaring_type = T;
+        using policy         = Policy;
+        const property       property_item;
+        Getter               property_getter;
+        Setter               property_setter;
     };
 #endif
 
@@ -329,7 +369,7 @@ public:
      * \see visit(constructor)
      */
     template<typename T>
-    void visit_constructor_function(const constructor_function_info<T>& info);
+    void visit_constructor(const constructor_function_info<T>& info);
 
     /*!
      * \brief This function will be called when you visit a type method via: \ref visit(type) or \ref visit(method).
@@ -377,6 +417,21 @@ public:
     void visit_property(const property_info<T>& info);
 
     /*!
+     * \brief This function will be called when you visit a property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_property()
+     */
+    template<typename T>
+    void visit_property(const property_getter_setter_info<T>& info);
+
+    /*!
      * \brief This function will be called when you visit a global property via: \ref visit(property).
      *        Reimplement this function, when you need the static compile time type information.
      *
@@ -390,6 +445,21 @@ public:
      */
     template<typename T>
     void visit_global_property(const property_info<T>& info);
+
+    /*!
+     * \brief This function will be called when you visit a global property via: \ref visit(property).
+     *        Reimplement this function, when you need the static compile time type information.
+     *
+     * \param T Internal template type, do not work with this parameter directly.
+     * \param info This object will be provided by RTTR, use it's public members and the `using's`
+     *
+     * You normally don't call this function directly. However, make sure this function is declared public,
+     * otherwise it cannot be invoked.
+     *
+     * \see visit(property), type::get_global_property()
+     */
+    template<typename T>
+    void visit_global_property(const property_getter_setter_info<T>& info);
 
     /*!
      * \brief This function will be called when you visit a read only property via: \ref visit(property).

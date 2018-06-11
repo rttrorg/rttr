@@ -128,6 +128,12 @@ public:
         visited_props.push_back(info.property_item);
     }
 
+    template<typename T>
+    void visit_property(const property_getter_setter_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
@@ -140,6 +146,12 @@ public:
 
     template<typename T>
     void visit_global_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
+    template<typename T>
+    void visit_global_property(const property_getter_setter_info<T>& info)
     {
         visited_props.push_back(info.property_item);
     }

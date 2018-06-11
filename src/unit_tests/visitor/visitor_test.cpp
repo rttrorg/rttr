@@ -97,10 +97,11 @@ TEST_CASE("visitor - property (incl. inheritance)", "[visitor]")
     auto t = type::get_by_name("visitor_test_class");
     vi.visit(t);
 
-    REQUIRE(vi.visited_props.size() == 3);
+    REQUIRE(vi.visited_props.size() == 4);
     CHECK(vi.visited_props[0] == t.get_property("base_property"));
     CHECK(vi.visited_props[1] == t.get_property("derived_property"));
     CHECK(vi.visited_props[2] == t.get_property("readonly_property"));
+    CHECK(vi.visited_props[3] == t.get_property("getter_setter_prop"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -124,6 +125,20 @@ TEST_CASE("visitor - property global", "[visitor]")
 {
     my_visitor vi;
     auto prop = type::get_global_property("some_global_property");
+    vi.visit(prop);
+
+    REQUIRE(vi.visited_props.size() == 1);
+    CHECK(vi.visited_props[0] == prop);
+
+    sanity_check(vi);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - property global (getter/setter)", "[visitor]")
+{
+    my_visitor vi;
+    auto prop = type::get_global_property("global_setter_getter");
     vi.visit(prop);
 
     REQUIRE(vi.visited_props.size() == 1);

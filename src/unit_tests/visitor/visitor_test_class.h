@@ -52,7 +52,13 @@ struct visitor_test_class : visitor_test_class_base
     bool derived_property;
     const float readonly_property = 3;
 
+    void set_value(int value) { m_value = value; }
+    int get_value() const { return m_value; }
+
     RTTR_ENABLE(visitor_test_class_base)
+
+    private:
+        int m_value;
 };
 
 static std::string some_global_method() { return "42"; }

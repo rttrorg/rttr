@@ -46,7 +46,7 @@ struct read_only;
 /*!
  *
  */
-template<typename T, typename S = void>
+template<typename T, typename Policy = void>
 class property_visitor_invoker
 {
 
@@ -62,30 +62,30 @@ private:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    template<typename U, typename V, typename W>
-    enable_if_t<!is_global_property<U>::value && !is_read_only<V>::value, void>
-    call_impl(W& visitor) const
+    template<typename U, typename Policy, typename V>
+    enable_if_t<!is_global_property<U>::value && !is_read_only<Policy>::value, void>
+    call_impl(V& visitor) const
     {
         visitor.visit_property(m_info);
     }
 
-    template<typename U, typename V, typename W>
-    enable_if_t<!is_global_property<U>::value && is_read_only<V>::value, void>
-    call_impl(W& visitor) const
+    template<typename U, typename Policy, typename V>
+    enable_if_t<!is_global_property<U>::value && is_read_only<Policy>::value, void>
+    call_impl(V& visitor) const
     {
         visitor.visit_readonly_property(m_info);
     }
 
-    template<typename U, typename V, typename W>
-    enable_if_t<is_global_property<U>::value && !is_read_only<V>::value, void>
-    call_impl(W& visitor) const
+    template<typename U, typename Policy, typename V>
+    enable_if_t<is_global_property<U>::value && !is_read_only<Policy>::value, void>
+    call_impl(V& visitor) const
     {
         visitor.visit_global_property(m_info);
     }
 
-    template<typename U, typename V, typename W>
-    enable_if_t<is_global_property<U>::value && is_read_only<V>::value, void>
-    call_impl(W& visitor) const
+    template<typename U, typename Policy, typename V>
+    enable_if_t<is_global_property<U>::value && is_read_only<Policy>::value, void>
+    call_impl(V& visitor) const
     {
         visitor.visit_global_readonly_property(m_info);
     }
@@ -101,19 +101,81 @@ public:
     template<typename W>
     void call(W& visitor) const
     {
-        call_impl<declaring_type_t, S>(visitor);
+        call_impl<declaring_type_t, Policy>(visitor);
     }
 
 private:
     const visitor::property_info<T>& m_info;
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//! \param Policy Specifies whether the property is read only or not.
+template<typename Policy = void, typename T = void>
+static property_visitor_invoker<T, Policy> make_property_visitor_invoker(const visitor::property_info<T>& info)
+{
+    return property_visitor_invoker<T, Policy>(info);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename S = void, typename T = void>
-static property_visitor_invoker<T, S> make_property_visitor_invoker(const visitor::property_info<T>& info)
+/*!
+ * The visitor invoker for getter/setter based properties.
+ */
+template<typename T>
+class property_getter_setter_visitor_invoker
 {
-    return property_visitor_invoker<T, S>(info);
+
+private:
+    using declaring_type_t = typename visitor::property_getter_setter_info<T>::declaring_type;
+
+    template<typename U>
+    using is_global_property = std::is_same<U, invalid_type>;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename U, typename V>
+    enable_if_t<!is_global_property<U>::value, void>
+    call_impl(V& visitor) const
+    {
+        visitor.visit_property(m_info);
+    }
+
+
+    template<typename U, typename V>
+    enable_if_t<is_global_property<U>::value, void>
+    call_impl(V& visitor) const
+    {
+        visitor.visit_global_property(m_info);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+public:
+    property_getter_setter_visitor_invoker(const visitor::property_getter_setter_info<T>& info)
+    :   m_info(info)
+    {
+    }
+
+    template<typename W>
+    void call(W& visitor) const
+    {
+        call_impl<declaring_type_t>(visitor);
+    }
+
+private:
+    const visitor::property_getter_setter_info<T>& m_info;
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+static property_getter_setter_visitor_invoker<T>
+make_property_getter_setter_visitor_invoker(const visitor::property_getter_setter_info<T>& info)
+{
+    return property_getter_setter_visitor_invoker<T>(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

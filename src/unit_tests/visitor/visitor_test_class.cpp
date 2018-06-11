@@ -35,6 +35,11 @@ static int some_global_property = 12;
 
 static bool get_prop_as_function() { return true; }
 
+static std::string g_text;
+
+static void set_global_value(std::string text) { g_text = text; }
+static std::string get_global_value() { return g_text; }
+
 using namespace rttr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -53,12 +58,14 @@ RTTR_REGISTRATION
         .method("some_method", &visitor_test_class::some_method)
         .property("derived_property", &visitor_test_class::derived_property)
         .property_readonly("readonly_property", &visitor_test_class::readonly_property)
+        .property("getter_setter_prop", &visitor_test_class::get_value, &visitor_test_class::set_value)
         ;
 
     registration::method("some_global_method", &some_global_method);
 
-    registration::property("some_global_property", &some_global_property);
-                 registration::property_readonly("get_prop_as_function", &get_prop_as_function);
+    registration::property("some_global_property", &some_global_property)
+                 .property("global_setter_getter", &get_global_value, &set_global_value)
+                 .property_readonly("get_prop_as_function", &get_prop_as_function);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

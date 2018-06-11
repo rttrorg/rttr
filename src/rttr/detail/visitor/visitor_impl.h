@@ -58,7 +58,7 @@ void visitor::visit_constructor(const constructor_info<T>& info)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void visitor::visit_constructor_function(const constructor_function_info<T>& info)
+void visitor::visit_constructor(const constructor_function_info<T>& info)
 {
 }
 
@@ -87,7 +87,23 @@ void visitor::visit_property(const property_info<T>& info)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
+void visitor::visit_property(const property_getter_setter_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
 void visitor::visit_global_property(const property_info<T>& info)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void visitor::visit_global_property(const property_getter_setter_info<T>& info)
 {
 
 }
@@ -151,6 +167,17 @@ template<typename T, typename Policy, typename Acc>
 static visitor::property_info<type_list<T, Policy, Acc>> make_property_info(const property& prop, const Acc& acc)
 {
     return visitor::property_info<type_list<T, Policy, Acc>>{prop, acc};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Policy, typename Getter, typename Setter>
+static visitor::property_getter_setter_info<type_list<T, Policy, Getter, Setter>>
+make_property_getter_setter_info(const property& prop,
+                                 const Getter& getter,
+                                 const Setter& setter)
+{
+    return visitor::property_getter_setter_info<type_list<T, Policy, Getter, Setter>>{prop, getter, setter};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
