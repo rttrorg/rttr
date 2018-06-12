@@ -47,6 +47,9 @@ struct visitor_test_class : visitor_test_class_base
     visitor_test_class() {};
     visitor_test_class(int) {};
 
+
+    static visitor_test_class create_object(int value) { return visitor_test_class(value); };
+
     void some_method(int) {}
 
     bool derived_property;

@@ -369,7 +369,7 @@ public:
      * \see visit(constructor)
      */
     template<typename T>
-    void visit_constructor(const constructor_function_info<T>& info);
+    void visit_constructor_function(const constructor_function_info<T>& info);
 
     /*!
      * \brief This function will be called when you visit a type method via: \ref visit(type) or \ref visit(method).
@@ -429,7 +429,7 @@ public:
      * \see visit(property), type::get_property()
      */
     template<typename T>
-    void visit_property(const property_getter_setter_info<T>& info);
+    void visit_getter_setter_property(const property_getter_setter_info<T>& info);
 
     /*!
      * \brief This function will be called when you visit a global property via: \ref visit(property).
@@ -459,7 +459,7 @@ public:
      * \see visit(property), type::get_global_property()
      */
     template<typename T>
-    void visit_global_property(const property_getter_setter_info<T>& info);
+    void visit_global_getter_setter_property(const property_getter_setter_info<T>& info);
 
     /*!
      * \brief This function will be called when you visit a read only property via: \ref visit(property).

@@ -45,9 +45,11 @@ int main(int argc, char** argv)
                             var obj = player(12)
                             obj.shoot()
                             obj.speed = 23
+                            obj.set_hp(12);
                             print("")
-                            print("${obj.speed}")
-                            print("${obj.bullets}")
+                            print("speed: ${obj.speed}")
+                            print("bullets: ${obj.bullets}")
+                            print("hp: ${obj.get_hp()}")
                             )";
     try
     {

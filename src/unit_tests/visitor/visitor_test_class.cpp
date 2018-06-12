@@ -55,6 +55,7 @@ RTTR_REGISTRATION
     registration::class_<visitor_test_class>("visitor_test_class")
         .constructor()
         .constructor<int>()
+        .constructor(&visitor_test_class::create_object)
         .method("some_method", &visitor_test_class::some_method)
         .property("derived_property", &visitor_test_class::derived_property)
         .property_readonly("readonly_property", &visitor_test_class::readonly_property)

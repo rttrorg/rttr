@@ -140,7 +140,7 @@ private:
     enable_if_t<!is_global_property<U>::value, void>
     call_impl(V& visitor) const
     {
-        visitor.visit_property(m_info);
+        visitor.visit_getter_setter_property<T>(m_info);
     }
 
 
@@ -148,7 +148,7 @@ private:
     enable_if_t<is_global_property<U>::value, void>
     call_impl(V& visitor) const
     {
-        visitor.visit_global_property(m_info);
+        visitor.visit_global_getter_setter_property(m_info);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -159,8 +159,8 @@ public:
     {
     }
 
-    template<typename W>
-    void call(W& visitor) const
+    template<typename V>
+    void call(V& visitor) const
     {
         call_impl<declaring_type_t>(visitor);
     }

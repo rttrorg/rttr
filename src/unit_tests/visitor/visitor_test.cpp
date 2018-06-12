@@ -48,9 +48,48 @@ TEST_CASE("visitor - type", "[visitor]")
     CHECK(vi.visited_types[2] == type::get_by_name("visitor_test_class"));
     CHECK(vi.visited_types[3] == type::get_by_name("visitor_test_class"));
 
+    // constructors
+    REQUIRE(vi.visited_ctors.size() == 4);
+
+    // properties
+    REQUIRE(vi.visited_props.size() == 4);
+    CHECK(vi.visited_props[0] == t.get_property("base_property"));
+    CHECK(vi.visited_props[1] == t.get_property("derived_property"));
+    CHECK(vi.visited_props[2] == t.get_property("readonly_property"));
+    CHECK(vi.visited_props[3] == t.get_property("getter_setter_prop"));
+
+    // methods
     REQUIRE(vi.visited_meths.size() == 2);
     CHECK(vi.visited_meths[0] == t.get_method("base_method"));
     CHECK(vi.visited_meths[1] == t.get_method("some_method"));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - constructor", "[visitor]")
+{
+    my_visitor vi;
+    auto t = type::get_by_name("visitor_test_class");
+    auto list = t.get_constructors();
+    std::vector<constructor> ctor_list(list.begin(), list.end());
+    vi.visit(ctor_list[0]);
+
+    REQUIRE(vi.visited_ctors.size() == 1);
+    CHECK(vi.visited_ctors[0] == ctor_list[0]);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("visitor - constructor function", "[visitor]")
+{
+    my_visitor vi;
+    auto t = type::get_by_name("visitor_test_class");
+    auto list = t.get_constructors();
+    std::vector<constructor> ctor_list(list.begin(), list.end());
+    vi.visit(ctor_list[2]);
+
+    REQUIRE(vi.visited_ctors.size() == 1);
+    CHECK(vi.visited_ctors[0] == ctor_list[2]);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

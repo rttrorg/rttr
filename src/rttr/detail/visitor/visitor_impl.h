@@ -58,7 +58,7 @@ void visitor::visit_constructor(const constructor_info<T>& info)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void visitor::visit_constructor(const constructor_function_info<T>& info)
+void visitor::visit_constructor_function(const constructor_function_info<T>& info)
 {
 }
 
@@ -87,7 +87,7 @@ void visitor::visit_property(const property_info<T>& info)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void visitor::visit_property(const property_getter_setter_info<T>& info)
+void visitor::visit_getter_setter_property(const property_getter_setter_info<T>& info)
 {
 
 }
@@ -103,7 +103,7 @@ void visitor::visit_global_property(const property_info<T>& info)
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void visitor::visit_global_property(const property_getter_setter_info<T>& info)
+void visitor::visit_global_getter_setter_property(const property_getter_setter_info<T>& info)
 {
 
 }

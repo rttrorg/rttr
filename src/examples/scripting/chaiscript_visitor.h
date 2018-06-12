@@ -101,6 +101,13 @@ public:
     }
 
     template<typename T>
+    void visit_getter_setter_property(const property_getter_setter_info<T>& info)
+    {
+        m_chai.add(chaiscript::fun(info.property_getter), std::string("get_") + info.property_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.property_setter), std::string("set_") + info.property_item.get_name().to_string());
+    }
+
+    template<typename T>
     void visit_readonly_property(const property_info<T>& info)
     {
         m_chai.add(chaiscript::fun(info.property_accessor), info.property_item.get_name().to_string());

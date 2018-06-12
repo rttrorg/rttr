@@ -104,6 +104,12 @@ public:
         visited_ctors.push_back(info.ctor_item);
     }
 
+    template<typename T, typename...Ctor_Args>
+    void visit_constructor_function(const constructor_function_info<T>& info)
+    {
+        visited_ctors.push_back(info.ctor_item);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
@@ -129,15 +135,7 @@ public:
     }
 
     template<typename T>
-    void visit_property(const property_getter_setter_info<T>& info)
-    {
-        visited_props.push_back(info.property_item);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    void visit_readonly_property(const property_info<T>& info)
+    void visit_getter_setter_property(const property_getter_setter_info<T>& info)
     {
         visited_props.push_back(info.property_item);
     }
@@ -151,7 +149,7 @@ public:
     }
 
     template<typename T>
-    void visit_global_property(const property_getter_setter_info<T>& info)
+    void visit_global_getter_setter_property(const property_getter_setter_info<T>& info)
     {
         visited_props.push_back(info.property_item);
     }
@@ -159,10 +157,18 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
+    void visit_readonly_property(const property_info<T>& info)
+    {
+        visited_props.push_back(info.property_item);
+    }
+
+    template<typename T>
     void visit_global_readonly_property(const property_info<T>& info)
     {
         visited_props.push_back(info.property_item);
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////
 
 public:
 
