@@ -140,7 +140,7 @@ private:
     enable_if_t<!is_global_property<U>::value, void>
     call_impl(V& visitor) const
     {
-        visitor.visit_getter_setter_property<T>(m_info);
+        visitor.visit_getter_setter_property(m_info);
     }
 
 
