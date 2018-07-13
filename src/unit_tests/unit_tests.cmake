@@ -46,6 +46,7 @@ set(SOURCE_FILES main.cpp
                  property/property_class_invoke_wrapper.cpp
                  property/property_member_function.cpp
                  property/property_member_object.cpp
+                 property/property_order_test.cpp
                  property/property_global_function.cpp
                  property/property_global_object.cpp
                  type/test_type.cpp
@@ -69,6 +70,7 @@ set(SOURCE_FILES main.cpp
                  method/method_default_arg_test.cpp
                  method/method_misc_test.cpp
                  method/method_invoke_test.cpp
+                 method/method_order_test.cpp
                  method/method_param_info_test.cpp
                  method/method_query_test.cpp
                  variant/variant_assign_test.cpp
