@@ -1036,11 +1036,13 @@ variant type_register_private::get_metadata(const type& t, const variant& key)
 variant type_register_private::get_metadata(const variant& key, const std::vector<metadata>& data)
 {
     auto itr = std::lower_bound(data.cbegin(), data.cend(), key, metadata::order_by_key());
-    if (itr != data.cend())
+    while (itr != data.cend())
     {
         auto& item = *itr;
         if (item.get_key() == key)
             return item.get_value();
+
+        ++itr;
     }
 
     return variant();

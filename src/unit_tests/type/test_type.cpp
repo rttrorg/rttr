@@ -30,7 +30,7 @@
 #include "unit_tests/test_classes.h"
 
 #include <catch/catch.hpp>
-#include <rttr/type>
+#include <rttr/registration>
 
 #include <vector>
 #include <map>
@@ -53,6 +53,24 @@ enum E_Alignment
 
 template<typename...Args>
 struct my_class_template {};
+
+struct type_metadata_test
+{
+
+};
+
+static const char* key_data = "Test";
+
+RTTR_REGISTRATION
+{
+    registration::class_<type_metadata_test>("type_metadata_test")
+            (
+                metadata(key_data, "foo"),
+                metadata("other_key", "bar"),
+                metadata("bar", 42),
+                metadata("foobar", "hello")
+            );
+}
 
 TEST_CASE("Test rttr::type - BasicTests", "[type]")
 {
@@ -602,5 +620,21 @@ TEST_CASE("Test rttr::type - get_types()", "[type]")
 {
     CHECK(type::get_types().size() > 1);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - get_metadata()", "[type]")
+{
+    auto t = type::get<type_metadata_test>();
+
+    CHECK(t.get_metadata(key_data).is_valid() == true);
+    CHECK(t.get_metadata("other_key").is_valid() == true);
+    CHECK(t.get_metadata("bar").is_valid() == true);
+    CHECK(t.get_metadata("foobar").is_valid() == true);
+
+    // negative
+    CHECK(t.get_metadata("novalid key").is_valid() == false);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
