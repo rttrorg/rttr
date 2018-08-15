@@ -1041,7 +1041,7 @@ variant type_register_private::get_metadata(const variant& key, const std::vecto
         auto& item = *itr;
         if (item.get_key() == key)
             return item.get_value();
-        
+
         ++itr;
     }
 
