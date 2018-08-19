@@ -43,7 +43,7 @@ if (USE_PCH)
 endif()
 
 add_library(unit_test_plugin SHARED ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(unit_test_plugin RTTR::Core)
+target_link_libraries(unit_test_plugin RTTR::Core unit_test_base)
 set_target_properties(unit_test_plugin PROPERTIES 
                                        DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                        FOLDER "Testing")

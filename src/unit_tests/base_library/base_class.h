@@ -25,63 +25,18 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include <rttr/registration>
-
-#include "unit_tests/base_library/base_class.h"
+#include <rttr/type>
 
 using namespace rttr;
-
 #include <vector>
 
-struct point2D { int x; int y; };
 
-class test_plugin_class
+struct RTTR_API base_test_class
 {
 public:
-    test_plugin_class()
+    base_test_class()
     {}
 
-    void set_point(point2D point)
-    {
-        m_point = point;
-    }
+    RTTR_ENABLE()
 
-    point2D get_point() const
-    {
-        return m_point;
-    }
-
-
-    point2D m_point;
 };
-
-struct derived_plugin_class : base_test_class
-{
-    derived_plugin_class() {}
-
-    int value;
-
-    RTTR_ENABLE(base_test_class)
-};
-
-RTTR_PLUGIN_REGISTRATION
-{
-    registration::class_<test_plugin_class>("test_plugin_class")
-            .constructor<>()
-             (
-                 policy::ctor::as_object
-             )
-            .property("point", &test_plugin_class::get_point, &test_plugin_class::set_point)
-            ;
-
-    registration::class_<point2D>("point2D")
-            .constructor<>()
-            .property("x", &point2D::x)
-            .property("y", &point2D::y);
-
-    registration::class_<derived_plugin_class>("derived_plugin_class")
-        .constructor<>()
-        .property("value", &derived_plugin_class::value)
-        ;
-}
-

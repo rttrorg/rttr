@@ -526,6 +526,7 @@ void type_register_private::register_base_class_info(type_data* info)
         auto r_type = t.m_base_type.get_raw_type();
         r_type.m_type_data->get_class_data().m_derived_types.push_back(type(info));
     }
+    class_data.m_type = type(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -563,6 +564,28 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_register_private::remove_derived_types_from_base_classes(type& t)
+{
+    auto info = t.m_type_data;
+    if (t.is_class() && !info->get_base_types().empty())
+    {
+      if (!info->get_class_data)
+          return;
+
+        // here we get from all base types, the derived types list and remove the given type "t"
+        for (auto data : info->get_class_data().m_base_types)
+        {
+            auto& class_data = data.m_type_data->get_class_data();
+            auto& derived_types = class_data.m_derived_types;
+            derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
+        }
+
+        info->get_class_data = nullptr;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -583,6 +606,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     {
         type obj_t(info);
         remove_container_item(m_type_list, obj_t);
+        remove_derived_types_from_base_classes(obj_t);
 
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);

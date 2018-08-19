@@ -2,7 +2,7 @@
 #                                                                                  #
 #  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
-#  This file is part of RTTR (Run Time Type Reflection)                            #
+#  This file is part of the examples of RTTR (Run Time Type Reflection)            #
 #  License: MIT License                                                            #
 #                                                                                  #
 #  Permission is hereby granted, free of charge, to any person obtaining           #
@@ -25,51 +25,32 @@
 #                                                                                  #
 ####################################################################################
 
-add_subdirectory(base_library)
-
-set(HPP_FILES "")
-set(SRC_FILES "")
-
-project(unit_tests LANGUAGES CXX)
+project(unit_test_base LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
-generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
-                                "RTTR unit_tests" "Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>" "MIT License")
+set(HPP_FILES "")
+set(SRC_FILES "")
 
-loadFolder("unit_tests" HPP_FILES SRC_FILES)
+generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
+                                "RTTR Unit-Tests: unit_test_base" "Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>" "MIT License")
+
+loadFolder("files" HPP_FILES SRC_FILES)
 
 if (USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
-add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(unit_tests RTTR::Core unit_test_base Catch2::Catch)
-add_dependencies(unit_tests RTTR::Core)
-set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                                            FOLDER "Testing"
-                                            INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
-                                            CXX_STANDARD ${MAX_CXX_STANDARD})
+add_library(unit_test_base SHARED ${SRC_FILES} ${HPP_FILES})
 
-set_compiler_warnings(unit_tests)
+target_compile_definitions(unit_test_base PRIVATE RTTR_DLL_EXPORTS)
+target_compile_definitions(unit_test_base PUBLIC RTTR_DLL)
 
-if (MSVC)
-    target_compile_options(unit_tests PRIVATE /bigobj) 
-endif()
-                                            
-# run tests
-add_custom_target(run_tests ALL
-                  COMMAND "$<TARGET_FILE:unit_tests>"
-                  DEPENDS unit_tests
-                  COMMENT "Running unit_tests")
-                  
-set_target_properties(run_tests PROPERTIES 
-                                FOLDER "Testing")
-
-add_subdirectory(plugin)
-
-add_dependencies(unit_tests unit_test_plugin)
+target_link_libraries(unit_test_base RTTR::Core)
+set_target_properties(unit_test_base PROPERTIES 
+                                     DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                     FOLDER "Testing")
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

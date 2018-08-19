@@ -75,6 +75,12 @@ struct RTTR_LOCAL class_data
         m_dtor(create_invalid_item<destructor>())
     {}
 
+    ~class_data()
+    {
+        type_register::unregister_type(m_type.m_type_data);
+    }
+
+    type                        m_type;
     get_derived_info_func       m_derived_info_func;
     std::vector<type>           m_base_types;
     std::vector<type>           m_derived_types;
