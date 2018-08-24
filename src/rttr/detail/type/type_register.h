@@ -118,7 +118,7 @@ public:
 
 
     static type_data* register_type(type_data* info) RTTR_NOEXCEPT;
-    static void unregister_type(type_data* info) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info, const std::vector<type>& base_types = std::vector<type>()) RTTR_NOEXCEPT;
 
 private:
 

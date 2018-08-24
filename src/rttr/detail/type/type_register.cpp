@@ -336,9 +336,9 @@ type_data* type_register::register_type(type_data* info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_type(type_data* info) RTTR_NOEXCEPT
+void type_register::unregister_type(type_data* info, const std::vector<type>& base_types) RTTR_NOEXCEPT
 {
-    type_register_private::get_instance().unregister_type(info);
+    type_register_private::get_instance().unregister_type(info, base_types);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -564,30 +564,28 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::remove_derived_types_from_base_classes(type& t)
+void type_register_private::remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types)
 {
     auto info = t.m_type_data;
     if (t.is_class() && !info->get_base_types().empty())
     {
-      if (!info->get_class_data)
-          return;
-
         // here we get from all base types, the derived types list and remove the given type "t"
-        for (auto data : info->get_class_data().m_base_types)
+        for (auto data : base_types)
         {
             auto& class_data = data.m_type_data->get_class_data();
             auto& derived_types = class_data.m_derived_types;
             derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
         }
-
-        info->get_class_data = nullptr;
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
+void type_register_private::unregister_type(type_data* info, const std::vector<type>& base_types) RTTR_NOEXCEPT
 {
+    // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
+    // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
+    // anymore because the containing std::unique_ptr is already destroyed
     std::lock_guard<std::mutex> lock(m_mutex);
 
     bool found_type_data = false;
@@ -606,7 +604,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     {
         type obj_t(info);
         remove_container_item(m_type_list, obj_t);
-        remove_derived_types_from_base_classes(obj_t);
+        remove_derived_types_from_base_classes(obj_t, base_types);
 
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);
