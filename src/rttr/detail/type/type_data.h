@@ -77,7 +77,7 @@ struct RTTR_LOCAL class_data
 
     ~class_data()
     {
-        type_register::unregister_type(m_type.m_type_data, m_base_types);
+        type_register::unregister_type(m_type.m_type_data, this);
     }
 
     type                        m_type;

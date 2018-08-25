@@ -336,9 +336,9 @@ type_data* type_register::register_type(type_data* info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_type(type_data* info, const std::vector<type>& base_types) RTTR_NOEXCEPT
+void type_register::unregister_type(type_data* info, const class_data* data) RTTR_NOEXCEPT
 {
-    type_register_private::get_instance().unregister_type(info, base_types);
+    type_register_private::get_instance().unregister_type(info, data);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -581,7 +581,7 @@ void type_register_private::remove_derived_types_from_base_classes(type& t, cons
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_type(type_data* info, const std::vector<type>& base_types) RTTR_NOEXCEPT
+void type_register_private::unregister_type(type_data* info, const class_data* class_info) RTTR_NOEXCEPT
 {
     // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
     // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
@@ -604,7 +604,8 @@ void type_register_private::unregister_type(type_data* info, const std::vector<t
     {
         type obj_t(info);
         remove_container_item(m_type_list, obj_t);
-        remove_derived_types_from_base_classes(obj_t, base_types);
+        remove_derived_types_from_base_classes(obj_t, class_info ? class_info->m_base_types :
+                                                                   info->get_class_data ? info->get_class_data().m_base_types : std::vector<type>());
 
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);

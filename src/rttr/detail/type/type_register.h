@@ -65,6 +65,7 @@ template<typename T, typename Enable>
 struct type_getter;
 
 struct type_data;
+struct class_data;
 
 class metadata;
 class registration_manager;
@@ -118,7 +119,7 @@ public:
 
 
     static type_data* register_type(type_data* info) RTTR_NOEXCEPT;
-    static void unregister_type(type_data* info, const std::vector<type>& base_types = std::vector<type>()) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info, const class_data* data = nullptr) RTTR_NOEXCEPT;
 
 private:
 

@@ -271,7 +271,7 @@ TEST_CASE("library - unload derived types", "[library]")
         auto derived_classes = t_base.get_derived_classes();
         CHECK(derived_classes.size() == 1);
         auto ret2 = std::find_if(derived_classes.begin(), derived_classes.end(), [derived_t](type t) { return t == derived_t; });
-        CHECK(ret2 != base_classes.end());
+        CHECK(ret2 != derived_classes.end());
 
         //// UNLOAD
         CHECK(lib.unload() == true);
