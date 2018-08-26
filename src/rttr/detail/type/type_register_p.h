@@ -74,7 +74,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////
 
     type_data* register_type(type_data* info) RTTR_NOEXCEPT;
-    void unregister_type(type_data* info, const class_data* data) RTTR_NOEXCEPT;
+    void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
     bool register_constructor(const constructor_wrapper_base* ctor);
     bool register_destructor(const destructor_wrapper_base* dtor);

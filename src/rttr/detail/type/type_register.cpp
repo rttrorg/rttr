@@ -336,9 +336,9 @@ type_data* type_register::register_type(type_data* info) RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_type(type_data* info, const class_data* data) RTTR_NOEXCEPT
+void type_register::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
-    type_register_private::get_instance().unregister_type(info, data);
+    type_register_private::get_instance().unregister_type(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -517,16 +517,18 @@ void type_register_private::register_base_class_info(type_data* info)
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                          { return left.m_base_type.is_base_of(right.m_base_type); });
 
-    auto& class_data = info->get_class_data();
-    for (const auto& t : base_classes)
+    if (!base_classes.empty())
     {
-        class_data.m_base_types.push_back(t.m_base_type);
-        class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
+        auto& class_data = info->get_class_data();
+        for (const auto& t : base_classes)
+        {
+            class_data.m_base_types.push_back(t.m_base_type);
+            class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
-        auto r_type = t.m_base_type.get_raw_type();
-        r_type.m_type_data->get_class_data().m_derived_types.push_back(type(info));
+            auto r_type = t.m_base_type.get_raw_type();
+            r_type.m_type_data->get_class_data().m_derived_types.push_back(type(info));
+        }
     }
-    class_data.m_type = type(info);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -566,22 +568,18 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
 void type_register_private::remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types)
 {
-    auto info = t.m_type_data;
-    if (t.is_class() && !info->get_base_types().empty())
+    // here we get from all base types, the derived types list and remove the given type "t"
+    for (auto data : base_types)
     {
-        // here we get from all base types, the derived types list and remove the given type "t"
-        for (auto data : base_types)
-        {
-            auto& class_data = data.m_type_data->get_class_data();
-            auto& derived_types = class_data.m_derived_types;
-            derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
-        }
+        auto& class_data = data.m_type_data->get_class_data();
+        auto& derived_types = class_data.m_derived_types;
+        derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_type(type_data* info, const class_data* class_info) RTTR_NOEXCEPT
+void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
     // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
     // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
@@ -604,9 +602,7 @@ void type_register_private::unregister_type(type_data* info, const class_data* c
     {
         type obj_t(info);
         remove_container_item(m_type_list, obj_t);
-        remove_derived_types_from_base_classes(obj_t, class_info ? class_info->m_base_types :
-                                                                   info->get_class_data ? info->get_class_data().m_base_types : std::vector<type>());
-
+        remove_derived_types_from_base_classes(obj_t, info->get_class_data().m_base_types);
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);
     }

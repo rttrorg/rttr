@@ -119,7 +119,7 @@ public:
 
 
     static type_data* register_type(type_data* info) RTTR_NOEXCEPT;
-    static void unregister_type(type_data* info, const class_data* data = nullptr) RTTR_NOEXCEPT;
+    static void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
 private:
 

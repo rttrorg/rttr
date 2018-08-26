@@ -75,12 +75,6 @@ struct RTTR_LOCAL class_data
         m_dtor(create_invalid_item<destructor>())
     {}
 
-    ~class_data()
-    {
-        type_register::unregister_type(m_type.m_type_data, this);
-    }
-
-    type                        m_type;
     get_derived_info_func       m_derived_info_func;
     std::vector<type>           m_base_types;
     std::vector<type>           m_derived_types;
@@ -159,8 +153,8 @@ struct RTTR_LOCAL type_data
 template<typename T>
 RTTR_LOCAL RTTR_INLINE class_data& get_type_class_data() RTTR_NOEXCEPT
 {
-    static std::unique_ptr<class_data> info = detail::make_unique<class_data>(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments());
-    return (*info.get());
+    static auto info = new class_data(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments());
+    return *info;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -286,6 +280,36 @@ RTTR_LOCAL RTTR_INLINE std::vector<metadata>& get_metadata_func_impl()
 using type_trait_value = uint64_t;
 #define TYPE_TRAIT_TO_BITSET_VALUE(trait) (static_cast<std::uint64_t>(std::trait<T>::value) << static_cast<std::size_t>(type_trait_infos::trait))
 #define TYPE_TRAIT_TO_BITSET_VALUE_2(trait, enum_key) (static_cast<std::uint64_t>(trait<T>::value) << static_cast<std::size_t>(type_trait_infos::enum_key))
+
+} // end namespace detail
+} // end namespace rttr
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+namespace std
+{
+    template<>
+    struct default_delete<::rttr::detail::type_data>
+    {
+        void operator()(::rttr::detail::type_data* info)
+        {
+            auto& class_data = info->get_class_data(); // class_data will be allocated on demand, where we delete it
+            delete &(class_data);
+            delete info;
+        }
+    };
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+namespace rttr
+{
+namespace detail
+{
 
 template<typename T>
 RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
