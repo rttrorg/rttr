@@ -139,23 +139,15 @@ struct RTTR_LOCAL type_data
     enumeration_wrapper_base*  enum_wrapper;
     impl::get_metadata_func    get_metadata;
     impl::create_wrapper_func  create_wrapper;
-    impl::get_class_data_func  get_class_data;
 
     bool is_valid;
     RTTR_FORCE_INLINE bool type_trait_value(type_trait_infos type_trait) const RTTR_NOEXCEPT { return m_type_traits.test(static_cast<std::size_t>(type_trait)); }
 
 
     type_traits m_type_traits;
+    class_data  m_class_data;
+
 };
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-RTTR_LOCAL RTTR_INLINE class_data& get_type_class_data() RTTR_NOEXCEPT
-{
-    static auto info = new class_data(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments());
-    return *info;
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -284,23 +276,6 @@ using type_trait_value = uint64_t;
 } // end namespace detail
 } // end namespace rttr
 
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-
-namespace std
-{
-    template<>
-    struct default_delete<::rttr::detail::type_data>
-    {
-        void operator()(::rttr::detail::type_data* info)
-        {
-            auto& class_data = info->get_class_data(); // class_data will be allocated on demand, where we delete it
-            delete &(class_data);
-            delete info;
-        }
-    };
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -332,7 +307,6 @@ RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
                             &get_metadata_func_impl<T>,
                             get_create_wrapper_func<T>(),
 
-                            &get_type_class_data<T>,
                             true,
                             type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |
@@ -345,7 +319,8 @@ RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
                                               TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_associative_container, is_associative_container) |
                                               TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::is_sequential_container, is_sequential_container) |
                                               TYPE_TRAIT_TO_BITSET_VALUE_2(::rttr::detail::template_type_trait, is_template_instantiation)
-                                            }
+                                            },
+                            class_data(get_most_derived_info_func<T>(), template_type_trait<T>::get_template_arguments())
                         }
                );
     return obj;
