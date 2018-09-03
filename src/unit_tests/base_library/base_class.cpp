@@ -25,51 +25,17 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "rttr/type.h"
-#include "rttr/detail/type/type_data.h"
+#include <rttr/registration>
 
-namespace rttr
+#include "unit_tests/base_library/base_class.h"
+
+using namespace rttr;
+
+
+RTTR_PLUGIN_REGISTRATION
 {
-namespace detail
-{
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
-{
-    static type_data instance{ nullptr, nullptr,
-                               nullptr,
-                               std::string(""), string_view(),
-                               0, 0,
-                               &create_invalid_variant_policy::create_variant,
-                               &base_classes<void>::get_types,
-                               nullptr,
-                               nullptr,
-                               get_create_wrapper_func<void>(),
-                               nullptr,
-                               false,
-                               type_trait_value{0},
-                               class_data(nullptr, std::vector<type>())
-                              };
-
-    instance.raw_type_data  = &instance;
-    instance.wrapped_type   = &instance;
-    instance.array_raw_type = &instance;
-
-    return instance;
+    registration::class_<base_test_class>("base_test_class")
+            .constructor<>()()
+           ;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-type_data* get_invalid_type_data() RTTR_NOEXCEPT
-{
-    static auto instance = &get_invalid_type_data_impl();
-    return instance;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-} // end namespace detail
-} // end namespace rttr
-
 

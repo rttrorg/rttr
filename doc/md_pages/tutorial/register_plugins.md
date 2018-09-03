@@ -101,6 +101,8 @@ Summary
 You could serialize your object into JSON-Format, unload the library, load the new version and deserialize it again.
 - \remark Make sure you throw away all retrieved items (\ref rttr::type "types", \ref rttr::property "properties", \ref rttr::method "methods" etc...) of the loaded library when unloading.
  Otherwise UB may occur. (e.g. Invoking a method of an unloaded library is not possible)
+When you want to create dynamic plugins with RTTR, make sure you link dynamically against the host application and the plugin, otherwise you will get UB.
+Also see `/src/examples/library_loading` for example of hot reloading.
   
 <hr>
 

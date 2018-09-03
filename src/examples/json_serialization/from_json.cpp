@@ -94,6 +94,8 @@ variant extract_basic_types(Value& json_value)
 static void write_array_recursively(variant_sequential_view& view, Value& json_array_value)
 {
     view.set_size(json_array_value.Size());
+    const type array_value_type = view.get_rank_type(1);
+
     for (SizeType i = 0; i < json_array_value.Size(); ++i)
     {
         auto& json_index_value = json_array_value[i];
@@ -111,9 +113,8 @@ static void write_array_recursively(variant_sequential_view& view, Value& json_a
         }
         else
         {
-            const type array_type = view.get_rank_type(i);
             variant extracted_value = extract_basic_types(json_index_value);
-            if (extracted_value.convert(array_type))
+            if (extracted_value.convert(array_value_type))
                 view.set_value(i, extracted_value);
         }
     }

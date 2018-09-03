@@ -67,6 +67,7 @@ class type_register_private;
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct invalid_type{};
 struct type_data;
+struct class_data;
 class destructor_wrapper_base;
 class property_wrapper_base;
 RTTR_LOCAL RTTR_INLINE type create_type(type_data*) RTTR_NOEXCEPT;
@@ -1211,6 +1212,7 @@ class RTTR_API type
         friend class detail::type_register;
         friend class detail::type_register_private;
         friend class visitor;
+        friend struct detail::class_data;
 
         friend type detail::create_type(detail::type_data*) RTTR_NOEXCEPT;
 

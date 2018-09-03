@@ -200,6 +200,9 @@ private:
      */
     void update_custom_name(std::string new_name, const type& t);
 
+    //! This will remove from all base classes the derived types (e.g. because of type unloaded)
+    void remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types);
+
     /*! A helper class to register the registration managers.
      * This class is needed in order to avoid that the registration_manager instance's
      * are trying to deregister its content, although the RTTR library is already unloaded.
