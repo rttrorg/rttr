@@ -27,7 +27,10 @@
 
 #include <catch/catch.hpp>
 
+#include "unit_tests/base_library/base_class.h"
 #include <rttr/type>
+#include <rttr/registration>
+
 #include <iostream>
 
 using namespace rttr;
@@ -245,3 +248,60 @@ TEST_CASE("library - using types", "[library]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("library - unload derived types", "[library]")
+{
+    base_test_class obj;
+    type::get<base_test_class>();
+
+    SECTION("load lib")
+    {
+        library lib(library_name);
+        //// LOAD
+        CHECK(lib.load() == true);
+
+        auto derived_t = type::get_by_name("derived_plugin_class");
+        CHECK(derived_t.is_valid() == true);
+        //
+        auto t_base = type::get<base_test_class>();
+        auto base_classes = derived_t.get_base_classes();
+        auto ret1 = std::find_if(base_classes.begin(), base_classes.end(), [t_base](type t) { return t == t_base; });
+        CHECK(ret1 != base_classes.end());
+        //
+        auto derived_classes = t_base.get_derived_classes();
+        CHECK(derived_classes.size() == 1);
+        auto ret2 = std::find_if(derived_classes.begin(), derived_classes.end(), [derived_t](type t) { return t == derived_t; });
+        CHECK(ret2 != derived_classes.end());
+
+        //// UNLOAD
+        CHECK(lib.unload() == true);
+    }
+
+    SECTION("unloaded lib")
+    {
+        auto derived_t = type::get_by_name("derived_plugin_class");
+        CHECK(derived_t.is_valid() == false);
+
+        auto t_base = type::get<base_test_class>();
+        auto derived_classes = t_base.get_derived_classes();
+        CHECK(derived_classes.size() == 0);
+    }
+
+    SECTION("load lib again")
+    {
+        library lib(library_name);
+        //// LOAD
+        CHECK(lib.load() == true);
+
+        auto derived_t = type::get_by_name("derived_plugin_class");
+        CHECK(derived_t.is_valid() == true);
+
+        auto t_base = type::get<base_test_class>();
+        auto derived_classes = t_base.get_derived_classes();
+        CHECK(derived_classes.size() == 1);
+        auto ret = std::find_if(derived_classes.begin(), derived_classes.end(), [derived_t](type t) { return t == derived_t; });
+        CHECK(ret != derived_classes.end());
+
+        CHECK(lib.unload() == true);
+    }
+}

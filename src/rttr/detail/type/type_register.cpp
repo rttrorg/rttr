@@ -212,7 +212,7 @@ bool type_register::unregister_less_than_comparator(const type_comparator_base* 
 
 void type_register::register_base_class(const type& derived_type, const base_class_info& base_info)
 {
-    auto& class_data = derived_type.m_type_data->get_class_data();
+    auto& class_data = derived_type.m_type_data->m_class_data;
     auto itr = std::find_if(class_data.m_base_types.begin(), class_data.m_base_types.end(),
     [base_info](const type& t)
     {
@@ -253,7 +253,7 @@ void type_register::register_base_class(const type& derived_type, const base_cla
                    [](const sorted_pair& item)-> rttr_cast_func { return item.second; });
 
     auto r_type = base_info.m_base_type.get_raw_type();
-    r_type.m_type_data->get_class_data().m_derived_types.push_back(type(derived_type.m_type_data));
+    r_type.m_type_data->m_class_data.m_derived_types.push_back(type(derived_type.m_type_data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -517,14 +517,17 @@ void type_register_private::register_base_class_info(type_data* info)
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                          { return left.m_base_type.is_base_of(right.m_base_type); });
 
-    auto& class_data = info->get_class_data();
-    for (const auto& t : base_classes)
+    if (!base_classes.empty())
     {
-        class_data.m_base_types.push_back(t.m_base_type);
-        class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
+        auto& class_data = info->m_class_data;
+        for (const auto& t : base_classes)
+        {
+            class_data.m_base_types.push_back(t.m_base_type);
+            class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
-        auto r_type = t.m_base_type.get_raw_type();
-        r_type.m_type_data->get_class_data().m_derived_types.push_back(type(info));
+            auto r_type = t.m_base_type.get_raw_type();
+            r_type.m_type_data->m_class_data.m_derived_types.push_back(type(info));
+        }
     }
 }
 
@@ -555,16 +558,32 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
     // when a base class type has class items, but the derived one not,
     // we update the derived class item list
     const auto t = type(info);
-    update_class_list(t, &detail::class_data::m_properties);
-    update_class_list(t, &detail::class_data::m_methods);
+    update_class_list(t, &class_data::m_properties);
+    update_class_list(t, &class_data::m_methods);
 
     return info;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type_register_private::remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types)
+{
+    // here we get from all base types, the derived types list and remove the given type "t"
+    for (auto data : base_types)
+    {
+        auto& class_data = data.m_type_data->m_class_data;
+        auto& derived_types = class_data.m_derived_types;
+        derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
+    // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
+    // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
+    // anymore because the containing std::unique_ptr is already destroyed
     std::lock_guard<std::mutex> lock(m_mutex);
 
     bool found_type_data = false;
@@ -583,7 +602,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     {
         type obj_t(info);
         remove_container_item(m_type_list, obj_t);
-
+        remove_derived_types_from_base_classes(obj_t, info->m_class_data.m_base_types);
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);
     }
@@ -593,7 +612,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 
 std::string type_register_private::derive_template_instance_name(type_data* info)
 {
-    auto& nested_types = info->get_class_data().m_nested_types;
+    auto& nested_types = info->m_class_data.m_nested_types;
     if (nested_types.empty()) // no template type
         return info->name;
 
@@ -702,7 +721,7 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
 bool type_register_private::register_constructor(const constructor_wrapper_base* ctor)
 {
     const auto t = ctor->get_declaring_type();
-    auto& class_data = t.m_type_data->get_class_data();
+    auto& class_data = t.m_type_data->m_class_data;
     class_data.m_ctors.emplace_back(create_item<::rttr::constructor>(ctor));
     return true;
 }
@@ -714,7 +733,7 @@ bool type_register_private::register_constructor(const constructor_wrapper_base*
 bool type_register_private::register_destructor(const destructor_wrapper_base* dtor)
 {
     const auto t = dtor->get_declaring_type();
-    auto& class_data = t.m_type_data->get_class_data();
+    auto& class_data = t.m_type_data->m_class_data;
 
     auto& dtor_type = class_data.m_dtor;
     if (!dtor_type) // when no dtor is set at the moment
@@ -734,14 +753,14 @@ bool type_register_private::register_property(const property_wrapper_base* prop)
     const auto t    = prop->get_declaring_type();
     const auto name = prop->get_name();
 
-    auto& property_list = t.m_type_data->get_class_data().m_properties;
+    auto& property_list = t.m_type_data->m_class_data.m_properties;
 
     if (get_type_property(t, name))
         return false;
 
     auto p = detail::create_item<::rttr::property>(prop);
     property_list.emplace_back(p);
-    update_class_list(t, &detail::class_data::m_properties);
+    update_class_list(t, &class_data::m_properties);
     return true;
 }
 
@@ -785,7 +804,7 @@ bool type_register_private::register_method(const method_wrapper_base* meth)
     if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
         return false;
 
-    auto& method_list = t.m_type_data->get_class_data().m_methods;
+    auto& method_list = t.m_type_data->m_class_data.m_methods;
     method_list.emplace_back(m);
     update_class_list(t, &class_data::m_methods);
     return true;
@@ -822,7 +841,7 @@ bool type_register_private::unregister_global_method(const method_wrapper_base* 
 
 property type_register_private::get_type_property(const type& t, string_view name)
 {
-    for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
+    for (const auto& prop : get_items_for_type(t, t.m_type_data->m_class_data.m_properties))
     {
         if (prop.get_name() == name)
             return prop;
@@ -836,7 +855,7 @@ property type_register_private::get_type_property(const type& t, string_view nam
 method type_register_private::get_type_method(const type& t, string_view name,
                                               const std::vector<type>& type_list)
 {
-    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data->m_class_data.m_methods))
     {
         if (meth.get_name() == name &&
             compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
@@ -853,15 +872,16 @@ method type_register_private::get_type_method(const type& t, string_view name,
 template<typename T>
 void type_register_private::update_class_list(const type& t, T item_ptr)
 {
+    auto& all_class_items = (t.m_type_data->m_class_data.*item_ptr);
+
     // update type "t" with all items from the base classes
-    auto& all_class_items = (t.m_type_data->get_class_data().*item_ptr);
     auto item_range = get_items_for_type(t, all_class_items);
     detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
     all_class_items.reserve(all_class_items.size() + 1);
     all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
     for (const auto& base_type : t.get_base_classes())
     {
-        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->get_class_data().*item_ptr);
+        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->m_class_data.*item_ptr);
         if (base_properties.empty())
             continue;
 

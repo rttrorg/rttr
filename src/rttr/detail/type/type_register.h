@@ -65,6 +65,7 @@ template<typename T, typename Enable>
 struct type_getter;
 
 struct type_data;
+struct class_data;
 
 class metadata;
 class registration_manager;
