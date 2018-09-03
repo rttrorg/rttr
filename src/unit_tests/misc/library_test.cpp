@@ -286,4 +286,22 @@ TEST_CASE("library - unload derived types", "[library]")
         auto derived_classes = t_base.get_derived_classes();
         CHECK(derived_classes.size() == 0);
     }
+
+    SECTION("load lib again")
+    {
+        library lib(library_name);
+        //// LOAD
+        CHECK(lib.load() == true);
+
+        auto derived_t = type::get_by_name("derived_plugin_class");
+        CHECK(derived_t.is_valid() == true);
+
+        auto t_base = type::get<base_test_class>();
+        auto derived_classes = t_base.get_derived_classes();
+        CHECK(derived_classes.size() == 1);
+        auto ret = std::find_if(derived_classes.begin(), derived_classes.end(), [derived_t](type t) { return t == derived_t; });
+        CHECK(ret != derived_classes.end());
+
+        CHECK(lib.unload() == true);
+    }
 }
