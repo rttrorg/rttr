@@ -32,6 +32,8 @@ using namespace rttr;
 
 struct instance_base
 {
+    virtual ~instance_base() {}
+
     RTTR_ENABLE()
 };
 
