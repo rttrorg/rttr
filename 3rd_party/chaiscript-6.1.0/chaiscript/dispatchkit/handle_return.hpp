@@ -20,6 +20,7 @@
 
 namespace chaiscript {
 class Boxed_Number;
+class Proxy_Function_Base;
 }  // namespace chaiscript
 
 namespace chaiscript
