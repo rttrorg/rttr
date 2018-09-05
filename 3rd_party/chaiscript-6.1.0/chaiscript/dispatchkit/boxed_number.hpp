@@ -521,6 +521,10 @@ namespace chaiscript
         validate_boxed_number(bv);
       }
 
+      static Boxed_Value clone(const Boxed_Value &t_bv) {
+        return Boxed_Number(t_bv).get_as(t_bv.get_type_info()).bv;
+      }
+
       static bool is_floating_point(const Boxed_Value &t_bv)
       {
         const Type_Info &inp_ = t_bv.get_type_info();

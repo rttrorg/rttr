@@ -23,10 +23,10 @@ namespace chaiscript
       void array(const std::string &type, Module& m)
       {
         typedef typename std::remove_extent<T>::type ReturnType;
-        const auto extent = std::extent<T>::value;
         m.add(user_type<T>(), type);
         m.add(fun(
-              [extent](T& t, size_t index)->ReturnType &{
+              [](T& t, size_t index)->ReturnType &{
+                constexpr auto extent = std::extent<T>::value;
                 if (extent > 0 && index >= extent) {
                   throw std::range_error("Array index out of range. Received: " + std::to_string(index)  + " expected < " + std::to_string(extent));
                 } else {
@@ -37,7 +37,8 @@ namespace chaiscript
             );
 
         m.add(fun(
-              [extent](const T &t, size_t index)->const ReturnType &{
+              [](const T &t, size_t index)->const ReturnType &{
+                constexpr auto extent = std::extent<T>::value;
                 if (extent > 0 && index >= extent) {
                   throw std::range_error("Array index out of range. Received: " + std::to_string(index)  + " expected < " + std::to_string(extent));
                 } else {
@@ -48,7 +49,8 @@ namespace chaiscript
             );
 
         m.add(fun(
-              [extent](const T &) {
+              [](const T &) {
+                constexpr auto extent = std::extent<T>::value;
                 return extent;
               }), "size");
       }
@@ -144,6 +146,7 @@ namespace chaiscript
       construct_pod<T>(name, m);
 
       m.add(fun(&parse_string<T>), "to_" + name);
+      m.add(fun([](const T t){ return t; }), "to_" + name);
     }
 
 
@@ -305,13 +308,13 @@ namespace chaiscript
       static bool has_parse_tree(const chaiscript::Const_Proxy_Function &t_pf)
       {
         const auto pf = std::dynamic_pointer_cast<const chaiscript::dispatch::Dynamic_Proxy_Function>(t_pf);
-        return pf && pf->get_parse_tree();
+        return bool(pf);
       }
 
-      static chaiscript::AST_NodePtr get_parse_tree(const chaiscript::Const_Proxy_Function &t_pf)
+      static const chaiscript::AST_Node &get_parse_tree(const chaiscript::Const_Proxy_Function &t_pf)
       {
         const auto pf = std::dynamic_pointer_cast<const chaiscript::dispatch::Dynamic_Proxy_Function>(t_pf);
-        if (pf && pf->get_parse_tree())
+        if (pf)
         {
           return pf->get_parse_tree();
         } else {
@@ -463,7 +466,7 @@ namespace chaiscript
         m.add(fun([](const char c) { return std::string(1, c); }), "to_string");
         m.add(fun(&Boxed_Number::to_string), "to_string");
 
-        
+
         bootstrap_pod_type<double>("double", m);
         bootstrap_pod_type<long double>("long_double", m);
         bootstrap_pod_type<float>("float", m);
@@ -492,7 +495,7 @@ namespace chaiscript
 
         opers_arithmetic_pod(m);
 
-        
+
         m.add(fun(&Build_Info::version_major), "version_major");
         m.add(fun(&Build_Info::version_minor), "version_minor");
         m.add(fun(&Build_Info::version_patch), "version_patch");
@@ -545,7 +548,7 @@ namespace chaiscript
                   std::vector<Boxed_Value> retval;
                   std::transform(t_eval_error.call_stack.begin(), t_eval_error.call_stack.end(),
                                  std::back_inserter(retval),
-                                 &chaiscript::var<const std::shared_ptr<const chaiscript::AST_Node> &>);
+                                 &chaiscript::var<const chaiscript::AST_Node_Trace &>);
                   return retval;
                 }), "call_stack"} }
             );
@@ -574,7 +577,7 @@ namespace chaiscript
                 const auto children = t_node.get_children();
                 std::transform(children.begin(), children.end(),
                                std::back_inserter(retval),
-                               &chaiscript::var<const std::shared_ptr<chaiscript::AST_Node> &>);
+                               &chaiscript::var<const std::reference_wrapper<chaiscript::AST_Node> &>);
                 return retval;
               }), "children"}
             }

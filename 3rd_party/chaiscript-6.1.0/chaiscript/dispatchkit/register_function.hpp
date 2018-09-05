@@ -48,6 +48,7 @@ namespace chaiscript
           chaiscript::make_shared<dispatch::Proxy_Function_Base, dispatch::Proxy_Function_Callable_Impl<Signature, T>>(t));
     }
 
+
   template<typename Ret, typename ... Param>
     Proxy_Function fun(Ret (*func)(Param...))
     {
@@ -77,12 +78,44 @@ namespace chaiscript
 
     }
 
-
   template<typename T, typename Class /*, typename = typename std::enable_if<std::is_member_object_pointer<T>::value>::type*/>
     Proxy_Function fun(T Class::* m /*, typename std::enable_if<std::is_member_object_pointer<T>::value>::type* = 0*/ )
     {
       return Proxy_Function(chaiscript::make_shared<dispatch::Proxy_Function_Base, dispatch::Attribute_Access<T, Class>>(m));
     }
+
+// only compile this bit if noexcept is part of the type system
+//
+#if (defined(__cpp_noexcept_function_type) && __cpp_noexcept_function_type >= 201510) || (defined(_NOEXCEPT_TYPES_SUPPORTED) && _MSC_VER >= 1912)
+  template<typename Ret, typename ... Param>
+    Proxy_Function fun(Ret (*func)(Param...) noexcept)
+    {
+      auto fun_call = dispatch::detail::Fun_Caller<Ret, Param...>(func);
+
+      return Proxy_Function(
+          chaiscript::make_shared<dispatch::Proxy_Function_Base, dispatch::Proxy_Function_Callable_Impl<Ret (Param...), decltype(fun_call)>>(fun_call));
+
+    }
+
+  template<typename Ret, typename Class, typename ... Param>
+    Proxy_Function fun(Ret (Class::*t_func)(Param...) const noexcept)
+    {
+      auto call = dispatch::detail::Const_Caller<Ret, Class, Param...>(t_func);
+
+      return Proxy_Function(
+          chaiscript::make_shared<dispatch::Proxy_Function_Base, dispatch::Proxy_Function_Callable_Impl<Ret (const Class &, Param...), decltype(call)>>(call));
+    }
+
+  template<typename Ret, typename Class, typename ... Param>
+    Proxy_Function fun(Ret (Class::*t_func)(Param...) noexcept)
+    {
+      auto call = dispatch::detail::Caller<Ret, Class, Param...>(t_func);
+
+      return Proxy_Function(
+          chaiscript::make_shared<dispatch::Proxy_Function_Base, dispatch::Proxy_Function_Callable_Impl<Ret (Class &, Param...), decltype(call)>>(call));
+
+    }
+#endif
 
 
 

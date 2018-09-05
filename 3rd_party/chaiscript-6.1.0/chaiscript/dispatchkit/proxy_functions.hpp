@@ -41,7 +41,7 @@ namespace chaiscript
   class Boxed_Number;
   struct AST_Node;
 
-  typedef std::shared_ptr<AST_Node> AST_NodePtr;
+  typedef std::unique_ptr<AST_Node> AST_NodePtr;
 
   namespace dispatch
   {
@@ -346,14 +346,15 @@ namespace chaiscript
     {
       public:
         Dynamic_Proxy_Function(
-            int t_arity=-1,
-            AST_NodePtr t_parsenode = AST_NodePtr(),
+            const int t_arity,
+            std::shared_ptr<AST_Node> t_parsenode,
             Param_Types t_param_types = Param_Types(),
             Proxy_Function t_guard = Proxy_Function())
           : Proxy_Function_Base(build_param_type_list(t_param_types), t_arity),
             m_param_types(std::move(t_param_types)),
             m_guard(std::move(t_guard)), m_parsenode(std::move(t_parsenode))
         {
+          // assert(t_parsenode);
         }
 
 
@@ -379,9 +380,17 @@ namespace chaiscript
           return m_guard;
         }
 
-        AST_NodePtr get_parse_tree() const
+        bool has_parse_tree() const {
+          return static_cast<bool>(m_parsenode);
+        }
+
+        const AST_Node &get_parse_tree() const
         {
-          return m_parsenode;
+          if (m_parsenode) {
+            return *m_parsenode;
+          } else {
+            throw std::runtime_error("Dynamic_Proxy_Function does not have parse_tree");
+          }
         }
 
 
@@ -445,7 +454,7 @@ namespace chaiscript
 
       private:
         Proxy_Function m_guard;
-        AST_NodePtr m_parsenode;
+        std::shared_ptr<AST_Node> m_parsenode;
     };
 
 
@@ -457,7 +466,7 @@ namespace chaiscript
         Dynamic_Proxy_Function_Impl(
             Callable t_f, 
             int t_arity=-1,
-            AST_NodePtr t_parsenode = AST_NodePtr(),
+            std::shared_ptr<AST_Node> t_parsenode = AST_NodePtr(),
             Param_Types t_param_types = Param_Types(),
             Proxy_Function t_guard = Proxy_Function())
           : Dynamic_Proxy_Function(

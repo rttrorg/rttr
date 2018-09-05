@@ -36,12 +36,13 @@
 #include <unistd.h>
 #endif
 
-#if defined(_POSIX_VERSION) && !defined(__CYGWIN__) 
+#if !defined(CHAISCRIPT_NO_DYNLOAD) && defined(_POSIX_VERSION) && !defined(__CYGWIN__)
 #include <dlfcn.h>
 #endif
 
-
-#ifdef CHAISCRIPT_WINDOWS
+#if defined(CHAISCRIPT_NO_DYNLOAD)
+#include "chaiscript_unknown.hpp"
+#elif defined(CHAISCRIPT_WINDOWS)
 #include "chaiscript_windows.hpp"
 #elif _POSIX_VERSION
 #include "chaiscript_posix.hpp"
@@ -54,6 +55,8 @@
 
 namespace chaiscript
 {
+   /// Namespace alias to provide cleaner and more explicit syntax to users.
+   using Namespace = dispatch::Dynamic_Object;
 
   namespace detail
   {
@@ -77,6 +80,8 @@ namespace chaiscript
     std::unique_ptr<parser::ChaiScript_Parser_Base> m_parser;
 
     chaiscript::detail::Dispatch_Engine m_engine;
+
+    std::map<std::string, std::function<Namespace&()>> m_namespace_generators;
 
     /// Evaluates the given string in by parsing it and running the results through the evaluator
     Boxed_Value do_eval(const std::string &t_input, const std::string &t_filename = "__EVAL__", bool /* t_internal*/  = false) 
@@ -185,7 +190,7 @@ namespace chaiscript
       }
 
       m_engine.add(fun([this](const std::string &t_str){ return internal_eval(t_str); }), "eval");
-      m_engine.add(fun([this](const AST_NodePtr &t_ast){ return eval(t_ast); }), "eval");
+      m_engine.add(fun([this](const AST_Node &t_ast){ return eval(t_ast); }), "eval");
 
       m_engine.add(fun([this](const std::string &t_str, const bool t_dump){ return parse(t_str, t_dump); }), "parse");
       m_engine.add(fun([this](const std::string &t_str){ return parse(t_str); }), "parse");
@@ -194,8 +199,32 @@ namespace chaiscript
       m_engine.add(fun([this](const Boxed_Value &t_bv, const std::string &t_name){ add_global_const(t_bv, t_name); }), "add_global_const");
       m_engine.add(fun([this](const Boxed_Value &t_bv, const std::string &t_name){ add_global(t_bv, t_name); }), "add_global");
       m_engine.add(fun([this](const Boxed_Value &t_bv, const std::string &t_name){ set_global(t_bv, t_name); }), "set_global");
+
+      m_engine.add(fun([this](const std::string& t_namespace_name) { register_namespace([](Namespace& /*space*/) {}, t_namespace_name); import(t_namespace_name); }), "namespace");
+      m_engine.add(fun([this](const std::string& t_namespace_name) { import(t_namespace_name); }), "import");
     }
 
+    /// Skip BOM at the beginning of file
+    static bool skip_bom(std::ifstream &infile) {
+        size_t bytes_needed = 3;
+        char buffer[3];
+
+        memset(buffer, '\0', bytes_needed);
+
+        infile.read(buffer, static_cast<std::streamsize>(bytes_needed));
+
+        if ((buffer[0] == '\xef')
+            && (buffer[1] == '\xbb')
+            && (buffer[2] == '\xbf')) {
+
+            infile.seekg(3);
+            return true;
+        }
+
+        infile.seekg(0);
+
+        return false;
+    }
 
     /// Helper function for loading a file
     static std::string load_file(const std::string &t_filename) {
@@ -205,17 +234,22 @@ namespace chaiscript
         throw chaiscript::exception::file_not_found_error(t_filename);
       }
 
-      const auto size = infile.tellg();
+      auto size = infile.tellg();
       infile.seekg(0, std::ios::beg);
 
       assert(size >= 0);
+
+      if (skip_bom(infile)) {
+          size-=3; // decrement the BOM size from file size, otherwise we'll get parsing errors
+          assert(size >= 0); //and check if there's more text
+      }
 
       if (size == std::streampos(0))
       {
         return std::string();
       } else {
         std::vector<char> v(static_cast<size_t>(size));
-        infile.read(&v[0], size);
+        infile.read(&v[0], static_cast<std::streamsize>(size));
         return std::string(v.begin(), v.end());
       }
     }
@@ -242,7 +276,7 @@ namespace chaiscript
         m_parser(std::move(parser)),
         m_engine(*m_parser)
     {
-#if defined(_POSIX_VERSION) && !defined(__CYGWIN__) 
+#if !defined(CHAISCRIPT_NO_DYNLOAD) && defined(_POSIX_VERSION) && !defined(__CYGWIN__)
       // If on Unix, add the path of the current executable to the module search path
       // as windows would do
 
@@ -278,6 +312,7 @@ namespace chaiscript
       build_eval_system(t_lib, t_opts);
     }
 
+#ifndef CHAISCRIPT_NO_DYNLOAD
     /// \brief Constructor for ChaiScript.
     /// 
     /// This version of the ChaiScript constructor attempts to find the stdlib module to load
@@ -307,16 +342,22 @@ namespace chaiscript
         throw;
       }
     }
+#else // CHAISCRIPT_NO_DYNLOAD
+explicit ChaiScript_Basic(std::unique_ptr<parser::ChaiScript_Parser_Base> &&parser,
+                          std::vector<std::string> t_module_paths = {},
+                          std::vector<std::string> t_use_paths = {},
+                          const std::vector<chaiscript::Options> &t_opts = chaiscript::default_options()) = delete;
+#endif
 
     parser::ChaiScript_Parser_Base &get_parser()
     {
       return *m_parser;
     }
 
-    const Boxed_Value eval(const AST_NodePtr &t_ast)
+    const Boxed_Value eval(const AST_Node &t_ast)
     {
       try {
-        return t_ast->eval(chaiscript::detail::Dispatch_State(m_engine));
+        return t_ast.eval(chaiscript::detail::Dispatch_State(m_engine));
       } catch (const exception::eval_error &t_ee) {
         throw Boxed_Value(t_ee);
       }
@@ -324,9 +365,9 @@ namespace chaiscript
 
     AST_NodePtr parse(const std::string &t_input, const bool t_debug_print = false)
     {
-      const auto ast = m_parser->parse(t_input, "PARSE");
+      auto ast = m_parser->parse(t_input, "PARSE");
       if (t_debug_print) {
-        m_parser->debug_print(ast);
+        m_parser->debug_print(*ast);
       }
       return ast;
     }
@@ -353,8 +394,8 @@ namespace chaiscript
     {
       for (const auto &path : m_use_paths)
       {
+        const auto appendedpath = path + t_filename;
         try {
-          const auto appendedpath = path + t_filename;
 
           chaiscript::detail::threading::unique_lock<chaiscript::detail::threading::recursive_mutex> l(m_use_mutex);
           chaiscript::detail::threading::unique_lock<chaiscript::detail::threading::shared_mutex> l2(m_mutex);
@@ -370,7 +411,11 @@ namespace chaiscript
           }
 
           return retval; // return, we loaded it, or it was already loaded
-        } catch (const exception::file_not_found_error &) {
+        } catch (const exception::file_not_found_error &e) {
+          if (e.filename != appendedpath) {
+            // a nested file include failed
+            throw;
+          }
           // failed to load, try the next path
         }
       }
@@ -548,6 +593,10 @@ namespace chaiscript
     /// \throw chaiscript::exception::load_module_error In the event that no matching module can be found.
     std::string load_module(const std::string &t_module_name)
     {
+#ifdef CHAISCRIPT_NO_DYNLOAD
+      (void)t_module_name; // -Wunused-parameter
+      throw chaiscript::exception::load_module_error("Loadable module support was disabled (CHAISCRIPT_NO_DYNLOAD)");
+#else
       std::vector<exception::load_module_error> errors;
       std::string version_stripped_name = t_module_name;
       size_t version_pos = version_stripped_name.find("-" + Build_Info::version());
@@ -581,6 +630,7 @@ namespace chaiscript
       }
 
       throw chaiscript::exception::load_module_error(t_module_name, errors);
+#endif
     }
 
     /// \brief Load a binary module from a dynamic library. Works on platforms that support
@@ -689,6 +739,41 @@ namespace chaiscript
     template<typename T>
     T eval_file(const std::string &t_filename, const Exception_Handler &t_handler = Exception_Handler()) {
       return m_engine.boxed_cast<T>(eval_file(t_filename, t_handler));
+    }
+
+    /// \brief Imports a namespace object into the global scope of this ChaiScript instance.
+    /// \param[in] t_namespace_name Name of the namespace to import.
+    /// \throw std::runtime_error In the case that the namespace name was never registered.
+    void import(const std::string& t_namespace_name)
+    {
+       chaiscript::detail::threading::unique_lock<chaiscript::detail::threading::recursive_mutex> l(m_use_mutex);
+
+       if (m_engine.get_scripting_objects().count(t_namespace_name)) {
+          throw std::runtime_error("Namespace: " + t_namespace_name + " was already defined");
+       }
+       else if (m_namespace_generators.count(t_namespace_name)) {
+          m_engine.add_global(var(std::ref(m_namespace_generators[t_namespace_name]())), t_namespace_name);
+       }
+       else {
+          throw std::runtime_error("No registered namespace: " + t_namespace_name);
+       }
+    }
+
+    /// \brief Registers a namespace generator, which delays generation of the namespace until it is imported, saving memory if it is never used.
+    /// \param[in] t_namespace_generator Namespace generator function.
+    /// \param[in] t_namespace_name Name of the Namespace function being registered.
+    /// \throw std::runtime_error In the case that the namespace name was already registered.
+    void register_namespace(const std::function<void(Namespace&)>& t_namespace_generator, const std::string& t_namespace_name)
+    {
+       chaiscript::detail::threading::unique_lock<chaiscript::detail::threading::recursive_mutex> l(m_use_mutex);
+
+       if (!m_namespace_generators.count(t_namespace_name)) {
+          // contain the namespace object memory within the m_namespace_generators map
+          m_namespace_generators.emplace(std::make_pair(t_namespace_name, [=, space = Namespace()]() mutable -> Namespace& { t_namespace_generator(space); return space; }));
+       }
+       else {
+          throw std::runtime_error("Namespace: " + t_namespace_name + " was already registered.");
+       }
     }
   };
 

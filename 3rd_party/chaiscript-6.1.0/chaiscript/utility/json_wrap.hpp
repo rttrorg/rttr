@@ -63,7 +63,11 @@ namespace chaiscript
 
       static Boxed_Value from_json(const std::string &t_json)
       {
-        return from_json( json::JSON::Load(t_json) );
+        try {
+          return from_json( json::JSON::Load(t_json) );
+        } catch (const std::out_of_range& ) {
+          throw std::runtime_error("Unparsed JSON input");
+        }
       }
 
       static std::string to_json(const Boxed_Value &t_bv)
@@ -76,7 +80,7 @@ namespace chaiscript
         try {
           const std::map<std::string, Boxed_Value> m = chaiscript::boxed_cast<const std::map<std::string, Boxed_Value> &>(t_bv);
 
-          json::JSON obj;
+          json::JSON obj(json::JSON::Class::Object);
           for (const auto &o : m)
           {
             obj[o.first] = to_json_object(o.second);
@@ -89,7 +93,7 @@ namespace chaiscript
         try {
           const std::vector<Boxed_Value> v = chaiscript::boxed_cast<const std::vector<Boxed_Value> &>(t_bv);
 
-          json::JSON obj;
+          json::JSON obj(json::JSON::Class::Array);
           for (size_t i = 0; i < v.size(); ++i)
           {
             obj[i] = to_json_object(v[i]);
@@ -106,7 +110,7 @@ namespace chaiscript
           {
             return json::JSON(bn.get_as<double>());
           } else {
-            return json::JSON(bn.get_as<long>());
+            return json::JSON(bn.get_as<std::int64_t>());
           }
         } catch (const chaiscript::detail::exception::bad_any_cast &) {
           // not a number
@@ -128,7 +132,7 @@ namespace chaiscript
         try {
           const chaiscript::dispatch::Dynamic_Object &o = boxed_cast<const dispatch::Dynamic_Object &>(t_bv);
 
-          json::JSON obj;
+          json::JSON obj(json::JSON::Class::Object);
           for (const auto &attr : o.get_attrs())
           {
             obj[attr.first] = to_json_object(attr.second);
@@ -137,6 +141,8 @@ namespace chaiscript
         } catch (const chaiscript::exception::bad_boxed_cast &) {
           // not a dynamic object
         }
+
+        if (t_bv.is_null()) return json::JSON(); // a null value
 
         throw std::runtime_error("Unknown object type to convert to JSON");
       }

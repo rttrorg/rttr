@@ -67,44 +67,44 @@ namespace chaiscript
         class Thread_Storage
         {
           public:
-
-            explicit Thread_Storage(void *t_key)
-              : m_key(t_key)
-            {
-            }
+            Thread_Storage() = default;
+            Thread_Storage(const Thread_Storage &) = delete;
+            Thread_Storage(Thread_Storage &&) = delete;
+            Thread_Storage &operator=(const Thread_Storage &) = delete;
+            Thread_Storage &operator=(Thread_Storage &&) = delete;
 
             ~Thread_Storage()
             {
-              t().erase(m_key);
+              t().erase(this);
             }
 
             inline const T *operator->() const
             {
-              return &(t()[m_key]);
+              return &(t()[this]);
             }
 
             inline const T &operator*() const
             {
-              return t()[m_key];
+              return t()[this];
             }
 
             inline T *operator->()
             {
-              return &(t()[m_key]);
+              return &(t()[this]);
             }
 
             inline T &operator*()
             {
-              return t()[m_key];
+              return t()[this];
             }
 
 
             void *m_key;
 
           private:
-            static std::unordered_map<void*, T> &t()
+            static std::unordered_map<const void*, T> &t()
             {
-              thread_local static std::unordered_map<void *, T> my_t;
+              thread_local std::unordered_map<const void *, T> my_t;
               return my_t;
             }
         };
@@ -144,7 +144,7 @@ namespace chaiscript
         class Thread_Storage
         {
           public:
-            explicit Thread_Storage(void *)
+            explicit Thread_Storage()
             {
             }
 

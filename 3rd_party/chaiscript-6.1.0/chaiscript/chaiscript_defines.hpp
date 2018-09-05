@@ -76,7 +76,7 @@ static_assert(_MSC_FULL_VER >= 190024210, "Visual C++ 2015 Update 3 or later req
 
 namespace chaiscript {
   static const int version_major = 6;
-  static const int version_minor = 0;
+  static const int version_minor = 1;
   static const int version_patch = 0;
 
   static const char *compiler_version = CHAISCRIPT_COMPILER_VERSION;
@@ -90,6 +90,16 @@ namespace chaiscript {
     return std::make_shared<D>(std::forward<Arg>(arg)...);
 #else
     return std::shared_ptr<B>(static_cast<B*>(new D(std::forward<Arg>(arg)...)));
+#endif
+  }
+
+  template<typename B, typename D, typename ...Arg>
+  inline std::unique_ptr<B> make_unique(Arg && ... arg)
+  {
+#ifdef CHAISCRIPT_USE_STD_MAKE_SHARED
+    return std::make_unique<D>(std::forward<Arg>(arg)...);
+#else
+    return std::unique_ptr<B>(static_cast<B*>(new D(std::forward<Arg>(arg)...)));
 #endif
   }
 
@@ -156,48 +166,56 @@ namespace chaiscript {
     }
 
 
-  template<typename T>
+    template<typename T>
     auto parse_num(const char *t_str) -> typename std::enable_if<!std::is_integral<T>::value, T>::type
     {
-      T t = 0;
-      T base = 0;
-      T decimal_place = 0;
-      bool exponent = false;
-      bool neg_exponent = false;
+       T t = 0;
+       T base{};
+       T decimal_place = 0;
+       int exponent = 0;
 
-      const auto final_value = [](const T val, const T baseval, const bool hasexp, const bool negexp) -> T {
-        if (!hasexp) {
-          return val;
-        } else {
-          return baseval * std::pow(T(10), val*T(negexp?-1:1));
-        }
-      };
-
-      for(; *t_str != '\0'; ++t_str) {
-        char c = *t_str;
-        if (c == '.') {
-          decimal_place = 10;
-        } else if (c == 'e' || c == 'E') {
-          exponent = true;
-          decimal_place = 0;
-          base = t;
-          t = 0;
-        } else if (c == '-' && exponent) {
-          neg_exponent = true;
-        } else if (c == '+' && exponent) {
-          neg_exponent = false;
-        } else if (c < '0' || c > '9') {
-          return final_value(t, base, exponent, neg_exponent);
-        } else if (decimal_place < T(10)) {
-          t *= T(10);
-          t += T(c - '0');
-        } else {
-          t += (T(c - '0') / (T(decimal_place)));
-          decimal_place *= 10;
-        }
-      }
-
-      return final_value(t, base, exponent, neg_exponent);
+       for (char c;; ++t_str) {
+          c = *t_str;
+          switch (c)
+          {
+          case '.':
+             decimal_place = 10;
+             break;
+          case 'e':
+          case 'E':
+             exponent = 1;
+             decimal_place = 0;
+             base = t;
+             t = 0;
+             break;
+          case '-':
+             exponent = -1;
+             break;
+          case '+':
+             break;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+             if (decimal_place < 10) {
+                t *= 10;
+                t += static_cast<T>(c - '0');
+             }
+             else {
+                t += static_cast<T>(c - '0') / decimal_place;
+                decimal_place *= 10;
+             }
+             break;
+          default:
+             return exponent ? base * std::pow(T(10), t * static_cast<T>(exponent)) : t;
+          }
+       }
     }
 
   template<typename T>
@@ -216,7 +234,11 @@ namespace chaiscript {
 
   static inline std::vector<Options> default_options()
   {
+#ifdef CHAISCRIPT_NO_DYNLOAD
+    return {Options::No_Load_Modules, Options::External_Scripts};
+#else
     return {Options::Load_Modules, Options::External_Scripts};
+#endif
   }
 }
 #endif

@@ -338,9 +338,7 @@ namespace chaiscript
         : m_mutex(),
           m_conversions(),
           m_convertableTypes(),
-          m_num_types(0),
-          m_thread_cache(this),
-          m_conversion_saves(this)
+          m_num_types(0)
       {
       }
 

@@ -26,7 +26,6 @@ namespace chaiscript
 {
   namespace dispatch
   {
-    class Proxy_Function_Base;
     template<class T, class U> class Proxy_Function_Callable_Impl;
     template<class T> class Assignable_Proxy_Function_Impl;
 
@@ -182,9 +181,9 @@ namespace chaiscript
       template<typename Ret>
         struct Handle_Return<const Ret>
         {
-          static Boxed_Value handle(const Ret &r)
+          static Boxed_Value handle(Ret r)
           {
-            return Boxed_Value(std::cref(r));
+            return Boxed_Value(std::move(r));
           }
         };
 
