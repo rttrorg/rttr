@@ -152,10 +152,6 @@ namespace rttr
 
 
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC
-#   if RTTR_COMP_VER <= 1800
-#       define RTTR_NO_CXX11_NOEXCEPT
-#       define RTTR_NO_CXX17_NOEXCEPT_FUNC_TYPE
-#   endif
 #   if !defined(__cpp_constexpr) || (__cpp_constexpr < 201304)
 #       define RTTR_NO_CXX11_CONSTEXPR
 #       define RTTR_NO_CXX14_CONSTEXPR

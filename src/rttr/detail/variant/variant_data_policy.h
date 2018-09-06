@@ -145,23 +145,11 @@ enum class variant_policy_operation : uint8_t
 using variant_policy_func = bool (*)(variant_policy_operation, const variant_data&, argument_wrapper);
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// some ugly workaround for MSVC < v. 1800
-
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
-    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs, ok)                                  \
-        compare_equal(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), ok)
-#else
-    #define COMPARE_EQUAL_PRE_PROC(lhs, rhs, ok)                                  \
+#define COMPARE_EQUAL_PRE_PROC(lhs, rhs, ok)                              \
         compare_equal(Tp::get_value(src_data), rhs.get_value<T>(), ok)
-#endif
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                           \
-        compare_less_than(const_cast<typename remove_const<T>::type&>(Tp::get_value(lhs)), const_cast<typename remove_const<T>::type&>(rhs.get_value<T>()), result)
-#else
-    #define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                           \
+#define COMPARE_LESS_PRE_PROC(lhs, rhs, result)                           \
         compare_less_than(Tp::get_value(src_data), rhs.get_value<T>(), result)
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -183,15 +171,8 @@ static RTTR_INLINE is_nullptr(T& to)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    // MSVC 2013 has not a full working "std::is_copy_constructible", thats why
-    // this workaround is used here
-    template<typename T>
-    using is_copyable = ::rttr::detail::is_copy_constructible<T>;
-#else
-    template<typename T>
-    using is_copyable = std::is_copy_constructible<T>;
-#endif
+template<typename T>
+using is_copyable = std::is_copy_constructible<T>;
 
 template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
 enable_if_t<is_copyable<Tp>::value &&
@@ -473,13 +454,8 @@ struct variant_data_policy_big : variant_data_base_policy<T, variant_data_policy
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    #define COPY_ARRAY_PRE_PROC(value, dest) \
-                copy_array(const_cast<typename remove_const<T>::type&>(value), const_cast<typename remove_const<T>::type&>(get_value(dest)))
-#else
-    #define COPY_ARRAY_PRE_PROC(value, dest) \
-                copy_array(value, const_cast<typename remove_const<T>::type&>(get_value(dest)));
-#endif
+#define COPY_ARRAY_PRE_PROC(value, dest) \
+                copy_array(value, const_cast<typename std::remove_const<T>::type&>(get_value(dest)));
 
 /*!
  * This policy is used for small raw array types, which fit in \p variant_data.

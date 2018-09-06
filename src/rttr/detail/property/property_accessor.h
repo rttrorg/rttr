@@ -54,12 +54,7 @@ struct property_accessor<T[N]>
 {
     static bool set_value(T (& target)[N], const T (& src)[N])
     {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC  && RTTR_COMP_VER <= 1800
-        using array_t = remove_const_t<remove_reference_t<decltype(src)>>;
-        copy_array(const_cast<array_t&>(src), target);
-#else
         copy_array(src, target);
-#endif
         return true;
     }
 };

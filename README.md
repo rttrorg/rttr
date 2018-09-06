@@ -103,7 +103,7 @@ Features
 Portability
 -----------
 Tested and compiled with:
-- Microsoft Visual Studio 2013, 2015 & 2017
+- Microsoft Visual Studio 2015 & 2017 (2013 support till version 0.9.6)
 - GCC 4.8.1
 - Clang 3.7
 - MinGW 4.8.2

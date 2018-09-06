@@ -844,11 +844,7 @@ TEST_CASE("variant_sequential_view::get_value()", "[variant_sequential_view]")
         auto view = var.create_sequential_view();
 
         REQUIRE(view.get_size() == 2);
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-        CHECK((view.get_value(0).is_type<int(*)[5]>() == true));
-#else
         CHECK((view.get_value(0).is_type<std::reference_wrapper<int[5]>>() == true));
-#endif
         auto sub_view = view.get_value(1).create_sequential_view();
         CHECK(sub_view.get_value(0).is_type<std::reference_wrapper<int>>() == true);
         CHECK(sub_view.get_value(0).to_int() == 6);

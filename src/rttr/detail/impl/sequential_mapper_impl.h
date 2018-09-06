@@ -80,15 +80,7 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
     static variant get_data(const iterator_data& itr)
     {
         auto& it = itr_wrapper::get_iterator(itr);
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-        // the compiler has a bug:
-        // int foo[2];
-        // auto bar = std::ref(foo);
-        // does not compile..., so we return a ptr here, instead of a std::reference_wrapper
-        return variant(&base_class::get_data(it));
-#else
         return variant(std::ref(base_class::get_data(it)));
-#endif
     }
 
     template<typename..., typename ReturnType = decltype(base_class::get_data(std::declval<itr_t>())),
@@ -262,16 +254,7 @@ struct sequential_container_mapper_wrapper : iterator_wrapper_base<Tp>
              enable_if_t<std::is_reference<ReturnType>::value && std::is_array<remove_reference_t<ReturnType>>::value, int> = 0>
     static variant get_value(void* container, std::size_t index)
     {
-
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-        // the compiler has a bug:
-        // int foo[2];
-        // auto bar = std::ref(foo);
-        // does not compile..., so we return a ptr here, instead of a std::reference_wrapper
-        return variant(&base_class::get_value(get_container(container), index));
-#else
         return variant(std::ref(base_class::get_value(get_container(container), index)));
-#endif
     }
 
     template<typename..., typename C = ConstType, typename ReturnType = decltype(base_class::get_value(std::declval<C&>(), 0)),
