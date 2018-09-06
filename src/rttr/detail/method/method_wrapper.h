@@ -40,6 +40,8 @@
 #include "rttr/instance.h"
 #include "rttr/variant.h"
 #include "rttr/array_range.h"
+#include "rttr/detail/visitor/visitor_iterator.h"
+#include "rttr/detail/visitor/method_visitor_invoker.h"
 
 #include <functional>
 #include <string>
@@ -50,23 +52,22 @@ namespace rttr
 namespace detail
 {
 
-template<typename F, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos, std::size_t Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename Default_Args, typename Parameter_Infos, std::size_t Metadata_Count, typename Visitor_List>
 class method_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, access_levels Acc_Level, typename Policy, typename... Param_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename... Param_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<Param_Args...>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         method_wrapper(string_view name,
-                       type declaring_type,
                        F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        parameter_infos<Param_Args...> param_infos) RTTR_NOEXCEPT
-        :   method_wrapper_base(name, declaring_type),
+        :   method_wrapper_base(name, type::get<Declaring_Type>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_param_infos(std::move(param_infos)),
@@ -119,6 +120,12 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
             return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, args);
         }
 
+        void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
+        {
+            auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
+        }
+
     private:
         F  m_func_acc;
         parameter_infos<Param_Args...> m_param_infos;
@@ -127,8 +134,8 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<Param
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, access_levels Acc_Level, typename Policy, typename...Default_Args, typename...Param_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, typename...Param_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<Param_Args...>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
@@ -137,12 +144,11 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
 
     public:
         method_wrapper(string_view name,
-                       type declaring_type,
                        F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        default_args<Default_Args...> default_args,
                        parameter_infos<Param_Args...> param_infos) RTTR_NOEXCEPT
-        :   method_wrapper_base(name, declaring_type),
+        :   method_wrapper_base(name, type::get<Declaring_Type>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_def_args(std::move(default_args)),
@@ -200,6 +206,12 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
                 return variant();
         }
 
+        void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
+        {
+            auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
+        }
+
     private:
         F                               m_func_acc;
         default_args<Default_Args...>   m_def_args;
@@ -209,16 +221,15 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count>
-class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<>, parameter_infos<>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
         method_wrapper(string_view name,
-                       type declaring_type,
                        F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        parameter_infos<> param_infos) RTTR_NOEXCEPT
-        :   method_wrapper_base(name, declaring_type),
+        :   method_wrapper_base(name, type::get<Declaring_Type>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc)
         {
@@ -268,14 +279,20 @@ class method_wrapper<F, Acc_Level, Policy, default_args<>, parameter_infos<>, Me
             return method_accessor<F, Policy>::invoke_variadic(m_func_acc, object, args);
         }
 
+        void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
+        {
+            auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
+        }
+
     private:
         F  m_func_acc;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, access_levels Acc_Level, typename Policy, typename...Default_Args, std::size_t Metadata_Count>
-class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<>, Metadata_Count> : public method_wrapper_base, public metadata_handler<Metadata_Count>
+template<typename F, typename Declaring_Type, access_levels Acc_Level, typename Policy, typename...Default_Args, std::size_t Metadata_Count, typename Visitor_List>
+class method_wrapper<F, Declaring_Type, Acc_Level, Policy, default_args<Default_Args...>, parameter_infos<>, Metadata_Count, Visitor_List> : public method_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using method_type = typename detail::method_type<F>::type;
     using arg_index_sequence = make_index_sequence<function_traits<F>::arg_count>;
@@ -284,12 +301,11 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
 
     public:
         method_wrapper(string_view name,
-                       type declaring_type,
                        F func_acc,
                        std::array<metadata, Metadata_Count> metadata_list,
                        default_args<Default_Args...> default_args,
                        parameter_infos<> param_infos)
-        :   method_wrapper_base(name, declaring_type),
+        :   method_wrapper_base(name, type::get<Declaring_Type>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_func_acc(func_acc),
             m_def_args(std::move(default_args))
@@ -341,6 +357,12 @@ class method_wrapper<F, Acc_Level, Policy, default_args<Default_Args...>, parame
                 return invoke_variadic_helper<invoke_with_defaults, arg_index_sequence>::invoke(args, m_func_acc, object, m_def_args.m_args);
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, method meth) const RTTR_NOEXCEPT
+        {
+            auto obj = make_method_info<Declaring_Type, Policy, F>(meth, m_func_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_method_visitor_invoker(obj));
         }
 
     private:

@@ -554,4 +554,12 @@ void type::create_wrapped_value(const argument& arg, variant& var) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type::visit(visitor& vi, detail::type_of_visit visit_type) const RTTR_NOEXCEPT
+{
+    if (m_type_data->visit_type)
+        m_type_data->visit_type(visit_type, vi, *this);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 } // end namespace rttr

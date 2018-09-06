@@ -36,6 +36,8 @@
 
 namespace rttr
 {
+template<typename... U> struct type_list;
+
 namespace detail
 {
 
@@ -96,8 +98,6 @@ struct create_wrapper_conversion<DerivedClass, BaseClass, U...>
         create_wrapper_conversion<DerivedClass, U...>::perform();
     }
 };
-
-template<typename... U> struct type_list;
 
 template<typename DerivedClass, class... BaseClassList>
 struct create_wrapper_conversion<DerivedClass, type_list<BaseClassList...>> : create_wrapper_conversion<DerivedClass, BaseClassList...> { };

@@ -40,6 +40,8 @@
 #include "rttr/argument.h"
 #include "rttr/variant.h"
 #include "rttr/policy.h"
+#include "rttr/detail/visitor/visitor_iterator.h"
+#include "rttr/detail/visitor/constructor_visitor_invoker.h"
 
 #include <vector>
 #include <utility>
@@ -63,15 +65,15 @@ struct are_args_in_valid_range<type_list<Ctor_Args...>, type_list<Args...>>
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ClassType, typename Constructor_Type, access_levels Acc_Level, typename Policy,
-         std::size_t Metadata_Count, typename Default_Args, typename Parameter_Infos, typename... Args>
+         std::size_t Metadata_Count, typename Default_Args, typename Parameter_Infos, typename Visitor_List, typename... Args>
 class constructor_wrapper;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type, access_levels Acc_Level, typename Policy,
-         std::size_t Metadata_Count, typename...Param_Args, typename... Ctor_Args>
+         std::size_t Metadata_Count, typename Visitor_List, typename...Param_Args, typename... Ctor_Args>
 class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
-                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, Ctor_Args...>
+                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, Visitor_List, Ctor_Args...>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
@@ -165,6 +167,12 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
             return invoke_variadic_impl(arg_list, make_index_sequence<sizeof...(Ctor_Args)>());
         }
 
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info<Class_Type, Policy, Ctor_Args...>(ctor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_ctor_visitor_invoker(obj));
+        }
+
     private:
         parameter_infos<Param_Args...> m_param_infos;
         std::array<parameter_info, sizeof...(Param_Args)> m_param_info_list;
@@ -175,10 +183,10 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy,
-         std::size_t Metadata_Count, typename...Param_Args, typename F>
-class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
-                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, F>
+template<typename Class_Type, access_levels Acc_Level, typename Policy,
+         std::size_t Metadata_Count, typename...Param_Args, typename Visitor_List, typename F>
+class constructor_wrapper<Class_Type, return_func, Acc_Level, Policy,
+                          Metadata_Count, default_args<>, parameter_infos<Param_Args...>, Visitor_List, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using instanciated_type = typename function_traits<F>::return_type;
@@ -197,7 +205,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level; }
         type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
-        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>(); }
+        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>(); }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();      }
         array_range<parameter_info> get_parameter_infos()   const RTTR_NOEXCEPT { return array_range<parameter_info>(m_param_info_list.data(),
@@ -238,6 +246,12 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
             return method_accessor<F, Policy>::invoke_variadic(m_creator_func, instance(), args);
         }
 
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info_func<Class_Type, Policy, F>(ctor, m_creator_func);
+            visitor_iterator<Visitor_List>::visit(visitor, make_ctor_visitor_invoker_func(obj));
+        }
+
     private:
          F  m_creator_func;
          parameter_infos<Param_Args...> m_param_infos;
@@ -249,9 +263,9 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Class_Type, access_levels Acc_Level, typename Policy,
-         std::size_t Metadata_Count, typename... Ctor_Args>
+         std::size_t Metadata_Count, typename Visitor_List, typename... Ctor_Args>
 class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
-                          Metadata_Count, default_args<>, parameter_infos<>, Ctor_Args...>
+                          Metadata_Count, default_args<>, parameter_infos<>, Visitor_List, Ctor_Args...>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using invoker_class = constructor_invoker<ctor_type, Policy, type_list<Class_Type, Ctor_Args...>, index_sequence_for<Ctor_Args...>>;
@@ -341,6 +355,12 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
         {
             return invoke_variadic_impl(arg_list, make_index_sequence<sizeof...(Ctor_Args)>());
         }
+
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info<Class_Type, Policy, Ctor_Args...>(ctor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_ctor_visitor_invoker(obj));
+        }
 };
 
 
@@ -348,10 +368,10 @@ class constructor_wrapper<Class_Type, class_ctor, Acc_Level, Policy,
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename ClassType, access_levels Acc_Level, typename Policy,
-         std::size_t Metadata_Count, typename F>
-class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
-                          Metadata_Count, default_args<>, parameter_infos<>, F>
+template<typename Class_Type, access_levels Acc_Level, typename Policy,
+         std::size_t Metadata_Count, typename Visitor_List, typename F>
+class constructor_wrapper<Class_Type, return_func, Acc_Level, Policy,
+                          Metadata_Count, default_args<>, parameter_infos<>, Visitor_List, F>
 :   public constructor_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using instanciated_type = typename function_traits<F>::return_type;
@@ -369,7 +389,7 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         bool is_valid()                                     const RTTR_NOEXCEPT { return true; }
         access_levels get_access_level()                    const RTTR_NOEXCEPT { return Acc_Level; }
         type get_instantiated_type()                        const RTTR_NOEXCEPT { return type::get<instanciated_type>();                  }
-        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<ClassType>::type>(); }
+        type get_declaring_type()                           const RTTR_NOEXCEPT { return type::get<typename raw_type<Class_Type>::type>(); }
         std::vector<bool> get_is_reference()                const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_reference();  }
         std::vector<bool> get_is_const()                    const RTTR_NOEXCEPT { return method_accessor<F, Policy>::get_is_const();      }
         array_range<parameter_info> get_parameter_infos()   const RTTR_NOEXCEPT { return array_range<parameter_info>(); }
@@ -406,6 +426,12 @@ class constructor_wrapper<ClassType, return_func, Acc_Level, Policy,
         variant invoke_variadic(std::vector<argument>& args) const
         {
             return method_accessor<F, Policy>::invoke_variadic(m_creator_func, instance(), args);
+        }
+
+        void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT
+        {
+            auto obj = make_ctor_info_func<Class_Type, Policy, F>(ctor, m_creator_func);
+            visitor_iterator<Visitor_List>::visit(visitor, make_ctor_visitor_invoker_func(obj));
         }
 
     private:

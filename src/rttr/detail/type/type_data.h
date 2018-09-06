@@ -103,6 +103,12 @@ enum class type_trait_infos : std::size_t
     TYPE_TRAIT_COUNT
 };
 
+enum class type_of_visit : bool
+{
+    begin_visit_type,
+    end_visit_type
+};
+
  using type_traits = std::bitset<static_cast<std::size_t>(type_trait_infos::TYPE_TRAIT_COUNT)>;
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +121,7 @@ using get_base_types_func  = decltype(&base_classes<int>::get_types);
 using create_wrapper_func  = void(*)(const argument& arg, variant& var);
 using get_metadata_func    = std::vector<metadata>&(*)(void);
 using get_class_data_func  = class_data&(*)(void);
+using visit_type_func      = void(*)(type_of_visit, visitor&, const type&);
 
 } // end namespace impl
 
@@ -139,6 +146,7 @@ struct RTTR_LOCAL type_data
     enumeration_wrapper_base*  enum_wrapper;
     impl::get_metadata_func    get_metadata;
     impl::create_wrapper_func  create_wrapper;
+    impl::visit_type_func      visit_type;
 
     bool is_valid;
     RTTR_FORCE_INLINE bool type_trait_value(type_trait_infos type_trait) const RTTR_NOEXCEPT { return m_type_traits.test(static_cast<std::size_t>(type_trait)); }
@@ -307,6 +315,7 @@ RTTR_LOCAL std::unique_ptr<type_data> make_type_data()
                             &get_metadata_func_impl<T>,
                             get_create_wrapper_func<T>(),
 
+                            nullptr,
                             true,
                             type_trait_value{ TYPE_TRAIT_TO_BITSET_VALUE(is_class) |
                                               TYPE_TRAIT_TO_BITSET_VALUE(is_enum) |

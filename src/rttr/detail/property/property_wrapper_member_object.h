@@ -32,15 +32,15 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read write
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, return_as_copy, set_value, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
@@ -72,6 +72,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         accessor m_acc;
 };
@@ -79,17 +85,17 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-// pointer to member - read only (because of std::false_type)
+// pointer to member
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, return_as_copy, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
@@ -117,6 +123,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         accessor m_acc;
 };
@@ -125,15 +137,15 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_co
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read write
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
@@ -171,6 +183,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_ptr, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         accessor m_acc;
 };
@@ -179,15 +197,15 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read only
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, return_as_ptr, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
@@ -216,6 +234,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_ptr, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         accessor m_acc;
 };
@@ -224,15 +248,15 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, return_as_pt
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read write
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_acc(acc)
         {
@@ -266,6 +290,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_w
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         accessor m_acc;
 };
@@ -274,15 +304,15 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_w
 /////////////////////////////////////////////////////////////////////////////////////////
 // pointer to member - read only
 
-template<typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, typename A, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_object_ptr, Declaring_Typ, A(C::*), void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using accessor = A (C::*);
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          accessor acc, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_acc(acc)
         {
             static_assert(!std::is_pointer<A>::value, "The data type of the property is already a pointer type! The given policy cannot be used for this property.");
@@ -309,6 +339,12 @@ class property_wrapper<member_object_ptr, A(C::*), void, Acc_Level, get_as_ref_w
                 return variant(std::cref((ptr->*m_acc)));
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, accessor>(prop, m_acc);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

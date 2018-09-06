@@ -44,6 +44,7 @@ class enumeration;
 class instance;
 class argument;
 class property;
+class visitor;
 
 namespace detail
 {
@@ -258,10 +259,13 @@ class RTTR_API property
         //! Constructs a property from a property_wrapper_base.
         property(const detail::property_wrapper_base* wrapper) RTTR_NOEXCEPT;
 
+        void visit(visitor& visitor) const RTTR_NOEXCEPT;
+
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
         template<typename T>
         friend T detail::create_invalid_item();
+        friend class visitor;
 
     private:
         const detail::property_wrapper_base* m_wrapper;

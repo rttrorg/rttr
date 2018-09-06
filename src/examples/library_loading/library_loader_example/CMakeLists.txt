@@ -43,9 +43,12 @@ add_executable(library_loader_example ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(library_loader_example RTTR::Core)
 add_dependencies(library_loader_example plugin_example)
 
-set_target_properties(library_loader_example PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                                                    FOLDER "Examples/library_loading")
+set_target_properties(library_loader_example PROPERTIES 
+                      DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                      FOLDER "Examples/library_loading"
+                      CXX_STANDARD ${MAX_CXX_STANDARD})
 
+add_dependencies(examples library_loader_example)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

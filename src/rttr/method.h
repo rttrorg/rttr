@@ -46,6 +46,7 @@ class type;
 class instance;
 class argument;
 class method;
+class visitor;
 
 namespace detail
 {
@@ -339,10 +340,13 @@ class RTTR_API method
     private:
         method(const detail::method_wrapper_base* wrapper) RTTR_NOEXCEPT;
 
+        void visit(visitor& visitor) const RTTR_NOEXCEPT;
+
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
         template<typename T>
         friend T detail::create_invalid_item();
+        friend class visitor;
 
     private:
         const detail::method_wrapper_base* m_wrapper;

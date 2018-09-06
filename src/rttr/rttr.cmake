@@ -50,9 +50,11 @@ set(HEADER_FILES access_levels.h
                  rttr_enable.h
                  type
                  type.h
+                 type_list.h
                  variant.h
                  variant_associative_view.h
                  variant_sequential_view.h
+                 visitor.h
                  wrapper_mapper.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
@@ -157,6 +159,13 @@ set(HEADER_FILES access_levels.h
                  detail/variant_sequential_view/variant_sequential_view_private.h
                  detail/variant_sequential_view/variant_sequential_view_creator_impl.h
                  detail/variant_sequential_view/variant_sequential_view_creator.h
+                 detail/visitor/visitor_iterator.h
+                 detail/visitor/method_visitor_invoker.h
+                 detail/visitor/constructor_visitor_invoker.h
+                 detail/visitor/property_visitor_invoker.h
+                 detail/visitor/visitor_impl.h
+                 detail/visitor/type_visitor_invoker.h
+                 detail/visitor/visitor_registration.h
                 )
 
 set(SOURCE_FILES constructor.cpp
@@ -172,6 +181,7 @@ set(SOURCE_FILES constructor.cpp
                  variant.cpp
                  variant_associative_view.cpp
                  variant_sequential_view.cpp
+                 visitor.cpp
                  detail/comparison/compare_equal.cpp
                  detail/comparison/compare_less.cpp
                  detail/misc/standard_types.cpp
