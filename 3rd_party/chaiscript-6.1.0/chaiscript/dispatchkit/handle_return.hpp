@@ -20,7 +20,6 @@
 
 namespace chaiscript {
 class Boxed_Number;
-class Proxy_Function_Base;
 }  // namespace chaiscript
 
 namespace chaiscript
@@ -29,6 +28,7 @@ namespace chaiscript
   {
     template<class T, class U> class Proxy_Function_Callable_Impl;
     template<class T> class Assignable_Proxy_Function_Impl;
+    class Proxy_Function_Base;
 
     namespace detail
     {
