@@ -160,6 +160,8 @@ set(HEADER_FILES access_levels.h
                  detail/variant_sequential_view/variant_sequential_view_creator_impl.h
                  detail/variant_sequential_view/variant_sequential_view_creator.h
                  detail/visitor/visitor_iterator.h
+                 detail/visitor/create_type_visitor_func.h
+                 detail/visitor/create_type_visitor_func_impl.h
                  detail/visitor/method_visitor_invoker.h
                  detail/visitor/constructor_visitor_invoker.h
                  detail/visitor/property_visitor_invoker.h
