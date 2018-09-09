@@ -325,6 +325,21 @@ TEST_CASE("variant conversion - to std::string", "[variant]")
         var = 0.0;
         CHECK(var.to_string() == "0");
     }
+
+     SECTION("double to std::string")
+    {
+        variant var = 1.567;
+        REQUIRE(var.is_valid() == true);
+        REQUIRE(var.can_convert<std::string>() == true);
+
+        CHECK(var.to_string() == "1.567");
+
+        var = 3.12345678;
+        CHECK(var.to_string() == "3.12345678");
+
+        var = 0.0;
+        CHECK(var.to_string() == "0");
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
