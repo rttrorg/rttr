@@ -259,7 +259,6 @@ class RTTR_API variant_sequential_view
          * \return The data at the specified index \p index, wrapped inside a `std::reference_wrapper<T>`.
          *
          * \remark Make sure the index is in a valid range, otherwise undefined behaviour may occurr.
-         *         For MSVC 2013 and raw arrays, the address of the data is returned (because of a bug).
          *
          * \see get_size()
          */
@@ -332,8 +331,6 @@ class RTTR_API variant_sequential_view
                  * Returns the underlying value in a variant stored in a `std::reference_wrapper<T>`.
                  * When the data cannot be returns as reference from the container, the data is stored directly inside the variant.
                  * E.g. for `std::vector<bool>` no reference can be returned.
-                 *
-                 * \remark For MSVC 2013, the return of `std::reference_wrapper` for arrays doesnt work, thats why we return a ptr instead.
                  *
                  * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
                  */

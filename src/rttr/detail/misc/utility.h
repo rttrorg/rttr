@@ -74,32 +74,11 @@ namespace detail
     template <std::size_t... I>
     using index_sequence = integer_sequence<std::size_t, I...>;
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    // workaround for a compiler bug of nested aliases (#1085630)
-    template <class T, T N>
-    struct make_integer_sequence_impl
-    {
-        using type = typename sequence_generator<T, N, N>::type;
-    };
-
-    template <class T, T N>
-    struct make_index_sequence_impl
-    {
-        using type = typename make_integer_sequence_impl<T, N>::type;
-    };
-
-    template <class T, T N>
-    using make_integer_sequence = typename make_integer_sequence_impl<T, N>::type;
-
-    template <std::size_t N>
-    using make_index_sequence = typename make_integer_sequence_impl<std::size_t, N>::type;
-#else
     template <class T, T N>
     using make_integer_sequence = typename sequence_generator<T, N, N>::type;
 
     template <std::size_t N>
     using make_index_sequence = make_integer_sequence<std::size_t, N>;
-#endif
 
     template<class... T>
     using index_sequence_for = make_index_sequence<sizeof...(T)>;

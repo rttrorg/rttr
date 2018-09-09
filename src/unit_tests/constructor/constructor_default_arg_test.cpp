@@ -205,42 +205,25 @@ TEST_CASE("constructor - default argument test (invoke variadic; real ctor)", "[
     // too less arguments for invoke
     variant var = ctor.invoke();
     CHECK(var.is_valid() == false);
-
-    // too much arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    int value1 = 23;
-    bool value2 = true;
-    std::string value3 = ("default text");
-    var = ctor.invoke_variadic({value1, value2, value3, 43.0});
-#else
     var = ctor.invoke_variadic({23, true, std::string("default text"), 43.0});
-#endif
+
     CHECK(var.is_valid() == false);
 
     // using 2 default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1});
-#else
     var = ctor.invoke_variadic({23});
-#endif
+
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 
     // using 1 default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1, value2});
-#else
     var = ctor.invoke_variadic({23, true});
-#endif
+
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 
     // using NO default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1, value2, value3});
-#else
     var = ctor.invoke_variadic({23, true, std::string("default text")});
-#endif
+
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 }
@@ -260,42 +243,23 @@ TEST_CASE("constructor - default argument test (invoke variadic; func ctor)", "[
     // too less arguments for invoke
     variant var = ctor.invoke();
     CHECK(var.is_valid() == false);
-
     // too much arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    int value1 = 23;
-    bool value2 = true;
-    std::string value3 = ("default text");
-    var = ctor.invoke_variadic({value1, value2, value3, 43.0});
-#else
     var = ctor.invoke_variadic({23, true, std::string("default text"), 43.0});
-#endif
     CHECK(var.is_valid() == false);
 
     // using 2 default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1});
-#else
     var = ctor.invoke_variadic({23});
-#endif
+
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 
     // using 1 default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1, value2});
-#else
     var = ctor.invoke_variadic({23, true});
-#endif
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 
     // using NO default arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = ctor.invoke_variadic({value1, value2, value3});
-#else
     var = ctor.invoke_variadic({23, true, std::string("default text")});
-#endif
     REQUIRE(var.is_type<create_type>() == true);
     CHECK(var.get_value<create_type>().get() != nullptr);
 }

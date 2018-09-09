@@ -37,180 +37,6 @@ namespace rttr
 
 namespace detail
 {
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-// workaround because msvc can't handle
-// T (*const)(U)
-//
-// Does not bind to a <T*> or <T*const> partial specialization with VC10 and earlier
-
-template <class T>
-struct remove_pointer_imp
-{
-   using type = T;
-};
-
-template <class T>
-struct remove_pointer_imp<T*>
-{
-   using type = T;
-};
-
-template <class T, bool b>
-struct remove_pointer_imp3
-{
-   using type = typename remove_pointer_imp<typename std::remove_cv<T>::type>::type;
-};
-
-template <class T>
-struct remove_pointer_imp3<T, false>
-{
-   using type = T;
-};
-
-template <class T>
-struct remove_pointer_imp2
-{
-   using type = typename remove_pointer_imp3<T, std::is_pointer<T>::value>::type;
-};
-
-template< typename T >
-struct remove_pointer
-{
-    using type = typename remove_pointer_imp2<T>::type;
-};
-#else
-
-template<typename T>
-using remove_pointer = std::remove_pointer<T>;
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-
- #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-
-template <typename T, size_t... Bounds>
-struct recombobulator;
-
-template <typename T>
-struct recombobulator<T>
-{
-    using type = T;
-};
-
-template <typename T, size_t N, size_t... Bounds>
-struct recombobulator<T, N, Bounds...> : recombobulator<T[N], Bounds...>
-{
-};
-
-template <typename T>
-struct remove_const_impl
-{
-    using type = T;
-};
-
-template <typename T>
-struct remove_const_impl<const T>
-{
-    using type = T;
-};
-
-template <typename T, size_t... Bounds>
-struct discombobulator_const : recombobulator<typename remove_const_impl<T>::type, Bounds...>
-{
-};
-
-template <typename T, size_t N, size_t... Bounds>
-struct discombobulator_const<T[N], Bounds...> : discombobulator_const<T, N, Bounds...>
-{
-};
-
-template <typename T>
-struct remove_const : discombobulator_const<T>
-{
-};
-
-template <typename T>
-struct remove_const<T[]>
-{
-    using U = typename remove_const<T>::type;
-    using type = U[];
-};
-
-#else
-
-template<typename T>
-using remove_const = std::remove_const<T>;
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-
-template <typename T>
-struct remove_volatile_impl
-{
-    using type = T;
-};
-
-template <typename T>
-struct remove_volatile_impl<volatile T>
-{
-    using type = T;
-};
-
-template <typename T, size_t... Bounds>
-struct discombobulator_volatile : recombobulator<typename remove_volatile_impl<T>::type, Bounds...>
-{
-};
-
-template <typename T, size_t N, size_t... Bounds>
-struct discombobulator_volatile<T[N], Bounds...> : discombobulator_volatile<T, N, Bounds...>
-{
-};
-
-template <typename T>
-struct remove_volatile : discombobulator_volatile<T>
-{
-};
-
-template <typename T>
-struct remove_volatile<T[]>
-{
-    using U = typename remove_volatile<T>::type;
-    using type = U[];
-};
-
-#else
-
-template<typename T>
-using remove_volatile = std::remove_volatile<T>;
-
-#endif
-
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////
-
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-
-template<class T>
-struct remove_cv
-{
-    using type = typename remove_const<typename remove_volatile<T>::type>::type;
-};
-
-#else
-
-template<typename T>
-using remove_cv = std::remove_cv<T>;
-
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
@@ -222,16 +48,16 @@ template< bool B, class T, class F >
 using conditional_t = typename std::conditional<B, T, F>::type;
 
 template<typename T>
-using remove_cv_t = typename remove_cv<T>::type;
+using remove_cv_t = typename std::remove_cv<T>::type;
 
 template<typename T>
-using remove_volatile_t = typename remove_volatile<T>::type;
+using remove_volatile_t = typename std::remove_volatile<T>::type;
 
 template<typename T>
-using remove_const_t = typename remove_const<T>::type;
+using remove_const_t = typename std::remove_const<T>::type;
 
 template<typename T>
-using remove_pointer_t = typename remove_pointer<T>::type;
+using remove_pointer_t = typename std::remove_pointer<T>::type;
 
 template<typename T>
 using remove_reference_t = typename std::remove_reference<T>::type;

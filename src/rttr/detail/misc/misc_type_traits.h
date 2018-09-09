@@ -589,7 +589,7 @@ namespace detail
     /////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    using remove_cv_ref_t = typename detail::remove_cv<typename std::remove_reference<T>::type>::type;
+    using remove_cv_ref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
     /*!
      * A slightly different decay than in the standard, the extent of arrays are not removed.

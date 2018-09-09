@@ -124,23 +124,14 @@ TEST_CASE("method - default argument test (invoke_variadic)", "[method]")
     CHECK(var.get_value<bool>() == true);
 
     // using one default argument
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    std::string string_value = "This is a default";
-    var = meth.invoke_variadic(obj, {23, string_value});
-#else
     var = meth.invoke_variadic(obj, {23, std::string("This is a default")});
-#endif
 
     REQUIRE(var.is_type<bool>());
     CHECK(var.get_value<bool>() == true);
 
     // using no default argument
     const int* ptr = nullptr;
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = meth.invoke_variadic(obj, {23, string_value, ptr});
-#else
     var = meth.invoke_variadic(obj, {23, std::string("This is a default"), ptr});
-#endif
     REQUIRE(var.is_type<bool>());
     CHECK(var.get_value<bool>() == true);
 
@@ -150,11 +141,7 @@ TEST_CASE("method - default argument test (invoke_variadic)", "[method]")
     CHECK(var.is_valid() == false);
 
     // too much arguments
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    var = meth.invoke_variadic(obj, {23, string_value, ptr, 45});
-#else
     var = meth.invoke_variadic(obj, {23, std::string("This is a default"), ptr, 45});
-#endif
     CHECK(var.is_valid() == false);
 }
 

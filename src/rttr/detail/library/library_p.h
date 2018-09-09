@@ -57,11 +57,7 @@ public:
     library_private(string_view file_name, string_view version)
     :   m_file_name(file_name),
         m_version(version),
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-        m_load_count(ATOMIC_VAR_INIT(0)),
-#else
         m_load_count(0),
-#endif
         m_handle(nullptr)
     {
 
