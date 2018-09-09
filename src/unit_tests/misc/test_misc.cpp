@@ -40,6 +40,23 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#include <rttr/registration>
+
+struct s_base
+{
+    virtual ~s_base() = default; // always use virtual dtor in base class
+    RTTR_ENABLE()
+};
+
+struct s_derived : s_base
+{
+    ~s_derived() override = default;
+    // Clang options require "override" on inherited virtual functions
+    RTTR_ENABLE(s_base)
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 namespace
 {
     struct custom_type
