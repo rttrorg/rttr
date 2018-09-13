@@ -304,7 +304,7 @@ namespace rttr
 #       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 #endif
 
-#if defined(__has_warning) && __has_warning("-Winconsistent-missing-override)
+#if defined(__has_warning) && __has_warning("-Winconsistent-missing-override")
 #   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING          _Pragma ("clang diagnostic push") \
                                                         _Pragma ("clang diagnostic ignored \"-Winconsistent-missing-override\"")
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING            _Pragma ("clang diagnostic pop")
