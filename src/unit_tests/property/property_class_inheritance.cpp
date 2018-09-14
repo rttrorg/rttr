@@ -56,6 +56,7 @@ struct left : virtual top
 {
 
     left() : _p2(true){}
+    ~left() override = default;
     bool _p2;
 
     RTTR_ENABLE(top)
@@ -67,6 +68,7 @@ struct right : virtual top
 {
 
     right() : _p3(true){}
+    ~right() override = default;
     bool _p3;
 
     RTTR_ENABLE(top)
@@ -77,6 +79,7 @@ struct right : virtual top
 struct right_2
 {
     virtual ~right_2() {}
+
     right_2() : _p4(true){}
     bool _p4;
     RTTR_ENABLE()
@@ -87,6 +90,7 @@ struct right_2
 struct bottom : left, right, right_2
 {
     bottom() : _p5(23.0){}
+     ~bottom() override = default;
 
     double _p5;
 

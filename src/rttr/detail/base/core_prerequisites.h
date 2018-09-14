@@ -261,15 +261,21 @@ namespace rttr
 #   define RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
 #   define RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 #if RTTR_COMP_VER >= 700
-
     #define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING      _Pragma ("GCC diagnostic push") \
                                                         _Pragma ("GCC diagnostic ignored \"-Wnoexcept-type\"")
     #define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING        _Pragma ("GCC diagnostic pop")
 #else
-
     #define RTTR_BEGIN_DISABLE_EXCEPT_TYPE_WARNING
     #define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
+#endif
 
+#if RTTR_COMP_VER >= 510
+#   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING        _Pragma ("GCC diagnostic push") \
+                                                      _Pragma ("GCC diagnostic ignored \"-Wsuggest-override\"")
+#   define RTTR_END_DISABLE_OVERRIDE_WARNING          _Pragma ("GCC diagnostic pop")
+# else
+#   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING
+#   define RTTR_END_DISABLE_OVERRIDE_WARNING
 #endif
 
 #   define RTTR_DECLARE_PLUGIN_CTOR       __attribute__((constructor))
@@ -298,6 +304,15 @@ namespace rttr
 #       define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 #endif
 
+#if defined(__has_warning) && __has_warning("-Winconsistent-missing-override")
+#   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING          _Pragma ("clang diagnostic push") \
+                                                        _Pragma ("clang diagnostic ignored \"-Winconsistent-missing-override\"")
+#   define RTTR_END_DISABLE_OVERRIDE_WARNING            _Pragma ("clang diagnostic pop")
+#else
+#   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING
+#   define RTTR_END_DISABLE_OVERRIDE_WARNING
+#endif
+
 #   define RTTR_DECLARE_PLUGIN_CTOR        __attribute__((__constructor__))
 #   define RTTR_DECLARE_PLUGIN_DTOR        __attribute__((__destructor__))
 
@@ -315,6 +330,8 @@ namespace rttr
 #   define RTTR_END_DISABLE_EXCEPT_TYPE_WARNING
 #   define RTTR_DECLARE_PLUGIN_CTOR
 #   define RTTR_DECLARE_PLUGIN_DTOR
+#   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING
+#   define RTTR_END_DISABLE_OVERRIDE_WARNING
 
 #else
 #   pragma message("WARNING: unknown compiler, don't know how to disable deprecated warnings")
