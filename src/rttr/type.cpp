@@ -215,13 +215,17 @@ bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 
 property type::get_property(string_view name) const RTTR_NOEXCEPT
 {
-    const auto& vec = get_raw_type().m_type_data->m_class_data.m_properties;
-    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+    const auto raw_t = get_raw_type();
+    const auto& vec = raw_t.m_type_data->m_class_data.m_properties;
+    // properties are ordered from base to derived
+    // use reverse iterator to find the most-derived propertie
+    // when searching instance registry by name
+    auto ret = std::find_if(vec.crbegin(), vec.crend(),
                             [name](const property& item)
                             {
                                 return (item.get_name() == name);
                             });
-    if (ret != vec.cend())
+    if (ret != vec.crend())
         return *ret;
 
     return detail::create_invalid_item<property>();
@@ -293,12 +297,15 @@ method type::get_method(string_view name) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
     const auto& vec = raw_t.m_type_data->m_class_data.m_methods;
-    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+    // methods appear are ordered from base to derived
+    // use reverse iterator to find the most-derived method
+    // when searching instance registry by name
+    auto ret = std::find_if(vec.crbegin(), vec.crend(),
                             [name](const method& item)
                             {
                                 return (item.get_name() == name);
                             });
-    if (ret != vec.cend())
+    if (ret != vec.crend())
         return *ret;
 
     return detail::create_invalid_item<method>();
@@ -309,8 +316,10 @@ method type::get_method(string_view name) const RTTR_NOEXCEPT
 method type::get_method(string_view name, const std::vector<type>& type_list) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    for (const auto& meth : raw_t.m_type_data->m_class_data.m_methods)
+    const auto& methvec = raw_t.m_type_data->m_class_data.m_methods;
+    for (auto mit = methvec.crbegin() ; mit != methvec.crend() ; ++mit)
     {
+        const auto& meth = *mit ;
         if ( meth.get_name() == name &&
              detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
         {
@@ -427,8 +436,10 @@ enumeration type::get_enumeration() const RTTR_NOEXCEPT
 variant type::invoke(string_view name, instance obj, std::vector<argument> args) const
 {
     const auto raw_t = get_raw_type();
-    for (const auto& meth : raw_t.m_type_data->m_class_data.m_methods)
+    const auto& methvec = raw_t.m_type_data->m_class_data.m_methods;
+    for (auto mit = methvec.crbegin() ; mit != methvec.crend() ; ++mit)
     {
+        const auto& meth = *mit ;
         if ( meth.get_name() == name &&
              detail::compare_with_arg_list::compare(meth.get_parameter_infos(), args))
         {
