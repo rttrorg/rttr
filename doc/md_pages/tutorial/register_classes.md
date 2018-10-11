@@ -118,7 +118,7 @@ RTTR_REGISTRATION
 ~~~~
 
 When a constructor is registered a destructor is registered automatically.
-The used default policy for creating an instance is @ref rttr::policy::ctor::as_object "policy::ctor::as_object".
+The used default policy for creating an instance is @ref rttr::policy::ctor::as_std_shared_ptr "policy::ctor::as_std_shared_ptr".
 
 Register class properties
 -------------------------
