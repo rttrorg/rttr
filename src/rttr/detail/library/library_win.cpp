@@ -209,7 +209,7 @@ bool library_private::load_native()
     if (is_absolute_path(wfile_name))
     {
         // that means, the suffix and prefix should be ignored at first try
-        prefix_list.insert(suffix_list.begin(), std::wstring());
+        prefix_list.insert(prefix_list.begin(), std::wstring());
         suffix_list.insert(suffix_list.begin(), std::wstring());
     }
     else
