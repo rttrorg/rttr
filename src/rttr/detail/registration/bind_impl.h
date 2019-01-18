@@ -796,12 +796,12 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
 
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, string_view name)
-        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_declared_type(type::get<Class_Type>())
+        :   registration_derived_t<Class_Type>(reg_exec), m_reg_exec(reg_exec), m_declared_type(type::template get<Class_Type>())
         {
             using namespace detail;
 
             m_reg_exec->add_registration_func(this);
-            auto t = type::get<Enum_Type>();
+            auto t = type::template get<Enum_Type>();
             type_register::custom_name(t, name);
         }
 
