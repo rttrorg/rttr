@@ -37,8 +37,8 @@
 #include <string_view>
 namespace rttr
 {
-    template<typename CharT, typename Traits = std::char_traits<CharT>>
-    using basic_string_view = std::basic_string_view<CharT, Traits>;
+    template<typename... T>
+    using basic_string_view = std::basic_string_view<T...>;
     using string_view = basic_string_view<char>;
 }
 
