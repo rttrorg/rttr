@@ -30,12 +30,11 @@
 #define RTTR_STRING_VIEW_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-
 #include <string>
-#include <string_view>
 
 #ifdef RTTR_ENABLE_STD_STRING_VIEW
 
+#include <string_view>
 namespace rttr
 {
     template<typename CharT, typename Traits = std::char_traits<CharT>>
