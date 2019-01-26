@@ -215,7 +215,7 @@ TEST_CASE("string_view - std::string operator()", "[string_view]")
 TEST_CASE("string_view - to_string", "[string_view]")
 {
     string_view text = "Hello World";
-    std::string string_value = text.to_string();
+    std::string string_value(text);
 
     CHECK(string_value == "Hello World");
 }

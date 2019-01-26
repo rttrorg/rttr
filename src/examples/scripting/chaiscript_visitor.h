@@ -81,7 +81,7 @@ public:
     template<typename T>
     void visit_global_method(const method_info<T>& info)
     {
-        m_chai.add(chaiscript::fun(info.function_ptr), info.method_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.function_ptr), std::string(info.method_item.get_name()));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public:
     template<typename T>
     void visit_method(const method_info<T>& info)
     {
-        m_chai.add(chaiscript::fun(info.function_ptr), info.method_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.function_ptr), std::string(info.method_item.get_name()));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -97,20 +97,20 @@ public:
     template<typename T>
     void visit_property(const property_info<T>& info)
     {
-        m_chai.add(chaiscript::fun(info.property_accessor), info.property_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.property_accessor), std::string(info.property_item.get_name()));
     }
 
     template<typename T>
     void visit_getter_setter_property(const property_getter_setter_info<T>& info)
     {
-        m_chai.add(chaiscript::fun(info.property_getter), std::string("get_") + info.property_item.get_name().to_string());
-        m_chai.add(chaiscript::fun(info.property_setter), std::string("set_") + info.property_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.property_getter), std::string("get_") + std::string(info.property_item.get_name()));
+        m_chai.add(chaiscript::fun(info.property_setter), std::string("set_") + std::string(info.property_item.get_name()));
     }
 
     template<typename T>
     void visit_readonly_property(const property_info<T>& info)
     {
-        m_chai.add(chaiscript::fun(info.property_accessor), info.property_item.get_name().to_string());
+        m_chai.add(chaiscript::fun(info.property_accessor), std::string(info.property_item.get_name()));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ private:
     template<typename T>
     static std::string get_type_name()
     {
-        return rttr::type::template get<T>().get_name().to_string();
+        return std::string(rttr::type::template get<T>().get_name());
     }
 
 private:

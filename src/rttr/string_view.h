@@ -32,11 +32,20 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include <string>
-#include <ostream>
+#include <string_view>
+
+#if 1
 
 namespace rttr
 {
+    template<typename CharT, typename Traits = std::char_traits<CharT>>
+    using basic_string_view = std::basic_string_view<CharT, Traits>;
+    using string_view = basic_string_view<char>;
+}
 
+#else
+namespace rttr
+{
 /*!
  * The class template \ref basic_string_view describes an non-owning reference to a
  * constant contiguous sequence of char-like objects.
@@ -496,5 +505,6 @@ using string_view = basic_string_view<char>;
 } // end namespace rttr
 
 #include "rttr/detail/impl/string_view_impl.h"
+#endif
 
 #endif // RTTR_STRING_VIEW_H_

@@ -1431,7 +1431,7 @@ struct convert_from_enum
 
     static RTTR_INLINE bool to(const T& from, std::string& to)
     {
-        to = get_enumeration_name(from).to_string();
+        to = std::string(get_enumeration_name(from));
         return (to.empty() == false);
     }
 
