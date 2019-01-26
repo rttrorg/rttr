@@ -396,7 +396,7 @@ static void move_pointer_and_ref_to_type(std::string& type_name)
 
 static std::string normalize_orig_name(string_view name)
 {
-    std::string normalized_name = name.to_string();
+    std::string normalized_name(name);
 
     move_pointer_and_ref_to_type(normalized_name);
     return normalized_name;
@@ -695,7 +695,7 @@ std::string type_register_private::derive_name(const type& t)
         auto custom_name    = t.get_raw_array_type().get_name();
         auto raw_name_orig  = normalize_orig_name( t.get_raw_array_type().get_full_name());
 
-        return derive_name_impl(src_name_orig, raw_name_orig, custom_name.to_string());
+        return derive_name_impl(src_name_orig, raw_name_orig, string(custom_name));
     }
     else if (t != t.get_raw_type())
     {
@@ -703,7 +703,7 @@ std::string type_register_private::derive_name(const type& t)
         auto custom_name    = t.get_raw_type().get_name();
         auto raw_name_orig  = normalize_orig_name( t.get_raw_type().get_full_name());
 
-        return derive_name_impl(src_name_orig, raw_name_orig, custom_name.to_string());
+        return derive_name_impl(src_name_orig, raw_name_orig, string(custom_name));
     }
     else
     {
@@ -718,7 +718,7 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
     if (!t.is_valid())
         return;
 
-    update_custom_name(custom_name.to_string(), t);
+    update_custom_name(string(custom_name), t);
 
     // we have to make a copy of the list, because we also perform an insertion with 'update_custom_name'
     auto tmp_type_list = m_custom_name_to_id.value_data();

@@ -418,7 +418,7 @@ TEST_CASE("Test method signature", "[method]")
     REQUIRE(methods.size() == 22);
 
     REQUIRE(methods[0].get_signature() ==  "method_1( )");
-    REQUIRE(methods[3].get_signature() ==  std::string("method_4( ") + type::get<std::string>().get_name() + " & )");
+    REQUIRE(methods[3].get_signature() ==  std::string("method_4( ") + std::string(type::get<std::string>().get_name()) + " & )");
     REQUIRE(methods[4].get_signature() ==  "method_5( double* )");
     REQUIRE(methods[5].get_signature() ==  "method_5( int, double )");
     REQUIRE(methods[21].get_signature() == "method_13( )");

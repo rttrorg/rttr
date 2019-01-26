@@ -97,11 +97,11 @@ TEST_CASE("library - load", "[library]")
     SECTION("load with suffix")
     {
 #if RTTR_PLATFORM == RTTR_PLATFORM_WINDOWS
-        library lib(library_name + std::string(".dll"));
+        library lib(std::string(library_name) + std::string(".dll"));
 #elif RTTR_PLATFORM == RTTR_PLATFORM_LINUX
-        library lib(library_name + std::string(".so"));
+        library lib(std::string(library_name) + std::string(".so"));
 #elif RTTR_PLATFORM == RTTR_PLATFORM_APPLE
-        library lib(library_name + std::string(".dylib"));
+        library lib(std::string(library_name) + std::string(".dylib"));
 #else
     #error "Don't know library suffix on this plattform!"
 #endif

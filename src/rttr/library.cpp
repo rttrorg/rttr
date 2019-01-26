@@ -51,7 +51,7 @@ class library_manager
             auto& manager = get_instance();
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
 
-            auto file_as_string = file_name.to_string();
+            std::string file_as_string(file_name);
             auto itr = manager.m_library_map.find(file_as_string);
             if (itr != manager.m_library_map.end())
                 return itr->second;
@@ -73,7 +73,7 @@ class library_manager
             auto& manager = get_instance();
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
 
-            auto itr = manager.m_library_map.find(item->get_file_name().to_string()); // because we use string_view to find the item
+            auto itr = manager.m_library_map.find(std::string(item->get_file_name())); // because we use string_view to find the item
             if (itr != manager.m_library_map.end())
                 manager.m_library_map.erase(itr);
         }
