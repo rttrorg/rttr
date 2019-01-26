@@ -34,7 +34,7 @@
 #include <string>
 #include <string_view>
 
-#if 1
+#ifdef RTTR_ENABLE_STD_STRING_VIEW
 
 namespace rttr
 {
@@ -44,6 +44,7 @@ namespace rttr
 }
 
 #else
+
 namespace rttr
 {
 /*!
@@ -255,14 +256,6 @@ class basic_string_view
          */
         template<typename Allocator>
         explicit operator std::basic_string<CharT, Traits, Allocator>() const;
-
-        /*!
-         * \brief Creates a `basic_string` with a copy of the content of the current view.
-         *
-         * \return A `basic_string` containing a copy of the characters of the current view.
-         */
-        template<typename Allocator = std::allocator<CharT> >
-        std::basic_string<CharT, Traits> to_string(const Allocator& a = Allocator()) const;
 
         /*!
          * \brief The function compares the two views by calling `Traits::compare(data(), v.data(), length)`,
@@ -505,6 +498,6 @@ using string_view = basic_string_view<char>;
 } // end namespace rttr
 
 #include "rttr/detail/impl/string_view_impl.h"
-#endif
 
+#endif // RTTR_ENABLE_STD_STRING_VIEW
 #endif // RTTR_STRING_VIEW_H_
