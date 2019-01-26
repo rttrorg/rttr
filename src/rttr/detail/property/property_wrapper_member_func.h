@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -32,8 +32,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter/Setter - pointer to member function
 
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_copy, set_value, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -41,10 +41,10 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -60,7 +60,6 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<return_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -83,6 +82,12 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, return_as_copy, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
+        }
+
     private:
         Getter  m_getter;
         Setter  m_setter;
@@ -92,17 +97,17 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_cop
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_copy, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get)
         {
@@ -116,7 +121,6 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true;  }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<return_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -133,6 +137,12 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, Getter>(prop, m_getter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         Getter  m_getter;
 };
@@ -142,8 +152,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_copy,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Getter/Setter pointer to member function
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -151,10 +161,10 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -173,7 +183,6 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<typename std::remove_reference<return_type>::type*>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -197,6 +206,12 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, return_as_ptr, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
+        }
+
     private:
         Getter  m_getter;
         Setter  m_setter;
@@ -207,8 +222,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, return_as_ptr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, return_as_ptr, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -216,10 +231,10 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
     using policy_type   = add_pointer_t<add_const_t<remove_reference_t<return_type>>>;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get)
         {
@@ -234,7 +249,6 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<policy_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -251,6 +265,12 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_ptr, Getter>(prop, m_getter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         Getter  m_getter;
 };
@@ -260,8 +280,8 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, return_as_ptr, 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Getter/Setter pointer to member function
-template<typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, typename Setter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -269,10 +289,10 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, get_as_ref_wr
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get), m_setter(set)
         {
@@ -291,7 +311,6 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, get_as_ref_wr
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper<remove_reference_t<return_type>> >(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -315,6 +334,12 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, get_as_ref_wr
                 return variant();
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_getter_setter_info<Declaring_Typ, get_as_ref_wrapper, Getter, Setter>(prop, m_getter, m_setter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_getter_setter_visitor_invoker(obj));
+        }
+
     private:
         Getter  m_getter;
         Setter  m_setter;
@@ -325,8 +350,8 @@ class property_wrapper<member_func_ptr, Getter, Setter, Acc_Level, get_as_ref_wr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Getter - pointer to member function
 
-template<typename Getter, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<member_func_ptr, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename Getter, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     using return_type   = typename function_traits<Getter>::return_type;
@@ -334,10 +359,10 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, get_as_ref_wrap
     using policy_type   = std::reference_wrapper<add_const_t<remove_reference_t<return_type>>>;
 
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          Getter get,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_getter(get)
         {
@@ -352,7 +377,6 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, get_as_ref_wrap
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<policy_type>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -367,6 +391,12 @@ class property_wrapper<member_func_ptr, Getter, void, Acc_Level, get_as_ref_wrap
                 return variant(std::cref((ptr->*m_getter)()));
             else
                 return variant();
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, Getter>(prop, m_getter);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

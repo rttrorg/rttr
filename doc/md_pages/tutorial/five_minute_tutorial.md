@@ -36,7 +36,7 @@ private:
 };
 }
 ~~~~
-The standard include file of rttr is: `<rttr/type>`.<br>
+The standard include file of rttr is: `<rttr/type>`<br>
 Remark the two added macros: \ref RTTR_ENABLE() and \ref RTTR_REGISTRATION_FRIEND. They are optional.<br>
 However, when you use class hierarchies you should add to every class: \ref RTTR_ENABLE().<br>
 When you want to reflect private data of a class, add: \ref RTTR_REGISTRATION_FRIEND.
@@ -76,6 +76,7 @@ RTTR_REGISTRATION
         ;
 }
 ~~~~
+The standard include file for registration types in rttr is: `<rttr/registration>`<br>Include this file only when you want to register something.
 The \ref rttr::registration "registration" class is here the entry point. 
 This registration process creates internally wrapper classes, which store for example function pointers or object pointers of the specific class.
 For these pointers you have to provide the data manually.

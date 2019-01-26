@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -53,6 +53,8 @@ struct method_test
 
     int method_5(int, double)       { method_5_overloaded_called = true; return 42; }   // overloaded method
     int method_5(int, double) const { return 23; }   // second overloaded method, with const
+
+    void method_4(std::string& text) const { }   // overloaded method, with const
 
     void method_with_ptr(int* ptr)   { method_with_ptr_called = true; }
 

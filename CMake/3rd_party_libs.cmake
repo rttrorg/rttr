@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -47,7 +47,9 @@ if (BUILD_BENCHMARKS)
     else()
         find_package(Boost)
     endif()
-    
+endif()
+
+if (BUILD_BENCHMARKS OR BUILD_EXAMPLES)
     find_package(Threads REQUIRED)
 endif()
 
@@ -59,5 +61,11 @@ set(CATCH_INCLUDE_DIR ${RTTR_3RD_PARTY_DIR}/catch-1.12.0)
 add_library(Catch INTERFACE)
 add_library(Catch2::Catch ALIAS Catch)
 target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
+
+# Find chai script
+set(CHAISCRIPT_INCLUDE_DIR ${RTTR_3RD_PARTY_DIR}/chaiscript-6.1.0)
+add_library(ChaiScript INTERFACE)
+add_library(ChaiScript::ChaiScript ALIAS ChaiScript)
+target_include_directories(ChaiScript INTERFACE ${CHAISCRIPT_INCLUDE_DIR})
 
 MESSAGE(STATUS "Finished finding 3rd party libs!")

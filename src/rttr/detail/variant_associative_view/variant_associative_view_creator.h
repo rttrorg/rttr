@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -32,6 +32,7 @@
 #include "rttr/detail/misc/misc_type_traits.h"
 #include "rttr/detail/misc/std_type_traits.h"
 #include "rttr/associative_mapper.h"
+#include "rttr/wrapper_mapper.h"
 
 #include <memory>
 
@@ -47,12 +48,12 @@ using can_create_associative_view = std::integral_constant<bool, is_associative_
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp = typename std::decay<T>::type>
-enable_if_t<can_create_associative_view<Tp>::value, variant_associative_view_private>
+template<typename T>
+enable_if_t<can_create_associative_view<T>::value, variant_associative_view_private>
 create_variant_associative_view(T&& value);
 
-template<typename T, typename Tp = typename std::decay<T>::type>
-enable_if_t<!can_create_associative_view<Tp>::value, variant_associative_view_private>
+template<typename T>
+enable_if_t<!can_create_associative_view<T>::value, variant_associative_view_private>
 create_variant_associative_view(T&& value);
 
 /////////////////////////////////////////////////////////////////////////////////////////

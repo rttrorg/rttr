@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -43,6 +43,7 @@ namespace rttr
 class type;
 class variant;
 class argument;
+class constructor;
 
 namespace detail
 {
@@ -63,7 +64,7 @@ class RTTR_API constructor_wrapper_base
         virtual bool is_valid() const RTTR_NOEXCEPT;
         virtual type get_declaring_type() const RTTR_NOEXCEPT;
         virtual access_levels get_access_level() const RTTR_NOEXCEPT;
-        virtual type get_instanciated_type() const RTTR_NOEXCEPT;
+        virtual type get_instantiated_type() const RTTR_NOEXCEPT;
         virtual std::vector<bool> get_is_reference() const RTTR_NOEXCEPT;
         virtual std::vector<bool> get_is_const() const RTTR_NOEXCEPT;
         virtual array_range<parameter_info> get_parameter_infos() const RTTR_NOEXCEPT;
@@ -80,6 +81,8 @@ class RTTR_API constructor_wrapper_base
                                argument& arg5, argument& arg6) const;
 
         virtual variant invoke_variadic(std::vector<argument>& args) const;
+
+        virtual void visit(visitor& visitor, const constructor& ctor) const RTTR_NOEXCEPT;
     protected:
         void init() RTTR_NOEXCEPT;
     private:

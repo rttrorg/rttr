@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -58,6 +58,92 @@ class RTTR_LOCAL registration_manager
         }
         ~registration_manager()
         {
+            unregister();
+        }
+
+        type_data* add_item(std::unique_ptr<type_data> obj)
+        {
+            auto reg_type = type_register::register_type(obj.get());
+            const auto was_type_stored = (reg_type == obj.get());
+            if (was_type_stored)
+                m_type_data_list.push_back(std::move(obj)); // so we have to unregister it later
+
+            return reg_type;
+        }
+
+        void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
+        {
+            if (type_register::register_constructor(ctor.get()))
+                m_constructors.push_back(std::move(ctor));
+        }
+
+        void add_item(std::unique_ptr<destructor_wrapper_base> dtor)
+        {
+            if (type_register::register_destructor(dtor.get()))
+                m_destructors.push_back(std::move(dtor));
+        }
+
+        void add_item(std::unique_ptr<property_wrapper_base> prop)
+        {
+            if (type_register::register_property(prop.get()))
+                m_properties.push_back(std::move(prop));
+        }
+
+        void add_item(std::unique_ptr<method_wrapper_base> meth)
+        {
+            if (type_register::register_method(meth.get()))
+                m_methods.push_back(std::move(meth));
+        }
+
+        void add_item(std::unique_ptr<enumeration_wrapper_base> enum_)
+        {
+            if (type_register::register_enumeration(enum_.get()))
+                m_enumerations.push_back(std::move(enum_));
+        }
+
+        void add_global_item(std::unique_ptr<property_wrapper_base> prop)
+        {
+            if (type_register::register_global_property(prop.get()))
+                m_global_properties.push_back(std::move(prop));
+        }
+
+        void add_global_item(std::unique_ptr<method_wrapper_base> meth)
+        {
+            if (type_register::register_global_method(meth.get()))
+                m_global_methods.push_back(std::move(meth));
+        }
+
+        void add_global_item(std::unique_ptr<enumeration_wrapper_base> enum_)
+        {
+            if (type_register::register_enumeration(enum_.get()))
+                m_enumerations.push_back(std::move(enum_));
+        }
+
+        void add_item(std::unique_ptr<type_converter_base> conv)
+        {
+            if (type_register::register_converter(conv.get()))
+                m_type_converters.push_back(std::move(conv));
+        }
+
+        void add_equal_cmp(std::unique_ptr<type_comparator_base> cmp)
+        {
+            if (type_register::register_equal_comparator(cmp.get()))
+                m_type_equal_cmps.push_back(std::move(cmp));
+        }
+
+        void add_less_than_cmp(std::unique_ptr<type_comparator_base> cmp)
+        {
+            if (type_register::register_less_than_comparator(cmp.get()))
+                m_type_less_than_cmps.push_back(std::move(cmp));
+        }
+
+        void set_disable_unregister()
+        {
+            m_should_unregister = false;
+        }
+
+        void unregister()
+        {
             if (!m_should_unregister)
                 return;
 
@@ -79,83 +165,19 @@ class RTTR_LOCAL registration_manager
                 type_register::unregister_type(type.get());
 
             type_register::unregister_reg_manager(this);
-        }
 
-        type add_item(std::unique_ptr<type_data> obj)
-        {
-            auto reg_type = type_register::register_type(obj.get());
-            m_type_data_list.push_back(std::move(obj));
-            return reg_type;
-        }
+            m_type_data_list.clear();
+            m_constructors.clear();
+            m_destructors.clear();
+            m_properties.clear();
+            m_global_properties.clear();
+            m_methods.clear();
+            m_global_methods.clear();
+            m_enumerations.clear();
+            m_type_converters.clear();
+            m_type_equal_cmps.clear();
+            m_type_less_than_cmps.clear();
 
-        void add_item(std::unique_ptr<constructor_wrapper_base> ctor)
-        {
-            type_register::register_constructor(ctor.get());
-            m_constructors.push_back(std::move(ctor));
-        }
-
-        void add_item(std::unique_ptr<destructor_wrapper_base> dtor)
-        {
-            type_register::register_destructor(dtor.get());
-            m_destructors.push_back(std::move(dtor));
-        }
-
-        void add_item(std::unique_ptr<property_wrapper_base> prop)
-        {
-            type_register::register_property(prop.get());
-            m_properties.push_back(std::move(prop));
-        }
-
-        void add_item(std::unique_ptr<method_wrapper_base> meth)
-        {
-            type_register::register_method(meth.get());
-            m_methods.push_back(std::move(meth));
-        }
-
-        void add_item(std::unique_ptr<enumeration_wrapper_base> enum_)
-        {
-            type_register::register_enumeration(enum_.get());
-            m_enumerations.push_back(std::move(enum_));
-        }
-
-        void add_global_item(std::unique_ptr<property_wrapper_base> prop)
-        {
-            type_register::register_global_property(prop.get());
-            m_global_properties.push_back(std::move(prop));
-        }
-
-        void add_global_item(std::unique_ptr<method_wrapper_base> meth)
-        {
-            type_register::register_global_method(meth.get());
-            m_global_methods.push_back(std::move(meth));
-        }
-
-        void add_global_item(std::unique_ptr<enumeration_wrapper_base> enum_)
-        {
-            type_register::register_enumeration(enum_.get());
-            m_enumerations.push_back(std::move(enum_));
-        }
-
-        void add_item(std::unique_ptr<type_converter_base> conv)
-        {
-            type_register::register_converter(conv.get());
-            m_type_converters.push_back(std::move(conv));
-        }
-
-        void add_equal_cmp(std::unique_ptr<type_comparator_base> cmp)
-        {
-            type_register::register_equal_comparator(cmp.get());
-            m_type_equal_cmps.push_back(std::move(cmp));
-        }
-
-        void add_less_than_cmp(std::unique_ptr<type_comparator_base> cmp)
-        {
-            type_register::register_less_than_comparator(cmp.get());
-            m_type_less_than_cmps.push_back(std::move(cmp));
-        }
-
-        void set_disable_unregister()
-        {
             m_should_unregister = false;
         }
 
@@ -186,8 +208,8 @@ class RTTR_LOCAL registration_manager
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-registration_manager& get_registration_manager() RTTR_NOEXCEPT
+
+RTTR_LOCAL RTTR_INLINE registration_manager& get_registration_manager() RTTR_NOEXCEPT
 {
     static registration_manager obj;
     return obj;
@@ -195,19 +217,22 @@ registration_manager& get_registration_manager() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+template<typename T>
+using is_global_item = std::integral_constant<bool, std::is_same<T, invalid_type>::value>;
+
 template<typename T, typename Item>
-static RTTR_FORCE_INLINE enable_if_t<std::is_same<T, invalid_type>::value, void> // we want to store only global items
+RTTR_LOCAL RTTR_FORCE_INLINE enable_if_t<is_global_item<T>::value, void>
 store_item(Item item)
 {
-    auto& obj = get_registration_manager<int>();
+    auto& obj = get_registration_manager();
     obj.add_global_item(std::move(item));
 }
 
 template<typename T, typename Item>
-enable_if_t<!std::is_same<T, invalid_type>::value, void>
-static RTTR_FORCE_INLINE store_item(Item item)
+RTTR_LOCAL RTTR_FORCE_INLINE enable_if_t<!is_global_item<T>::value, void>
+store_item(Item item)
 {
-    auto& obj = get_registration_manager<int>();
+    auto& obj = get_registration_manager();
     obj.add_item(std::move(item));
 }
 

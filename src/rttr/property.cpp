@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -114,13 +114,6 @@ enumeration property::get_enumeration() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool property::is_array() const RTTR_NOEXCEPT
-{
-    return m_wrapper->is_array();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 string_view property::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
@@ -173,6 +166,13 @@ bool property::operator==(const property& other) const RTTR_NOEXCEPT
 bool property::operator!=(const property& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void property::visit(visitor& visitor) const RTTR_NOEXCEPT
+{
+    m_wrapper->visit(visitor, property(*this));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -59,23 +59,16 @@ using namespace std;
 
 namespace rttr
 {
-namespace
-{
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-static array_range<T> get_items_for_type(const type& t,
-                                         const std::vector<T>& vec)
+type::type() RTTR_NOEXCEPT
+:   m_type_data(detail::get_invalid_type_data())
 {
-    return array_range<T>(vec.data(), vec.size(),
-                          detail::default_predicate<T>([t](const T& item) { return (item.get_declaring_type() == t); }) );
 }
 
-} // end anonymous namespace
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
@@ -86,7 +79,7 @@ bool type::is_derived_from(const type& other) const RTTR_NOEXCEPT
     if (src_raw_type == tgt_raw_type)
         return true;
 
-    for (auto& t : src_raw_type->get_class_data().m_base_types)
+    for (auto& t : src_raw_type->m_class_data.m_base_types)
     {
         if (t.m_type_data == tgt_raw_type)
         {
@@ -107,7 +100,7 @@ bool type::is_base_of(const type& other) const RTTR_NOEXCEPT
     if (src_raw_type == tgt_raw_type)
         return true;
 
-    for (auto& t : src_raw_type->get_class_data().m_derived_types)
+    for (auto& t : src_raw_type->m_class_data.m_derived_types)
     {
         if (t.m_type_data == tgt_raw_type)
         {
@@ -128,11 +121,11 @@ void* type::apply_offset(void* ptr, const type& source_type, const type& target_
     if (src_raw_type == tgt_raw_type || ptr == nullptr)
         return ptr;
 
-    const detail::derived_info info = src_raw_type->get_class_data().m_derived_info_func(ptr);
+    const detail::derived_info info = src_raw_type->m_class_data.m_derived_info_func(ptr);
     if (info.m_type.m_type_data->raw_type_data == tgt_raw_type)
         return info.m_ptr;
 
-    auto& class_list = info.m_type.m_type_data->raw_type_data->get_class_data();
+    auto& class_list = info.m_type.m_type_data->raw_type_data->m_class_data;
     int i = 0;
     for (auto& t : class_list.m_base_types)
     {
@@ -154,7 +147,7 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
         return type();
 
     auto& src_raw_type = source_type.m_type_data->raw_type_data;
-    const detail::derived_info info = src_raw_type->get_class_data().m_derived_info_func(ptr);
+    const detail::derived_info info = src_raw_type->m_class_data.m_derived_info_func(ptr);
     return info.m_type;
 }
 
@@ -162,16 +155,16 @@ type type::get_derived_type(void* ptr, const type& source_type) RTTR_NOEXCEPT
 
 array_range<type> type::get_base_classes() const RTTR_NOEXCEPT
 {
-    return array_range<type>(m_type_data->get_class_data().m_base_types.data(),
-                             m_type_data->get_class_data().m_base_types.size());
+    return array_range<type>(m_type_data->m_class_data.m_base_types.data(),
+                             m_type_data->m_class_data.m_base_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 array_range<type> type::get_derived_classes() const RTTR_NOEXCEPT
 {
-    return array_range<type>(m_type_data->get_class_data().m_derived_types.data(),
-                             m_type_data->get_class_data().m_derived_types.size());
+    return array_range<type>(m_type_data->m_class_data.m_derived_types.data(),
+                             m_type_data->m_class_data.m_derived_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -186,8 +179,8 @@ array_range<type> type::get_types() RTTR_NOEXCEPT
 
 array_range<type> type::get_template_arguments() const RTTR_NOEXCEPT
 {
-    return array_range<type>(m_type_data->get_class_data().m_nested_types.data(),
-                             m_type_data->get_class_data().m_nested_types.size());
+    return array_range<type>(m_type_data->m_class_data.m_nested_types.data(),
+                             m_type_data->m_class_data.m_nested_types.size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +194,7 @@ variant type::get_metadata(const variant& key) const
 
 variant type::create(vector<argument> args) const
 {
-    auto& ctors = m_type_data->get_class_data().m_ctors;
+    auto& ctors = m_type_data->m_class_data.m_ctors;
     for (const auto& ctor : ctors)
     {
         if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), args))
@@ -222,13 +215,17 @@ bool type::destroy(variant& obj) const RTTR_NOEXCEPT
 
 property type::get_property(string_view name) const RTTR_NOEXCEPT
 {
-    const auto& vec = get_raw_type().m_type_data->get_class_data().m_properties;
-    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+    const auto raw_t = get_raw_type();
+    const auto& vec = raw_t.m_type_data->m_class_data.m_properties;
+    // properties are ordered from base to derived
+    // use reverse iterator to find the most-derived propertie
+    // when searching instance registry by name
+    auto ret = std::find_if(vec.crbegin(), vec.crend(),
                             [name](const property& item)
                             {
                                 return (item.get_name() == name);
                             });
-    if (ret != vec.cend())
+    if (ret != vec.crend())
         return *ret;
 
     return detail::create_invalid_item<property>();
@@ -269,7 +266,7 @@ bool type::set_property_value(string_view name, argument arg)
 
 array_range<property> type::get_properties() const RTTR_NOEXCEPT
 {
-    auto& vec = get_raw_type().m_type_data->get_class_data().m_properties;
+    auto& vec = get_raw_type().m_type_data->m_class_data.m_properties;
     if (!vec.empty())
     {
         return array_range<property>(vec.data(), vec.size(),
@@ -287,7 +284,7 @@ array_range<property> type::get_properties() const RTTR_NOEXCEPT
 array_range<property> type::get_properties(filter_items filter) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    auto& vec = raw_t.m_type_data->get_class_data().m_properties;
+    auto& vec = raw_t.m_type_data->m_class_data.m_properties;
     if (!vec.empty())
         return array_range<property>(vec.data(), vec.size(), detail::get_filter_predicate<property>(raw_t, filter));
 
@@ -299,13 +296,16 @@ array_range<property> type::get_properties(filter_items filter) const RTTR_NOEXC
 method type::get_method(string_view name) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    const auto& vec = raw_t.m_type_data->get_class_data().m_methods;
-    auto ret = std::find_if(vec.cbegin(), vec.cend(),
+    const auto& vec = raw_t.m_type_data->m_class_data.m_methods;
+    // methods appear are ordered from base to derived
+    // use reverse iterator to find the most-derived method
+    // when searching instance registry by name
+    auto ret = std::find_if(vec.crbegin(), vec.crend(),
                             [name](const method& item)
                             {
                                 return (item.get_name() == name);
                             });
-    if (ret != vec.cend())
+    if (ret != vec.crend())
         return *ret;
 
     return detail::create_invalid_item<method>();
@@ -316,8 +316,10 @@ method type::get_method(string_view name) const RTTR_NOEXCEPT
 method type::get_method(string_view name, const std::vector<type>& type_list) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    for (const auto& meth : raw_t.m_type_data->get_class_data().m_methods)
+    const auto& methvec = raw_t.m_type_data->m_class_data.m_methods;
+    for (auto mit = methvec.crbegin() ; mit != methvec.crend() ; ++mit)
     {
+        const auto& meth = *mit ;
         if ( meth.get_name() == name &&
              detail::compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
         {
@@ -333,7 +335,7 @@ method type::get_method(string_view name, const std::vector<type>& type_list) co
 array_range<method> type::get_methods() const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    auto& vec = raw_t.m_type_data->get_class_data().m_methods;
+    auto& vec = raw_t.m_type_data->m_class_data.m_methods;
     if (!vec.empty())
     {
         return array_range<method>(vec.data(), vec.size(),
@@ -351,7 +353,7 @@ array_range<method> type::get_methods() const RTTR_NOEXCEPT
 array_range<method> type::get_methods(filter_items filter) const RTTR_NOEXCEPT
 {
     const auto raw_t = get_raw_type();
-    auto& vec = raw_t.m_type_data->get_class_data().m_methods;
+    auto& vec = raw_t.m_type_data->m_class_data.m_methods;
     if (!vec.empty())
         return array_range<method>(vec.data(), vec.size(), detail::get_filter_predicate<method>(raw_t, filter));
 
@@ -434,8 +436,10 @@ enumeration type::get_enumeration() const RTTR_NOEXCEPT
 variant type::invoke(string_view name, instance obj, std::vector<argument> args) const
 {
     const auto raw_t = get_raw_type();
-    for (const auto& meth : raw_t.m_type_data->get_class_data().m_methods)
+    const auto& methvec = raw_t.m_type_data->m_class_data.m_methods;
+    for (auto mit = methvec.crbegin() ; mit != methvec.crend() ; ++mit)
     {
+        const auto& meth = *mit ;
         if ( meth.get_name() == name &&
              detail::compare_with_arg_list::compare(meth.get_parameter_infos(), args))
         {
@@ -506,7 +510,7 @@ const detail::type_comparator_base* type::get_less_than_comparator() const RTTR_
 
 constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEXCEPT
 {
-    auto& ctors = m_type_data->get_class_data().m_ctors;
+    auto& ctors = m_type_data->m_class_data.m_ctors;
     for (const auto& ctor : ctors)
     {
         if (detail::compare_with_type_list::compare(ctor.get_parameter_infos(), args))
@@ -520,7 +524,7 @@ constructor type::get_constructor(const std::vector<type>& args) const RTTR_NOEX
 
 array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
 {
-    auto& ctors = m_type_data->get_class_data().m_ctors;
+    auto& ctors = m_type_data->m_class_data.m_ctors;
     if (!ctors.empty())
     {
         return array_range<constructor>(ctors.data(), ctors.size(),
@@ -537,7 +541,7 @@ array_range<constructor> type::get_constructors() const RTTR_NOEXCEPT
 
 array_range<constructor> type::get_constructors(filter_items filter) const RTTR_NOEXCEPT
 {
-    auto& ctors = m_type_data->get_class_data().m_ctors;
+    auto& ctors = m_type_data->m_class_data.m_ctors;
     if (!ctors.empty())
         return array_range<constructor>(ctors.data(), ctors.size(), detail::get_filter_predicate<constructor>(*this, filter));
 
@@ -548,7 +552,7 @@ array_range<constructor> type::get_constructors(filter_items filter) const RTTR_
 
 destructor type::get_destructor() const RTTR_NOEXCEPT
 {
-    return get_raw_type().m_type_data->get_class_data().m_dtor;
+    return get_raw_type().m_type_data->m_class_data.m_dtor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -557,6 +561,14 @@ void type::create_wrapped_value(const argument& arg, variant& var) const
 {
     if (m_type_data->create_wrapper)
         m_type_data->create_wrapper(arg, var);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type::visit(visitor& vi, detail::type_of_visit visit_type) const RTTR_NOEXCEPT
+{
+    if (m_type_data->visit_type)
+        m_type_data->visit_type(visit_type, vi, *this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -30,6 +30,8 @@ set(HEADER_FILES test_classes.h
                  type/test_type.h
                  variant/test_enums.h
                  version.rc.in
+                 visitor/my_visitor.h
+                 visitor/visitor_test_class.h
                  )
 
 set(SOURCE_FILES main.cpp
@@ -37,12 +39,14 @@ set(SOURCE_FILES main.cpp
                  misc/array_range_test.cpp
                  misc/string_view_test.cpp
                  misc/enum_flags_test.cpp
+                 misc/library_test.cpp
                  property/property_access_level_test.cpp
                  property/property_misc_test.cpp
                  property/property_class_inheritance.cpp
                  property/property_class_invoke_wrapper.cpp
                  property/property_member_function.cpp
                  property/property_member_object.cpp
+                 property/property_order_test.cpp
                  property/property_global_function.cpp
                  property/property_global_object.cpp
                  type/test_type.cpp
@@ -66,6 +70,7 @@ set(SOURCE_FILES main.cpp
                  method/method_default_arg_test.cpp
                  method/method_misc_test.cpp
                  method/method_invoke_test.cpp
+                 method/method_order_test.cpp
                  method/method_param_info_test.cpp
                  method/method_query_test.cpp
                  variant/variant_assign_test.cpp
@@ -77,6 +82,7 @@ set(SOURCE_FILES main.cpp
                  variant/variant_cmp_less_or_equal.cpp
                  variant/variant_cmp_greater_or_equal.cpp
                  variant/variant_misc_test.cpp
+                 variant/variant_cast_test.cpp
                  variant/variant_conv_to_bool.cpp
                  variant/variant_conv_to_int8.cpp
                  variant/variant_conv_to_int16.cpp
@@ -90,7 +96,8 @@ set(SOURCE_FILES main.cpp
                  variant/variant_conv_to_float.cpp
                  variant/variant_conv_to_string.cpp
                  variant/variant_conv_to_enum.cpp
-                 variant_array_view/variant_array_view_test.cpp
                  variant_associative_view/variant_associative_view_test.cpp
                  variant_sequential_view/variant_sequential_view_test.cpp
+                 visitor/visitor_test.cpp
+                 visitor/visitor_test_class.cpp
                  )

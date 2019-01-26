@@ -25,3 +25,4 @@ Registration of Types
 -# [Default Arguments](@ref default_arguments_page)
 -# [Parameter Names](@ref parameter_names_page)
 -# [Policies](@ref register_policies_page)
+-# [Plugins](@ref register_plugins)

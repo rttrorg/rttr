@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -94,6 +94,8 @@ variant extract_basic_types(Value& json_value)
 static void write_array_recursively(variant_sequential_view& view, Value& json_array_value)
 {
     view.set_size(json_array_value.Size());
+    const type array_value_type = view.get_rank_type(1);
+
     for (SizeType i = 0; i < json_array_value.Size(); ++i)
     {
         auto& json_index_value = json_array_value[i];
@@ -111,9 +113,8 @@ static void write_array_recursively(variant_sequential_view& view, Value& json_a
         }
         else
         {
-            const type array_type = view.get_rank_type(i);
             variant extracted_value = extract_basic_types(json_index_value);
-            if (extracted_value.convert(array_type))
+            if (extracted_value.convert(array_value_type))
                 view.set_value(i, extracted_value);
         }
     }
@@ -131,7 +132,7 @@ variant extract_value(Value::MemberIterator& itr, const type& t)
             constructor ctor = t.get_constructor();
             for (auto& item : t.get_constructors())
             {
-                if (item.get_instanciated_type() == t)
+                if (item.get_instantiated_type() == t)
                     ctor = item;
             }
             extracted_value = ctor.invoke();

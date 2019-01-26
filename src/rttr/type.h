@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -51,6 +51,7 @@ class enumeration;
 class type;
 class instance;
 class argument;
+class visitor;
 
 template<typename Target_Type, typename Source_Type>
 Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT;
@@ -63,25 +64,29 @@ struct type_converter_base;
 class type_register;
 class type_register_private;
 
-template<typename T, typename Enable = void>
-struct type_getter;
-
 static type get_invalid_type() RTTR_NOEXCEPT;
 struct invalid_type{};
 struct type_data;
+struct class_data;
 class destructor_wrapper_base;
 class property_wrapper_base;
+RTTR_LOCAL RTTR_INLINE type create_type(type_data*) RTTR_NOEXCEPT;
 
 template<typename T>
-std::unique_ptr<type_data> make_type_data();
+RTTR_LOCAL std::unique_ptr<type_data> make_type_data();
 
 template<typename T, typename Tp, typename Converter>
 struct variant_data_base_policy;
 
 struct type_comparator_base;
 
+enum class type_of_visit : bool;
+
 RTTR_API bool compare_types_less_than(const void*, const void*, const type&, int&);
 RTTR_API bool compare_types_equal(const void*, const void*, const type&, bool&);
+
+template<typename T>
+RTTR_LOCAL RTTR_INLINE type get_type_from_instance(const T*) RTTR_NOEXCEPT;
 } // end namespace detail
 
 /*!
@@ -302,7 +307,7 @@ class RTTR_API type
          * \return type for the template type \a T.
          */
         template<typename T>
-        static type get() RTTR_NOEXCEPT;
+        RTTR_LOCAL static type get() RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns a type object for the given instance \a object.
@@ -315,7 +320,7 @@ class RTTR_API type
          * \return type for an \a object of type \a T.
          */
         template<typename T>
-        static type get(T&& object) RTTR_NOEXCEPT;
+        RTTR_LOCAL static type get(T&& object) RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the type object with the given name \p name.
@@ -432,11 +437,19 @@ class RTTR_API type
         RTTR_INLINE bool is_wrapper() const RTTR_NOEXCEPT;
 
         /*!
-         * \brief Returns true whether the given type represents an array.
+         * \brief Returns `true` whether the given type represents an array.
+         *        An array is always also a sequential container.
+         *        The check will return `true` only for raw C-Style arrays:
+         * \code{.cpp}
          *
-         * \return True if the type is an array, otherwise false.
+         *  type::get<int[10]>().is_array();            // true
+         *  type::get<int>().is_array();                // false
+         *  type::get<std::array<int,10>>().is_array(); // false
+         * \endcode
          *
-         * \see \ref array_mapper "array_mapper<T>"
+         * \return `true` if the type is an array, otherwise `false`.
+         *
+         * \see is_sequential_container()
          */
         RTTR_INLINE bool is_array() const RTTR_NOEXCEPT;
 
@@ -983,6 +996,33 @@ class RTTR_API type
         static void register_converter_func(F func);
 
         /*!
+         * \brief Register for all base classes of the giving type \p T
+         *        wrapper converter functions.
+         *        The converters are registered in both directions respectively.
+         *        From derived to base class and vice versa.
+         *
+         *
+         * See following example code:
+         *  \code{.cpp}
+         *   struct base { virtual ~base() {}; RTTR_ENABLE() };
+         *   struct derived : base { virtual ~derived() {}; RTTR_ENABLE(base) };
+         *
+         *   variant var = std::make_shared<derived>();
+         *   var.convert(type::get<std::shared_ptr<base>>());    // yields to `false`
+         *
+         *   // register the conversion functions
+         *   type::register_wrapper_converter_for_base_classes<std::shared_ptr<derived>>();
+         *
+         *   var.convert(type::get<std::shared_ptr<base>>());    // yields to `true`, derived to base conversion
+         *   var.convert(type::get<std::shared_ptr<derived>>()); // yields to `true`, base to derived conversion
+         *  \endcode
+         *
+         * \see variant::convert(), \ref wrapper_mapper "wrapper_mapper<T>"
+         */
+        template<typename T>
+        static void register_wrapper_converter_for_base_classes();
+
+        /*!
          * \brief Register comparison operators for template type \p T.
          *        This requires a valid `operator==` and `operator<` for type \p T.
          *
@@ -1069,7 +1109,7 @@ class RTTR_API type
         /*!
          * Constructs an empty and invalid type object.
          */
-        RTTR_INLINE type() RTTR_NOEXCEPT;
+        type() RTTR_NOEXCEPT;
 
         /*!
          * \brief Constructs a valid type object.
@@ -1152,6 +1192,10 @@ class RTTR_API type
          */
         void create_wrapped_value(const argument& arg, variant& var) const;
 
+        /*!
+         * \brief Visits the current type, with the given visitor \p visitor.
+         */
+        void visit(visitor& visitor, detail::type_of_visit visit_type) const RTTR_NOEXCEPT;
 
         /////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
@@ -1164,12 +1208,13 @@ class RTTR_API type
         template<typename Target_Type, typename Source_Type>
         friend Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT;
 
-        template<typename T, typename Enable>
-        friend struct detail::type_getter;
         friend class instance;
         friend class detail::type_register;
-        friend type detail::get_invalid_type() RTTR_NOEXCEPT;
         friend class detail::type_register_private;
+        friend class visitor;
+        friend struct detail::class_data;
+
+        friend type detail::create_type(detail::type_data*) RTTR_NOEXCEPT;
 
         template<typename T>
         friend std::unique_ptr<detail::type_data> detail::make_type_data();

@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -33,45 +33,46 @@ namespace rttr
 namespace detail
 {
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// We have to use this property_accessor helper struct, because of a bug in MSVC compiler
+// "ambiguous call to overloaded function when using raw arrays"
+
 template<typename T>
 struct property_accessor
 {
-    static bool set_value(T& prop, argument& arg)
+    static bool set_value(T& prop, const T& arg)
     {
-        prop = arg.get_value<T>();
+        prop = arg;
         return true;
     }
 };
 
-template<typename T>
-struct property_accessor<std::reference_wrapper<T>>
-{
-    static bool set_value(T& prop, argument& arg)
-    {
-        prop = arg.get_value<std::reference_wrapper<T>>().get();
-        return true;
-    }
-};
+/////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, std::size_t N>
 struct property_accessor<T[N]>
 {
-    static bool set_value(T (& prop)[N], argument& arg)
+    static bool set_value(T (& target)[N], const T (& src)[N])
     {
-        copy_array(arg.get_value<T[N]>(), prop);
+        copy_array(src, target);
         return true;
     }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 template<typename T, std::size_t N>
 struct property_accessor<T(*)[N]>
 {
-    static bool set_value(T (* prop)[N], argument& arg)
+
+    static bool set_value(T (*target)[N], const T (*src)[N])
     {
-        copy_array(*arg.get_value<T(*)[N]>(), *prop);
+        copy_array(src, target);
         return true;
     }
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

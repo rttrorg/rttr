@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -43,7 +43,10 @@ matrix:
      # check code formatting
     - os: linux
       compiler: gcc
-      env: NAME="check code formatting" CHECK_FORMATTING=true 
+      env: NAME="check code formatting" CHECK_FORMATTING=true
+      addons:
+        apt:
+          packages: ['vera++']
       
     # valgrind memory check
     - os: linux
@@ -112,15 +115,7 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9', 'ninja-build']
       env: NAME="g++-4.9 x64" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=true
-      
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.9', 'libboost-all-dev']
-      env: NAME="g++-4.9 x64 - Build benchmarks & examples" COMPILER=g++-4.9 ARCH=x86_64 CONF=Release UNIT_TESTS=false BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
-      
+
     - os: linux
       compiler: gcc
       addons:
@@ -128,6 +123,14 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5', 'ninja-build']
       env: NAME="g++-5" COMPILER=g++-5 ARCH=x86_64 CONF=Release UNIT_TESTS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libboost-all-dev', 'ninja-build']
+      env: NAME="g++-5 - Build benchmarks & examples" COMPILER=g++-5 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_EXAMPLES=true BUILD_BENCHMARKS=true
       
     - os: linux
       compiler: gcc
@@ -198,7 +201,7 @@ matrix:
     - os: osx
       osx_image: xcode9.2
       compiler: clang
-      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true BUILD_EXAMPLES=true
       
     - os: osx
       osx_image: xcode9.2
@@ -219,7 +222,10 @@ matrix:
       osx_image: xcode8.3
       compiler: clang
       env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true
-    
+
+  allow_failures:
+    - env: NAME="documentation build" BUILD_DOCU=true COMPILER=g++-4.8 ARCH=x86 CONF=Release UNIT_TESTS=false
+   
 before_install:
   - export CIT_ROOT=`pwd`
   - cd $CIT_ROOT
@@ -254,13 +260,6 @@ install:
       DOXYGEN_URL="http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.linux.bin.tar.gz"
       mkdir doxygen && travis_retry wget --quiet -O - ${DOXYGEN_URL} | tar --strip-components=1 -xz -C doxygen
       export PATH=${DEPS_DIR}/doxygen/bin:${PATH}
-    fi
-  #######################################################################################
-  # Install vera++
-  #######################################################################################
-  - |
-    if [[ "${CHECK_FORMATTING}" == "true" ]]; then
-      sudo apt-get install vera++ -y
     fi
     
 before_script:
@@ -310,7 +309,7 @@ script:
   - |
     if [[ "${BUILD_EXAMPLES}" == "true" ]]; then
       # Run unit tests on two cores
-      (cd build && make json_serialization -j2)
+      (cd build && make examples)
     fi
   - |
     if [[ "${VALGRIND}" == "true" ]]; then

@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -71,74 +71,76 @@ void type_register::unregister_reg_manager(registration_manager* manager)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_property(const property_wrapper_base* prop)
+bool type_register::register_property(const property_wrapper_base* prop)
 {
-    type_register_private::get_instance().register_property(prop);
+    return type_register_private::get_instance().register_property(prop);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_global_property(const property_wrapper_base* prop)
+bool type_register::register_global_property(const property_wrapper_base* prop)
 {
-     type_register_private::get_instance().register_global_property(prop);
+     return type_register_private::get_instance().register_global_property(prop);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_global_property(const property_wrapper_base* prop)
+bool type_register::unregister_global_property(const property_wrapper_base* prop)
 {
-     type_register_private::get_instance().unregister_global_property(prop);
+     return type_register_private::get_instance().unregister_global_property(prop);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_method(method_wrapper_base* method)
+bool type_register::register_method(method_wrapper_base* meth)
 {
-     type_register_private::get_instance().register_method(method);
+     return type_register_private::get_instance().register_method(meth);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_global_method(method_wrapper_base* method)
+bool type_register::register_global_method(method_wrapper_base* meth)
 {
-     type_register_private::get_instance().register_global_method(method);
+     return type_register_private::get_instance().register_global_method(meth);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_global_method(method_wrapper_base* meth)
+bool type_register::unregister_global_method(method_wrapper_base* meth)
 {
-     type_register_private::get_instance().unregister_global_method(meth);
+     return type_register_private::get_instance().unregister_global_method(meth);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_constructor(constructor_wrapper_base* ctor)
+bool type_register::register_constructor(constructor_wrapper_base* ctor)
 {
-     type_register_private::get_instance().register_constructor(ctor);
+     return type_register_private::get_instance().register_constructor(ctor);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_destructor(destructor_wrapper_base* dtor)
+bool type_register::register_destructor(destructor_wrapper_base* dtor)
 {
-     type_register_private::get_instance().register_destructor(dtor);
+     return type_register_private::get_instance().register_destructor(dtor);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_enumeration(enumeration_wrapper_base* enum_item)
+bool type_register::register_enumeration(enumeration_wrapper_base* enum_data)
 {
-    const auto t = enum_item->get_type();
-    t.m_type_data->enum_wrapper = enum_item;
+    const auto t = enum_data->get_type();
+    t.m_type_data->enum_wrapper = enum_data;
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_enumeration(enumeration_wrapper_base* enum_item)
+bool type_register::unregister_enumeration(enumeration_wrapper_base* enum_data)
 {
-    const auto t = enum_item->get_type();
+    const auto t = enum_data->get_type();
     t.m_type_data->enum_wrapper = nullptr; // FIXME: possible unsafe: m_type_data can be invalid
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -166,51 +168,51 @@ void type_register::metadata(const type& t, std::vector<::rttr::detail::metadata
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_converter(const type_converter_base* converter)
+bool type_register::register_converter(const type_converter_base* converter)
 {
-     type_register_private::get_instance().register_converter(converter);
+     return type_register_private::get_instance().register_converter(converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_converter(const type_converter_base* conv)
+bool type_register::unregister_converter(const type_converter_base* converter)
 {
-     type_register_private::get_instance().unregister_converter(conv);
+     return type_register_private::get_instance().unregister_converter(converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_equal_comparator(type_comparator_base* cmp)
+bool type_register::register_equal_comparator(type_comparator_base* comparator)
 {
-     type_register_private::get_instance().register_equal_comparator(cmp);
+     return type_register_private::get_instance().register_equal_comparator(comparator);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_equal_comparator(const type_comparator_base* cmp)
+bool type_register::unregister_equal_comparator(const type_comparator_base* converter)
 {
-     type_register_private::get_instance().unregister_equal_comparator(cmp);
+     return type_register_private::get_instance().unregister_equal_comparator(converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::register_less_than_comparator(type_comparator_base* cmp)
+bool type_register::register_less_than_comparator(type_comparator_base* comparator)
 {
-     type_register_private::get_instance().register_less_than_comparator(cmp);
+     return type_register_private::get_instance().register_less_than_comparator(comparator);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register::unregister_less_than_comparator(const type_comparator_base* cmp)
+bool type_register::unregister_less_than_comparator(const type_comparator_base* converter)
 {
-     type_register_private::get_instance().unregister_less_than_comparator(cmp);
+     return type_register_private::get_instance().unregister_less_than_comparator(converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register::register_base_class(const type& derived_type, const base_class_info& base_info)
 {
-    auto& class_data = derived_type.m_type_data->get_class_data();
+    auto& class_data = derived_type.m_type_data->m_class_data;
     auto itr = std::find_if(class_data.m_base_types.begin(), class_data.m_base_types.end(),
     [base_info](const type& t)
     {
@@ -251,15 +253,28 @@ void type_register::register_base_class(const type& derived_type, const base_cla
                    [](const sorted_pair& item)-> rttr_cast_func { return item.second; });
 
     auto r_type = base_info.m_base_type.get_raw_type();
-    r_type.m_type_data->get_class_data().m_derived_types.push_back(type(derived_type.m_type_data));
+    r_type.m_type_data->m_class_data.m_derived_types.push_back(type(derived_type.m_type_data));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 type_register_private::type_register_private()
-:   m_type_list({type(&get_invalid_type_data()) }),
-    m_type_data_storage({&get_invalid_type_data()})
+:   m_type_list({ type(get_invalid_type_data()) }),
+    m_type_data_storage({ get_invalid_type_data() })
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+type_register_private::~type_register_private()
+{
+    // When this dtor is running, it means, that RTTR library will be unloaded
+    // In order to avoid that the registration_manager instance's
+    // are trying to deregister its content, although the RTTR library is already unloaded
+    // every registration manager class holds a flag whether it should deregister itself or not
+    // and we are settings this flag here
+    for (auto& manager : m_registration_manager_list)
+        manager->set_disable_unregister();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -274,16 +289,14 @@ type_register_private& type_register_private::get_instance()
 
 void type_register_private::register_reg_manager(registration_manager* manager)
 {
-    auto& manager_obj = get_instance().m_registration_reg_manager;
-    manager_obj.m_manager_list.insert(manager);
+    m_registration_manager_list.insert(manager);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::unregister_reg_manager(registration_manager* manager)
 {
-    auto& manager_obj = get_instance().m_registration_reg_manager;
-    manager_obj.m_manager_list.erase(manager);
+    m_registration_manager_list.erase(manager);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +329,7 @@ std::vector<property>& type_register_private::get_global_properties()
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register::register_type(type_data* info) RTTR_NOEXCEPT
+type_data* type_register::register_type(type_data* info) RTTR_NOEXCEPT
 {
     return type_register_private::get_instance().register_type(info);
 }
@@ -327,6 +340,16 @@ void type_register::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
     type_register_private::get_instance().unregister_type(info);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool type_register::register_visit_type_func(type& t, visit_type_func func) RTTR_NOEXCEPT
+{
+    t.m_type_data->visit_type = func;
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -441,12 +464,15 @@ static array_range<T> get_items_for_type(const type& t,
 /////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename I>
-static void remove_item(T& container, const I& item)
+static bool remove_container_item(T& container, const I& item)
 {
+    bool result = false;
     container.erase(std::remove_if(container.begin(), container.end(),
-        [&item](I& item_)
-    { return (item_== item); }),
-        container.end());
+                                   [&item, &result](I& item_)
+                                   { return (item_== item) ? (result = true) : false; }),
+                    container.end());
+
+    return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -457,20 +483,22 @@ static void remove_item(T& container, const I& item)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register_private::register_name_if_neccessary(type_data* info)
+type_data* type_register_private::register_name_if_neccessary(type_data* info)
 {
     using namespace detail;
 
     auto ret = m_orig_name_to_id.find(info->type_name);
     if (ret != m_orig_name_to_id.end())
-        return (*ret);
+        return ret->m_type_data;
+
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     m_orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
     info->name = derive_name(type(info));
     m_custom_name_to_id.insert(std::make_pair(info->name, type(info)));
 
     m_type_list.emplace_back(type(info));
-    return get_invalid_type();
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -499,20 +527,23 @@ void type_register_private::register_base_class_info(type_data* info)
     std::sort(base_classes.begin(), base_classes.end(), [](const base_class_info& left, const base_class_info& right)
                                                          { return left.m_base_type.is_base_of(right.m_base_type); });
 
-    auto& class_data = info->get_class_data();
-    for (const auto& t : base_classes)
+    if (!base_classes.empty())
     {
-        class_data.m_base_types.push_back(t.m_base_type);
-        class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
+        auto& class_data = info->m_class_data;
+        for (const auto& t : base_classes)
+        {
+            class_data.m_base_types.push_back(t.m_base_type);
+            class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
-        auto r_type = t.m_base_type.get_raw_type();
-        r_type.m_type_data->get_class_data().m_derived_types.push_back(type(info));
+            auto r_type = t.m_base_type.get_raw_type();
+            r_type.m_type_data->m_class_data.m_derived_types.push_back(type(info));
+        }
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
+type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 {
     // this will register the base types
     info->get_base_types();
@@ -524,7 +555,10 @@ type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 
     info->raw_type_data  = !info->raw_type_data->is_valid ? info : info->raw_type_data;
 
-    m_type_data_storage.push_back(info);
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_type_data_storage.push_back(info);
+    }
 
     // has to be done as last step
     register_base_class_info(info);
@@ -534,16 +568,47 @@ type type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
     // when a base class type has class items, but the derived one not,
     // we update the derived class item list
     const auto t = type(info);
-    update_class_list(t, &detail::class_data::m_properties);
-    update_class_list(t, &detail::class_data::m_methods);
+    update_class_list(t, &class_data::m_properties);
+    update_class_list(t, &class_data::m_methods);
 
-    return t;
+    return info;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types)
+{
+    // here we get from all base types, the derived types list and remove the given type "t"
+    for (auto data : base_types)
+    {
+        auto& class_data = data.m_type_data->m_class_data;
+        auto& derived_types = class_data.m_derived_types;
+        derived_types.erase(std::remove_if(derived_types.begin(), derived_types.end(), [t](type derived_t) { return derived_t == t; }));
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void type_register_private::remove_base_types_from_derived_classes(type& t, const std::vector<type>& derived_types)
+{
+    // here we get from all base types, the derived types list and remove the given type "t"
+    for (auto data : derived_types)
+    {
+        auto& class_data = data.m_type_data->m_class_data;
+        auto& base_types = class_data.m_base_types;
+        base_types.erase(std::remove_if(base_types.begin(), base_types.end(), [t](type base_t) { return base_t == t; }));
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 {
+    // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
+    // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
+    // anymore because the containing std::unique_ptr is already destroyed
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     bool found_type_data = false;
 
     m_type_data_storage.erase(std::remove_if(m_type_data_storage.begin(), m_type_data_storage.end(),
@@ -559,8 +624,9 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     if (found_type_data)
     {
         type obj_t(info);
-        remove_item(m_type_list, obj_t);
-
+        remove_container_item(m_type_list, obj_t);
+        remove_derived_types_from_base_classes(obj_t, info->m_class_data.m_base_types);
+        remove_base_types_from_derived_classes(obj_t, info->m_class_data.m_derived_types);
         m_orig_name_to_id.erase(info->type_name);
         m_custom_name_to_id.erase(info->name);
     }
@@ -570,7 +636,7 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
 
 std::string type_register_private::derive_template_instance_name(type_data* info)
 {
-    auto& nested_types = info->get_class_data().m_nested_types;
+    auto& nested_types = info->m_class_data.m_nested_types;
     if (nested_types.empty()) // no template type
         return info->name;
 
@@ -606,6 +672,8 @@ std::string type_register_private::derive_template_instance_name(type_data* info
 
 void type_register_private::update_custom_name(std::string new_name, const type& t)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto& type_name = t.m_type_data->name;
 
     if (new_name != type_name)
@@ -674,21 +742,22 @@ void type_register_private::register_custom_name(type& t, string_view custom_nam
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_constructor(const constructor_wrapper_base* ctor)
+bool type_register_private::register_constructor(const constructor_wrapper_base* ctor)
 {
     const auto t = ctor->get_declaring_type();
-    auto& class_data = t.m_type_data->get_class_data();
+    auto& class_data = t.m_type_data->m_class_data;
     class_data.m_ctors.emplace_back(create_item<::rttr::constructor>(ctor));
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_destructor(const destructor_wrapper_base* dtor)
+bool type_register_private::register_destructor(const destructor_wrapper_base* dtor)
 {
     const auto t = dtor->get_declaring_type();
-    auto& class_data = t.m_type_data->get_class_data();
+    auto& class_data = t.m_type_data->m_class_data;
 
     auto& dtor_type = class_data.m_dtor;
     if (!dtor_type) // when no dtor is set at the moment
@@ -696,100 +765,107 @@ void type_register_private::register_destructor(const destructor_wrapper_base* d
         auto d = create_item<::rttr::destructor>(dtor);
         dtor_type = d;
     }
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_property(const property_wrapper_base* prop)
+bool type_register_private::register_property(const property_wrapper_base* prop)
 {
     const auto t    = prop->get_declaring_type();
     const auto name = prop->get_name();
 
-    auto& property_list = t.m_type_data->get_class_data().m_properties;
+    auto& property_list = t.m_type_data->m_class_data.m_properties;
 
     if (get_type_property(t, name))
-        return;
+        return false;
 
     auto p = detail::create_item<::rttr::property>(prop);
     property_list.emplace_back(p);
-    update_class_list(t, &detail::class_data::m_properties);
+    update_class_list(t, &class_data::m_properties);
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_global_property(const property_wrapper_base* prop)
+bool type_register_private::register_global_property(const property_wrapper_base* prop)
 {
     const auto t    = prop->get_declaring_type();
     const auto name = prop->get_name();
 
      if (t.get_global_property(name))
-         return;
+         return false;
 
      auto p = detail::create_item<::rttr::property>(prop);
      get_global_properties().emplace_back(p);
      get_global_property_storage().insert(std::move(name), std::move(p));
+     return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_global_property(const property_wrapper_base* prop)
+bool type_register_private::unregister_global_property(const property_wrapper_base* prop)
 {
-    auto& g_props = get_global_property_storage();
-    g_props.erase(prop->get_name());
+    auto& g_props   = get_global_property_storage();
+    auto result     = g_props.erase(prop->get_name());
 
-    remove_item(get_global_properties(), create_item<rttr::property>(prop));
+    auto result2 = remove_container_item(get_global_properties(), create_item<rttr::property>(prop));
+    return result && result2;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_method(const method_wrapper_base* meth)
+bool type_register_private::register_method(const method_wrapper_base* meth)
 {
     const auto t    = meth->get_declaring_type();
     const auto name = meth->get_name();
     auto m          = create_item<::rttr::method>(meth);
 
     if (get_type_method(t, name, convert_param_list(meth->get_parameter_infos())))
-        return;
+        return false;
 
-    auto& method_list = t.m_type_data->get_class_data().m_methods;
+    auto& method_list = t.m_type_data->m_class_data.m_methods;
     method_list.emplace_back(m);
     update_class_list(t, &class_data::m_methods);
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_global_method(const method_wrapper_base* meth)
+bool type_register_private::register_global_method(const method_wrapper_base* meth)
 {
     const auto t    = meth->get_declaring_type();
     const auto name = meth->get_name();
     auto m          = create_item<::rttr::method>(meth);
 
     if (t.get_global_method(name, convert_param_list(meth->get_parameter_infos())))
-        return;
+        return false;
 
     get_global_methods().push_back(m);
     get_global_method_storage().insert(std::move(name), std::move(m));
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_global_method(const method_wrapper_base* meth)
+bool type_register_private::unregister_global_method(const method_wrapper_base* meth)
 {
-    auto& g_meths = get_global_method_storage();
-    g_meths.erase(meth->get_name());
+    auto& g_meths   = get_global_method_storage();
+    auto result     = g_meths.erase(meth->get_name());
 
-    remove_item(get_global_methods(), create_item<rttr::method>(meth));
+    auto result2 = remove_container_item(get_global_methods(), create_item<rttr::method>(meth));
+    return result && result2;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 property type_register_private::get_type_property(const type& t, string_view name)
 {
-    for (const auto& prop : get_items_for_type(t, t.m_type_data->get_class_data().m_properties))
+    for (const auto& prop : get_items_for_type(t, t.m_type_data->m_class_data.m_properties))
     {
         if (prop.get_name() == name)
             return prop;
@@ -800,25 +876,10 @@ property type_register_private::get_type_property(const type& t, string_view nam
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method type_register_private::get_type_method(const type& t, string_view name)
-{
-    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
-    {
-        if (meth.get_name() == name)
-        {
-            return meth;
-        }
-    }
-
-    return create_invalid_item<::rttr::method>();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 method type_register_private::get_type_method(const type& t, string_view name,
                                               const std::vector<type>& type_list)
 {
-    for (const auto& meth : get_items_for_type(t, t.m_type_data->get_class_data().m_methods))
+    for (const auto& meth : get_items_for_type(t, t.m_type_data->m_class_data.m_methods))
     {
         if (meth.get_name() == name &&
             compare_with_type_list::compare(meth.get_parameter_infos(), type_list))
@@ -835,15 +896,16 @@ method type_register_private::get_type_method(const type& t, string_view name,
 template<typename T>
 void type_register_private::update_class_list(const type& t, T item_ptr)
 {
+    auto& all_class_items = (t.m_type_data->m_class_data.*item_ptr);
+
     // update type "t" with all items from the base classes
-    auto& all_class_items = (t.m_type_data->get_class_data().*item_ptr);
     auto item_range = get_items_for_type(t, all_class_items);
     detail::remove_cv_ref_t<decltype(all_class_items)> item_vec(item_range.begin(), item_range.end());
     all_class_items.reserve(all_class_items.size() + 1);
     all_class_items.clear(); // this will not reduce the capacity, i.e. new memory allocation may not necessary
     for (const auto& base_type : t.get_base_classes())
     {
-        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->get_class_data().*item_ptr);
+        auto base_properties = get_items_for_type(base_type, base_type.m_type_data->m_class_data.*item_ptr);
         if (base_properties.empty())
             continue;
 
@@ -864,26 +926,27 @@ void type_register_private::update_class_list(const type& t, T item_ptr)
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_converter(const type_converter_base* converter)
+bool type_register_private::register_converter(const type_converter_base* converter)
 {
     const auto t = converter->get_source_type();
 
     if (!t.is_valid())
-        return;
+        return false;
 
     if (get_converter(t, converter->m_target_type))
-        return;
+        return false;
 
     using vec_value_type = data_container<const type_converter_base*>;
     m_type_converter_list.push_back({t.get_id(), converter});
     std::stable_sort(m_type_converter_list.begin(), m_type_converter_list.end(),
                      vec_value_type::order_by_id());
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Container, typename Item>
-static void remove_item(Container& container, Item& item)
+static bool remove_item(Container& container, Item& item)
 {
     using order = typename Container::value_type::order_by_id;
     auto itr = std::lower_bound(container.begin(), container.end(),
@@ -893,15 +956,17 @@ static void remove_item(Container& container, Item& item)
         if ((*itr).m_data == item)
         {
             container.erase(itr);
+            return true;
         }
     }
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_converter(const type_converter_base* converter)
+bool type_register_private::unregister_converter(const type_converter_base* converter)
 {
-    remove_item(m_type_converter_list, converter);
+    return remove_item(m_type_converter_list, converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -958,44 +1023,48 @@ type_register_private::get_type_comparator_impl(const type& t,
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_equal_comparator(const type_comparator_base* comparator)
+bool type_register_private::register_equal_comparator(const type_comparator_base* comparator)
 {
-    register_comparator_impl(comparator->cmp_type, comparator, m_type_equal_cmp_list);
+    return register_comparator_impl(comparator->cmp_type, comparator, m_type_equal_cmp_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_equal_comparator(const type_comparator_base* converter)
+bool type_register_private::unregister_equal_comparator(const type_comparator_base* converter)
 {
-    remove_item(m_type_equal_cmp_list, converter);
+    return remove_item(m_type_equal_cmp_list, converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_less_than_comparator(const type_comparator_base* comparator)
+bool type_register_private::register_less_than_comparator(const type_comparator_base* comparator)
 {
-    register_comparator_impl(comparator->cmp_type, comparator, m_type_less_than_cmp_list);
+    return register_comparator_impl(comparator->cmp_type, comparator, m_type_less_than_cmp_list);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::unregister_less_than_comparator(const type_comparator_base* converter)
+bool type_register_private::unregister_less_than_comparator(const type_comparator_base* converter)
 {
-    remove_item(m_type_less_than_cmp_list, converter);
+    return remove_item(m_type_less_than_cmp_list, converter);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void type_register_private::register_comparator_impl(const type& t, const type_comparator_base* comparator,
+bool type_register_private::register_comparator_impl(const type& t, const type_comparator_base* comparator,
                                                      std::vector<data_container<const type_comparator_base*>>& comparator_list)
 {
     if (!t.is_valid())
-        return;
+        return false;
+
+    if (get_type_comparator_impl(t, comparator_list)) // already registered an comparator ?
+        return false;
 
     using data_type = data_container<const type_comparator_base*>;
     comparator_list.push_back({t.get_id(), comparator});
     std::stable_sort(comparator_list.begin(), comparator_list.end(),
                      data_type::order_by_id());
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1011,11 +1080,13 @@ variant type_register_private::get_metadata(const type& t, const variant& key)
 variant type_register_private::get_metadata(const variant& key, const std::vector<metadata>& data)
 {
     auto itr = std::lower_bound(data.cbegin(), data.cend(), key, metadata::order_by_key());
-    if (itr != data.cend())
+    while (itr != data.cend())
     {
         auto& item = *itr;
         if (item.get_key() == key)
             return item.get_value();
+
+        ++itr;
     }
 
     return variant();

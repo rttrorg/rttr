@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -35,9 +35,10 @@
 #include "rttr/argument.h"
 #include "rttr/detail/type/accessor_type.h"
 #include "rttr/policy.h"
-#include "rttr/array_mapper.h"
 #include "rttr/detail/misc/utility.h"
 #include "rttr/detail/property/property_accessor.h"
+#include "rttr/detail/visitor/visitor_iterator.h"
+#include "rttr/detail/visitor/property_visitor_invoker.h"
 
 #include <functional>
 
@@ -46,7 +47,16 @@ namespace rttr
 namespace detail
 {
 
-template<typename Accessor_Type, typename Getter, typename Setter, access_levels Acc_Level, typename Get_Policy, typename Set_Policy, std::size_t Metadata_Count>
+template<typename Accessor_Type,
+         typename Declaring_Typ,
+         typename Getter,
+         typename Setter,
+         access_levels Acc_Level,
+         typename Get_Policy,
+         typename Set_Policy,
+         std::size_t Metadata_Count,
+         typename Visitor_List
+         >
 class property_wrapper;
 
 #include "rttr/detail/property/property_wrapper_member_func.h"

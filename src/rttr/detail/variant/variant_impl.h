@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -34,12 +34,16 @@
 #include "rttr/detail/type/type_converter.h"
 #include "rttr/detail/misc/data_address_container.h"
 #include "rttr/detail/variant/variant_data_policy.h"
-#include "rttr/variant_array_view.h"
 #include "rttr/variant_associative_view.h"
 #include "rttr/variant_sequential_view.h"
 
 namespace rttr
 {
+namespace detail
+{
+template<typename T>
+using variant_t = remove_cv_t<remove_reference_t<T>>;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -131,12 +135,23 @@ RTTR_INLINE bool variant::operator>(const variant& other) const
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
+RTTR_INLINE T& variant::get_value()
+{
+    using namespace detail;
+    auto result = unsafe_variant_cast<variant_t<T>>(this);
+
+    return *result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
 RTTR_INLINE const T& variant::get_value() const
 {
-    const void* value;
-    m_policy(detail::variant_policy_operation::GET_VALUE, m_data, value);
-    using nonRef = detail::remove_cv_t<T>;
-    return *reinterpret_cast<const nonRef*>(value);
+    using namespace detail;
+    auto result = unsafe_variant_cast<variant_t<T>>(this);
+
+    return *result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -388,6 +403,93 @@ template<typename T>
 RTTR_INLINE T variant::convert(bool* ok) const
 {
     return convert_impl<T>(ok);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+namespace detail
+{
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE T* unsafe_variant_cast(variant* operand) RTTR_NOEXCEPT
+{
+    const void* value;
+    operand->m_policy(detail::variant_policy_operation::GET_VALUE, operand->m_data, value);
+    return reinterpret_cast<T*>(const_cast<void*>(value));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE const T* unsafe_variant_cast(const variant* operand) RTTR_NOEXCEPT
+{
+    return unsafe_variant_cast<const T>(const_cast<variant*>(operand));
+}
+
+} // end namespace detail
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE T variant_cast(const variant& operand)
+{
+    using namespace detail;
+    static_assert(std::is_constructible<T, const variant_t<T>&>::value,
+                  "variant_cast<T>(variant&) requires T to be constructible from const remove_cv_t<remove_reference_t<T>>&");
+
+    auto result = unsafe_variant_cast<variant_t<T>>(&operand);
+
+    using ref_type = conditional_t<std::is_reference<T>::value, T, add_lvalue_reference_t<T>>;
+    return static_cast<ref_type>(*result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE T variant_cast(variant& operand)
+{
+    using namespace detail;
+    static_assert(std::is_constructible<T, variant_t<T>&>::value,
+                  "variant_cast<T>(variant&) requires T to be constructible from remove_cv_t<remove_reference_t<T>>&");
+
+    auto result = unsafe_variant_cast<variant_t<T>>(&operand);
+
+    using ref_type = conditional_t<std::is_reference<T>::value, T, add_lvalue_reference_t<T>>;
+    return static_cast<ref_type>(*result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE T variant_cast(variant&& operand)
+{
+    using namespace detail;
+    static_assert(std::is_constructible<T, variant_t<T>>::value,
+                  "variant_cast<T>(variant&&) requires T to be constructible from remove_cv_t<remove_reference_t<T>>");
+    auto result = unsafe_variant_cast<variant_t<T>>(&operand);
+    return std::move(*result);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE T* variant_cast(variant* operand) RTTR_NOEXCEPT
+{
+    using namespace detail;
+    return (type::get<T>() == operand->get_type()) ?
+            unsafe_variant_cast<T>(operand) : nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+RTTR_INLINE const T* variant_cast(const variant* operand) RTTR_NOEXCEPT
+{
+    return variant_cast<T>(const_cast<variant*>(operand));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

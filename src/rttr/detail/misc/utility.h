@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -74,32 +74,11 @@ namespace detail
     template <std::size_t... I>
     using index_sequence = integer_sequence<std::size_t, I...>;
 
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-    // workaround for a compiler bug of nested aliases (#1085630)
-    template <class T, T N>
-    struct make_integer_sequence_impl
-    {
-        using type = typename sequence_generator<T, N, N>::type;
-    };
-
-    template <class T, T N>
-    struct make_index_sequence_impl
-    {
-        using type = typename make_integer_sequence_impl<T, N>::type;
-    };
-
-    template <class T, T N>
-    using make_integer_sequence = typename make_integer_sequence_impl<T, N>::type;
-
-    template <std::size_t N>
-    using make_index_sequence = typename make_integer_sequence_impl<std::size_t, N>::type;
-#else
     template <class T, T N>
     using make_integer_sequence = typename sequence_generator<T, N, N>::type;
 
     template <std::size_t N>
     using make_index_sequence = make_integer_sequence<std::size_t, N>;
-#endif
 
     template<class... T>
     using index_sequence_for = make_index_sequence<sizeof...(T)>;
@@ -519,6 +498,31 @@ public:
         return generate_hash(text.data(), text.length());
     }
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+inline enable_if_t<std::is_same<T, std::string>::value || std::is_same<T, std::wstring>::value, bool>
+starts_with(const T& big_str, const T& small_str)
+{
+    return (big_str.compare(0, small_str.size(), small_str) == 0);
+}
+
+template<typename T>
+inline enable_if_t<std::is_same<T, std::string>::value || std::is_same<T, std::wstring>::value, bool>
+ends_with(const T& big_str, const T& small_str)
+{
+    return (big_str.size() >= small_str.size() &&
+            big_str.compare(big_str.size() - small_str.size(), small_str.size(), small_str) == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * A simple identity function. Returns the same object, without doing anything.
+ */
+template<typename T>
+static RTTR_INLINE T& identity_func(T& func) { return func; }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

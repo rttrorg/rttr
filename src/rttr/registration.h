@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -36,7 +36,7 @@
 #include "rttr/detail/default_arguments/default_arguments.h"
 #include "rttr/detail/parameter_info/parameter_names.h"
 #include "rttr/variant.h"
-
+#include "rttr/detail/visitor/visitor_registration.h"
 namespace rttr
 {
 
@@ -125,7 +125,7 @@ public:
     /*!
      * The \ref class_ is used to register classes to RTTR.
      */
-    template<typename Class_Type>
+    template<typename Class_Type, typename Visitor_List = READ_TL(rttr_visitor_list)>
     class class_
     {
         public:
@@ -144,7 +144,7 @@ public:
              *
              */
             template<typename...Args>
-            class_<Class_Type>& operator()(Args&&...args);
+            class_<Class_Type, Visitor_List>& operator()(Args&&...args);
 
 
             /*!
@@ -160,7 +160,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename... Args, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_levels_list>::value>::type>
-            bind<detail::ctor, Class_Type, acc_level, Args...> constructor(acc_level level = acc_level());
+            bind<detail::ctor, Class_Type, acc_level, Visitor_List, Args...> constructor(acc_level level = acc_level());
 
             /*!
              * \brief Register a constructor for this class type which uses a function \p F.
@@ -175,7 +175,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename F, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<!detail::contains<F, detail::access_levels_list>::value>::type>
-            bind<detail::ctor_func, Class_Type, F, acc_level> constructor(F func, acc_level level = acc_level());
+            bind<detail::ctor_func, Class_Type, F, acc_level, Visitor_List> constructor(F func, acc_level level = acc_level());
 
 
             /*!
@@ -193,7 +193,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_levels_list>::value>::type>
-            bind<detail::prop, Class_Type, A, acc_level> property(string_view name, A acc, acc_level level = acc_level());
+            bind<detail::prop, Class_Type, A, acc_level, Visitor_List> property(string_view name, A acc, acc_level level = acc_level());
 
             /*!
              * \brief Register a read only property to this class.
@@ -211,7 +211,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename A, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<detail::contains<acc_level, detail::access_levels_list>::value>::type>
-            bind<detail::prop_readonly, Class_Type, A, acc_level> property_readonly(string_view name, A acc, acc_level level = acc_level());
+            bind<detail::prop_readonly, Class_Type, A, acc_level, Visitor_List> property_readonly(string_view name, A acc, acc_level level = acc_level());
 
             /*!
              * \brief Register a property to this class.
@@ -230,8 +230,8 @@ public:
              *
              * \return A \ref bind object, in order to chain more calls.
              */
-            template<typename A1, typename A2, typename Tp = typename std::enable_if<!detail::contains<A2, detail::access_levels_list>::value>::type, typename acc_level = detail::public_access>
-            bind<detail::prop, Class_Type, A1, A2, acc_level> property(string_view name, A1 getter, A2 setter, acc_level level = acc_level());
+            template<typename A1, typename A2, typename acc_level = detail::public_access, typename Tp = typename std::enable_if<!detail::contains<A2, detail::access_levels_list>::value>::type>
+            bind<detail::prop, Class_Type, A1, A2, acc_level, Visitor_List> property(string_view name, A1 getter, A2 setter, acc_level level = acc_level());
 
 
             /*!
@@ -249,7 +249,7 @@ public:
              * \return A \ref bind object, in order to chain more calls.
              */
             template<typename F, typename acc_level = detail::public_access>
-            bind<detail::meth, Class_Type, F, acc_level> method(string_view name, F f, acc_level level = acc_level());
+            bind<detail::meth, Class_Type, F, acc_level, Visitor_List> method(string_view name, F f, acc_level level = acc_level());
 
 
             /*!
@@ -287,8 +287,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A>
-    static bind<detail::prop, detail::invalid_type, A, detail::public_access> property(string_view name, A acc);
+    template<typename A, typename Visitor_List = READ_TL(rttr_visitor_list)>
+    static bind<detail::prop, detail::invalid_type, A, detail::public_access, Visitor_List> property(string_view name, A acc);
 
     /*!
      * \brief Register a global read only property.
@@ -305,8 +305,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A>
-    static bind<detail::prop_readonly, detail::invalid_type, A, detail::public_access> property_readonly(string_view name, A acc);
+    template<typename A, typename Visitor_List = READ_TL(rttr_visitor_list)>
+    static bind<detail::prop_readonly, detail::invalid_type, A, detail::public_access, Visitor_List> property_readonly(string_view name, A acc);
 
     /*!
      * \brief Register a property to this class.
@@ -323,8 +323,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename A1, typename A2>
-    static bind<detail::prop, detail::invalid_type, A1, A2, detail::public_access> property(string_view name, A1 getter, A2 setter);
+    template<typename A1, typename A2, typename Visitor_List = READ_TL(rttr_visitor_list)>
+    static bind<detail::prop, detail::invalid_type, A1, A2, detail::public_access, Visitor_List> property(string_view name, A1 getter, A2 setter);
 
     /*!
      * \brief Register a method to this class.
@@ -339,8 +339,8 @@ public:
      *
      * \return A \ref bind object, in order to chain more calls.
      */
-    template<typename F>
-    static bind<detail::meth, detail::invalid_type, F, detail::public_access> method(string_view name, F f);
+    template<typename F, typename Visitor_List = READ_TL(rttr_visitor_list)>
+    static bind<detail::meth, detail::invalid_type, F, detail::public_access, Visitor_List> method(string_view name, F f);
 
     /*!
      * \brief Register a global enumeration of type \p Enum_Type
@@ -743,6 +743,30 @@ RTTR_INLINE detail::parameter_names<detail::decay_t<TArgs>...> parameter_names(T
  *
  */
 #define RTTR_REGISTRATION
+
+/*!
+ * \brief Use this macro to automatically register your reflection information inside a plugin to RTTR.
+ *
+ * Use it in following way:
+ * \code{.cpp}
+ *
+ *   int some_method() { return 42; }
+ *
+ *   RTTR_PLUGIN_REGISTRATION
+ *   {
+ *       rttr::registration::method("some_method", &some_method);
+ *   }
+ * \endcode
+ *
+ * Just place the macro in global scope in a cpp file.
+ *
+ * \remark It is not possible to place the macro multiple times in one cpp file.
+ *         When you compile your plugin with the `gcc` toolchain, make sure you use the compiler option: `-fno-gnu-unique`.
+ *         otherwise the unregistration will not work properly.
+ *
+ * \see library
+ */
+#define RTTR_PLUGIN_REGISTRATION
 
 /*!
  * \brief Place this macro inside a class, when you need to reflect properties,

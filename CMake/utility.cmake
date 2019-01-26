@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -416,9 +416,9 @@ function( replace_compiler_option _OLD_OPTION _NEW_OPTION)
           CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
     if(${flag_var} MATCHES ${_OLD_OPTION})
       # the whitespace after_OLD_OPTION is necessary to really match only the flag and not some sub flag (/MD should match by /MDd)
-      string(REGEX REPLACE "${_OLD_OPTION} " "${_NEW_OPTION}" ${flag_var} "${${flag_var}}")
+      string(REGEX REPLACE "${_OLD_OPTION} " "${_NEW_OPTION} " ${flag_var} "${${flag_var}}")
     else()
-      set(${flag_var} "${${flag_var}} ${_NEW_OPTION}")
+      set(${flag_var} "${${flag_var}} ${_NEW_OPTION} ")
     endif()
    set(${flag_var} ${${flag_var}} PARENT_SCOPE)
   endforeach()
@@ -449,7 +449,7 @@ macro(enable_rtti _ENABLE)
     replace_compiler_option("${disable_rtti_opt}" "${enable_rtti_opt}")
   else()
     message(STATUS "Disabled: use of RTTI")
-    replace_compiler_option(${enable_rtti_opt} ${disable_rtti_opt})
+    replace_compiler_option("${enable_rtti_opt}" "${disable_rtti_opt}")
   endif()
 endmacro()
 
@@ -471,7 +471,7 @@ function(getCompilerName _COMPILER_NAME)
     set(COMPILER_NAME "vs2013")
   elseif(MSVC_VERSION EQUAL 1900)
     set(COMPILER_NAME "vs2015")
-  elseif(MSVC_VERSION EQUAL 1910 OR MSVC_VERSION EQUAL 1912)
+  elseif((MSVC_VERSION EQUAL 1910 OR MSVC_VERSION GREATER 1910) AND (MSVC_VERSION EQUAL 1919 OR MSVC_VERSION LESS 1919))
     set(COMPILER_NAME "vs2017")
   elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(COMPILER_NAME "gcc")

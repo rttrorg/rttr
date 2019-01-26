@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -230,6 +230,12 @@ variant method_wrapper_base::invoke_variadic(const instance& object, std::vector
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void method_wrapper_base::visit(visitor& visitor, method m) const RTTR_NOEXCEPT
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 } // end namespace detail
 } // end namespace rttr

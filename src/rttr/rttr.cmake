@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -27,7 +27,6 @@
 
 set(HEADER_FILES access_levels.h
                  argument.h
-                 array_mapper.h
                  array_range.h
                  associative_mapper.h
                  constructor.h
@@ -36,6 +35,7 @@ set(HEADER_FILES access_levels.h
                  enum_flags.h
                  filter_item.h
                  instance.h
+                 library.h
                  method.h
                  policy.h
                  property.h
@@ -50,16 +50,12 @@ set(HEADER_FILES access_levels.h
                  rttr_enable.h
                  type
                  type.h
+                 type_list.h
                  variant.h
-                 variant_array_view.h
                  variant_associative_view.h
                  variant_sequential_view.h
+                 visitor.h
                  wrapper_mapper.h
-                 detail/array/array_accessor.h
-                 detail/array/array_accessor_impl.h
-                 detail/array/array_mapper_impl.h
-                 detail/array/array_wrapper.h
-                 detail/array/array_wrapper_base.h
                  detail/base/core_prerequisites.h
                  detail/base/version.h.in
                  detail/base/version.rc.in
@@ -96,6 +92,7 @@ set(HEADER_FILES access_levels.h
                  detail/impl/sequential_mapper_impl.h
                  detail/impl/string_view_impl.h
                  detail/impl/wrapper_mapper_impl.h
+                 detail/library/library_p.h
                  detail/metadata/metadata.h
                  detail/metadata/metadata_handler.h
                  detail/method/method_accessor.h
@@ -111,6 +108,7 @@ set(HEADER_FILES access_levels.h
                  detail/misc/function_traits.h
                  detail/misc/iterator_wrapper.h
                  detail/misc/misc_type_traits.h
+                 detail/misc/register_wrapper_mapper_conversion.h
                  detail/misc/sequential_container_type_traits.h
                  detail/misc/std_type_traits.h
                  detail/misc/template_type_trait.h
@@ -155,20 +153,27 @@ set(HEADER_FILES access_levels.h
                  detail/variant/variant_data_converter.h
                  detail/variant/variant_data_policy.h
                  detail/variant/variant_impl.h
-                 detail/variant_array_view/variant_array_view_creator.h
-                 detail/variant_array_view/variant_array_view_creator_impl.h
-                 detail/variant_array_view/variant_array_view_traits.h
                  detail/variant_associative_view/variant_associative_view_private.h
                  detail/variant_associative_view/variant_associative_view_creator.h
                  detail/variant_associative_view/variant_associative_view_creator_impl.h
                  detail/variant_sequential_view/variant_sequential_view_private.h
                  detail/variant_sequential_view/variant_sequential_view_creator_impl.h
                  detail/variant_sequential_view/variant_sequential_view_creator.h
+                 detail/visitor/visitor_iterator.h
+                 detail/visitor/create_type_visitor_func.h
+                 detail/visitor/create_type_visitor_func_impl.h
+                 detail/visitor/method_visitor_invoker.h
+                 detail/visitor/constructor_visitor_invoker.h
+                 detail/visitor/property_visitor_invoker.h
+                 detail/visitor/visitor_impl.h
+                 detail/visitor/type_visitor_invoker.h
+                 detail/visitor/visitor_registration.h
                 )
 
 set(SOURCE_FILES constructor.cpp
                  destructor.cpp
                  enumeration.cpp
+                 library.cpp
                  method.cpp
                  parameter_info.cpp
                  policy.cpp
@@ -176,9 +181,9 @@ set(SOURCE_FILES constructor.cpp
                  registration.cpp
                  type.cpp
                  variant.cpp
-                 variant_array_view.cpp
                  variant_associative_view.cpp
                  variant_sequential_view.cpp
+                 visitor.cpp
                  detail/comparison/compare_equal.cpp
                  detail/comparison/compare_less.cpp
                  detail/misc/standard_types.cpp
@@ -187,11 +192,14 @@ set(SOURCE_FILES constructor.cpp
                  detail/destructor/destructor_wrapper_base.cpp
                  detail/enumeration/enumeration_helper.cpp
                  detail/enumeration/enumeration_wrapper_base.cpp
+                 detail/library/library_win.cpp
+                 detail/library/library_unix.cpp
                  detail/method/method_wrapper_base.cpp
                  detail/parameter_info/parameter_info_wrapper_base.cpp
                  detail/property/property_wrapper_base.cpp
                  detail/registration/registration_executer.cpp
                  detail/registration/registration_state_saver.cpp
+                 detail/type/type_data.cpp
                  detail/type/type_register.cpp
                  detail/variant/variant_compare.cpp
                  )

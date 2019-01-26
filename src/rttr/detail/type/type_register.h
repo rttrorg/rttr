@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -43,6 +43,7 @@ class argument;
 
 template<typename T>
 class class_;
+class visitor;
 
 namespace detail
 {
@@ -61,10 +62,14 @@ struct derived_info;
 using variant_create_func   = variant(*)(const argument&);
 using get_derived_func      = derived_info(*)(void*);
 
+enum class type_of_visit : bool;
+using visit_type_func       = void(*)(type_of_visit, visitor&, const type&);
+
 template<typename T, typename Enable>
 struct type_getter;
 
 struct type_data;
+struct class_data;
 
 class metadata;
 class registration_manager;
@@ -81,35 +86,35 @@ public:
     // no assign
     type_register& operator=(const type_register&) = delete;
 
-    static void register_property(const property_wrapper_base* prop);
-    static void register_method(method_wrapper_base* meth);
+    static bool register_property(const property_wrapper_base* prop);
+    static bool register_method(method_wrapper_base* meth);
     // there are no methods for unregister prop & methods,
     // because they will be unregistered automatically, when the types are unregistered
 
-    static void register_global_property(const property_wrapper_base* prop);
-    static void unregister_global_property(const property_wrapper_base* prop);
+    static bool register_global_property(const property_wrapper_base* prop);
+    static bool unregister_global_property(const property_wrapper_base* prop);
 
-    static void register_global_method(method_wrapper_base* meth);
-    static void unregister_global_method(method_wrapper_base* meth);
+    static bool register_global_method(method_wrapper_base* meth);
+    static bool unregister_global_method(method_wrapper_base* meth);
 
-    static void register_constructor(constructor_wrapper_base* ctor);
-    static void register_destructor(destructor_wrapper_base* dtor);
+    static bool register_constructor(constructor_wrapper_base* ctor);
+    static bool register_destructor(destructor_wrapper_base* dtor);
 
-    static void register_enumeration(enumeration_wrapper_base* enum_data);
-    static void unregister_enumeration(enumeration_wrapper_base* enum_data);
+    static bool register_enumeration(enumeration_wrapper_base* enum_data);
+    static bool unregister_enumeration(enumeration_wrapper_base* enum_data);
 
     static void custom_name(type& t, string_view name);
 
     static void metadata( const type& t, std::vector<metadata> data);
 
-    static void register_converter(const type_converter_base* converter);
-    static void unregister_converter(const type_converter_base* converter);
+    static bool register_converter(const type_converter_base* converter);
+    static bool unregister_converter(const type_converter_base* converter);
 
-    static void register_equal_comparator(type_comparator_base* comparator);
-    static void unregister_equal_comparator(const type_comparator_base* converter);
+    static bool register_equal_comparator(type_comparator_base* comparator);
+    static bool unregister_equal_comparator(const type_comparator_base* converter);
 
-    static void register_less_than_comparator(type_comparator_base* comparator);
-    static void unregister_less_than_comparator(const type_comparator_base* converter);
+    static bool register_less_than_comparator(type_comparator_base* comparator);
+    static bool unregister_less_than_comparator(const type_comparator_base* converter);
 
     static void register_base_class(const type& derived_type, const base_class_info& base_info);
 
@@ -117,8 +122,9 @@ public:
     static void unregister_reg_manager(registration_manager* manager);
 
 
-    static type register_type(type_data* info) RTTR_NOEXCEPT;
+    static type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     static void unregister_type(type_data* info) RTTR_NOEXCEPT;
+    static bool register_visit_type_func(type& t, visit_type_func) RTTR_NOEXCEPT;
 
 private:
 

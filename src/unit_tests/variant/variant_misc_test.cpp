@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -101,6 +101,37 @@ TEST_CASE("variant - swap", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("variant - get_value()", "[variant]")
+{
+    SECTION("check get_value() non-const version")
+    {
+        std::string text = "hello world";
+        variant var = text;
+
+        auto& value = var.get_value<std::string>();
+        value = "world";
+        using value_t = detail::remove_reference_t<decltype(value)>;
+
+        static_assert(!std::is_const<value_t>::value, "Provide non-const getter!");
+
+        CHECK(var.get_value<std::string>() == "world");
+    }
+
+    SECTION("check get_value() const version")
+    {
+        std::string text = "hello world";
+        const variant var = text;
+
+        auto& value = var.get_value<std::string>();
+
+        using value_t = detail::remove_reference_t<decltype(value)>;
+        static_assert(std::is_const<value_t>::value, "Provide non-const getter!");
+        CHECK(value == text);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("variant - get_wrapped_value", "[variant]")
 {
     int foo = 12;
@@ -135,21 +166,5 @@ TEST_CASE("variant - get_wrapped_value", "[variant]")
     CHECK(*var.get_wrapped_value<std::unique_ptr<int>>().get() == 24);
     CHECK(var.extract_wrapped_value().is_valid() == false);
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-RTTR_BEGIN_DISABLE_DEPRECATED_WARNING
-
-TEST_CASE("variant - is_array", "[variant]")
-{
-    variant a = std::vector<int>(100, 1);
-    CHECK(a.is_array() == true);
-
-    int raw_array[100];
-    variant b = raw_array;
-    CHECK(b.is_array() == true);
-}
-
-RTTR_END_DISABLE_DEPRECATED_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -44,6 +44,7 @@ class enumeration;
 class instance;
 class argument;
 class property;
+class visitor;
 
 namespace detail
 {
@@ -149,7 +150,6 @@ class RTTR_API property
          */
         bool is_readonly() const RTTR_NOEXCEPT;
 
-
         /*!
          * \brief Returns true if this property is static property, otherwise false.
          *        A static property does not need an instance for performing set_value/get_value.
@@ -159,7 +159,6 @@ class RTTR_API property
          * \return True if this is a static property, otherwise false.
          */
         bool is_static() const RTTR_NOEXCEPT;
-
 
         /*!
          * \brief Returns true if the underlying property is an \ref enumeration.
@@ -179,15 +178,6 @@ class RTTR_API property
          * \return An enumeration object.
          */
         enumeration get_enumeration() const RTTR_NOEXCEPT;
-
-        /*!
-         * \brief Returns true if the underlying property is an \ref array.
-         *
-         * \remark When the property is not valid, this function will return false.
-         *
-         * \return True if this is a \ref array type, otherwise false.
-         */
-        bool is_array() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the name of this property.
@@ -269,10 +259,13 @@ class RTTR_API property
         //! Constructs a property from a property_wrapper_base.
         property(const detail::property_wrapper_base* wrapper) RTTR_NOEXCEPT;
 
+        void visit(visitor& visitor) const RTTR_NOEXCEPT;
+
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
         template<typename T>
         friend T detail::create_invalid_item();
+        friend class visitor;
 
     private:
         const detail::property_wrapper_base* m_wrapper;

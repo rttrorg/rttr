@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -104,6 +104,13 @@ type variant_associative_view::get_key_type() const RTTR_NOEXCEPT
 type variant_associative_view::get_value_type() const RTTR_NOEXCEPT
 {
     return m_view.get_value_type();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+bool variant_associative_view::is_key_only_type() const RTTR_NOEXCEPT
+{
+    return (m_view.get_value_type().is_valid() == false && is_valid());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

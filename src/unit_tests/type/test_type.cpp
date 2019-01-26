@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -30,7 +30,7 @@
 #include "unit_tests/test_classes.h"
 
 #include <catch/catch.hpp>
-#include <rttr/type>
+#include <rttr/registration>
 
 #include <vector>
 #include <map>
@@ -53,6 +53,24 @@ enum E_Alignment
 
 template<typename...Args>
 struct my_class_template {};
+
+struct type_metadata_test
+{
+
+};
+
+static const char* key_data = "Test";
+
+RTTR_REGISTRATION
+{
+    registration::class_<type_metadata_test>("type_metadata_test")
+            (
+                metadata(key_data, "foo"),
+                metadata("other_key", "bar"),
+                metadata("bar", 42),
+                metadata("foobar", "hello")
+            );
+}
 
 TEST_CASE("Test rttr::type - BasicTests", "[type]")
 {
@@ -271,12 +289,23 @@ TEST_CASE("type - get_base_classes()", "[type]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("type - is_base_of()", "[type]")
+{
+    auto t_base = type::get<ClassSingleBase>();
+    auto t_derived = type::get<ClassSingle6A>();
+
+    CHECK(t_base.is_base_of(t_derived)          == true);
+    CHECK(t_base.is_base_of<ClassSingle6A>()    == true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("type - is_derived_from()", "[type]")
 {
     DiamondBottom d;
 
-    REQUIRE(type::get(d).is_derived_from(type::get<DiamondTop>()) == true); // dynamic
-    REQUIRE(type::get(d).is_derived_from<DiamondTop>() == true); // static
+    REQUIRE(type::get(d).is_derived_from(type::get<DiamondTop>())   == true); // dynamic
+    REQUIRE(type::get(d).is_derived_from<DiamondTop>()              == true); // static
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -398,6 +427,7 @@ TEST_CASE("Test rttr::type - Check is_array", "[type]")
     CHECK(type::get<int[10]>().is_array()        == true);
     CHECK(type::get<char[10]>().is_array()       == true);
 
+    CHECK(type::get<char(*)[10]>().is_array()    == false);
     CHECK(type::get<int>().is_array()            == false);
     CHECK(type::get<float>().is_array()          == false);
     CHECK(type::get<int*>().is_array()           == false);
@@ -590,5 +620,21 @@ TEST_CASE("Test rttr::type - get_types()", "[type]")
 {
     CHECK(type::get_types().size() > 1);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test rttr::type - get_metadata()", "[type]")
+{
+    auto t = type::get<type_metadata_test>();
+
+    CHECK(t.get_metadata(key_data).is_valid() == true);
+    CHECK(t.get_metadata("other_key").is_valid() == true);
+    CHECK(t.get_metadata("bar").is_valid() == true);
+    CHECK(t.get_metadata("foobar").is_valid() == true);
+
+    // negative
+    CHECK(t.get_metadata("novalid key").is_valid() == false);
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////

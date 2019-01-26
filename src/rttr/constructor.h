@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -44,6 +44,7 @@ namespace rttr
 class variant;
 class type;
 class argument;
+class visitor;
 
 namespace detail
 {
@@ -60,7 +61,7 @@ class constructor_wrapper_base;
  *
  * Meta Information
  * ----------------
- * A \ref constructor has a signature (\ref get_signature()) and instantiate exactly one type (\ref get_instanciated_type()).
+ * A \ref constructor has a signature (\ref get_signature()) and instantiate exactly one type (\ref get_instantiated_type()).
  * With \ref get_parameter_infos() you retrieve all information of the parameters for this constructor.
  * When the \ref constructor was declared inside a class, then \ref get_declaring_type() can be used to obtain the type of this class.
  *
@@ -117,7 +118,7 @@ class RTTR_API constructor
          *
          * \return The instantiated type.
          */
-        type get_instanciated_type() const RTTR_NOEXCEPT;
+        type get_instantiated_type() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the \ref type of the class or struct that declares this \ref constructor.
@@ -154,7 +155,7 @@ class RTTR_API constructor
         variant get_metadata(const variant& key) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark Returns an invalid \ref variant object (see \ref variant::is_valid), when the arguments does
@@ -162,12 +163,12 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke() const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -176,12 +177,12 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -190,12 +191,12 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1, argument arg2) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -204,12 +205,12 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1, argument arg2, argument arg3) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -218,12 +219,12 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1, argument arg2, argument arg3, argument arg4) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -232,13 +233,13 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *
          * \remark The given argument type has to match **exactly** the type of the underling constructor parameter,
@@ -247,13 +248,13 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke(argument arg1, argument arg2, argument arg3, argument arg4,
                        argument arg5, argument arg6) const;
 
         /*!
-         * \brief Invokes the constructor of type returned by \ref get_instanciated_type().
+         * \brief Invokes the constructor of type returned by \ref get_instantiated_type().
          *        The instance will always be created on the heap and will be returned as variant object.
          *         Use this method when you need to instantiate a constructor with more then 6 parameters.
          *
@@ -264,7 +265,7 @@ class RTTR_API constructor
          *
          * \see get_parameter_infos()
          *
-         * \return An instance of the type \ref get_instanciated_type().
+         * \return An instance of the type \ref get_instantiated_type().
          */
         variant invoke_variadic(std::vector<argument> args) const;
 
@@ -284,11 +285,13 @@ class RTTR_API constructor
 
     private:
         constructor(const detail::constructor_wrapper_base* wrapper) RTTR_NOEXCEPT;
+        void visit(visitor& visitor) const RTTR_NOEXCEPT;
 
         template<typename T>
         friend T detail::create_item(const detail::class_item_to_wrapper_t<T>* wrapper);
         template<typename T>
         friend T detail::create_invalid_item();
+        friend class visitor;
 
     private:
         const detail::constructor_wrapper_base* m_wrapper;

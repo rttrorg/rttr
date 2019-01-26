@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -31,6 +31,8 @@
 
 namespace rttr
 {
+template<typename... U> struct type_list;
+
 namespace detail
 {
 
@@ -75,10 +77,10 @@ using info_container = std::vector<detail::base_class_info>;
  * This class fills from a given type_list the corresponding type objects into a std::vector.
  */
 template<typename DerivedClass, typename... T>
-struct type_from_base_classes;
+struct RTTR_LOCAL type_from_base_classes;
 
 template<typename DerivedClass>
-struct type_from_base_classes<DerivedClass>
+struct RTTR_LOCAL type_from_base_classes<DerivedClass>
 {
     static RTTR_INLINE void fill(info_container&)
     {
@@ -101,7 +103,7 @@ static void* rttr_cast_impl(void* ptr)
 }
 
 template<typename DerivedClass, typename BaseClass, typename... U>
-struct type_from_base_classes<DerivedClass, BaseClass, U...>
+struct RTTR_LOCAL type_from_base_classes<DerivedClass, BaseClass, U...>
 {
     static RTTR_INLINE void fill(info_container& vec)
     {
@@ -115,8 +117,6 @@ struct type_from_base_classes<DerivedClass, BaseClass, U...>
     }
 };
 
-template<typename... U> struct type_list;
-
 template<typename DerivedClass, class... BaseClassList>
 struct type_from_base_classes<DerivedClass, type_list<BaseClassList...>> : type_from_base_classes<DerivedClass, BaseClassList...> { };
 
@@ -125,7 +125,7 @@ struct type_from_base_classes<DerivedClass, type_list<BaseClassList...>> : type_
  * When there is no type_list defined or the class has no base class, an empty vector is returned.
  */
 template<typename T, typename Enable = void>
-struct base_classes
+struct RTTR_LOCAL base_classes
 {
     static RTTR_INLINE info_container get_types()
     {
@@ -135,7 +135,7 @@ struct base_classes
 };
 
 template<typename T>
-struct base_classes<T, typename std::enable_if<has_base_class_list<T>::value>::type>
+struct RTTR_LOCAL base_classes<T, typename std::enable_if<has_base_class_list<T>::value>::type>
 {
     static RTTR_INLINE info_container get_types()
     {

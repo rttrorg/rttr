@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -87,7 +87,8 @@ RTTR_REGISTRATION
         (
             policy::ctor::as_object,
             default_arguments(23),
-            metadata(E_MetaData::SCRIPTABLE, true)
+            metadata(E_MetaData::SCRIPTABLE, true),
+            parameter_names("value")
         )
         .constructor(&ctor_misc_test::create_object)
         (
@@ -98,6 +99,15 @@ RTTR_REGISTRATION
 
    registration::class_<not_copyable_ctor>("not_copyable_ctor")
         .constructor<>();
+
+
+   registration::class_<ctor_misc_test>("ctor_misc_test")
+       .constructor<int>()
+       (
+           policy::ctor::as_object,
+           default_arguments(23),
+           metadata(E_MetaData::SCRIPTABLE, true)
+           );
 
 }
 
@@ -112,18 +122,18 @@ TEST_CASE("constructor - default ctor binding type", "[constructor]")
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("constructor - get_instanciated_type", "[constructor]")
+TEST_CASE("constructor - get_instantiated_type", "[constructor]")
 {
     auto range = type::get<ctor_misc_test>().get_constructors();
     std::vector<constructor> ctor_list(range.cbegin(), range.cend());
     REQUIRE(ctor_list.size() >= 4);
 
-    CHECK(ctor_list[0].get_instanciated_type() == type::get<ctor_misc_test*>());
-    CHECK(ctor_list[1].get_instanciated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
-    CHECK(ctor_list[2].get_instanciated_type() == type::get<ctor_misc_test>());
-    CHECK(ctor_list[3].get_instanciated_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[0].get_instantiated_type() == type::get<ctor_misc_test*>());
+    CHECK(ctor_list[1].get_instantiated_type() == type::get<std::shared_ptr<ctor_misc_test>>());
+    CHECK(ctor_list[2].get_instantiated_type() == type::get<ctor_misc_test>());
+    CHECK(ctor_list[3].get_instantiated_type() == type::get<ctor_misc_test>());
     //negative test
-    CHECK(type::get_by_name("").get_constructor().get_instanciated_type().is_valid() == false);
+    CHECK(type::get_by_name("").get_constructor().get_instantiated_type().is_valid() == false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -150,9 +160,16 @@ TEST_CASE("constructor - get_parameter_infos", "[constructor]")
     constructor ctor = type::get<ctor_misc_test>().get_constructor();
     CHECK(ctor.get_parameter_infos().empty() == true);
 
-    ctor = type::get<ctor_misc_test>().get_constructor({type::get<int>()});
+    auto range = type::get<ctor_misc_test>().get_constructors();
+    std::vector<constructor> ctor_list(range.cbegin(), range.cend());
+    REQUIRE(ctor_list.size() >= 6);
+    ctor = ctor_list[4];
+
     REQUIRE(ctor.get_parameter_infos().size() == 1);
-    CHECK(ctor.get_parameter_infos().begin()->get_type() == type::get<int>());
+    auto info = *ctor.get_parameter_infos().begin();
+    CHECK(info.get_type() == type::get<int>());
+    CHECK(info.has_default_value() == true);
+    CHECK(info.get_default_value() == 23);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

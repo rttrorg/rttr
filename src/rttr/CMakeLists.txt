@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -31,7 +31,7 @@ message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
-                                "RTTR" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
+                                "RTTR" "Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>" "MIT License")
 
 loadFolder("rttr" HPP_FILES SRC_FILES BUILD_INSTALLER)
 
@@ -55,6 +55,9 @@ if (${BUILD_RTTR_DYNAMIC})
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           CXX_VISIBILITY_PRESET hidden
                           VISIBILITY_INLINES_HIDDEN 1)
+    
+    target_link_libraries(rttr_core PRIVATE ${CMAKE_DL_LIBS})
+                          
                           
     if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
         target_compile_features(rttr_core PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
@@ -74,11 +77,6 @@ if (${BUILD_RTTR_DYNAMIC})
                 ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
                 FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
-        install(EXPORT rttr_targets
-                DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
-                NAMESPACE RTTR::
-                FILE rttr-config.cmake)
-            
         # install also pdb file
         install_pdb_files(rttr_core)
     endif()
@@ -96,6 +94,9 @@ if (BUILD_STATIC)
                           EXPORT_NAME Core_Lib
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
+                          
+    target_link_libraries(rttr_core_lib PRIVATE ${CMAKE_DL_LIBS})
+    
     if (MSVC)
         set_target_properties(rttr_core_lib PROPERTIES OUTPUT_NAME librttr_core)
     elseif (CMAKE_COMPILER_IS_GNUCXX)
@@ -138,6 +139,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                $<INSTALL_INTERFACE:include>)
 
+    target_link_libraries(rttr_core_s PRIVATE ${CMAKE_DL_LIBS})
+                               
     set_target_properties(rttr_core_s PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
                           EXPORT_NAME Core_STL
@@ -187,6 +190,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                               EXPORT_NAME Core_Lib_STL
                               CXX_STANDARD ${MAX_CXX_STANDARD}
                               DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
+                              
+        target_link_libraries(rttr_core_lib_s PRIVATE ${CMAKE_DL_LIBS})
             
         if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
             target_compile_features(rttr_core_lib_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
@@ -215,6 +220,15 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     endif()
 endif()
+
+
+if(BUILD_INSTALLER)
+	install(EXPORT rttr_targets
+		DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
+		NAMESPACE RTTR::
+		FILE rttr-config.cmake)
+endif()
+
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")

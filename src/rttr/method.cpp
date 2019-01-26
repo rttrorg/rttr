@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -26,6 +26,7 @@
 *************************************************************************************/
 
 #include "rttr/method.h"
+
 #include "rttr/detail/method/method_wrapper_base.h"
 #include "rttr/argument.h"
 #include "rttr/instance.h"
@@ -201,6 +202,13 @@ bool method::operator==(const method& other) const RTTR_NOEXCEPT
 bool method::operator!=(const method& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper != other.m_wrapper);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void method::visit(visitor& visitor) const RTTR_NOEXCEPT
+{
+    m_wrapper->visit(visitor, method(*this));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

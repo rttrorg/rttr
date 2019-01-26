@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -161,16 +161,20 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
     {
         variant var;
         CHECK(var.is_sequential_container() == false);
+        CHECK(var.create_sequential_view().is_valid() == false);
 
         var = 23;
         CHECK(var.is_sequential_container() == false);
+        CHECK(var.create_sequential_view().is_valid() == false);
 
         var = std::set<int>({1, 2, 3});
         CHECK(var.is_sequential_container() == false);
+        CHECK(var.create_sequential_view().is_valid() == false);
 
         auto set = std::set<int>({ 1, 2, 3 });
         var = std::ref(set);
         CHECK(var.is_sequential_container() == false);
+        CHECK(var.create_sequential_view().is_valid() == false);
     }
 
 
@@ -180,12 +184,15 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = vec;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
 
         var = std::ref(vec);
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
 
         var = &vec;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - std::vector<bool>")
@@ -194,6 +201,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = vec;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - std::list")
@@ -202,6 +210,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = list;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - std::deque")
@@ -210,6 +219,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = deque;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - std::array")
@@ -218,6 +228,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = array;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - std::initializer_list")
@@ -226,6 +237,7 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = init_list;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
     SECTION("valid - raw array")
@@ -234,6 +246,16 @@ TEST_CASE("variant::is_sequential_container", "[variant_sequential_view]")
 
         variant var = array;
         CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
+    }
+
+    SECTION("valid - raw array ptr")
+    {
+        int array[3] = {1, 2, 3};
+
+        variant var = &array;
+        CHECK(var.is_sequential_container() == true);
+        CHECK(var.create_sequential_view().is_valid() == true);
     }
 
 }
@@ -455,6 +477,7 @@ TEST_CASE("variant_sequential_view::set_size()", "[variant_sequential_view]")
         int obj[2] = { 0, 0 };
         variant var = obj;
         auto view = var.create_sequential_view();
+        CHECK(view.is_valid()   == true);
         CHECK(view.set_size(10) == false);
     }
 
@@ -508,6 +531,15 @@ TEST_CASE("variant_sequential_view::insert()", "[variant_sequential_view]")
 
         CHECK(itr == view.end());
         CHECK(view.get_size() == 5);
+    }
+
+    SECTION("raw array")
+    {
+        int obj[2] = { 0, 0 };
+        variant var = obj;
+        auto view = var.create_sequential_view();
+
+        CHECK(view.insert(view.begin(), 12) == view.end());
     }
 
     SECTION("const std::vector")
@@ -812,11 +844,7 @@ TEST_CASE("variant_sequential_view::get_value()", "[variant_sequential_view]")
         auto view = var.create_sequential_view();
 
         REQUIRE(view.get_size() == 2);
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_COMP_VER <= 1800
-        CHECK((view.get_value(0).is_type<int(*)[5]>() == true));
-#else
         CHECK((view.get_value(0).is_type<std::reference_wrapper<int[5]>>() == true));
-#endif
         auto sub_view = view.get_value(1).create_sequential_view();
         CHECK(sub_view.get_value(0).is_type<std::reference_wrapper<int>>() == true);
         CHECK(sub_view.get_value(0).to_int() == 6);

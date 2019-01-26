@@ -6,6 +6,10 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9821799170644782ac8d7885d393e686)](https://www.codacy.com/app/acki-m/rttr?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rttrorg/rttr&amp;utm_campaign=Badge_Grade)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](http://www.rttr.org/doc/master/classes.html)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/rttrorg/rttr/master/LICENSE.txt)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JQ65KGGCSUZMS)
+
+<a target="_blank" href="http://www.rttr.org/news/major-release-0-9-6">!New Release - 0.9.6!</a>
+==
 
 RTTR
 ====
@@ -99,15 +103,39 @@ Features
 Portability
 -----------
 Tested and compiled with:
-- Microsoft Visual Studio 2013, 2015 & 2017
+- Microsoft Visual Studio 2015 & 2017 (2013 support till version 0.9.6)
 - GCC 4.8.1
 - Clang 3.7
 - MinGW 4.8.2
 
 License
 -------
+
+<img align="right" src="http://opensource.org/trademarks/opensource/OSI-Approved-License-100x137.png">
+
 RTTR is released under the terms of the [MIT](LICENSE.txt) license,
 so it is free to use in your free or commercial projects.
+
+Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 
 Installation
 ------------
@@ -117,6 +145,13 @@ The installation guide can be found [here][rttr.install].
 Get Started:
 ------------
 Take a look at the [documentation][rttr.docs] or start with the [tutorial][rttr.tutorial].
+
+Donation:
+---------
+When you use RTTR and you would like to say thank you for its development,
+I am happy to receive any donation.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JQ65KGGCSUZMS)
 
 <!-- Links -->
 [rttr.docs]: http://www.rttr.org/doc/master/classes.html

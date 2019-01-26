@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -56,6 +56,21 @@ struct wrapper_mapper<std::shared_ptr<T>>
     static RTTR_INLINE type create(const wrapped_type& t)
     {
         return type(t);
+    }
+
+    template<typename U>
+    static std::shared_ptr<U> convert(const type& source, bool& ok)
+    {
+        if (auto p = rttr_cast<typename std::shared_ptr<U>::element_type*>(source.get()))
+        {
+            ok = true;
+            return std::shared_ptr<U>(source, p);
+        }
+        else
+        {
+            ok = false;
+            return std::shared_ptr<U>();
+        }
     }
 };
 
@@ -121,7 +136,7 @@ namespace detail
 //////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-using wrapper_mapper_t = typename wrapper_mapper<typename remove_cv<typename std::remove_reference<T>::type
+using wrapper_mapper_t = typename wrapper_mapper<typename std::remove_cv<typename std::remove_reference<T>::type
                                                                    >::type>::wrapped_type;
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -160,7 +175,7 @@ typename std::enable_if<!is_wrapper<T>::value, raw_addressof_return_type_t<T>>::
  * Determine if the given type \a T is a wrapper and has the member method
  * 'wrapper create(const wrapper_type&)' declared.
  */
-template <typename T, typename Tp = typename remove_cv<typename std::remove_reference<T>::type>::type>
+template <typename T, typename Tp = typename std::remove_cv<typename std::remove_reference<T>::type>::type>
 class has_create_wrapper_func_impl
 {
     using YesType = char[1];

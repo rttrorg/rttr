@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -37,8 +37,8 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp>
-enable_if_t<can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+template<typename T>
+enable_if_t<can_create_sequential_view<T>::value, variant_sequential_view_private>
 create_variant_sequential_view(T&& value)
 {
     return variant_sequential_view_private(wrapped_raw_addressof(value));
@@ -46,8 +46,8 @@ create_variant_sequential_view(T&& value)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, typename Tp>
-enable_if_t<!can_create_sequential_view<Tp>::value, variant_sequential_view_private>
+template<typename T>
+enable_if_t<!can_create_sequential_view<T>::value, variant_sequential_view_private>
 create_variant_sequential_view(T&& value)
 {
     return variant_sequential_view_private();

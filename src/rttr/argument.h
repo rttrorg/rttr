@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -51,8 +51,7 @@ class instance;
 class RTTR_API argument
 {
     template<typename T>
-    using decay_arg_t = detail::enable_if_t<!std::is_same<argument, T>::value &&
-                                            !std::is_same<variant_array_view, T>::value, T>;
+    using decay_arg_t = detail::enable_if_t<!std::is_same<argument, T>::value, T>;
 
     template<typename T>
     using is_variant = std::is_same<detail::remove_cv_t<detail::remove_reference_t<T>>, variant>;

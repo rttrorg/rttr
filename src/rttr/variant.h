@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -42,7 +42,6 @@
 namespace rttr
 {
 
-class variant_array_view;
 class variant_associative_view;
 class variant_sequential_view;
 class type;
@@ -52,6 +51,11 @@ class instance;
 
 namespace detail
 {
+    template<class T>
+    RTTR_INLINE T* unsafe_variant_cast(variant* operand) RTTR_NOEXCEPT;
+    template<class T>
+    RTTR_INLINE const T* unsafe_variant_cast(const variant* operand) RTTR_NOEXCEPT;
+
     struct data_address_container;
     template<typename T>
     struct empty_type_converter;
@@ -63,8 +67,7 @@ namespace detail
     enum class variant_policy_operation : uint8_t;
 
     template<typename T, typename Decayed = decay_except_array_t<T>>
-    using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value &&
-                                        !std::is_same<Decayed, variant_array_view>::value, Decayed>;
+    using decay_variant_t = enable_if_t<!std::is_same<Decayed, variant>::value, Decayed>;
 
     using variant_policy_func = bool (*)(variant_policy_operation, const variant_data&, argument_wrapper);
 }
@@ -393,21 +396,6 @@ class RTTR_API variant
         explicit operator bool() const;
 
         /*!
-         * \deprecated Use instead rttr::variant::is_sequential_container()
-         *
-         * \brief When the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
-         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array",
-         *        then this function will return true, otherwise false.
-         *
-         * \return True if the containing value is an array; otherwise false.
-         */
-#ifndef DOXYGEN
-        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::is_sequential_container()") bool is_array() const;
-#else
-        bool is_array() const;
-#endif
-
-        /*!
          * \brief Returns true, when for the underlying or the \ref type::get_wrapped_type() "wrapped type"
          *        an associative_mapper exists.
          *
@@ -433,6 +421,32 @@ class RTTR_API variant
          *  };
          *
          *  variant var = custom_type{};
+         *  if (var.is_type<custom_type>())                         // yields to true
+         *      custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
+         * \endcode
+         *
+         * \remark Only call this method when it is possible to return the containing value as the given type \p T.
+         *         Use therefore the method \ref is_type().
+         *         Otherwise the call leads to undefined behaviour.
+         *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
+         *
+         * \see is_type(), variant_cast<T>
+         *
+         * \return A reference to the stored value.
+         */
+        template<typename T>
+        T& get_value();
+
+        /*!
+         * \brief Returns a reference to the containing value as type \p T.
+         *
+         * \code{.cpp}
+         *  struct custom_type
+         *  {
+         *     //...
+         *  };
+         *
+         *  variant var = custom_type{};
          *  if (var.is_type<custom_type>())                             // yields to true
          *    const custom_type& value = var.get_value<custom_type>();  // extracts the value by reference
          * \endcode
@@ -442,7 +456,7 @@ class RTTR_API variant
          *         Otherwise the call leads to undefined behaviour.
          *         Also make sure you don't clean this variant, when you still hold a reference to the containing value.
          *
-         * \see is_type()
+         * \see is_type(), variant_cast<T>
          *
          * \return A reference to the stored value.
          */
@@ -612,37 +626,6 @@ class RTTR_API variant
          */
         template<typename T>
         bool convert(T& value) const;
-
-        /*!
-         * \deprecated Use instead rttr::variant::create_sequential_view()
-         *
-         * \brief Creates a \ref variant_array_view from the containing value,
-         *        when the \ref variant::get_type "type" or its \ref type::get_raw_type() "raw type"
-         *        or the \ref type::get_wrapped_type() "wrapped type" is an \ref type::is_array() "array".
-         *        Otherwise a default constructed variant_array_view will be returned.
-         *        For shorten this check, use the function \ref is_array().
-         *
-         * A typical example is the following:
-         *
-         * \code{.cpp}
-         *   int obj_array[100];
-         *   variant var = obj_array;                           // copies the content of obj_array into var
-         *   variant_array_view view = var.create_array_view(); // creates a view of the hold array in the variant (data is not copied!)
-         *   std::size_t x = view.get_size();                   // return number of elements x = 100
-         *   view.set_value(0, 42);                             // set the first index to the value 42
-         * \endcode
-         *
-         * \remark This function will return an \ref variant_array_view::is_valid() "invalid" object, when the \ref variant::get_type "type" is no array.
-         *
-         * \return A variant_array_view object.
-         *
-         * \see can_convert(), convert()
-         */
-#ifndef DOXYGEN
-        RTTR_DEPRECATED_WITH_MSG("is deprecated, use instead rttr::variant::create_sequential_view()") variant_array_view create_array_view() const;
-#else
-        variant_array_view create_array_view() const;
-#endif
 
         /*!
          * \brief Creates a \ref variant_associative_view from the containing value,
@@ -1067,12 +1050,106 @@ class RTTR_API variant
         friend struct detail::variant_data_base_policy;
         friend struct detail::variant_data_policy_nullptr_t;
         friend RTTR_API bool detail::variant_compare_less(const variant&, const type&, const variant&, const type&, bool& ok);
+        template<class T>
+        friend RTTR_INLINE T* detail::unsafe_variant_cast(variant* operand) RTTR_NOEXCEPT;
+
 
         detail::variant_data            m_data;
         detail::variant_policy_func     m_policy;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Returns a reference to the containing value as type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
+ *  std:string value = variant_cast<std::string>(var);        // copies the value
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(const variant& operand);
+
+/*!
+ * \brief Returns a reference to the containing value as type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std::string& value_ref = variant_cast<std::string&>(var);  // extracts the value by reference
+ *  std::string value = variant_cast<std::string>(var);        // copies the value
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(variant& operand);
+
+/*!
+ * \brief Move the containing value from the variant into a type \p T.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std::string& a = variant_cast<std::string&>(var);
+ *  std::string b = variant_cast<std::string>(std::move(var)); // move the value to 'b'
+ *  std::cout << "a: " << a << std::endl; // is now empty (nothing to print)
+ *  std::cout << "b: " << b << std::endl; // prints "hello world"
+ *
+ * \endcode
+ *
+ * \remark Extracting a value type, which is not stored in the variant, leads to undefined behaviour.
+ *         No exception or error code will be returned!
+ */
+template<class T>
+T variant_cast(variant&& operand);
+
+/*!
+ * \brief Returns a pointer to the containing value with type \p T.
+ *        When the containing value is of type \p T, a valid pointer to the type will be returned.
+ *        Otherwise a `nullptr` is returned.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns the value by reference
+ *  int* b        = variant_cast<int>(&var);
+ *  std::cout << "a valid: " << a != nullptr << std::endl;  // prints "1"
+ *  std::cout << "b valid: " << b != nullptr << std::endl;  // prints "0"
+ * \endcode
+ *
+ * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
+ */
+template<class T>
+const T* variant_cast(const variant* operand) RTTR_NOEXCEPT;
+
+/*!
+ * \brief Returns a pointer to the containing value with type \p T.
+ *        When the containing value is of type \p T, a valid pointer to the type will be returned.
+ *        Otherwise a `nullptr` is returned.
+ *
+ * \code{.cpp}
+ *
+ *  variant var = std::string("hello world");
+ *  std:string* a = variant_cast<std::string>(&var);  // performs an internal type check and returns the value by reference
+ *  int* b        = variant_cast<int>(&var);
+ *  std::cout << "a valid: " << a != nullptr << std::endl;  // prints "1"
+ *  std::cout << "b valid: " << b != nullptr << std::endl;  // prints "0"
+ * \endcode
+ *
+ * \return A valid pointer, when the containing type is of type \p T; otherwise a `nullptr`.
+ */
+template<class T>
+T* variant_cast(variant* operand) RTTR_NOEXCEPT;
 
 } // end namespace rttr
 

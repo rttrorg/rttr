@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -40,6 +40,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace rttr
 {
@@ -72,19 +73,19 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    type register_type(type_data* info) RTTR_NOEXCEPT;
+    type_data* register_type(type_data* info) RTTR_NOEXCEPT;
     void unregister_type(type_data* info) RTTR_NOEXCEPT;
 
-    void register_constructor(const constructor_wrapper_base* ctor);
-    void register_destructor(const destructor_wrapper_base* dtor);
+    bool register_constructor(const constructor_wrapper_base* ctor);
+    bool register_destructor(const destructor_wrapper_base* dtor);
 
-    void register_property(const property_wrapper_base* prop);
-    void register_global_property(const property_wrapper_base* prop);
-    void unregister_global_property(const property_wrapper_base* prop);
+    bool register_property(const property_wrapper_base* prop);
+    bool register_global_property(const property_wrapper_base* prop);
+    bool unregister_global_property(const property_wrapper_base* prop);
 
-    void register_method(const method_wrapper_base* meth);
-    void register_global_method(const method_wrapper_base* meth);
-    void unregister_global_method(const method_wrapper_base* meth);
+    bool register_method(const method_wrapper_base* meth);
+    bool register_global_method(const method_wrapper_base* meth);
+    bool unregister_global_method(const method_wrapper_base* meth);
 
     void register_custom_name(type& t, string_view custom_name);
 
@@ -106,14 +107,14 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////////////
 
-    void register_converter(const type_converter_base* converter);
-    void unregister_converter(const type_converter_base* converter);
+    bool register_converter(const type_converter_base* converter);
+    bool unregister_converter(const type_converter_base* converter);
 
-    void register_equal_comparator(const type_comparator_base* comparator);
-    void unregister_equal_comparator(const type_comparator_base* converter);
+    bool register_equal_comparator(const type_comparator_base* comparator);
+    bool unregister_equal_comparator(const type_comparator_base* converter);
 
-    void register_less_than_comparator(const type_comparator_base* comparator);
-    void unregister_less_than_comparator(const type_comparator_base* converter);
+    bool register_less_than_comparator(const type_comparator_base* comparator);
+    bool unregister_less_than_comparator(const type_comparator_base* converter);
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +131,7 @@ public:
 
 private:
     type_register_private();
-    ~type_register_private() = default;
+    ~type_register_private();
 
     template<typename T, typename Data_Type = conditional_t<std::is_pointer<T>::value, T, std::unique_ptr<T>>>
     struct data_container
@@ -170,29 +171,12 @@ private:
         Data_Type       m_data;
     };
 
-    /*! A helper class to register the registration managers.
-     * This class is needed in order to avoid that the registration_manager instance's
-     * are trying to deregister its content, although the RTTR library is already unloaded.
-     * So every registration manager class holds a flag whether it should deregister itself or not.
-     */
-    struct registration_reg_manager
-    {
-        ~registration_reg_manager()
-        {
-            // when this dtor is running, it means, that RTTR library will be unloaded
-            for (auto& manager : m_manager_list)
-                manager->set_disable_unregister();
-        }
-        std::set<registration_manager*> m_manager_list;
-    };
-
-    static void register_comparator_impl(const type& t, const type_comparator_base* comparator,
+    static bool register_comparator_impl(const type& t, const type_comparator_base* comparator,
                                          std::vector<data_container<const type_comparator_base*>>& comparator_list);
     static const type_comparator_base* get_type_comparator_impl(const type& t,
                                                                 const std::vector<data_container<const type_comparator_base*>>& comparator_list);
 
     static ::rttr::property get_type_property(const type& t, string_view name);
-    static ::rttr::method get_type_method(const type& t, string_view name);
     static ::rttr::method get_type_method(const type& t, string_view name,
                                           const std::vector<type>& type_list);
 
@@ -201,7 +185,7 @@ private:
 
     static std::string derive_name(const type& t);
     //! Returns true, when the name was already registered
-    type register_name_if_neccessary(type_data* info);
+    type_data* register_name_if_neccessary(type_data* info);
     static void register_base_class_info(type_data* info);
     /*!
      * \brief This will create the derived name of a template instance, with all the custom names of a template parameter.
@@ -216,7 +200,18 @@ private:
      */
     void update_custom_name(std::string new_name, const type& t);
 
-    registration_reg_manager                                    m_registration_reg_manager;
+    //! This will remove from all base classes the derived types (e.g. because of type unloaded)
+    void remove_derived_types_from_base_classes(type& t, const std::vector<type>& base_types);
+
+    //! This will remove from all derived classes the base types (e.g. because of type unloaded)
+    void remove_base_types_from_derived_classes(type& t, const std::vector<type>& derived_types);
+
+    /*! A helper class to register the registration managers.
+     * This class is needed in order to avoid that the registration_manager instance's
+     * are trying to deregister its content, although the RTTR library is already unloaded.
+     * So every registration manager class holds a flag whether it should deregister itself or not.
+     */
+    std::set<registration_manager*>                             m_registration_manager_list;
 
     flat_map<std::string, type, hash>                           m_custom_name_to_id;
     flat_map<string_view, type>                                 m_orig_name_to_id;
@@ -231,6 +226,8 @@ private:
     std::vector<data_container<const type_converter_base*>>     m_type_converter_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
+
+    std::mutex                                                  m_mutex;
 };
 
 } // end namespace detail

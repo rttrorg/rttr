@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -51,7 +51,7 @@ using variant_create_func = variant(*)(const argument&);
  * Template arguments cannot be forwarded at runtime to some derived or base classes.
  */
 template<typename T>
-struct create_variant_policy
+struct RTTR_LOCAL create_variant_policy
 {
     static variant create_variant(const argument& data)
     {
@@ -59,7 +59,7 @@ struct create_variant_policy
     }
 };
 
-struct create_invalid_variant_policy
+struct RTTR_LOCAL create_invalid_variant_policy
 {
     static variant create_variant(const argument& data)
     {

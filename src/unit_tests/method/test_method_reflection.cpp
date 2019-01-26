@@ -1,6 +1,6 @@
 /************************************************************************************
 *                                                                                   *
-*   Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     *
+*   Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           *
 *                                                                                   *
 *   This file is part of RTTR (Run Time Type Reflection)                            *
 *   License: MIT License                                                            *
@@ -99,12 +99,15 @@ RTTR_REGISTRATION
         .method("method_1", &method_test::method_1)
         .method("method_2", &method_test::method_2)
         .method("method_3", &method_test::method_3)
-        .method("method_4", &method_test::method_4)
 #if RTTR_COMPILER == RTTR_COMPILER_MSVC && RTTR_ARCH_TYPE == RTTR_ARCH_32
+        .method("method_4", static_cast<void(method_test::*)(std::string&)>(&method_test::method_4))
+        .method("method_4", static_cast<void(method_test::*)(std::string&) const>(&method_test::method_4))
         .method("method_5", static_cast<int(method_test::*)(double*)>(&method_test::method_5))
         .method("method_5", static_cast<int(method_test::*)(int, double)>(&method_test::method_5))
         .method("method_5", static_cast<int(method_test::*)(int, double) const>(&method_test::method_5))
 #else
+        .method("method_4", select_non_const(&method_test::method_4))
+        .method("method_4", select_const(&method_test::method_4))
         .method("method_5", select_overload<int(double*)>(&method_test::method_5))
         .method("method_5", select_overload<int(int, double)>(&method_test::method_5))
         .method("method_5", select_const(&method_test::method_5))
@@ -157,7 +160,11 @@ RTTR_REGISTRATION
         .method("get_global_string_void", &get_global_string)
         (
             policy::meth::discard_return
-        );
+        )
+        ;
+
+    // register same method again, should not register anything
+    registration::method("get_global_string_void", &get_global_string);
 
     // the class 'derive_registered' has a base class 'base_not_registered'
     // which is not registered explictely via rttr, however the base-derived relationship

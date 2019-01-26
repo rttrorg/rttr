@@ -1,6 +1,6 @@
 ####################################################################################
 #                                                                                  #
-#  Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>                     #
+#  Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>                           #
 #                                                                                  #
 #  This file is part of RTTR (Run Time Type Reflection)                            #
 #  License: MIT License                                                            #
@@ -25,13 +25,18 @@
 #                                                                                  #
 ####################################################################################
 
+add_subdirectory(base_library)
+
+set(HPP_FILES "")
+set(SRC_FILES "")
+
 project(unit_tests LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
 message(STATUS "===========================")
 
 generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RTTR_VERSION_PATCH}
-                                "RTTR unit_tests" "Copyright (c) 2014, 2015 - 2017 Axel Menzel <info@rttr.org>" "MIT License")
+                                "RTTR unit_tests" "Copyright (c) 2014 - 2018 Axel Menzel <info@rttr.org>" "MIT License")
 
 loadFolder("unit_tests" HPP_FILES SRC_FILES)
 
@@ -40,9 +45,10 @@ if (USE_PCH)
 endif()
 
 add_executable(unit_tests ${SRC_FILES} ${HPP_FILES})
-target_link_libraries(unit_tests RTTR::Core Catch2::Catch)
+target_link_libraries(unit_tests RTTR::Core unit_test_base Catch2::Catch)
 add_dependencies(unit_tests RTTR::Core)
 set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                                            FOLDER "Testing"
                                             INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 
@@ -57,7 +63,13 @@ add_custom_target(run_tests ALL
                   COMMAND "$<TARGET_FILE:unit_tests>"
                   DEPENDS unit_tests
                   COMMENT "Running unit_tests")
+                  
+set_target_properties(run_tests PROPERTIES 
+                                FOLDER "Testing")
 
+add_subdirectory(plugin)
+
+add_dependencies(unit_tests unit_test_plugin)
 
 message(STATUS "Scanning " ${PROJECT_NAME} " module finished!")
 message(STATUS "")
