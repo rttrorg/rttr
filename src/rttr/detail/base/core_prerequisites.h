@@ -337,6 +337,13 @@ namespace rttr
 #   pragma message("WARNING: unknown compiler, don't know how to disable deprecated warnings")
 #endif
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// Enable some C++17 Features
+/////////////////////////////////////////////////////////////////////////////////////////
+#if __cplusplus >= 201703L
+    #define RTTR_ENABLE_STD_STRING_VIEW
+#endif
+
 } // end namespace rttr
 
 #endif // RTTR_CORE_PREREQUISITES_H_
