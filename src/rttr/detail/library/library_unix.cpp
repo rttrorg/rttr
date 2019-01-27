@@ -93,7 +93,7 @@ static rttr::string_view get_error()
 {
     using namespace rttr;
     auto err = dlerror();
-    return err ? string_view(err): string_view();
+    return err ? rttr::string_view(err): rttr::string_view();
 }
 
 } // end namespace anonymous
