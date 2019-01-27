@@ -278,6 +278,9 @@ namespace rttr
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING
 #endif
 
+#   define RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+#   define RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+
 #   define RTTR_DECLARE_PLUGIN_CTOR       __attribute__((constructor))
 #   define RTTR_DECLARE_PLUGIN_DTOR       __attribute__((destructor))
 
