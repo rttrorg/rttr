@@ -154,10 +154,9 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
     {
         variant a;
 
-        #pragma clang diagnostic push 
-        #pragma clang diagnostic ignored "-Wself-assign-overloaded"
+        RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
         a = a;
-        #pragma clang diagnostic pop
+        RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
 
         CHECK(a.is_valid() == false);
     }
@@ -165,10 +164,11 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
     SECTION("self assign - full")
     {
         variant a = 1;
-        #pragma clang diagnostic push 
-        #pragma clang diagnostic ignored "-Wself-assign-overloaded"
+
+        RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
         a = a;
-        #pragma clang diagnostic pop
+        RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+
         CHECK(a.is_valid() == true);
     }
 }

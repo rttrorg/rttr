@@ -32,6 +32,7 @@
 #include "rttr/property.h"
 #include "rttr/type.h"
 #include <memory>
+#include <functional>
 
 namespace rttr
 {

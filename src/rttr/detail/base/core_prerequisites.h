@@ -316,6 +316,15 @@ namespace rttr
 #   define RTTR_DECLARE_PLUGIN_CTOR        __attribute__((__constructor__))
 #   define RTTR_DECLARE_PLUGIN_DTOR        __attribute__((__destructor__))
 
+#if defined(__has_warning) && __has_warning("-Wself-assign-overloaded")
+#       define RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING   _Pragma ("clang diagnostic push") \
+                                                                   _Pragma ("clang diagnostic ignored \"-Wself-assign-overloaded\"")
+#       define RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING     _Pragma ("clang diagnostic pop")
+#else
+#       define RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+#       define RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+#endif
+
 #elif RTTR_COMPILER == RTTR_COMPILER_MSVC
 #   define RTTR_BEGIN_DISABLE_DEPRECATED_WARNING        __pragma( warning( push )) \
                                                         __pragma( warning( disable: 4996))
@@ -332,7 +341,8 @@ namespace rttr
 #   define RTTR_DECLARE_PLUGIN_DTOR
 #   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING
-
+#   define RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
+#   define RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
 #else
 #   pragma message("WARNING: unknown compiler, don't know how to disable deprecated warnings")
 #endif
