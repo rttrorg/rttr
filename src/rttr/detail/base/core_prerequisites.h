@@ -353,8 +353,12 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Enable some C++17 Features
 /////////////////////////////////////////////////////////////////////////////////////////
-#if __cplusplus >= 201703L
-    #define RTTR_ENABLE_STD_STRING_VIEW
+#ifdef RTTR_USE_STD_STRING_VIEW
+    #if __cplusplus >= 201703L
+        #define RTTR_ENABLE_STD_STRING_VIEW
+    #else
+        #error "Linking with this library needs C++17, as std::string_view is required."
+    #endif
 #endif
 
 } // end namespace rttr

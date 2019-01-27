@@ -39,14 +39,22 @@ if (USE_PCH)
     activate_precompiled_headers("detail/base/pch.h" SRC_FILES)
 endif()
 
+# Determine the minium required standard.
+if (USE_LATEST_STD)
+    if (MAX_CXX_STANDARD GREATER_EQUAL 17)
+        list(APPEND COMPILE_DEFS "RTTR_USE_STD_STRING_VIEW")
+        set(MIN_CXX_STANDARD cxx_std_17)
+    endif ()
+else ()
+    set(MIN_CXX_STANDARD cxx_std_11) # at least c++11 is needed to compile RTTR
+endif ()
+
 if (${BUILD_RTTR_DYNAMIC})
     add_library(rttr_core SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
     add_library(RTTR::Core ALIAS rttr_core)
     
     target_compile_definitions(rttr_core PRIVATE RTTR_DLL_EXPORTS)
     target_compile_definitions(rttr_core PUBLIC RTTR_DLL)
-
-    
 
     set_target_properties(rttr_core PROPERTIES
                           VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
@@ -55,12 +63,14 @@ if (${BUILD_RTTR_DYNAMIC})
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           CXX_VISIBILITY_PRESET hidden
                           VISIBILITY_INLINES_HIDDEN 1)
-    
+
+    target_compile_definitions(rttr_core PUBLIC ${COMPILE_DEFS})
+
     target_link_libraries(rttr_core PRIVATE ${CMAKE_DL_LIBS})
                           
                           
     if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
-        target_compile_features(rttr_core PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+        target_compile_features(rttr_core PUBLIC ${MIN_CXX_STANDARD}) 
     endif()
                          
     target_include_directories(rttr_core PUBLIC
@@ -94,7 +104,9 @@ if (BUILD_STATIC)
                           EXPORT_NAME Core_Lib
                           CXX_STANDARD ${MAX_CXX_STANDARD}
                           DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX})
-                          
+
+    target_compile_definitions(rttr_core PUBLIC ${COMPILE_DEFS})
+
     target_link_libraries(rttr_core_lib PRIVATE ${CMAKE_DL_LIBS})
     
     if (MSVC)
@@ -138,6 +150,8 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
                                $<INSTALL_INTERFACE:include>)
+
+    target_compile_definitions(rttr_core PUBLIC ${COMPILE_DEFS})
 
     target_link_libraries(rttr_core_s PRIVATE ${CMAKE_DL_LIBS})
                                
