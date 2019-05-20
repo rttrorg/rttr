@@ -505,7 +505,7 @@ type_data* type_register_private::register_name_if_neccessary(type_data* info)
 
 void type_register_private::register_base_class_info(type_data* info)
 {
-    auto base_classes = info->get_base_types();
+    auto base_classes(info->get_base_types(true));
 
     // remove double entries; can only be happen for virtual inheritance case
     set<type> double_entries;
@@ -529,9 +529,9 @@ void type_register_private::register_base_class_info(type_data* info)
 
     if (!base_classes.empty())
     {
-        auto& class_data = info->m_class_data;
         for (const auto& t : base_classes)
         {
+            auto& class_data = info->m_class_data;
             class_data.m_base_types.push_back(t.m_base_type);
             class_data.m_conversion_list.push_back(t.m_rttr_cast_func);
 
@@ -546,7 +546,7 @@ void type_register_private::register_base_class_info(type_data* info)
 type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
 {
     // this will register the base types
-    info->get_base_types();
+    info->get_base_types(true);
 
     using namespace detail;
 

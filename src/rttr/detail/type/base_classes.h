@@ -82,7 +82,7 @@ struct RTTR_LOCAL type_from_base_classes;
 template<typename DerivedClass>
 struct RTTR_LOCAL type_from_base_classes<DerivedClass>
 {
-    static RTTR_INLINE void fill(info_container&)
+    static RTTR_INLINE void fill(info_container&, bool)
     {
     }
 };
@@ -105,15 +105,25 @@ static void* rttr_cast_impl(void* ptr)
 template<typename DerivedClass, typename BaseClass, typename... U>
 struct RTTR_LOCAL type_from_base_classes<DerivedClass, BaseClass, U...>
 {
-    static RTTR_INLINE void fill(info_container& vec)
+    static RTTR_INLINE void fill(info_container& vec, bool do_all_bases)
     {
         static_assert(has_base_class_list<BaseClass>::value, "The parent class has no base class list defined - please use the macro RTTR_ENABLE");
-        vec.emplace_back(type::get<BaseClass>(), &rttr_cast_impl<DerivedClass, BaseClass>);
-        // retrieve also the types of all base classes of the base classes; you will get an compile error here,
-        // when the base class has not defined the 'base_class_list' typedef
-        type_from_base_classes<DerivedClass, typename BaseClass::base_class_list>::fill(vec);
-        // continue with the rest
-        type_from_base_classes<DerivedClass, U...>::fill(vec);
+
+        // put away pair of "type" and cast to type
+        vec.emplace_back(
+                type::get<BaseClass>(),
+                &rttr_cast_impl<DerivedClass, BaseClass>
+                );
+
+        if ( do_all_bases ) {
+
+            // retrieve also the types of all base classes of the base classes; you will get an compile error here,
+            // when the base class has not defined the 'base_class_list' typedef
+            type_from_base_classes<DerivedClass, typename BaseClass::base_class_list>::fill(vec, do_all_bases);
+        }
+
+        // continue with the rest of the bases in struct
+        type_from_base_classes<DerivedClass, U...>::fill(vec, do_all_bases);
     }
 };
 
@@ -127,7 +137,7 @@ struct type_from_base_classes<DerivedClass, type_list<BaseClassList...>> : type_
 template<typename T, typename Enable = void>
 struct RTTR_LOCAL base_classes
 {
-    static RTTR_INLINE info_container get_types()
+    static RTTR_INLINE info_container get_types(bool)
     {
         info_container result;
         return result;
@@ -137,10 +147,10 @@ struct RTTR_LOCAL base_classes
 template<typename T>
 struct RTTR_LOCAL base_classes<T, typename std::enable_if<has_base_class_list<T>::value>::type>
 {
-    static RTTR_INLINE info_container get_types()
+    static RTTR_INLINE info_container get_types(bool do_all_bases)
     {
         info_container result;
-        type_from_base_classes<T, typename T::base_class_list>::fill(result);
+        type_from_base_classes<T, typename T::base_class_list>::fill(result, do_all_bases);
         return result;
     }
 };
