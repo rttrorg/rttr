@@ -77,6 +77,7 @@ struct RTTR_LOCAL class_data
 
     get_derived_info_func       m_derived_info_func;
     std::vector<type>           m_base_types;
+    std::vector<type>           m_direct_base_types;
     std::vector<type>           m_derived_types;
     std::vector<rttr_cast_func> m_conversion_list;
     std::vector<property>       m_properties;

@@ -115,7 +115,7 @@ template<typename Class_Type, typename Visitor_List>
 registration::class_<Class_Type, Visitor_List>::~class_()
 {
     // make sure that all base classes are registered
-    detail::base_classes<Class_Type>::get_types();
+    detail::base_classes<Class_Type>::get_types(true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
