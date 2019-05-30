@@ -74,10 +74,25 @@ struct associative_container_mapper_wrapper : iterator_wrapper_base<Tp>
 
     template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value, int> = 0>
     static variant
+    get_value(iterator_data& itr)
+    {
+        auto& it = itr_wrapper::get_iterator(itr);
+        return variant(std::ref(base_class::get_value(it)));
+    }
+
+    template<typename..., typename V = value_t, enable_if_t<!std::is_void<V>::value, int> = 0>
+    static variant
     get_value(const iterator_data& itr)
     {
         auto& it = itr_wrapper::get_iterator(itr);
         return variant(std::ref(base_class::get_value(it)));
+    }
+
+    template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value, int> = 0>
+    static variant
+    get_value(iterator_data& itr)
+    {
+        return variant();
     }
 
     template<typename..., typename V = value_t, enable_if_t<std::is_void<V>::value, int> = 0>
@@ -474,6 +489,11 @@ struct associative_container_empty
     }
 
     static variant get_key(const iterator_data& itr)
+    {
+        return variant();
+    }
+
+    static variant get_value(iterator_data& itr)
     {
         return variant();
     }

@@ -92,6 +92,7 @@ namespace rttr
 class RTTR_API variant_associative_view
 {
     public:
+        class iterator;
         class const_iterator;
 
         /*!
@@ -217,7 +218,14 @@ class RTTR_API variant_associative_view
          *
          * \return The element with key equivalent to \p key. If no element is found an invalid iterator is returned.
          */
-        const_iterator find(argument key);
+        iterator find(argument key);
+
+        /*!
+         * \brief Finds an element with specific key \p key .
+         *
+         * \return The element with key equivalent to \p key. If no element is found an invalid iterator is returned.
+         */
+        const_iterator find(argument key) const;
 
         /*!
          * \brief Removes the element (if one exists) with the key equivalent to \p key.
@@ -276,6 +284,15 @@ class RTTR_API variant_associative_view
          *
          * \return Iterator to the first element .
          */
+        iterator begin();
+
+        /*!
+         * \brief Returns a const_iterator to the first element of the container.
+         *
+         * \see end()
+         *
+         * \return Iterator to the first element .
+         */
         const_iterator begin() const;
 
         /*!
@@ -285,7 +302,143 @@ class RTTR_API variant_associative_view
          *
          * \return Iterator to the element following the last element.
          */
+        iterator end();
+
+        /*!
+         * \brief Returns a const_iterator to the element following the last element of the container.
+         *
+         * \see begin()
+         *
+         * \return Iterator to the element following the last element.
+         */
         const_iterator end() const;
+
+        /*!
+         * The \ref variant_associative_view::iterator allows iteration over an associative container in a variant.
+         * An instance can only be created by a non-const variant_associative_view.
+         * 
+         * \see variant_associative_view::const_iterator
+         */
+        class RTTR_API iterator
+        {
+            public:
+                using self_type = iterator;
+                using value_type = variant;
+
+                /*!
+                 * \brief Destroys the variant_associative_view::iterator
+                 */
+                ~iterator();
+
+                /*!
+                 * \brief Creates a copy of \p other
+                 */
+                iterator(const iterator& other);
+
+                 /*!
+                 * \brief Assigns \p other to `this`.
+                 */
+                iterator& operator=(iterator other);
+
+                /*!
+                 * Returns the underlying key and value stored in a `std::pair<key, value>`.
+                 * The actual data in the variant is stored inside a `std::reference_wrapper<T>`
+                 *
+                 * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
+                 */
+                std::pair<variant, variant> operator*();
+
+                /*!
+                 * \brief Returns the current key, stored inside a `std::reference_wrapper<T>`
+                 *        and copied to a variant.
+                 *
+                 * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
+                 */
+                const variant get_key() const;
+
+                /*!
+                 * \brief Returns the current value, stored inside a `std::reference_wrapper<T>`
+                 *        and copied to a variant.
+                 *
+                 * \see variant::extract_wrapped_value(), variant::get_wrapped_value<T>()
+                 */
+                variant get_value();
+
+                /*!
+                 * \brief Pre-increment operator advances the iterator to the next item
+                 *        in the container and returns an iterator to the new current item.
+                 *
+                 * \remark Calling this function on and iterator with value variant_associative_view::end()
+                 *         leads to undefined behaviour.
+                 */
+                iterator &operator++();
+
+                /*!
+                 * \brief Post-increment operator advances the iterator to the next item
+                 *        in the container and returns an iterator to the previously current item.
+                 */
+                iterator operator++(int);
+
+                /*!
+                 * \brief Pre-decrement operator makes the preceding item current and returns
+                 *        an iterator to the new current item.
+                 *
+                 * \remark Calling this function on and iterator with value variant_associative_view::begin()
+                 *         leads to undefined behaviour.
+                 */
+                iterator &operator--();
+
+                /*!
+                 * \brief Post-decrement operator makes the preceding item current
+                 *        and returns an iterator to the previously current item.
+                 */
+                iterator operator--(int);
+
+                /*!
+                 * \brief Advances the iterator by i items.
+                 */
+                iterator &operator+=(int i);
+
+                /*!
+                 * \brief Returns an iterator to the item at i positions backward from this iterator.
+                 */
+                iterator &operator-=(int i);
+
+                /*!
+                 * \brief Returns an iterator to the item at i positions forward from this iterator.
+                 */
+                iterator operator+(int i) const;
+
+                /*!
+                 * \brief Returns an iterator to the item at i positions backward from this iterator.
+                 */
+                iterator operator-(int i) const;
+
+                /*!
+                 * \brief Returns `true` if \p other points to the same item
+                 *        as this iterator; otherwise returns false.
+                 *
+                 * \see \ref iterator::operator!= "operator!="
+                 */
+                bool operator==(const iterator& other) const;
+
+                /*!
+                 * \brief Returns true if \p other points to a different item
+                 *        than this iterator; otherwise returns false.
+                 *
+                 * \see \ref operator== "operator=="
+                 */
+                bool operator!=(const iterator& other) const;
+
+            private:
+                iterator(detail::variant_associative_view_private* view) RTTR_NOEXCEPT;
+                void swap(iterator& other);
+
+                friend class variant_associative_view;
+
+                detail::variant_associative_view_private* m_view;
+                detail::iterator_data m_itr;
+        };
 
         /*!
          * The \ref variant_associative_view::const_iterator allows iteration over an associative container in a variant.
