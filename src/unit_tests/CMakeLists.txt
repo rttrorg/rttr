@@ -53,7 +53,7 @@ set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 
 set_compiler_warnings(unit_tests)
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0.1)
     target_compile_options(unit_tests PRIVATE -Wno-error=self-assign-overloaded)
 endif()
 
