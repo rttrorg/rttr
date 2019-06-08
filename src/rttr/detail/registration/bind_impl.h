@@ -295,7 +295,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level, Visitor_Li
                                                    std::move(get_metadata(std::forward<Args>(args)...)),
                                                    std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
                                                    std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)));
-            return std::move(ctor);
+            return ctor;
         }
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, F func)
@@ -678,7 +678,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level, Visitor_List> :
                                                                      std::move(get_metadata(std::forward<Args>(args)...)),
                                                                      std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
                                                                      std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)) );
-            return std::move(meth);
+            return meth;
         }
 
         template<typename Policy, std::size_t Metadata_Count, typename...TArgs, typename...Param_Args>
