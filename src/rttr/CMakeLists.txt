@@ -128,50 +128,52 @@ if (BUILD_STATIC)
 endif()
 
 if (BUILD_WITH_STATIC_RUNTIME_LIBS)
-    add_library(rttr_core_s SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
-    add_library(RTTR::Core_STL ALIAS rttr_core_s)
-    
-    target_compile_definitions(rttr_core_s PRIVATE RTTR_DLL_EXPORTS)
-    target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
+    if (${BUILD_RTTR_DYNAMIC})
+        add_library(rttr_core_s SHARED ${UnityBuild} ${SRC_FILES} ${HPP_FILES})
+        add_library(RTTR::Core_STL ALIAS rttr_core_s)
+        
+        target_compile_definitions(rttr_core_s PRIVATE RTTR_DLL_EXPORTS)
+        target_compile_definitions(rttr_core_s PUBLIC RTTR_DLL)
 
-    target_include_directories(rttr_core_s PUBLIC
-                               $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-                               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
-                               $<INSTALL_INTERFACE:include>)
+        target_include_directories(rttr_core_s PUBLIC
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+                                   $<INSTALL_INTERFACE:include>)
 
-    target_link_libraries(rttr_core_s PRIVATE ${CMAKE_DL_LIBS})
-                               
-    set_target_properties(rttr_core_s PROPERTIES
-                          VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
-                          EXPORT_NAME Core_STL
-                          CXX_STANDARD ${MAX_CXX_STANDARD}
-                          DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
-                          CXX_VISIBILITY_PRESET hidden
-                          VISIBILITY_INLINES_HIDDEN 1)
+        target_link_libraries(rttr_core_s PRIVATE ${CMAKE_DL_LIBS})
+                                   
+        set_target_properties(rttr_core_s PROPERTIES
+                              VERSION ${RTTR_VERSION} SOVERSION ${RTTR_VERSION}
+                              EXPORT_NAME Core_STL
+                              CXX_STANDARD ${MAX_CXX_STANDARD}
+                              DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
+                              CXX_VISIBILITY_PRESET hidden
+                              VISIBILITY_INLINES_HIDDEN 1)
 
-    if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
-        target_compile_features(rttr_core_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
-    endif()
-    
-    set_compiler_warnings(rttr_core_s)
+        if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+            target_compile_features(rttr_core_s PUBLIC cxx_std_11) # at least c++11 is needed to compile RTTR
+        endif()
+        
+        set_compiler_warnings(rttr_core_s)
 
-    if (MSVC)
-        target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
-    elseif(CMAKE_COMPILER_IS_GNUCXX)
-        set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS ${GNU_STATIC_LINKER_FLAGS})
-    elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS})
-    else()
-        message(SEND_ERROR "Do not know how to statically link against the standard library with this compiler.")
-    endif()
+        if (MSVC)
+            target_compile_options(rttr_core_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
+        elseif(CMAKE_COMPILER_IS_GNUCXX)
+            set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS ${GNU_STATIC_LINKER_FLAGS})
+        elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set_target_properties(rttr_core_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS})
+        else()
+            message(SEND_ERROR "Do not know how to statically link against the standard library with this compiler.")
+        endif()
 
-    if (BUILD_INSTALLER)
-        install_pdb_files(rttr_core_s)
-        install(TARGETS rttr_core_s EXPORT rttr_targets
-                RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
-                LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
-                ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
-                FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
+        if (BUILD_INSTALLER)
+            install_pdb_files(rttr_core_s)
+            install(TARGETS rttr_core_s EXPORT rttr_targets
+                    RUNTIME       DESTINATION ${RTTR_RUNTIME_INSTALL_DIR}
+                    LIBRARY       DESTINATION ${RTTR_LIBRARY_INSTALL_DIR}
+                    ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
+                    FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
+        endif()
     endif()
     
     if (BUILD_STATIC)
