@@ -165,7 +165,7 @@ function(loadFolder FOLDER _HEADER_FILES _SOURCE_FILES)
     getNameOfDir(CMAKE_CURRENT_SOURCE_DIR DIRNAME)
     if (${shouldInstall})
       if (NOT ${FULL_HEADER_PATH} MATCHES ".*_p.h$") # we don't want to install header files which are marked as private
-        install(FILES ${FULL_HEADER_PATH} DESTINATION "include/${DIRNAME}/${REL_PATH}" PERMISSIONS OWNER_READ)
+        install(FILES ${FULL_HEADER_PATH} DESTINATION "include/${DIRNAME}/${REL_PATH}" PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
       endif()
     endif()
   endforeach()
