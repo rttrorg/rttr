@@ -38,7 +38,7 @@ generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RT
 
 loadFolder("files" HPP_FILES SRC_FILES)
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
@@ -48,7 +48,7 @@ target_compile_definitions(unit_test_base PRIVATE RTTR_DLL_EXPORTS)
 target_compile_definitions(unit_test_base PUBLIC RTTR_DLL)
 
 target_link_libraries(unit_test_base RTTR::Core)
-set_target_properties(unit_test_base PROPERTIES 
+set_target_properties(unit_test_base PROPERTIES
                                      DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                      FOLDER "Testing")
 

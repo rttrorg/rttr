@@ -34,7 +34,7 @@ MESSAGE(STATUS ${LIBRARY_OUTPUT_DIRECTORY})
 MESSAGE(STATUS "Finding 3rd party libs...")
 MESSAGE(STATUS "===========================")
 
-if (BUILD_BENCHMARKS)
+if (RTTR_BUILD_BENCHMARKS)
     if (MSVC)
         # there is a the moment a problem with finding multiple versions of boost,
         # i.e. the static AND the static runtime version; that is not possible atm.
@@ -49,7 +49,7 @@ if (BUILD_BENCHMARKS)
     endif()
 endif()
 
-if (BUILD_BENCHMARKS OR BUILD_EXAMPLES)
+if (RTTR_BUILD_BENCHMARKS OR RTTR_BUILD_EXAMPLES)
     find_package(Threads REQUIRED)
 endif()
 

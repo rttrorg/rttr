@@ -35,14 +35,14 @@ generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RT
 
 loadFolder("files" HPP_FILES SRC_FILES)
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
 add_executable(json_example ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(json_example RTTR::Core)
 target_include_directories(json_example PUBLIC ${RAPID_JSON_DIR})
-set_target_properties(json_example PROPERTIES 
+set_target_properties(json_example PROPERTIES
                       DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                       FOLDER "Examples"
                       INSTALL_RPATH "${RTTR_EXECUTABLE_INSTALL_RPATH}"

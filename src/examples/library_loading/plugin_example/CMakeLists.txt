@@ -35,13 +35,13 @@ generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RT
 
 loadFolder("files" HPP_FILES SRC_FILES)
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
 add_library(plugin_example SHARED ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(plugin_example RTTR::Core)
-set_target_properties(plugin_example PROPERTIES 
+set_target_properties(plugin_example PROPERTIES
                       DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                       FOLDER "Examples/library_loading"
                       CXX_STANDARD ${MAX_CXX_STANDARD})
