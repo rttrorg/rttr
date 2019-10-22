@@ -269,15 +269,6 @@ basic_string_view<CharT, Traits>::operator std::basic_string<CharT, Traits, Allo
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename CharT, typename Traits>
-template<typename Allocator>
-std::basic_string<CharT, Traits> basic_string_view<CharT, Traits>::to_string(const Allocator& a) const
-{
-    return std::basic_string<CharT, Traits, Allocator>(begin(), end(), a);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-template<typename CharT, typename Traits>
 RTTR_CXX14_CONSTEXPR int basic_string_view<CharT, Traits>::compare(basic_string_view v) const RTTR_NOEXCEPT
 {
     const int cmp = traits_type::compare(m_data, v.m_data, (std::min)(m_size, v.m_size));
@@ -586,14 +577,14 @@ template<typename CharT, typename Traits>
 RTTR_INLINE std::basic_string<CharT, Traits> operator+(basic_string_view<CharT, Traits> lhs,
                                                        const std::basic_string<CharT, Traits>& rhs)
 {
-    return (lhs.to_string() + rhs);
+    return (std::string(lhs) + rhs);
 }
 
 template<typename CharT, typename Traits>
 RTTR_INLINE std::basic_string<CharT, Traits> operator+(const std::basic_string<CharT, Traits>& lhs,
                                                        basic_string_view<CharT, Traits> rhs)
 {
-    return (lhs + rhs.to_string());
+    return (lhs + std::string(rhs));
 }
 
 template<typename CharT, typename Traits>

@@ -30,13 +30,22 @@
 #define RTTR_STRING_VIEW_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-
 #include <string>
-#include <ostream>
+
+#ifdef RTTR_ENABLE_STD_STRING_VIEW
+
+#include <string_view>
+namespace rttr
+{
+    template<typename... T>
+    using basic_string_view = std::basic_string_view<T...>;
+    using string_view = basic_string_view<char>;
+}
+
+#else
 
 namespace rttr
 {
-
 /*!
  * The class template \ref basic_string_view describes an non-owning reference to a
  * constant contiguous sequence of char-like objects.
@@ -246,14 +255,6 @@ class basic_string_view
          */
         template<typename Allocator>
         explicit operator std::basic_string<CharT, Traits, Allocator>() const;
-
-        /*!
-         * \brief Creates a `basic_string` with a copy of the content of the current view.
-         *
-         * \return A `basic_string` containing a copy of the characters of the current view.
-         */
-        template<typename Allocator = std::allocator<CharT> >
-        std::basic_string<CharT, Traits> to_string(const Allocator& a = Allocator()) const;
 
         /*!
          * \brief The function compares the two views by calling `Traits::compare(data(), v.data(), length)`,
@@ -497,4 +498,5 @@ using string_view = basic_string_view<char>;
 
 #include "rttr/detail/impl/string_view_impl.h"
 
+#endif // RTTR_ENABLE_STD_STRING_VIEW
 #endif // RTTR_STRING_VIEW_H_

@@ -37,6 +37,8 @@
 #include <dlfcn.h>
 #include <cstdio>
 
+using namespace std;
+
 namespace
 {
 
@@ -91,7 +93,7 @@ static rttr::string_view get_error()
 {
     using namespace rttr;
     auto err = dlerror();
-    return err ? string_view(err): string_view();
+    return err ? rttr::string_view(err): rttr::string_view();
 }
 
 } // end namespace anonymous
@@ -146,7 +148,7 @@ bool library_private::load_native()
 
     if (!m_handle)
     {
-        m_error_string = "Cannot load library " + m_file_name + " " + get_error();
+        m_error_string = "Cannot load library " + m_file_name + " " + string(get_error());
     }
     else
     {
@@ -163,7 +165,7 @@ bool library_private::unload_native()
 {
     if (dlclose(m_handle))
     {
-         m_error_string = "Cannot unload library: '" + m_file_name + "'" +  get_error();
+         m_error_string = "Cannot unload library: '" + m_file_name + "'" + string(get_error());
          return false;
     }
 

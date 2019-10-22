@@ -60,6 +60,7 @@ option(BUILD_PACKAGE "Enable this to build the installer" ON)
 option(USE_PCH "Use precompiled header files for compilation" ON)
 option(CUSTOM_DOXYGEN_STYLE "Enable this option to use a custom doxygen style for HTML documentation; Otherwise the default will be used" ON)
 option(BUILD_WEBSITE_DOCU "Enable this option to create the special docu for the website" OFF)
+option(USE_LATEST_STD "Build the library using the latest std-library fetures and making it probably not backward compatible." OFF)
 
 # one precompiled headers cannot be used for multiple ninja targets
 # thats why we have to disable this option, when BUILD_STATIC or

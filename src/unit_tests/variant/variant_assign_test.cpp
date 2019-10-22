@@ -153,7 +153,10 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
     SECTION("self assign - empty")
     {
         variant a;
+
+        RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
         a = a;
+        RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
 
         CHECK(a.is_valid() == false);
     }
@@ -161,7 +164,10 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
     SECTION("self assign - full")
     {
         variant a = 1;
+
+        RTTR_BEGIN_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
         a = a;
+        RTTR_END_DISABLE_SELF_ASSIGN_OVERLOADED_WARNING
 
         CHECK(a.is_valid() == true);
     }
