@@ -40,7 +40,7 @@ env:
 matrix:
   include:
     
-     # check code formatting
+    # check code formatting
     - os: linux
       compiler: gcc
       env: NAME="check code formatting" CHECK_FORMATTING=true
@@ -147,6 +147,22 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-7', 'libboost-all-dev', 'ninja-build']
       env: NAME="g++-7" COMPILER=g++-7 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+      
+    - os: linux
+      compiler: gcc
+      addons:
+          apt:
+              sources: ['ubuntu-toolchain-r-test']
+              packages: ['g++-8', 'libboost-all-dev', 'ninja-build']
+      env: NAME="g++-8" COMPILER=g++-8 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
+
+    - os: linux
+      compiler: gcc
+      addons:
+          apt:
+              sources: ['ubuntu-toolchain-r-test']
+              packages: ['g++-9', 'libboost-all-dev', 'ninja-build']
+      env: NAME="g++-9" COMPILER=g++-9 ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=true
     
     # Linux / CLang
     - os: linux
@@ -198,6 +214,41 @@ matrix:
       env: COMPILER=clang++-5.0 ARCH=x86_64 CONF=Release UNIT_TESTS=true
 
     # OSX/Clang
+    - os: osx
+      osx_image: xcode10.2
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode10.1
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode10
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode9.4
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode9.4
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode9.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
+    - os: osx
+      osx_image: xcode9.3
+      compiler: clang
+      env: COMPILER=clang++ ARCH=x86_64 CONF=Release UNIT_TESTS=true BUILD_BENCHMARKS=false BUILD_EXAMPLES=true
+
     - os: osx
       osx_image: xcode9.2
       compiler: clang

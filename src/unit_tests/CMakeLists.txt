@@ -30,6 +30,7 @@ add_subdirectory(base_library)
 set(HPP_FILES "")
 set(SRC_FILES "")
 
+cmake_policy(SET CMP0025 NEW)
 project(unit_tests LANGUAGES CXX)
 
 message(STATUS "Scanning "  ${PROJECT_NAME} " module.")
@@ -53,6 +54,20 @@ set_target_properties(unit_tests PROPERTIES DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                             CXX_STANDARD ${MAX_CXX_STANDARD})
 
 set_compiler_warnings(unit_tests)
+
+message("CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message("CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+message("XCODE_VERSION: ${XCODE_VERSION}")
+
+if ((CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "10.0.1.10010046")
+    OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "6.0.1")
+    OR (XCODE AND XCODE_VERSION VERSION_GREATER "10.1"))
+        target_compile_options(unit_tests PRIVATE -Wno-error=self-assign-overloaded)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.1.0")
+    target_compile_options(unit_tests PRIVATE -Wno-error=init-list-lifetime)
+endif()
 
 if (MSVC)
     target_compile_options(unit_tests PRIVATE /bigobj) 
