@@ -295,7 +295,7 @@ class registration::bind<detail::ctor_func, Class_Type, F, acc_level, Visitor_Li
                                                    std::move(get_metadata(std::forward<Args>(args)...)),
                                                    std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
                                                    std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)));
-            return std::move(ctor);
+            return ctor;
         }
     public:
         bind(const std::shared_ptr<detail::registration_executer>& reg_exec, F func)
@@ -397,7 +397,7 @@ class registration::bind<detail::prop, Class_Type, A, acc_level, Visitor_List> :
                                                              getter_policy, setter_policy,
                                                              Metadata_Count,
                                                              Visitor_List>>(name, acc, std::move(metadata_list));
-            return std::move(prop);
+            return prop;
         }
 
     public:
@@ -491,7 +491,7 @@ class registration::bind<detail::prop, Class_Type, A1, A2, acc_level, Visitor_Li
                                                              Metadata_Count, Visitor_List
                                                             >
                                             >(name, getter, setter, std::move(metadata_list));
-            return std::move(prop);
+            return prop;
         }
 
     public:
@@ -583,7 +583,7 @@ class registration::bind<detail::prop_readonly, Class_Type, A, acc_level, Visito
                                                             >
                                            >(name, acc, std::move(metadata_list));
 
-            return std::move(prop);
+            return prop;
         }
 
     public:
@@ -678,7 +678,7 @@ class registration::bind<detail::meth, Class_Type, F, acc_level, Visitor_List> :
                                                                      std::move(get_metadata(std::forward<Args>(args)...)),
                                                                      std::move(get_default_args<type_list<Acc_Func>, function_type>(std::forward<Args>(args)...)),
                                                                      std::move(create_param_infos<type_list<F>, function_type>(std::forward<Args>(args)...)) );
-            return std::move(meth);
+            return meth;
         }
 
         template<typename Policy, std::size_t Metadata_Count, typename...TArgs, typename...Param_Args>
@@ -791,7 +791,7 @@ class registration::bind<detail::enum_, Class_Type, Enum_Type> : public registra
                                                                                                 std::move(get_metadata(std::forward<Args>(args)...)));
 
 
-            return std::move(enum_wrapper);
+            return enum_wrapper;
         }
 
     public:
