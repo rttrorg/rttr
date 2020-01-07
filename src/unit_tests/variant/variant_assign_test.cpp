@@ -150,6 +150,11 @@ TEST_CASE("move assignment", "[variant]")
 
 TEST_CASE("variant::operator=() - self assignment", "[variant]")
 {
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG || RTTR_COMPILER == RTTR_COMPILER_APPLECLANG
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wself-assign"
+#endif
+
     SECTION("self assign - empty")
     {
         variant a;
@@ -165,6 +170,10 @@ TEST_CASE("variant::operator=() - self assignment", "[variant]")
 
         CHECK(a.is_valid() == true);
     }
+
+#if RTTR_COMPILER == RTTR_COMPILER_CLANG || RTTR_COMPILER == RTTR_COMPILER_APPLECLANG
+    #pragma clang diagnostic pop
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
