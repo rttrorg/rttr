@@ -50,7 +50,9 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
         {
             static_assert(function_traits<Getter>::arg_count == 0, "Invalid number of argument, please provide a getter-member-function without arguments.");
             static_assert(function_traits<Setter>::arg_count == 1, "Invalid number of argument, please provide a setter-member-function with exactly one argument.");
-            static_assert(std::is_same<return_type, arg_type>::value, "Please provide the same signature for getter and setter!");
+            static_assert(std::is_same<typename std::remove_const<typename std::remove_volatile<typename std::remove_reference<return_type>::type>::type>::type,
+                                       typename std::remove_const<typename std::remove_volatile<typename std::remove_reference<arg_type>::type>::type>::type>::value,
+                                       "Please provide the same signature for getter and setter!");
 
             init();
         }
