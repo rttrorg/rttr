@@ -36,8 +36,8 @@ set(RTTR_PRODUCT_NAME "RTTR")
 message("Project version: ${RTTR_VERSION_STR}")
 
 # files
-set(README_FILE "${CMAKE_SOURCE_DIR}/README.md")
-set(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE.txt")
+set(README_FILE "${PROJECT_SOURCE_DIR}/README.md")
+set(LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE.txt")
 
 # dirs where the binaries should be placed, installed
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
@@ -54,7 +54,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #3rd part dependencies dirs
-set(RTTR_3RD_PARTY_DIR "${CMAKE_SOURCE_DIR}/3rd_party")
+set(RTTR_3RD_PARTY_DIR "${PROJECT_SOURCE_DIR}/3rd_party")
 
 getNameOfDir(CMAKE_LIBRARY_OUTPUT_DIRECTORY RTTR_TARGET_BIN_DIR)
 is_vs_based_build(VS_BUILD)
