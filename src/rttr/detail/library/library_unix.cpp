@@ -136,6 +136,11 @@ bool library_private::load_native()
             attempt = prefix_list[prefix] + m_file_name + suffix_list[suffix];
 
             m_handle = dlopen(attempt.c_str(), dl_flags);
+            if (!m_handle)
+            {
+              m_error_string += "Cannot load library " + m_file_name + " " + get_error() + "\n";
+            }
+
             if (!m_handle && is_absolute_path(m_file_name) && file_exist(attempt))
             {
                 retry = false;
@@ -144,11 +149,7 @@ bool library_private::load_native()
 
     }
 
-    if (!m_handle)
-    {
-        m_error_string = "Cannot load library " + m_file_name + " " + get_error();
-    }
-    else
+    if (m_handle)
     {
         m_qualifed_file_name = attempt;
         m_error_string.clear();
