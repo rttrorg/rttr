@@ -42,12 +42,21 @@
 #define CLASS_MULTI_INHERIT_5(CLASS1, CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) struct CLASS1 : CLASS2, CLASS3, CLASS4, CLASS5, CLASS6 \
 { virtual int getType() { return static_cast<int>(dummyBoolValue); } RTTR_ENABLE(CLASS2, CLASS3, CLASS4, CLASS5, CLASS6) bool dummyBoolValue = true; };
 
+#define CLASS_T2_V1(CLASS_NAME, V1) template<typename T1, typename T2, V1 v> struct CLASS_NAME\
+{ virtual ~CLASS_NAME() {} virtual int getType() { return dummyIntValue; } int dummyIntValue = 0; };
+
+#define CLASS_T1_V2(CLASS_NAME, V1, V2) template<typename T1, V1 v1, V2 v2> struct CLASS_NAME\
+{ virtual ~CLASS_NAME() {} virtual int getType() { return dummyIntValue; } int dummyIntValue = 0; };
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // The following class structures has 7 hierarchy levels and is 5 classes wide;
 // only single inheritance
 /////////////////////////////////////////////////////////////////////////////////////////
 
 CLASS(ClassSingleBase)
+CLASS_T2_V1(ClassT2Int, int)
+CLASS_T1_V2(ClassT1IntBool, bool, bool)
 CLASS_INHERIT(ClassSingle1A, ClassSingleBase)
 CLASS_INHERIT(ClassSingle2A, ClassSingle1A)
 CLASS_INHERIT(ClassSingle3A, ClassSingle2A)
