@@ -551,6 +551,9 @@ TEST_CASE("Test rttr::type - Check is_template_instantiation", "[type]")
 
     CHECK(type::get<int>().is_template_instantiation()                    == false);
     CHECK(type::get<ClassSingleBase>().is_template_instantiation()        == false);
+
+    CHECK((type::get<ClassT2Int<bool, char, 100>>().is_template_instantiation() == true));
+    CHECK((type::get<ClassT1IntBool<int, true, true>>().is_template_instantiation() == true));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
