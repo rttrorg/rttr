@@ -54,6 +54,12 @@ RTTR_INLINE Target_Type rttr_cast(Source_Type object) RTTR_NOEXCEPT
                    (!std::is_const<Arg_Type>::value && std::is_const<Return_Type>::value) ||
                    (!std::is_const<Arg_Type>::value && !std::is_const<Return_Type>::value), "Return type must have const qualifier");
 
+    // rttr_cast should return nullptr if input is nullptr
+    if (object == nullptr)
+    {
+        return nullptr;
+    }
+
     using source_type_no_cv = typename std::remove_cv<typename std::remove_pointer<Source_Type>::type>::type;
     return static_cast<Target_Type>(type::apply_offset(const_cast<source_type_no_cv*>(object)->get_ptr(), const_cast<source_type_no_cv*>(object)->get_type(), type::get<Target_Type>()));
 }

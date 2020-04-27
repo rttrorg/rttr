@@ -254,6 +254,12 @@ TEST_CASE("Test rttr::type - MultipleClassInheritance", "[type]")
 
         CHECK(rttr_cast<ClassMultipleBaseE*>(&classMulti1E) != nullptr);
         CHECK(rttr_cast<ClassMultiple1E*>(&classMulti1E) != nullptr);
+
+        // check for nullptr, should always return nullptr
+        ClassMultipleBaseA* baseMultiANull = nullptr;             
+        CHECK(rttr_cast<ClassMultiple4B*>(baseMultiANull) == nullptr);
+        CHECK(rttr_cast<ClassMultiple5A*>(baseMultiANull) == nullptr);
+        CHECK(rttr_cast<ClassMultiple1E*>(baseMultiANull) == nullptr);
     }
 }
 
