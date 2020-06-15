@@ -223,20 +223,21 @@ endif()
 
 if(BUILD_INSTALLER)
     if(${USE_RELATIVE_IMPORT_PREFIX})
-        string(REPLACE "${CMAKE_INSTALL_PREFIX}/" ""
-          RELATIVE_RTTR_CMAKE_CONFIG_INSTALL_DIR
-          ${RTTR_CMAKE_CONFIG_INSTALL_DIR})
+        # Prepare config file for find_package
+        set(RTTR_INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include")
+        set(RTTR_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttrConfig.cmake")
+        configure_package_config_file("rttrConfig.cmake.in" "${RTTR_CONFIG_FILE}"
+            INSTALL_DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
+            PATH_VARS RTTR_INSTALL_INC_DIR)
+
+        install(FILES ${RTTR_CONFIG_FILE}
+                DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR})
 
         install(EXPORT rttr_targets
                 DESTINATION ${RELATIVE_RTTR_CMAKE_CONFIG_INSTALL_DIR}
                 NAMESPACE RTTR::
                 FILE rttrTargets.cmake)
 
-        # Prepare config file for find_package
-        set(RTTR_INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include")
-        configure_package_config_file("rttrConfig.cmake.in" "${RTTR_CMAKE_CONFIG_INSTALL_DIR}/rttrConfig.cmake"
-            INSTALL_DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
-            PATH_VARS RTTR_INSTALL_INC_DIR)
     else()
         install(EXPORT rttr_targets
                 DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
