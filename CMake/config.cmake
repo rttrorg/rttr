@@ -158,15 +158,21 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CLANG_STATIC_LINKER_FLAGS "-stdlib=libc++ -static-libstdc++")
 endif()
 
+if(${USE_RELATIVE_IMPORT_PREFIX})
+    set(RTTR_CONFIG_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttrTargets-version.cmake")
+else()
+    set(RTTR_CONFIG_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake")
+endif()
+
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
+    ${RTTR_CONFIG_VERSION_FILE}
     VERSION ${RTTR_VERSION_STR}
     COMPATIBILITY AnyNewerVersion
 )
 
 if (BUILD_INSTALLER)
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CMake/rttr-config-version.cmake"
+    install(FILES ${RTTR_CONFIG_VERSION_FILE}
             DESTINATION ${RTTR_CMAKE_CONFIG_INSTALL_DIR}
             COMPONENT Devel)
 
