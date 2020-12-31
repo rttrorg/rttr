@@ -40,7 +40,9 @@
     #include <windows.h>
 #endif
 
+#ifndef RTTR_NO_CXX11_THREAD
 #include <atomic>
+#endif
 
 namespace rttr
 {
@@ -95,7 +97,12 @@ public:
 
         --m_load_count;
 
-        if (m_load_count.load() == 0)
+#ifdef RTTR_NO_CXX11_THREAD
+        auto load_count = m_load_count;
+#else
+        auto load_count = m_load_count.load();
+#endif
+        if (load_count == 0)
         {
             auto ret = unload_native();
             if (ret)
@@ -126,9 +133,15 @@ public:
 
     array_range<method> get_global_methods() const RTTR_NOEXCEPT { return m_state_saver.get_global_methods(); }
 
+#ifdef RTTR_NO_CXX11_THREAD
+    int get_load_count() const RTTR_NOEXCEPT { return m_load_count; }
+
+    void set_load_count(int count) { m_load_count = count; }
+#else
     int get_load_count() const RTTR_NOEXCEPT { return m_load_count.load(); }
 
     void set_load_count(int count) { m_load_count.store(count); }
+#endif
 
 private:
     bool load_native();
@@ -141,7 +154,11 @@ private:
     std::string                 m_error_string;
     registration_state_saver    m_state_saver;
 
+#ifdef RTTR_NO_CXX11_THREAD
+    int                         m_load_count;
+#else
     std::atomic_int             m_load_count;
+#endif
 
 #if RTTR_PLATFORM == RTTR_PLATFORM_WINDOWS
     HMODULE

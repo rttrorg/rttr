@@ -29,7 +29,10 @@
 #include "rttr/detail/library/library_p.h"
 
 #include <map>
+
+#ifndef RTTR_NO_CXX11_THREAD
 #include <mutex>
+#endif
 
 namespace rttr
 {
@@ -49,7 +52,9 @@ class library_manager
         static std::shared_ptr<library_private> create_or_find_library(string_view file_name, string_view version)
         {
             auto& manager = get_instance();
+#ifndef RTTR_NO_CXX11_THREAD
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
+#endif
 
             auto file_as_string = file_name.to_string();
             auto itr = manager.m_library_map.find(file_as_string);
@@ -71,7 +76,9 @@ class library_manager
         static void remove_item(const std::shared_ptr<library_private>& item)
         {
             auto& manager = get_instance();
+#ifndef RTTR_NO_CXX11_THREAD
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
+#endif
 
             auto itr = manager.m_library_map.find(item->get_file_name().to_string()); // because we use string_view to find the item
             if (itr != manager.m_library_map.end())
@@ -102,7 +109,10 @@ class library_manager
 
         // use std::less in order to use string_view for finding the item
         std::map<std::string, std::shared_ptr<library_private>> m_library_map;
+
+#ifndef RTTR_NO_CXX11_THREAD
         std::mutex m_library_mutex;
+#endif
 };
 }
 

@@ -11,7 +11,9 @@
 #ifndef CHAISCRIPT_DYNAMIC_CAST_CONVERSION_HPP_
 #define CHAISCRIPT_DYNAMIC_CAST_CONVERSION_HPP_
 
+#ifndef RTTR_NO_CXX11_THREAD
 #include <atomic>
+#endif
 #include <memory>
 #include <set>
 #include <stdexcept>

@@ -40,7 +40,10 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#ifndef RTTR_NO_CXX11_THREAD
 #include <mutex>
+#endif
 
 namespace rttr
 {
@@ -227,7 +230,9 @@ private:
     std::vector<data_container<const type_comparator_base*>>    m_type_equal_cmp_list;
     std::vector<data_container<const type_comparator_base*>>    m_type_less_than_cmp_list;
 
+#ifndef RTTR_NO_CXX11_THREAD
     std::mutex                                                  m_mutex;
+#endif
 };
 
 } // end namespace detail
