@@ -34,8 +34,32 @@
 #include "rttr/detail/misc/utility.h"
 
 #include <vector>
-#include <dlfcn.h>
 #include <cstdio>
+
+#if defined __has_include
+#if __has_include(<dlfcn.h>)
+#include <dlfcn.h>
+#else
+
+#define RTLD_NOW 0
+
+void* dlopen(const char* file, int mode) {
+    return nullptr;
+}
+
+char* dlerror(void) {
+    static char error[] = "Not supported";
+    return error;
+}
+
+int dlclose(void* handle) {
+    return 1;
+}
+
+#endif
+#else
+#include <dlfcn.h>
+#endif
 
 namespace
 {
