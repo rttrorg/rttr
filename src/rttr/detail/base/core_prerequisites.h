@@ -112,7 +112,10 @@ namespace rttr
 /////////////////////////////////////////////////////////////////////////////////////////
 // Compiler specific cmds for export and import code to DLL
 /////////////////////////////////////////////////////////////////////////////////////////
-#if RTTR_COMPILER == RTTR_COMPILER_MSVC || __MINGW32__ || __CYGWIN__
+#if RTTR_COMPILER == RTTR_COMPILER_MSVC ||\
+    (RTTR_COMPILER == RTTR_COMPILER_CLANG && defined(_MSC_VER)) ||\
+    defined(__MINGW32__) ||\
+    defined(__CYGWIN__)
 #     define RTTR_HELPER_DLL_IMPORT __declspec( dllimport )
 #     define RTTR_HELPER_DLL_EXPORT __declspec( dllexport )
 #     define RTTR_HELPER_DLL_LOCAL
