@@ -119,7 +119,7 @@ bool library_private::load_native()
         prefix_list.push_back(std::string());
     }
 
-    int dl_flags = RTLD_NOW;
+    int dl_flags = RTLD_NOW | RTLD_GLOBAL;
     auto retry = true;
     std::string attempt;
 
