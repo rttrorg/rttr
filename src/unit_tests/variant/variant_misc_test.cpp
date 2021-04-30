@@ -168,3 +168,61 @@ TEST_CASE("variant - get_wrapped_value", "[variant]")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+struct simple_type_noncopyable
+{
+  simple_type_noncopyable() {};
+  simple_type_noncopyable(const simple_type_noncopyable& other) = delete;
+};
+
+struct simple_type {
+
+};
+
+TEST_CASE("variant - get_reference_argument ")
+{
+  auto value = std::make_shared<simple_type_noncopyable>();
+
+  // works with shared_ptrs
+  variant var = value;
+  argument arg = var.extract_reference_argument();
+
+  CHECK(var.get_type().is_wrapper() == true);
+  CHECK(var.get_type().is_pointer() == false);
+  CHECK(arg.get_type().is_wrapper() == false);
+  CHECK(arg.get_type().is_pointer() == false);
+  REQUIRE(arg.get_type() == rttr::type::get<simple_type_noncopyable>());
+
+  // works with pointers
+  var = value.get();
+  arg = var.extract_reference_argument();
+
+  CHECK(var.get_type().is_wrapper() == false);
+  CHECK(var.get_type().is_pointer() == true);
+  CHECK(arg.get_type().is_wrapper() == false);
+  CHECK(arg.get_type().is_pointer() == false);
+  REQUIRE(arg.get_type() == rttr::type::get<simple_type_noncopyable>());
+
+  // works with reference wrappers
+  var = std::ref(*value);
+  arg = var.extract_reference_argument();
+
+  CHECK(var.get_type().is_wrapper() == true);
+  CHECK(var.get_type().is_pointer() == false);
+  CHECK(arg.get_type().is_wrapper() == false);
+  CHECK(arg.get_type().is_pointer() == false);
+  REQUIRE(arg.get_type() == rttr::type::get<simple_type_noncopyable>());
+
+  // works with values
+  auto simple_value = simple_type{};
+  var = simple_value;
+  arg = var.extract_reference_argument();
+
+  CHECK(var.get_type().is_wrapper() == false);
+  CHECK(var.get_type().is_pointer() == false);
+  CHECK(arg.get_type().is_wrapper() == false);
+  CHECK(arg.get_type().is_pointer() == false);
+  REQUIRE(arg.get_type() == rttr::type::get<simple_type>());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////

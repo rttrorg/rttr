@@ -191,6 +191,15 @@ variant variant::extract_wrapped_value() const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+argument variant::extract_reference_argument() const
+{
+    argument var;
+    m_policy(detail::variant_policy_operation::EXTRACT_REFERENCE_ARGUMENT, m_data, var);
+    return var;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant variant::create_wrapped_value(const type& wrapped_type) const
 {
     variant var;

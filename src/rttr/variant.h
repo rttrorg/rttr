@@ -512,6 +512,16 @@ class RTTR_API variant
         variant extract_wrapped_value() const;
 
         /*!
+        * \brief Extracts the wrapped value as a reference and stores it as a reference in a new argument.
+        *
+        * \remark This can be used to extract values from a variant that can not usually be stored in a variant
+        *         such as references. It is non-templated equivalent to the get_wrapped_value function.
+        *
+        * \return An argument containing a reference to the stored wrapped value.
+        */
+        argument extract_reference_argument() const;
+
+        /*!
          * \brief Returns `true` if the contained value can be converted to the given type \p T.
          *        Otherwise `false`.
          *

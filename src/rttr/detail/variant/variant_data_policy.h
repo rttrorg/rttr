@@ -38,7 +38,6 @@
 #include "rttr/detail/comparison/compare_less.h"
 
 #include <cstdint>
-
 namespace rttr
 {
 namespace detail
@@ -123,6 +122,7 @@ enum class variant_policy_operation : uint8_t
     SWAP,
     EXTRACT_WRAPPED_VALUE,
     CREATE_WRAPPED_VALUE,
+    EXTRACT_REFERENCE_ARGUMENT,
     GET_VALUE,
     GET_TYPE,
     GET_PTR,
@@ -192,6 +192,61 @@ enable_if_t<!is_copyable<Tp>::value ||
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename>
+std::false_type is_pointer_like (unsigned long);
+
+template <typename T>
+auto is_pointer_like (int)
+   -> decltype( * std::declval<T>(), std::true_type{} );
+
+template <typename T>
+auto is_pointer_like (long)
+   -> decltype( std::declval<T>().operator->(), std::true_type{} );
+
+template <typename T>
+using is_dereferenceable = decltype(is_pointer_like<T>(0));
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
+enable_if_t<is_wrapper<T>::value && is_dereferenceable<Tp>::value, argument> get_reference_argument(T& value)
+{
+    using raw_wrapper_type = remove_cv_t<remove_reference_t<T>>;
+    return argument(*(wrapper_mapper<raw_wrapper_type>::get(value)));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T, typename Tp = decay_except_array_t<wrapper_mapper_t<T>> >
+enable_if_t<is_wrapper<T>::value && !is_dereferenceable<Tp>::value, argument> get_reference_argument(T& value)
+{
+    using raw_wrapper_type = remove_cv_t<remove_reference_t<T>>;
+    return argument(wrapper_mapper<raw_wrapper_type>::get(value));
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+enable_if_t<!is_wrapper<T>::value && 
+            is_dereferenceable<T>::value, argument> get_reference_argument(T& value)
+{ 
+    return argument(*value);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+enable_if_t<!is_wrapper<T>::value &&
+            !is_dereferenceable<T>::value, argument> get_reference_argument(T& value)
+{
+    return argument(value);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 /*!
  * This class represents the base implementation for variant_data policy.
@@ -225,6 +280,11 @@ struct variant_data_base_policy
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {
                 arg.get_value<variant>() = get_wrapped_value(Tp::get_value(src_data));
+                break;
+            }
+            case variant_policy_operation::EXTRACT_REFERENCE_ARGUMENT:
+            {       
+                arg.get_value<argument&>() = get_reference_argument(Tp::get_value(src_data));
                 break;
             }
             case variant_policy_operation::CREATE_WRAPPED_VALUE:
@@ -611,6 +671,7 @@ struct RTTR_API variant_data_policy_empty
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
+            case variant_policy_operation::EXTRACT_REFERENCE_ARGUMENT:
             case variant_policy_operation::CREATE_WRAPPED_VALUE:
             {
                 break;
@@ -719,6 +780,7 @@ struct RTTR_API variant_data_policy_void
             case variant_policy_operation::CLONE:
             case variant_policy_operation::SWAP:
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
+            case variant_policy_operation::EXTRACT_REFERENCE_ARGUMENT:
             {
                 break;
             }
@@ -868,6 +930,7 @@ struct RTTR_API variant_data_policy_nullptr_t
             {
                 return false;
             }
+            case variant_policy_operation::EXTRACT_REFERENCE_ARGUMENT:
             case variant_policy_operation::EXTRACT_WRAPPED_VALUE:
             {
                 break;
