@@ -278,6 +278,15 @@ namespace rttr
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING
 #endif
 
+#if RTTR_COMP_VER >= 900
+#   define RTTR_BEGIN_DISABLE_INIT_LIST_WARNING       _Pragma ("GCC diagnostic push") \
+                                                      _Pragma ("GCC diagnostic ignored \"-Winit-list-lifetime\"")
+#   define RTTR_END_DISABLE_INIT_LIST_WARNING         _Pragma ("GCC diagnostic pop")
+# else
+#   define RTTR_BEGIN_DISABLE_INIT_LIST_WARNING
+#   define RTTR_END_DISABLE_INIT_LIST_WARNING
+#endif
+
 #   define RTTR_DECLARE_PLUGIN_CTOR       __attribute__((constructor))
 #   define RTTR_DECLARE_PLUGIN_DTOR       __attribute__((destructor))
 
@@ -313,6 +322,10 @@ namespace rttr
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING
 #endif
 
+
+#   define RTTR_BEGIN_DISABLE_INIT_LIST_WARNING
+#   define RTTR_END_DISABLE_INIT_LIST_WARNING
+
 #   define RTTR_DECLARE_PLUGIN_CTOR        __attribute__((__constructor__))
 #   define RTTR_DECLARE_PLUGIN_DTOR        __attribute__((__destructor__))
 
@@ -332,6 +345,8 @@ namespace rttr
 #   define RTTR_DECLARE_PLUGIN_DTOR
 #   define RTTR_BEGIN_DISABLE_OVERRIDE_WARNING
 #   define RTTR_END_DISABLE_OVERRIDE_WARNING
+#   define RTTR_BEGIN_DISABLE_INIT_LIST_WARNING
+#   define RTTR_END_DISABLE_INIT_LIST_WARNING
 
 #else
 #   pragma message("WARNING: unknown compiler, don't know how to disable deprecated warnings")
