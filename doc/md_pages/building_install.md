@@ -60,6 +60,19 @@ Execute following command in the build directory of RTTR:
     
 and in the root directory of the build dir will be an install package placed (e.g. `rttr-1.0.0-win64-vs2013.7z`)
 
+Building rttr - Using vcpkg
+---------------------------
+
+You can download and install rttr using the [vcpkg](https://github.com/Microsoft/vcpkg) dependency manager:
+
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+    ./vcpkg integrate install
+    ./vcpkg install rttr
+
+The rttr port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+
 Using Installation of RTTR
 --------------------------
 The last step is to use RTTR in your own application. During the install process also some CMake config files were created to find RTTR.
