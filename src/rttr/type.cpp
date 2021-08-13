@@ -49,11 +49,14 @@
 #include <vector>
 #include <memory>
 #include <set>
-#include <thread>
-#include <mutex>
 #include <cstring>
 #include <cctype>
 #include <utility>
+
+#ifndef RTTR_NO_CXX11_THREAD
+#include <thread>
+#include <mutex>
+#endif
 
 using namespace std;
 

@@ -491,7 +491,9 @@ type_data* type_register_private::register_name_if_neccessary(type_data* info)
     if (ret != m_orig_name_to_id.end())
         return ret->m_type_data;
 
+#ifndef RTTR_NO_CXX11_THREAD
     std::lock_guard<std::mutex> lock(m_mutex);
+#endif
 
     m_orig_name_to_id.insert(std::make_pair(info->type_name, type(info)));
     info->name = derive_name(type(info));
@@ -556,7 +558,9 @@ type_data* type_register_private::register_type(type_data* info) RTTR_NOEXCEPT
     info->raw_type_data  = !info->raw_type_data->is_valid ? info : info->raw_type_data;
 
     {
+#ifndef RTTR_NO_CXX11_THREAD
         std::lock_guard<std::mutex> lock(m_mutex);
+#endif
         m_type_data_storage.push_back(info);
     }
 
@@ -607,7 +611,9 @@ void type_register_private::unregister_type(type_data* info) RTTR_NOEXCEPT
     // REMARK: the base_types has to be provided as argument explicitely and cannot be retrieve via the type_data itself,
     // because the `class_data` which holds the base_types information cannot be retrieve via the function `get_class_data`
     // anymore because the containing std::unique_ptr is already destroyed
+#ifndef RTTR_NO_CXX11_THREAD
     std::lock_guard<std::mutex> lock(m_mutex);
+#endif
 
     bool found_type_data = false;
 
@@ -672,7 +678,9 @@ std::string type_register_private::derive_template_instance_name(type_data* info
 
 void type_register_private::update_custom_name(std::string new_name, const type& t)
 {
+#ifndef RTTR_NO_CXX11_THREAD
     std::lock_guard<std::mutex> lock(m_mutex);
+#endif
 
     auto& type_name = t.m_type_data->name;
 
