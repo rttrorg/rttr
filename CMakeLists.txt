@@ -72,6 +72,13 @@ if (USE_PCH)
   endif()
 endif()
 
+if(NOT BUILD_RTTR_DYNAMIC)
+    message(WARNING "Disabling the dynamic/shared version of RTTR will also disable Benchmarks, Examples, and Unit Tests.")
+    set(BUILD_BENCHMARKS FALSE)
+    set(BUILD_EXAMPLES FALSE)
+    set(BUILD_UNIT_TESTS FALSE)
+endif()
+
 include(config)
 include(3rd_party_libs)
 
