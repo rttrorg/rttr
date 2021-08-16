@@ -68,30 +68,30 @@ set(DOXYGEN_EXCLUDE_PATTERNS  "*.cpp* \\
 
 set(DOXYGEN_INDEX_FILE_IN   "index.html.in")
 
-#### LAYOUT VARIABLES
+# LAYOUT VARIABLES
 set(DOXY_LAYOUT_MAIN_PAGE_TITLE "RTTR")
 set(DOXY_LAYOUT_PAGES_TITLE     "Tutorial")
 set(DOXY_LAYOUT_PAGES_TITLE2    "Installation")
 set(DOXY_LAYOUT_PAGES_TITLE3    "License")
 
 
-if (${CUSTOM_DOXYGEN_STYLE})
+if (RTTR_CUSTOM_DOXYGEN_STYLE)
   set(DOXYGEN_CUSTOM_HTML_FOOTER     "${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/html/footer.html")
   set(DOXYGEN_CUSTOM_HTML_HEADER     "${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/html/header.html")
   set(DOXYGEN_CUSTOM_HTML_STYLESHEET "${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/css/custom-doxygen.css")
 endif()
 
-if(NOT DOXYGEN_FOUND)
+if (NOT DOXYGEN_FOUND)
   message(WARNING "Doxygen not found - Documentation will not be generated!")
   return()
 endif()
 
-string ( REGEX REPLACE ".cfg.in$" ".cfg" DOXYGEN_CONFIG_FILE ${DOXYGEN_CONFIG_FILE_IN} )
-string ( REGEX REPLACE ".html.in$" ".html" DOXYGEN_INDEX_FILE ${DOXYGEN_INDEX_FILE_IN} )
-string ( REGEX REPLACE ".xml.in$" ".xml" DOXYGEN_LAYOUT_FILE ${DOXYGEN_LAYOUT_FILE_IN} )
-string ( REGEX REPLACE "[^\\/]*/(.*)" "\\1" DOXYGEN_LAYOUT_FILE "${DOXYGEN_LAYOUT_FILE}")
+string( REGEX REPLACE ".cfg.in$" ".cfg" DOXYGEN_CONFIG_FILE ${DOXYGEN_CONFIG_FILE_IN} )
+string( REGEX REPLACE ".html.in$" ".html" DOXYGEN_INDEX_FILE ${DOXYGEN_INDEX_FILE_IN} )
+string( REGEX REPLACE ".xml.in$" ".xml" DOXYGEN_LAYOUT_FILE ${DOXYGEN_LAYOUT_FILE_IN} )
+string( REGEX REPLACE "[^\\/]*/(.*)" "\\1" DOXYGEN_LAYOUT_FILE "${DOXYGEN_LAYOUT_FILE}")
 
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN})
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_CONFIG_FILE_IN})
   message(WARNING "Doxygen configuration file not found - Documentation will not be generated!")
   return()
 endif()
@@ -104,7 +104,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${DOXYGEN_INDEX_FILE_IN} ${DOXYGEN_OU
 # but this file is hard to locate in the big doxygen output directory)
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/index.html DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY})
 
-if (${CUSTOM_DOXYGEN_STYLE})
+if (RTTR_CUSTOM_DOXYGEN_STYLE)
   #fonts
   file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/ptsans_regular_macroman DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/fonts)
   file(COPY  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-customization/fonts/source_code_pro_regular DESTINATION ${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}/fonts)
@@ -141,7 +141,7 @@ install(FILES "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE}"
 
 #########################################################################################
 
-if (BUILD_WEBSITE_DOCU)
+if (RTTR_BUILD_WEBSITE_DOCU)
     set(DOXYGEN_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/doc_website")
     set(DOXYGEN_CUSTOM_HTML_FOOTER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/footer.html")
     set(DOXYGEN_CUSTOM_HTML_HEADER      "${CMAKE_CURRENT_SOURCE_DIR}/doxygen_website_customization/html/header.html")
@@ -158,7 +158,7 @@ if (BUILD_WEBSITE_DOCU)
                       COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CONFIG_FILE}"
                       WORKING_DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}"
                       COMMENT "Building documentation...")
-    
+
     set_target_properties(doc_website PROPERTIES FOLDER "Documentation")
 endif()
 

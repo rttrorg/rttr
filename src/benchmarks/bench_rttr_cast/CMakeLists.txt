@@ -37,7 +37,7 @@ loadFolder("bench_rttr_cast" HPP_FILES SRC_FILES)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
@@ -50,7 +50,7 @@ endif()
 
 target_include_directories(bench_rttr_cast PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
 target_compile_definitions(bench_rttr_cast PUBLIC BOOST_ALL_NO_LIB)
-if(MSVC)
+if (MSVC)
     target_compile_options(bench_rttr_cast PRIVATE /Zm200)
 endif()
 
@@ -69,7 +69,7 @@ install(TARGETS bench_rttr_cast
 
 ###############################################################################
 
-if (BUILD_STATIC)
+if (RTTR_BUILD_STATIC)
     add_executable(bench_rttr_cast_lib ${SRC_FILES} ${HPP_FILES})
     if (MSVC)
       target_link_libraries(bench_rttr_cast_lib rttr_core_lib ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
@@ -79,7 +79,7 @@ if (BUILD_STATIC)
 
     target_include_directories(bench_rttr_cast_lib PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
     target_compile_definitions(bench_rttr_cast_lib PUBLIC BOOST_ALL_NO_LIB)
-    if(MSVC)
+    if (MSVC)
         target_compile_options(bench_rttr_cast_lib PRIVATE /Zm200 /bigobj)
     endif()
 
@@ -99,7 +99,7 @@ endif()
 
 ###############################################################################
 
-if (BUILD_WITH_STATIC_RUNTIME_LIBS)
+if (RTTR_BUILD_WITH_STATIC_RUNTIME_LIBS)
     add_executable(bench_rttr_cast_s ${SRC_FILES} ${HPP_FILES})
     if (MSVC)
       target_link_libraries(bench_rttr_cast_s RTTR::Core_STL ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
@@ -109,7 +109,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     target_include_directories(bench_rttr_cast_s PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
     target_compile_definitions(bench_rttr_cast_s PUBLIC BOOST_ALL_NO_LIB)
-    if(MSVC)
+    if (MSVC)
         target_compile_options(bench_rttr_cast_s PRIVATE /Zm200 /bigobj)
     endif()
 
@@ -122,7 +122,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
     if (MSVC)
         target_compile_options(bench_rttr_cast_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
-    elseif(CMAKE_COMPILER_IS_GNUCXX)
+    elseif (CMAKE_COMPILER_IS_GNUCXX)
         set_target_properties(bench_rttr_cast_s PROPERTIES LINK_FLAGS ${GNU_STATIC_LINKER_FLAGS})
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set_target_properties(bench_rttr_cast_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS})
@@ -136,7 +136,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
             ARCHIVE       DESTINATION ${RTTR_ARCHIVE_INSTALL_DIR}
             FRAMEWORK     DESTINATION ${RTTR_FRAMEWORK_INSTALL_DIR})
 
-    if (BUILD_STATIC)
+    if (RTTR_BUILD_STATIC)
         add_executable(bench_rttr_cast_lib_s ${SRC_FILES} ${HPP_FILES})
         if (MSVC)
           target_link_libraries(bench_rttr_cast_lib_s RTTR::Core_Lib_STL ${Boost_CHRONO_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
@@ -146,7 +146,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
         target_include_directories(bench_rttr_cast_lib_s PUBLIC ${NONIUS_DIR} ${Boost_INCLUDE_DIR})
         target_compile_definitions(bench_rttr_cast_lib_s PUBLIC BOOST_ALL_NO_LIB)
-        if(MSVC)
+        if (MSVC)
             target_compile_options(bench_rttr_cast_lib_s PRIVATE /Zm200 /bigobj)
         endif()
 
@@ -159,7 +159,7 @@ if (BUILD_WITH_STATIC_RUNTIME_LIBS)
 
         if (MSVC)
             target_compile_options(bench_rttr_cast_lib_s PUBLIC "/MT$<$<CONFIG:Debug>:d>")
-        elseif(CMAKE_COMPILER_IS_GNUCXX)
+        elseif (CMAKE_COMPILER_IS_GNUCXX)
             set_target_properties(bench_rttr_cast_lib_s PROPERTIES LINK_FLAGS ${GNU_STATIC_LINKER_FLAGS})
         elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             set_target_properties(bench_rttr_cast_lib_s PROPERTIES LINK_FLAGS ${CLANG_STATIC_LINKER_FLAGS})

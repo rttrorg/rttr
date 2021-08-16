@@ -40,7 +40,7 @@ generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RT
 
 loadFolder("unit_tests" HPP_FILES SRC_FILES)
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 

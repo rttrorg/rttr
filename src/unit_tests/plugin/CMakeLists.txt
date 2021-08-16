@@ -38,13 +38,13 @@ generateLibraryVersionVariables(${RTTR_VERSION_MAJOR} ${RTTR_VERSION_MINOR} ${RT
 
 loadFolder("plugin" HPP_FILES SRC_FILES)
 
-if (USE_PCH)
+if (RTTR_USE_PCH)
   activate_precompiled_headers("pch.h" SRC_FILES)
 endif()
 
 add_library(unit_test_plugin SHARED ${SRC_FILES} ${HPP_FILES})
 target_link_libraries(unit_test_plugin RTTR::Core unit_test_base)
-set_target_properties(unit_test_plugin PROPERTIES 
+set_target_properties(unit_test_plugin PROPERTIES
                                        DEBUG_POSTFIX ${RTTR_DEBUG_POSTFIX}
                                        FOLDER "Testing")
 
