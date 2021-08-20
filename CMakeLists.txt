@@ -37,6 +37,10 @@ project ("rttr" LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
+#enforce requiring c++11 compatible compiler
+set(CMAKE_CXX_STANDARD 11)
+
+
 if (CMAKE_BUILD_TYPE STREQUAL "")
   # CMake defaults to leaving CMAKE_BUILD_TYPE empty. This screws up
   # differentiation between debug and release builds.
