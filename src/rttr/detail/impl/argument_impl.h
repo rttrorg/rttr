@@ -60,7 +60,7 @@ template<typename T, typename Tp>
 argument::argument(const T& data) RTTR_NOEXCEPT
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_variant(nullptr),
-    m_type(rttr::type::get<T>())
+    m_type(rttr::type::get(data))
 {
     static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
 }
@@ -71,7 +71,7 @@ template<typename T, typename Tp>
 argument::argument(T& data) RTTR_NOEXCEPT
 :   m_data(reinterpret_cast<const void*>(std::addressof(data))),
     m_variant(nullptr),
-    m_type(rttr::type::get<T>())
+    m_type(rttr::type::get(data))
 {
     static_assert(!std::is_same<instance, T>::value, "Don't use the argument class for forwarding an instance!");
 }
