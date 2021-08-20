@@ -287,6 +287,17 @@ TEST_CASE("type - get_base_classes()", "[type]")
     REQUIRE(base_list[2] == type::get<DiamondRight>());
 }
 
+TEST_CASE("type - get_direct_base_classes()", "[type]")
+{
+    DiamondBottom d;
+    const auto& base_list_range = type::get(d).get_direct_base_classes();
+    REQUIRE(base_list_range.size() == 2);
+
+    std::vector<type> base_list(base_list_range.cbegin(), base_list_range.cend());
+    REQUIRE(base_list[0] == type::get<DiamondLeft>());
+    REQUIRE(base_list[1] == type::get<DiamondRight>());
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("type - is_base_of()", "[type]")

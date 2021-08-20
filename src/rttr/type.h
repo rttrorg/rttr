@@ -574,6 +574,13 @@ class RTTR_API type
         array_range<type> get_base_classes() const RTTR_NOEXCEPT;
 
         /*!
+         * \brief Returns a range of direct base classes of this type in order declarad in RTTR_ENABLE.
+         *
+         * \return A range of types.
+         */
+        std::vector<type> get_direct_base_classes() const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns a range of all derived classes of this type.
          *
          * \remark Make sure that the complete class hierarchy has the macro RTTR_ENABLE
