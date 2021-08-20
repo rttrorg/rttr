@@ -29,7 +29,10 @@ How to Use
 #include <rttr/registration>
 using namespace rttr;
 
-struct MyStruct { MyStruct() {}; void func(double) {}; int data; };
+struct MyStruct { 
+MyStruct() {   //Default Constructor 
+}; 
+void func(double) {}; int data; };
 
 RTTR_REGISTRATION
 {
