@@ -230,10 +230,21 @@ enable_if_t<is_wrapper<T>::value && !is_dereferenceable<Tp>::value, argument> ge
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-enable_if_t<!is_wrapper<T>::value && 
-            is_dereferenceable<T>::value, argument> get_reference_argument(T& value)
-{ 
+enable_if_t< !is_wrapper<T>::value && is_dereferenceable<T>::value &&
+             !std::is_void<typename std::remove_pointer<T>::type>::value, argument> get_reference_argument(T& value)
+{   
     return argument(*value);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+enable_if_t<!is_wrapper<T>::value && is_dereferenceable<T>::value && 
+            std::is_void<typename std::remove_pointer<T>::type>::value, argument> get_reference_argument(T& value)
+{ 
+    // This is specifically for the scenario when T is void*. And since we cannot actually do anything 
+    // meaningful with a void* variable we will just return an empty argument.
+    return argument();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
