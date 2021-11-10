@@ -1115,9 +1115,13 @@ flat_map<string_view, type>& type_register_private::get_orig_name_to_id()
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-flat_map<std::string, type, hash>& type_register_private::get_custom_name_to_id()
+type type_register_private::get_type_by_custom_name(string_view name)
 {
-    return m_custom_name_to_id;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto ret = m_custom_name_to_id.find(name);
+    if (ret != m_custom_name_to_id.end())
+        return (*ret);
+    return detail::get_invalid_type();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
