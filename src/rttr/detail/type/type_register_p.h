@@ -103,7 +103,7 @@ public:
     std::vector<type_data*>& get_type_data_storage();
     std::vector<type>& get_type_storage();
     flat_map<string_view, type>& get_orig_name_to_id();
-    flat_map<std::string, type, hash>& get_custom_name_to_id();
+    type get_type_by_custom_name(string_view name);
 
     /////////////////////////////////////////////////////////////////////////////////////
 

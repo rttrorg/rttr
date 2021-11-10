@@ -477,12 +477,7 @@ variant type::invoke(string_view name, std::vector<argument> args)
 
 type type::get_by_name(string_view name) RTTR_NOEXCEPT
 {
-    auto& custom_name_to_id = detail::type_register_private::get_instance().get_custom_name_to_id();
-    auto ret = custom_name_to_id.find(name);
-    if (ret != custom_name_to_id.end())
-        return (*ret);
-
-    return detail::get_invalid_type();
+    return detail::type_register_private::get_instance().get_type_by_custom_name(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
