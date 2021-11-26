@@ -434,7 +434,7 @@ public:
     static const detail::private_access     private_access;
 
 private:
-    registration() {}
+    registration() = default;
     registration(const std::shared_ptr<detail::registration_executer>& reg_exec) : m_reg_exec(reg_exec) { }
     registration(const registration& other);
     registration& operator=(const registration& other);

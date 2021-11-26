@@ -201,8 +201,6 @@ bool library_private::load_native()
 {
     std::wstring wfile_name = convert_utf8_to_utf16(m_file_name);
 
-    std::vector<std::wstring> paths_to_try;
-
     std::vector<std::wstring> prefix_list = {L"lib"};
     std::vector<std::wstring> suffix_list = {L".dll"};
 

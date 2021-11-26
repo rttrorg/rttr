@@ -43,7 +43,7 @@ namespace detail
 class RTTR_API metadata
 {
     public:
-        metadata() { }
+        metadata() = default;
         metadata(variant key, variant value) : m_key(std::move(key)), m_value(std::move(value)) { }
         metadata(const metadata& other) : m_key(other.m_key), m_value(other.m_value) {}
         metadata(metadata&& other) : m_key(std::move(other.m_key)), m_value(std::move(other.m_value)) {}
