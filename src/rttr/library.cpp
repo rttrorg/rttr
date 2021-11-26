@@ -79,7 +79,7 @@ class library_manager
         }
 
     private:
-        library_manager() {}
+        library_manager() = default;
 
         static library_manager& get_instance()
         {

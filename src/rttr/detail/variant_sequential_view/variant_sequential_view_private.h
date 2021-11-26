@@ -97,10 +97,7 @@ class RTTR_LOCAL variant_sequential_view_private
 
         RTTR_INLINE variant_sequential_view_private(const variant_sequential_view_private& other) = default;
 
-        RTTR_INLINE ~variant_sequential_view_private()
-        {
-
-        }
+        RTTR_INLINE ~variant_sequential_view_private() = default;
 
         RTTR_INLINE type get_type() const RTTR_NOEXCEPT
         {

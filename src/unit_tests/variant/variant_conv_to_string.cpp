@@ -51,7 +51,7 @@ TEST_CASE("variant::to_string() - from empty", "[variant]")
 {
     variant var;
     bool ok = false;
-    CHECK(var.to_string(&ok) == "");
+    CHECK(var.to_string(&ok).empty());
     CHECK(ok == false);
 }
 
@@ -400,7 +400,7 @@ TEST_CASE("variant::to_string() - from enum", "[variant]")
     {
         variant var = unregisterd_enum::VALUE_1;
         bool ok = false;
-        CHECK(var.to_string(&ok) == "");
+        CHECK(var.to_string(&ok).empty());
         CHECK(ok == false);
         CHECK(var.convert(type::get<std::string>()) == false);
     }

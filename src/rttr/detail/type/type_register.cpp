@@ -644,8 +644,8 @@ std::string type_register_private::derive_template_instance_name(type_data* info
     if (has_custom_name)
         return info->name;
 
-    const auto start_pos = info->name.find("<");
-    const auto end_pos = info->name.rfind(">");
+    const auto start_pos = info->name.find('<');
+    const auto end_pos = info->name.rfind('>');
 
     if (start_pos == std::string::npos || end_pos == std::string::npos)
         return info->name;
