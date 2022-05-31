@@ -192,6 +192,18 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type::get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+{
+    vec.resize(m_type_data->get_metadata().size());
+    for (const detail::metadata& data : m_type_data->get_metadata())
+    {
+        std::pair<variant, variant> pair(data.get_key(), data.get_value());
+        vec.push_back(pair);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant type::create(vector<argument> args) const
 {
     auto& ctors = m_type_data->m_class_data.m_ctors;
