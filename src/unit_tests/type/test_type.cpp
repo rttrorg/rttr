@@ -632,6 +632,19 @@ TEST_CASE("Test rttr::type - get_metadata()", "[type]")
     CHECK(t.get_metadata("bar").is_valid() == true);
     CHECK(t.get_metadata("foobar").is_valid() == true);
 
+    std::vector<detail::metadata> metadata;
+    t.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 4);
+    CHECK(metadata[0].get_key() == "Test");
+    CHECK(metadata[0].get_value() == "foo");
+    CHECK(metadata[1].get_key() == "other_key");
+    CHECK(metadata[1].get_value() == "bar");
+    CHECK(metadata[2].get_key() == "bar");
+    CHECK(metadata[2].get_value() == 42);
+    CHECK(metadata[3].get_key() == "foobar");
+    CHECK(metadata[3].get_value() == "hello");
+
     // negative
     CHECK(t.get_metadata("novalid key").is_valid() == false);
 }
