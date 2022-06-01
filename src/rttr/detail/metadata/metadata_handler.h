@@ -66,7 +66,7 @@ class metadata_handler
             vec.reserve(Metadata_Count);
             for (const detail::metadata& meta : m_metadata_list)
             {
-                vec.push_back(std::pair(meta.get_key(), meta.get_value()));
+                vec.push_back(std::pair<variant, variant>(meta.get_key(), meta.get_value()));
             }
 
         }
