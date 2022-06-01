@@ -74,7 +74,7 @@ class RTTR_API property_wrapper_base
 
         virtual variant get_metadata(const variant& key) const;
 
-        virtual void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT;
+        virtual void foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT;
 
         virtual bool set_value(instance& object, argument& arg) const;
 

@@ -156,9 +156,9 @@ variant property::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void property::get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+void property::foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT
 {
-    m_wrapper->get_metadata(vec);
+    m_wrapper->foreach_metadata(func);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -111,7 +111,7 @@ variant property_wrapper_base::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void property_wrapper_base::get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+void property_wrapper_base::foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT
 {
 }
 

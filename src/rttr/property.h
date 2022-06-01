@@ -49,6 +49,7 @@ class visitor;
 namespace detail
 {
     class property_wrapper_base;
+    class metadata;
 }
 
 /*!
@@ -246,7 +247,7 @@ class RTTR_API property
         *
         * \remark Ability to access the metadata as an array of pairs
         */
-        void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT;
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.

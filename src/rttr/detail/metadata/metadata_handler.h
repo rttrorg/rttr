@@ -61,14 +61,12 @@ class metadata_handler
             return variant();
         }
 
-        RTTR_INLINE void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+        RTTR_INLINE void foreach_metadata(const std::function<void (const metadata&)>& func) const RTTR_NOEXCEPT
         {
-            vec.reserve(Metadata_Count);
-            for (const detail::metadata& meta : m_metadata_list)
+            for (const metadata& metadata : m_metadata_list)
             {
-                vec.push_back(std::pair<variant, variant>(meta.get_key(), meta.get_value()));
+                func(metadata);
             }
-
         }
 
     private:
@@ -88,6 +86,7 @@ class metadata_handler<0>
         RTTR_FORCE_INLINE void set_metadata(std::array<metadata, 0> new_data) { }
 
         RTTR_INLINE variant get_metadata(const variant& key) const  { return variant(); }
+        RTTR_INLINE void foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT { }
 };
 
 } // end namespace detail
