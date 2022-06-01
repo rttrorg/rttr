@@ -61,6 +61,16 @@ class metadata_handler
             return variant();
         }
 
+        RTTR_INLINE void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+        {
+            vec.reserve(Metadata_Count);
+            for (const detail::metadata& meta : m_metadata_list)
+            {
+                vec.push_back(std::pair(meta.get_key(), meta.get_value()));
+            }
+
+        }
+
     private:
         std::array<metadata, Metadata_Count> m_metadata_list;
 };

@@ -156,6 +156,13 @@ variant property::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void property::get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT
+{
+    m_wrapper->get_metadata(vec);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool property::operator==(const property& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);

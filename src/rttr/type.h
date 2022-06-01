@@ -600,7 +600,7 @@ class RTTR_API type
         variant get_metadata(const variant& key) const;
 
         /*!
-        * \brief Returns a range of all metadata of this type
+        * \brief Returns a std::vector pair of all metadata of this type
         * 
         * \remark Ability to access the metadata as an array of pairs
         */

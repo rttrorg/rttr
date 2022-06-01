@@ -242,6 +242,13 @@ class RTTR_API property
         variant get_metadata(const variant& key) const;
 
         /*!
+        * \brief Returns a std::vector pair of all metadata of this property
+        *
+        * \remark Ability to access the metadata as an array of pairs
+        */
+        void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns true if this property is the same like the \p other.
          *
          * \return True if both properties are equal, otherwise false.

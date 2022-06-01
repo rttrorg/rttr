@@ -61,6 +61,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, r
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<return_type>(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void get_metadata(std::vector<std::pair<variant, variant>>& vec) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::get_metadata(vec); }
 
         bool set_value(instance& object, argument& arg) const
         {
