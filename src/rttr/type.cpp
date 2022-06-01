@@ -192,6 +192,16 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void type::foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT
+{
+    for (const detail::metadata& data : m_type_data->get_metadata())
+    {
+        func(data);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 variant type::create(vector<argument> args) const
 {
     auto& ctors = m_type_data->m_class_data.m_ctors;

@@ -206,6 +206,15 @@ TEST_CASE("property - get_metadata()", "[property]")
     CHECK(prop.get_metadata("Text") == "This is some description text");
     CHECK(prop.get_metadata("Invalid Key").is_valid() == false);
 
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Text");
+    CHECK(metadata[0].get_value() == "This is some description text");
+
+
     prop = type::get<prop_misc_test>().get_property("");
     CHECK(prop.is_valid() == false);
     CHECK(prop.get_metadata("Invalid Key").is_valid() == false);

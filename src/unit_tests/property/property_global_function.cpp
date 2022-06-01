@@ -106,6 +106,13 @@ TEST_CASE("property - global function", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // valid invoke
     CHECK(prop.set_value(instance(), std::string("New Text")) == true);
     CHECK(prop.get_value(instance()).is_type<std::string>() == true);
@@ -129,6 +136,13 @@ TEST_CASE("property - global function - read only", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // valid invoke
     CHECK(prop.get_value(instance()).is_type<int>() == true);
     CHECK(prop.get_value(instance()).get_value<int>() == 512);
@@ -150,6 +164,13 @@ TEST_CASE("property - global function - bind as ptr", "[property]")
     CHECK(prop.get_type() == type::get<const std::string*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // valid invoke
     const std::string text("Hello World");
@@ -175,6 +196,13 @@ TEST_CASE("property - global function - read only - bind as ptr", "[property]")
     CHECK(prop.get_type() == type::get<const int*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // valid invoke
     CHECK(prop.get_value(instance()).is_type<const int*>() == true);
@@ -214,6 +242,13 @@ TEST_CASE("property - global function - read only - as_reference_wrapper", "[pro
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // valid invoke
     CHECK(prop.get_value(instance()).is_type<std::reference_wrapper<const int>>() == true);
     CHECK(prop.get_value(instance()).get_value<std::reference_wrapper<const int>>().get() == 42);
@@ -235,6 +270,13 @@ TEST_CASE("property - global function - as_reference_wrapper", "[property]")
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // valid invoke
     const std::string text("Hello World");

@@ -600,6 +600,13 @@ class RTTR_API type
         variant get_metadata(const variant& key) const;
 
         /*!
+        * \brief Returns a std::vector pair of all metadata of this type
+        * 
+        * \remark Ability to access the metadata as an array of pairs
+        */
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT;
+
+        /*!
          * \brief Returns a public constructor whose parameters match the types in the specified list.
          *
          * \remark When no parameter list is given, it will be searched for the default constructor.

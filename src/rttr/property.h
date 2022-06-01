@@ -49,6 +49,7 @@ class visitor;
 namespace detail
 {
     class property_wrapper_base;
+    class metadata;
 }
 
 /*!
@@ -240,6 +241,13 @@ class RTTR_API property
          * \return A variant object, containing arbitrary data.
          */
         variant get_metadata(const variant& key) const;
+
+        /*!
+        * \brief Returns a std::vector pair of all metadata of this property
+        *
+        * \remark Ability to access the metadata as an array of pairs
+        */
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns true if this property is the same like the \p other.

@@ -123,6 +123,13 @@ TEST_CASE("property - class object", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // invoke
     CHECK(prop.set_value(obj, 42) == true);
     CHECK(prop.get_value(obj).is_type<int>() == true);
@@ -150,6 +157,13 @@ TEST_CASE("property - class object - read only", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // invoke
     CHECK(prop.get_value(obj).is_type<int>() == true);
     CHECK(prop.get_value(obj).get_value<int>() == 12);
@@ -176,6 +190,13 @@ TEST_CASE("property - class object - bind as ptr", "[property]")
     CHECK(prop.get_type() == type::get<std::vector<int>*>());
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // invoke
     REQUIRE(prop.get_value(obj).is_type<std::vector<int>*>() == true);
@@ -211,6 +232,13 @@ TEST_CASE("property - class object - read only - bind as ptr", "[property]")
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
 
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
+
     // invoke
     CHECK(prop.get_value(obj).is_type<const std::vector<int>*>() == true);
     auto ptr = prop.get_value(obj).get_value<const std::vector<int>*>();
@@ -245,6 +273,13 @@ TEST_CASE("property - class object - as_reference_wrapper", "[property]")
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // invoke
     REQUIRE(prop.get_value(obj).is_type<std::reference_wrapper<std::vector<int>>>() == true);
@@ -288,6 +323,13 @@ TEST_CASE("property - class object - read only - as_reference_wrapper", "[proper
     CHECK(prop.get_type().is_wrapper() == true);
     CHECK(prop.get_access_level() == rttr::access_levels::public_access);
     CHECK(prop.get_metadata("Description") == "Some Text");
+
+    std::vector<detail::metadata> metadata;
+    prop.foreach_metadata([&metadata](const rttr::detail::metadata& meta) { metadata.push_back(meta); });
+
+    CHECK(metadata.size() == 1);
+    CHECK(metadata[0].get_key() == "Description");
+    CHECK(metadata[0].get_value() == "Some Text");
 
     // invoke
     CHECK(prop.get_value(obj).is_type<std::reference_wrapper<const std::vector<int>>>() == true);

@@ -61,6 +61,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, r
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<return_type>(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -118,6 +119,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, ret
         bool is_array()     const RTTR_NOEXCEPT                 { return std::is_array<return_type>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -178,6 +180,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, r
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<typename std::remove_reference<return_type>::type*>(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -234,6 +237,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, ret
         type get_type()     const RTTR_NOEXCEPT { return type::get<typename std::add_const<typename std::remove_reference<return_type>::type>::type*>(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -292,6 +296,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, Setter, Acc_Level, g
         type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper<remove_reference_t<return_type>> >(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {
@@ -350,6 +355,7 @@ class property_wrapper<function_ptr, Declaring_Typ, Getter, void, Acc_Level, get
         type get_type()     const RTTR_NOEXCEPT { return type::get<policy_type>(); }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
+        void foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT { metadata_handler<Metadata_Count>::foreach_metadata(func); }
 
         bool set_value(instance& object, argument& arg) const
         {

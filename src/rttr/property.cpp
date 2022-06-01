@@ -156,6 +156,13 @@ variant property::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void property::foreach_metadata(const std::function<void(const detail::metadata&)>& func) const RTTR_NOEXCEPT
+{
+    m_wrapper->foreach_metadata(func);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool property::operator==(const property& other) const RTTR_NOEXCEPT
 {
     return (m_wrapper == other.m_wrapper);

@@ -111,6 +111,12 @@ variant property_wrapper_base::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+void property_wrapper_base::foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 bool property_wrapper_base::set_value(instance& object, argument& arg) const
 {
     return false;

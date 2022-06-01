@@ -61,6 +61,14 @@ class metadata_handler
             return variant();
         }
 
+        RTTR_INLINE void foreach_metadata(const std::function<void (const metadata&)>& func) const RTTR_NOEXCEPT
+        {
+            for (const metadata& metadata : m_metadata_list)
+            {
+                func(metadata);
+            }
+        }
+
     private:
         std::array<metadata, Metadata_Count> m_metadata_list;
 };
@@ -78,6 +86,7 @@ class metadata_handler<0>
         RTTR_FORCE_INLINE void set_metadata(std::array<metadata, 0> new_data) { }
 
         RTTR_INLINE variant get_metadata(const variant& key) const  { return variant(); }
+        RTTR_INLINE void foreach_metadata(const std::function<void(const metadata&)>& func) const RTTR_NOEXCEPT { }
 };
 
 } // end namespace detail
