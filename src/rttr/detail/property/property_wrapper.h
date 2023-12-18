@@ -61,6 +61,7 @@ class property_wrapper;
 
 #include "rttr/detail/property/property_wrapper_member_func.h"
 #include "rttr/detail/property/property_wrapper_func.h"
+#include "rttr/detail/property/property_wrapper_member_functor.h"
 #include "rttr/detail/property/property_wrapper_member_object.h"
 #include "rttr/detail/property/property_wrapper_object.h"
 

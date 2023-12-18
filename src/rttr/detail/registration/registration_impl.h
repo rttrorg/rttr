@@ -193,14 +193,6 @@ registration::bind<detail::prop, Class_Type, A1, A2, acc_level, Visitor_List> re
     static_assert(std::is_member_function_pointer<A1>::value || std::is_member_function_pointer<A2>::value ||
                   is_functor<A1>::value || is_functor<A2>::value, "No valid property accessor provided!");
 
-    static_assert(function_traits<A1>::arg_count == 0, "Invalid number of arguments, please provide as first accessor a getter-member-function without arguments.");
-    static_assert(function_traits<A2>::arg_count == 1, "Invalid number of arguments, please provide as second argument a setter-member-function with exactly one argument.");
-    using return_type   = typename function_traits<A1>::return_type;
-    using arg_type      = typename param_types<A2, 0>::type;
-    static_assert(std::is_same<typename std::remove_const<typename std::remove_volatile<typename std::remove_reference<return_type>::type>::type>::type,
-                               typename std::remove_const<typename std::remove_volatile<typename std::remove_reference<arg_type>::type>::type>::type>::value,
-                               "Please provide the same signature (data type) for getter and setter!");
-
     return {create_if_empty(m_reg_exec), name, getter, setter};
 }
 

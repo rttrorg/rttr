@@ -72,15 +72,18 @@ namespace detail
     struct is_functor_impl<T, member_function_holder<&helper_composed<T>::operator()> > : std::false_type
     {};
 
+    template<typename T>
+    struct is_function_object : conditional_t<std::is_class<T>::value,
+                                is_functor_impl<T>,
+                                std::false_type>
+    {};
+
     /*!
      * \brief Returns true whether the given type T is a functor.
      *        i.e. func(...); That can be free function, lambdas or function objects.
      */
     template <typename T>
-    struct is_functor : conditional_t<std::is_class<T>::value,
-                                      is_functor_impl<T>,
-                                      std::false_type>
-    {};
+    struct is_functor : is_function_object<T> {};
 
     template<typename R, typename... Args>
     struct is_functor<R (*)(Args...)> : std::true_type {};
@@ -95,6 +98,7 @@ namespace detail
     template<typename R, typename... Args>
     struct is_functor<R (&)(Args...) noexcept> : std::true_type {};
 #endif
+
 
     /////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////
