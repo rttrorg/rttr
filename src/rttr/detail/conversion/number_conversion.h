@@ -134,9 +134,9 @@ typename std::enable_if<std::is_floating_point<F>::value &&
                         bool>::type
 convert_to(const F& from, T& to)
 {
-    if (from > std::numeric_limits<T>::max())
+    if (from > static_cast<F>(std::numeric_limits<T>::max()))
         return false; // value too large
-    else if (from < -std::numeric_limits<T>::max())
+    else if (from < -static_cast<F>(std::numeric_limits<T>::max()))
         return false; // value to small
 
     to = static_cast<T>(from);
@@ -151,7 +151,7 @@ typename std::enable_if<std::is_floating_point<F>::value &&
                         bool>::type
 convert_to(const F& from, T& to)
 {
-    if (from < 0 || from > std::numeric_limits<T>::max())
+    if (from < 0 || from > static_cast<F>(std::numeric_limits<T>::max()))
         return false; // value too large
 
     to = static_cast<T>(from);
